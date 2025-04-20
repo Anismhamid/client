@@ -1,0 +1,85 @@
+{
+	"categories": {
+		"fruits": "Fruits",
+		"vegetable": "Vegetable",
+		"fish": "Fish",
+		"dairy": "Dairy",
+		"meat": "Meat",
+		"spices": "Spices",
+		"bakery": "Bakery",
+		"beverages": "Beverages",
+		"forzen": "Frozen",
+		"snacks": "Snacks"
+	},
+	"links": {
+		"home": "home",
+		"products": "Products",
+		"cart": "Shopping Cart",
+		"about": "About",
+		"contact": "Contact",
+		"login": "Login",
+		"logout": "Logout",
+		"orders": "Orders",
+		"receipts": "Receipts"
+	},
+	"pages": {
+		"bakeryHeading": "Our baked goods - fresh, high-quality, and diverse!",
+		"bakerydescription": "Here you can find a wide variety of fresh baked goods, baked on-site with high-quality ingredients. We promise great flavors and fresh products to give you the perfect taste experience.",
+
+		"beveragesHeading": "Our beverages - fresh, high-quality, and diverse!",
+		"beveragesdescription": "Here you can find a wide selection of fresh, natural, and unique beverages suitable for every taste. We promise high quality and delicious drinks for a perfect drinking experience.",
+
+		"dairyHeading": "Our dairy products - fresh, high-quality, and diverse!",
+		"dairydescription": "Here you can find a wide selection of natural and high-quality dairy products, carefully chosen from our local suppliers. We promise high quality and excellent service so you can enjoy every dairy product easily and comfortably.",
+
+		"discountsAndOffersHeading": "Discounts and Offers",
+		"discountsAndOffersSpan": "Don't miss our special deals!",
+		"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as value packages for families. Follow our page to stay updated and save even more!",
+
+		"fishHeading": "Our fish - fresh, high-quality, and diverse!",
+		"fishDescription": "Here you can find a wide variety of fresh fish, just caught by our local fishermen. We guarantee high quality and excellent service so you can enjoy every fish easily and comfortably.",
+
+		"frozenHeading": "Our frozen products - high quality, fresh, and diverse!",
+		"frozenDescription": "Here you can find a wide variety of frozen products, made from natural ingredients and preserved using advanced technologies to maintain freshness.",
+
+		"fruitsHeading": "Our fruits - fresh, high-quality, and diverse!",
+		"fruitsDescription": "Here you can find a wide variety of fresh fruits, just picked from our local farmers. We guarantee high quality and excellent service so you can enjoy every fruit easily and comfortably.",
+
+		"vegetableHeading": "Our Vegetables – Fresh, Healthy & Delicious!",
+		"vegetableDescription": "Our vegetables grow in fertile fields with a focus on freshness and health. Find seasonal vegetables handpicked just for you.",
+
+		"meatHeading": "Our meats - fresh, high-quality, and diverse!",
+		"meatDescription": "Here you can find a wide selection of fresh meats, carefully selected from our local suppliers. We promise high quality and excellent service so you can enjoy every cut of meat easily and comfortably.",
+
+		"snacksHeading": "Our Snacks – Quality, Fresh & Tasty!",
+		"snacksDescription": "Explore a variety of snacks made from natural ingredients and preserved using advanced technology. We guarantee freshness and quality in every bite.",
+
+		"spicesHeading": "Our Spices – Natural, Aromatic & Flavorful!",
+		"spicesDescription": "Choose from a wide variety of natural spices, carefully selected from trusted local suppliers. Quality and excellent service guaranteed.",
+
+		"receiptSearchTitle": "Advanced Search",
+		"receiptSearch_1": "Search by name, email or order number",
+		"receiptSearch_2": "Search by product name",
+		"receiptSearchFromDate": "From date:",
+		"receiptSearchToDate": "To date:",
+		"receiptNumber": "Receipt #",
+		"receiptDate": "Date:",
+		"receiptCustomer": "Customer:",
+		"receiptCustomerPhone": "Phone:",
+		"receiptCustomerEmail": "Email:",
+		"receiptCustomerAdress": "Address:",
+		"receiptCustomerNoCustomerToProvide": "No customer details available",
+		"receiptCustomerPaymentMethod": "Payment method:",
+		"receiptCustomerCridetCard": "Credit Card",
+		"receiptCustomerCash": "Cash",
+		"receiptCustomerCollectionMethod": "Collection method:",
+		"receiptCustomerDelivry": "Home delivery",
+		"receiptCustomerSelfCollection": "Self collection",
+		"receiptTotalQuantity": "Quantity",
+		"receiptTotalPricePerUnit": "Unit Price",
+		"receiptTotalPriceTotalUnits": "Total",
+		"receiptTotalToBePaid": "Total to be paid:",
+		"receiptBusinessName": "Business Name:",
+		"receiptDownload": "Download"
+	}
+}

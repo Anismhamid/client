@@ -1,0 +1,135 @@
+:root {
+  --violet-4: #9c4f96;
+  --violet-12: #4a2e6e;
+  --red-4: #ec3622;
+  --red-11: #ffffff;
+  --mauve-4: #0011ff;
+  --mauve-11: #ffffff;
+  --mauve-5: #363536;
+  --gray-1: #9ea9bde5;
+}
+
+.Overlay {
+  background-color: var(--black-a9);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+}
+
+/* תוכן הדיאלוג */
+.Content {
+  background-color: var(--gray-1);
+  border-radius: 6px;
+  box-shadow: var(--shadow-6);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 500px;
+  max-height: 85vh;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 100;
+}
+
+.Content:focus {
+  outline: none;
+}
+
+/* כותרת */
+.Title {
+  margin: 0;
+  color: var(--mauve-12);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* תיאור */
+.Description {
+  margin-bottom: 20px;
+  color: var(--mauve-11);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* כפתור כללי */
+.Button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  padding: 0 15px;
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 500;
+  height: 35px;
+  user-select: none;
+}
+
+.Button:focus:not(:focus-visible) {
+  outline: 0;
+}
+
+.Button:focus-visible {
+  outline: 2px solid var(--violet-6);
+  outline-offset: 1px;
+}
+
+/* צבעי כפתורים ספציפיים */
+.violet {
+  background-color: var(--violet-4);
+  color: var(--violet-12);
+  outline-color: var(--violet-6);
+}
+
+.violet:hover {
+  background-color: var(--mauve-3);
+}
+
+.red {
+  background-color: var(--red-4);
+  color: var(--red-11);
+  outline-color: var(--red-7);
+}
+
+.red:hover {
+  background-color: var(--red-5);
+}
+
+.mauve {
+  background-color: var(--mauve-4);
+  color: var(--mauve-11);
+  outline-color: var(--mauve-7);
+}
+
+.mauve:hover {
+  background-color: var(--mauve-5);
+}
+
+/* Keyframes לאנימציות */
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
