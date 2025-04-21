@@ -70,7 +70,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	const isUser = !isAdmin && isLoggedIn;
 
 	useEffect(() => {
-		window.scrollTo(0, 100);
+		window.scrollTo(0, 0);
 	}, [location]);
 
 	const logout = () => {
