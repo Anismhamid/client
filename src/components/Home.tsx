@@ -14,6 +14,7 @@ import {
 	Button,
 	Tooltip,
 	Fab,
+	CircularProgress,
 } from "@mui/material";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import RoleType from "../interfaces/UserType";
@@ -38,6 +39,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [onShowModal, setOnShowModal] = useState<boolean>(false);
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
+	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
@@ -98,7 +100,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		setVisibleProducts(dataToDisplay);
 	}, [products, searchQuery, filteredProducts, visibleCount]);
 
-	const handleAdd = (
+	const handleAdd = async (
 		product_name: string,
 		quantity: {[key: string]: number},
 		price: number,
@@ -110,7 +112,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 		if (!isLoggedIn) {
 			OnShowCartModal();
 		} else {
-			handleAddToCart(
+			setLoadingAddToCart(product_name);
+			await handleAddToCart(
 				setQuantities,
 				product_name,
 				productQuantity || 1,
@@ -119,6 +122,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				sale,
 				discount,
 			);
+			setLoadingAddToCart(null);
 		}
 	};
 
@@ -372,9 +376,17 @@ const Home: FunctionComponent<HomeProps> = () => {
 															: "btn-outline-success"
 													}`}
 												>
-													{isOutOfStock
-														? "אזל מהמלאי"
-														: "הוספה לסל"}
+													{isOutOfStock ? (
+														"אזל מהמלאי"
+													) : loadingAddToCart ===
+													  product.product_name ? (
+														<CircularProgress
+															size={20}
+															color='inherit'
+														/>
+													) : (
+														"הוספה לסל"
+													)}
 												</button>
 											</div>
 

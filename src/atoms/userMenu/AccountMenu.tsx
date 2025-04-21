@@ -97,7 +97,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				<MenuItem onClick={() => navigate(path.Profile)}>
 					<Avatar
 						src={
-							auth?.image?.url ||
+							auth.image?.url ||
 							"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
 						}
 					/>
