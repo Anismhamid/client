@@ -12,9 +12,9 @@
   box-sizing: border-box;
 }
 
-.MuiFormGroup-root{
-      background: rgba(17, 25, 40, 0.8) !important;
-    margin-bottom: 20px;
+.MuiFormGroup-root {
+  background: rgba(17, 25, 40, 0.8) !important;
+  margin-bottom: 20px;
 }
 
 .navbar-glass {
@@ -86,6 +86,14 @@
 }
 
 
+.card.h-100.shadow-sm.border-0 img {
+    object-fit: cover;
+    transition: 0.3s;
+    -webkit-transition: 0.3s;
+    -moz-transition: 0.3s;
+    -ms-transition: 0.3s;
+    -o-transition: 0.3s;
+}
 
 .login {
   background: radial-gradient(#11171c00, #16181b);

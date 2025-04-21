@@ -1,41 +1,40 @@
 import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
-import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.js";
+import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {Routes, Route, useNavigate, Navigate} from "react-router-dom";
-import UsersManagement from "./components/UsersManagement.js";
-import OrederDetails from "./components/OrederDetails.js";
-import AllTheOrders from "./components/AllTheOrders.js";
-import Beverages from "./components/Beverages.js";
+import UsersManagement from "./components/UsersManagement.tsx";
+import OrederDetails from "./components/OrederDetails.tsx";
+import AllTheOrders from "./components/AllTheOrders.tsx";
+import Beverages from "./components/Beverages.tsx";
 import Vegetable from "./components/Vegetable";
-import Profile from "./components/Profile.js";
-import Receipt from "./components/Receipt.js";
+import Profile from "./components/Profile.tsx";
+import Receipt from "./components/Receipt.tsx";
 import Checkout from "./components/Checkout";
 import Register from "./components/Register";
-import Spices from "./components/Spices.js";
-import Orders from "./components/Orders.js";
-import Bakery from "./components/Bakery.js";
-import Frozen from "./components/Frozen.js";
-import Snacks from "./components/Snacks.js";
+import Spices from "./components/Spices.tsx";
+import Orders from "./components/Orders.tsx";
+import Bakery from "./components/Bakery.tsx";
+import Frozen from "./components/Frozen.tsx";
+import Snacks from "./components/Snacks.tsx";
 import PageNotFound from "./components/Png";
 import Contact from "./components/Contact";
-import Dairy from "./components/Dairy.js";
+import Dairy from "./components/Dairy.tsx";
 import Footer from "./components/Footer";
 import Fruits from "./components/Fruits";
-import NavBar from "./components/NavBar";
-import Meat from "./components/Meat.js";
-import Fish from "./components/Fish.js";
+import Meat from "./components/Meat.tsx";
+import Fish from "./components/Fish.tsx";
 import Login from "./components/Login";
 import About from "./components/About";
 import Cart from "./components/Cart";
 import Home from "./components/Home";
 import {path, productsPathes} from "./routes/routes";
 import {ToastContainer} from "react-toastify";
-import {fontAwesomeIcon} from "./FontAwesome/Icons.js";
-import useToken from "./hooks/useToken.js";
+import {fontAwesomeIcon} from "./FontAwesome/Icons.tsx";
+import useToken from "./hooks/useToken.ts";
 import {io} from "socket.io-client";
 import {useEffect, useMemo, useState} from "react";
-import {useUser} from "./context/useUSer.js";
-import RoleType from "./interfaces/UserType.js";
-import {showInfo} from "./atoms/Toast.js";
+import {useUser} from "./context/useUSer.tsx";
+import RoleType from "./interfaces/UserType.ts";
+import {showInfo} from "./atoms/Toast.ts";
 import {
 	CssBaseline,
 	RadioGroup,
@@ -47,11 +46,12 @@ import {
 	PaletteMode,
 	SpeedDial,
 } from "@mui/material";
-import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.js";
-import CompleteProfile from "./components/CompleteProfile.js";
-import TermOfUse from "./components/TermOfUse.js";
+import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.tsx";
+import CompleteProfile from "./components/CompleteProfile.tsx";
+import TermOfUse from "./components/TermOfUse.tsx";
 import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";
+import NavBar from "./components/NavBar.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -160,6 +160,7 @@ function App() {
 						}}
 					/>
 				)}
+
 				<Routes>
 					<Route path={path.Home} element={<Home />} />
 					<Route path={path.Login} element={<Login />} />

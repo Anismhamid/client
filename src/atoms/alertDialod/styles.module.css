@@ -1,25 +1,21 @@
 :root {
-  --violet-4: #9c4f96;
-  --violet-12: #4a2e6e;
-  --red-4: #ec3622;
-  --red-11: #ffffff;
-  --mauve-4: #0011ff;
-  --mauve-11: #ffffff;
-  --mauve-5: #363536;
-  --gray-1: #9ea9bde5;
+  --violet-4: #319c4c;
+  --mauve-5: #ffffff;
+  --gray-1: #1b1b1bd2;
 }
 
 .Overlay {
-  background-color: var(--black-a9);
+  background-color: var(--mauve-5);
   position: fixed;
   inset: 0;
   animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
-
+  z-index: 100;
 }
 
 /* תוכן הדיאלוג */
 .Content {
+  border: 3px solid #858585;
   background-color: var(--gray-1);
   border-radius: 6px;
   box-shadow: var(--shadow-6);
@@ -42,17 +38,17 @@
 
 /* כותרת */
 .Title {
-  margin: 0;
-  color: var(--mauve-12);
-  font-size: 17px;
+  margin: 20px auto;
+  color: var(--mauve-5);
+  font-size: 1.5rem;
   font-weight: 500;
 }
 
 /* תיאור */
 .Description {
   margin-bottom: 20px;
-  color: var(--mauve-11);
-  font-size: 15px;
+  color: var(--mauve-5);
+  font-size: 1.05rem;
   line-height: 1.5;
 }
 
@@ -83,7 +79,7 @@
 /* צבעי כפתורים ספציפיים */
 .violet {
   background-color: var(--violet-4);
-  color: var(--violet-12);
+  color: green;
   outline-color: var(--violet-6);
 }
 
@@ -98,7 +94,7 @@
 }
 
 .red:hover {
-  background-color: var(--red-5);
+  background-color: var(--violet-4);
 }
 
 .mauve {

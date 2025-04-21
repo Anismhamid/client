@@ -488,6 +488,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 				show={showDeleteModal}
 				openModal={() => setShowDeleteModal(true)}
 				onHide={closeDeleteModal}
+				title={"אתה בטוח לחלוטין?"}
+				description={`לא ניתן לבטל פעולה זו. פעולה זו תמחק ותסיר ה (${productToDelete}) לצמיתות את הנתונים שלך מהשרתים שלנו`}
 				handleDelete={() => handleDelete(productToDelete)}
 			/>
 			<ForAllModal show={onShowModal} onHide={OnHideCartModal} />
