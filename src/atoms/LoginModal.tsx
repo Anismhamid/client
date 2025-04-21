@@ -78,7 +78,7 @@ const ForAllModal: FunctionComponent<ForAllModalProps> = ({onHide, show}) => {
 	});
 
 	return (
-		<Modal className='' show={show} onHide={() => onHide()} centered>
+		<Modal className=' mt-5' show={show} onHide={() => onHide()} >
 			<Modal.Body className='d-flex justify-content-center align-items-center'>
 				<div className='container w-75'>
 					<form

@@ -166,10 +166,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 									/>
 
 									<div className='card-body d-flex flex-column justify-content-between'>
-										<h5 className='card-title text-center fw-bold'>
+										<h6 className='card-title text-center fw-bold'>
 											{product.product_name}
-										</h5>
-										<h5
+										</h6>
+										<h6
 											className={` text-center fw-semibold ${
 												product.quantity_in_stock <= 0
 													? "text-danger"
@@ -179,11 +179,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 											{product.quantity_in_stock <= 0
 												? "אזל מהמלאי"
 												: "במלאי"}
-										</h5>
+										</h6>
 
 										{product.sale ? (
 											<>
-												<h5 className='text-center fw-bold'>
+												<h6 className='text-center'>
 													מחיר לפני:
 													<s className='ms-2'>
 														{product.price.toLocaleString(
@@ -194,8 +194,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 															},
 														)}
 													</s>
-												</h5>
-												<h6 className='text-center'>
+												</h6>
+												<h6 className='text-center fw-bold'>
 													מחיר:
 													{(
 														product.price -
@@ -209,21 +209,21 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														currency: "ILS",
 													})}
 												</h6>
-												<p className='d-block m-2 text-center text-danger'>
-													{product.discount}% מבצע
+												<p className='d-block text-center text-danger'>
+													{product.discount}% הנחה
 												</p>
 											</>
 										) : (
-											<h5 className='card-text text-center'>
+											<h6 className='card-text text-center  fw-bold'>
 												מחיר:
 												{product.price.toLocaleString("he-IL", {
 													style: "currency",
 													currency: "ILS",
 												})}
-											</h5>
+											</h6>
 										)}
 
-										<p className='text-center text-muted small'>
+										<h6 className='text-center text-muted small'>
 											{category === "spices"
 												? "ל / 100-גרם"
 												: [
@@ -234,7 +234,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													  ].includes(category)
 													? "ל / ק" + "\u05B2" + "ג"
 													: "ל-יחידה"}
-										</p>
+										</h6>
 
 										<div className='d-flex align-items-center justify-content-center gap-3'>
 											<button
@@ -246,15 +246,15 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn btn-light border rounded-circle shadow-sm my-1'
+												className='btn btn-light border rounded-circle shadow-sm'
 											>
 												<img
 													src='/svg/remove.svg'
 													alt=''
-													width={20}
+													width={15}
 												/>
 											</button>
-											<h5 className='fs-5 fw-bold'>
+											<h5 className='fs-6 fw-bold'>
 												<b>{productQuantity}</b>
 											</h5>
 											<button
@@ -266,12 +266,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 														product.product_name,
 													)
 												}
-												className='btn btn-light border rounded-circle shadow-sm my-1'
+												className='btn btn-light border rounded-circle shadow-sm'
 											>
 												<img
 													src='/svg/add.svg'
 													alt=''
-													width={20}
+													width={15}
 												/>
 											</button>
 										</div>
@@ -287,7 +287,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												);
 											}}
 											disabled={product.quantity_in_stock <= 0}
-											className={`w-100 btn shadow-sm py-2 fw-bold rounded-pill d-block ${
+											className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
 												product.quantity_in_stock <= 0
 													? "btn btn-outline-danger"
 													: "btn btn-outline-success"
