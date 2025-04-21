@@ -81,5 +81,11 @@
 		"receiptTotalToBePaid": "סה״כ לתשלום:",
 		"receiptBusinessName": "שם עסק:",
 		"receiptDownload": "הורדה"
-	}
+	},
+	"accountMenu": {
+  "account": "החשבון שלי",
+  "profile": "הפרופיל שלי",
+  "settings": "הגדרות",
+  "logout": "התנתקות"
+}
 }

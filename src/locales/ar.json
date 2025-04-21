@@ -80,5 +80,11 @@
 		"receiptTotalToBePaid": "الإجمالي للدفع:",
 		"receiptBusinessName": "اسم المتجر:",
 		"receiptDownload": "تحميل"
+	},
+	"accountMenu": {
+		"account": "حسابي",
+		"profile": "ملفي الشخصي",
+		"settings": "الإعدادات",
+		"logout": "تسجيل الخروج"
 	}
 }

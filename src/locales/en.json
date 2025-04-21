@@ -81,5 +81,11 @@
 		"receiptTotalToBePaid": "Total to be paid:",
 		"receiptBusinessName": "Business Name:",
 		"receiptDownload": "Download"
+	},
+	"accountMenu": {
+		"account": "My Account",
+		"profile": "My Profile",
+		"settings": "Settings",
+		"logout": "Log Out"
 	}
 }

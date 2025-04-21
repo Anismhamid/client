@@ -130,21 +130,20 @@ function App() {
 		<>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<FormControl sx={{width:"100%",display:"flex"}}>
+				<FormControl sx={{width: "100%", display: "flex"}}>
 					<RadioGroup
 						aria-labelledby='demo-theme-toggle'
 						name='theme-toggle'
 						row
 						value={mode}
 						onChange={handleThemeChange}
-						>
+					>
 						<FormControlLabel
 							value='light'
 							control={<Radio />}
 							label='Light'
-							
 						/>
-						<FormControlLabel  value='dark' control={<Radio />} label='Dark' />
+						<FormControlLabel value='dark' control={<Radio />} label='Dark' />
 						<LanguageSwitcher />
 					</RadioGroup>
 				</FormControl>

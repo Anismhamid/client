@@ -156,6 +156,13 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						</Stack>
 
 						<Menu
+							PaperProps={{
+								sx: {
+									backgroundColor: "rgba(30, 30, 30, 0.9)",
+									borderRadius: 2,
+									color: "#fff",
+								},
+							}}
 							anchorEl={anchorEl}
 							open={openMenu}
 							onClose={handleMenuClose}
@@ -163,8 +170,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								onMouseEnter: handleMenuClick,
 								onMouseLeave: handleMenuClose,
 							}}
-							anchorOrigin={{vertical: "top", horizontal: "left"}}
-							transformOrigin={{vertical: "top", horizontal: "left"}}
+							transformOrigin={{horizontal: "center", vertical: "top"}}
+							anchorOrigin={{horizontal: "center", vertical: "top"}}
 						>
 							{/* Category Links */}
 							{navbarCategoryLinks.map(({labelKey, path, icon}) => (
@@ -254,13 +261,11 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								<Box>
 									<Badge
 										badgeContent={quantity}
-										color='primary'
-										overlap='circular'
 										sx={{
 											"& .MuiBadge-badge": {
-												fontSize: "0.75rem",
-												height: 20,
-												minWidth: 20,
+												backgroundColor: "#4FC3F7",
+												color: "#1A1E22",
+												fontWeight: "bold",
 											},
 										}}
 									>
@@ -285,13 +290,12 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								color='primary'
 								onClick={() => navigate(path.Login)}
 								sx={{
-									position: "absolute",
-									left: "10px",
-									borderRadius: "20px",
+									borderRadius: "30px",
 									fontWeight: "bold",
-									boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
+									backgroundColor: "#4FC3F7",
+									color: "#1A1E22",
 									"&:hover": {
-										backgroundColor: "#4562a0",
+										backgroundColor: "#81D4FA",
 									},
 								}}
 							>

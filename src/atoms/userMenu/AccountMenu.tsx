@@ -11,6 +11,8 @@ import {Fragment, FunctionComponent, useState} from "react";
 import {useUser} from "../../context/useUSer";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
+import {Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 interface AccountMenuProps {
 	logout: Function;
@@ -21,6 +23,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 	const open = Boolean(anchorEl);
 	const {auth} = useUser();
 	const navigate = useNavigate();
+	const {t} = useTranslation();
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -37,15 +40,22 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				<Tooltip title='הגדרות חשבון'>
 					<IconButton
 						onClick={handleClick}
-						size='small'
-						sx={{width: "40px", position: "absolute", left: 10}}
-						aria-controls={open ? "account-menu" : undefined}
-						aria-haspopup='true'
-						aria-expanded={open ? "true" : undefined}
+						sx={{
+							width: 44,
+							height: 44,
+							ml: 1,
+							border: "2px solid #4FC3F7",
+							transition: "0.3s",
+							"&:hover": {
+								borderColor: "#81D4FA",
+								transform: "scale(1.05)",
+							},
+						}}
 					>
 						<Avatar
 							className='bg-primary'
 							sx={{width: 40, height: 40}}
+							children={auth?.name.last?.[0]}
 							src={
 								auth?.image?.url ||
 								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
@@ -65,31 +75,24 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						elevation: 10,
 						sx: {
 							overflow: "hidden",
-							filter: "drop-shadow(0px 2px 8px rgba(255, 255, 255, 0.32))",
+							backgroundColor: "#1A1E22",
+							color: "#fff",
 							mt: 1.5,
-							"& .MuiAvatar-root": {
-								width: 32,
-								height: 32,
-								ml: -0.5,
-								mr: 1,
-							},
-							"&::before": {
-								content: '""',
-								display: "block",
-								position: "absolute",
-								top: 0,
-								right: 14,
-								width: 10,
-								height: 10,
-								bgcolor: "background.paper",
-								transform: "translateY(-50%) rotate(45deg)",
-								zIndex: 0,
+							borderRadius: 2,
+							minWidth: 180,
+							boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
+							"& .MuiMenuItem-root": {
+								transition: "0.2s",
+								"&:hover": {
+									backgroundColor: "#263238",
+									color: "#4FC3F7",
+								},
 							},
 						},
 					},
 				}}
 				transformOrigin={{horizontal: "right", vertical: "top"}}
-				anchorOrigin={{horizontal: "right", vertical: "bottom"}}
+				anchorOrigin={{horizontal: "left", vertical: "bottom"}}
 			>
 				<MenuItem onClick={() => navigate(path.Profile)}>
 					<Avatar
@@ -98,16 +101,26 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 							"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
 						}
 					/>
-					החשבון שלי
+					{t("accountMenu.profile")}
 				</MenuItem>
 
 				<Divider />
 				<MenuItem onClick={handleClose}>
-					<ListItemIcon>{fontAwesomeIcon.setting}</ListItemIcon>
-					הגדרות
+					<ListItemIcon sx={{color: "ButtonShadow"}}>
+						{fontAwesomeIcon.setting}
+					</ListItemIcon>
+					<Typography ml={1}>{t("accountMenu.settings")}</Typography>
 				</MenuItem>
+
+				<Divider sx={{borderColor: "#4FC3F7", my: 0.5}} />
+
 				<MenuItem onClick={() => logout()}>
-					<ListItemIcon>{fontAwesomeIcon.LogOut}</ListItemIcon> יציאה
+					<ListItemIcon sx={{color: "#FF5252"}}>
+						{fontAwesomeIcon.LogOut}
+					</ListItemIcon>
+					<Typography ml={1} color='#FF5252'>
+						{t("accountMenu.logout")}
+					</Typography>
 				</MenuItem>
 			</Menu>
 		</Fragment>

@@ -13,21 +13,21 @@
 }
 
 .MuiFormGroup-root{
-    background: rgba(9, 43, 90, 0.733) !important;
+      background: rgba(17, 25, 40, 0.8) !important;
     margin-bottom: 20px;
 }
 
 .navbar-glass {
-  background: rgba(9, 43, 90, 0.733) !important;
-  backdrop-filter: blur(10px);
-  --a: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: rgba(17, 25, 40, 0.8) !important;
+  backdrop-filter: blur(12px);
+  --a: 0 8px 32px rgba(0, 0, 0, 0.25);
   box-shadow: var(--a);
-  border-radius: 12px;
-  padding: 5px 20px;
+  border-radius: 16px;
+  padding: 10px 30px;
   transition: all 0.3s ease;
-  margin: 5px auto;
+  margin: 10px auto 60px;
   max-width: 1200px;
-  margin-bottom: 100px !important;
+  margin-bottom: 60px !important;
   list-style: none;
   -webkit-transition: all 0.3s ease;
   -moz-transition: all 0.3s ease;
@@ -44,44 +44,47 @@
   color: #000 !important;
 }
 
-.nav-link {
-  transition: 0.2s ease-in-out;
-  font-size: 1rem;
-  padding: 6px 10px;
-  font-weight: bold;
-  -webkit-transition: 0.2s ease-in-out;
-  -moz-transition: 0.2s ease-in-out;
-  -ms-transition: 0.2s ease-in-out;
-  -o-transition: 0.2s ease-in-out;
-}
-
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #0C6EFD !important;
-}
-
-.nav-link.text-danger {
-  color: #ff5b5b !important;
-  font-weight: bold;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
 .nav-item {
-  margin: 0 10px;
+  margin: 0 8px;
   display: flex;
   align-items: center;
 }
 
+.nav-link {
+  transition: 0.2s ease-in-out;
+  font-size: 1rem;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: #ffffffcc;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  -webkit-transition: all 0.2s ease-in-out;
+  -moz-transition: all 0.2s ease-in-out;
+  -ms-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #4FC3F7 !important;
+}
+
+.nav-link.text-danger {
+  color: #ff5b5b !important;
+  background-color: rgba(255, 255, 255, 0.07);
+}
 
 
-/* img {
-  object-fit: cover;
-  transition: 0.5s;
-  -webkit-transition: 0.5s;
-  -moz-transition: 0.5s;
-  -ms-transition: 0.5s;
-  -o-transition: 0.5s;
-} */
+.MuiBadge-badge {
+  background-color: #4FC3F7 !important;
+  color: #1A1E22;
+  font-weight: bold;
+}
+
 
 
 .login {
