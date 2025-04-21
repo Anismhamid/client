@@ -24,7 +24,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
-import {useLocation} from "react-router-dom";
 
 interface HomeProps {}
 
@@ -48,7 +47,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
-	const location = useLocation();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
