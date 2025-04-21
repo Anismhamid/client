@@ -96,7 +96,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					<Tooltip title='בית' arrow>
 						<li className='nav-item'>
 							<NavLink
-								className={`${isActive(path.Home) ? "text-danger" : ""}`}
+								className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
 								aria-current='page'
 								to={path.Home}
 							>
@@ -282,7 +282,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						<li>
 							<Button
 								variant='contained'
-								color='success'
+								color='primary'
 								onClick={() => navigate(path.Login)}
 								sx={{
 									position: "absolute",
@@ -291,7 +291,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									fontWeight: "bold",
 									boxShadow: "0 2px 6px rgba(0, 0, 0, 0.3)",
 									"&:hover": {
-										backgroundColor: "#45a049",
+										backgroundColor: "#4562a0",
 									},
 								}}
 							>

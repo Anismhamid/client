@@ -70,14 +70,14 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					const categoryPath = categoryToPath[product.category] || "";
 					const isLoaded = loadedImages[product.product_name];
 					return (
-						<div className='col' key={product._id}>
+						<div className='col-6' key={product._id}>
 							<div className='card h-100 shadow-sm'>
 								<Link to={categoryPath}>
 									{!isLoaded && (
 										<Skeleton
 											variant='rectangular'
 											width='100%'
-											height={200}
+											height={150}
 											sx={{bgcolor: "grey.900"}}
 										/>
 									)}
@@ -88,7 +88,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										style={{
 											display: isLoaded ? "block" : "none",
 											objectFit: "cover",
-											height: "200px",
+											height: "160px",
 										}}
 										onLoad={() =>
 											setImageLoaded(product.product_name)
@@ -101,7 +101,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 									<hr />
 									<h5 className='text-danger'>
 										{product.sale
-											? `במבצע ${product.discount}%`
+											? `הנחה ${product.discount}%`
 											: "הצעות בשבילך"}
 									</h5>
 								</div>
@@ -109,6 +109,8 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 						</div>
 					);
 				})}
+				<p className=' display-6 fw-bold mt-5 mb-0 w-100'>כל המוצרים שלנו</p>
+				<hr className=' w-100' />
 			</div>
 		</main>
 	);

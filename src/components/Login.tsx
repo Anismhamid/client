@@ -10,7 +10,7 @@ import useToken from "../hooks/useToken";
 import {showError, showSuccess} from "../atoms/Toast";
 import {emptyAuthValues} from "../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import {TextField} from "@mui/material";
+import {Button, TextField} from "@mui/material";
 import UserInfoModal from "../atoms/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
@@ -119,9 +119,9 @@ const Login: FunctionComponent<LoginProps> = () => {
 
 	return (
 		<main className='min-vh-50'>
-			<div className='container p-5'>
+			<div className='container pb-3'>
 				<form
-					style={{maxWidth: "400px", margin: "auto"}}
+					style={{maxWidth: "350px", margin: "auto"}}
 					autoComplete='off'
 					noValidate
 					onSubmit={formik.handleSubmit}
@@ -151,22 +151,24 @@ const Login: FunctionComponent<LoginProps> = () => {
 						fullWidth
 						className='my-2'
 						variant='outlined'
+						
 					/>
 
-					<button type='submit' className='btn btn-success w-100 mt-2'>
+					<div className=''>
+					<Button color="primary"  variant="contained" type='submit' className=' w-100 my-3  rounded-5 '>
 						כניסה
-					</button>
-					<div className='mt-4'>
+					</Button>
 						<GoogleLogin
+							ux_mode="popup"
+							shape="circle"
+							theme="filled_blue"
 							onSuccess={handleGoogleLoginSuccess}
 							onError={() => showError("Google login failed")}
 						/>
 					</div>
 					<div className='mt-3'>
-						<span className='text-light fw-bold me-1'>
-							עדיין אין לך חשבון ?
-						</span>
-						<Link to={path.Register}>לחץ כאן להרשמה</Link>
+						<span className=' fw-bold me-1'>עדיין אין לך חשבון ?</span>
+						<Link to={path.Register}>לחץ להרשמה</Link>
 					</div>
 					<div className=' my-3 d-flex justify-content-center gap-3'>
 						<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>

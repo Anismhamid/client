@@ -13,7 +13,7 @@ const LanguageSwitcher: FunctionComponent<LanguageSwitcherProps> = () => {
 	};
 
 	return (
-		<div>
+		<div style={{marginRight:"10px"}}>
 			<Button color="error" onClick={() => changeLanguage("ar")}>عربي</Button>
 			<Button centerRipple color="error" onClick={() => changeLanguage("he")}>עברית</Button>
 			<Button color="error" onClick={() => changeLanguage("en")}>English</Button>

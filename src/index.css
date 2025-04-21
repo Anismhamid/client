@@ -12,12 +12,13 @@
   box-sizing: border-box;
 }
 
-header {
-  background: rgba(47, 124, 233, 0.404) !important;
+.MuiFormGroup-root{
+    background: rgba(9, 43, 90, 0.733) !important;
+    margin-bottom: 20px;
 }
 
 .navbar-glass {
-  background: rgba(9, 43, 90, 0.404) !important;
+  background: rgba(9, 43, 90, 0.733) !important;
   backdrop-filter: blur(10px);
   --a: 0 4px 12px rgba(0, 0, 0, 0.3);
   box-shadow: var(--a);
@@ -45,7 +46,7 @@ header {
 
 .nav-link {
   transition: 0.2s ease-in-out;
-  font-size: 1.1rem;
+  font-size: 1rem;
   padding: 6px 10px;
   font-weight: bold;
   -webkit-transition: 0.2s ease-in-out;
@@ -73,14 +74,14 @@ header {
 
 
 
-img {
+/* img {
   object-fit: cover;
   transition: 0.5s;
   -webkit-transition: 0.5s;
   -moz-transition: 0.5s;
   -ms-transition: 0.5s;
   -o-transition: 0.5s;
-}
+} */
 
 
 .login {
@@ -108,9 +109,6 @@ img {
   }
 }
 
-main {
-  padding: 7rem 0;
-}
 
 
 .link-success:hover {

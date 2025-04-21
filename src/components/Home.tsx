@@ -24,6 +24,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
+import {useLocation} from "react-router-dom";
 
 interface HomeProps {}
 
@@ -47,6 +48,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const location = useLocation();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -69,6 +71,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				setProducts(products);
 				setVisibleProducts(products.slice(0, 15));
 				setLoading(false);
+				window.scrollTo(0, 0);
 			})
 			.catch((err) => {
 				console.log(err);
@@ -169,7 +172,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			)}
 
 			{/* Search and filter products */}
-			<div className='container py-5'>
+			<div className='container'>
 				<div className=''>
 					<Paper
 						component='div'
@@ -227,7 +230,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 									: product.price;
 								return (
 									<div
-										className='col-md-6 col-lg-4 col-xl-3 mb-4'
+										className='col-6 col-md-4 col-xl-3 mb-4'
 										key={product._id}
 									>
 										<div className='card shadow rounded-4 h-100 overflow-hidden border-0'>
@@ -239,7 +242,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 													className='card-img-top'
 													style={{
 														objectFit: "cover",
-														height: "200px",
+														height:
+															window.innerWidth < 576
+																? "160px"
+																: "250px",
 														transition:
 															"transform 0.3s ease-in-out",
 													}}
@@ -375,8 +381,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 											</div>
 
 											{((auth && isAdmin) ||
-												(auth &&
-													isModerator)) && (
+												(auth && isModerator)) && (
 												<div className='card-footer my-3 bg-transparent border-0 d-flex justify-content-around'>
 													<Tooltip title='עריכה'>
 														<Fab

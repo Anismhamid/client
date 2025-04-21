@@ -133,13 +133,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 	return (
 		<main className='min-vh-100'>
-			<div className='container py-5'>
+			<div className='container pb-5'>
 				<div className='row g-4'>
 					{visibleProducts.map((product: Products) => {
 						const productQuantity = quantities[product.product_name] || 1;
 						return (
 							<div
-								className='col-md-6 mb-5 col-lg-4 col-xl-3 '
+								className='col-6 col-sm-6 col-lg-4 col-xl-3 '
 								key={product.product_name}
 							>
 								<div className='card h-100 shadow rounded-4 overflow-hidden'>
@@ -150,7 +150,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 										className='card-img-top'
 										style={{
 											objectFit: "cover",
-											height: "200px",
+											height:
+												window.innerWidth < 576
+													? "160px"
+													: "200px",
 											transition: "transform 0.3s ease-in-out",
 										}}
 										onMouseOver={(e) =>
@@ -177,7 +180,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 												? "אזל מהמלאי"
 												: "במלאי"}
 										</h5>
-										<hr />
 
 										{product.sale ? (
 											<>
@@ -340,7 +342,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				</div>
 				{/* Show More Button */}
 				{products.length > visibleProducts.length && (
-					<div className='text-center '>
+					<div className='text-center my-4 '>
 						<Button
 							onClick={handleShowMore}
 							color='primary'

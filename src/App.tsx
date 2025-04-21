@@ -130,21 +130,22 @@ function App() {
 		<>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<FormControl>
-					<LanguageSwitcher />
+				<FormControl sx={{width:"100%",display:"flex"}}>
 					<RadioGroup
 						aria-labelledby='demo-theme-toggle'
 						name='theme-toggle'
 						row
 						value={mode}
 						onChange={handleThemeChange}
-					>
+						>
 						<FormControlLabel
 							value='light'
 							control={<Radio />}
 							label='Light'
+							
 						/>
-						<FormControlLabel value='dark' control={<Radio />} label='Dark' />
+						<FormControlLabel  value='dark' control={<Radio />} label='Dark' />
+						<LanguageSwitcher />
 					</RadioGroup>
 				</FormControl>
 
@@ -153,7 +154,7 @@ function App() {
 				{decodedToken && (
 					<SpeedDial
 						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: 16}}
+						sx={{position: "fixed", bottom: 16, right: 5}}
 						icon={fontAwesomeIcon.CartInoc}
 						onClick={() => {
 							navigate(path.Cart);
