@@ -51,6 +51,7 @@ import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.js";
 import CompleteProfile from "./components/CompleteProfile.js";
 import TermOfUse from "./components/TermOfUse.js";
 import "./locales/i18n.tsx";
+import LanguageSwitcher from "./locales/languageSwich.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -130,6 +131,7 @@ function App() {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<FormControl>
+					<LanguageSwitcher />
 					<RadioGroup
 						aria-labelledby='demo-theme-toggle'
 						name='theme-toggle'

@@ -21,7 +21,6 @@ import {navbarCategoryLinks} from "../helpers/navCategoryies";
 import {emptyAuthValues} from "../interfaces/authValues";
 import {useCartItems} from "../context/useCart";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import LanguageSwitcher from "../locales/languageSwich";
 import {useTranslation} from "react-i18next";
 
 interface NavBarProps {}
@@ -303,8 +302,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						isLoggedIn && <AccountMenu logout={logout} />
 					)}
 				</Box>
-
-				<LanguageSwitcher />
 			</AppBar>
 
 			{location.pathname !== path.Home && (
