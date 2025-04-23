@@ -94,7 +94,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						)}
 						<img
 							className='border border-light rounded'
-							src={user.image.url}
+							src={user.image?.url}
 							alt={
 								user.image.alt
 									? `${user.image?.alt}'s avatar`

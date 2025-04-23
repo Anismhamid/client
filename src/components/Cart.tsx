@@ -51,7 +51,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 		});
 
 		DeleteCartItems(product_name).catch((err) => {
-			console.error("Error deleting item:", err);
+			console.error("Error while deleting item:", err);
 		});
 		setQuantity((prev) => prev - 1);
 	};

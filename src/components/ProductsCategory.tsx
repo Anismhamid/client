@@ -13,7 +13,7 @@ import {useCartItems} from "../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 
 interface ProductCategoryProps {
@@ -35,9 +35,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
-	const {setQuantity} = useCartItems();
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
+	const {setQuantity} = useCartItems();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -66,6 +67,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		if (!isLoggedIn) {
 			OnShowLoginModal();
 		} else {
+			setLoadingAddToCart(product_name);
 			handleAddToCart(
 				setQuantities,
 				product_name,
@@ -76,6 +78,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				discount,
 			);
 			setQuantity((prev) => prev + 1);
+			setLoadingAddToCart(null);
 		}
 	};
 
@@ -293,9 +296,17 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													: "btn btn-outline-success"
 											}`}
 										>
-											{product.quantity_in_stock <= 0
-												? "אזל מהמלאי"
-												: "הוספה לסל"}
+											{product.quantity_in_stock <= 0 ? (
+												"אזל מהמלאי"
+											) : loadingAddToCart ===
+											  product.product_name ? (
+												<CircularProgress
+													size={20}
+													color='inherit'
+												/>
+											) : (
+												"הוספה לסל"
+											)}
 										</button>
 										{((auth && auth.role === RoleType.Admin) ||
 											(auth &&
@@ -368,6 +379,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				openModal={() => setShowDeleteModal(true)}
 				onHide={closeDeleteModal}
 				handleDelete={() => handleDelete(productToDelete)}
+				title={"מחיקת מוצר"}
+				description={""}
 			/>
 
 			<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />

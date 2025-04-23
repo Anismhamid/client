@@ -11,7 +11,7 @@ import Loader from "../atoms/loader/Loader";
 import {Order} from "../interfaces/Order";
 import Checkbox from "@mui/material/Checkbox";
 import {useUser} from "../context/useUSer";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import PaymentModal from "../atoms/pymentModal/PymentModal";
 import {useCartItems} from "../context/useCart";
 
@@ -29,18 +29,21 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 	const formRef = useRef<HTMLFormElement | null>(null);
+	const [loadingAddToCart, setLoadingAddToCart] = useState<boolean>(false);
 
 	const onShowPymentModal = () => setShowPymentModal(true);
 	const hidePymentModal = () => setShowPymentModal(false);
 	const {setQuantity} = useCartItems();
 
 	const scrollToContent = () => {
-	if (formRef.current) {
-		const yOffset = -500;
-		const y =
-			formRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
-		window.scrollTo({top: y, behavior: "smooth"});
-	}
+		if (formRef.current) {
+			const yOffset = -500;
+			const y =
+				formRef.current.getBoundingClientRect().top +
+				window.pageYOffset +
+				yOffset;
+			window.scrollTo({top: y, behavior: "smooth"});
+		}
 	};
 
 	const formik = useFormik({
@@ -304,7 +307,11 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							}
 							className='btn btn-primary me-5'
 						>
-							אישור
+							{formik.isSubmitting ? (
+								<CircularProgress size={30} color='inherit' />
+							) : (
+								"אישור"
+							)}
 						</Button>
 						<Button
 							onClick={() => navigate(-1)}

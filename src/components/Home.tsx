@@ -219,7 +219,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</Paper>
 					{/* Discounts Section */}
 					{!searchQuery && <DiscountsAndOffers />}
-
+					
 					<div className='row'>
 						{visibleProducts.length > 0 ? (
 							visibleProducts.map((product) => {

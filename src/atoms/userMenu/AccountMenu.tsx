@@ -28,6 +28,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
+
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
@@ -55,9 +56,9 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						<Avatar
 							className='bg-primary'
 							sx={{width: 40, height: 40}}
-							children={auth?.name.last?.[0]}
+							children={auth && auth?.name?.last?.[0]}
 							src={
-								auth?.image?.url ||
+								(auth && auth?.image?.url) ||
 								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
 							}
 						/>
@@ -97,7 +98,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				<MenuItem onClick={() => navigate(path.Profile)}>
 					<Avatar
 						src={
-							auth.image?.url ||
+							(auth && auth?.image?.url) ||
 							"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
 						}
 					/>
