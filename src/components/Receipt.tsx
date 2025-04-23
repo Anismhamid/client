@@ -11,6 +11,7 @@ import RoleType from "../interfaces/UserType";
 import {showError} from "../atoms/Toast";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../locales/handleRTL";
+import Loader from "../atoms/loader/Loader";
 
 interface ReceiptProps {}
 /**
@@ -74,6 +75,9 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	}, [receipts, searchQuery, productSearch, startDate, endDate]);
 
 	useEffect(() => {
+		setTimeout(() => {
+			
+		
 		if (decodedToken && decodedToken.role === RoleType.Client) {
 			getUserReceiptsById(decodedToken._id)
 				.then((res) => {
@@ -90,24 +94,24 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				.catch((err) => {
 					console.log(err);
 				});
-		}
+		}}, 5000);
 	}, [decodedToken]);
 
 	if (!receipts) {
 		return (
 			<main className='text-center mt-5 min-vh-50'>
-				<Spinner animation='border' variant='primary' />
-				<p className='mt-3'>טוען קבלות...</p>
+				<Loader />
 			</main>
 		);
 	}
+
 	const diriction = handleRTL();
 
 	if (receipts.length === 0) {
 		return (
-			<div className='text-center mt-5'>
+			<main className=' min-vh-100' dir={diriction}>
 				<p>לא נמצאו קבלות</p>
-			</div>
+			</main>
 		);
 	}
 

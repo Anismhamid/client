@@ -23,6 +23,7 @@ import {InputBase, Paper, IconButton} from "@mui/material";
 import {showError, showSuccess} from "../atoms/Toast";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CloseIcon from "@mui/icons-material/Close";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 
@@ -214,12 +215,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 							inputProps={{"aria-label": "search"}}
 						/>
 						<IconButton onClick={() => setSearchQuery("")} size='small'>
-							❌
+							<CloseIcon fontSize='small' />
 						</IconButton>
 					</Paper>
 					{/* Discounts Section */}
 					{!searchQuery && <DiscountsAndOffers />}
-					
+
 					<div className='row'>
 						{visibleProducts.length > 0 ? (
 							visibleProducts.map((product) => {

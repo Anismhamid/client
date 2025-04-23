@@ -8,8 +8,10 @@ import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import NavigathionButtons from "../atoms/NavigathionButtons";
 import RoleType from "../interfaces/UserType";
 import SearchIcon from "@mui/icons-material/Search";
-import {InputBase, Paper, IconButton} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import {InputBase, Paper, IconButton, CircularProgress} from "@mui/material";
 import {useTranslation} from "react-i18next";
+
 
 interface AllTheOrdersProps {}
 /**
@@ -62,7 +64,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			.finally(() => {
 				setLoading(false);
 			});
-	}, []);
+	}, [statusLoading]);
 
 	const handleStatus = useMemo(
 		() => async (status: string, orderId: string) => {
@@ -131,7 +133,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 						inputProps={{"aria-label": "search"}}
 					/>
 					<IconButton onClick={() => setSearchQuery("")} size='small'>
-						❌
+						<CloseIcon fontSize='small' />
 					</IconButton>
 				</Paper>
 				<div className='row mt-5'>
@@ -240,9 +242,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 														order.status === "Shipped"
 													}
 												>
-													{statusLoading[order.orderNumber]
-														? "טוען..."
-														: "הכנה"}
+													{statusLoading[order.orderNumber] ? (
+														<CircularProgress
+															size={20}
+															color='inherit'
+														/>
+													) : (
+														"הכנה"
+													)}
 												</button>
 												<button
 													onClick={() =>
@@ -257,9 +264,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 														order.status === "Shipped"
 													}
 												>
-													{statusLoading[order.orderNumber]
-														? "טוען..."
-														: "נשלח"}
+													{statusLoading[order.orderNumber] ? (
+														<CircularProgress
+															size={20}
+															color='inherit'
+														/>
+													) : (
+														"נשלח"
+													)}
 												</button>
 												<button
 													onClick={() =>
@@ -271,9 +283,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 													className='btn btn-success'
 													disabled={order.status === "Shipped"}
 												>
-													{statusLoading[order.orderNumber]
-														? "טוען..."
-														: "נמסר"}
+													{statusLoading[order.orderNumber] ? (
+														<CircularProgress
+															size={20}
+															color='inherit'
+														/>
+													) : (
+														"נמסר"
+													)}
 												</button>
 											</>
 										)}

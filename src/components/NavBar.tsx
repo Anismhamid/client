@@ -34,19 +34,18 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
 	const {quantity, setQuantity} = useCartItems();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	const [openMenu, setOpenMenu] = useState(false);
+	const openMenu = Boolean(anchorEl);
 
 	const navigate = useNavigate();
 
 	const isActive = (path: string) => location.pathname === path;
 
 	const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorEl(event.currentTarget);
-		setOpenMenu(true);
+		setAnchorEl(anchorEl ? null : event.currentTarget);
 	};
 
 	const handleMenuClose = () => {
-		setOpenMenu(false);
+		setAnchorEl(null);
 	};
 
 	useEffect(() => {
@@ -122,18 +121,17 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
+
 					<Box
-						onMouseEnter={handleMenuClick}
-						onMouseLeave={handleMenuClose}
+						onClick={handleMenuClick}
 						sx={{
 							cursor: "pointer",
 							display: "flex",
 							alignItems: "center",
-							gap: 0.5,
-							position: "relative",
 							px: 2,
 							py: 1,
 							fontWeight: 800,
+							position: "relative",
 						}}
 					>
 						<Stack direction='row' alignItems='center' spacing={0.5}>
@@ -146,8 +144,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</Typography>
 							<KeyboardArrowDownIcon
 								sx={{
-									fontSize: 25,
-									transition: "transform 1s ease",
+									fontSize: 22,
+									transition: "transform 0.3s ease-in-out",
 									transform: openMenu
 										? "rotate(180deg)"
 										: "rotate(0deg)",
@@ -156,18 +154,20 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						</Stack>
 
 						<Menu
-							PaperProps={{
-								sx: {
-									backgroundColor: "rgba(30, 30, 30, 0.9)",
-									borderRadius: 5,
-									color: "#fff",
-								},
-							}}
 							anchorEl={anchorEl}
 							open={openMenu}
 							onClose={handleMenuClose}
+							PaperProps={{
+								sx: {
+									backgroundColor: "rgba(40, 40, 40, 0.95)",
+									borderRadius: 3,
+									color: "#fff",
+									mt: 1,
+									minWidth: 200,
+								},
+							}}
 							transformOrigin={{horizontal: "center", vertical: "top"}}
-							anchorOrigin={{horizontal: "center", vertical: "top"}}
+							anchorOrigin={{horizontal: "center", vertical: "bottom"}}
 						>
 							{/* Category Links */}
 							{navbarCategoryLinks.map(({labelKey, path, icon}) => (
@@ -176,9 +176,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									component={NavLink}
 									to={path}
 									onClick={handleMenuClose}
-									className={`${
-										isActive(path) ? "text-danger" : ""
-									} nav-link`}
 								>
 									{icon}
 									<span className=' me-2'>{t(labelKey)}</span>
