@@ -29,7 +29,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 	const formRef = useRef<HTMLFormElement | null>(null);
-	const [loadingAddToCart, setLoadingAddToCart] = useState<boolean>(false);
 
 	const onShowPymentModal = () => setShowPymentModal(true);
 	const hidePymentModal = () => setShowPymentModal(false);
@@ -301,6 +300,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						<Button
 							type='submit'
 							disabled={
+								formik.isSubmitting ||
 								(!formik.values.payment &&
 									!formik.values.cashOnDelivery) ||
 								(!formik.values.selfCollection && !formik.values.delivery)

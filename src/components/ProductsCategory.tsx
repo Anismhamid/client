@@ -290,7 +290,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													product.discount || 0,
 												);
 											}}
-											disabled={product.quantity_in_stock <= 0}
+											disabled={
+												product.quantity_in_stock <= 0 ||
+												loadingAddToCart === product.product_name
+											}
 											className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
 												product.quantity_in_stock <= 0
 													? "btn btn-outline-danger"
