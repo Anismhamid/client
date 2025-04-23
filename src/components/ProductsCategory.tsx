@@ -76,9 +76,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 				product_image,
 				sale,
 				discount,
-			);
-			setQuantity((prev) => prev + 1);
-			setLoadingAddToCart(null);
+			).then(() => {
+				setQuantity((prev) => prev + 1);
+				setLoadingAddToCart(null);
+			});
 		}
 	};
 
@@ -296,14 +297,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 													: "btn btn-outline-success"
 											}`}
 										>
-											{product.quantity_in_stock <= 0 ? (
-												"אזל מהמלאי"
-											) : loadingAddToCart ===
-											  product.product_name ? (
+											{loadingAddToCart === product.product_name ? (
 												<CircularProgress
 													size={20}
 													color='inherit'
 												/>
+											) : product.quantity_in_stock <= 0 ? (
+												"אזל מהמלאי"
 											) : (
 												"הוספה לסל"
 											)}
