@@ -10,6 +10,7 @@ import useToken from "../hooks/useToken";
 import RoleType from "../interfaces/UserType";
 import {showError} from "../atoms/Toast";
 import {useTranslation} from "react-i18next";
+import handleRTL from "../locales/handleRTL";
 
 interface ReceiptProps {}
 /**
@@ -100,10 +101,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 			</main>
 		);
 	}
-	// changing the direction by language
-	const currentLanguage = i18n.language;
-	const direction =
-		currentLanguage === "he" || currentLanguage === "ar" ? "rtl" : "ltr";
+	const diriction = handleRTL();
 
 	if (receipts.length === 0) {
 		return (
@@ -114,15 +112,15 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100' dir={direction}>
+		<main className=' min-vh-100' dir={diriction}>
 			{/* חיפוש מתקדם  */}
 			<div className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
-					<h3>🔎 {t("pages.receiptSearchTitle")}</h3>
+					<h3>🔎 {t("pages.receipts.receiptSearchTitle")}</h3>
 					<div className='row border p-3 border-primary rounded'>
 						<div className='col-6'>
 							<TextField
-								label={t("pages.receiptSearch_1")}
+								label={t("pages.receipts.receiptSearch_1")}
 								name='search_1'
 								type='search'
 								value={searchQuery}
@@ -134,7 +132,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						</div>
 						<div className='col-6 '>
 							<TextField
-								label={t("pages.receiptSearch_2")}
+								label={t("pages.receipts.receiptSearch_2")}
 								name='search_2'
 								type='search'
 								value={productSearch}
@@ -146,7 +144,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						</div>
 						<div className='d-flex justify-content-center gap-3 mt-3'>
 							<div>
-								<label>{t("pages.receiptSearchFromDate")}</label>
+								<label>{t("pages.receipts.receiptSearchFromDate")}</label>
 								<TextField
 									name='search_3'
 									type='date'
@@ -158,7 +156,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								/>
 							</div>
 							<div>
-								<label>{t("pages.receiptSearchToDate")}</label>
+								<label>{t("pages.receipts.receiptSearchToDate")}</label>
 								<TextField
 									name='search_3'
 									type='date'
@@ -186,11 +184,11 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								as='h5'
 								className='text-center bg-primary text-white'
 							>
-								{t("pages.receiptNumber")} {receipt.orderNumber}
+								{t("pages.receipts.receiptNumber")} {receipt.orderNumber}
 							</Card.Header>
 							<Card.Body>
 								<Card.Text>
-									<strong>{t("pages.receiptDate")}</strong>
+									<strong>{t("pages.receipts.receiptDate")}</strong>
 									{new Date(receipt.orderDate).toLocaleString("he-IL", {
 										year: "numeric",
 										month: "long",
@@ -204,27 +202,29 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 									{receipt.customer ? (
 										<>
 											<strong className='me-1'>
-												{t("pages.receiptCustomer")}
+												{t("pages.receipts.receiptCustomer")}
 											</strong>
 											{receipt.customer.name.first}
 											<br />
 											<strong className='me-1'>
-												{t("pages.receiptCustomerPhone")}
+												{t("pages.receipts.receiptCustomerPhone")}
 											</strong>
 											{receipt.customer.phone.phone_1}
 											<br />
 											<strong className='me-1'>
-												{t("pages.receiptCustomerPhone")}
+												{t("pages.receipts.receiptCustomerPhone")}
 											</strong>
 											{receipt.customer.phone.phone_2 || "לא קיים"}
 											<br />
 											<strong className='me-1'>
-												{t("pages.receiptCustomerEmail")}
+												{t("pages.receipts.receiptCustomerEmail")}
 											</strong>{" "}
 											{receipt.customer.email}
 											<br />
 											<strong className='me-1'>
-												{t("pages.receiptCustomerAdress")}
+												{t(
+													"pages.receipts.receiptCustomerAdress",
+												)}
 											</strong>
 											{`${receipt.customer.address.city}, ${receipt.customer.address.street},
 											${receipt.customer.address.houseNumber}`}
@@ -232,7 +232,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 									) : (
 										<span className='text-muted'>
 											{t(
-												"pages.receiptCustomerNoCustomerToProvide",
+												"pages.receipts.receiptCustomerNoCustomerToProvide",
 											)}
 										</span>
 									)}
@@ -242,29 +242,33 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 
 								<Card.Text>
 									<strong>
-										{t("pages.receiptCustomerPaymentMethod")}
+										{t("pages.receipts.receiptCustomerPaymentMethod")}
 									</strong>
 									{receipt.payment == "true"
-										? t("pages.receiptCustomerCridetCard")
-										: t("pages.receiptCustomerCash")}
+										? t("pages.receipts.receiptCustomerCridetCard")
+										: t("pages.receipts.receiptCustomerCash")}
 								</Card.Text>
 								<Card.Text>
 									<strong>
-										{t("pages.receiptCustomerCollectionMethod")}
+										{t(
+											"pages.receipts.receiptCustomerCollectionMethod",
+										)}
 									</strong>{" "}
 									{receipt.deliveryFee
-										? `${t("pages.receiptCustomerDelivry")} ${receipt.deliveryFee.toLocaleString(
+										? `${t("pages.receipts.receiptCustomerDelivry")} ${receipt.deliveryFee.toLocaleString(
 												"he-IL",
 												{
 													style: "currency",
 													currency: "ILS",
 												},
 											)}`
-										: t("pages.receiptCustomerSelfCollection")}
+										: t(
+												"pages.receipts.receiptCustomerSelfCollection",
+											)}
 								</Card.Text>
 
 								<Card.Text className='fs-5 fw-bold'>
-									{t("pages.receiptTotalToBePaid")}
+									{t("pages.receipts.receiptTotalToBePaid")}
 									{receipt.totalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
@@ -278,9 +282,13 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							<thead className='table-dark'>
 								<tr>
 									<th>{t("links.products")}</th>
-									<th>{t("pages.receiptTotalQuantity")}</th>
-									<th>{t("pages.receiptTotalPricePerUnit")}</th>
-									<th>{t("pages.receiptTotalPriceTotalUnits")}</th>
+									<th>{t("pages.receipts.receiptTotalQuantity")}</th>
+									<th>
+										{t("pages.receipts.receiptTotalPricePerUnit")}
+									</th>
+									<th>
+										{t("pages.receipts.receiptTotalPriceTotalUnits")}
+									</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -307,19 +315,23 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							</tbody>
 						</Table>
 						<Card.Text className=' text-dark'>
-							<strong>{t("pages.receiptBusinessName")}</strong>
+							<strong>{t("pages.receipts.receiptBusinessName")}</strong>
 							{receipt.businessInfo.name}
 							<br />
 							<br />
-							<strong>{t("pages.receiptCustomerPhone")}</strong>
+							<strong>{t("pages.receipts.receiptCustomerPhone")}</strong>
 							{receipt.businessInfo.phone}
 							<br />
 							<br />
-							<strong>{t("pages.receiptCustomerEmail")}</strong>{" "}
+							<strong>
+								{t("pages.receipts.receiptCustomerEmail")}
+							</strong>{" "}
 							{receipt.businessInfo.email}
 							<br />
 							<br />
-							<strong>{t("pages.receiptCustomerAdress")}</strong>{" "}
+							<strong>
+								{t("pages.receipts.receiptCustomerAdress")}
+							</strong>{" "}
 							{receipt.businessInfo.address}
 						</Card.Text>
 
@@ -333,7 +345,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								}}
 								onClick={() => generatePDF(receipt.orderNumber)}
 							>
-								{t("pages.receiptDownload")} - PDF
+								{t("pages.receipts.receiptDownload")} - PDF
 							</Button>
 						</div>
 					</div>

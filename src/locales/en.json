@@ -23,64 +23,155 @@
 		"receipts": "Receipts"
 	},
 	"pages": {
-		"bakeryHeading": "Our baked goods - fresh, high-quality, and diverse!",
-		"bakerydescription": "Here you can find a wide variety of fresh baked goods, baked on-site with high-quality ingredients. We promise great flavors and fresh products to give you the perfect taste experience.",
-
-		"beveragesHeading": "Our beverages - fresh, high-quality, and diverse!",
-		"beveragesdescription": "Here you can find a wide selection of fresh, natural, and unique beverages suitable for every taste. We promise high quality and delicious drinks for a perfect drinking experience.",
-
-		"dairyHeading": "Our dairy products - fresh, high-quality, and diverse!",
-		"dairydescription": "Here you can find a wide selection of natural and high-quality dairy products, carefully chosen from our local suppliers. We promise high quality and excellent service so you can enjoy every dairy product easily and comfortably.",
-
-		"discountsAndOffersHeading": "Discounts and Offers",
-		"discountsAndOffersSpan": "Don't miss our special deals!",
-		"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as value packages for families. Follow our page to stay updated and save even more!",
-
-		"fishHeading": "Our fish - fresh, high-quality, and diverse!",
-		"fishDescription": "Here you can find a wide variety of fresh fish, just caught by our local fishermen. We guarantee high quality and excellent service so you can enjoy every fish easily and comfortably.",
-
-		"frozenHeading": "Our frozen products - high quality, fresh, and diverse!",
-		"frozenDescription": "Here you can find a wide variety of frozen products, made from natural ingredients and preserved using advanced technologies to maintain freshness.",
-
-		"fruitsHeading": "Our fruits - fresh, high-quality, and diverse!",
-		"fruitsDescription": "Here you can find a wide variety of fresh fruits, just picked from our local farmers. We guarantee high quality and excellent service so you can enjoy every fruit easily and comfortably.",
-
-		"vegetableHeading": "Our Vegetables – Fresh, Healthy & Delicious!",
-		"vegetableDescription": "Our vegetables grow in fertile fields with a focus on freshness and health. Find seasonal vegetables handpicked just for you.",
-
-		"meatHeading": "Our meats - fresh, high-quality, and diverse!",
-		"meatDescription": "Here you can find a wide selection of fresh meats, carefully selected from our local suppliers. We promise high quality and excellent service so you can enjoy every cut of meat easily and comfortably.",
-
-		"snacksHeading": "Our Snacks – Quality, Fresh & Tasty!",
-		"snacksDescription": "Explore a variety of snacks made from natural ingredients and preserved using advanced technology. We guarantee freshness and quality in every bite.",
-
-		"spicesHeading": "Our Spices – Natural, Aromatic & Flavorful!",
-		"spicesDescription": "Choose from a wide variety of natural spices, carefully selected from trusted local suppliers. Quality and excellent service guaranteed.",
-
-		"receiptSearchTitle": "Advanced Search",
-		"receiptSearch_1": "Search by name, email or order number",
-		"receiptSearch_2": "Search by product name",
-		"receiptSearchFromDate": "From date:",
-		"receiptSearchToDate": "To date:",
-		"receiptNumber": "Receipt #",
-		"receiptDate": "Date:",
-		"receiptCustomer": "Customer:",
-		"receiptCustomerPhone": "Phone:",
-		"receiptCustomerEmail": "Email:",
-		"receiptCustomerAdress": "Address:",
-		"receiptCustomerNoCustomerToProvide": "No customer details available",
-		"receiptCustomerPaymentMethod": "Payment method:",
-		"receiptCustomerCridetCard": "Credit Card",
-		"receiptCustomerCash": "Cash",
-		"receiptCustomerCollectionMethod": "Collection method:",
-		"receiptCustomerDelivry": "Home delivery",
-		"receiptCustomerSelfCollection": "Self collection",
-		"receiptTotalQuantity": "Quantity",
-		"receiptTotalPricePerUnit": "Unit Price",
-		"receiptTotalPriceTotalUnits": "Total",
-		"receiptTotalToBePaid": "Total to be paid:",
-		"receiptBusinessName": "Business Name:",
-		"receiptDownload": "Download"
+		"bakery": {
+			"bakeryHeading": "Our baked goods - fresh, high-quality, and diverse!",
+			"bakerydescription": "Here you can find a wide variety of fresh baked goods, baked on-site with high-quality ingredients. We promise great flavors and fresh products to give you the perfect taste experience."
+		},
+		"beverages": {
+			"beveragesHeading": "Our beverages - fresh, high-quality, and diverse!",
+			"beveragesdescription": "Here you can find a wide selection of fresh, natural, and unique beverages suitable for every taste. We promise high quality and delicious drinks for a perfect drinking experience."
+		},
+		"dairy": {
+			"dairyHeading": "Our dairy products - fresh, high-quality, and diverse!",
+			"dairydescription": "Here you can find a wide selection of natural and high-quality dairy products, carefully chosen from our local suppliers. We promise high quality and excellent service so you can enjoy every dairy product easily and comfortably."
+		},
+		"discountsAndOffers": {
+			"discountsAndOffersHeading": "Discounts and Offers",
+			"discountsAndOffersSpan": "Don't miss our special deals!",
+			"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as value packages for families. Follow our page to stay updated and save even more!"
+		},
+		"fish": {
+			"fishHeading": "Our fish - fresh, high-quality, and diverse!",
+			"fishDescription": "Here you can find a wide variety of fresh fish, just caught by our local fishermen. We guarantee high quality and excellent service so you can enjoy every fish easily and comfortably."
+		},
+		"frozen": {
+			"frozenHeading": "Our frozen products - high quality, fresh, and diverse!",
+			"frozenDescription": "Here you can find a wide variety of frozen products, made from natural ingredients and preserved using advanced technologies to maintain freshness."
+		},
+		"fruit": {
+			"fruitsHeading": "Our fruits - fresh, high-quality, and diverse!",
+			"fruitsDescription": "Here you can find a wide variety of fresh fruits, just picked from our local farmers. We guarantee high quality and excellent service so you can enjoy every fruit easily and comfortably."
+		},
+		"vegetable": {
+			"vegetableHeading": "Our Vegetables – Fresh, Healthy & Delicious!",
+			"vegetableDescription": "Our vegetables grow in fertile fields with a focus on freshness and health. Find seasonal vegetables handpicked just for you."
+		},
+		"meat": {
+			"meatHeading": "Our meats - fresh, high-quality, and diverse!",
+			"meatDescription": "Here you can find a wide selection of fresh meats, carefully selected from our local suppliers. We promise high quality and excellent service so you can enjoy every cut of meat easily and comfortably."
+		},
+		"snacks": {
+			"snacksHeading": "Our Snacks – Quality, Fresh & Tasty!",
+			"snacksDescription": "Explore a variety of snacks made from natural ingredients and preserved using advanced technology. We guarantee freshness and quality in every bite."
+		},
+		"spices": {
+			"spicesHeading": "Our Spices – Natural, Aromatic & Flavorful!",
+			"spicesDescription": "Choose from a wide variety of natural spices, carefully selected from trusted local suppliers. Quality and excellent service guaranteed."
+		},
+		"receipts": {
+			"receiptSearchTitle": "Advanced Search",
+			"receiptSearch_1": "Search by name, email or order number",
+			"receiptSearch_2": "Search by product name",
+			"receiptSearchFromDate": "From date:",
+			"receiptSearchToDate": "To date:",
+			"receiptNumber": "Receipt #",
+			"receiptDate": "Date:",
+			"receiptCustomer": "Customer:",
+			"receiptCustomerPhone": "Phone:",
+			"receiptCustomerEmail": "Email:",
+			"receiptCustomerAdress": "Address:",
+			"receiptCustomerNoCustomerToProvide": "No customer details available",
+			"receiptCustomerPaymentMethod": "Payment method:",
+			"receiptCustomerCridetCard": "Credit Card",
+			"receiptCustomerCash": "Cash",
+			"receiptCustomerCollectionMethod": "Collection method:",
+			"receiptCustomerDelivry": "Home delivery",
+			"receiptCustomerSelfCollection": "Self collection",
+			"receiptTotalQuantity": "Quantity",
+			"receiptTotalPricePerUnit": "Unit Price",
+			"receiptTotalPriceTotalUnits": "Total",
+			"receiptTotalToBePaid": "Total to be paid:",
+			"receiptBusinessName": "Business Name:",
+			"receiptDownload": "Download"
+		},
+		"contact": {
+			"title": "Contact Us",
+			"heading": "Shuk HaBina - Organic Fruits and Vegetables",
+			"intro": "At 'Shuk HaBina', we are proud to offer fresh organic fruits and vegetables delivered straight to your doorstep, with an emphasis on quality and excellent service.",
+			"goal": "Our goal is to provide our customers with the healthiest fruits and vegetables, while adhering to organic farming and sustainable agriculture principles. Join us for a healthy and delicious lifestyle.",
+			"team": "Contact the 'Shuk HaBina' Team",
+			"teamDesc": "We have a skilled and dedicated team ready to help with any questions. Whether you're inquiring about our products, placing an order, or discussing another topic – we are here for you.",
+			"contactInfo": "Contact Information:",
+			"email": "Email: support@fruitsandveg.com",
+			"phone": "Phone: 03-1234567",
+			"note": "We are always happy to hear from our customers, and our team works hard to ensure you receive the best service. Don’t hesitate to reach out with any questions or requests.",
+			"addressTitle": "Address",
+			"address": "If you’d like to visit us in person, we are located at: 45 Jerusalem Blvd, Tel Aviv",
+			"thanks": "Thank you for choosing us – we’re happy to help you enjoy healthy, quality food!"
+		},
+		"privacy": {
+			"title": "Privacy Policy",
+			"lastUpdated": "Last updated {{date}}",
+			"intro": {
+				"title": "Introduction",
+				"text": "In our app, Corner Market, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when signing in with Google."
+			},
+			"collectedInfo": {
+				"title": "What Information Do We Collect?",
+				"text": "When logging in via Google, we obtain the following information from your account:",
+				"info": {
+					"name": "First and last name – as defined in your Google profile.",
+					"email": "Email address – the address used for registration.",
+					"image": "Profile picture – if available, will be displayed in your app profile."
+				},
+				"technical": "Additionally, we may store technical data such as IP address, browser type, and operating system for security and service improvement purposes."
+			},
+			"usage": {
+				"title": "How Do We Use the Information?",
+				"points": {
+					"p1": "To register the user and verify identity.",
+					"p2": "To improve the user experience in the app.",
+					"p3": "To send relevant notifications, updates, or reminders.",
+					"p4": "To secure the system and protect your account."
+				}
+			},
+			"consent": {
+				"title": "Transparency and Consent",
+				"text": "When logging in via Google, you will be asked to grant access to your information. We only request the permissions necessary for proper functionality, maintaining full transparency."
+			},
+			"sharing": {
+				"title": "Sharing Information with Third Parties",
+				"points": {
+					"external": "External services: Information is shared only with providers essential for operating the app.",
+					"law": "Legal compliance: We only share information if legally required."
+				}
+			},
+			"protection": {
+				"title": "Data Protection",
+				"text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend avoiding password sharing and choosing a strong password."
+			},
+			"updates": {
+				"title": "Policy Updates",
+				"text": "This policy may change from time to time. We will notify you within the app or via direct message. Continued use of the app constitutes acceptance of the updates."
+			},
+			"rights": {
+				"title": "Your Rights",
+				"points": {
+					"p1": "Right to access the personal information stored about you.",
+					"p2": "Right to correct incorrect or incomplete information.",
+					"p3": "Right to request deletion of data – unless legally required to retain it."
+				}
+			},
+			"contact": {
+				"title": "Contact",
+				"text": "For any question or request regarding privacy, you can contact us via phone:",
+				"phone": "053-834-6915"
+			},
+			"userConsent": {
+				"title": "User Consent",
+				"text": "By using the app, you confirm that you have read, understood, and agreed to this privacy policy. If you do not agree – please refrain from using the app."
+			}
+		}
 	},
 	"accountMenu": {
 		"account": "My Account",

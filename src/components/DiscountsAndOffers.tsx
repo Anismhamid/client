@@ -56,11 +56,13 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4 display-5 fw-bold'>
-					{t("pages.discountsAndOffersHeading")}
+					{t("pages.discountsAndOffers.discountsAndOffersHeading")}
 				</h1>
 				<p className='text-center lead mb-5'>
-					<span className='d-block'>{t("pages.discountsAndOffersSpan")}</span>
-					{t("pages.discountsAndOffersDescription")}
+					<span className='d-block'>
+						{t("pages.discountsAndOffers.discountsAndOffersSpan")}
+					</span>
+					{t("pages.discountsAndOffers.discountsAndOffersDescription")}
 				</p>
 			</div>
 

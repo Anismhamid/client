@@ -139,14 +139,14 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						<Stack direction='row' alignItems='center' spacing={0.5}>
 							<Typography
 								sx={{
-									fontSize: 20,
+									fontSize: 16,
 								}}
 							>
 								{t("links.products")}
 							</Typography>
 							<KeyboardArrowDownIcon
 								sx={{
-									fontSize: 20,
+									fontSize: 25,
 									transition: "transform 1s ease",
 									transform: openMenu
 										? "rotate(180deg)"
@@ -159,17 +159,13 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							PaperProps={{
 								sx: {
 									backgroundColor: "rgba(30, 30, 30, 0.9)",
-									borderRadius: 2,
+									borderRadius: 5,
 									color: "#fff",
 								},
 							}}
 							anchorEl={anchorEl}
 							open={openMenu}
 							onClose={handleMenuClose}
-							MenuListProps={{
-								onMouseEnter: handleMenuClick,
-								onMouseLeave: handleMenuClose,
-							}}
 							transformOrigin={{horizontal: "center", vertical: "top"}}
 							anchorOrigin={{horizontal: "center", vertical: "top"}}
 						>

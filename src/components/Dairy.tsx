@@ -13,11 +13,11 @@ const Dairy: FunctionComponent<DairyProps> = () => {
 		<main className=' min-vh-100'>
 			<div className='container'>
 				<h1 className='text-center mb-4  p-2 rounded display-6 fw-bold'>
-					{t("pages.dairyHeading")}
+					{t("pages.dairy.dairyHeading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.dairydescription")}
+					{t("pages.dairy.dairydescription")}
 				</p>
 			</div>
 			<ProductCategory category='dairy' />

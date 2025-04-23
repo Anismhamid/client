@@ -36,7 +36,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 	const scrollToContent = () => {
 		if (formRef.current) {
-			const yOffset = -500;
+			const yOffset = -200;
 			const y =
 				formRef.current.getBoundingClientRect().top +
 				window.pageYOffset +
@@ -211,117 +211,131 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				</section>
 
 				{/* Payment Methods Selection */}
-				<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
-					<h4>בחר שיטת תשלום</h4>
-					<div className='mt-3'>
-						<div className='form-check mb-2'>
-							<Checkbox
-								id='payment'
-								name='payment'
-								checked={formik.values.payment}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								disabled={formik.values.cashOnDelivery}
-							/>
-							<label htmlFor='payment' className='form-check-label'>
-								כרטיס אשראי
-							</label>
-						</div>
-						<div className='form-check'>
-							<Checkbox
-								id='cashOnDelivery'
-								name='cashOnDelivery'
-								checked={formik.values.cashOnDelivery}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								disabled={formik.values.payment}
-							/>
-							<label htmlFor='cashOnDelivery' className='form-check-label'>
-								מזומן
-							</label>
-						</div>
-					</div>
+				<section>
+					<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
+						<h4>בחר שיטת תשלום</h4>
+						<fieldset disabled={formik.isSubmitting}>
+							<div className='mt-3'>
+								<div className='form-check mb-2'>
+									<Checkbox
+										id='payment'
+										name='payment'
+										checked={formik.values.payment}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										disabled={formik.values.cashOnDelivery}
+									/>
+									<label htmlFor='payment' className='form-check-label'>
+										כרטיס אשראי
+									</label>
+								</div>
+								<div className='form-check'>
+									<Checkbox
+										id='cashOnDelivery'
+										name='cashOnDelivery'
+										checked={formik.values.cashOnDelivery}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										disabled={formik.values.payment}
+									/>
+									<label
+										htmlFor='cashOnDelivery'
+										className='form-check-label'
+									>
+										מזומן
+									</label>
+								</div>
+							</div>
 
-					<h4 className='mt-5'>בחר שיטת איסוף</h4>
-					<div>
-						<div className='form-check'>
-							<Checkbox
-								id='selfCollection'
-								name='selfCollection'
-								checked={formik.values.selfCollection}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								disabled={formik.values.delivery}
-							/>
-							<label htmlFor='selfCollection' className='form-check-label'>
-								איסוף עצמי
-							</label>
-						</div>
-						<div className='form-check'>
-							<Checkbox
-								id='delivery'
-								name='delivery'
-								checked={formik.values.delivery}
-								onChange={formik.handleChange}
-								onBlur={formik.handleBlur}
-								disabled={formik.values.selfCollection}
-							/>
-							<label htmlFor='delivery' className='form-check-label'>
-								משלוח
-								<span className='text-danger fw-bold ms-2'>
-									+{" "}
-									{deliveryFee.toLocaleString("he-IL", {
+							<h4 className='mt-5'>בחר שיטת איסוף</h4>
+							<div>
+								<div className='form-check'>
+									<Checkbox
+										id='selfCollection'
+										name='selfCollection'
+										checked={formik.values.selfCollection}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										disabled={formik.values.delivery}
+									/>
+									<label
+										htmlFor='selfCollection'
+										className='form-check-label'
+									>
+										איסוף עצמי
+									</label>
+								</div>
+								<div className='form-check'>
+									<Checkbox
+										id='delivery'
+										name='delivery'
+										checked={formik.values.delivery}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										disabled={formik.values.selfCollection}
+									/>
+									<label
+										htmlFor='delivery'
+										className='form-check-label'
+									>
+										משלוח
+										<span className='text-danger fw-bold ms-2'>
+											+{" "}
+											{deliveryFee.toLocaleString("he-IL", {
+												style: "currency",
+												currency: "ILS",
+											})}
+										</span>
+									</label>
+								</div>
+							</div>
+
+							<hr />
+							{/* --- Total Display --- */}
+							<div className='form-floating'>
+								<strong className='me-2'>סך הכל:</strong>
+								<input
+									type='text'
+									name='totalAmount'
+									value={finalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
 									})}
-								</span>
-							</label>
-						</div>
-					</div>
+									className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
+									disabled
+								/>
+							</div>
 
-					<hr />
-					{/* --- Total Display --- */}
-					<div className='form-floating'>
-						<strong className='me-2'>סך הכל:</strong>
-						<input
-							type='text'
-							name='totalAmount'
-							value={finalAmount.toLocaleString("he-IL", {
-								style: "currency",
-								currency: "ILS",
-							})}
-							className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
-							disabled
-						/>
-					</div>
-
-					{/* --- Submit Button --- */}
-					<div className=' d-flex align-items-start my-5'>
-						<Button
-							type='submit'
-							disabled={
-								formik.isSubmitting ||
-								(!formik.values.payment &&
-									!formik.values.cashOnDelivery) ||
-								(!formik.values.selfCollection && !formik.values.delivery)
-							}
-							className='btn btn-primary me-5'
-						>
-							{formik.isSubmitting ? (
-								<CircularProgress size={30} color='inherit' />
-							) : (
-								"אישור"
-							)}
-						</Button>
-						<Button
-							onClick={() => navigate(-1)}
-							color='error'
-							className='btn btn-danger me-5'
-						>
-							ביטול
-						</Button>
-					</div>
-				</form>
+							{/* --- Submit Button --- */}
+							<div className=' d-flex align-items-start my-5'>
+								<Button
+									type='submit'
+									disabled={
+										formik.isSubmitting ||
+										(!formik.values.payment &&
+											!formik.values.cashOnDelivery) ||
+										(!formik.values.selfCollection &&
+											!formik.values.delivery)
+									}
+									className='btn btn-primary me-5'
+								>
+									{formik.isSubmitting ? (
+										<CircularProgress size={30} color='inherit' />
+									) : (
+										"אישור"
+									)}
+								</Button>
+								<Button
+									onClick={() => navigate(-1)}
+									color='error'
+									className='btn btn-danger me-5'
+								>
+									ביטול
+								</Button>
+							</div>
+						</fieldset>
+					</form>
+				</section>
 			</div>
 			<PaymentModal
 				order={newOrder}

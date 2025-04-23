@@ -1,4 +1,6 @@
 import {FunctionComponent} from "react";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../locales/handleRTL";
 
 interface PrivacyAdnPolicyProps {}
 /**
@@ -6,122 +8,126 @@ interface PrivacyAdnPolicyProps {}
  * @returns
  */
 const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
+	const {t} = useTranslation();
+	const diriction = handleRTL();
+
 	return (
-		<main className='min-vh-100 py-5 px-3'>
-			<div className='container border border-primary shadow p-5 rounded-4'>
-				<h1 className='text-center mb-4 text-primary'>מדיניות פרטיות</h1>
-				<p className='text-center mb-5'>
-					עודכן לאחרונה: <strong>13/04/2025</strong>
+		<main className='min-vh-100'>
+			<div
+				dir={diriction}
+				className='container my-5 border border-primary shadow p-5 rounded-4'
+			>
+				<h1 className='text-center mb-4 text-primary'>
+					{t("pages.privacy.title")}
+				</h1>
+
+				<p className=' mb-5'>
+					{t("pages.privacy.lastUpdated", {date: "13/04/2025"})}
 				</p>
 
+				{/* 1 */}
 				<section className='my-5'>
-					<h2 className='display-6 '>1. מבוא</h2>
-					<p className=' lead'>
-						ביישום שלנו <strong>שוק בפינה</strong> אנחנו שומרים על פרטיותך
-						ומבינים את החשיבות שבשמירה על המידע האישי שלך. מדיניות זו מסבירה
-						כיצד אנו אוספים, משתמשים ומגנים על המידע האישי שלך, כולל בעת
-						התחברות עם גוגל.
-					</p>
+					<h2 className='text-center display-6'>
+						{t("pages.privacy.intro.title")}
+					</h2>
+					<p className='lead'>{t("pages.privacy.intro.text")}</p>
+				</section>
+
+				{/* 2 */}
+				<section className='my-5'>
+					2.
+					<h2 className='display-6'>
+						{t("pages.privacy.collectedInfo.title")}
+					</h2>
+					<p className='lead'>{t("pages.privacy.collectedInfo.text")}</p>
+					<ol>
+						<hr />
+						<li>{t("pages.privacy.collectedInfo.info.name")}</li>
+						<hr />
+						<li>{t("pages.privacy.collectedInfo.info.email")}</li>
+						<hr />
+						<li>{t("pages.privacy.collectedInfo.info.image")}</li>
+						<hr />
+						<li>{t("pages.privacy.collectedInfo.technical")}</li>
+						<hr />
+					</ol>
+				</section>
+
+				{/* 3 */}
+				<section className='my-5'>
+					3.
+					<h2 className='display-6'>{t("pages.privacy.usage.title")}</h2>
+					<ol>
+						<li>{t("pages.privacy.usage.points.p1")}</li>
+						<hr />
+						<li>{t("pages.privacy.usage.points.p2")}</li>
+						<hr />
+						<li>{t("pages.privacy.usage.points.p3")}</li>
+						<hr />
+						<li>{t("pages.privacy.usage.points.p4")}</li>
+						<hr />
+					</ol>
+				</section>
+
+				{/* 4 */}
+				<section className='my-5'>
+					4.
+					<h2 className='display-6'>{t("pages.privacy.consent.title")}</h2>
+					<ol>
+						<li>{t("pages.privacy.consent.text")}</li>
+					</ol>
+				</section>
+
+				{/* 5 */}
+				<section className='my-5'>
+					5.
+					<h2 className='display-6'>{t("pages.privacy.sharing.title")}</h2>
+					<ol>
+						<li>{t("pages.privacy.sharing.points.external")}</li>
+						<li>{t("pages.privacy.sharing.points.law")}</li>
+					</ol>
 				</section>
 
 				<section className='my-5'>
-					<h2 className='display-6 '>2. איזה מידע אנו אוספים?</h2>
-					<p className=' lead'>
-						בעת התחברות באמצעות Google, אנו מקבלים את המידע הבא מחשבון הגוגל
-						שלך:
-					</p>
+					<h2 className='display-6 '>
+						6. {t("pages.privacy.protection.title")}
+					</h2>
+					<p className=' lead'>{t("pages.privacy.protection.text")}</p>
+				</section>
+
+				<section className='my-5'>
+					7.
+					<h2 className='display-6 '>{t("pages.privacy.updates.title")}</h2>
+					<p className=' lead'>{t("pages.privacy.updates.text")}</p>
+				</section>
+
+				<section className='my-5'>
+					8.
+					<h2 className='display-6 '>{t("pages.privacy.rights.title")}</h2>
+					<ol>
+						<li>{t("pages.privacy.rights.points.p1")}</li>
+						<li>{t("pages.privacy.rights.points.p2")}</li>
+						<li>{t("pages.privacy.rights.points.p3")}</li>
+					</ol>
+				</section>
+
+				{/* 9 */}
+				<section className='my-5'>
+					9.
+					<h2 className='display-6 '>{t("pages.privacy.userConsent.title")}</h2>
 					<ul>
-						<li>
-							<strong>שם פרטי ושם משפחה</strong> – כפי שמוגדרים בפרופיל
-							הגוגל שלך.
-						</li>
-						<li>
-							<strong>דוא"ל</strong> – כתובת המייל שלך המשמשת להזדהות
-							באפליקציה.
-						</li>
-						<li>
-							<strong>תמונת פרופיל</strong> – אם קיימת, תוצג בפרופיל שלך
-							באפליקציה.
-						</li>
-					</ul>
-					<p className=' lead my-2'>
-						בנוסף, אנו עשויים לשמור מידע טכני כגון כתובת IP, סוג דפדפן ומערכת
-						הפעלה, לצרכי אבטחה ושיפור השירות.
-					</p>
-				</section>
-
-				<section className='my-5'>
-					<h2 className='display-6 '>3. כיצד אנו משתמשים במידע?</h2>
-					<ul>
-						<li>לביצוע רישום ואימות זהות המשתמש.</li>
-						<li>לשיפור חוויית המשתמש באפליקציה.</li>
-						<li>לשליחת הודעות, עדכונים או תזכורות רלוונטיות.</li>
-						<li>לשמירה על אבטחת המערכת והגנה על חשבונך.</li>
+						<li>{t("pages.privacy.userConsent.text")}</li>
 					</ul>
 				</section>
 
+				{/* 10 */}
 				<section className='my-5'>
-					<h2 className='display-6 '>4. שקיפות והסכמה</h2>
-					<p className=' lead'>
-						בעת התחברות דרך גוגל, תתבקש לאשר גישה למידע שלך. אנו מבקשים רק את
-						ההרשאות ההכרחיות לתפקוד תקין של השירות, תוך שמירה על שקיפות מלאה.
-					</p>
-				</section>
-
-				<section className='my-5'>
-					<h2 className='display-6 '>5. שיתוף מידע עם צדדים שלישיים</h2>
-					<ul>
-						<li>
-							<strong>שירותים חיצוניים:</strong> מידע יועבר אך ורק לספקים
-							הנדרשים לתפעול האפליקציה.
-						</li>
-						<li>
-							<strong>ציות לחוק:</strong> נשתף מידע רק אם נידרש לכך על פי
-							חוק.
-						</li>
-					</ul>
-				</section>
-
-				<section className='my-5'>
-					<h2 className='display-6 '>6. הגנה על המידע</h2>
-					<p className=' lead'>
-						אנו נוקטים באמצעים טכנולוגיים וארגוניים מתקדמים לשמירה על המידע
-						שלך. יחד עם זאת, אין אבטחה מוחלטת, ולכן אנו ממליצים להימנע משיתוף
-						סיסמאות ולבחור בסיסמה חזקה.
-					</p>
-				</section>
-
-				<section className='my-5'>
-					<h2 className='display-6 '>7. עדכונים למדיניות</h2>
-					<p className=' lead'>
-						ייתכנו שינויים במדיניות מעת לעת. נודיע על כך בתוך האפליקציה או
-						באמצעות הודעה ישירה. שימוש מתמשך באפליקציה מהווה הסכמה לעדכונים.
-					</p>
-				</section>
-
-				<section className='my-5'>
-					<h2 className='display-6 '>8. הזכויות שלך</h2>
-					<ul>
-						<li>זכות לעיין במידע האישי השמור עליך.</li>
-						<li>זכות לתקן מידע שגוי או חסר.</li>
-						<li>זכות לבקש מחיקת מידע – כל עוד אין חובה חוקית לשמור אותו.</li>
-					</ul>
-				</section>
-
-				<section className='mb-5'>
-					<h2 className='display-6 '>9. יצירת קשר</h2>
-					<p className=' lead'>
-						בכל שאלה, בירור או בקשה הנוגעת לפרטיות, ניתן ליצור קשר בטלפון:{" "}
-						<strong className='d-block'>053-834-6915</strong>
-					</p>
-				</section>
-
-				<section>
-					<h2 className='display-6 '>10. הסכמת המשתמש</h2>
-					<p className=' lead'>
-						השימוש באפליקציה מהווה אישור לכך שקראת, הבנת והסכמת למדיניות
-						פרטיות זו. אם אינך מסכים – אנא הימנע מהשימוש.
-					</p>
+					10.
+					<h2 className='display-6 '>{t("pages.privacy.contact.title")}</h2>
+					<ol>
+						<li>{t("pages.privacy.contact.text")}</li>
+						<li>{t("pages.privacy.contact.phone")}</li>
+					</ol>
 				</section>
 			</div>
 		</main>
