@@ -8,6 +8,8 @@ import {useUser} from "../context/useUSer";
 import {useNavigate} from "react-router-dom";
 import RoleType from "../interfaces/UserType";
 import {useTranslation} from "react-i18next";
+import {handleOrderStatus} from "../helpers/orderStatus";
+import { CircularProgress } from "@mui/material";
 
 interface OrdersProps {}
 
@@ -47,25 +49,6 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 				setLoading(false);
 			});
 	}, []);
-
-	// Handle to update order status
-	const handleStatus = async (status: string, orderId: string) => {
-		setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
-		try {
-			await patchStatus(status, orderId);
-			setOrderStatuses((prevStatuses) => ({
-				...prevStatuses,
-				[orderId]: status,
-			}));
-		} catch (error) {
-			console.error("Failed to update order status:", error);
-		} finally {
-			const a = setTimeout(() => {
-				setStatusLoading((prev) => ({...prev, [orderId]: false})); // Reset loading state
-			}, 1000);
-			return () => clearTimeout(a);
-		}
-	};
 
 	if (loading) {
 		return <Loader />;
@@ -155,9 +138,11 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 										<div className='d-flex align-items-center justify-content-between'>
 											<button
 												onClick={() =>
-													handleStatus(
+													handleOrderStatus(
 														"Preparing",
 														order.orderNumber,
+														setOrderStatuses,
+														setStatusLoading,
 													)
 												}
 												className='btn btn-primary'
@@ -166,14 +151,19 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 												}
 											>
 												{statusLoading[order.orderNumber]
-													? "טוען..."
+													? <CircularProgress
+															size={20}
+															color='inherit'
+														/>
 													: "הכנה"}
 											</button>
 											<button
 												onClick={() =>
-													handleStatus(
+													handleOrderStatus(
 														"Delivered",
 														order.orderNumber,
+														setOrderStatuses,
+														setStatusLoading,
 													)
 												}
 												className='btn btn-info'
@@ -181,15 +171,22 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													statusLoading[order.orderNumber]
 												}
 											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "נשלח"}
+												{statusLoading[order.orderNumber] ? (
+													<CircularProgress
+														size={20}
+														color='inherit'
+													/>
+												) : (
+													"נשלח"
+												)}
 											</button>
 											<button
 												onClick={() =>
-													handleStatus(
+													handleOrderStatus(
 														"Shipped",
 														order.orderNumber,
+														setOrderStatuses,
+														setStatusLoading,
 													)
 												}
 												className='btn btn-success'
@@ -197,15 +194,22 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 													statusLoading[order.orderNumber]
 												}
 											>
-												{statusLoading[order.orderNumber]
-													? "טוען..."
-													: "נמסר"}
+												{statusLoading[order.orderNumber] ? (
+													<CircularProgress
+														size={20}
+														color='inherit'
+													/>
+												) : (
+													"נמסר"
+												)}
 											</button>
 											<button
 												onClick={() =>
-													handleStatus(
+													handleOrderStatus(
 														"Cancelled",
 														order.orderNumber,
+														setOrderStatuses,
+														setStatusLoading,
 													)
 												}
 												className='btn btn-danger'
@@ -214,7 +218,10 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 												}
 											>
 												{statusLoading[order.orderNumber]
-													? "טוען..."
+													? <CircularProgress
+															size={20}
+															color='inherit'
+														/>
 													: "ביטול"}
 											</button>
 										</div>

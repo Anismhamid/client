@@ -22,6 +22,15 @@
 		"orders": "Orders",
 		"receipts": "Receipts"
 	},
+	"orders": {
+		"status": {
+			"pending": "Pending",
+			"preparing": "Preparing",
+			"delivered": "Delivered",
+			"shipped": "Shipped",
+			"cancelled": "Cancelled"
+		}
+	},
 	"pages": {
 		"bakery": {
 			"bakeryHeading": "Our baked goods - fresh, high-quality, and diverse!",

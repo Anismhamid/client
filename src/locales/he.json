@@ -22,6 +22,15 @@
 		"orders": "הזמנות",
 		"receipts": "קבלות"
 	},
+	"orders": {
+		"status": {
+			"pending": "בהמתנה",
+			"preparing": "בהכנה",
+			"delivered": "נשלח",
+			"shipped": "נמסר",
+			"cancelled": "בוטל"
+		}
+	},
 	"pages": {
 		"bakery": {
 			"bakeryHeading": "מוצרי המאפה שלנו - טריים, איכותיים ומגוונים!",

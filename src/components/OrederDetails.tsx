@@ -1,9 +1,13 @@
-import {FunctionComponent} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import Loader from "../atoms/loader/Loader";
 import useOrderDetails from "../hooks/useOrderDetails";
 import {useUser} from "../context/useUSer";
 import RoleType from "../interfaces/UserType";
+import {getStatusClass, getStatusText, handleOrderStatus} from "../helpers/orderStatus";
+import {CircularProgress} from "@mui/material";
+import {showError} from "../atoms/Toast";
+import {useTranslation} from "react-i18next";
 
 interface OrderDetailsProps {}
 
@@ -13,17 +17,32 @@ interface OrderDetailsProps {}
  */
 const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const {orderNumber} = useParams<{orderNumber: string}>();
-	const {cartItems, loading, error} = useOrderDetails(orderNumber as string);
+	const {orderItems, loading, error} = useOrderDetails(orderNumber as string);
 	const {auth} = useUser();
-	if (loading) {
-		return <Loader />;
+	const [orderStatuses, setOrderStatuses] = useState<{
+		[orderNumber: string]: string;
+	}>({});
+	const [statusLoading, setStatusLoading] = useState<{
+		[orderNumber: string]: boolean;
+	}>({});
+	const {t} = useTranslation();
+
+useEffect(() => {
+	if (orderItems?.status) {
+		setOrderStatuses({[orderItems.orderNumber]: orderItems.status});
 	}
+}, [orderItems]);
+
 
 	if (error) {
 		return <div>{error}</div>;
 	}
 
-	if (!cartItems) {
+	if (loading) {
+		return <Loader />;
+	}
+
+	if (!orderItems) {
 		return (
 			<h2 className='text-center bg-primary text-white rounded p-3 mb-4'>
 				No products found in this order.
@@ -31,57 +50,90 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		);
 	}
 
-
 	return (
 		<main className='min-vh-50'>
 			<div className='container p-3'>
 				<div className='text-center bg-gradient rounded p-3 mb-4'>
 					<div className='mb-3 text-center d-flex align-items-center justify-content-between'>
+						<div className='mb-3'>
+							<strong>סטטוס נוכחי:</strong>{" "}
+							<span
+								className={getStatusClass(
+									orderStatuses[orderItems.orderNumber],
+								)}
+							>
+								{getStatusText(orderStatuses[orderItems.orderNumber], t)}
+							</span>
+						</div>
 						{((auth && auth.role === RoleType.Admin) ||
 							(auth && auth.role === RoleType.Moderator)) && (
 							<>
 								<button
-									// onClick={() =>
-									// 	handleStatus("Preparing", order.orderNumber)
-									// }
-									className='btn btn-primary me-3'
-									// disabled={
-									// 	order.status === "Preparing" ||
-									// 	order.status === "Delivered" ||
-									// 	order.status === "Shipped"
-									// }
+									onClick={() =>
+										handleOrderStatus(
+											"Preparing",
+											orderItems.orderNumber,
+											setOrderStatuses,
+											setStatusLoading,
+										).catch((err) => {
+											showError(err);
+										})
+									}
+									className='btn btn-primary me-2'
+									disabled={
+										orderItems.status === "Preparing" ||
+										orderItems.status === "Delivered" ||
+										orderItems.status === "Shipped"
+									}
 								>
-									{/* {statusLoading[order.orderNumber]
-										? "טוען..."
-										: "הכנה"} */}
-									הכנה
+									{statusLoading[orderItems.orderNumber] ? (
+										<CircularProgress size={20} color='inherit' />
+									) : (
+										"הכנה"
+									)}
 								</button>
 								<button
-									// onClick={() =>
-									// 	handleStatus("Delivered", order.orderNumber)
-									// }
-									className='btn btn-info me-3'
-									// disabled={
-									// 	order.status === "Delivered" ||
-									// 	order.status === "Shipped"
-									// }
+									onClick={() =>
+										handleOrderStatus(
+											"Delivered",
+											orderItems.orderNumber,
+											setOrderStatuses,
+											setStatusLoading,
+										).catch((err) => {
+											showError(err);
+										})
+									}
+									className='btn btn-info me-1'
+									disabled={
+										orderItems.status === "Delivered" ||
+										orderItems.status === "Shipped"
+									}
 								>
-									{/* {statusLoading[order.orderNumber]
-										? "טוען..."
-										: "נשלח"} */}
-									נשלח
+									{statusLoading[orderItems.orderNumber] ? (
+										<CircularProgress size={20} color='inherit' />
+									) : (
+										"נשלח"
+									)}
 								</button>
 								<button
-									// onClick={() =>
-									// 	handleStatus("Shipped", order.orderNumber)
-									// }
+									onClick={() =>
+										handleOrderStatus(
+											"Shipped",
+											orderItems.orderNumber,
+											setOrderStatuses,
+											setStatusLoading,
+										).catch((err) => {
+											showError(err);
+										})
+									}
 									className='btn btn-success'
-									// disabled={order.status === "Shipped"}
+									disabled={orderItems.status === "Shipped"}
 								>
-									{/* {statusLoading[order.orderNumber]
-										? "טוען..."
-										: "נמסר"} */}
-									נמסר
+									{statusLoading[orderItems.orderNumber] ? (
+										<CircularProgress size={20} color='inherit' />
+									) : (
+										"נמסר"
+									)}
 								</button>
 							</>
 						)}
@@ -89,7 +141,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 					</div>
 				</div>
 				<div className='row  row-cols-1 row-cols-md-3 row-cols-lg-3 g-4'>
-					{cartItems.products.map((product, index) => (
+					{orderItems.products.map((product, index) => (
 						<div key={product.product_image + index + 1} className='col'>
 							<div className='card h-100 shadow-sm border-0'>
 								<img
@@ -97,17 +149,19 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 									alt={product.product_name || "Product image"}
 									className='card-img-top'
 									role='img'
-									style={{height: "250px"}}
+									style={{width: "100%"}}
 								/>
-								<div className='card-body d-flex flex-column'>
-									<h5 className='card-title'>{product.product_name}</h5>
-									<h5>
-										{product.sale ? `מבצע${product.discount}` : ""}
-									</h5>
+								<h5 className='card-title'>{product.product_name}</h5>
+								<div className='card-body d-flex flex-column text-danger'>
+									<h6>
+										{product.discount
+											? `הנחה ${product.discount}%`
+											: ""}
+									</h6>
 									<h6 className='card-subtitle mb-2 text-muted'>
 										כמות: {product.quantity}
 									</h6>
-									<h6 className='card-subtitle mb-2 text-success fw-bold fs-5'>
+									<h6 className='card-subtitle my-2 text-success fw-bold'>
 										מחיר{" "}
 										{product.product_price.toLocaleString("he-IL", {
 											style: "currency",

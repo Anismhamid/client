@@ -11,7 +11,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import {InputBase, Paper, IconButton, CircularProgress} from "@mui/material";
 import {useTranslation} from "react-i18next";
-
+import {getStatusClass, getStatusText, handleOrderStatus} from "../helpers/orderStatus";
+import { showError } from "../atoms/Toast";
 
 interface AllTheOrdersProps {}
 /**
@@ -20,17 +21,18 @@ interface AllTheOrdersProps {}
  */
 const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const {t} = useTranslation();
-	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
-		{},
-	);
-	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
-		{},
-	); // Track loading for each status update
 	const [allOrders, setAllOrders] = useState<Order[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState("");
 	const navigate = useNavigate();
 	const {auth} = useUser();
+
+	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
+		{},
+	);
+	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
+		{},
+	);
 
 	const filteredOrders = useMemo(() => {
 		return allOrders.filter((order) => {
@@ -65,27 +67,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				setLoading(false);
 			});
 	}, [statusLoading]);
-
-	const handleStatus = useMemo(
-		() => async (status: string, orderId: string) => {
-			setStatusLoading((prev) => ({...prev, [orderId]: true})); // loading state for specific order
-			try {
-				await patchStatus(status, orderId);
-				setOrderStatuses((prevStatuses) => ({
-					...prevStatuses,
-					[orderId]: status,
-				}));
-			} catch (error) {
-				console.error("Failed to update order status:", error);
-			} finally {
-				setTimeout(() => {
-					setStatusLoading((prev) => ({...prev, [orderId]: false})); // Reset loading state
-				}, 1000);
-			}
-		},
-
-		[statusLoading, orderStatuses],
-	);
 
 	if (loading) {
 		return <Loader />;
@@ -174,52 +155,12 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 										<div className='mt-1'>
 											<strong>סטטוס:</strong>{" "}
 											<span
-												className={`${
-													orderStatuses[order.orderNumber] ===
-													"Pending"
-														? "text-danger"
-														: orderStatuses[
-																	order.orderNumber
-															  ] === "Shipped"
-															? "text-success"
-															: orderStatuses[
-																		order.orderNumber
-																  ] === "Delivered"
-																? "text-info"
-																: orderStatuses[
-																			order
-																				.orderNumber
-																	  ] === "Preparing"
-																	? "text-primary"
-																	: orderStatuses[
-																				order
-																					.orderNumber
-																		  ] ===
-																		  "Cancelled"
-																		? "text-danger"
-																		: ""
-												}`}
+												className={`${getStatusClass(orderStatuses[order.orderNumber])}`}
 											>
-												{orderStatuses[order.orderNumber] ===
-												"Pending"
-													? "בהמתנה"
-													: orderStatuses[order.orderNumber] ===
-														  "Shipped"
-														? "נמסר"
-														: orderStatuses[
-																	order.orderNumber
-															  ] === "Delivered"
-															? "נשלח"
-															: orderStatuses[
-																		order.orderNumber
-																  ] === "Preparing"
-																? "ההזמנה שלך בהכנה"
-																: orderStatuses[
-																			order
-																				.orderNumber
-																	  ] === "Cancelled"
-																	? "בוטל"
-																	: ""}
+												{getStatusText(
+													orderStatuses[order.orderNumber],
+													t,
+												)}
 											</span>
 										</div>
 									</div>
@@ -230,10 +171,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 											<>
 												<button
 													onClick={() =>
-														handleStatus(
+														handleOrderStatus(
 															"Preparing",
 															order.orderNumber,
-														)
+															setOrderStatuses,
+															setStatusLoading,
+														).catch((err) => {
+															showError(err);
+														})
 													}
 													className='btn btn-primary'
 													disabled={
@@ -253,10 +198,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 												</button>
 												<button
 													onClick={() =>
-														handleStatus(
+														handleOrderStatus(
 															"Delivered",
 															order.orderNumber,
-														)
+															setOrderStatuses,
+															setStatusLoading,
+														).catch((err) => {
+															showError(err);
+														})
 													}
 													className='btn btn-info'
 													disabled={
@@ -275,10 +224,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 												</button>
 												<button
 													onClick={() =>
-														handleStatus(
+														handleOrderStatus(
 															"Shipped",
 															order.orderNumber,
-														)
+															setOrderStatuses,
+															setStatusLoading,
+														).catch((err) => {
+															showError(err);
+														})
 													}
 													className='btn btn-success'
 													disabled={order.status === "Shipped"}
@@ -321,7 +274,10 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 										) : order.delivery ? (
 											<span className='text-primary'>
 												{fontAwesomeIcon.boxOpen}
-												משלוח + 20 שח
+												{order.deliveryFee.toLocaleString(
+													"he-IL",
+													{style: "currency", currency: "ILS"},
+												)}
 											</span>
 										) : (
 											<span className='text-muted'>לא נבחר</span>

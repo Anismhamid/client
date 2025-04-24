@@ -1,32 +1,33 @@
 import {useEffect, useState} from "react";
-import {Cart} from "../interfaces/Cart";
 import {getOrderByOrderNumber} from "../services/orders";
-import { showError } from "../atoms/Toast";
+import {showError} from "../atoms/Toast";
+import { Order } from "../interfaces/Order";
 
 // Custom Hook to Fetch Order Details
 const useOrderDetails = (orderNumber: string) => {
-	const [cartItems, setCartItems] = useState<Cart|null>(null);
+	const [orderItems, setCartItems] = useState<Order | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [error, setError] = useState<string >('');
+	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
-		const fetchOrder = async () => {
-			try {
-				const data = await getOrderByOrderNumber(orderNumber);
+		getOrderByOrderNumber(orderNumber)
+			.then((data) => {
 				setCartItems(data);
-			} catch (err) {
+				console.log(data);
+				
+			})
+			.catch((err) => {
 				setError("Failed to load order details. Please try again later.");
-				showError(error)
-			} finally {
+				showError(err);
+			})
+			.finally(() => {
 				setLoading(false);
-			}
-		};
+			});
 
-		fetchOrder();
 		window.scroll(0, 0);
 	}, [orderNumber]);
 
-	return {cartItems, loading, error};
+	return {orderItems, loading, error};
 };
 
 export default useOrderDetails;

@@ -9,6 +9,8 @@ import Loader from "../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {Button, Tooltip} from "@mui/material";
 import {useCartItems} from "../context/useCart";
+import {Products} from "../interfaces/Products";
+import {showError, showSuccess} from "../atoms/Toast";
 
 interface CartProps {}
 
@@ -43,20 +45,26 @@ const Cart: FunctionComponent<CartProps> = () => {
 		setItems((prev: CartType[]) => {
 			return prev.map((item: any) => {
 				const updatedProducts = item.products.filter(
-					(product: any) => product.product_name !== product_name,
+					(product: Products) => product.product_name !== product_name,
 				);
 
 				return {...item, products: updatedProducts};
 			});
 		});
 
-		DeleteCartItems(product_name).catch((err) => {
-			console.error("Error while deleting item:", err);
-		});
+		DeleteCartItems(product_name)
+			.then(() => {
+				showSuccess("the item has been removed from cart")
+			})
+			.catch((err) => {
+				console.log(err);
+
+				showError("Error while deleting item:");
+			});
 		setQuantity((prev) => prev - 1);
 	};
 
-	// Calculate total amount of the cart, only considering items that have valid products
+	// Calculate total amount of the cart
 	const calculateTotalAmount = (cartItems: CartType[]): number => {
 		return cartItems.reduce((total, item) => {
 			return (
@@ -68,12 +76,12 @@ const Cart: FunctionComponent<CartProps> = () => {
 		}, 0);
 	};
 
-	// Fetch cart items when the component mounts
 	useEffect(() => {
 		if (decodedToken) {
 			getCartItems()
 				.then((cartItems) => {
 					setItems(cartItems);
+					console.log(cartItems);
 					setLoading(false);
 				})
 				.catch((err) => {
@@ -129,7 +137,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 														)}
 													</h5>
 													<strong className='me-2 text-danger'>
-														במבצע {product.discount}% |
+														הנחה {product.discount}% |
 													</strong>
 												</>
 											) : (

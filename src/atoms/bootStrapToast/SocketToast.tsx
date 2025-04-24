@@ -31,7 +31,7 @@ export const showNewOrderToast = ({
 		),
 		{
 			autoClose: false,
-			closeOnClick: true,
+			closeOnClick: false,
 		},
 	);
 };

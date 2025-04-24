@@ -25,7 +25,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const navigate = useNavigate();
 	const [cartItems, setCartItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [, setOrderDetails] = useState<Order | null>(null);
+	const [orderDetails, setOrderDetails] = useState<Order | null>(null);
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 	const formRef = useRef<HTMLFormElement | null>(null);
@@ -61,19 +61,16 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			selfCollection: yup.boolean().required(),
 			delivery: yup.boolean().required(),
 			sale: yup.boolean().required(),
-			discount: yup.number(),
+			discount: yup.number().required(),
 			totalAmount: yup.number().required(),
 		}),
-		onSubmit: async (value) => {
-			try {
-				await handleCheckout(value);
-			} catch (error) {
-				console.log(error);
-			}
+		onSubmit: (value) => {
+			handleCheckout(value).catch((err) => {
+				console.log(err);
+			});
 		},
 	});
 
-	// Fetch the cart items when the component mounts
 	useEffect(() => {
 		if (auth) {
 			getCartItems()
@@ -120,8 +117,8 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				product_image: product.product_image,
 				product_price: product.product_price,
 				quantity: product.quantity,
-				sale: value.sale,
-				discount: value.discount,
+				sale: product.sale,
+				discount: product.discount,
 			})),
 		);
 
@@ -184,13 +181,15 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 												alt={product.product_name}
 												style={{width: "100px"}}
 											/>
-
-											<strong>{product.product_name}</strong>
-
-											{product.discount
-												? `מבצע ${product.discount}%`
-												: "אין מבצע"}
-											<div className='text-muted text-danger'>
+											<div className=''>
+												<strong>{product.product_name}</strong>
+												<h6>
+													{product.discount
+														? `הנחה ${product.discount}%`
+														: ""}
+												</h6>
+											</div>
+											<div className='text-muted text-danger fw-bold'>
 												{product.product_price.toLocaleString(
 													"he-IL",
 													{

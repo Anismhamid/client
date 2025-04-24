@@ -22,6 +22,15 @@
 		"orders": "الطلبات",
 		"receipts": "الإيصالات"
 	},
+	"orders": {
+		"status": {
+			"pending": "قيد الانتظار",
+			"preparing": "قيد التحضير",
+			"delivered": "تم الإرسال",
+			"shipped": "تم التسليم",
+			"cancelled": "تم الإلغاء"
+		}
+	},
 	"pages": {
 		"bakery": {
 			"bakeryHeading": "منتجاتنا المخبوزة - طازجة، عالية الجودة ومتنوعة!",

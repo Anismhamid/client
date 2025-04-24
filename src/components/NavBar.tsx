@@ -88,7 +88,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						justifyContent: "space-between",
 						alignItems: "center",
 						flexWrap: "wrap",
-						padding: "5px 20px",
+						padding: "5px 5px",
 					}}
 					component='nav'
 				>
