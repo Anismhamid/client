@@ -5,7 +5,7 @@ interface LoaderProps {}
 
 const Loader: FunctionComponent<LoaderProps> = () => {
 	return (
-		<main className=" min-vh-100 d-flex align-items-center justify-content-center">
+		<main >
 			<div className={Style.loader}>
 				<div className={Style.truckWrapper}>
 					<div className={Style.truckBody}>

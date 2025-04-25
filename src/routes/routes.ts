@@ -1,13 +1,13 @@
 export const productsPathes = {
-	Fruits: "/fruits",
-	Vegetable: "/vegetable",
+	fruits: "/fruits",
+	vegetable: "/vegetable",
 	fish: "/fish",
 	dairy: "/dairy",
 	meat: "/meat",
 	spices: "/spices",
 	bakery: "/bakery",
 	beverages: "/beverages",
-	forzen: "/forzen",
+	frozen: "/forzen",
 	snacks: "/snacks",
 	// will add other products here if nedded...
 };

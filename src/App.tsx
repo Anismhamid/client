@@ -154,7 +154,7 @@ function App() {
 					<SpeedDial
 						ariaLabel='cart'
 						sx={{position: "fixed", bottom: 16, right: 5}}
-						icon={fontAwesomeIcon.CartInoc}
+						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {
 							navigate(path.Cart);
 						}}
@@ -186,15 +186,15 @@ function App() {
 					<Route path={path.TermOfUse} element={<TermOfUse />} />
 					<Route path={path.CompleteProfile} element={<CompleteProfile />} />
 					<Route path={path.AdminSettings} element={<AdminSettings />} />
-					<Route path={productsPathes.Fruits} element={<Fruits />} />
-					<Route path={productsPathes.Vegetable} element={<Vegetable />} />
+					<Route path={productsPathes.fruits} element={<Fruits />} />
+					<Route path={productsPathes.vegetable} element={<Vegetable />} />
 					<Route path={productsPathes.fish} element={<Fish />} />
 					<Route path={productsPathes.meat} element={<Meat />} />
 					<Route path={productsPathes.spices} element={<Spices />} />
 					<Route path={productsPathes.dairy} element={<Dairy />} />
 					<Route path={productsPathes.bakery} element={<Bakery />} />
 					<Route path={productsPathes.beverages} element={<Beverages />} />
-					<Route path={productsPathes.forzen} element={<Frozen />} />
+					<Route path={productsPathes.frozen} element={<Frozen />} />
 					<Route path={productsPathes.snacks} element={<Snacks />} />
 					<Route path={path.Checkout} element={<Checkout />} />
 					<Route path={path.Png} element={<PageNotFound />} />

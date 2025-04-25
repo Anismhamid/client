@@ -65,7 +65,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		window.history.length > 1 ? navigate(-1) : navigate(path.Home);
 
 	const isAdmin = auth?.role === RoleType.Admin;
-	const isUser = !isAdmin && isLoggedIn;
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -115,7 +114,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									aria-current='page'
 									to={path.UsersManagement}
 								>
-									{fontAwesomeIcon.UserGear}
+									{fontAwesomeIcon.userGear}
 								</NavLink>
 							</li>
 						</Tooltip>
@@ -248,7 +247,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 											aria-current='page'
 											to={path.Cart}
 										>
-											{fontAwesomeIcon.CartInoc}
+											{fontAwesomeIcon.cartInoc}
 										</NavLink>
 									</Badge>
 								</Box>

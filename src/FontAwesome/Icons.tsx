@@ -30,11 +30,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export const fontAwesomeIcon = {
-	CartInoc: <FontAwesomeIcon icon={faCartShopping} />,
-	UserGear: <FontAwesomeIcon icon={faUserGear} />,
-	Fruit: <FontAwesomeIcon icon={faAppleWhole} />,
-	Vegetable: <FontAwesomeIcon icon={faCarrot} />,
-	LogOut: <FontAwesomeIcon icon={faPersonWalkingArrowLoopLeft} />,
+	cartInoc: <FontAwesomeIcon icon={faCartShopping} />,
+	userGear: <FontAwesomeIcon icon={faUserGear} />,
+	fruit: <FontAwesomeIcon icon={faAppleWhole} />,
+	vegetable: <FontAwesomeIcon icon={faCarrot} />,
+	logOut: <FontAwesomeIcon icon={faPersonWalkingArrowLoopLeft} />,
 	shekel: <FontAwesomeIcon icon={faShekel} />,
 	boxOpen: <FontAwesomeIcon icon={faBoxOpen} />,
 	moneyBillWave: <FontAwesomeIcon icon={faMoneyBillWave} />,
@@ -47,7 +47,7 @@ export const fontAwesomeIcon = {
 	spices: <FontAwesomeIcon icon={faMortarPestle} />,
 	bakery: <FontAwesomeIcon icon={faWheatAwn} />,
 	beverages: <FontAwesomeIcon icon={faBottleWater} />,
-	forzen: <FontAwesomeIcon icon={faSnowflake} />,
+	frozen: <FontAwesomeIcon icon={faSnowflake} />,
 	snacks: <FontAwesomeIcon icon={faIceCream} />,
 	about: <FontAwesomeIcon icon={faInfoCircle} />,
 	contact: <FontAwesomeIcon icon={faContactCard} />,

@@ -1,6 +1,6 @@
 import {FunctionComponent} from "react";
 import {Link, NavLink} from "react-router-dom";
-import {path, productsPathes} from "../routes/routes";
+import {navbarCategoryLinks} from "../helpers/navCategoryies";
 
 interface FooterProps {}
 /**
@@ -43,38 +43,16 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						<h5>קישורים מהירים</h5>
 						<nav className='flex-column'>
 							<ul className='list-unstyled'>
-								<li>
-									<NavLink
-										to={productsPathes.Fruits}
-										className='text-primaty text-decoration-none'
-									>
-										Fruits
-									</NavLink>
-								</li>
-								<li>
-									<NavLink
-										to={productsPathes.Vegetable}
-										className='text-primaty text-decoration-none'
-									>
-										Vegetables
-									</NavLink>
-								</li>
-								<li>
-									<NavLink
-										to={path.About}
-										className='text-primaty text-decoration-none'
-									>
-										About Us
-									</NavLink>
-								</li>
-								<li>
-									<NavLink
-										to={path.Contact}
-										className='text-primaty text-decoration-none'
-									>
-										Contact Us
-									</NavLink>
-								</li>
+								{navbarCategoryLinks.map((pathes, index) => (
+									<li key={index}>
+										<NavLink
+											to={pathes.path}
+											className='text-primaty text-decoration-none'
+										>
+											{pathes.labelKey}
+										</NavLink>
+									</li>
+								))}
 							</ul>
 						</nav>
 					</div>

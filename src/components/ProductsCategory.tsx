@@ -15,6 +15,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import {Button, CircularProgress} from "@mui/material";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
+import Seo from "../atoms/Seo/Seo";
+import {productsPathes} from "../routes/routes";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
 
 interface ProductCategoryProps {
 	category: string;
@@ -135,259 +138,307 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		return <Loader />;
 	}
 
+	const getFaviconForCategory = (category: string) => {
+		switch (category) {
+			case "fruits":
+				return "../src/assets/icons/fruits.svg";
+			case "vegetable":
+				return "../src/assets/icons/vegetable.svg";
+			case "fish":
+				return "../src/assets/icons/fish.svg";
+			case "dairy":
+				return "../src/assets/icons/dairy.svg";
+			case "meat":
+				return "../src/assets/icons/meat.svg";
+			case "spices":
+				return "../src/assets/icons/spices.svg";
+			case "bakery":
+				return "../src/assets/icons/bakery.svg";
+			case "beverages":
+				return "../src/assets/icons/beverages.svg";
+			case "frozen":
+				return "../src/assets/icons/frozen.svg";
+			case "snacks":
+				return "../src/assets/icons/snacks.svg";
+			default:
+				return "";
+		}
+	};
+	const icons = getFaviconForCategory(category);
+	console.log(icons);
+
 	return (
-		<main className='min-vh-100'>
-			<div className='container pb-5'>
-				<div className='row g-4'>
-					{visibleProducts.map((product: Products) => {
-						const productQuantity = quantities[product.product_name] || 1;
-						return (
-							<div
-								className='col-6 col-sm-6 col-lg-4 col-xl-3 '
-								key={product.product_name}
-							>
-								<div className='card h-100 shadow rounded-4 overflow-hidden'>
-									<img
-										loading='lazy'
-										src={product.image_url}
-										alt={product.product_name}
-										className='card-img-top'
-										style={{
-											objectFit: "cover",
-											height:
-												window.innerWidth < 576
-													? "160px"
-													: "200px",
-											transition: "transform 0.3s ease-in-out",
-										}}
-										onMouseOver={(e) =>
-											(e.currentTarget.style.transform =
-												"scale(1.05)")
-										}
-										onMouseOut={(e) =>
-											(e.currentTarget.style.transform = "scale(1)")
-										}
-									/>
+		<>
+			<Seo
+				title={`קטגוריית ${category} | שוק הפינה`}
+				description={`צפו במגוון ${category} טריים ואיכותיים אצלנו באתר!`}
+				image={icons}
+				type='category'
+			/>
+			<main className='min-vh-100'>
+				<div className='container pb-5'>
+					<div className='row g-4'>
+						{visibleProducts.map((product: Products) => {
+							const productQuantity = quantities[product.product_name] || 1;
 
-									<div className='card-body d-flex flex-column justify-content-between'>
-										<h6 className='card-title text-center fw-bold'>
-											{product.product_name}
-										</h6>
-										<h6
-											className={` text-center fw-semibold ${
-												product.quantity_in_stock <= 0
-													? "text-danger"
-													: "text-success"
-											}`}
-										>
-											{product.quantity_in_stock <= 0
-												? "אזל מהמלאי"
-												: "במלאי"}
-										</h6>
-
-										{product.sale ? (
-											<>
-												<h6 className='text-center'>
-													מחיר לפני:
-													<s className='ms-2'>
-														{product.price.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
-													</s>
-												</h6>
-												<h6 className='text-center fw-bold'>
-													מחיר:
-													{(
-														product.price -
-														(product.discount
-															? (product.price *
-																	product.discount) /
-																100
-															: 0)
-													).toLocaleString("he-IL", {
-														style: "currency",
-														currency: "ILS",
-													})}
-												</h6>
-												<p className='d-block text-center text-danger'>
-													{product.discount}% הנחה
-												</p>
-											</>
-										) : (
-											<h6 className='card-text text-center  fw-bold'>
-												מחיר:
-												{product.price.toLocaleString("he-IL", {
-													style: "currency",
-													currency: "ILS",
-												})}
-											</h6>
-										)}
-
-										<h6 className='text-center text-muted small'>
-											{category === "spices"
-												? "ל / 100-גרם"
-												: [
-															"fruit",
-															"vegetable",
-															"meat",
-															"fish",
-													  ].includes(category)
-													? "ל / ק" + "\u05B2" + "ג"
-													: "ל-יחידה"}
-										</h6>
-
-										<div className='d-flex align-items-center justify-content-center gap-3'>
-											<button
-												disabled={product.quantity_in_stock <= 0}
-												onClick={() =>
-													handleQuantity(
-														setQuantities,
-														"-",
-														product.product_name,
-													)
-												}
-												className='btn btn-light border rounded-circle shadow-sm'
-											>
-												<img
-													src='/svg/remove.svg'
-													alt=''
-													width={15}
-												/>
-											</button>
-											<h5 className='fs-6 fw-bold'>
-												<b>{productQuantity}</b>
-											</h5>
-											<button
-												disabled={product.quantity_in_stock <= 0}
-												onClick={() =>
-													handleQuantity(
-														setQuantities,
-														"+",
-														product.product_name,
-													)
-												}
-												className='btn btn-light border rounded-circle shadow-sm'
-											>
-												<img
-													src='/svg/add.svg'
-													alt=''
-													width={15}
-												/>
-											</button>
-										</div>
-										<button
-											onClick={() => {
-												handleAdd(
-													product.product_name,
-													quantities,
-													product.price,
-													product.image_url,
-													product.sale || false,
-													product.discount || 0,
-												);
+							return (
+								<div
+									className='col-6 col-sm-6 col-lg-4 col-xl-3 '
+									key={product.product_name}
+								>
+									<div className='card h-100 shadow rounded-4 overflow-hidden'>
+										<img
+											loading='lazy'
+											src={product.image_url}
+											alt={product.product_name}
+											className='card-img-top'
+											style={{
+												objectFit: "cover",
+												height:
+													window.innerWidth < 576
+														? "160px"
+														: "200px",
+												transition: "transform 0.3s ease-in-out",
 											}}
-											disabled={
-												product.quantity_in_stock <= 0 ||
-												loadingAddToCart === product.product_name
+											onMouseOver={(e) =>
+												(e.currentTarget.style.transform =
+													"scale(1.05)")
 											}
-											className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
-												product.quantity_in_stock <= 0
-													? "btn btn-outline-danger"
-													: "btn btn-outline-success"
-											}`}
-										>
-											{loadingAddToCart === product.product_name ? (
-												<CircularProgress
-													size={20}
-													color='inherit'
-												/>
-											) : product.quantity_in_stock <= 0 ? (
-												"אזל מהמלאי"
+											onMouseOut={(e) =>
+												(e.currentTarget.style.transform =
+													"scale(1)")
+											}
+										/>
+										<div className='card-body d-flex flex-column justify-content-between'>
+											<h6 className='card-title text-center fw-bold'>
+												{product.product_name}
+											</h6>
+											<h6
+												className={` text-center fw-semibold ${
+													product.quantity_in_stock <= 0
+														? "text-danger"
+														: "text-success"
+												}`}
+											>
+												{product.quantity_in_stock <= 0
+													? "אזל מהמלאי"
+													: "במלאי"}
+											</h6>
+
+											{product.sale ? (
+												<>
+													<h6 className='text-center'>
+														מחיר לפני:
+														<s className='ms-2'>
+															{product.price.toLocaleString(
+																"he-IL",
+																{
+																	style: "currency",
+																	currency: "ILS",
+																},
+															)}
+														</s>
+													</h6>
+													<h6 className='text-center fw-bold'>
+														מחיר:
+														{(
+															product.price -
+															(product.discount
+																? (product.price *
+																		product.discount) /
+																	100
+																: 0)
+														).toLocaleString("he-IL", {
+															style: "currency",
+															currency: "ILS",
+														})}
+													</h6>
+													<p className='d-block text-center text-danger'>
+														{product.discount}% הנחה
+													</p>
+												</>
 											) : (
-												"הוספה לסל"
+												<h6 className='card-text text-center  fw-bold'>
+													מחיר:
+													{product.price.toLocaleString(
+														"he-IL",
+														{
+															style: "currency",
+															currency: "ILS",
+														},
+													)}
+												</h6>
 											)}
-										</button>
-										{((auth && auth.role === RoleType.Admin) ||
-											(auth &&
-												auth.role === RoleType.Moderator)) && (
-											<div className='card-footer mt-3 bg-transparent border-0 d-flex justify-content-around'>
-												<Tooltip title='עריכה'>
-													<Fab
-														color='warning'
-														aria-label='עריכה'
-														onClick={() => {
-															setProductNameToUpdate(
-																product.product_name,
-															);
-															onShowUpdateProductModal();
-														}}
-														size='small'
-														className='z-1'
-													>
-														<EditIcon />
-													</Fab>
-												</Tooltip>
-												<Tooltip title='מחיקה'>
-													<Fab
-														color='error'
-														aria-label='מחיקה'
-														onClick={() =>
-															openDeleteModal(
-																product.product_name,
-															)
-														}
-														size='small'
-														className='z-1'
-													>
-														<DeleteIcon />
-													</Fab>
-												</Tooltip>
+
+											<h6 className='text-center text-muted small'>
+												{category === "spices"
+													? "ל / 100-גרם"
+													: [
+																"fruit",
+																"vegetable",
+																"meat",
+																"fish",
+														  ].includes(category)
+														? "ל / ק" + "\u05B2" + "ג"
+														: "ל-יחידה"}
+											</h6>
+
+											<div className='d-flex align-items-center justify-content-center gap-3'>
+												<button
+													disabled={
+														product.quantity_in_stock <= 0
+													}
+													onClick={() =>
+														handleQuantity(
+															setQuantities,
+															"-",
+															product.product_name,
+														)
+													}
+													className='btn btn-light border rounded-circle shadow-sm'
+												>
+													<img
+														src='/svg/remove.svg'
+														alt=''
+														width={15}
+													/>
+												</button>
+												<h5 className='fs-6 fw-bold'>
+													<b>{productQuantity}</b>
+												</h5>
+												<button
+													disabled={
+														product.quantity_in_stock <= 0
+													}
+													onClick={() =>
+														handleQuantity(
+															setQuantities,
+															"+",
+															product.product_name,
+														)
+													}
+													className='btn btn-light border rounded-circle shadow-sm'
+												>
+													<img
+														src='/svg/add.svg'
+														alt=''
+														width={15}
+													/>
+												</button>
 											</div>
-										)}
+											<button
+												onClick={() => {
+													handleAdd(
+														product.product_name,
+														quantities,
+														product.price,
+														product.image_url,
+														product.sale || false,
+														product.discount || 0,
+													);
+												}}
+												disabled={
+													product.quantity_in_stock <= 0 ||
+													loadingAddToCart ===
+														product.product_name
+												}
+												className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
+													product.quantity_in_stock <= 0
+														? "btn btn-outline-danger"
+														: "btn btn-outline-success"
+												}`}
+											>
+												{loadingAddToCart ===
+												product.product_name ? (
+													<CircularProgress
+														size={20}
+														color='inherit'
+													/>
+												) : product.quantity_in_stock <= 0 ? (
+													"אזל מהמלאי"
+												) : (
+													"הוספה לסל"
+												)}
+											</button>
+											{((auth && auth.role === RoleType.Admin) ||
+												(auth &&
+													auth.role ===
+														RoleType.Moderator)) && (
+												<div className='card-footer mt-3 bg-transparent border-0 d-flex justify-content-around'>
+													<Tooltip title='עריכה'>
+														<Fab
+															color='warning'
+															aria-label='עריכה'
+															onClick={() => {
+																setProductNameToUpdate(
+																	product.product_name,
+																);
+																onShowUpdateProductModal();
+															}}
+															size='small'
+															className='z-1'
+														>
+															<EditIcon />
+														</Fab>
+													</Tooltip>
+													<Tooltip title='מחיקה'>
+														<Fab
+															color='error'
+															aria-label='מחיקה'
+															onClick={() =>
+																openDeleteModal(
+																	product.product_name,
+																)
+															}
+															size='small'
+															className='z-1'
+														>
+															<DeleteIcon />
+														</Fab>
+													</Tooltip>
+												</div>
+											)}
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
-				</div>
-				{/* Show More Button */}
-				{products.length > visibleProducts.length && (
-					<div className='text-center my-4 '>
-						<Button
-							onClick={handleShowMore}
-							color='primary'
-							variant='contained'
-							size='large'
-							disabled={showMoreLoading}
-							className='rounded-pill shadow'
-						>
-							הצג עוד מוצרים
-						</Button>
+							);
+						})}
 					</div>
-				)}
-			</div>
+					{/* Show More Button */}
+					{products.length > visibleProducts.length && (
+						<div className='text-center my-4 '>
+							<Button
+								onClick={handleShowMore}
+								color='primary'
+								variant='contained'
+								size='large'
+								disabled={showMoreLoading}
+								className='rounded-pill shadow'
+							>
+								הצג עוד מוצרים
+							</Button>
+						</div>
+					)}
+				</div>
 
-			<UpdateProductModal
-				product_name={productNameToUpdate}
-				show={showUpdateProductModal}
-				onHide={() => onHideUpdateProductModal()}
-			/>
+				<UpdateProductModal
+					product_name={productNameToUpdate}
+					show={showUpdateProductModal}
+					onHide={() => onHideUpdateProductModal()}
+				/>
 
-			<AlertDialogs
-				show={showDeleteModal}
-				openModal={() => setShowDeleteModal(true)}
-				onHide={closeDeleteModal}
-				handleDelete={() => handleDelete(productToDelete)}
-				title={"מחיקת מוצר"}
-				description={""}
-			/>
+				<AlertDialogs
+					show={showDeleteModal}
+					openModal={() => setShowDeleteModal(true)}
+					onHide={closeDeleteModal}
+					handleDelete={() => handleDelete(productToDelete)}
+					title={"מחיקת מוצר"}
+					description={""}
+				/>
 
-			<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />
-		</main>
+				<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />
+			</main>
+		</>
 	);
 };
 

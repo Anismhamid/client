@@ -4,13 +4,13 @@ import { productsPathes } from "../routes/routes";
 export const navbarCategoryLinks = [
 	{
 		labelKey: "categories.fruits",
-		path: productsPathes.Fruits,
-		icon: fontAwesomeIcon.Fruit,
+		path: productsPathes.fruits,
+		icon: fontAwesomeIcon.fruit,
 	},
 	{
 		labelKey: "categories.vegetable",
-		path: productsPathes.Vegetable,
-		icon: fontAwesomeIcon.Vegetable,
+		path: productsPathes.vegetable,
+		icon: fontAwesomeIcon.vegetable,
 	},
 	{
 		labelKey: "categories.fish",
@@ -44,8 +44,8 @@ export const navbarCategoryLinks = [
 	},
 	{
 		labelKey: "categories.forzen",
-		path: productsPathes.forzen,
-		icon: fontAwesomeIcon.forzen,
+		path: productsPathes.frozen,
+		icon: fontAwesomeIcon.frozen,
 	},
 	{
 		labelKey: "categories.snacks",
