@@ -77,7 +77,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		if (auth) {
 			getBusinessInfo()
 				.then((res) => {
-					setDeliveryFee(res.deliveryFee);
+					setDeliveryFee(res.deliveryFee||0);
 				})
 				.then(() => {
 					getCartItems()

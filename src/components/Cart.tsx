@@ -81,7 +81,6 @@ const Cart: FunctionComponent<CartProps> = () => {
 			getCartItems()
 				.then((cartItems) => {
 					setItems(cartItems);
-					console.log(cartItems);
 					setLoading(false);
 				})
 				.catch((err) => {
@@ -109,7 +108,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 				<ul className='list-group'>
 					{items.length ? (
 						items.map((item, index) => (
-							<div key={index} className=''>
+							<div key={index} >
 								{item.products.map((product) => (
 									<li
 										key={product.product_name}
