@@ -103,7 +103,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</NavLink>
 						</li>
 					</Tooltip>
-
 					{auth && isAdmin && (
 						<Tooltip title='ניהול משתמשים' arrow>
 							<li className='nav-item'>
@@ -121,7 +120,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
-
 					<Box
 						onClick={handleMenuClick}
 						sx={{
@@ -183,36 +181,17 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							))}
 						</Menu>
 					</Box>
-					{auth && isUser ? (
-						<li className='nav-item'>
-							<NavLink
-								className={` ${
-									isActive(path.MyOrders) ? "text-danger fw-bold" : ""
-								} nav-link`}
-								aria-current='page'
-								to={path.MyOrders}
-							>
-								{t("links.orders")}
-							</NavLink>
-						</li>
-					) : (
-						auth &&
-						isAdmin && (
-							<li className='nav-item'>
-								<NavLink
-									className={` ${
-										isActive(path.AllTheOrders)
-											? "text-danger fw-bold"
-											: ""
-									} nav-link`}
-									aria-current='page'
-									to={path.AllTheOrders}
-								>
-									{t("links.orders")}
-								</NavLink>
-							</li>
-						)
-					)}
+					<li className='nav-item'>
+						<NavLink
+							className={` ${
+								isActive(path.AllTheOrders) ? "text-danger fw-bold" : ""
+							} nav-link`}
+							aria-current='page'
+							to={path.AllTheOrders}
+						>
+							{t("links.orders")}
+						</NavLink>
+					</li>
 					<li className='nav-item'>
 						<NavLink
 							className={`${

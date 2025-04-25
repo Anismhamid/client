@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../interfaces/Order";
-import {getAllOrders, patchStatus} from "../services/orders";
+import {getAllOrders, getUserOrders, patchStatus} from "../services/orders";
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../context/useUSer";
 import Loader from "../atoms/loader/Loader";
@@ -12,7 +12,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {InputBase, Paper, IconButton, CircularProgress} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {getStatusClass, getStatusText, handleOrderStatus} from "../helpers/orderStatus";
-import { showError } from "../atoms/Toast";
+import {showError} from "../atoms/Toast";
 
 interface AllTheOrdersProps {}
 /**
@@ -50,22 +50,45 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}, [allOrders, searchQuery]);
 
 	useEffect(() => {
-		getAllOrders()
-			.then((res) => {
-				setAllOrders(res.reverse());
+		if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
+			getAllOrders()
+				.then((res) => {
+					setAllOrders(res.reverse());
 
-				const initialStatuses: {[orderId: string]: string} = {};
-				res.forEach((order: {orderNumber: string | number; status: string}) => {
-					initialStatuses[order.orderNumber] = order.status;
+					const initialStatuses: {[orderId: string]: string} = {};
+					res.forEach(
+						(order: {orderNumber: string | number; status: string}) => {
+							initialStatuses[order.orderNumber] = order.status;
+						},
+					);
+					setOrderStatuses(initialStatuses);
+				})
+				.catch((error) => {
+					console.error("Failed to fetch orders:", error);
+				})
+				.finally(() => {
+					setLoading(false);
 				});
-				setOrderStatuses(initialStatuses);
-			})
-			.catch((error) => {
-				console.error("Failed to fetch orders:", error);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
+		} else {
+			getUserOrders(auth._id as string)
+				.then((res) => {
+					setAllOrders(res.reverse());
+
+					const initialStatuses: {[orderId: string]: string} = {};
+					res.forEach(
+						(order: {orderNumber: string | number; status: string}) => {
+							initialStatuses[order.orderNumber] = order.status;
+						},
+					);
+					setOrderStatuses(initialStatuses);
+				})
+				.catch((error) => {
+					console.error("Failed to fetch orders:", error);
+				})
+				.finally(() => {
+					setLoading(false);
+				});
+		}
 	}, [statusLoading]);
 
 	if (loading) {
@@ -73,7 +96,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}
 
 	return (
-		<main >
+		<main>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
 				<h1 className='text-center'>{t("links.orders")}</h1>
 				<Paper

@@ -147,7 +147,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			} else {
 				await postOrder(newOrder as Order);
 				setOrderDetails(newOrder as Order);
-				navigate(path.MyOrders);
+				navigate(path.AllTheOrders);
 				showInfo("ממתין לאישור");
 				setQuantity((prev) => prev - prev);
 			}
@@ -358,7 +358,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						setLoading(true);
 						await postOrder(orderToSend);
 						setOrderDetails(orderToSend);
-						navigate(path.MyOrders);
+						navigate(path.AllTheOrders);
 						showInfo("התשלום התקבל וההזמנה ממתינה לאישור");
 						setLoading(false);
 						setQuantity((prev) => prev - prev);

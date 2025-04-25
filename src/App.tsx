@@ -11,7 +11,6 @@ import Receipt from "./components/Receipt.tsx";
 import Checkout from "./components/Checkout";
 import Register from "./components/Register";
 import Spices from "./components/Spices.tsx";
-import Orders from "./components/Orders.tsx";
 import Bakery from "./components/Bakery.tsx";
 import Frozen from "./components/Frozen.tsx";
 import Snacks from "./components/Snacks.tsx";
@@ -180,7 +179,6 @@ function App() {
 					<Route path={path.Contact} element={<Contact />} />
 					<Route path={path.About} element={<About />} />
 					<Route path={path.Cart} element={<Cart />} />
-					<Route path={path.MyOrders} element={<Orders />} />
 					<Route path={path.OrderDetails} element={<OrederDetails />} />
 					<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 					<Route path={path.Receipt} element={<Receipt />} />
