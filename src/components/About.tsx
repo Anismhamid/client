@@ -21,8 +21,6 @@ const About: FunctionComponent<AboutProps> = () => {
 								עם מגוון רחב של מוצרים איכותיים.
 							</p>
 						</div>
-						
-
 						{/* lifestyle and services */}
 						<section className='about-section'>
 							<h3 className='my-4'>

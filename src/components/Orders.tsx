@@ -55,7 +55,7 @@ const Orders: FunctionComponent<OrdersProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container'>
 				<h1 className='text-center'>{t("links.orders")}</h1>
 				<div className='row'>

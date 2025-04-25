@@ -12,7 +12,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 	const {t} = useTranslation();
 	const diriction = handleRTL();
 	return (
-		<main className=' min-vh-100' dir={diriction}>
+		<main  dir={diriction}>
 			<div className='container'>
 				<h1 className='text-center display-1'>{t("pages.contact.title")}</h1>
 				<hr />

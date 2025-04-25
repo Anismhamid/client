@@ -12,6 +12,10 @@
   box-sizing: border-box;
 }
 
+main{
+  min-height: 90vh;
+}
+
 .MuiFormGroup-root {
   background: rgba(17, 25, 40, 0.8) !important;
   margin-bottom: 20px;

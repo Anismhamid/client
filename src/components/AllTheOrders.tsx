@@ -73,7 +73,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container bg-gradient rounded  text-center align-items-center'>
 				<h1 className='text-center'>{t("links.orders")}</h1>
 				<Paper

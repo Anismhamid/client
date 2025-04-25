@@ -10,7 +10,7 @@ interface VegentableProps {}
 const Vegentable: FunctionComponent<VegentableProps> = () => {
 	const {t} = useTranslation();
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container m-auto'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
 					{t("pages.vegetable.vegetableHeading")}

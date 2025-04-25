@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {ReceiptsType} from "../interfaces/Receipts";
-import {Card, Table, Spinner, Form} from "react-bootstrap";
+import {Card, Table, Form} from "react-bootstrap";
 import {getUserReceiptsById, getUsersReceipts} from "../services/Receipts";
 import html2canvas from "html2canvas";
 
@@ -19,7 +19,7 @@ interface ReceiptProps {}
  * @returns auth receipt and all receipt for admin users
  */
 const Receipt: FunctionComponent<ReceiptProps> = () => {
-	const {t, i18n} = useTranslation();
+	const {t} = useTranslation();
 	const [receipts, setReceipts] = useState<ReceiptsType[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [startDate, setStartDate] = useState("");
@@ -27,6 +27,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	const [productSearch, setProductSearch] = useState("");
 	const {decodedToken} = useToken();
 
+	// Generate to pdf file
 	const generatePDF = async (orderNumber: string) => {
 		const element = document.getElementById(`receipt-${orderNumber}`);
 		if (!element) return;
@@ -46,6 +47,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		}
 	};
 
+	// Custom search
 	const filteredOrders = useMemo(() => {
 		return receipts.filter((receipt) => {
 			const query = searchQuery.toLowerCase();
@@ -75,18 +77,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	}, [receipts, searchQuery, productSearch, startDate, endDate]);
 
 	useEffect(() => {
-		setTimeout(() => {
-			
-		
-		if (decodedToken && decodedToken.role === RoleType.Client) {
-			getUserReceiptsById(decodedToken._id)
-				.then((res) => {
-					setReceipts(res);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		} else if (decodedToken && decodedToken.role === RoleType.Admin) {
+		if (
+			(decodedToken && decodedToken.role === RoleType.Admin) ||
+			(decodedToken && decodedToken.role === RoleType.Moderator)
+		) {
 			getUsersReceipts()
 				.then((res) => {
 					setReceipts(res);
@@ -94,13 +88,22 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				.catch((err) => {
 					console.log(err);
 				});
-		}}, 5000);
+		} else {
+			if (decodedToken)
+				getUserReceiptsById(decodedToken._id)
+					.then((res) => {
+						setReceipts(res);
+					})
+					.catch((err) => {
+						console.log(err);
+					});
+		}
 	}, [decodedToken]);
 
 	if (!receipts) {
 		return (
 			<main className='text-center mt-5 min-vh-50'>
-				<Loader />
+				<p>לא נמצאו קבלות</p>
 			</main>
 		);
 	}
@@ -109,18 +112,18 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 
 	if (receipts.length === 0) {
 		return (
-			<main className=' min-vh-100' dir={diriction}>
-				<p>לא נמצאו קבלות</p>
+			<main className='' dir={diriction}>
+				<Loader />
 			</main>
 		);
 	}
 
 	return (
-		<main className=' min-vh-100' dir={diriction}>
+		<main dir={diriction}>
 			{/* חיפוש מתקדם  */}
 			<div className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
-					<h3>🔎 {t("pages.receipts.receiptSearchTitle")}</h3>
+					<h3>{t("pages.receipts.receiptSearchTitle")}</h3>
 					<div className='row border p-3 border-primary rounded'>
 						<div className='col-6'>
 							<TextField

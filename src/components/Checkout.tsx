@@ -14,6 +14,7 @@ import {useUser} from "../context/useUSer";
 import {Button, CircularProgress} from "@mui/material";
 import PaymentModal from "../atoms/pymentModal/PymentModal";
 import {useCartItems} from "../context/useCart";
+import {getBusinessInfo} from "../services/businessInfo";
 
 interface CheckoutProps {}
 /**
@@ -25,10 +26,11 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const navigate = useNavigate();
 	const [cartItems, setCartItems] = useState<CartType[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [orderDetails, setOrderDetails] = useState<Order | null>(null);
+	const [, setOrderDetails] = useState<Order | null>(null);
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 	const formRef = useRef<HTMLFormElement | null>(null);
+	const [deliveryFee, setDeliveryFee] = useState<number>(0);
 
 	const onShowPymentModal = () => setShowPymentModal(true);
 	const hidePymentModal = () => setShowPymentModal(false);
@@ -73,13 +75,19 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 	useEffect(() => {
 		if (auth) {
-			getCartItems()
-				.then((items) => {
-					setCartItems(items);
-					setLoading(false);
+			getBusinessInfo()
+				.then((res) => {
+					setDeliveryFee(res.deliveryFee);
 				})
-				.catch((err) => {
-					console.log(err);
+				.then(() => {
+					getCartItems()
+						.then((items) => {
+							setCartItems(items);
+							setLoading(false);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
 				});
 		}
 	}, [auth]);
@@ -94,8 +102,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			)
 		);
 	}, 0);
-
-	const deliveryFee = 25;
 
 	const discountedAmount = totalAmount - (totalAmount * formik.values.discount) / 100;
 

@@ -98,7 +98,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container'>
 				<div className=' text-center m-auto'>
 					<Button variant='contained' color='primary' onClick={scrollToContent}>

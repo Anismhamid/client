@@ -53,7 +53,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		return <Loader />;
 	}
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container'>
 				<h1 className='text-center mb-4 display-5 fw-bold'>
 					{t("pages.discountsAndOffers.discountsAndOffersHeading")}

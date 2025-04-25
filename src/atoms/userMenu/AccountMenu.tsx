@@ -9,10 +9,11 @@ import Tooltip from "@mui/material/Tooltip";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {Fragment, FunctionComponent, useState} from "react";
 import {useUser} from "../../context/useUSer";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import RoleType from "../../interfaces/UserType";
 
 interface AccountMenuProps {
 	logout: Function;
@@ -104,14 +105,18 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					/>
 					{t("accountMenu.profile")}
 				</MenuItem>
-
 				<Divider />
-				<MenuItem onClick={handleClose}>
-					<ListItemIcon sx={{color: "ButtonShadow"}}>
-						{fontAwesomeIcon.setting}
-					</ListItemIcon>
-					<Typography ml={1}>{t("accountMenu.settings")}</Typography>
-				</MenuItem>
+
+				{auth && auth.role === RoleType.Admin && (
+					<Link className=' text-decoration-none' to={path.AdminSettings}>
+						<MenuItem onClick={handleClose}>
+							<ListItemIcon sx={{color: "ButtonShadow"}}>
+								{fontAwesomeIcon.setting}
+							</ListItemIcon>
+							<Typography ml={1}>{t("accountMenu.settings")}</Typography>
+						</MenuItem>
+					</Link>
+				)}
 
 				<Divider sx={{borderColor: "#4FC3F7", my: 0.5}} />
 

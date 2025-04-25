@@ -19,6 +19,7 @@ export enum path {
 	Register = "/register",
 	UsersManagement = "/usersManagement",
 	Fruits = "/fruits",
+	AdminSettings = "/adminSettings",
 	Vegetable = "/vegetable",
 	AllTheOrders = "/all-orders",
 	PrivacyAndPolicy = "/Privacy-and-policy",

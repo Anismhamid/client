@@ -15,7 +15,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 					{/* Store Info Section */}
 					<div className='col-md-4 mb-3'>
 						<h3>שוק הבינה</h3>
-						<p>פירות וירקות טריים ואורגניים נשלחים אליכם עד דלת הבית</p>
+						<p>פירות וירקות ועוד נשלחים אליכם עד דלת הבית</p>
 						<hr />
 						<p>
 							צור איתנו קשר:

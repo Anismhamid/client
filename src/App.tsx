@@ -52,6 +52,7 @@ import TermOfUse from "./components/TermOfUse.tsx";
 import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";
 import NavBar from "./components/NavBar.tsx";
+import AdminSettings from "./components/AdminSettengs.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -186,6 +187,7 @@ function App() {
 					<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 					<Route path={path.TermOfUse} element={<TermOfUse />} />
 					<Route path={path.CompleteProfile} element={<CompleteProfile />} />
+					<Route path={path.AdminSettings} element={<AdminSettings />} />
 					<Route path={productsPathes.Fruits} element={<Fruits />} />
 					<Route path={productsPathes.Vegetable} element={<Vegetable />} />
 					<Route path={productsPathes.fish} element={<Fish />} />

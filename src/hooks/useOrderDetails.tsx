@@ -5,16 +5,14 @@ import { Order } from "../interfaces/Order";
 
 // Custom Hook to Fetch Order Details
 const useOrderDetails = (orderNumber: string) => {
-	const [orderItems, setCartItems] = useState<Order | null>(null);
+	const [orderItems, setOrderItems] = useState<Order | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 
 	useEffect(() => {
 		getOrderByOrderNumber(orderNumber)
 			.then((data) => {
-				setCartItems(data);
-				console.log(data);
-				
+				setOrderItems(data);
 			})
 			.catch((err) => {
 				setError("Failed to load order details. Please try again later.");

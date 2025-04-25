@@ -10,7 +10,7 @@ interface BakeryProps {}
 const Bakery: FunctionComponent<BakeryProps> = () => {
 	const {t} = useTranslation();
 	return (
-		<main className=' min-vh-100'>
+		<main >
 			<div className='container'>
 				<h1 className='text-center mb-4 rounded display-6 fw-bold'>
 					{t("pages.bakery.bakeryHeading")}
