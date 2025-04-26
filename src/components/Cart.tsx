@@ -92,7 +92,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 
 	const totalAmount = calculateTotalAmount(items);
 
-	if (!loading) {
+	if (loading) {
 		return <Loader />;
 	}
 
