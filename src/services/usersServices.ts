@@ -31,7 +31,9 @@ interface GoogleJwtPayload {
  */
 export const registerNewUser = async (newUserData: UserRegister) => {
 	try {
-		const response = await axios.post(api, newUserData);
+		const response = await axios.post(api, newUserData, {
+			headers: {"Content-Type": "application/json"},
+		});
 		showSuccess("נחמד, נרשמת בהצלחה!. עכשיו אתה יכול להתחבר");
 		return response.data;
 	} catch (error) {
@@ -73,12 +75,14 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
 			address: {
 				city: extraData ? extraData.city : "",
 				street: extraData ? extraData.street : "",
-				houseNumber:extraData ? extraData.houseNumber : "",
+				houseNumber: extraData ? extraData.houseNumber : "",
 			},
 		};
 
 		const res = await axios.post(`${api}/google`, userData, {
 			headers: {
+				"Content-Type": "application/json",
+				withCredentials: true,
 				Authorization: localStorage.getItem("token"),
 			},
 		});
@@ -106,7 +110,7 @@ export const verifyGoogleToken = async (token: string) => {
 export const verifyGoogleUser = async (googleId: string) => {
 	try {
 		const res = await axios.get(`${api}/google/verify/${googleId}`);
-		return res.data.exists; // سيرفر يرجّع true أو false
+		return res.data.exists;
 	} catch (err) {
 		console.error("Error verifying Google user", err);
 		return false;
@@ -129,6 +133,7 @@ export const compleateProfileData = async (userId: string, values: any) => {
 		};
 		await axios.patch(`${api}/compleate/${userId}`, payload, {
 			headers: {
+				"Content-Type": "application/json",
 				Authorization: token,
 			},
 		});
@@ -144,7 +149,9 @@ export const compleateProfileData = async (userId: string, values: any) => {
  */
 export const loginUser = async (userData: UserLogin) => {
 	try {
-		const response = await axios.post(`${api}/login`, userData);
+		const response = await axios.post(`${api}/login`, userData, {
+			headers: {"Content-Type": "application/json"},
+		});
 		return response.data;
 	} catch (error: any) {
 		if (error.request.response === "Too Many Requests") {
@@ -216,7 +223,10 @@ export const patchUserRole = async (userId: string, newRole: string) => {
 			`${api}/role/${userId}`,
 			{role: newRole},
 			{
-				headers: {Authorization: localStorage.getItem("token")},
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.getItem("token"),
+				},
 			},
 		);
 		return response.data;

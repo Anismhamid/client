@@ -31,7 +31,10 @@ export const addToCart = async (
 		};
 
 		const response = await axios.post(`${api}/carts`, product, {
-			headers: {Authorization: localStorage.getItem("token")},
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.getItem("token"),
+			},
 		});
 		return response.data;
 	} catch (error) {
@@ -67,6 +70,7 @@ export const DeleteCartItems = async (product_name: string) => {
 	try {
 		const response = await axios.delete(`${api}/carts/${product_name}`, {
 			headers: {
+				"Content-Type": "application/json",
 				Authorization: localStorage.getItem("token"),
 			},
 		});

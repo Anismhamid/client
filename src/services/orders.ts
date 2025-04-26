@@ -64,10 +64,12 @@ export const postOrder = async (order: Order) => {
 	try {
 		const orders = await axios.post(
 			api,
-			{...order,
-			},
+			{...order},
 			{
-				headers: {Authorization: localStorage.getItem("token")},
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.getItem("token"),
+				},
 			},
 		);
 		return orders.data;
@@ -88,7 +90,12 @@ export const patchStatus = async (status: string, orderNumber: string) => {
 		const patchStatus = await axios.patch(
 			`${api}/${orderNumber}`,
 			{status},
-			{headers: {Authorization: localStorage.getItem("token")}},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: localStorage.getItem("token"),
+				},
+			},
 		);
 		return patchStatus.data;
 	} catch (error) {
