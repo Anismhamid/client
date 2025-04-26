@@ -1,6 +1,7 @@
 import {FunctionComponent} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {navbarCategoryLinks} from "../helpers/navCategoryies";
+import { useTranslation } from "react-i18next";
 
 interface FooterProps {}
 /**
@@ -8,12 +9,14 @@ interface FooterProps {}
  * @returns footer
  */
 const Footer: FunctionComponent<FooterProps> = () => {
+	const {t}= useTranslation()
+
 	return (
 		<footer className='text-white pt-4 pb-2 bottom-0 start-0 end-0'>
 			<div className='container py-5'>
 				<div className='row'>
 					{/* Store Info Section */}
-					<div className='col-md-4 mb-3'>
+					<div className='col-md-5 mb-3'>
 						<h3>שוק הבינה</h3>
 						<p>פירות וירקות ועוד נשלחים אליכם עד דלת הבית</p>
 						<hr />
@@ -39,7 +42,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 					</div>
 
 					{/* Quick Links Section */}
-					<div className='col-md-4 mb-3'>
+					<div className='col-4 mb-3'>
 						<h5>קישורים מהירים</h5>
 						<nav className='flex-column'>
 							<ul className='list-unstyled'>
@@ -49,7 +52,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 											to={pathes.path}
 											className='text-primaty text-decoration-none'
 										>
-											{pathes.labelKey}
+											{t(`${pathes.labelKey}`)}
 										</NavLink>
 									</li>
 								))}
@@ -58,7 +61,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 					</div>
 
 					{/* Social Media Links Section */}
-					<div className='col-md-4 mb-3'>
+					<div className='col-md-3 mb-3'>
 						<h5>עקוב אחרינו</h5>
 						<nav className='gap-3'>
 							<ul className='list-unstyled'>

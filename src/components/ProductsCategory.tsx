@@ -18,6 +18,8 @@ import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 import Seo from "../atoms/Seo/Seo";
 import {productsPathes} from "../routes/routes";
 import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import {getFaviconForCategory} from "../FontAwesome/tapIcons";
+import { useTranslation } from "react-i18next";
 
 interface ProductCategoryProps {
 	category: string;
@@ -52,10 +54,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	// Login modal to show whene user adding a product to cart and (not loggedIn)
 	const OnShowLoginModal = () => setShowLoginModal(true);
 	const OnHideLoginModal = () => setShowLoginModal(false);
+const {t}= useTranslation()
 
 	// Update product
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
+
+	const icons = getFaviconForCategory(category);
 
 	const handleAdd = (
 		product_name: string,
@@ -138,39 +143,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 		return <Loader />;
 	}
 
-	const getFaviconForCategory = (category: string) => {
-		switch (category) {
-			case "fruits":
-				return "../src/assets/icons/fruits.svg";
-			case "vegetable":
-				return "../src/assets/icons/vegetable.svg";
-			case "fish":
-				return "../src/assets/icons/fish.svg";
-			case "dairy":
-				return "../src/assets/icons/dairy.svg";
-			case "meat":
-				return "../src/assets/icons/meat.svg";
-			case "spices":
-				return "../src/assets/icons/spices.svg";
-			case "bakery":
-				return "../src/assets/icons/bakery.svg";
-			case "beverages":
-				return "../src/assets/icons/beverages.svg";
-			case "frozen":
-				return "../src/assets/icons/frozen.svg";
-			case "snacks":
-				return "../src/assets/icons/snacks.svg";
-			default:
-				return "";
-		}
-	};
-	const icons = getFaviconForCategory(category);
-	console.log(icons);
-
 	return (
 		<>
 			<Seo
-				title={`קטגוריית ${category} | שוק הפינה`}
+				title={`קטגוריית ${t("category")} | שוק הפינה`}
 				description={`צפו במגוון ${category} טריים ואיכותיים אצלנו באתר!`}
 				image={icons}
 				type='category'

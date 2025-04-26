@@ -52,6 +52,8 @@ import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";
 import NavBar from "./components/NavBar.tsx";
 import AdminSettings from "./components/AdminSettengs.tsx";
+import { Order } from "./interfaces/Order.ts";
+import { UserRegister } from "./interfaces/User.ts";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -65,7 +67,7 @@ function App() {
 			transports: ["websocket"],
 		});
 
-		socket.on("new order", (newOrder) => {
+		socket.on("new order", (newOrder:Order) => {
 			const orderNum = newOrder.orderNumber;
 			console.log("New order received in real-time:", orderNum);
 
@@ -78,13 +80,13 @@ function App() {
 			}
 		});
 
-		socket.on("user:registered", (user) => {
+		socket.on("user:registered", (user:UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
 				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
 			}
 		});
 
-		socket.on("user:newUserLoggedIn", (user) => {
+		socket.on("user:newUserLoggedIn", (user: UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
 				showInfo(
 					user.role === RoleType.Client
