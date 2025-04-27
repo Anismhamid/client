@@ -32,7 +32,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [products, setProducts] = useState<Products[]>([]);
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
-	const [showLoginModal, setShowLoginModal] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
