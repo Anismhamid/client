@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../interfaces/Order";
-import {getAllOrders, getUserOrders, patchStatus} from "../services/orders";
+import {getAllOrders, getUserOrders} from "../services/orders";
 import {useNavigate} from "react-router-dom";
 import {useUser} from "../context/useUSer";
 import Loader from "../atoms/loader/Loader";
@@ -70,26 +70,28 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					setLoading(false);
 				});
 		} else {
-			getUserOrders(auth._id as string)
-				.then((res) => {
-					setAllOrders(res.reverse());
+			if (auth) {
+				getUserOrders(auth._id as string)
+					.then((res) => {
+						setAllOrders(res.reverse());
 
-					const initialStatuses: {[orderId: string]: string} = {};
-					res.forEach(
-						(order: {orderNumber: string | number; status: string}) => {
-							initialStatuses[order.orderNumber] = order.status;
-						},
-					);
-					setOrderStatuses(initialStatuses);
-				})
-				.catch((error) => {
-					console.error("Failed to fetch orders:", error);
-				})
-				.finally(() => {
-					setLoading(false);
-				});
+						const initialStatuses: {[orderId: string]: string} = {};
+						res.forEach(
+							(order: {orderNumber: string | number; status: string}) => {
+								initialStatuses[order.orderNumber] = order.status;
+							},
+						);
+						setOrderStatuses(initialStatuses);
+					})
+					.catch((error) => {
+						console.error("Failed to fetch orders:", error);
+					})
+					.finally(() => {
+						setLoading(false);
+					});
+			}
 		}
-	}, [statusLoading]);
+	}, [statusLoading,auth]);
 
 	if (loading) {
 		return <Loader />;

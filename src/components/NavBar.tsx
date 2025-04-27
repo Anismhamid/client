@@ -80,7 +80,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	const {t} = useTranslation();
 	return (
 		<>
-			<AppBar position='sticky' className='navbar-glass m-auto z-2'>
+			<AppBar position='relative' className='navbar-glass m-auto z-2'>
 				<Box
 					sx={{
 						display: "flex",

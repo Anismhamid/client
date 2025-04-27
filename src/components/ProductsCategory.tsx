@@ -2,7 +2,6 @@ import {FunctionComponent, useEffect, useState} from "react";
 import {deleteProduct, getProductsByCategory} from "../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
-import ForAllModal from "../atoms/LoginModal";
 import {useUser} from "../context/useUSer";
 import Loader from "../atoms/loader/Loader";
 import UpdateProductModal from "../atoms/UpdateProductModal";
@@ -16,10 +15,10 @@ import Fab from "@mui/material/Fab";
 import {Button, CircularProgress} from "@mui/material";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
 import Seo from "../atoms/Seo/Seo";
-import {productsPathes} from "../routes/routes";
-import {fontAwesomeIcon} from "../FontAwesome/Icons";
 import {getFaviconForCategory} from "../FontAwesome/tapIcons";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {useNavigate} from "react-router-dom";
+import {path} from "../routes/routes";
 
 interface ProductCategoryProps {
 	category: string;
@@ -44,6 +43,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const {setQuantity} = useCartItems();
+	const navigate = useNavigate();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -51,10 +51,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 	};
 	const closeDeleteModal = () => setShowDeleteModal(false);
 
-	// Login modal to show whene user adding a product to cart and (not loggedIn)
-	const OnShowLoginModal = () => setShowLoginModal(true);
-	const OnHideLoginModal = () => setShowLoginModal(false);
-const {t}= useTranslation()
+	const {t} = useTranslation();
 
 	// Update product
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
@@ -73,7 +70,7 @@ const {t}= useTranslation()
 		const productQuantity = quantity[product_name];
 
 		if (!isLoggedIn) {
-			OnShowLoginModal();
+			navigate(path.Login);
 		} else {
 			setLoadingAddToCart(product_name);
 			handleAddToCart(
@@ -411,8 +408,6 @@ const {t}= useTranslation()
 					title={"מחיקת מוצר"}
 					description={""}
 				/>
-
-				<ForAllModal show={showLoginModal} onHide={OnHideLoginModal} />
 			</main>
 		</>
 	);

@@ -69,7 +69,6 @@ function App() {
 
 		socket.on("new order", (newOrder:Order) => {
 			const orderNum = newOrder.orderNumber;
-			console.log("New order received in real-time:", orderNum);
 
 			if (auth.role === RoleType.Admin || auth.role == RoleType.Moderator) {
 				showNewOrderToast({

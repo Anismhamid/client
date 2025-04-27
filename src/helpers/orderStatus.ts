@@ -19,7 +19,6 @@ export const handleOrderStatus = async (
 	setOrderStatuses: Function,
 	setStatusLoading: Function,
 ) => {
-	setStatusLoading((prev: any) => ({...prev, [orderId]: true})); // loading state for specific order
 	try {
 		await patchStatus(status, orderId);
 		setOrderStatuses((prevStatuses: any) => ({
@@ -29,26 +28,23 @@ export const handleOrderStatus = async (
 	} catch (error) {
 		console.error("Failed to update order status:", error);
 	} finally {
-		setTimeout(() => {
-			setStatusLoading((prev: any) => ({...prev, [orderId]: false}));
-		}, 1000);
+		setStatusLoading((prev: any) => ({...prev, [orderId]: false}));
 	}
 };
 
-
-export	const getStatusClass = (status: string) => {
-		switch (status) {
-			case "Pending":
-				return "text-danger";
-			case "Shipped":
-				return "text-success";
-			case "Delivered":
-				return "text-info";
-			case "Preparing":
-				return "text-primary";
-			case "Cancelled":
-				return "text-danger";
-			default:
-				return "";
-		}
-	};
+export const getStatusClass = (status: string) => {
+	switch (status) {
+		case "Pending":
+			return "text-danger";
+		case "Shipped":
+			return "text-success";
+		case "Delivered":
+			return "text-info";
+		case "Preparing":
+			return "text-primary";
+		case "Cancelled":
+			return "text-danger";
+		default:
+			return "";
+	}
+};

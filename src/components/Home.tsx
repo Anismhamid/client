@@ -6,7 +6,6 @@ import {deleteProduct, getAllProducts} from "../services/productsServices";
 import {Products} from "../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../helpers/fruitesFunctions";
 import Loader from "../atoms/loader/Loader";
-import ForAllModal from "../atoms/LoginModal";
 import {
 	SpeedDial,
 	SpeedDialIcon,
@@ -26,6 +25,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from "@mui/icons-material/Close";
 import UpdateProductModal from "../atoms/UpdateProductModal";
 import AlertDialogs from "../atoms/alertDialod/AlertDialog";
+import {useNavigate} from "react-router-dom";
+import {path} from "../routes/routes";
 
 interface HomeProps {}
 
@@ -37,7 +38,6 @@ interface HomeProps {}
 const Home: FunctionComponent<HomeProps> = () => {
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
-	const [onShowModal, setOnShowModal] = useState<boolean>(false);
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
@@ -50,6 +50,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const navigate = useNavigate();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -59,9 +60,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
-
-	const OnShowCartModal = () => setOnShowModal(true);
-	const OnHideCartModal = () => setOnShowModal(false);
 
 	const showAddProductModal = () => setOnShowAddModal(true);
 	const hideAddProductModal = () => setOnShowAddModal(false);
@@ -111,7 +109,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	) => {
 		const productQuantity = quantity[product_name]; // Access the quantity of the specific product
 		if (!isLoggedIn) {
-			OnShowCartModal();
+			navigate(path.Login);
 		} else {
 			setLoadingAddToCart(product_name);
 			await handleAddToCart(
@@ -129,7 +127,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const actions = [
 		{
-			icon: fontAwesomeIcon.CartInoc,
+			icon: fontAwesomeIcon.cartInoc,
 			name: "מוצר חדש",
 			addClick: () => showAddProductModal(),
 		},
@@ -493,7 +491,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 				description={`לא ניתן לבטל פעולה זו. פעולה זו תמחק ותסיר ה (${productToDelete}) לצמיתות את הנתונים שלך מהשרתים שלנו`}
 				handleDelete={() => handleDelete(productToDelete)}
 			/>
-			<ForAllModal show={onShowModal} onHide={OnHideCartModal} />
 		</main>
 	);
 };

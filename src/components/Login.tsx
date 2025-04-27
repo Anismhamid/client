@@ -14,13 +14,7 @@ import {Button, TextField} from "@mui/material";
 import UserInfoModal from "../atoms/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
-
-interface DecodedGooglePayload {
-	sub: string;
-	email?: string;
-	name?: string;
-	picture?: string;
-}
+import { DecodedGooglePayload } from "../interfaces/googleValues";
 
 interface LoginProps {}
 /**
@@ -113,7 +107,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 
 	useEffect(() => {
 		if (localStorage.token) {
-			navigate(path.Home);
+			navigate(-1);
 		}
 	}, [navigate]);
 
@@ -151,17 +145,21 @@ const Login: FunctionComponent<LoginProps> = () => {
 						fullWidth
 						className='my-2'
 						variant='outlined'
-						
 					/>
 
 					<div className=''>
-					<Button color="primary"  variant="contained" type='submit' className=' w-100 my-3  rounded-5 '>
-						כניסה
-					</Button>
+						<Button
+							color='primary'
+							variant='contained'
+							type='submit'
+							className=' w-100 my-3  rounded-5 '
+						>
+							כניסה
+						</Button>
 						<GoogleLogin
-							ux_mode="popup"
-							shape="circle"
-							theme="filled_blue"
+							ux_mode='popup'
+							shape='circle'
+							theme='filled_blue'
 							onSuccess={handleGoogleLoginSuccess}
 							onError={() => showError("Google login failed")}
 						/>
