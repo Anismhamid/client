@@ -5,6 +5,11 @@
 
 #root {
   font-family: "IBM Plex Sans Hebrew", sans-serif;
+  background: url('./assets/bbblurry.svg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 * {
@@ -13,9 +18,12 @@
   box-sizing: border-box;
 }
 
-main{
+
+main {
   min-height: 90vh;
+  background: transparent;
 }
+
 .swiper-scrollbar {
   height: 10px !important;
   background-color: rgba(0, 0, 0, 0.5) !important;
@@ -47,8 +55,6 @@ main{
   -ms-transition: all 0.3s ease;
   -o-transition: all 0.3s ease;
 }
-
-
 
 .modal-content {
   background: rgba(221, 235, 255, 0.671);
@@ -91,21 +97,20 @@ main{
   background-color: rgba(255, 255, 255, 0.07);
 }
 
-
 .MuiBadge-badge {
   background-color: #4FC3F7 !important;
   color: #1A1E22;
   font-weight: bold;
 }
 
-
 .card.h-100.shadow-sm.border-0 img {
-    object-fit: cover;
-    transition: 0.3s;
-    -webkit-transition: 0.3s;
-    -moz-transition: 0.3s;
-    -ms-transition: 0.3s;
-    -o-transition: 0.3s;
+  object-fit: cover;
+  transition: 0.3s;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -ms-transition: 0.3s;
+  -o-transition: 0.3s;
+
 }
 
 .login {
@@ -132,8 +137,6 @@ main{
     -o-border-radius: 20px;
   }
 }
-
-
 
 .link-success:hover {
   transform: scale(1.2);

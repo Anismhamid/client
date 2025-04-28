@@ -147,9 +147,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					})}
 				</Swiper>
 			</div>
-
-			<p className='display-6 fw-bold mt-5 mb-0 w-100'>כל המוצרים שלנו</p>
-			<hr className='w-100' />
 		</main>
 	);
 };

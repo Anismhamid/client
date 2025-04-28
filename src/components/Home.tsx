@@ -157,7 +157,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			{((auth && isAdmin) || (auth && isModerator)) && (
 				<SpeedDial
 					ariaLabel='SpeedDial basic example'
-					sx={{position: "fixed", bottom: 90, right: 16}}
+					sx={{position: "fixed", bottom: 16, right: 16}}
 					icon={<SpeedDialIcon />}
 				>
 					{actions.map((action) => (
@@ -463,7 +463,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 			<div className='container'>
 				{/* Customer support section */}
-				<section className='my-5'>
+				<section className='p-5'>
 					<h2 className='text-center mb-4'>אנו כאן לשירותכם!</h2>
 					<p className='text-center mb-4'>
 						אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע הזמנה, אל תהססו
@@ -471,6 +471,15 @@ const Home: FunctionComponent<HomeProps> = () => {
 						אנחנו כאן כדי להבטיח שתהנו מכל רכישה ושזה יהיה תהליך חלק ונעים
 						עבורכם.
 					</p>
+					<div className='m-auto text-center'>
+						<Button
+							onClick={() => navigate(path.Contact)}
+							variant='contained'
+						>
+							{" "}
+							צור קשר
+						</Button>
+					</div>
 				</section>
 			</div>
 

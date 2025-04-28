@@ -43,7 +43,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	};
 
 	const navigate = useNavigate();
-	
+
 	const formik = useFormik<UserRegister>({
 		initialValues: {
 			name: {
@@ -119,10 +119,29 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			}),
 			terms: yup.boolean().oneOf([true], "יש לאשר את תנאי השימוש"),
 		}),
-		onSubmit: async (values) => {
+		onSubmit: async (user: UserRegister) => {
+			const dataToSend = {
+				name: {
+					first: user.name.first,
+					last: user.name.last,
+				},
+				phone: {phone_1: user.phone.phone_1, phone_2: user.phone.phone_2},
+				address: {
+					city: user.address.city,
+					street: user.address.street,
+					houseNumber: user.address.houseNumber,
+				},
+				email: user.email,
+				password: user.password,
+				gender: user.gender,
+				role: user.role,
+				image: {url: user.image.url, alt: user.image.alt},
+				terms: user.terms,
+			};
+
 			try {
 				setIsLoading(true);
-				await registerNewUser(values);
+				await registerNewUser(dataToSend);
 				navigate(path.Login);
 				setIsLoading(false);
 			} catch (error) {
@@ -132,19 +151,24 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	});
 
 	return (
-		<main className='min-vh-100'>
+		<main>
 			<div className='container pt-5'>
 				<form
-					style={{maxWidth: "800px", margin: "auto"}}
+					style={{
+						maxWidth: "800px",
+						margin: "auto",
+						backdropFilter: "blur(20px)",
+					}}
 					autoComplete='off'
+					className='border p-3 mb-5 rounded'
 					noValidate
 					onSubmit={formik.handleSubmit}
 				>
-					<h6 className='display-6 text-center'>הרשמה</h6>
+					<h6 className='display-6 text-center fw-bold'>הרשמה</h6>
 
 					{/* first - last name  */}
 					<div className='row row-cols-2'>
-						<div className=''>
+						<div>
 							<TextField
 								autoFocus
 								label='שם'
@@ -165,7 +189,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								variant='outlined'
 							/>
 						</div>
-						<div className=''>
+						<div>
 							<TextField
 								label='שם משפחה'
 								name='name.last'
@@ -223,8 +247,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					</div>
 
 					{/* email password */}
-					<hr className='text-light' />
-					<div className='row row-cols-3'>
+					<div className='row row-cols-2'>
 						<div>
 							<TextField
 								label='דו"אל'
@@ -330,7 +353,6 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					<hr className=' text-light' />
 
 					<h6 className='text-primary mb-2 text-center'>(אופציונלי)</h6>
-
 					<div className='row row-cols-2'>
 						<div>
 							<TextField
@@ -453,7 +475,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					</div>
 					<div className='mt-5'>
 						<span className='fw-bold me-3'>יש לך חשבון ?</span>
-						<Link to={path.Login}>התחבר כאן</Link>
+						<Button variant='contained' onClick={() => navigate(path.Login)}>
+							התחבר כאן
+						</Button>
 					</div>
 				</form>
 			</div>

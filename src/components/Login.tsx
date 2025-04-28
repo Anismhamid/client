@@ -14,7 +14,7 @@ import {Button, TextField} from "@mui/material";
 import UserInfoModal from "../atoms/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
-import { DecodedGooglePayload } from "../interfaces/googleValues";
+import {DecodedGooglePayload} from "../interfaces/googleValues";
 
 interface LoginProps {}
 /**
@@ -164,9 +164,14 @@ const Login: FunctionComponent<LoginProps> = () => {
 							onError={() => showError("Google login failed")}
 						/>
 					</div>
-					<div className='mt-3'>
-						<span className=' fw-bold me-1'>עדיין אין לך חשבון ?</span>
-						<Link to={path.Register}>לחץ להרשמה</Link>
+					<div className='m-3 text-center my-3'>
+						<span className='fw-bold me-2'>עדיין אין לך חשבון ?</span>
+						<Button
+							variant='contained'
+							onClick={() => navigate(path.Register)}
+						>
+							לחץ להרשמה
+						</Button>
 					</div>
 					<div className=' my-3 d-flex justify-content-center gap-3'>
 						<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
