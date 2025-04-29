@@ -9,7 +9,17 @@
 		"bakery": "מאפים",
 		"beverages": "משקאות",
 		"forzen": "מוצרים קפוא",
-		"snacks": "חטיפים"
+		"snacks": "חטיפים",
+		"baby": "מוצרי תינוקות",
+		"cleaning": "מוצרי ניקוי",
+		"pastaAndRice": "פסטה ואורז",
+		"house": "מוצרי בית",
+		"alcohol": "משקאות אלכוהוליים",
+		"health": "מוצרי בריאות"
+	},
+	"seo": {
+		"categoryTitle": "קטגוריית {{category}} | שוק הפינה",
+		"categoryDescription": "צפו במגוון {{category}} טריים ואיכותיים אצלנו באתר!"
 	},
 	"links": {
 		"home": "בית",
@@ -76,6 +86,30 @@
 		"spices": {
 			"spicesHeading": "התבלינים שלנו - טבעיים, איכותיים ומגוונים!",
 			"spicesDescription": "כאן תוכלו למצוא מגוון רחב של תבלינים טבעיים, שנבחרו בקפידה מהספקיםהמקומיים שלנו. אנו מבטיחים איכות גבוהה ושירות מצוין כדי שתהנו מכלתבלין בנוחות ובקלות."
+		},
+		"baby": {
+			"babyHeading": "מוצרי תינוקות",
+			"babyDescription": "גלה את המוצרים והפריטים הטובים ביותר לטיפול ולדאגה לקטנטנים שלך."
+		},
+		"cleaning": {
+			"cleaningHeading": "מוצרי ניקוי",
+			"cleaningDescription": "כל מה שצריך כדי לנקות ולחטא את הבית בקלות וביעילות."
+		},
+		"pastaAndRice": {
+			"pastaAndRiceHeading": "פסטה ואורז",
+			"pastaAndRiceDescription": "מבחר רחב של סוגי פסטה ואורז בטעמים מגוונים."
+		},
+		"house": {
+			"houseHeading": "מוצרי בית",
+			"houseDescription": "כל מה שהבית שלך צריך - כלים, עיצוב ומוצרים בסיסיים."
+		},
+		"alcohol": {
+			"alcoholHeading": "משקאות אלכוהוליים",
+			"alcoholDescription": "מבחר יוקרתי של משקאות אלכוהוליים לאירועים מיוחדים."
+		},
+		"health": {
+			"healthHeading": "מוצרי בריאות",
+			"healthDescription": "חזק את הבריאות שלך עם תוספי תזונה, ויטמינים ומוצרים טבעיים."
 		},
 		"receipts": {
 			"receiptSearchTitle": "חיפוש מתקדם",

@@ -1,11 +1,16 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faAppleWhole,
+	faBaby,
 	faBars,
 	faBottleWater,
+	faBowlFood,
 	faBoxOpen,
+	faBroom,
 	faCarrot,
 	faCartShopping,
+	faChair,
+	faChampagneGlasses,
 	faChevronCircleRight,
 	faCog,
 	faContactCard,
@@ -14,6 +19,7 @@ import {
 	faDrumstickBite,
 	faEdit,
 	faFishFins,
+	faHeartPulse,
 	faHome,
 	faIceCream,
 	faInfoCircle,
@@ -30,6 +36,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export const fontAwesomeIcon = {
+	cleaning: <FontAwesomeIcon icon={faBroom} />,
+	pastaRice: <FontAwesomeIcon icon={faBowlFood} />,
+	house: <FontAwesomeIcon icon={faChair} />,
+	health: <FontAwesomeIcon icon={faHeartPulse} />,
+	alcohol: <FontAwesomeIcon icon={faChampagneGlasses} />,
+	baby: <FontAwesomeIcon icon={faBaby} />,
 	cartInoc: <FontAwesomeIcon icon={faCartShopping} />,
 	userGear: <FontAwesomeIcon icon={faUserGear} />,
 	fruit: <FontAwesomeIcon icon={faAppleWhole} />,

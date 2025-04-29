@@ -52,4 +52,34 @@ export const navbarCategoryLinks = [
 		path: productsPathes.snacks,
 		icon: fontAwesomeIcon.snacks,
 	},
+	{
+		labelKey: "categories.baby",
+		path: productsPathes.baby,
+		icon: fontAwesomeIcon.baby,
+	},
+	{
+		labelKey: "categories.alcohol",
+		path: productsPathes.alcohol,
+		icon: fontAwesomeIcon.alcohol,
+	},
+	{
+		labelKey: "categories.cleaning",
+		path: productsPathes.cleaning,
+		icon: fontAwesomeIcon.cleaning,
+	},
+	{
+		labelKey: "categories.pastaRice",
+		path: productsPathes.pastaRice,
+		icon: fontAwesomeIcon.pastaRice,
+	},
+	{
+		labelKey: "categories.house",
+		path: productsPathes.house,
+		icon: fontAwesomeIcon.house,
+	},
+	{
+		labelKey: "categories.health",
+		path: productsPathes.health,
+		icon: fontAwesomeIcon.health,
+	},
 ];

@@ -24,6 +24,7 @@ main {
   background: transparent;
 }
 
+
 .swiper-scrollbar {
   height: 10px !important;
   background-color: rgba(0, 0, 0, 0.5) !important;
@@ -103,14 +104,11 @@ main {
   font-weight: bold;
 }
 
-.card.h-100.shadow-sm.border-0 img {
-  object-fit: cover;
-  transition: 0.3s;
-  -webkit-transition: 0.3s;
-  -moz-transition: 0.3s;
-  -ms-transition: 0.3s;
-  -o-transition: 0.3s;
-
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .login {

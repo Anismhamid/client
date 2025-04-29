@@ -9,6 +9,12 @@ export const productsPathes = {
 	beverages: "/beverages",
 	frozen: "/forzen",
 	snacks: "/snacks",
+	baby: "/baby",
+	alcohol: "/alcohol",
+	cleaning: "/cleaning",
+	pastaRice: "/Pasta-&-Rice",
+	house: "/house",
+	health: "/health",
 	// will add other products here if nedded...
 };
 

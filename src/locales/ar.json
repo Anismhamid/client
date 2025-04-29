@@ -9,7 +9,17 @@
 		"bakery": "مخبوزات",
 		"beverages": "مشروبات",
 		"forzen": "مجمدات",
-		"snacks": "وجبات خفيفة"
+		"snacks": "وجبات خفيفة",
+		"baby": "منتجات الأطفال",
+		"cleaning": "منتجات التنظيف",
+		"pastaAndRice": "المعكرونة والأرز",
+		"home": "مستلزمات المنزل",
+		"alcohol": "مشروبات كحولية",
+		"health": "منتجات الصحة"
+	},
+	"seo": {
+		"categoryTitle": "فئة {{category}} | سوق الزاوية",
+		"categoryDescription": "تصفح مجموعة متنوعة من {{category}} الطازجة وعالية الجودة على موقعنا!"
 	},
 	"links": {
 		"home": "الرئيسية",
@@ -76,6 +86,30 @@
 		"spices": {
 			"spicesHeading": "توابلنا - طبيعية، متنوعة وعطرية!",
 			"spicesDescription": "مجموعة واسعة من التوابل الطبيعية المختارة بعناية من موردينا المحليين. نعدكم بجودة ممتازة وخدمة راقية."
+		},
+		"baby": {
+			"babyHeading": "منتجات الأطفال",
+			"babyDescription": "اكتشفوا أفضل المنتجات والعناية اللازمة لأطفالكم الصغار."
+		},
+		"cleaning": {
+			"cleaningHeading": "منتجات التنظيف",
+			"cleaningDescription": "كل ما تحتاجونه لتنظيف وتعقيم منزلكم بسهولة وكفاءة."
+		},
+		"pastaAndRice": {
+			"pastaAndRiceHeading": "معكرونة وأرز",
+			"pastaAndRiceDescription": "استمتعوا بتشكيلة رائعة من المعكرونة والأرز بنكهات متنوعة."
+		},
+		"house": {
+			"houseHeading": "مستلزمات المنزل",
+			"houseDescription": "كل ما يلزم منزلكم من أدوات، ديكور ومنتجات أساسية."
+		},
+		"alcohol": {
+			"alcoholHeading": "مشروبات كحولية",
+			"alcoholDescription": "مجموعة مختارة من المشروبات الكحولية الفاخرة لمناسباتكم الخاصة."
+		},
+		"health": {
+			"healthHeading": "منتجات الصحة",
+			"healthDescription": "عززوا صحتكم مع مكملات غذائية، فيتامينات، ومنتجات طبيعية."
 		},
 		"receipts": {
 			"receiptSearchTitle": "بحث متقدم",

@@ -1,30 +1,30 @@
 import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
 import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {Routes, Route, useNavigate, Navigate} from "react-router-dom";
-import UsersManagement from "./components/UsersManagement.tsx";
-import OrederDetails from "./components/OrederDetails.tsx";
-import AllTheOrders from "./components/AllTheOrders.tsx";
-import Beverages from "./components/Beverages.tsx";
-import Vegetable from "./components/Vegetable";
-import Profile from "./components/Profile.tsx";
-import Receipt from "./components/Receipt.tsx";
-import Checkout from "./components/Checkout";
-import Register from "./components/Register";
-import Spices from "./components/Spices.tsx";
-import Bakery from "./components/Bakery.tsx";
-import Frozen from "./components/Frozen.tsx";
-import Snacks from "./components/Snacks.tsx";
-import PageNotFound from "./components/Png";
-import Contact from "./components/Contact";
-import Dairy from "./components/Dairy.tsx";
-import Footer from "./components/Footer";
-import Fruits from "./components/Fruits";
-import Meat from "./components/Meat.tsx";
-import Fish from "./components/Fish.tsx";
-import Login from "./components/Login";
-import About from "./components/About";
-import Cart from "./components/Cart";
-import Home from "./components/Home";
+import UsersManagement from "./components/settings/UsersManagement.tsx";
+import OrederDetails from "./components/settings/OrederDetails.tsx";
+import AllTheOrders from "./components/settings/AllTheOrders.tsx";
+import Beverages from "./components/pages/products/Beverages.tsx";
+import Vegetable from "./components/pages/products/Vegetable.tsx";
+import Profile from "./components/settings/Profile.tsx";
+import Receipt from "./components/settings/Receipt.tsx";
+import Checkout from "./components/settings/Checkout.tsx";
+import Register from "./components/pages/Register.tsx";
+import Spices from "./components/pages/products/Spices.tsx";
+import Bakery from "./components/pages/products/Bakery.tsx";
+import Frozen from "./components/pages/products/Frozen.tsx";
+import Snacks from "./components/pages/products/Snacks.tsx";
+import PageNotFound from "./components/pages/Png.tsx";
+import Contact from "./components/pages/Contact.tsx";
+import Dairy from "./components/pages/products/Dairy.tsx";
+import Footer from "./components/settings/Footer.tsx";
+import Fruits from "./components/pages/products/Fruits.tsx";
+import Meat from "./components/pages/products/Meat.tsx";
+import Fish from "./components/pages/products/Fish.tsx";
+import Login from "./components/pages/Login.tsx";
+import About from "./components/pages/About.tsx";
+import Cart from "./components/settings/Cart.tsx";
+import Home from "./components/pages/Home.tsx";
 import {path, productsPathes} from "./routes/routes";
 import {ToastContainer} from "react-toastify";
 import {fontAwesomeIcon} from "./FontAwesome/Icons.tsx";
@@ -45,15 +45,21 @@ import {
 	PaletteMode,
 	SpeedDial,
 } from "@mui/material";
-import PrivacyAdnPolicy from "./components/PrivacyAndPolicy.tsx";
-import CompleteProfile from "./components/CompleteProfile.tsx";
-import TermOfUse from "./components/TermOfUse.tsx";
+import PrivacyAdnPolicy from "./components/pages/PrivacyAndPolicy.tsx";
+import CompleteProfile from "./components/settings/CompleteProfile.tsx";
+import TermOfUse from "./components/pages/TermOfUse.tsx";
 import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";
-import NavBar from "./components/NavBar.tsx";
-import AdminSettings from "./components/AdminSettengs.tsx";
-import { Order } from "./interfaces/Order.ts";
-import { UserRegister } from "./interfaces/User.ts";
+import NavBar from "./components/settings/NavBar.tsx";
+import AdminSettings from "./components/settings/AdminSettengs.tsx";
+import {Order} from "./interfaces/Order.ts";
+import {UserRegister} from "./interfaces/User.ts";
+import Baby from "./components/pages/products/Babys.tsx";
+import Cleaning from "./components/pages/products/Cleaning.tsx";
+import PastaRice from "./components/pages/products/PastaRice.tsx";
+import House from "./components/pages/products/House.tsx";
+import Alcohol from "./components/pages/products/Alcohol.tsx";
+import Health from "./components/pages/products/Health.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -67,7 +73,7 @@ function App() {
 			transports: ["websocket"],
 		});
 
-		socket.on("new order", (newOrder:Order) => {
+		socket.on("new order", (newOrder: Order) => {
 			const orderNum = newOrder.orderNumber;
 
 			if (auth.role === RoleType.Admin || auth.role == RoleType.Moderator) {
@@ -79,7 +85,7 @@ function App() {
 			}
 		});
 
-		socket.on("user:registered", (user:UserRegister) => {
+		socket.on("user:registered", (user: UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
 				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
 			}
@@ -154,7 +160,7 @@ function App() {
 				{decodedToken && (
 					<SpeedDial
 						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: '45%'}}
+						sx={{position: "fixed", bottom: 16, right: "45%"}}
 						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {
 							navigate(path.Cart);
@@ -197,6 +203,12 @@ function App() {
 					<Route path={productsPathes.beverages} element={<Beverages />} />
 					<Route path={productsPathes.frozen} element={<Frozen />} />
 					<Route path={productsPathes.snacks} element={<Snacks />} />
+					<Route path={productsPathes.baby} element={<Baby />} />
+					<Route path={productsPathes.alcohol} element={<Alcohol />} />
+					<Route path={productsPathes.cleaning} element={<Cleaning />} />
+					<Route path={productsPathes.pastaRice} element={<PastaRice />} />
+					<Route path={productsPathes.house} element={<House />} />
+					<Route path={productsPathes.health} element={<Health />} />
 					<Route path={path.Checkout} element={<Checkout />} />
 					<Route path={path.Png} element={<PageNotFound />} />
 				</Routes>

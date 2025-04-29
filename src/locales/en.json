@@ -9,8 +9,20 @@
 		"bakery": "Bakery",
 		"beverages": "Beverages",
 		"forzen": "Frozen",
-		"snacks": "Snacks"
+		"snacks": "Snacks",
+		"baby": "Baby Products",
+		"cleaning": "Cleaning Products",
+		"pastaAndRice": "Pasta and Rice",
+		"house": "Household Essentials",
+		"alcohol": "Alcoholic Beverages",
+		"health": "Health Products"
 	},
+
+	"seo": {
+		"categoryTitle": "{{category}} Category | Corner Market",
+		"categoryDescription": "Browse a variety of fresh and high-quality {{category}} on our website!"
+	},
+
 	"links": {
 		"home": "home",
 		"products": "Products",
@@ -76,6 +88,30 @@
 		"spices": {
 			"spicesHeading": "Our Spices – Natural, Aromatic & Flavorful!",
 			"spicesDescription": "Choose from a wide variety of natural spices, carefully selected from trusted local suppliers. Quality and excellent service guaranteed."
+		},
+		"baby": {
+			"babyHeading": "Baby Products",
+			"babyDescription": "Discover the best products and care essentials for your little ones."
+		},
+		"cleaning": {
+			"cleaningHeading": "Cleaning Products",
+			"cleaningDescription": "Everything you need to clean and sanitize your home easily and efficiently."
+		},
+		"pastaAndRice": {
+			"pastaAndRiceHeading": "Pasta & Rice",
+			"pastaAndRiceDescription": "Enjoy a wide variety of pasta and rice with different flavors."
+		},
+		"home": {
+			"homeHeading": "Home Essentials",
+			"homeDescription": "Everything your home needs – tools, decor, and basic products."
+		},
+		"alcohol": {
+			"alcoholHeading": "Alcoholic Beverages",
+			"alcoholDescription": "A premium selection of alcoholic drinks for your special occasions."
+		},
+		"health": {
+			"healthHeading": "Health Products",
+			"healthDescription": "Boost your health with supplements, vitamins, and natural products."
 		},
 		"receipts": {
 			"receiptSearchTitle": "Advanced Search",
