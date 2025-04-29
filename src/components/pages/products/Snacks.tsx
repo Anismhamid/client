@@ -13,12 +13,12 @@ const Snacks: FunctionComponent<SnacksProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.snacks.snacksHeading")}
+					{t("categories.snacks.heading")}
 				</h1>
 
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.snacks.snacksDescription")}
+					{t("categories.snacks.description")}
 				</p>
 			</div>
 			<ProductCategory category='snacks' />

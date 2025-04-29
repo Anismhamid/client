@@ -44,7 +44,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
-	const [visibleCount, setVisibleCount] = useState(15);
+	const [visibleCount, setVisibleCount] = useState(16);
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
@@ -68,7 +68,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		getAllProducts()
 			.then((products) => {
 				setProducts(products);
-				setVisibleProducts(products.slice(0, 15));
+				setVisibleProducts(products.slice(0, 16));
 				setLoading(false);
 				window.scrollTo(0, 0);
 			})
@@ -219,7 +219,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					{/* Discounts Section */}
 					{!searchQuery && <DiscountsAndOffers />}
 
-					<div className='row'>
+					<div className='row row-cols-xl-5 row-cols-md-3'>
 						{visibleProducts.length > 0 ? (
 							visibleProducts.map((product) => {
 								const productQuantity =
@@ -230,10 +230,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 										(product.price * (product.discount || 0)) / 100
 									: product.price;
 								return (
-									<div
-										className='col-6 col-md-4 col-xl-3 mb-4'
-										key={product._id}
-									>
+									<div className='col mb-4' key={product._id}>
 										<div className='card shadow rounded-4 h-100 overflow-hidden border-0'>
 											<div className='card-img-top'>
 												<img
@@ -243,10 +240,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 													className='card-img-top'
 													style={{
 														objectFit: "cover",
-														height:
-															window.innerWidth < 576
-																? "160px"
-																: "250px",
+														height: "",
+
 														transition:
 															"transform 0.3s ease-in-out",
 													}}
@@ -312,7 +307,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 												)}
 
 												<h6 className=' text-primary'>
-													ל / 1-ק"ג
+													{product.category.toLowerCase() ===
+													"spices"
+														? "ל / 100-גרם"
+														: [
+																	"fruit",
+																	"vegetable",
+																	"meat",
+																	"fish",
+															  ].includes(
+																	product.category.toLowerCase(),
+															  )
+															? "ל / קג"
+															: "ל-יחידה"}
 												</h6>
 												<div className='d-flex align-items-center justify-content-evenly'>
 													<button

@@ -13,11 +13,11 @@ const Bakery: FunctionComponent<BakeryProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 rounded display-6 fw-bold'>
-					{t("pages.bakery.bakeryHeading")}
+					{t("categories.bakery.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.bakery.bakerydescription")}
+					{t("categories.bakery.description")}
 				</p>
 			</div>
 			<ProductCategory category='bakery' />

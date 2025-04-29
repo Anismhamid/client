@@ -1,84 +1,84 @@
-import { fontAwesomeIcon } from "../FontAwesome/Icons";
-import { productsPathes } from "../routes/routes";
+import {fontAwesomeIcon} from "../FontAwesome/Icons";
+import {productsPathes} from "../routes/routes";
 
 export const navbarCategoryLinks = [
 	{
-		labelKey: "categories.fruits",
+		labelKey: "categories.fruitAndVegetables.fruits.label",
 		path: productsPathes.fruits,
 		icon: fontAwesomeIcon.fruit,
 	},
 	{
-		labelKey: "categories.vegetable",
+		labelKey: "categories.fruitAndVegetables.vegetable.label",
 		path: productsPathes.vegetable,
 		icon: fontAwesomeIcon.vegetable,
 	},
 	{
-		labelKey: "categories.fish",
+		labelKey: "categories.meatAndFish.fish.label",
 		path: productsPathes.fish,
 		icon: fontAwesomeIcon.fish,
 	},
 	{
-		labelKey: "categories.dairy",
-		path: productsPathes.dairy,
-		icon: fontAwesomeIcon.dairyProducts,
-	},
-	{
-		labelKey: "categories.meat",
+		labelKey: "categories.meatAndFish.meat.label",
 		path: productsPathes.meat,
 		icon: fontAwesomeIcon.meat,
 	},
 	{
-		labelKey: "categories.spices",
+		labelKey: "categories.dairy.label",
+		path: productsPathes.dairy,
+		icon: fontAwesomeIcon.dairyProducts,
+	},
+	{
+		labelKey: "categories.spices.label",
 		path: productsPathes.spices,
 		icon: fontAwesomeIcon.spices,
 	},
 	{
-		labelKey: "categories.bakery",
+		labelKey: "categories.bakery.label",
 		path: productsPathes.bakery,
 		icon: fontAwesomeIcon.bakery,
 	},
 	{
-		labelKey: "categories.beverages",
+		labelKey: "categories.beverages.label",
 		path: productsPathes.beverages,
 		icon: fontAwesomeIcon.beverages,
 	},
 	{
-		labelKey: "categories.forzen",
+		labelKey: "categories.frozen.label",
 		path: productsPathes.frozen,
 		icon: fontAwesomeIcon.frozen,
 	},
 	{
-		labelKey: "categories.snacks",
+		labelKey: "categories.snacks.label",
 		path: productsPathes.snacks,
 		icon: fontAwesomeIcon.snacks,
 	},
 	{
-		labelKey: "categories.baby",
+		labelKey: "categories.baby.label",
 		path: productsPathes.baby,
 		icon: fontAwesomeIcon.baby,
 	},
 	{
-		labelKey: "categories.alcohol",
+		labelKey: "categories.alcohol.label",
 		path: productsPathes.alcohol,
 		icon: fontAwesomeIcon.alcohol,
 	},
 	{
-		labelKey: "categories.cleaning",
+		labelKey: "categories.cleaning.label",
 		path: productsPathes.cleaning,
 		icon: fontAwesomeIcon.cleaning,
 	},
 	{
-		labelKey: "categories.pastaRice",
+		labelKey: "categories.pastaAndRice.label",
 		path: productsPathes.pastaRice,
 		icon: fontAwesomeIcon.pastaRice,
 	},
 	{
-		labelKey: "categories.house",
+		labelKey: "categories.house.label",
 		path: productsPathes.house,
 		icon: fontAwesomeIcon.house,
 	},
 	{
-		labelKey: "categories.health",
+		labelKey: "categories.health.label",
 		path: productsPathes.health,
 		icon: fontAwesomeIcon.health,
 	},

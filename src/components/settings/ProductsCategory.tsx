@@ -28,7 +28,9 @@ interface ProductCategoryProps {
  * @param {category}
  * @returns products by categoties
  */
-const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) => {
+const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
+	category,
+}: ProductCategoryProps) => {
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [products, setProducts] = useState<Products[]>([]);
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
@@ -109,7 +111,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 			.then((res) => {
 				setProducts(res);
 
-				setVisibleProducts(res.slice(0, 9));
+				setVisibleProducts(res.slice(0, 16));
 
 				const initialQuantities = res.reduce(
 					(acc: any, product: {product_name: string}) => {
@@ -129,7 +131,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({category}) =>
 
 	const handleShowMore = () => {
 		setShowMoreLoading(true);
-		const nextVisibleCount = visibleProducts.length + 6; // Load more products by slicing the products array
+		const nextVisibleCount = visibleProducts.length + 16; // Load more products by slicing the products array
 		const newVisibleProducts = products.slice(0, nextVisibleCount);
 		setVisibleProducts(newVisibleProducts);
 		setShowMoreLoading(false);

@@ -160,7 +160,7 @@ function App() {
 				{decodedToken && (
 					<SpeedDial
 						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: "45%"}}
+						sx={{position: "fixed", bottom: 40, right: "45%"}}
 						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {
 							navigate(path.Cart);

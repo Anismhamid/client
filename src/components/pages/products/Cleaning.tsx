@@ -13,11 +13,11 @@ const Cleaning: FunctionComponent<CleaningProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.cleaning.cleaningHeading")}
+					{t("categories.cleaning.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.cleaning.cleaningDescription")}
+					{t("categories.cleaning.description")}
 				</p>
 			</div>
 			<ProductCategory category='cleaning' />

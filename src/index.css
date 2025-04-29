@@ -5,7 +5,7 @@
 
 #root {
   font-family: "IBM Plex Sans Hebrew", sans-serif;
-  background: url('./assets/bbblurry.svg');
+  background-image: url('./assets/bbblurry.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

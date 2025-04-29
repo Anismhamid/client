@@ -13,11 +13,11 @@ const PastaRice: FunctionComponent<PastaRiceProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.pastaAndRice.pastaAndRiceHeading")}
+					{t("categories.pastaAndRice.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.pastaAndRice.pastaAndRiceDescription")}
+					{t("categories.pastaAndRice.pdescription")}
 				</p>
 			</div>
 			<ProductCategory category='pasta & Rice' />

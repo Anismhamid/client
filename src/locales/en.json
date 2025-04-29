@@ -1,21 +1,95 @@
 {
 	"categories": {
-		"fruits": "Fruits",
-		"vegetable": "Vegetable",
-		"fish": "Fish",
-		"dairy": "Dairy",
-		"meat": "Meat",
-		"spices": "Spices",
-		"bakery": "Bakery",
-		"beverages": "Beverages",
-		"forzen": "Frozen",
-		"snacks": "Snacks",
-		"baby": "Baby Products",
-		"cleaning": "Cleaning Products",
-		"pastaAndRice": "Pasta and Rice",
-		"house": "Household Essentials",
-		"alcohol": "Alcoholic Beverages",
-		"health": "Health Products"
+		"fruitAndVegetables": {
+			"fruits": {
+				"label": "Fruits",
+				"heading": "Our Fruits - Fresh, High Quality, and Diverse!",
+				"description": "Here you can find a wide variety of freshly picked fruits from our local farms. We promise high quality and excellent service to enjoy every fruit with ease and comfort."
+			},
+			"vegetable": {
+				"label": "Vegetables",
+				"heading": "Our Vegetables - Fresh and Healthy for the Whole Family!",
+				"description": "Our vegetables are grown in fertile fields with great attention to freshness and health. You will find seasonal vegetables specially selected for you."
+			}
+		},
+
+		"meatAndFish": {
+			"meat": {
+				"label": "Meat",
+				"heading": "Our Meat - Fresh, High Quality, and Diverse!",
+				"description": "Here you can find a wide variety of fresh meats carefully selected from our local suppliers. We guarantee high quality and excellent service to enjoy every piece of meat with ease and comfort."
+			},
+			"fish": {
+				"label": "Fish",
+				"heading": "Our Fish - Fresh, High Quality, and Diverse!",
+				"description": "Here you can find a wide variety of freshly caught fish by our local fishermen. We promise high quality and excellent service to enjoy every fish with ease and comfort."
+			}
+		},
+		"dairy": {
+			"label": "Dairy Products",
+			"heading": "Dairy Products - Fresh, High Quality, and Diverse!",
+			"description": "Here you can find a wide selection of carefully chosen natural dairy products from our local suppliers. We guarantee high quality and excellent service to enjoy every product with ease and comfort."
+		},
+		"spices": {
+			"label": "Spices",
+			"heading": "Our Spices - Natural, Diverse, and Aromatic!",
+			"description": "A wide variety of natural spices carefully selected from our local suppliers. We promise excellent quality and refined service."
+		},
+		"bakery": {
+			"label": "Bakery",
+			"heading": "Our Bakery - Fresh, High Quality, and Diverse!",
+			"description": "Here you can find a large selection of freshly baked goods prepared daily. We guarantee high quality and excellent service to enjoy every piece with ease and comfort."
+		},
+		"beverages": {
+			"label": "Beverages",
+			"heading": "Our Beverages - Refreshing, Healthy, and Diverse!",
+			"description": "A selection of juices, soft drinks, and water with high quality and great taste to quench your thirst at every moment."
+		},
+		"frozen": {
+			"label": "Frozen Products",
+			"heading": "Our Frozen Products - Fresh, Convenient, and Diverse!",
+			"description": "Enjoy a wide variety of high-quality frozen products that save you time and effort in preparing your favorite meals."
+		},
+		"snacks": {
+			"label": "Snacks",
+			"heading": "Our Snacks - Delicious, Diverse, and Suitable for Every Occasion!",
+			"description": "Discover our wide selection of crispy, sweet, and salty snacks. Perfect for picnics, hospitality, or simply enjoying a delicious moment."
+		},
+		"baby": {
+			"label": "Baby Products",
+			"heading": "Baby Products - The Best Care for Your Kids!",
+			"description": "A carefully selected range of products that meet your child's needs from the start of life. From diapers to oils and creams, we offer you the best."
+		},
+		"cleaning": {
+			"label": "Cleaning Products",
+			"heading": "Cleaning Products - Effective and Safe for Every Corner of Your Home!",
+			"description": "Discover our wide range of cleaning products that ensure cleanliness and disinfection, providing effective results without damaging surfaces or health. Quality and safety are at your fingertips."
+		},
+		"pastaAndRice": {
+			"label": "Pasta and Rice",
+			"heading": "Pasta and Rice - Delicious and Diverse!",
+			"description": "Enjoy a great selection of pasta and rice with various flavors and shapes to suit every taste."
+		},
+		"house": {
+			"label": "Household Essentials",
+			"heading": "Household Essentials - Everything You Need Under One Roof!",
+			"description": "A variety of essential and practical products that make your home more comfortable and organized. From kitchen tools to storage solutions – we have everything you need to make your daily life easier."
+		},
+		"alcohol": {
+			"label": "Alcoholic Beverages",
+			"heading": "Alcoholic Beverages - A Distinctive Selection for Your Special Times!",
+			"description": "A curated selection of premium alcoholic beverages from top brands. Enjoy a unique atmosphere with our special drinks."
+		},
+		"health": {
+			"label": "Health Products",
+			"heading": "Health Products - Enhance Your Health and Vitality!",
+			"description": "A range of dietary supplements and vitamins that help you improve your health. Discover natural products that support your healthy lifestyle."
+		},
+		"discountsAndOffers": {
+			"discountsAndOffersHeading": "Discounts and Offers",
+			"discountsAndOffersSpan": "Don't Miss Our Special Offers!",
+			"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as packages suitable for families. Stay updated on our page to save even more!"
+		}
 	},
 
 	"seo": {
@@ -24,7 +98,7 @@
 	},
 
 	"links": {
-		"home": "home",
+		"home": "Home",
 		"products": "Products",
 		"cart": "Shopping Cart",
 		"about": "About",
@@ -44,75 +118,6 @@
 		}
 	},
 	"pages": {
-		"bakery": {
-			"bakeryHeading": "Our baked goods - fresh, high-quality, and diverse!",
-			"bakerydescription": "Here you can find a wide variety of fresh baked goods, baked on-site with high-quality ingredients. We promise great flavors and fresh products to give you the perfect taste experience."
-		},
-		"beverages": {
-			"beveragesHeading": "Our beverages - fresh, high-quality, and diverse!",
-			"beveragesdescription": "Here you can find a wide selection of fresh, natural, and unique beverages suitable for every taste. We promise high quality and delicious drinks for a perfect drinking experience."
-		},
-		"dairy": {
-			"dairyHeading": "Our dairy products - fresh, high-quality, and diverse!",
-			"dairydescription": "Here you can find a wide selection of natural and high-quality dairy products, carefully chosen from our local suppliers. We promise high quality and excellent service so you can enjoy every dairy product easily and comfortably."
-		},
-		"discountsAndOffers": {
-			"discountsAndOffersHeading": "Discounts and Offers",
-			"discountsAndOffersSpan": "Don't miss our special deals!",
-			"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as value packages for families. Follow our page to stay updated and save even more!"
-		},
-		"fish": {
-			"fishHeading": "Our fish - fresh, high-quality, and diverse!",
-			"fishDescription": "Here you can find a wide variety of fresh fish, just caught by our local fishermen. We guarantee high quality and excellent service so you can enjoy every fish easily and comfortably."
-		},
-		"frozen": {
-			"frozenHeading": "Our frozen products - high quality, fresh, and diverse!",
-			"frozenDescription": "Here you can find a wide variety of frozen products, made from natural ingredients and preserved using advanced technologies to maintain freshness."
-		},
-		"fruit": {
-			"fruitsHeading": "Our fruits - fresh, high-quality, and diverse!",
-			"fruitsDescription": "Here you can find a wide variety of fresh fruits, just picked from our local farmers. We guarantee high quality and excellent service so you can enjoy every fruit easily and comfortably."
-		},
-		"vegetable": {
-			"vegetableHeading": "Our Vegetables – Fresh, Healthy & Delicious!",
-			"vegetableDescription": "Our vegetables grow in fertile fields with a focus on freshness and health. Find seasonal vegetables handpicked just for you."
-		},
-		"meat": {
-			"meatHeading": "Our meats - fresh, high-quality, and diverse!",
-			"meatDescription": "Here you can find a wide selection of fresh meats, carefully selected from our local suppliers. We promise high quality and excellent service so you can enjoy every cut of meat easily and comfortably."
-		},
-		"snacks": {
-			"snacksHeading": "Our Snacks – Quality, Fresh & Tasty!",
-			"snacksDescription": "Explore a variety of snacks made from natural ingredients and preserved using advanced technology. We guarantee freshness and quality in every bite."
-		},
-		"spices": {
-			"spicesHeading": "Our Spices – Natural, Aromatic & Flavorful!",
-			"spicesDescription": "Choose from a wide variety of natural spices, carefully selected from trusted local suppliers. Quality and excellent service guaranteed."
-		},
-		"baby": {
-			"babyHeading": "Baby Products",
-			"babyDescription": "Discover the best products and care essentials for your little ones."
-		},
-		"cleaning": {
-			"cleaningHeading": "Cleaning Products",
-			"cleaningDescription": "Everything you need to clean and sanitize your home easily and efficiently."
-		},
-		"pastaAndRice": {
-			"pastaAndRiceHeading": "Pasta & Rice",
-			"pastaAndRiceDescription": "Enjoy a wide variety of pasta and rice with different flavors."
-		},
-		"home": {
-			"homeHeading": "Home Essentials",
-			"homeDescription": "Everything your home needs – tools, decor, and basic products."
-		},
-		"alcohol": {
-			"alcoholHeading": "Alcoholic Beverages",
-			"alcoholDescription": "A premium selection of alcoholic drinks for your special occasions."
-		},
-		"health": {
-			"healthHeading": "Health Products",
-			"healthDescription": "Boost your health with supplements, vitamins, and natural products."
-		},
 		"receipts": {
 			"receiptSearchTitle": "Advanced Search",
 			"receiptSearch_1": "Search by name, email or order number",

@@ -13,11 +13,11 @@ const Health: FunctionComponent<HealthProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.health.healthHeading")}
+					{t("categories.health.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.health.healthDescription")}
+					{t("categories.health.description")}
 				</p>
 			</div>
 			<ProductCategory category='health' />

@@ -13,11 +13,11 @@ const Vegentable: FunctionComponent<VegentableProps> = () => {
 		<main>
 			<div className='container m-auto'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.vegetable.vegetableHeading")}
+					{t("categories.fruitAndVegetables.vegetable.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.vegetable.vegetableDescription")}
+					{t("categories.fruitAndVegetables.vegetable.description")}
 				</p>
 			</div>
 			<ProductCategory category='vegetable' />

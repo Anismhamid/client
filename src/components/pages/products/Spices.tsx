@@ -13,11 +13,11 @@ const Spices: FunctionComponent<SpicesProps> = () => {
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("pages.spices.spicesHeading")}
+					{t("categories.spices.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("pages.spices.spicesDescription")}
+					{t("categories.spices.description")}
 				</p>
 			</div>
 			<ProductCategory category='spices' />

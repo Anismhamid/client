@@ -128,7 +128,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							px: 2,
 							py: 1,
 							fontWeight: 800,
-							position: "relative",
 						}}
 					>
 						<Stack direction='row' alignItems='center' spacing={0.5}>
@@ -157,9 +156,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							PaperProps={{
 								sx: {
 									backgroundColor: "rgba(40, 40, 40, 0.95)",
-									borderRadius: 3,
+									borderRadius: 1,
 									color: "#fff",
-									mt: 1,
+									mt: 2.5,
 									minWidth: 200,
 								},
 							}}
