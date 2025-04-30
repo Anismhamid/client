@@ -2,9 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@100;200;300;400;500;600;700&display=swap');
 @import "react-toastify/dist/ReactToastify.css";
 
-
 #root {
-  font-family: "IBM Plex Sans Hebrew", sans-serif;
   background-image: url('./assets/bbblurry.svg');
   background-position: center;
   background-repeat: no-repeat;
@@ -12,10 +10,12 @@
   background-attachment: fixed;
 }
 
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Heebo", sans-serif;
 }
 
 
@@ -104,11 +104,20 @@ main {
   font-weight: bold;
 }
 
+.card {
+  transition: transform 0.2s ease-in-out !important;
+  -webkit-transition: transform 0.2s ease-in-out !important;
+  -moz-transition: transform 0.2s ease-in-out !important;
+  -ms-transition: transform 0.2s ease-in-out !important;
+  -o-transition: transform 0.2s ease-in-out !important;
+}
+
 .card-body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+
 }
 
 .login {

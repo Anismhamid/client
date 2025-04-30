@@ -14,6 +14,8 @@ import {
 	Tooltip,
 	Fab,
 	CircularProgress,
+	CardMedia,
+	Card,
 } from "@mui/material";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import RoleType from "../../interfaces/UserType";
@@ -202,7 +204,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								color: "#696969",
 								ml: 5,
 								flex: 1,
-								fontSize: "16px",
+								fontSize: "1rem",
 								"& input::placeholder": {
 									color: "#ff5151",
 								},
@@ -231,30 +233,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 									: product.price;
 								return (
 									<div className='col mb-4' key={product._id}>
-										<div className='card shadow rounded-4 h-100 overflow-hidden border-0'>
-											<div className='card-img-top'>
-												<img
-													loading='lazy'
-													src={product.image_url}
-													alt={product.product_name}
-													className='card-img-top'
-													style={{
-														objectFit: "cover",
-														height: "",
-
-														transition:
-															"transform 0.3s ease-in-out",
-													}}
-													onMouseOver={(e) =>
-														(e.currentTarget.style.transform =
-															"scale(1.05)")
-													}
-													onMouseOut={(e) =>
-														(e.currentTarget.style.transform =
-															"scale(1)")
-													}
-												/>
-											</div>
+										<Card className='card shadow rounded-4 h-100 overflow-hidden border-0'>
+											<CardMedia
+												component='img'
+												height='194'
+												image={product.image_url}
+												alt={product.product_name}
+											/>
 
 											<div className='card-body d-flex flex-column justify-content-between'>
 												<h5 className='card-title text-center fw-bol'>
@@ -379,7 +364,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													className={`w-100 btn shadow-sm py-2 fw-bold rounded-pill ${
 														isOutOfStock
 															? "btn-outline-danger"
-															: "btn-outline-success"
+															: "btn-outline-primary"
 													}`}
 												>
 													{isOutOfStock ? (
@@ -432,7 +417,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													</Tooltip>
 												</div>
 											)}
-										</div>
+										</Card>
 									</div>
 								);
 							})

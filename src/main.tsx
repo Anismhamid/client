@@ -6,6 +6,7 @@ import {UserProvider} from "./context/useUSer.tsx";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {CartProvider} from "./context/useCart.tsx";
 
+
 createRoot(document.getElementById("root")!).render(
 	<GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API}>
 		<UserProvider>

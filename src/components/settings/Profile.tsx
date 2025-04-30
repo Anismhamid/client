@@ -1,5 +1,5 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {getUserById} from "../../services/usersServices";
+import {deleteUserById, getUserById} from "../../services/usersServices";
 import RoleType from "../../interfaces/UserType";
 import {useNavigate} from "react-router-dom";
 import {
@@ -10,10 +10,15 @@ import {
 	Typography,
 	Skeleton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import {path} from "../../routes/routes";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useToken from "../../hooks/useToken";
 import Loader from "../../atoms/loader/Loader";
+import {useUser} from "../../context/useUSer";
+import {emptyAuthValues} from "../../interfaces/authValues";
+import DeleteAccountBox from "../../atoms/DeleteAccountBox";
+import UserDetailTable from "../../atoms/UesrDetailsTable";
 
 interface ProfileProps {}
 /**
@@ -24,7 +29,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
-	const {decodedToken} = useToken();
+	const {decodedToken, setAfterDecode} = useToken();
+	const {setAuth, setIsLoggedIn} = useUser();
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -79,6 +85,16 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		return <Loader />;
 	}
 
+	function handleDeleteAccount() {
+		deleteUserById(decodedToken._id).then(() => {
+			localStorage.removeItem("token");
+			setAuth(emptyAuthValues);
+			setIsLoggedIn(false);
+			setAfterDecode(null);
+			navigate(path.Home);
+		});
+	}
+
 	return (
 		<main className='min-vh-100'>
 			<div className='container'>
@@ -94,7 +110,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						)}
 						<img
 							className='border border-light rounded'
-							src={user.image?.url}
+							src={
+								user.image.url ||
+								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
+							}
 							alt={
 								user.image.alt
 									? `${user.image?.alt}'s avatar`
@@ -113,7 +132,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					<Button
 						variant='contained'
 						color='warning'
-						// Edit Profile
+						startIcon={<EditIcon />}
 						onClick={updateProfile}
 					>
 						עריכת פרטים אישיים
@@ -121,41 +140,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				</div>
 			</div>
 			<div className='container table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
-				<div className=' fw-bold display-6 p-2'>פרים אישיים</div>
-				<table className='table table-striped-columns'>
-					<tbody>
-						<tr>
-							<th>שם מלא</th>
-							<td>
-								{user.name?.first} {user.name?.last}
-							</td>
-						</tr>
-						<tr>
-							<th>טלפון ראשי</th>
-							<td>{user.phone?.phone_1 || "-"}</td>
-						</tr>
-						<tr>
-							<th>טלפון נוסף</th>
-							<td>{user.phone?.phone_2 || "-"}</td>
-						</tr>
-						<tr>
-							<th>דו"אל</th>
-							<td>{user.email}</td>
-						</tr>
-						<tr>
-							<th>סוג חשבון</th>
-							<td className='text-success fw-bold'>
-								{user.role === RoleType.Admin
-									? "מנהל ומנחה"
-									: user.role === RoleType.Moderator
-										? "מנחה"
-										: user.role
-											? "לקוח"
-											: "—"}
-							</td>
-						</tr>
-					</tbody>
-				</table>
+				<div className=' fw-bold display-6 p-2'>פרטים אישיים</div>
+				<UserDetailTable user={user} />
 
 				<div className=' m-auto text-center mt-5 w-100'>
 					<div className='table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
@@ -181,7 +167,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									<td>
 										{(2500).toLocaleString("he-IL", {
 											style: "currency",
-											currency: "ILs",
+											currency: "ILS",
 										})}
 									</td>
 								</tr>
@@ -208,10 +194,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</AccordionSummary>
 						<AccordionDetails>
 							<Typography style={{whiteSpace: "pre-line"}}>
-								{user.activity?.length
-									? user.activity
-											.map((timestamp) =>
-												new Date(timestamp).toLocaleString(
+								{user.activity?.length ? (
+									<ul>
+										{user.activity.map((timestamp) => (
+											<li key={timestamp}>
+												{new Date(timestamp).toLocaleString(
 													"he-IL",
 													{
 														year: "numeric",
@@ -220,10 +207,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 														hour: "2-digit",
 														minute: "2-digit",
 													},
-												),
-											)
-											.join("\n")
-									: "אין נתוני התחברות"}
+												)}
+											</li>
+										))}
+									</ul>
+								) : (
+									"אין נתוני התחברות"
+								)}
 							</Typography>
 						</AccordionDetails>
 					</Accordion>
@@ -240,6 +230,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					צור קשר עם תמיכה
 				</Button>
 			</div>
+			<DeleteAccountBox onDelete={handleDeleteAccount} />
 		</main>
 	);
 };

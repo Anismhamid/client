@@ -228,5 +228,10 @@
 		"profile": "My Profile",
 		"settings": "Settings",
 		"logout": "Log Out"
+	},
+	"removeAccount": {
+		"heading": "Delete Account",
+		"description": "If you delete the account, this action cannot be undone",
+		"buttonText": "Delete Permanently"
 	}
 }

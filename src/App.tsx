@@ -119,7 +119,7 @@ function App() {
 		if (stored === "dark" || stored === "light") {
 			return stored;
 		}
-		return "light";
+		return "dark";
 	};
 	const [mode, setMode] = useState<PaletteMode>(getInitialMode());
 

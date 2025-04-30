@@ -122,7 +122,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 
 				<MenuItem onClick={() => logout()}>
 					<ListItemIcon sx={{color: "#FF5252"}}>
-						{fontAwesomeIcon.LogOut}
+						{fontAwesomeIcon.logOut}
 					</ListItemIcon>
 					<Typography ml={1} color='#FF5252'>
 						{t("accountMenu.logout")}

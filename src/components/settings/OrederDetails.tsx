@@ -9,7 +9,7 @@ import {
 	getStatusText,
 	handleOrderStatus,
 } from "../../helpers/orderStatus";
-import {CircularProgress} from "@mui/material";
+import {CardMedia, CircularProgress} from "@mui/material";
 import {showError} from "../../atoms/Toast";
 import {useTranslation} from "react-i18next";
 
@@ -146,13 +146,22 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 				<div className='row  row-cols-1 row-cols-md-3 row-cols-lg-3 g-4'>
 					{orderItems.products.map((product, index) => (
 						<div key={product.product_image + index + 1} className='col'>
-							<div className='card h-100 shadow-sm border-0'>
-								<img
-									src={product.product_image}
-									alt={product.product_name || "Product image"}
-									className='card-img-top'
-									role='img'
-									style={{width: "100%"}}
+							<div className='card h-100 shadow-sm border-0 overflow-hidden'>
+								<CardMedia
+									component='img'
+									height='194'
+									image={product.product_image}
+									alt={product.product_name}
+									sx={{
+										objectFit: "cover",
+										transition: "transform 0.3s ease-in-out",
+									}}
+									onMouseOver={(e) =>
+										(e.currentTarget.style.transform = "scale(1.05)")
+									}
+									onMouseOut={(e) =>
+										(e.currentTarget.style.transform = "scale(1)")
+									}
 								/>
 								<h5 className='card-title'>{product.product_name}</h5>
 								<div className='card-body d-flex flex-column text-danger'>

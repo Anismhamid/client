@@ -27,6 +27,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	const [productSearch, setProductSearch] = useState("");
 	const {decodedToken} = useToken();
 
+
 	// Generate to pdf file
 	const generatePDF = async (orderNumber: string) => {
 		const element = document.getElementById(`receipt-${orderNumber}`);
@@ -34,13 +35,14 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 
 		try {
 			const canvas: HTMLCanvasElement = await html2canvas(element, {scale: 2});
-			const imgData = canvas.toDataURL("image/png");
+			const imgData = canvas.toDataURL("image/jpg");
 
 			const pdf = new jsPDF("p", "mm", "a4");
 			const pdfWidth = pdf.internal.pageSize.getWidth();
 			const pdfHeight = (canvas.height * pdfWidth - 200) / canvas.width;
 
-			pdf.addImage(imgData, "png", 0, 0, pdfWidth, pdfHeight);
+			pdf.setFont("");
+			pdf.addImage(imgData, "jpg", 0, 0, pdfWidth, pdfHeight);
 			pdf.save(`receipt_${orderNumber}.pdf`);
 		} catch (error) {
 			showError("שגיאה ביצירת PDF");
@@ -183,7 +185,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				{filteredOrders.map((receipt) => (
 					<div
 						id={`receipt-${receipt.orderNumber}`}
-						className='container my-5 bg-light p-3 border border-primary rounded'
+						className=' container my-5 bg-light p-3 border border-primary rounded'
 						key={receipt.orderNumber}
 					>
 						<Card className='mb-4 shadow-sm'>

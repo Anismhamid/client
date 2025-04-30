@@ -235,3 +235,17 @@ export const patchUserRole = async (userId: string, newRole: string) => {
 		return null;
 	}
 };
+
+export const deleteUserById = async (userId: string) => {
+	try {
+		const response = await axios.delete(`${api}/${userId}`, {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.getItem("token"),
+			},
+		});
+		return response.data;
+	} catch (error) {
+		console.log(error);
+	}
+};

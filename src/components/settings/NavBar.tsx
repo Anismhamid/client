@@ -35,6 +35,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	const {quantity, setQuantity} = useCartItems();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const openMenu = Boolean(anchorEl);
+	const {t} = useTranslation();
 
 	const navigate = useNavigate();
 
@@ -77,7 +78,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		setAfterDecode(null);
 		navigate(path.Home);
 	};
-	const {t} = useTranslation();
+
 	return (
 		<>
 			<AppBar position='relative' className='navbar-glass m-auto z-2'>
@@ -125,19 +126,13 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							cursor: "pointer",
 							display: "flex",
 							alignItems: "center",
-							px: 2,
+							px: 0,
 							py: 1,
 							fontWeight: 800,
 						}}
 					>
-						<Stack direction='row' alignItems='center' spacing={0.5}>
-							<Typography
-								sx={{
-									fontSize: 16,
-								}}
-							>
-								{t("links.products")}
-							</Typography>
+						<Stack direction='row' alignItems='center' spacing={0}>
+							<Typography>{t("links.products")}</Typography>
 							<KeyboardArrowDownIcon
 								sx={{
 									fontSize: 22,
@@ -179,17 +174,21 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							))}
 						</Menu>
 					</Box>
-					<li className='nav-item'>
-						<NavLink
-							className={` ${
-								isActive(path.AllTheOrders) ? "text-danger fw-bold" : ""
-							} nav-link`}
-							aria-current='page'
-							to={path.AllTheOrders}
-						>
-							{t("links.orders")}
-						</NavLink>
-					</li>
+					{isLoggedIn && (
+						<li className='nav-item'>
+							<NavLink
+								className={` ${
+									isActive(path.AllTheOrders)
+										? "text-danger fw-bold"
+										: ""
+								} nav-link`}
+								aria-current='page'
+								to={path.AllTheOrders}
+							>
+								{t("links.orders")}
+							</NavLink>
+						</li>
+					)}
 					<li className='nav-item'>
 						<NavLink
 							className={`${

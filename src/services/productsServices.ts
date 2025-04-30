@@ -81,7 +81,6 @@ export async function createNewProduct(products: Products) {
 export async function getProductsInDiscount() {
 	try {
 		const response = await axios.get(`${api}/discounts`);
-
 		return response.data;
 	} catch (error) {
 		console.log(error);

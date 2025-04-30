@@ -2,7 +2,6 @@ import {FunctionComponent, useEffect, useState} from "react";
 import {Products} from "../../../interfaces/Products";
 import {getProductsInDiscount} from "../../../services/productsServices";
 import {Link} from "react-router-dom";
-import {productsPathes} from "../../../routes/routes";
 import Loader from "../../../atoms/loader/Loader";
 import {Skeleton} from "@mui/material";
 import {useTranslation} from "react-i18next";
@@ -23,19 +22,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
-	// Category to path mapping
-	const categoryToPath: Record<string, string> = {
-		Fruit: productsPathes.fruits,
-		Vegetable: productsPathes.vegetable,
-		Fish: productsPathes.fish,
-		Dairy: productsPathes.dairy,
-		Meat: productsPathes.meat,
-		Spices: productsPathes.spices,
-		Bakery: productsPathes.bakery,
-		Beverages: productsPathes.beverages,
-		Frozen: productsPathes.frozen,
-		Snacks: productsPathes.snacks,
-	};
 
 	useEffect(() => {
 		getProductsInDiscount()
@@ -92,7 +78,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					effect='coverflow'
 				>
 					{productsInDiscount.map((product: Products) => {
-						const categoryPath = categoryToPath[product.category] || "";
 						const isLoaded = loadedImages[product.product_name];
 
 						return (

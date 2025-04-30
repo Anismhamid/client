@@ -5,11 +5,13 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	MenuItem,
 	TextField,
 } from "@mui/material";
 import {useFormik} from "formik";
 import {FunctionComponent} from "react";
 import * as yup from "yup";
+import {cities} from "../interfaces/cities";
 
 interface UserInfoModalProps {
 	isOpen: boolean;
@@ -53,7 +55,9 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 
 	return (
 		<Dialog open={isOpen} onClose={onClose} maxWidth='xs' fullWidth>
-			<DialogTitle>השלם את פרטיך</DialogTitle>
+			<DialogTitle className=' text-center'>
+				יש להשלם את פרטיך להמשך להרשמה
+			</DialogTitle>
 			<DialogContent>
 				<Box component='form' onSubmit={formik.handleSubmit} noValidate>
 					<TextField
@@ -75,15 +79,28 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 						onChange={formik.handleChange}
 					/>
 					<TextField
-						margin='dense'
+						select
 						label='עיר'
-						fullWidth
+						id='city'
 						name='city'
 						value={formik.values.city}
 						onChange={formik.handleChange}
 						error={formik.touched.city && Boolean(formik.errors.city)}
 						helperText={formik.touched.city && formik.errors.city}
-					/>
+						fullWidth
+						className='my-2'
+						variant='outlined'
+					>
+						<MenuItem value=''>
+							<em>בחר עיר</em>
+						</MenuItem>
+						{cities.map((city) => (
+							<MenuItem key={city} value={city}>
+								{city}
+							</MenuItem>
+						))}
+					</TextField>
+
 					<TextField
 						margin='dense'
 						label='רחוב'
@@ -109,12 +126,12 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 							formik.touched.houseNumber && formik.errors.houseNumber
 						}
 					/>
-					<DialogActions>
-						<Button onClick={onClose} color='secondary'>
-							ביטול
+					<DialogActions className='d-flex align-items-center justify-content-between mt-3'>
+						<Button variant='contained' onClick={onClose} color='error'>
+							ביטול רישום
 						</Button>
 						<Button type='submit' color='primary' variant='contained'>
-							אישור
+							המשך רישום
 						</Button>
 					</DialogActions>
 				</Box>

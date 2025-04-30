@@ -12,7 +12,7 @@ import {useCartItems} from "../../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
-import {Button, CircularProgress} from "@mui/material";
+import {Button, Card, CardMedia, CircularProgress} from "@mui/material";
 import AlertDialogs from "../../atoms/alertDialod/AlertDialog";
 import Seo from "../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
@@ -153,7 +153,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			/>
 			<main className='min-vh-100'>
 				<div className='container pb-5'>
-					<div className='row g-4'>
+					<div className='row gy-4 row-cols-xl-5 row-cols-md-2'>
 						{visibleProducts.map((product: Products) => {
 							const productQuantity = quantities[product.product_name] || 1;
 
@@ -162,23 +162,16 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									className='col-6 col-sm-6 col-lg-4 col-xl-3 '
 									key={product.product_name}
 								>
-									<div className='card h-100 shadow rounded-4 overflow-hidden'>
-										<img
-											loading='lazy'
-											src={product.image_url}
+									<Card className='card h-100 shadow rounded-4 overflow-hidden'>
+										<CardMedia
+											component='img'
+											height='250'
+											image={product.image_url}
 											alt={product.product_name}
-											className='card-img-top'
-											style={{
+											sx={{
+												objectFit: "cover",
 												transition: "transform 0.3s ease-in-out",
 											}}
-											onMouseOver={(e) =>
-												(e.currentTarget.style.transform =
-													"scale(1.05)")
-											}
-											onMouseOut={(e) =>
-												(e.currentTarget.style.transform =
-													"scale(1)")
-											}
 										/>
 										<div className='card-body d-flex flex-column justify-content-between'>
 											<h6 className='card-title text-center fw-bold'>
@@ -316,7 +309,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
 													product.quantity_in_stock <= 0
 														? "btn btn-outline-danger"
-														: "btn btn-outline-success"
+														: "btn btn-outline-primary"
 												}`}
 											>
 												{loadingAddToCart ===
@@ -370,7 +363,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												</div>
 											)}
 										</div>
-									</div>
+									</Card>
 								</div>
 							);
 						})}
