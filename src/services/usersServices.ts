@@ -2,27 +2,9 @@ import axios from "axios";
 import {UserLogin, UserRegister} from "../interfaces/User";
 import {showError, showSuccess} from "../atoms/Toast";
 import {jwtDecode} from "jwt-decode";
+import GoogleJwtPayload from "../interfaces/google";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
-
-interface GoogleJwtPayload {
-	email: string;
-	email_verified: string;
-	exp: string;
-	family_name: string;
-	given_name: string;
-	iat: string;
-	iss: string;
-	name: string;
-	picture: string;
-	sub: string;
-	typ: string;
-	aud: string;
-	azp: string;
-	jti: string;
-	kid: string;
-	nbf: string;
-}
 
 /**
  * Register a new user
@@ -58,7 +40,7 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
 		}
 
 		const userData = {
-			googleId: sub,
+			credentialToken: response.credential,
 			email,
 			name: {
 				first: given_name,
@@ -82,8 +64,6 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
 		const res = await axios.post(`${api}/google`, userData, {
 			headers: {
 				"Content-Type": "application/json",
-				withCredentials: true,
-				Authorization: localStorage.getItem("token"),
 			},
 		});
 		const token = res.data;
@@ -247,5 +227,30 @@ export const deleteUserById = async (userId: string) => {
 		return response.data;
 	} catch (error) {
 		console.log(error);
+	}
+};
+
+
+export const changeUserPassword = async (userId: string, newPassword: string) => {
+	try {
+		const token = localStorage.getItem("token");
+
+		await axios.patch(
+			`${api}/password/${userId}`,
+			{newPassword},
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: token,
+				},
+			},
+		);
+
+		showSuccess("הסיסמה שונתה בהצלחה");
+		return true;
+	} catch (error) {
+		console.error("שגיאה בשינוי סיסמה:", error);
+		showError("לא הצלחנו לשנות את הסיסמה");
+		return false;
 	}
 };
