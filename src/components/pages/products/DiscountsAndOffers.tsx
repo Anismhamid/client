@@ -57,7 +57,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				</p>
 			</div>
 
-			<div className='container-fluid'>
+			<div className='border border-top-0 border-bottom-0 border-5 rounded-3'>
 				<Swiper
 					modules={[Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow]}
 					pagination={{clickable: true}}
@@ -66,12 +66,12 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					style={{height: "350px"}}
 					loop={true}
 					spaceBetween={10}
-					slidesPerView={3}
+					slidesPerView={2}
 					freeMode={true}
 					coverflowEffect={{
-						rotate: 50,
+						rotate: 20,
 						stretch: 0,
-						depth: 100,
+						depth: 30,
 						modifier: 3,
 						slideShadows: true,
 					}}

@@ -12,7 +12,7 @@ import {useCartItems} from "../../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
-import {Button, Card, CardMedia, CircularProgress} from "@mui/material";
+import {Button, Card, CardMedia, Chip, CircularProgress} from "@mui/material";
 import AlertDialogs from "../../atoms/alertDialod/AlertDialog";
 import Seo from "../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
@@ -153,15 +153,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			/>
 			<main className='min-vh-100'>
 				<div className='container pb-5'>
-					<div className='row gy-4 row-cols-xl-5 row-cols-md-2'>
+					<div className='row gy-4 row-cols-xl-4 row-cols-md-3'>
 						{visibleProducts.map((product: Products) => {
 							const productQuantity = quantities[product.product_name] || 1;
 
 							return (
-								<div
-									className='col-6 col-sm-6 col-lg-4 col-xl-3 '
-									key={product.product_name}
-								>
+								<div className='col ' key={product.product_name}>
 									<Card className='card h-100 shadow rounded-4 overflow-hidden'>
 										<CardMedia
 											component='img'
@@ -178,7 +175,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												{product.product_name}
 											</h6>
 											<h6
-												className={` text-center fw-semibold ${
+												className={`text-center fw-semibold ${
 													product.quantity_in_stock <= 0
 														? "text-danger"
 														: "text-success"
@@ -186,7 +183,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											>
 												{product.quantity_in_stock <= 0
 													? "אזל מהמלאי"
-													: "במלאי"}
+													: `במלאי ${product.quantity_in_stock}`}
 											</h6>
 
 											{product.sale ? (
@@ -203,7 +200,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															)}
 														</s>
 													</h6>
-													<h6 className='text-center fw-bold'>
+													<Chip
+														label={`${product.discount}% הנחה`}
+														color='error'
+														size='small'
+													/>
+													<h5 className='text-center fw-bold text-success'>
 														מחיר:
 														{(
 															product.price -
@@ -216,10 +218,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															style: "currency",
 															currency: "ILS",
 														})}
-													</h6>
-													<p className='d-block text-center text-danger'>
-														{product.discount}% הנחה
-													</p>
+													</h5>
 												</>
 											) : (
 												<h6 className='card-text text-center  fw-bold'>

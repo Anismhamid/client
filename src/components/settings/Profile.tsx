@@ -1,6 +1,5 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {deleteUserById, getUserById} from "../../services/usersServices";
-import RoleType from "../../interfaces/UserType";
 import {useNavigate} from "react-router-dom";
 import {
 	Accordion,
@@ -193,28 +192,23 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							<Typography component='span'>היסטורייה התחברות</Typography>
 						</AccordionSummary>
 						<AccordionDetails>
-							<Typography style={{whiteSpace: "pre-line"}}>
-								{user.activity?.length ? (
-									<ul>
-										{user.activity.map((timestamp) => (
-											<li key={timestamp}>
-												{new Date(timestamp).toLocaleString(
-													"he-IL",
-													{
-														year: "numeric",
-														month: "long",
-														day: "numeric",
-														hour: "2-digit",
-														minute: "2-digit",
-													},
-												)}
-											</li>
-										))}
-									</ul>
-								) : (
-									"אין נתוני התחברות"
-								)}
-							</Typography>
+							{user.activity?.length ? (
+								<ul>
+									{user.activity.map((timestamp) => (
+										<li key={timestamp}>
+											{new Date(timestamp).toLocaleString("he-IL", {
+												year: "numeric",
+												month: "long",
+												day: "numeric",
+												hour: "2-digit",
+												minute: "2-digit",
+											})}
+										</li>
+									))}
+								</ul>
+							) : (
+								<Typography>אין נתוני התחברות</Typography>
+							)}
 						</AccordionDetails>
 					</Accordion>
 				</div>

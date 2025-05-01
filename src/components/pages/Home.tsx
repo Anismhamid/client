@@ -16,6 +16,7 @@ import {
 	CircularProgress,
 	CardMedia,
 	Card,
+	Chip,
 } from "@mui/material";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import RoleType from "../../interfaces/UserType";
@@ -246,9 +247,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 													{product.product_name}
 												</h5>
 
-												<p className='text-success text-center mb-2'>
+												{/* <p className='text-success text-center mb-2'>
 													במלאי {product.quantity_in_stock}
-												</p>
+												</p> */}
 
 												{product.sale ? (
 													<>
@@ -264,8 +265,26 @@ const Home: FunctionComponent<HomeProps> = () => {
 																)}
 															</s>
 														</h6>
+														<h6
+															className={`text-center fw-semibold ${
+																product.quantity_in_stock <=
+																0
+																	? "text-danger"
+																	: "text-success"
+															}`}
+														>
+															{product.quantity_in_stock <=
+															0
+																? "אזל מהמלאי"
+																: `במלאי ${product.quantity_in_stock}`}
+														</h6>
 
-														<h5 className=' text-center'>
+														<Chip
+															label={`${product.discount}% הנחה`}
+															color='error'
+															size='small'
+														/>
+														<h5 className='text-center text-success'>
 															מחיר:
 															{discountedPrice.toLocaleString(
 																"he-IL",
@@ -274,24 +293,37 @@ const Home: FunctionComponent<HomeProps> = () => {
 																	currency: "ILS",
 																},
 															)}
-															<small className='text-muted ms-2'>
-																({product.discount}% הנחה)
-															</small>
 														</h5>
 													</>
 												) : (
-													<h5 className='card-text text-center'>
-														{product.price.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
-													</h5>
+													<>
+														<h6
+															className={`text-center fw-semibold ${
+																product.quantity_in_stock <=
+																0
+																	? "text-danger"
+																	: "text-success"
+															}`}
+														>
+															{product.quantity_in_stock <=
+															0
+																? "אזל מהמלאי"
+																: `במלאי ${product.quantity_in_stock}`}
+														</h6>
+
+														<h5 className='card-text text-center'>
+															{product.price.toLocaleString(
+																"he-IL",
+																{
+																	style: "currency",
+																	currency: "ILS",
+																},
+															)}
+														</h5>
+													</>
 												)}
 
-												<h6 className=' text-primary'>
+												<h6 className='text-primary'>
 													{product.category.toLowerCase() ===
 													"spices"
 														? "ל / 100-גרם"
@@ -316,12 +348,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 																product.product_name,
 															)
 														}
-														className='btn btn-light border rounded-circle shadow-sm my-1'
+														className='btn btn-light border rounded-circle my-1'
 													>
 														<img
 															src='/svg/remove.svg'
 															alt='remove one'
-															width={20}
+															width={15}
 														/>
 													</button>
 													<h5 className='text-decoration-underline'>
@@ -345,7 +377,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														<img
 															src='/svg/add.svg'
 															alt='add more one'
-															width={20}
+															width={15}
 														/>
 													</button>
 												</div>
@@ -422,20 +454,22 @@ const Home: FunctionComponent<HomeProps> = () => {
 								);
 							})
 						) : (
-							<p className='rounded border border-light mt-3 text-center lead'>
-								חפש לפי/
-								<strong className='text-danger fw-bold mx-1'>
-									שם מוצר
-								</strong>
-								/
-								<strong className='text-danger fw-bold mx-1'>
-									מחיר מוצר
-								</strong>
-								/
-								<strong className='text-danger fw-bold ms-1'>
-									מילת מבצע
-								</strong>
-							</p>
+							<div className=' text-center container'>
+								<p className='rounded border border-light p-3 mt-3 lead'>
+									חפש לפי/
+									<strong className='text-danger fw-bold mx-1'>
+										שם מוצר
+									</strong>
+									/
+									<strong className='text-danger fw-bold mx-1'>
+										מחיר מוצר
+									</strong>
+									/
+									<strong className='text-danger fw-bold ms-1'>
+										מילת מבצע
+									</strong>
+								</p>
+							</div>
 						)}
 					</div>
 				</div>

@@ -9,14 +9,22 @@ import NavigathionButtons from "../../atoms/NavigathionButtons";
 import RoleType from "../../interfaces/UserType";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import {InputBase, Paper, IconButton, CircularProgress} from "@mui/material";
+import {
+	InputBase,
+	Paper,
+	IconButton,
+	CircularProgress,
+	Button,
+	Chip,
+} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {
 	getStatusClass,
 	getStatusText,
 	handleOrderStatus,
-} from "../../helpers/orderStatus";
+} from "../../atoms/OrderStatusButtons/orderStatus";
 import {showError} from "../../atoms/Toast";
+import OrderStatusButtons from "../../atoms/OrderStatusButtons/StatusButtons";
 
 interface AllTheOrdersProps {}
 /**
@@ -96,6 +104,9 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			}
 		}
 	}, [statusLoading, auth]);
+
+	const canChangeStatus =
+		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
 	if (loading) {
 		return <Loader />;
@@ -183,98 +194,41 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 										</div>
 										<div className='mt-1'>
 											<strong>סטטוס:</strong>{" "}
-											<span
-												className={`${getStatusClass(orderStatuses[order.orderNumber])}`}
-											>
-												{getStatusText(
+											<Chip
+												label={getStatusText(
 													orderStatuses[order.orderNumber],
 													t,
 												)}
-											</span>
+												color={
+													orderStatuses[order.orderNumber] ===
+													"Preparing"
+														? "warning"
+														: orderStatuses[
+																	order.orderNumber
+															  ] === "Delivered"
+															? "info"
+															: orderStatuses[
+																		order.orderNumber
+																  ] === "Shipped"
+																? "success"
+																: "default"
+												}
+											/>
 										</div>
 									</div>
 									<div className='mb-3 mx-auto text-center'>
-										{((auth && auth.role === RoleType.Admin) ||
-											(auth &&
-												auth.role === RoleType.Moderator)) && (
-											<>
-												<button
-													onClick={() =>
-														handleOrderStatus(
-															"Preparing",
-															order.orderNumber,
-															setOrderStatuses,
-															setStatusLoading,
-														).catch((err) => {
-															showError(err);
-														})
-													}
-													className='btn btn-primary'
-													disabled={
-														order.status === "Preparing" ||
-														order.status === "Delivered" ||
-														order.status === "Shipped"
-													}
-												>
-													{statusLoading[order.orderNumber] ? (
-														<CircularProgress
-															size={20}
-															color='inherit'
-														/>
-													) : (
-														"הכנה"
-													)}
-												</button>
-												<button
-													onClick={() =>
-														handleOrderStatus(
-															"Delivered",
-															order.orderNumber,
-															setOrderStatuses,
-															setStatusLoading,
-														).catch((err) => {
-															showError(err);
-														})
-													}
-													className='btn btn-info'
-													disabled={
-														order.status === "Delivered" ||
-														order.status === "Shipped"
-													}
-												>
-													{statusLoading[order.orderNumber] ? (
-														<CircularProgress
-															size={20}
-															color='inherit'
-														/>
-													) : (
-														"נשלח"
-													)}
-												</button>
-												<button
-													onClick={() =>
-														handleOrderStatus(
-															"Shipped",
-															order.orderNumber,
-															setOrderStatuses,
-															setStatusLoading,
-														).catch((err) => {
-															showError(err);
-														})
-													}
-													className='btn btn-success'
-													disabled={order.status === "Shipped"}
-												>
-													{statusLoading[order.orderNumber] ? (
-														<CircularProgress
-															size={20}
-															color='inherit'
-														/>
-													) : (
-														"נמסר"
-													)}
-												</button>
-											</>
+										{canChangeStatus && (
+											<OrderStatusButtons
+												orderNumber={order.orderNumber}
+												statusLoading={statusLoading}
+												handleOrderStatus={handleOrderStatus}
+												setOrderStatuses={setOrderStatuses}
+												setStatusLoading={setStatusLoading}
+												showError={showError}
+												currentStatus={
+													orderStatuses[order.orderNumber]
+												}
+											/>
 										)}
 									</div>
 
@@ -324,16 +278,27 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 									</div>
 
 									<div className='d-flex justify-content-center mt-3'>
-										<button
+										<Button
+											startIcon={
+												statusLoading[order.orderNumber] ? (
+													<CircularProgress
+														size={18}
+														color='inherit'
+													/>
+												) : null
+											}
 											onClick={() => {
 												navigate(
 													`/orderDetails/${order.orderNumber}`,
 												);
 											}}
-											className='btn btn-info btn-sm'
+											variant='contained'
+											color='info'
+											size='small'
+											sx={{mt: 1}}
 										>
 											פרטים נוספים
-										</button>
+										</Button>
 									</div>
 								</div>
 							</div>
