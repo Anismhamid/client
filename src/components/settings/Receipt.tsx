@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useMemo, useState} from "react";
+import {FunctionComponent, Ref, useEffect, useMemo, useRef, useState} from "react";
 import {ReceiptsType} from "../../interfaces/Receipts";
 import {Card, Table, Form} from "react-bootstrap";
 import {getUserReceiptsById, getUsersReceipts} from "../../services/Receipts";
@@ -12,6 +12,7 @@ import {showError} from "../../atoms/Toast";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 import Loader from "../../atoms/loader/Loader";
+import React from "react";
 
 interface ReceiptProps {}
 /**
@@ -27,26 +28,44 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	const [productSearch, setProductSearch] = useState("");
 	const {decodedToken} = useToken();
 
-
 	// Generate to pdf file
-	const generatePDF = async (orderNumber: string) => {
-		const element = document.getElementById(`receipt-${orderNumber}`);
-		if (!element) return;
+	const generatePDF = async (elementId: string) => {
 
-		try {
-			const canvas: HTMLCanvasElement = await html2canvas(element, {scale: 2});
-			const imgData = canvas.toDataURL("image/jpg");
-
-			const pdf = new jsPDF("p", "mm", "a4");
-			const pdfWidth = pdf.internal.pageSize.getWidth();
-			const pdfHeight = (canvas.height * pdfWidth - 200) / canvas.width;
-
-			pdf.setFont("");
-			pdf.addImage(imgData, "jpg", 0, 0, pdfWidth, pdfHeight);
-			pdf.save(`receipt_${orderNumber}.pdf`);
-		} catch (error) {
-			showError("שגיאה ביצירת PDF");
+		const input = document.getElementById(`receipt-${elementId}`);
+		if (!input) {
+			console.error("Element not found");
+			return;
 		}
+
+		// יוצרים תמונה מה־HTML
+		const canvas = await html2canvas(input, {
+			scale: 2,
+			useCORS: true,
+			scrollY: -window.scrollY, // חשוב ל־full height
+		});
+
+		const imgData = canvas.toDataURL("image/jpeg", 1.0);
+		const pdf = new jsPDF("p", "mm", "a4");
+		const pageWidth = pdf.internal.pageSize.getWidth();
+		const pageHeight = pdf.internal.pageSize.getHeight();
+
+		const imgWidth = pageWidth;
+		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+		let heightLeft = imgHeight;
+		let position = 0;
+
+		pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+		heightLeft -= pageHeight;
+
+		while (heightLeft > 0) {
+			position = heightLeft - imgHeight;
+			pdf.addPage();
+			pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+			heightLeft -= pageHeight;
+		}
+
+		pdf.save("receipt.pdf");
 	};
 
 	// Custom search
@@ -188,7 +207,9 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						className=' container my-5 bg-light p-3 border border-primary rounded'
 						key={receipt.orderNumber}
 					>
-						<Card className='mb-4 shadow-sm'>
+						<Card
+							className='card mb-1 shadow-sm'
+						>
 							<Card.Header
 								as='h5'
 								className='text-center bg-primary text-white'

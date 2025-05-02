@@ -62,11 +62,9 @@ const OrderStatusButtons: FunctionComponent<OrderStatusButtonsProps> = ({
 		case "Shipped":
 			buttonsToRender = defaultButtons.filter((btn) => btn.value === "Shipped");
 			break;
-		case "Shipped":
-
 	}
 
-	if (buttonsToRender.length < 0) return [] ;
+	if (buttonsToRender.length < 0) return [];
 
 	return (
 		<>
