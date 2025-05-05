@@ -19,6 +19,8 @@ export interface Order {
 	totalAmount: number;
 	deliveryFee: number;
 	date: string;
+	phone: string;
+	address: string;
 	createdAt: string;
 	updatedAt: string;
 	__v: number;

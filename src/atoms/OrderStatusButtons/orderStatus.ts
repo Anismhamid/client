@@ -1,3 +1,4 @@
+import {ChipProps} from "@mui/material/Chip";
 import {patchStatus} from "../../services/orders";
 
 // Mapping between status codes and translation keys
@@ -45,10 +46,8 @@ export const handleOrderStatus = async (
 /**
  * Returns MUI-style class names based on order status
  */
-export const getStatusClass = (status: string): string => {
+export const getStatusClass = (status: string): ChipProps["color"] => {
 	switch (status) {
-		case "Pending":
-			return "text-danger";
 		case "Preparing":
 			return "warning";
 		case "Delivered":
@@ -56,6 +55,6 @@ export const getStatusClass = (status: string): string => {
 		case "Shipped":
 			return "success";
 		default:
-			return "";
+			return "error";
 	}
 };

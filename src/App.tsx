@@ -60,23 +60,32 @@ import PastaRice from "./components/pages/products/PastaRice.tsx";
 import House from "./components/pages/products/House.tsx";
 import Alcohol from "./components/pages/products/Alcohol.tsx";
 import Health from "./components/pages/products/Health.tsx";
+import {useTranslation} from "react-i18next";
+import {getStatusText} from "./atoms/OrderStatusButtons/orderStatus.ts";
+import useNotificationSound from "./hooks/useNotificationSound.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
 	const {auth} = useUser();
 	const navigate = useNavigate();
+	const {t} = useTranslation();
+	const {playNotificationSound} = useNotificationSound();
 
 	useEffect(() => {
 		if (!auth) return;
 
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
 			transports: ["websocket"],
+			auth: {
+				userId: auth?._id,
+			},
 		});
 
 		socket.on("new order", (newOrder: Order) => {
 			const orderNum = newOrder.orderNumber;
 
 			if (auth.role === RoleType.Admin || auth.role == RoleType.Moderator) {
+				playNotificationSound();
 				showNewOrderToast({
 					navigate,
 					navigateTo: `/orderDetails/${orderNum}`,
@@ -85,14 +94,25 @@ function App() {
 			}
 		});
 
+		socket.on(
+			"order:status:client",
+			({orderNumber, status}: {orderNumber: string; status: string}) => {
+				const statusText = getStatusText(status, t);
+				showInfo(`ההזמנה שלך (${orderNumber}) ${statusText}`);
+				playNotificationSound()
+			},
+		);
+
 		socket.on("user:registered", (user: UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
 				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
+				playNotificationSound();
 			}
 		});
 
 		socket.on("user:newUserLoggedIn", (user: UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
+				playNotificationSound();
 				showInfo(
 					user.role === RoleType.Client
 						? `${user.email} משתמש התחבר`
@@ -111,6 +131,7 @@ function App() {
 	const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const newMode = event.target.value as PaletteMode;
 		setMode(newMode);
+
 		localStorage.setItem("dark", newMode);
 	};
 

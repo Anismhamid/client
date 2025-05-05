@@ -53,18 +53,20 @@ const OrderStatusButtons: FunctionComponent<OrderStatusButtonsProps> = ({
 	let buttonsToRender: StatusButton[] = [];
 
 	switch (currentStatus) {
-		case "Pending":
+		case "Preparing":
 			buttonsToRender = defaultButtons.filter((btn) => btn.value === "Preparing");
 			break;
-		case "Preparing":
+		case "Delivered":
 			buttonsToRender = defaultButtons.filter((btn) => btn.value === "Delivered");
 			break;
 		case "Shipped":
-			buttonsToRender = defaultButtons.filter((btn) => btn.value === "Shipped");
+			buttonsToRender = [];
 			break;
+		default:
+			buttonsToRender = defaultButtons.filter((btn) => btn.value === "Preparing");
 	}
 
-	if (buttonsToRender.length < 0) return [];
+	if (buttonsToRender.length === 0) return null;
 
 	return (
 		<>

@@ -8,15 +8,7 @@ import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import NavigathionButtons from "../../atoms/NavigathionButtons";
 import RoleType from "../../interfaces/UserType";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import {
-	InputBase,
-	Paper,
-	IconButton,
-	CircularProgress,
-	Button,
-	Chip,
-} from "@mui/material";
+import {CircularProgress, Button, Chip} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {
 	getStatusClass,
@@ -25,6 +17,9 @@ import {
 } from "../../atoms/OrderStatusButtons/orderStatus";
 import {showError} from "../../atoms/Toast";
 import OrderStatusButtons from "../../atoms/OrderStatusButtons/StatusButtons";
+import {io} from "socket.io-client";
+import useNotificationSound from "../../hooks/useNotificationSound";
+import SearchBox from "../../atoms/SearchBox";
 
 interface AllTheOrdersProps {}
 /**
@@ -46,6 +41,9 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		{},
 	);
 
+	const canChangeStatus =
+		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
+
 	const filteredOrders = useMemo(() => {
 		return allOrders.filter((order) => {
 			const query = searchQuery.toLowerCase();
@@ -60,9 +58,24 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			);
 		});
 	}, [allOrders, searchQuery]);
+	const {playNotificationSound} = useNotificationSound();
 
 	useEffect(() => {
-		if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
+
+		socket.on("order:status:client", (order: Order) => {
+			playNotificationSound();
+			setOrderStatuses((prev) => ({
+				...prev,
+				[order.orderNumber]: order.status,
+			}));
+		});
+
+		return () => socket.disconnect();
+	}, []);
+
+	useEffect(() => {
+		if (canChangeStatus) {
 			getAllOrders()
 				.then((res) => {
 					setAllOrders(res.reverse());
@@ -103,10 +116,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					});
 			}
 		}
-	}, [statusLoading, auth]);
-
-	const canChangeStatus =
-		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
+	}, [auth]);
 
 	if (loading) {
 		return <Loader />;
@@ -116,51 +126,14 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		<main>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
 				<h1 className='text-center'>{t("links.orders")}</h1>
-				<Paper
-					component='div'
-					onSubmit={(e) => e.preventDefault()}
-					sx={{
-						width: {xs: "90%", sm: 400},
-						m: "auto",
-						mb: 4,
-						p: "2px 10px",
-						display: "flex",
-						alignItems: "center",
-						borderRadius: "50px",
-						background: "rgba(255, 255, 255, 0.08)",
-						boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-						backdropFilter: "blur(10px)",
-						border: "1px solid rgba(255, 255, 255, 0.2)",
-						transition: "0.3s ease",
-						"&:hover": {
-							boxShadow: "0 6px 25px rgba(0, 0, 0, 0.4)",
-						},
-					}}
-				>
-					<SearchIcon sx={{color: "#66b2ff", mr: 1}} />
-					<InputBase
-						sx={{
-							color: "#696969",
-							ml: 5,
-							flex: 1,
-							fontSize: "16px",
-							"& input::placeholder": {
-								color: "#5f5f5f",
-							},
-						}}
-						placeholder='חיפוש לפי מזהה, תאריך או מספר הזמנה...'
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						inputProps={{"aria-label": "search"}}
-					/>
-					<IconButton onClick={() => setSearchQuery("")} size='small'>
-						<CloseIcon fontSize='small' />
-					</IconButton>
-				</Paper>
+				<SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 				<div className='row mt-5'>
 					{filteredOrders.length ? (
 						filteredOrders.map((order) => (
-							<div key={order.createdAt} className='mb-4 col-md-6 col-lg-4'>
+							<div
+								key={order.orderNumber}
+								className='mb-4 col-md-6 col-lg-4'
+							>
 								<div className='card p-3 shadow'>
 									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
 										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
@@ -173,7 +146,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 											</span>
 										</div>
 										<div>
-											<strong>תאריך הזמנה:</strong>(
+											<strong>תאריך הזמנה:</strong>
 											{new Date(order.date).toLocaleString(
 												"he-IL",
 												{
@@ -184,7 +157,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 													minute: "2-digit",
 												},
 											)}
-											)
 										</div>
 										<div className='text-start mt-3'>
 											<strong>טלפון מזמין:</strong>
@@ -199,20 +171,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 													orderStatuses[order.orderNumber],
 													t,
 												)}
-												color={
-													orderStatuses[order.orderNumber] ===
-													"Preparing"
-														? "warning"
-														: orderStatuses[
-																	order.orderNumber
-															  ] === "Delivered"
-															? "info"
-															: orderStatuses[
-																		order.orderNumber
-																  ] === "Shipped"
-																? "success"
-																: "default"
-												}
+												color={getStatusClass(order.orderNumber)}
 											/>
 										</div>
 									</div>
