@@ -7,7 +7,6 @@ import Loader from "../../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import NavigathionButtons from "../../atoms/NavigathionButtons";
 import RoleType from "../../interfaces/UserType";
-import SearchIcon from "@mui/icons-material/Search";
 import {CircularProgress, Button, Chip} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {
@@ -29,6 +28,7 @@ interface AllTheOrdersProps {}
 const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const {t} = useTranslation();
 	const [allOrders, setAllOrders] = useState<Order[]>([]);
+	const {playNotificationSound} = useNotificationSound();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState("");
 	const navigate = useNavigate();
@@ -58,7 +58,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			);
 		});
 	}, [allOrders, searchQuery]);
-	const {playNotificationSound} = useNotificationSound();
 
 	useEffect(() => {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL);

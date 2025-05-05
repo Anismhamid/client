@@ -75,10 +75,11 @@ function App() {
 		if (!auth) return;
 
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
-			transports: ["websocket"],
 			auth: {
 				userId: auth?._id,
 			},
+			transports: ["websocket", "polling"],
+			withCredentials: true,
 		});
 
 		socket.on("new order", (newOrder: Order) => {
@@ -98,7 +99,7 @@ function App() {
 			"order:status:client",
 			({orderNumber, status}: {orderNumber: string; status: string}) => {
 				const statusText = getStatusText(status, t);
-				playNotificationSound()
+				playNotificationSound();
 				showInfo(`ההזמנה שלך (${orderNumber}) ${statusText}`);
 			},
 		);
@@ -124,6 +125,10 @@ function App() {
 		});
 
 		return () => {
+			socket.off("new order");
+			socket.off("order:status:client");
+			socket.off("user:registered");
+			socket.off("user:newUserLoggedIn");
 			socket.disconnect();
 		};
 	}, [auth]);

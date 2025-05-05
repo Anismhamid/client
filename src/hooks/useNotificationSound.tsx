@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect, useRef} from "react";
+import {useState, useEffect, useRef} from "react";
 
 const useNotificationSound = () => {
 	const [canPlaySound, setCanPlaySound] = useState(false);
@@ -34,7 +34,7 @@ const useNotificationSound = () => {
 
 	const playNotificationSound = () => {
 		if (canPlaySound && notificationSoundRef.current) {
-			// הפעלת הצליל מבלי ליצור אובייקטים חדשים
+			console.log("Playing notification sound");
 			notificationSoundRef.current.currentTime = 0;
 			notificationSoundRef.current.play().catch(console.error);
 		}
