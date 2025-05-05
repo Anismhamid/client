@@ -15,7 +15,6 @@ export const getUserOrders = async (userId: string) => {
 		});
 		return orders.data;
 	} catch (error) {
-		console.log(error);
 		return [];
 	}
 };
@@ -34,7 +33,6 @@ export const getOrderByOrderNumber = async (orderNumber: string) => {
 		});
 		return response.data;
 	} catch (error) {
-		console.log("Error fetching cart items:", error);
 		return [];
 	}
 };
@@ -50,7 +48,6 @@ export const getAllOrders = async () => {
 		});
 		return response.data;
 	} catch (error) {
-		console.log(error);
 		return [];
 	}
 };
@@ -74,7 +71,6 @@ export const postOrder = async (order: Order) => {
 		);
 		return orders.data;
 	} catch (error) {
-		console.log(error);
 		return null;
 	}
 };
@@ -99,7 +95,6 @@ export const patchStatus = async (status: string, orderNumber: string) => {
 		);
 		return patchStatus.data;
 	} catch (error) {
-		console.log(error);
 		return null;
 	}
 };

@@ -23,7 +23,7 @@ import Meat from "./components/pages/products/Meat.tsx";
 import Fish from "./components/pages/products/Fish.tsx";
 import Login from "./components/pages/Login.tsx";
 import About from "./components/pages/About.tsx";
-import Cart from "./components/settings/Cart.tsx";
+import Cart from "./components/pages/Cart.tsx";
 import Home from "./components/pages/Home.tsx";
 import {path, productsPathes} from "./routes/routes";
 import {ToastContainer} from "react-toastify";
@@ -98,15 +98,15 @@ function App() {
 			"order:status:client",
 			({orderNumber, status}: {orderNumber: string; status: string}) => {
 				const statusText = getStatusText(status, t);
-				showInfo(`ההזמנה שלך (${orderNumber}) ${statusText}`);
 				playNotificationSound()
+				showInfo(`ההזמנה שלך (${orderNumber}) ${statusText}`);
 			},
 		);
 
 		socket.on("user:registered", (user: UserRegister) => {
 			if (auth && auth.role === RoleType.Admin) {
-				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
 				playNotificationSound();
+				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
 			}
 		});
 

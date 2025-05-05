@@ -88,8 +88,8 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					);
 					setOrderStatuses(initialStatuses);
 				})
-				.catch((error) => {
-					console.error("Failed to fetch orders:", error);
+				.catch(() => {
+					showError("Failed to fetch orders:");
 				})
 				.finally(() => {
 					setLoading(false);
