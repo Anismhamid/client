@@ -1,4 +1,4 @@
-import "../node_modules/bootstrap/dist/js/bootstrap.min.js";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {Routes, Route, useNavigate, Navigate} from "react-router-dom";
 import UsersManagement from "./components/settings/UsersManagement.tsx";
