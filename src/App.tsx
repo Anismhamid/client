@@ -85,6 +85,7 @@ function App() {
 		socket.on("new order", (newOrder: Order) => {
 			const orderNum = newOrder.orderNumber;
 
+			
 			if (auth.role === RoleType.Admin || auth.role == RoleType.Moderator) {
 				playNotificationSound();
 				showNewOrderToast({
