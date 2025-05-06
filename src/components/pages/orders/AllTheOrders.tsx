@@ -1,18 +1,18 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
-import {Order} from "../../interfaces/Order";
-import {getAllOrders, getUserOrders} from "../../services/orders";
-import {useUser} from "../../context/useUSer";
-import Loader from "../../atoms/loader/Loader";
-import NavigathionButtons from "../../atoms/NavigathionButtons";
-import RoleType from "../../interfaces/UserType";
+import {Order} from "../../../interfaces/Order";
+import {getAllOrders, getUserOrders} from "../../../services/orders";
+import {useUser} from "../../../context/useUSer";
+import Loader from "../../../atoms/loader/Loader";
+import NavigathionButtons from "../../../atoms/NavigathionButtons";
+import RoleType from "../../../interfaces/UserType";
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {showError} from "../../atoms/Toast";
+import {showError} from "../../../atoms/Toast";
 import {io} from "socket.io-client";
-import useNotificationSound from "../../hooks/useNotificationSound";
-import SearchBox from "../../atoms/SearchBox";
-import IncompleteOrders from "./orders/IncompleteOrders";
-import NewOrders from "./orders/NewOrders";
+import useNotificationSound from "../../../hooks/useNotificationSound";
+import SearchBox from "../../../atoms/SearchBox";
+import IncompleteOrders from "./IncompleteOrders";
+import NewOrders from "./NewOrders";
 
 interface AllTheOrdersProps {}
 /**
@@ -35,8 +35,8 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	);
 	const [incompleteOrders, setIncompleteOrders] = useState<Order[]>([]);
 
-const canChangeStatus =
-	!!auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
+	const canChangeStatus =
+		!!auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
 	const [viewIncomplete, setViewIncomplete] = useState(false);
 

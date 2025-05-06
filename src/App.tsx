@@ -3,7 +3,7 @@ import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {Routes, Route, useNavigate, Navigate} from "react-router-dom";
 import UsersManagement from "./components/settings/UsersManagement.tsx";
 import OrederDetails from "./components/pages/OrederDetails.tsx";
-import AllTheOrders from "./components/pages/AllTheOrders.tsx";
+import AllTheOrders from "./components/pages/orders/AllTheOrders.tsx";
 import Beverages from "./components/pages/products/Beverages.tsx";
 import Vegetable from "./components/pages/products/Vegetable.tsx";
 import Profile from "./components/settings/Profile.tsx";

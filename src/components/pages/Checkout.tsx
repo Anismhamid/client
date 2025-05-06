@@ -57,7 +57,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			discount: 0,
 			totalAmount: 0,
 			phone: {
-				phone_1: auth.phone.phone_1,
+				phone_1: auth.phone.phone_1 || "",
 				phone_2: auth.phone.phone_1 || "",
 			},
 			address: {
@@ -75,7 +75,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			discount: yup.number().required(),
 			totalAmount: yup.number().required(),
 			phone: yup.object({
-				phone_1: yup.string().required(),
+				phone_1: yup.string(),
 				phone_2: yup.string(),
 			}),
 			address: yup.object({
@@ -156,7 +156,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			deliveryFee: value.delivery ? deliveryFee : 0,
 			totalAmount: finalAmount,
 			phone: {
-				phone_1: auth.phone.phone_1,
+				phone_1: auth.phone?.phone_1 || "",
 				phone_2: auth.phone?.phone_2 || "",
 			},
 			address: {
@@ -186,7 +186,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		}
 	};
 
-	if (!auth || !auth.address) return <Loader />;
 	if (loading) return <Loader />;
 
 	return (
