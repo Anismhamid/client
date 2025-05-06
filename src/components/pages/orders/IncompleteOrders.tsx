@@ -1,7 +1,6 @@
 import {FunctionComponent} from "react";
 import {Order} from "../../../interfaces/Order";
 import {Link} from "react-router-dom";
-import {path} from "../../../routes/routes";
 
 interface IncompleteOrdersProps {
 	incompleteOrders: Order[];

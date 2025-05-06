@@ -8,7 +8,7 @@ import Beverages from "./components/pages/products/Beverages.tsx";
 import Vegetable from "./components/pages/products/Vegetable.tsx";
 import Profile from "./components/settings/Profile.tsx";
 import Receipt from "./components/settings/Receipt.tsx";
-import Checkout from "./components/settings/Checkout.tsx";
+import Checkout from "./components/pages/Checkout.tsx";
 import Register from "./components/pages/Register.tsx";
 import Spices from "./components/pages/products/Spices.tsx";
 import Bakery from "./components/pages/products/Bakery.tsx";
@@ -46,7 +46,7 @@ import {
 	SpeedDial,
 } from "@mui/material";
 import PrivacyAdnPolicy from "./components/pages/PrivacyAndPolicy.tsx";
-import CompleteProfile from "./components/settings/CompleteProfile.tsx";
+import CompleteProfile from "./components/pages/CompleteProfile.tsx";
 import TermOfUse from "./components/pages/TermOfUse.tsx";
 import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";

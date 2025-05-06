@@ -1,4 +1,4 @@
-import {FunctionComponent, Ref, useEffect, useMemo, useRef, useState} from "react";
+import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {ReceiptsType} from "../../interfaces/Receipts";
 import {Card, Table, Form} from "react-bootstrap";
 import {getUserReceiptsById, getUsersReceipts} from "../../services/Receipts";
@@ -8,11 +8,9 @@ import jsPDF from "jspdf";
 import {Button, TextField} from "@mui/material";
 import useToken from "../../hooks/useToken";
 import RoleType from "../../interfaces/UserType";
-import {showError} from "../../atoms/Toast";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 import Loader from "../../atoms/loader/Loader";
-import React from "react";
 
 interface ReceiptProps {}
 /**
@@ -30,7 +28,6 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 
 	// Generate to pdf file
 	const generatePDF = async (elementId: string) => {
-
 		const input = document.getElementById(`receipt-${elementId}`);
 		if (!input) {
 			console.error("Element not found");
@@ -50,7 +47,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		const pageHeight = pdf.internal.pageSize.getHeight();
 
 		const imgWidth = pageWidth;
-		const imgHeight = (canvas.height * imgWidth) / canvas.width;
+		const imgHeight = (canvas.height * imgWidth - 200) / canvas.width;
 
 		let heightLeft = imgHeight;
 		let position = 0;
@@ -207,9 +204,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						className=' container my-5 bg-light p-3 border border-primary rounded'
 						key={receipt.orderNumber}
 					>
-						<Card
-							className='card mb-1 shadow-sm'
-						>
+						<Card className='card mb-1 shadow-sm'>
 							<Card.Header
 								as='h5'
 								className='text-center bg-primary text-white'
