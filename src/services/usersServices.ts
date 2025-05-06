@@ -113,7 +113,6 @@ export const compleateProfileData = async (userId: string, values: any) => {
 		};
 		await axios.patch(`${api}/compleate/${userId}`, payload, {
 			headers: {
-				"Content-Type": "application/json",
 				Authorization: token,
 			},
 		});
@@ -129,9 +128,7 @@ export const compleateProfileData = async (userId: string, values: any) => {
  */
 export const loginUser = async (userData: UserLogin) => {
 	try {
-		const response = await axios.post(`${api}/login`, userData, {
-			headers: {"Content-Type": "application/json"},
-		});
+		const response = await axios.post(`${api}/login`, userData);
 		return response.data;
 	} catch (error: any) {
 		if (error.request.response === "Too Many Requests") {
@@ -229,7 +226,6 @@ export const deleteUserById = async (userId: string) => {
 		console.log(error);
 	}
 };
-
 
 export const changeUserPassword = async (userId: string, newPassword: string) => {
 	try {
