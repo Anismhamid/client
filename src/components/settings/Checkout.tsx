@@ -56,6 +56,15 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			sale: false,
 			discount: 0,
 			totalAmount: 0,
+			phone: {
+				phone_1: auth.phone.phone_1,
+				phone_2: auth.phone.phone_1 || "",
+			},
+			address: {
+				city: auth.address.city,
+				street: auth.address.street,
+				houseNumber: auth.address.houseNumber,
+			},
 		},
 		validationSchema: yup.object({
 			payment: yup.boolean().required(),
@@ -65,6 +74,15 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			sale: yup.boolean().required(),
 			discount: yup.number().required(),
 			totalAmount: yup.number().required(),
+			phone: yup.object({
+				phone_1: yup.string().required(),
+				phone_2: yup.string(),
+			}),
+			address: yup.object({
+				city: yup.string().required(),
+				street: yup.string().required(),
+				houseNumber: yup.string().required(),
+			}),
 		}),
 		onSubmit: (value) => {
 			handleCheckout(value).catch((err) => {
@@ -137,7 +155,17 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			delivery: value.delivery,
 			deliveryFee: value.delivery ? deliveryFee : 0,
 			totalAmount: finalAmount,
+			phone: {
+				phone_1: auth.phone.phone_1,
+				phone_2: auth.phone?.phone_2 || "",
+			},
+			address: {
+				city: auth.address.city,
+				street: auth.address.street,
+				houseNumber: auth.address?.houseNumber || "",
+			},
 		};
+
 		setNewOrder(newOrder as Order);
 		try {
 			if (value.payment) {
@@ -158,6 +186,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		}
 	};
 
+	if (!auth || !auth.address) return <Loader />;
 	if (loading) return <Loader />;
 
 	return (

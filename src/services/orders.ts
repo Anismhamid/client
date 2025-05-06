@@ -71,6 +71,7 @@ export const postOrder = async (order: Order) => {
 		);
 		return orders.data;
 	} catch (error) {
+		console.log(error);
 		return null;
 	}
 };

@@ -1,24 +1,18 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../../interfaces/Order";
 import {getAllOrders, getUserOrders} from "../../services/orders";
-import {useNavigate} from "react-router-dom";
 import {useUser} from "../../context/useUSer";
 import Loader from "../../atoms/loader/Loader";
-import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import NavigathionButtons from "../../atoms/NavigathionButtons";
 import RoleType from "../../interfaces/UserType";
-import {CircularProgress, Button, Chip} from "@mui/material";
+import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {
-	getStatusClass,
-	getStatusText,
-	handleOrderStatus,
-} from "../../atoms/OrderStatusButtons/orderStatus";
 import {showError} from "../../atoms/Toast";
-import OrderStatusButtons from "../../atoms/OrderStatusButtons/StatusButtons";
 import {io} from "socket.io-client";
 import useNotificationSound from "../../hooks/useNotificationSound";
 import SearchBox from "../../atoms/SearchBox";
+import IncompleteOrders from "./orders/IncompleteOrders";
+import NewOrders from "./orders/NewOrders";
 
 interface AllTheOrdersProps {}
 /**
@@ -31,7 +25,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const {playNotificationSound} = useNotificationSound();
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState("");
-	const navigate = useNavigate();
 	const {auth} = useUser();
 
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
@@ -40,6 +33,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
 		{},
 	);
+	const [incompleteOrders, setIncompleteOrders] = useState<Order[]>([]);
 
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
@@ -59,18 +53,33 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		});
 	}, [allOrders, searchQuery]);
 
+	const findIncompleteOrders = () => {
+		const incomplete = allOrders.filter((order) => {
+			return (
+				!order.address?.city ||
+				!order.address?.street ||
+				!order.address?.houseNumber
+			);
+		});
+		setIncompleteOrders(incomplete);
+	};
+
 	useEffect(() => {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
 
-		socket.on("order:status:client", (order: Order) => {
+		const handleStatusChange = (order: Order) => {
 			playNotificationSound();
 			setOrderStatuses((prev) => ({
 				...prev,
 				[order.orderNumber]: order.status,
 			}));
-		});
+		};
+		socket.on("order:status:client", handleStatusChange);
 
-		return () => socket.disconnect();
+		return () => {
+			socket.off("order:status:client", handleStatusChange);
+			socket.disconnect();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -124,149 +133,41 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	return (
 		<main>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
-				<h1 className='text-center'>{t("links.orders")}</h1>
-				<SearchBox searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-				<div className='row mt-5'>
-					{filteredOrders.length ? (
-						filteredOrders.map((order) => (
-							<div
-								key={order.orderNumber}
-								className='mb-4 col-md-6 col-lg-4'
-							>
-								<div className='card p-3 shadow'>
-									<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
-										<strong>מ"ס הזמנה:</strong> {order.orderNumber}
-									</h5>
-									<div className='mb-3'>
-										<div className='my-1'>
-											<strong className=''>ID מזמין</strong>
-											<span className='fw-bold rounded d-block text-danger'>
-												{order.userId}
-											</span>
-										</div>
-										<div>
-											<strong>תאריך הזמנה:</strong>
-											{new Date(order.date).toLocaleString(
-												"he-IL",
-												{
-													year: "2-digit",
-													month: "short",
-													day: "numeric",
-													hour: "2-digit",
-													minute: "2-digit",
-												},
-											)}
-										</div>
-										<div className='text-start mt-3'>
-											<strong>טלפון מזמין:</strong>
-										</div>
-										<div className='text-start my-3'>
-											<strong>כתובת מזמין:</strong>
-										</div>
-										<div className='mt-1'>
-											<strong>סטטוס:</strong>{" "}
-											<Chip
-												label={getStatusText(
-													orderStatuses[order.orderNumber],
-													t,
-												)}
-												color={getStatusClass(order.orderNumber)}
-											/>
-										</div>
-									</div>
-									<div className='mb-3 mx-auto text-center'>
-										{canChangeStatus && (
-											<OrderStatusButtons
-												orderNumber={order.orderNumber}
-												statusLoading={statusLoading}
-												handleOrderStatus={handleOrderStatus}
-												setOrderStatuses={setOrderStatuses}
-												setStatusLoading={setStatusLoading}
-												showError={showError}
-												currentStatus={
-													orderStatuses[order.orderNumber]
-												}
-											/>
-										)}
-									</div>
-
-									<div className='mb-3'>
-										<strong>שיטת תשלום:</strong>{" "}
-										{order.payment ? (
-											<span className='text-success'>
-												{fontAwesomeIcon.creditCard}
-												כרטיס אשראי
-											</span>
-										) : (
-											<span className='text-warning'>
-												{fontAwesomeIcon.moneyBillWave}
-												מזומן
-											</span>
-										)}
-									</div>
-
-									<div className='mb-3'>
-										<strong>שיטת איסוף:</strong>{" "}
-										{order.selfCollection ? (
-											<span className='text-info'>
-												{fontAwesomeIcon.boxOpen}
-												איסוף עצמי
-											</span>
-										) : order.delivery ? (
-											<span className='text-primary'>
-												{fontAwesomeIcon.boxOpen}
-												{order.deliveryFee.toLocaleString(
-													"he-IL",
-													{style: "currency", currency: "ILS"},
-												)}
-											</span>
-										) : (
-											<span className='text-muted'>לא נבחר</span>
-										)}
-									</div>
-
-									<div>
-										<h5 className='text-center text-success'>
-											<strong>ס"כ מחיר הזמנה:</strong>{" "}
-											{order.totalAmount.toLocaleString("he-IL", {
-												style: "currency",
-												currency: "ILS",
-											})}
-										</h5>
-									</div>
-
-									<div className='d-flex justify-content-center mt-3'>
-										<Button
-											startIcon={
-												statusLoading[order.orderNumber] ? (
-													<CircularProgress
-														size={18}
-														color='inherit'
-													/>
-												) : null
-											}
-											onClick={() => {
-												navigate(
-													`/orderDetails/${order.orderNumber}`,
-												);
-											}}
-											variant='contained'
-											color='info'
-											size='small'
-											sx={{mt: 1}}
-										>
-											פרטים נוספים
-										</Button>
-									</div>
-								</div>
-							</div>
-						))
-					) : (
-						<div className='text-center text-danger fs-4'>
-							אין הזמנות עדיין
-						</div>
-					)}
-				</div>
+				{incompleteOrders.length && (
+					<>
+						<Button
+							variant='outlined'
+							color='warning'
+							onClick={() => setIncompleteOrders([])}
+						>
+							הזמנות חדשות
+						</Button>
+					</>
+				)}
+				<IncompleteOrders incompleteOrders={incompleteOrders} />
+				{filteredOrders.length > 0 && (
+					<>
+						<Button
+							variant='outlined'
+							color='warning'
+							onClick={findIncompleteOrders}
+						>
+							הזמנות חסרות מידע
+						</Button>
+						<h1 className='text-center'>{t("links.orders")}</h1>
+						<SearchBox
+							searchQuery={searchQuery}
+							setSearchQuery={setSearchQuery}
+						/>
+						<NewOrders
+							filteredOrders={filteredOrders}
+							orderStatuses={orderStatuses}
+							setOrderStatuses={setOrderStatuses}
+							setStatusLoading={setStatusLoading}
+							statusLoading={statusLoading}
+						/>
+					</>
+				)}
 
 				<div className='text-center'>
 					<NavigathionButtons />
