@@ -1,4 +1,4 @@
-import {FunctionComponent, useState} from "react";
+import {FunctionComponent} from "react";
 import {Order} from "../../../interfaces/Order";
 import {
 	getStatusClass,
@@ -38,7 +38,12 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 
 	const {t} = useTranslation();
 	const navigate = useNavigate();
-
+  
+filteredOrders.forEach((order) => {
+	if (!order.phone) {
+		console.warn("Missing phone field for order:", order.orderNumber);
+	}
+});
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
@@ -70,8 +75,8 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 								</div>
 								<div className='text-start mt-3'>
 									<strong>טלפון מזמין:</strong>
-									{order.phone?.phone_1 ||
-										order.phone?.phone_2 ||
+									{order.phone?.phone_1 ??
+										order.phone?.phone_2 ??
 										"לא זמין"}
 								</div>
 								<div className='text-start my-3'>

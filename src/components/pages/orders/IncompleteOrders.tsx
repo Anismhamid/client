@@ -27,19 +27,17 @@ const IncompleteOrders: FunctionComponent<IncompleteOrdersProps> = ({
 								>
 									<div className='card border-danger p-3'>
 										<h5 className='text-center text-danger'>
-											הזמנה #{order.orderNumber}
+											הזמנה: {order.orderNumber}
 										</h5>
 										<p>
-											<strong>טלפון:</strong>{" "}
-											{order.phone?.phone_1 || (
-												<span className='text-danger'>חסר</span>
-											)}
+											<strong>טלפון:</strong>
+											<span className='text-danger'>חסר</span>
 										</p>
 										<p>
-											<strong>כתובת:</strong>{" "}
-											{order.address?.city && order.address?.street
-												? `${order.address.city} ${order.address.street}`
-												: "חסרה כתובת"}
+											<strong>כתובת:</strong>
+											<span className='text-danger'>
+												חסרה כתובת
+											</span>
 										</p>
 									</div>
 								</Link>

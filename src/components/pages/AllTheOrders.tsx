@@ -35,8 +35,10 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	);
 	const [incompleteOrders, setIncompleteOrders] = useState<Order[]>([]);
 
-	const canChangeStatus =
-		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
+const canChangeStatus =
+	!!auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
+
+	const [viewIncomplete, setViewIncomplete] = useState(false);
 
 	const filteredOrders = useMemo(() => {
 		return allOrders.filter((order) => {
@@ -132,28 +134,34 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 	return (
 		<main>
+			{canChangeStatus && (
+				<div className='container my-3 d-flex align-items-center justify-content-between'>
+					<Button
+						variant='contained'
+						color='warning'
+						onClick={() => setViewIncomplete(false)}
+						sx={{ml: 5}}
+					>
+						הצג את כל ההזמנות
+					</Button>
+
+					<Button
+						variant='contained'
+						color='error'
+						onClick={() => {
+							findIncompleteOrders();
+							setViewIncomplete(true);
+						}}
+					>
+						הצג הזמנות חסרות מידע
+					</Button>
+				</div>
+			)}
 			<div className='container bg-gradient rounded  text-center align-items-center'>
-				{incompleteOrders.length && (
+				{viewIncomplete ? (
+					<IncompleteOrders incompleteOrders={incompleteOrders} />
+				) : (
 					<>
-						<Button
-							variant='outlined'
-							color='warning'
-							onClick={() => setIncompleteOrders([])}
-						>
-							הזמנות חדשות
-						</Button>
-					</>
-				)}
-				<IncompleteOrders incompleteOrders={incompleteOrders} />
-				{filteredOrders.length > 0 && (
-					<>
-						<Button
-							variant='outlined'
-							color='warning'
-							onClick={findIncompleteOrders}
-						>
-							הזמנות חסרות מידע
-						</Button>
 						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
 							searchQuery={searchQuery}
@@ -168,7 +176,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 						/>
 					</>
 				)}
-
 				<div className='text-center'>
 					<NavigathionButtons />
 				</div>
