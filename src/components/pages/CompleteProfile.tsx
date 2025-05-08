@@ -27,7 +27,7 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 		enableReinitialize: true,
 		validationSchema: yup.object({
 			phone: yup.object({
-				phone_1: yup.string(),
+				phone_1: yup.string().matches(/^0\d{1,2}-?\d{7}$/),
 				phone_2: yup.string(),
 			}),
 			address: yup.object({
