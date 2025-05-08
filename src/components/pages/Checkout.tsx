@@ -48,6 +48,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	};
 
 	const formik = useFormik({
+		enableReinitialize:true,
 		initialValues: {
 			payment: false,
 			cashOnDelivery: false,
@@ -57,13 +58,13 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			discount: 0,
 			totalAmount: 0,
 			phone: {
-				phone_1: auth.phone.phone_1 || "",
-				phone_2: auth.phone.phone_1 || "",
+				phone_1: auth.phone.phone_1,
+				phone_2: auth.phone.phone_1,
 			},
 			address: {
-				city: auth.address.city,
-				street: auth.address.street,
-				houseNumber: auth.address.houseNumber,
+				city: auth.address?.city || "",
+				street: auth.address?.street || "",
+				houseNumber: auth.address?.houseNumber || "",
 			},
 		},
 		validationSchema: yup.object({
@@ -160,8 +161,8 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				phone_2: auth.phone?.phone_2 || "",
 			},
 			address: {
-				city: auth.address.city,
-				street: auth.address.street,
+				city: auth.address?.city,
+				street: auth.address?.street,
 				houseNumber: auth.address?.houseNumber || "",
 			},
 		};
@@ -202,8 +203,8 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					<h4>סיכום הסל</h4>
 					<ul className='list-group'>
 						{cartItems.length ? (
-							cartItems.map((item, index) => (
-								<div key={index}>
+							cartItems.map((item) => (
+								<div key={item._id}>
 									{item.products.map((product) => (
 										<li
 											key={product.product_name}
@@ -321,6 +322,18 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 										</span>
 									</label>
 								</div>
+							</div>
+
+							{/* new coppon */}
+							<div className='form-group mt-3'>
+								<label htmlFor='discount'>קופון הנחה (%)</label>
+								<input
+									type='number'
+									name='discount'
+									className='form-control'
+									value={formik.values.discount}
+									onChange={formik.handleChange}
+								/>
 							</div>
 
 							<hr />

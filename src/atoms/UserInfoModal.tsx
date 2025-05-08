@@ -42,11 +42,15 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 			phone_1: yup
 				.string()
 				.required("נדרש מספר טלפון ראשי")
-				.matches(/^0\d{8,9}$/, "מספר טלפון לא חוקי"),
-			phone_2: yup.string().nullable(),
+				.matches(/^0\d{1,2}-?\d{7}$/),
+			phone_2: yup
+				.string()
+				.min(9)
+				.max(10)
+				.matches(/^$|^0\d{1,2}-?\d{7}$/, "מספר טלפון משני לא תקין"),
 			city: yup.string().required("נדרשת עיר"),
 			street: yup.string().required("נדרש רחוב"),
-			houseNumber: yup.string().required("נדרש מספר בית"),
+			houseNumber: yup.string(),
 		}),
 		onSubmit: (values) => {
 			onSubmit(values);

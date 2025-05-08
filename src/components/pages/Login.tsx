@@ -79,7 +79,6 @@ const Login: FunctionComponent<LoginProps> = () => {
 				const token = await handleGoogleLogin(response, null);
 				if (token) {
 					const decoded = jwtDecode(token);
-					console.log(decoded);
 					setAfterDecode(token);
 					setAuth(decoded as any);
 					setIsLoggedIn(true);

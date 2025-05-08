@@ -3,6 +3,7 @@ import {UserLogin, UserRegister} from "../interfaces/User";
 import {showError, showSuccess} from "../atoms/Toast";
 import {jwtDecode} from "jwt-decode";
 import GoogleJwtPayload from "../interfaces/google";
+import {CompleteUserPayload} from "../interfaces/completeProfile";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -97,13 +98,16 @@ export const verifyGoogleUser = async (googleId: string) => {
 	}
 };
 
-export const compleateProfileData = async (userId: string, values: any) => {
+export const compleateProfileData = async (
+	userId: string,
+	values: CompleteUserPayload,
+) => {
 	try {
 		const token = localStorage.getItem("token");
 		const payload = {
 			phone: {
 				phone_1: values.phone.phone_1,
-				phone_2: values.phone.phone_2,
+				phone_2: values.phone.phone_2 || "",
 			},
 			address: {
 				city: values.address.city,

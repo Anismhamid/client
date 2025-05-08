@@ -27,12 +27,17 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 		enableReinitialize: true,
 		validationSchema: yup.object({
 			phone: yup.object({
-				phone_1: yup.string().matches(/^0\d{1,2}-?\d{7}$/),
-				phone_2: yup.string(),
+				phone_1: yup
+					.string()
+					.matches(/^0\d{1,2}-?\d{7}$/, "מספר טלפון לא תקין בפורמט ישראלי")
+					.required(),
+				phone_2: yup
+					.string()
+					.matches(/^0\d{1,2}-?\d{7}$/, "מספר טלפון לא תקין בפורמט ישראלי"),
 			}),
 			address: yup.object({
-				city: yup.string(),
-				street: yup.string(),
+				city: yup.string().required("נדרשת עיר"),
+				street: yup.string().required("נדרש רחוב"),
 				houseNumber: yup.string(),
 			}),
 		}),
@@ -40,15 +45,12 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 			if (decodedToken) {
 				compleateProfileData(decodedToken._id, values)
 					.then(() => {
-						const time = setTimeout(() => {
-							formik.setSubmitting(false);
-							showSuccess("הפרופיל עודכן בהצלחה!");
-						}, 1000);
-						return () => clearTimeout(time);
+						formik.setSubmitting(false);
+						showSuccess("הפרופיל עודכן בהצלחה!");
 					})
-					.catch((err) => {
+					.catch(() => {
+						formik.setSubmitting(false);
 						showError("שגיאה בעדכון הפרופיל");
-						console.error(err);
 					});
 			}
 		},
@@ -65,9 +67,9 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 						phone_2: user.phone?.phone_2 || "",
 					},
 					address: {
-						city: user.address?.city || "בחר עיר",
-						street: user.address?.street || "שם רחוב לא הוזן",
-						houseNumber: user.address?.houseNumber || "",
+						city: user.address.city || "בחר עיר",
+						street: user.address.street || "שם רחוב לא הוזן",
+						houseNumber: user.address.houseNumber || "",
 					},
 				});
 			} catch (err) {
