@@ -14,7 +14,7 @@ import useToken from "../../hooks/useToken";
 import {showError, showSuccess} from "../../atoms/Toast";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import {Button, TextField} from "@mui/material";
+import {Button, CircularProgress, TextField} from "@mui/material";
 import UserInfoModal from "../../atoms/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
@@ -151,14 +151,21 @@ const Login: FunctionComponent<LoginProps> = () => {
 					/>
 
 					<div className=''>
-						<Button
-							color='primary'
-							variant='contained'
-							type='submit'
-							className=' w-100 my-3  rounded-5 '
-						>
-							כניסה
-						</Button>
+						{formik.isSubmitting ? (
+							<div className=' text-center my-2'>
+								<CircularProgress size={30} color='inherit' />
+							</div>
+						) : (
+							<Button
+								color='primary'
+								variant='contained'
+								type='submit'
+								className=' w-100 my-3  rounded-5 '
+							>
+								כניסה
+							</Button>
+						)}
+
 						<GoogleLogin
 							ux_mode='popup'
 							shape='circle'

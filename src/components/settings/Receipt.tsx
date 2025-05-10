@@ -9,7 +9,6 @@ import {Button, TextField} from "@mui/material";
 import useToken from "../../hooks/useToken";
 import RoleType from "../../interfaces/UserType";
 import {useTranslation} from "react-i18next";
-import handleRTL from "../../locales/handleRTL";
 import Loader from "../../atoms/loader/Loader";
 
 interface ReceiptProps {}
@@ -18,14 +17,13 @@ interface ReceiptProps {}
  * @returns auth receipt and all receipt for admin users
  */
 const Receipt: FunctionComponent<ReceiptProps> = () => {
-	const {t} = useTranslation();
 	const [receipts, setReceipts] = useState<ReceiptsType[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [startDate, setStartDate] = useState("");
 	const [endDate, setEndDate] = useState("");
 	const [productSearch, setProductSearch] = useState("");
 	const {decodedToken} = useToken();
-
+	const {t} = useTranslation();
 	// Generate to pdf file
 	const generatePDF = async (elementId: string) => {
 		const input = document.getElementById(`receipt-${elementId}`);
@@ -126,18 +124,16 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		);
 	}
 
-	const diriction = handleRTL();
-
 	if (receipts.length === 0) {
 		return (
-			<main className='' dir={diriction}>
+			<main className=''>
 				<Loader />
 			</main>
 		);
 	}
 
 	return (
-		<main dir={diriction}>
+		<main>
 			{/* חיפוש מתקדם  */}
 			<div className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
@@ -197,7 +193,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				</Form>
 			</div>
 			<div className=' container'>
-				<h2 className='text-center mb-4'>{t("links.receipts")}🧾</h2>
+				<h2 className='text-center mb-4'>קבלות🧾</h2>
 				{filteredOrders.map((receipt) => (
 					<div
 						id={`receipt-${receipt.orderNumber}`}
@@ -209,11 +205,11 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								as='h5'
 								className='text-center bg-primary text-white'
 							>
-								{t("pages.receipts.receiptNumber")} {receipt.orderNumber}
+								'קבלה מס {receipt.orderNumber}
 							</Card.Header>
 							<Card.Body>
 								<Card.Text>
-									<strong>{t("pages.receipts.receiptDate")}</strong>
+									<strong>תאריך:</strong>
 									{new Date(receipt.orderDate).toLocaleString("he-IL", {
 										year: "numeric",
 										month: "long",
@@ -226,39 +222,25 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								<Card.Text>
 									{receipt.customer ? (
 										<>
-											<strong className='me-1'>
-												{t("pages.receipts.receiptCustomer")}
-											</strong>
+											<strong className='me-1'>לקוח:</strong>
 											{receipt.customer.name.first}
 											<br />
-											<strong className='me-1'>
-												{t("pages.receipts.receiptCustomerPhone")}
-											</strong>
+											<strong className='me-1'>טלפון:</strong>
 											{receipt.customer.phone.phone_1}
 											<br />
-											<strong className='me-1'>
-												{t("pages.receipts.receiptCustomerPhone")}
-											</strong>
+											<strong className='me-1'>טלפון-2</strong>
 											{receipt.customer.phone.phone_2 || "לא קיים"}
 											<br />
-											<strong className='me-1'>
-												{t("pages.receipts.receiptCustomerEmail")}
-											</strong>{" "}
+											<strong className='me-1'>אימייל:</strong>{" "}
 											{receipt.customer.email}
 											<br />
-											<strong className='me-1'>
-												{t(
-													"pages.receipts.receiptCustomerAdress",
-												)}
-											</strong>
+											<strong className='me-1'>כתובת:</strong>
 											{`${receipt.customer.address.city}, ${receipt.customer.address.street},
 											${receipt.customer.address.houseNumber}`}
 										</>
 									) : (
 										<span className='text-muted'>
-											{t(
-												"pages.receipts.receiptCustomerNoCustomerToProvide",
-											)}
+											אין פרטי לקוח זמינים
 										</span>
 									)}
 								</Card.Text>
@@ -266,34 +248,24 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								<hr />
 
 								<Card.Text>
-									<strong>
-										{t("pages.receipts.receiptCustomerPaymentMethod")}
-									</strong>
-									{receipt.payment == "true"
-										? t("pages.receipts.receiptCustomerCridetCard")
-										: t("pages.receipts.receiptCustomerCash")}
+									<strong>שיטת תשלום:</strong>
+									{receipt.payment == "true" ? "כרטיס אשראי" : "מזומן"}
 								</Card.Text>
 								<Card.Text>
-									<strong>
-										{t(
-											"pages.receipts.receiptCustomerCollectionMethod",
-										)}
-									</strong>{" "}
+									<strong>שיטת איסוף:</strong>{" "}
 									{receipt.deliveryFee
-										? `${t("pages.receipts.receiptCustomerDelivry")} ${receipt.deliveryFee.toLocaleString(
+										? `משלוח עד הבית ${receipt.deliveryFee.toLocaleString(
 												"he-IL",
 												{
 													style: "currency",
 													currency: "ILS",
 												},
 											)}`
-										: t(
-												"pages.receipts.receiptCustomerSelfCollection",
-											)}
+										: "איסוף עצמי "}
 								</Card.Text>
 
 								<Card.Text className='fs-5 fw-bold'>
-									{t("pages.receipts.receiptTotalToBePaid")}
+									סה״כ לתשלום:
 									{receipt.totalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
@@ -302,18 +274,14 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							</Card.Body>
 						</Card>
 
-						<h5 className='text-center'>🛒 {t("links.products")}</h5>
+						<h5 className='text-center'>🛒 מוצרים</h5>
 						<Table striped bordered hover dir='rtl' className='mb-5'>
 							<thead className='table-dark'>
 								<tr>
-									<th>{t("links.products")}</th>
-									<th>{t("pages.receipts.receiptTotalQuantity")}</th>
-									<th>
-										{t("pages.receipts.receiptTotalPricePerUnit")}
-									</th>
-									<th>
-										{t("pages.receipts.receiptTotalPriceTotalUnits")}
-									</th>
+									<th>מוצרים</th>
+									<th>כמות</th>
+									<th>מחיר ליחידה</th>
+									<th>סה״כ</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -340,23 +308,19 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							</tbody>
 						</Table>
 						<Card.Text className=' text-dark'>
-							<strong>{t("pages.receipts.receiptBusinessName")}</strong>
+							<strong>שם עסק:</strong>
 							{receipt.businessInfo.name}
 							<br />
 							<br />
-							<strong>{t("pages.receipts.receiptCustomerPhone")}</strong>
+							<strong>טלפון:</strong>
 							{receipt.businessInfo.phone}
 							<br />
 							<br />
-							<strong>
-								{t("pages.receipts.receiptCustomerEmail")}
-							</strong>{" "}
+							<strong>אימייל:</strong>
 							{receipt.businessInfo.email}
 							<br />
 							<br />
-							<strong>
-								{t("pages.receipts.receiptCustomerAdress")}
-							</strong>{" "}
+							<strong>כתובת:</strong>
 							{receipt.businessInfo.address}
 						</Card.Text>
 
@@ -370,7 +334,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								}}
 								onClick={() => generatePDF(receipt.orderNumber)}
 							>
-								{t("pages.receipts.receiptDownload")} - PDF
+								{t("pages.receipts.download")} - PDF
 							</Button>
 						</div>
 					</div>

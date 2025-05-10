@@ -1,5 +1,5 @@
 {
-	"price":"السعر",
+	"price": "السعر",
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {
@@ -120,27 +120,9 @@
 			"receiptSearchTitle": "بحث متقدم",
 			"receiptSearch_1": "ابحث بالاسم أو البريد الإلكتروني أو رقم الطلب",
 			"receiptSearch_2": "ابحث باسم المنتج",
-			"receiptSearchFromDate": "من تاريخ:",
-			"receiptSearchToDate": "إلى تاريخ:",
-			"receiptNumber": "رقم الإيصال",
-			"receiptDate": "التاريخ:",
-			"receiptCustomer": "العميل:",
-			"receiptCustomerPhone": "الهاتف:",
-			"receiptCustomerEmail": "البريد الإلكتروني:",
-			"receiptCustomerAdress": "العنوان:",
-			"receiptCustomerNoCustomerToProvide": "لا تتوفر تفاصيل للعميل",
-			"receiptCustomerPaymentMethod": "طريقة الدفع:",
-			"receiptCustomerCridetCard": "بطاقة ائتمان",
-			"receiptCustomerCash": "نقداً",
-			"receiptCustomerCollectionMethod": "طريقة الاستلام:",
-			"receiptCustomerDelivry": "توصيل للمنزل",
-			"receiptCustomerSelfCollection": "استلام ذاتي",
-			"receiptTotalQuantity": "الكمية",
-			"receiptTotalPricePerUnit": "سعر الوحدة",
-			"receiptTotalPriceTotalUnits": "الإجمالي",
-			"receiptTotalToBePaid": "الإجمالي للدفع:",
-			"receiptBusinessName": "اسم المتجر:",
-			"receiptDownload": "تحميل"
+			"receiptSearchFromDate": "من تاريخ",
+			"receiptSearchToDate": "إلى تاريخ",
+			"download": "تنزيل"
 		},
 		"contact": {
 			"title": "اتصل بنا",
@@ -233,6 +215,6 @@
 	"removeAccount": {
 		"heading": "حذف الحساب",
 		"description": "اذا قمت بحذف الحساب لا يمكن التراجع عن هذا الإجراء",
-		"buttonText":"حذف نهائي"
+		"buttonText": "حذف نهائي"
 	}
 }
