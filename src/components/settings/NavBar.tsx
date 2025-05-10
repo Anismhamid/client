@@ -10,6 +10,7 @@ import {
 	Badge,
 	Box,
 	Button,
+	Chip,
 	Menu,
 	MenuItem,
 	Stack,
@@ -224,34 +225,34 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							{t("links.contact")}
 						</NavLink>
 					</li>
-					{auth && isLoggedIn && (
-						<Tooltip title='סל קניות' arrow>
-							<li className='nav-item ms-1'>
-								<Box>
-									<Badge
-										badgeContent={quantity}
-										sx={{
-											"& .MuiBadge-badge": {
-												backgroundColor: "#4FC3F7",
-												color: "#1A1E22",
-												fontWeight: "bold",
-											},
-										}}
+					{/* {auth && isLoggedIn && ( */}
+					<Tooltip title='סל קניות' arrow>
+						<li className='nav-item ms-1'>
+							<Box>
+								<Badge
+									badgeContent={quantity}
+									sx={{
+										"& .MuiBadge-badge": {
+											backgroundColor: "#4FC3F7",
+											color: "#1A1E22",
+											fontWeight: "bold",
+										},
+									}}
+								>
+									<NavLink
+										className={`${
+											isActive(path.Cart) ? "text-danger" : ""
+										} nav-link fs-5`}
+										aria-current='page'
+										to={path.Cart}
 									>
-										<NavLink
-											className={`${
-												isActive(path.Cart) ? "text-danger" : ""
-											} nav-link fs-5`}
-											aria-current='page'
-											to={path.Cart}
-										>
-											{fontAwesomeIcon.cartInoc}
-										</NavLink>
-									</Badge>
-								</Box>
-							</li>
-						</Tooltip>
-					)}
+										{fontAwesomeIcon.cartInoc}
+									</NavLink>
+								</Badge>
+							</Box>
+						</li>
+					</Tooltip>
+					{/* )} */}
 					{!isLoggedIn ? (
 						<li>
 							<Button
@@ -296,6 +297,53 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					</span>
 				</Box>
 			)}
+
+			<Box
+			
+				sx={{
+					display: {xs: "flex", md: "none"}, // Show only on mobile/tablet
+					overflowX: "auto",
+					scrollSnapType: "x mandatory",
+					scrollbarWidth: "none",
+					"&::-webkit-scrollbar": {display: "none"},
+					py: 1,
+					gap: 1,
+					backgroundColor: "#111824",
+					mb: 5,
+					backdropFilter: "blur(10px);",
+					"& > a": {
+						scrollSnapAlign: "start",
+						flexShrink: 0,
+					},
+					width: "100%",
+					position: "sticky",
+					top: 0,
+					zIndex: 1000,
+					boxShadow: 1,
+				}}
+			>
+				{navbarCategoryLinks.map((link) => (
+					<NavLink
+						to={link.path}
+						key={link.path}
+						style={{textDecoration: "none"}}
+					>
+						<Chip
+							label={t(link.labelKey)}
+							color='error'
+							size='medium'
+							sx={{
+								px: 2,
+								"&:hover": {
+									transform: "scale(1.05)",
+									boxShadow: 2,
+								},
+								transition: "all 0.2s ease",
+							}}
+						/>
+					</NavLink>
+				))}
+			</Box>
 		</>
 	);
 };

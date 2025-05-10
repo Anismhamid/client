@@ -9,9 +9,11 @@ import {
 	TextField,
 } from "@mui/material";
 import {useFormik} from "formik";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useEffect, useState} from "react";
 import * as yup from "yup";
-import {cities} from "../interfaces/cities";
+import {Cities} from "../interfaces/cities";
+import {getCities} from "../services/cities";
+import useAddressData from "../hooks/useAddressData";
 
 interface UserInfoModalProps {
 	isOpen: boolean;
@@ -57,6 +59,8 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 		},
 	});
 
+	const {cities, streets, loadingStreets} = useAddressData(formik.values.city);
+
 	return (
 		<Dialog open={isOpen} onClose={onClose} maxWidth='xs' fullWidth>
 			<DialogTitle className=' text-center'>
@@ -84,9 +88,8 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					/>
 					<TextField
 						select
-						label='עיר'
-						id='city'
-						name='city'
+						label='בחר עיר'
+						name='address.city'
 						value={formik.values.city}
 						onChange={formik.handleChange}
 						error={formik.touched.city && Boolean(formik.errors.city)}
@@ -94,27 +97,56 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 						fullWidth
 						className='my-2'
 						variant='outlined'
+						SelectProps={{
+							MenuProps: {
+								PaperProps: {
+									style: {
+										maxHeight: 300,
+									},
+								},
+							},
+						}}
 					>
-						<MenuItem value=''>
-							<em>בחר עיר</em>
-						</MenuItem>
-						{cities.map((city) => (
-							<MenuItem key={city} value={city}>
+						<MenuItem value=''>בחר עיר</MenuItem>
+						{cities.map((city, index) => (
+							<MenuItem key={index} value={city}>
 								{city}
 							</MenuItem>
 						))}
 					</TextField>
-
 					<TextField
-						margin='dense'
-						label='רחוב'
-						fullWidth
-						name='street'
+						select
+						label='בחר רחוב'
+						name='address.street'
 						value={formik.values.street}
 						onChange={formik.handleChange}
+						disabled={!formik.values.city || loadingStreets}
 						error={formik.touched.street && Boolean(formik.errors.street)}
 						helperText={formik.touched.street && formik.errors.street}
-					/>
+						fullWidth
+						className='my-2'
+						variant='outlined'
+						SelectProps={{
+							MenuProps: {
+								PaperProps: {
+									style: {
+										maxHeight: 300,
+									},
+								},
+							},
+						}}
+					>
+						<MenuItem value=''>בחר רחוב</MenuItem>
+						{loadingStreets ? (
+							<MenuItem disabled>טוען רחובות...</MenuItem>
+						) : (
+							streets.map((street, index) => (
+								<MenuItem key={index} value={street}>
+									{street}
+								</MenuItem>
+							))
+						)}
+					</TextField>
 					<TextField
 						margin='dense'
 						label='מספר בית'

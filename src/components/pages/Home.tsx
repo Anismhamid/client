@@ -113,6 +113,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		const productQuantity = quantity[product_name]; // Access the quantity of the specific product
 		if (!isLoggedIn) {
 			navigate(path.Login);
+			return;
 		} else {
 			setLoadingAddToCart(product_name);
 			await handleAddToCart(

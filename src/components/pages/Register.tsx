@@ -22,10 +22,11 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import {cities} from "../../interfaces/cities";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import React from "react";
+import useAddressData from "../../hooks/useAddressData";
+import {Col, Form, Row} from "react-bootstrap";
 
 interface RegisterProps {}
 /**
@@ -45,7 +46,6 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	const handleMouseUpPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 	};
-
 	const navigate = useNavigate();
 
 	const formik = useFormik<UserRegister>({
@@ -157,24 +157,33 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		},
 	});
 
+	const {cities, streets, loadingStreets} = useAddressData(formik.values.address.city);
+
 	return (
 		<Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
 			<Card
-				sx={{maxWidth: 800, width: "100%", p: 2, borderRadius: 3, boxShadow: 6}}
+				sx={{
+					maxWidth: 800,
+					width: "100%",
+					p: 2,
+					mb: 8,
+					borderRadius: 3,
+					boxShadow: 6,
+				}}
 			>
 				<CardContent>
 					<Typography variant='h4' align='center' gutterBottom>
 						הרשמה
 					</Typography>
-					<form
+					<Form
 						autoComplete='off'
 						className='border p-3 mb-5 rounded'
 						noValidate
 						onSubmit={formik.handleSubmit}
 					>
 						{/* first - last name  */}
-						<div className='row row-cols-md-2 row-cols-sm-1'>
-							<div>
+						<Row className='row row-cols-md-2 row-cols-sm-1'>
+							<Col>
 								<TextField
 									autoFocus
 									label='שם'
@@ -194,8 +203,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-							<div>
+							</Col>
+							<Col>
 								<TextField
 									label='שם משפחה'
 									name='name.last'
@@ -214,12 +223,12 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-						</div>
+							</Col>
+						</Row>
 
 						{/* phone 1 - 2  */}
-						<div className='row row-cols-md-2 row-cols-sm-1'>
-							<div>
+						<Row className='row row-cols-md-2 row-cols-sm-1'>
+							<Col>
 								<TextField
 									label='טלופן ראשי'
 									name='phone.phone_1'
@@ -238,8 +247,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-							<div>
+							</Col>
+							<Col>
 								<TextField
 									label='טלופן שני (לא חובה)'
 									name='phone.phone_2'
@@ -250,12 +259,12 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-						</div>
+							</Col>
+						</Row>
 
 						{/* email password gender */}
-						<div className='row row-cols-md-2 row-cols-sm-1'>
-							<div>
+						<Row className='row row-cols-md-2 row-cols-sm-1'>
+							<Col>
 								<TextField
 									label='דו"אל'
 									name='email'
@@ -275,8 +284,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-							<div dir='ltr'>
+							</Col>
+							<Col dir='ltr'>
 								<FormControl
 									sx={{mt: 1}}
 									variant='outlined'
@@ -324,8 +333,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 											</FormHelperText>
 										)}
 								</FormControl>
-							</div>
-							<div>
+							</Col>
+							<Col>
 								<TextField
 									label='אישור סיסמה'
 									type='password'
@@ -345,9 +354,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
+							</Col>
 							{/* gender */}
-							<div>
+							<Col>
 								<TextField
 									select
 									label='מגדר'
@@ -370,14 +379,14 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									<MenuItem value='זכר'>זכר</MenuItem>
 									<MenuItem value='נקבה'>נקבה</MenuItem>
 								</TextField>
-							</div>
-						</div>
+							</Col>
+						</Row>
 
 						{/* image - alt */}
 						<hr className=' text-light' />
 						<h6 className='text-primary mb-2 text-center'>(אופציונלי)</h6>
-						<div className='row row-cols-2'>
-							<div>
+						<Row className='row row-cols-2'>
+							<Col>
 								<TextField
 									id='imageUrl'
 									label='קישור לתמונה'
@@ -389,8 +398,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-							<div>
+							</Col>
+							<Col>
 								<TextField
 									label='שם תמונה'
 									type='text'
@@ -402,17 +411,16 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-						</div>
+							</Col>
+						</Row>
 
 						{/* address - city - street - house number  */}
 						<hr className='text-light' />
-						<div className='row row-cols-md-3'>
-							<div>
+						<Row className='row row-cols-md-3'>
+							<Col>
 								<TextField
 									select
-									label='עיר'
-									id='city'
+									label='בחר עיר'
 									name='address.city'
 									value={formik.values.address.city}
 									onChange={formik.handleChange}
@@ -427,28 +435,34 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									fullWidth
 									className='my-2'
 									variant='outlined'
+									SelectProps={{
+										MenuProps: {
+											PaperProps: {
+												style: {
+													maxHeight: 300, // שורת מפתח
+												},
+											},
+										},
+									}}
 								>
-									<MenuItem value=''>
-										<em>בחר עיר</em>
-									</MenuItem>
-									{cities.map((city) => (
-										<MenuItem key={city} value={city}>
+									<MenuItem value=''>בחר עיר</MenuItem>
+									{cities.map((city, index) => (
+										<MenuItem key={index} value={city}>
 											{city}
 										</MenuItem>
 									))}
 								</TextField>
-							</div>
-							<div>
+							</Col>
+							<Col>
 								<TextField
-									label='רחוב'
-									id='street'
+									select
+									label='בחר רחוב'
 									name='address.street'
-									type='text'
-									fullWidth
-									className='my-2'
-									variant='outlined'
 									value={formik.values.address.street}
 									onChange={formik.handleChange}
+									disabled={
+										!formik.values.address.city || loadingStreets
+									}
 									error={
 										formik.touched.address?.street &&
 										Boolean(formik.errors.address?.street)
@@ -457,22 +471,35 @@ const Register: FunctionComponent<RegisterProps> = () => {
 										formik.touched.address?.street &&
 										formik.errors.address?.street
 									}
-								/>
-							</div>
-							<div>
+									fullWidth
+									className='my-2'
+									variant='outlined'
+								>
+									<MenuItem value=''>בחר רחוב</MenuItem>
+									{loadingStreets ? (
+										<MenuItem disabled>טוען רחובות...</MenuItem>
+									) : (
+										streets.map((street, index) => (
+											<MenuItem key={index} value={street}>
+												{street}
+											</MenuItem>
+										))
+									)}
+								</TextField>
+							</Col>
+							<Col>
 								<TextField
 									label='מספר בית'
-									id='houseNumber'
 									name='address.houseNumber'
 									type='text'
-									value={formik.values.address?.houseNumber}
+									value={formik.values.address.houseNumber}
 									onChange={formik.handleChange}
 									fullWidth
 									className='my-2'
 									variant='outlined'
 								/>
-							</div>
-						</div>
+							</Col>
+						</Row>
 						<FormControlLabel
 							control={
 								<Checkbox
@@ -491,7 +518,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						{formik.touched.terms && formik.errors.terms && (
 							<div className='text-danger small'>{formik.errors.terms}</div>
 						)}
-						<div className=' m-auto mt-5'>
+						<Box className=' m-auto mt-5'>
 							<Button
 								className=' w-100'
 								variant='contained'
@@ -501,8 +528,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							>
 								{isLoading ? "טוען..." : "הרשמה"}
 							</Button>
-						</div>
-						<div className='mt-5'>
+						</Box>
+						<Box className='mt-5'>
 							<span className='fw-bold me-3'>יש לך חשבון ?</span>
 							<Button
 								variant='contained'
@@ -510,8 +537,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							>
 								התחבר כאן
 							</Button>
-						</div>
-					</form>
+						</Box>
+					</Form>
 				</CardContent>
 			</Card>
 		</Box>

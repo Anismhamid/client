@@ -3,11 +3,11 @@ import * as yup from "yup";
 import {showSuccess, showError} from "../../atoms/Toast";
 import {FunctionComponent, useEffect, useState} from "react";
 import {Box, Button, CircularProgress, MenuItem, TextField} from "@mui/material";
-import {Col, Row} from "react-bootstrap";
-import {cities} from "../../interfaces/cities";
+import {Col, Form, Row} from "react-bootstrap";
 import {compleateProfileData, getUserById} from "../../services/usersServices";
 import useToken from "../../hooks/useToken";
 import Loader from "../../atoms/loader/Loader";
+import useAddressData from "../../hooks/useAddressData";
 
 interface CompleteProfileProps {}
 
@@ -56,6 +56,8 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 		},
 	});
 
+	const {cities, streets, loadingStreets} = useAddressData(formik.values.address.city);
+
 	useEffect(() => {
 		async function getUser() {
 			try {
@@ -95,7 +97,7 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 		>
 			<Box className='container d-flex align-items-center justify-content-center flex-column'>
 				<h2 className='text-center'>השלמת פרופיל</h2>
-				<form onSubmit={formik.handleSubmit} className='mt-4'>
+				<Form onSubmit={formik.handleSubmit} className='mt-4'>
 					<Row>
 						<Col>
 							<TextField
@@ -134,7 +136,7 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 							<Col>
 								<TextField
 									select
-									label='עיר'
+									label='בחר עיר'
 									name='address.city'
 									value={formik.values.address.city}
 									onChange={formik.handleChange}
@@ -149,12 +151,19 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 									fullWidth
 									className='my-2'
 									variant='outlined'
+									SelectProps={{
+										MenuProps: {
+											PaperProps: {
+												style: {
+													maxHeight: 300,
+												},
+											},
+										},
+									}}
 								>
-									<MenuItem value=''>
-										<em>בחר עיר</em>
-									</MenuItem>
-									{cities.map((city, idx) => (
-										<MenuItem key={idx} value={city}>
+									<MenuItem value=''>בחר עיר</MenuItem>
+									{cities.map((city, index) => (
+										<MenuItem key={index} value={city}>
 											{city}
 										</MenuItem>
 									))}
@@ -162,11 +171,14 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 							</Col>
 							<Col>
 								<TextField
-									label='רחוב'
+									select
+									label='בחר רחוב'
 									name='address.street'
-									type='text'
 									value={formik.values.address.street}
 									onChange={formik.handleChange}
+									disabled={
+										!formik.values.address.city || loadingStreets
+									}
 									error={
 										formik.touched.address?.street &&
 										Boolean(formik.errors.address?.street)
@@ -178,7 +190,27 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 									fullWidth
 									className='my-2'
 									variant='outlined'
-								/>
+									SelectProps={{
+										MenuProps: {
+											PaperProps: {
+												style: {
+													maxHeight: 300,
+												},
+											},
+										},
+									}}
+								>
+									<MenuItem value=''>בחר רחוב</MenuItem>
+									{loadingStreets ? (
+										<MenuItem disabled>טוען רחובות...</MenuItem>
+									) : (
+										streets.map((street, index) => (
+											<MenuItem key={index} value={street}>
+												{street}
+											</MenuItem>
+										))
+									)}
+								</TextField>
 							</Col>
 							<Col>
 								<TextField
@@ -209,7 +241,7 @@ const CompleteProfile: FunctionComponent<CompleteProfileProps> = () => {
 							</Button>
 						</Box>
 					</Row>
-				</form>
+				</Form>
 			</Box>
 		</main>
 	);

@@ -73,7 +73,6 @@ function App() {
 
 	useEffect(() => {
 		if (!auth) return;
-
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
 			auth: {
 				userId: auth?._id,
