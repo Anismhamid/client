@@ -158,87 +158,81 @@ function App() {
 	);
 
 	return (
-		<>
-			<ThemeProvider theme={theme}>
-				<CssBaseline />
-				<FormControl sx={{width: "100%", display: "flex"}}>
-					<RadioGroup
-						aria-labelledby='demo-theme-toggle'
-						name='theme-toggle'
-						row
-						value={mode}
-						onChange={handleThemeChange}
-					>
-						<FormControlLabel
-							value='light'
-							control={<Radio />}
-							label='Light'
-						/>
-						<FormControlLabel value='dark' control={<Radio />} label='Dark' />
-						<LanguageSwitcher />
-					</RadioGroup>
-				</FormControl>
+		<ThemeProvider theme={theme}>
+			<CssBaseline />
+			<FormControl sx={{width: "100%", display: "flex"}}>
+				<RadioGroup
+					aria-labelledby='demo-theme-toggle'
+					name='theme-toggle'
+					row
+					value={mode}
+					onChange={handleThemeChange}
+				>
+					<FormControlLabel value='light' control={<Radio />} label='Light' />
+					<FormControlLabel value='dark' control={<Radio />} label='Dark' />
+					<LanguageSwitcher />
+				</RadioGroup>
+			</FormControl>
 
-				<ToastContainer />
-				<NavBar />
-				{decodedToken && (
-					<SpeedDial
-						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 40, right: "45%"}}
-						icon={fontAwesomeIcon.cartInoc}
-						onClick={() => {
-							navigate(path.Cart);
-						}}
-					/>
-				)}
+			<ToastContainer />
+			<NavBar />
+			{decodedToken && (
+				<SpeedDial
+					ariaLabel='cart'
+					sx={{position: "fixed", bottom: 40, right: "45%"}}
+					icon={fontAwesomeIcon.cartInoc}
+					onClick={() => {
+						navigate(path.Cart);
+					}}
+				/>
+			)}
 
-				<Routes>
-					<Route path={path.Home} element={<Home />} />
-					<Route path={path.Login} element={<Login />} />
-					<Route path={path.Profile} element={<Profile />} />
-					<Route path={path.Register} element={<Register />} />
-					<Route
-						path={path.UsersManagement}
-						element={
-							auth && auth.role === RoleType.Admin ? (
-								<UsersManagement />
-							) : (
-								<Navigate to={path.Login} />
-							)
-						}
-					/>
-					<Route path={path.Contact} element={<Contact />} />
-					<Route path={path.About} element={<About />} />
-					<Route path={path.Cart} element={<Cart />} />
-					<Route path={path.OrderDetails} element={<OrederDetails />} />
-					<Route path={path.AllTheOrders} element={<AllTheOrders />} />
-					<Route path={path.Receipt} element={<Receipt />} />
-					<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
-					<Route path={path.TermOfUse} element={<TermOfUse />} />
-					<Route path={path.CompleteProfile} element={<CompleteProfile />} />
-					<Route path={path.AdminSettings} element={<AdminSettings />} />
-					<Route path={productsPathes.fruits} element={<Fruits />} />
-					<Route path={productsPathes.vegetable} element={<Vegetable />} />
-					<Route path={productsPathes.fish} element={<Fish />} />
-					<Route path={productsPathes.meat} element={<Meat />} />
-					<Route path={productsPathes.spices} element={<Spices />} />
-					<Route path={productsPathes.dairy} element={<Dairy />} />
-					<Route path={productsPathes.bakery} element={<Bakery />} />
-					<Route path={productsPathes.beverages} element={<Beverages />} />
-					<Route path={productsPathes.frozen} element={<Frozen />} />
-					<Route path={productsPathes.snacks} element={<Snacks />} />
-					<Route path={productsPathes.baby} element={<Baby />} />
-					<Route path={productsPathes.alcohol} element={<Alcohol />} />
-					<Route path={productsPathes.cleaning} element={<Cleaning />} />
-					<Route path={productsPathes.pastaRice} element={<PastaRice />} />
-					<Route path={productsPathes.house} element={<House />} />
-					<Route path={productsPathes.health} element={<Health />} />
-					<Route path={path.Checkout} element={<Checkout />} />
-					<Route path={path.Png} element={<PageNotFound />} />
-				</Routes>
-				<Footer />
-			</ThemeProvider>
-		</>
+			<Routes>
+				<Route path={path.Home} element={<Home />} />
+				<Route path={path.Login} element={<Login />} />
+				<Route path={path.Profile} element={<Profile />} />
+				<Route path={path.Register} element={<Register />} />
+				<Route
+					path={path.UsersManagement}
+					element={
+						auth && auth.role === RoleType.Admin ? (
+							<UsersManagement />
+						) : (
+							<Navigate to={path.Login} />
+						)
+					}
+				/>
+				<Route path={path.Contact} element={<Contact />} />
+				<Route path={path.About} element={<About />} />
+				<Route path={path.Cart} element={<Cart />} />
+				<Route path={path.OrderDetails} element={<OrederDetails />} />
+				<Route path={path.AllTheOrders} element={<AllTheOrders />} />
+				<Route path={path.Receipt} element={<Receipt />} />
+				<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
+				<Route path={path.TermOfUse} element={<TermOfUse />} />
+				<Route path={path.CompleteProfile} element={<CompleteProfile />} />
+				<Route path={path.AdminSettings} element={<AdminSettings />} />
+				<Route path={productsPathes.fruits} element={<Fruits />} />
+				<Route path={productsPathes.vegetable} element={<Vegetable />} />
+				<Route path={productsPathes.fish} element={<Fish />} />
+				<Route path={productsPathes.meat} element={<Meat />} />
+				<Route path={productsPathes.spices} element={<Spices />} />
+				<Route path={productsPathes.dairy} element={<Dairy />} />
+				<Route path={productsPathes.bakery} element={<Bakery />} />
+				<Route path={productsPathes.beverages} element={<Beverages />} />
+				<Route path={productsPathes.frozen} element={<Frozen />} />
+				<Route path={productsPathes.snacks} element={<Snacks />} />
+				<Route path={productsPathes.baby} element={<Baby />} />
+				<Route path={productsPathes.alcohol} element={<Alcohol />} />
+				<Route path={productsPathes.cleaning} element={<Cleaning />} />
+				<Route path={productsPathes.pastaRice} element={<PastaRice />} />
+				<Route path={productsPathes.house} element={<House />} />
+				<Route path={productsPathes.health} element={<Health />} />
+				<Route path={path.Checkout} element={<Checkout />} />
+				<Route path={path.Png} element={<PageNotFound />} />
+			</Routes>
+			<Footer />
+		</ThemeProvider>
 	);
 }
 

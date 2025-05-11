@@ -16,14 +16,14 @@ export interface UserRegister {
 	};
 	email: string;
 	password: string;
-	confirmPassword?:string;
+	confirmPassword?: string;
 	gender: string;
 	image: {
 		url?: string;
 		alt?: string;
 	};
 	role: string;
-	status?: string;
+	status?: boolean;
 	terms: boolean;
 }
 

@@ -12,6 +12,7 @@ import { CardMedia, Chip} from "@mui/material";
 import {showError} from "../../atoms/Toast";
 import {useTranslation} from "react-i18next";
 import OrderStatusButtons from "../../atoms/OrderStatusButtons/StatusButtons";
+import handleRTL from "../../locales/handleRTL";
 
 interface OrderDetailsProps {}
 
@@ -50,8 +51,11 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
+	const diriction = handleRTL();
+
+
 	return (
-		<main className='min-vh-50'>
+		<main className='min-vh-50' dir={diriction}>
 			<div className='container p-3'>
 				<div className='text-center bg-gradient p-4 rounded shadow-sm'>
 					<h1 className='text-center mb-4'>{orderNumber}</h1>
@@ -89,7 +93,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 					</div>
 				</div>
 
-				<div className='row row-cols-1 row-cols-md-3 g-4 mt-4'>
+				<div className='row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4 mt-4'>
 					{orderItems.products.map((product, index) => {
 						const finalPrice =
 							product.discount > 0
@@ -101,7 +105,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 								<div className='card h-100 shadow-sm border-0 overflow-hidden'>
 									<CardMedia
 										component='img'
-										height='180'
+										height='200'
 										image={product.product_image}
 										alt={product.product_name}
 										sx={{

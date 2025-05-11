@@ -56,7 +56,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 			<ModalHeader closeButton>
 				<h6 className='display-6 p-2 fw-bold text-center'>הוספת מוצר חדש</h6>
 			</ModalHeader>
-			<Modal.Body className='rounded  d-flex justify-content-center align-items-center'>
+			<Modal.Body className='rounded d-flex justify-content-center align-items-center'>
 				<div className='container '>
 					<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
 						{/* product_name */}

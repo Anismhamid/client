@@ -69,12 +69,23 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	}
 
 	return (
-		<main>
+		<main className=' d-flex align-items-center'>
 			<Box component='form' onSubmit={formik.handleSubmit} className='container'>
 				<TableContainer component={Paper}>
-					<Table className=''>
+					<Table
+						sx={{
+							"& .MuiTableRow-root": {
+								"&:nth-of-type(even)": {
+									backgroundColor: "#f9f9f9",
+								},
+								"&:hover": {
+									backgroundColor: "#585858",
+								},
+							},
+						}}
+					>
 						<TableHead>
-							<TableRow className='bg-gradient '>
+							<TableRow>
 								<TableCell align='center'>מחיר משלוח</TableCell>
 								<TableCell align='center'>שם העסק</TableCell>
 								<TableCell align='center'>כתובת העסק</TableCell>

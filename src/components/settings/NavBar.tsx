@@ -299,23 +299,23 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 			)}
 
 			<Box
-			
 				sx={{
-					display: {xs: "flex", md: "none"}, // Show only on mobile/tablet
-					overflowX: "auto",
+					display: "flex", // Show only on mobile/tablet
+					flexWrap: {xs: "nowrap", md: "wrap"},
+					overflowX: {xs: "auto", md: "visible"},
 					scrollSnapType: "x mandatory",
 					scrollbarWidth: "none",
 					"&::-webkit-scrollbar": {display: "none"},
-					py: 1,
+					py: 2,
 					gap: 1,
-					backgroundColor: "#111824",
+					fontWeight: "bold",
 					mb: 5,
 					backdropFilter: "blur(10px);",
 					"& > a": {
-						scrollSnapAlign: "start",
 						flexShrink: 0,
 					},
 					width: "100%",
+					m: "auto",
 					position: "sticky",
 					top: 0,
 					zIndex: 1000,
@@ -323,24 +323,29 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 				}}
 			>
 				{navbarCategoryLinks.map((link) => (
-					<NavLink
-						to={link.path}
-						key={link.path}
-						style={{textDecoration: "none"}}
-					>
-						<Chip
-							label={t(link.labelKey)}
-							color='error'
-							size='medium'
-							sx={{
-								px: 2,
-								"&:hover": {
-									transform: "scale(1.05)",
-									boxShadow: 2,
-								},
-								transition: "all 0.2s ease",
-							}}
-						/>
+					<NavLink to={link.path} key={link.path}>
+						{({isActive}) => (
+							<Chip
+								label={t(link.labelKey)}
+								color={isActive ? "default" : "default"}
+								size='medium'
+								sx={{
+									px: 2,
+									mx:1,
+									"&:hover": {
+										transform: "scale(1.05)",
+										boxShadow: 7,
+									},
+									transition: "all 0.2s ease",
+									// Additional active state styling if needed
+									...(isActive && {
+										fontWeight: "bold",
+										boxShadow: 7,
+										transform: "scale(1.05)",
+									}),
+								}}
+							/>
+						)}
 					</NavLink>
 				))}
 			</Box>

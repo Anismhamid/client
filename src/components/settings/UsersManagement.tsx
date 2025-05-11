@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {UserRegister} from "../../interfaces/User";
-import {getAllUsers, patchUserRole} from "../../services/usersServices";
+import {getAllUsers, patchUserStatus, patchUserRole} from "../../services/usersServices";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import RoleType from "../../interfaces/UserType";
 import {
@@ -18,14 +18,19 @@ import {
 	TableRow,
 	TableHead,
 	Paper,
+	CircularProgress,
+	Typography,
 } from "@mui/material";
+import {io} from "socket.io-client";
+import {showInfo} from "../../atoms/Toast";
+import {useUser} from "../../context/useUSer";
 
 interface UersManagementProps {}
 
 const STATUS = {
-	ACTIVE: "Active",
-	INACTIVE: "Inactive",
-};
+	ACTIVE: true,
+	INACTIVE: false,
+} as const;
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -46,13 +51,17 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 		border: 0,
 	},
 }));
+
 /**
  * Users uers management
  * @returns all users table for management
  */
 const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [users, setUsers] = useState<UserRegister[]>([]);
-	const [searchQuery, setSearchQuery] = useState("");
+	const [loading, setLoading] = useState<boolean>(true);
+	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+	const {auth} = useUser();
 
 	useEffect(() => {
 		getAllUsers()
@@ -61,30 +70,70 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			})
 			.catch((err) => {
 				console.log(err);
-			});
+			})
+			.finally(() => setLoading(false));
 	}, []);
 
-	const filteredUsers = (users || []).filter(
-		(user) =>
-			user.name.first.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			user.email.toLowerCase().includes(searchQuery.toLowerCase()),
-	);
-
-	// Update user status
-	const toggleStatus = (_id: string) => {
-		setUsers(
-			users.map((user) =>
-				user._id === _id
-					? {
-							...user,
-							status:
-								user.status === STATUS.ACTIVE
-									? STATUS.INACTIVE
-									: STATUS.ACTIVE,
-						}
-					: user,
-			),
+	useEffect(() => {
+		const socket = io(
+			import.meta.env.VITE_API_SOCKET_URL,
+			{
+				auth: {
+					userId: auth._id,
+				},
+			},
+			[],
 		);
+
+		const handleUserConnected = (data: {userId: string}) => {
+			setUsers((prevUsers) =>
+				prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
+			);
+		};
+
+		const handleUserDisconnected = (data: {userId: string}) => {
+			setUsers((prevUsers) =>
+				prevUsers.map((u) => (u._id === data.userId ? {...u, status: false} : u)),
+			);
+			patchUserStatus(data.userId, false);
+		};
+
+		socket.on("user:connected", handleUserConnected);
+		socket.on("user:disconnected", handleUserDisconnected);
+
+		return () => {
+			socket.off("user:connected", handleUserConnected);
+			socket.off("user:disconnected", handleUserDisconnected);
+			socket.disconnect();
+		};
+	}, [auth._id]);
+
+	const handleStatusChange = async (userId: string) => {
+		try {
+			setUpdatingUserId(userId);
+			const userToUpdate = users.find((user) => user._id === userId);
+			if (!userToUpdate) {
+				showInfo("User not found");
+				return;
+			}
+
+			const newStatus = !userToUpdate.status;
+			const response = await patchUserStatus(userId, newStatus);
+
+			if (response.success) {
+				setUsers(
+					users.map((user) =>
+						user._id === userId ? {...user, status: newStatus} : user,
+					),
+				);
+				showInfo("Status updated successfully");
+			}
+		} catch (error: any) {
+			console.error("Update failed:", error);
+			showInfo(error.response?.data?.message || "Failed to update status");
+		} finally {
+			setUpdatingUserId(null);
+		}
 	};
 
 	// Change role
@@ -101,6 +150,12 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 				console.error("Failed to change role", err);
 			});
 	};
+
+	const filteredUsers = (users || []).filter(
+		(user) =>
+			user.name.first.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			user.email.toLowerCase().includes(searchQuery.toLowerCase()),
+	);
 
 	return (
 		<main className='min-vh-100'>
@@ -131,11 +186,19 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 								<StyledTableCell align='center'>דו"אל</StyledTableCell>
 								<StyledTableCell align='center'>תפקיד</StyledTableCell>
 								<StyledTableCell align='center'>סטטוס</StyledTableCell>
-								<StyledTableCell align='center'>סטטוס</StyledTableCell>
+								<StyledTableCell align='center'>
+									עריכה | מחיקה
+								</StyledTableCell>
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{filteredUsers.length > 0 ? (
+							{loading ? (
+								<TableRow>
+									<TableCell colSpan={5} align='center'>
+										<CircularProgress />
+									</TableCell>
+								</TableRow>
+							) : filteredUsers.length > 0 ? (
 								filteredUsers.map((user) => (
 									<StyledTableRow key={user._id} hover>
 										<StyledTableCell component='th' scope='row'>
@@ -172,21 +235,22 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 											</Box>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Button
-												color='success'
-												className={` ${
-													user.status === "Active"
-														? "text-success"
-														: "text-danger"
-												}`}
-												onClick={() =>
-													toggleStatus(user._id as string)
-												}
+											<Typography
+											variant="body2"
+												color={user.status ? "success" : "error"}
+												// onClick={() =>
+												// 	handleStatusChange(user._id as string)
+												// }
+												// disabled={loading}
 											>
-												{user.status === "Active"
-													? "פעיל"
-													: "לא פעיל"}
-											</Button>
+												{loading ? (
+													<CircularProgress size={24} />
+												) : user.status ? (
+													"פעיל"
+												) : (
+													"לא פעיל"
+												)}
+											</Typography>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											<Box sx={{display: "flex"}} className=''>

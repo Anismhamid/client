@@ -1,111 +1,56 @@
 import {FunctionComponent} from "react";
-import {path, productsPathes} from "../routes/routes";
-import {useNavigate} from "react-router-dom";
-import {Button} from "react-bootstrap";
+import {NavLink, useNavigate} from "react-router-dom";
+import {Button, Chip} from "@mui/material";
+import {navbarCategoryLinks} from "../helpers/navCategoryies";
+import {useTranslation} from "react-i18next";
+import { path } from "../routes/routes";
 
 interface NavigathionButtonsProps {}
 
 const NavigathionButtons: FunctionComponent<NavigathionButtonsProps> = () => {
 	const navigate = useNavigate();
+	const {t} = useTranslation();
 
 	return (
 		<div className=' w-100'>
 			<hr />
 			<p className='fw-bold fs-3 rounded'>הזמנה חדשה</p>
 
-			<div className='row'>
-				<div className='col-3'>
+			<div className=''>
+				<div>
 					<Button
+						variant='contained'
 						onClick={() => navigate(path.Home)}
 						className='btn btn-secondary fw-bold w-100 m-1'
 					>
 						בית
 					</Button>
 				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.Fruits)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						פירות
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.Vegetable)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						ירקות
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.fish)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						דגים
-					</Button>
-				</div>
-			</div>
-			<div className='row'>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.dairy)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						מוצרי חלב
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.meat)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						בשרים
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.spices)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						תבלינים
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.bakery)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						מאפים
-					</Button>
-				</div>
-			</div>
-
-			<div className='row'>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.beverages)}
-						className='btn btn-info fw-bold w-100 m-1'
-					>
-						משקאות
-					</Button>
-				</div>
-				<div className='col-6'>
-					<Button
-						onClick={() => navigate(productsPathes.forzen)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						מוצרים קפואים
-					</Button>
-				</div>
-				<div className='col-3'>
-					<Button
-						onClick={() => navigate(productsPathes.snacks)}
-						className='btn btn-secondary fw-bold w-100 m-1'
-					>
-						חטיפים
-					</Button>
+				<div className='my-3'>
+					{navbarCategoryLinks.map((link) => (
+						<NavLink to={link.path} key={link.path}>
+							{({isActive}) => (
+								<Chip
+									label={t(link.labelKey)}
+									color={isActive ? "default" : "info"}
+									size='medium'
+									sx={{
+										px: 2,
+										m: 1,
+										"&:hover": {
+											transform: "scale(1.05)",
+											boxShadow: 2,
+										},
+										transition: "all 0.2s ease",
+										...(isActive && {
+											fontWeight: "bold",
+											border: "2px solid #894891",
+										}),
+									}}
+								/>
+							)}
+						</NavLink>
+					))}
 				</div>
 			</div>
 		</div>
