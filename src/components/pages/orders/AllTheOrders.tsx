@@ -164,6 +164,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
+							text="'חיפוש לפי מזהה, תאריך או מספר הזמנה...'"
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>

@@ -34,7 +34,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
 		phone: {phone_1: string; phone_2: string};
-		address: {city: string; street: string; houseNumber?: string};
+		address: {
+			city: string;
+			street: string;
+			houseNumber: string;
+		};
 		email: string;
 		image: {url: string; alt: string};
 		role: string;
@@ -63,7 +67,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	};
 
 	const contactSupport = () => {
-		// Logic to handle contacting support
 		navigate(path.Contact);
 	};
 

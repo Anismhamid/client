@@ -4,6 +4,6 @@ export default function handleRTL() {
 	// changing the direction by language
 	const currentLanguage = i18n.language;
 	const direction =
-		currentLanguage === "he" || currentLanguage === "en" ? "ltr" :"rtl" ;
+		currentLanguage === "he" || currentLanguage === "ar" ? "rtl" :"ltr" ;
 	return direction;
 }

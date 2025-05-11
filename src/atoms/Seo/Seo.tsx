@@ -25,7 +25,7 @@ const Seo: FunctionComponent<SeoProps> = ({
 			{/* Open Graph */}
 			<meta property='og:title' content={title} />
 			<meta property='og:description' content={description} />
-			<link rel='icon' href={image} />
+			<link rel='icon' type='image/svg+xml' href={image} />
 			<meta property='og:type' content={type} />
 		</Helmet>
 	);

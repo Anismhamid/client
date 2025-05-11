@@ -1,51 +1,90 @@
 import {FunctionComponent} from "react";
 import RoleType from "../interfaces/UserType";
-
+import {
+	styled,
+	TableContainer,
+	tableCellClasses,
+	Table,
+	TableCell,
+	TableBody,
+	TableRow,
+	Paper,
+} from "@mui/material";
 interface UserDetailTableProps {
 	user: {
 		name: {first: string; last: string};
 		phone: {phone_1: string; phone_2: string};
 		email: string;
 		role: string;
+		address: {
+			city: string;
+			street: string;
+			houseNumber: string;
+		};
 	};
 }
 
+const StyledTableCell = styled(TableCell)(({theme}) => ({
+	[`&.${tableCellClasses.head}`]: {
+		backgroundColor: theme.palette.common.black,
+		color: theme.palette.common.black,
+		fontSize: "1rem",
+	},
+	[`&.${tableCellClasses.body}`]: {
+		fontSize: 14,
+	},
+}));
+
 const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 	return (
-		<table className='table table-striped-columns'>
-			<tbody>
-				<tr>
-					<th>שם מלא</th>
-					<td>
-						{user.name?.first} {user.name?.last}
-					</td>
-				</tr>
-				<tr>
-					<th>טלפון ראשי</th>
-					<td>{user.phone?.phone_1 || "-"}</td>
-				</tr>
-				<tr>
-					<th>טלפון נוסף</th>
-					<td>{user.phone?.phone_2 || "-"}</td>
-				</tr>
-				<tr>
-					<th>דו"אל</th>
-					<td>{user.email}</td>
-				</tr>
-				<tr>
-					<th>סוג חשבון</th>
-					<td className='text-success fw-bold'>
-						{user.role === RoleType.Admin
-							? "מנהל ומנחה"
-							: user.role === RoleType.Moderator
-								? "מנחה"
-								: user.role
-									? "לקוח"
-									: "—"}
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<TableContainer component={Paper}>
+			<Table aria-label='user details table'>
+				<TableBody>
+					<TableRow>
+						<StyledTableCell align='center'>שם מלא</StyledTableCell>
+						<TableCell>
+							{user.name?.first} {user.name?.last}
+						</TableCell>
+					</TableRow>
+
+					<TableRow>
+						<StyledTableCell align='center'>טלפון</StyledTableCell>
+						<TableCell>{user.phone.phone_1 || "-"}</TableCell>
+					</TableRow>
+
+					{user.phone.phone_2 && (
+						<TableRow>
+							<StyledTableCell>טלפון נוסף</StyledTableCell>
+							<TableCell>{user.phone.phone_2}</TableCell>
+						</TableRow>
+					)}
+
+					<TableRow>
+						<StyledTableCell align='center'>כתובת</StyledTableCell>
+						<TableCell>
+							{`${user.address.city} ${user.address.street} ${user.address.houseNumber}` ||
+								"-"}
+						</TableCell>
+					</TableRow>
+
+					<TableRow>
+						<StyledTableCell align='center'>דוא"ל</StyledTableCell>
+						<TableCell>{user.email}</TableCell>
+					</TableRow>
+
+					<TableRow>
+						<StyledTableCell align='center'>סוג חשבון</StyledTableCell>
+						<TableCell sx={{color: "success.main", fontWeight: "bold"}}>
+							{user.role === RoleType.Admin
+								? "מנהל ומנחה"
+								: user.role === RoleType.Moderator
+									? "מנחה"
+									: "לקוח"}
+						</TableCell>
+					</TableRow>
+				</TableBody>
+			</Table>
+		</TableContainer>
 	);
 };
 

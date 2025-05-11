@@ -1,31 +1,7 @@
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
-import {Routes, Route, useNavigate, Navigate} from "react-router-dom";
-import UsersManagement from "./components/settings/UsersManagement.tsx";
-import OrederDetails from "./components/pages/OrederDetails.tsx";
-import AllTheOrders from "./components/pages/orders/AllTheOrders.tsx";
-import Beverages from "./components/pages/products/Beverages.tsx";
-import Vegetable from "./components/pages/products/Vegetable.tsx";
-import Profile from "./components/settings/Profile.tsx";
-import Receipt from "./components/settings/Receipt.tsx";
-import Checkout from "./components/pages/Checkout.tsx";
-import Register from "./components/pages/Register.tsx";
-import Spices from "./components/pages/products/Spices.tsx";
-import Bakery from "./components/pages/products/Bakery.tsx";
-import Frozen from "./components/pages/products/Frozen.tsx";
-import Snacks from "./components/pages/products/Snacks.tsx";
-import PageNotFound from "./components/pages/Png.tsx";
-import Contact from "./components/pages/Contact.tsx";
-import Dairy from "./components/pages/products/Dairy.tsx";
+import {useNavigate} from "react-router-dom";
 import Footer from "./components/settings/Footer.tsx";
-import Fruits from "./components/pages/products/Fruits.tsx";
-import Meat from "./components/pages/products/Meat.tsx";
-import Fish from "./components/pages/products/Fish.tsx";
-import Login from "./components/pages/Login.tsx";
-import About from "./components/pages/About.tsx";
-import Cart from "./components/pages/Cart.tsx";
-import Home from "./components/pages/Home.tsx";
-import {path, productsPathes} from "./routes/routes";
+import {path} from "./routes/routes";
 import {ToastContainer} from "react-toastify";
 import {fontAwesomeIcon} from "./FontAwesome/Icons.tsx";
 import useToken from "./hooks/useToken.ts";
@@ -45,24 +21,15 @@ import {
 	PaletteMode,
 	SpeedDial,
 } from "@mui/material";
-import PrivacyAdnPolicy from "./components/pages/PrivacyAndPolicy.tsx";
-import CompleteProfile from "./components/pages/CompleteProfile.tsx";
-import TermOfUse from "./components/pages/TermOfUse.tsx";
 import "./locales/i18n.tsx";
 import LanguageSwitcher from "./locales/languageSwich.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
-import AdminSettings from "./components/settings/AdminSettengs.tsx";
 import {Order} from "./interfaces/Order.ts";
-import {UserRegister} from "./interfaces/User.ts";
-import Baby from "./components/pages/products/Babys.tsx";
-import Cleaning from "./components/pages/products/Cleaning.tsx";
-import PastaRice from "./components/pages/products/PastaRice.tsx";
-import House from "./components/pages/products/House.tsx";
-import Alcohol from "./components/pages/products/Alcohol.tsx";
-import Health from "./components/pages/products/Health.tsx";
 import {useTranslation} from "react-i18next";
 import {getStatusText} from "./atoms/OrderStatusButtons/orderStatus.ts";
 import useNotificationSound from "./hooks/useNotificationSound.tsx";
+import {UserRegister} from "./interfaces/User.ts";
+import AppRoutes from "./routes/AppRoutes.tsx";
 
 function App() {
 	const {decodedToken} = useToken();
@@ -73,9 +40,10 @@ function App() {
 
 	useEffect(() => {
 		if (!auth) return;
+
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
 			auth: {
-				userId: auth?._id,
+				userId: auth._id,
 			},
 			withCredentials: true,
 		});
@@ -140,10 +108,7 @@ function App() {
 
 	const getInitialMode = (): PaletteMode => {
 		const stored = localStorage.getItem("dark");
-		if (stored === "dark" || stored === "light") {
-			return stored;
-		}
-		return "dark";
+		return stored === "light" ? "light" : "dark";
 	};
 	const [mode, setMode] = useState<PaletteMode>(getInitialMode());
 
@@ -186,8 +151,8 @@ function App() {
 					}}
 				/>
 			)}
-
-			<Routes>
+			<AppRoutes auth={auth} />
+			{/* <Routes>
 				<Route path={path.Home} element={<Home />} />
 				<Route path={path.Login} element={<Login />} />
 				<Route path={path.Profile} element={<Profile />} />
@@ -230,7 +195,7 @@ function App() {
 				<Route path={productsPathes.health} element={<Health />} />
 				<Route path={path.Checkout} element={<Checkout />} />
 				<Route path={path.Png} element={<PageNotFound />} />
-			</Routes>
+			</Routes> */}
 			<Footer />
 		</ThemeProvider>
 	);

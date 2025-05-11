@@ -15,11 +15,11 @@ const DeleteAccountBox: FunctionComponent<DeleteAccountBoxProps> = ({onDelete}) 
 			sx={{
 				textAlign: "center",
 				mt: 15,
-				mb: 3,
-				maxWidth: 500,
+				maxWidth: "100%",
 				backdropFilter: "blur(5px)",
 				border: "2px solid #ff4b2b",
-				boxShadow: "0 0 20px rgba(255, 75, 43, 0.3)",
+				boxShadow: "0 0 2px rgb(255, 75, 43)",
+				borderBottom: 0,
 			}}
 			className=' rounded-4 mx-auto p-3 lead'
 		>
@@ -34,9 +34,9 @@ const DeleteAccountBox: FunctionComponent<DeleteAccountBoxProps> = ({onDelete}) 
 				color='error'
 				startIcon={<DeleteIcon />}
 				onClick={onDelete}
+				size='small'
 				sx={{
-					px: 4,
-					py: 1.5,
+					px: 2,
 					fontWeight: "bold",
 					borderRadius: 2,
 					fontSize: "1rem",

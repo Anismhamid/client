@@ -1,16 +1,17 @@
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
-import {InputBase, Paper, IconButton} from "@mui/material";
+import {InputBase, Paper, IconButton, Box} from "@mui/material";
 import {FunctionComponent} from "react";
 
 interface SearchBoxProps {
 	searchQuery: string;
 	setSearchQuery:Function
+	text:string
 }
 
-const SearchBox: FunctionComponent<SearchBoxProps> = ({searchQuery,setSearchQuery}) => {
+const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearchQuery}) => {
 	return (
-		<div>
+		<Box>
 			<Paper
 				component='div'
 				onSubmit={(e) => e.preventDefault()}
@@ -36,14 +37,14 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({searchQuery,setSearchQuer
 				<InputBase
 					sx={{
 						color: "#696969",
-						ml: 5,
+						mr: 2,
 						flex: 1,
-						fontSize: "16px",
+						fontSize: "1.2rem",
 						"& input::placeholder": {
-							color: "#5f5f5f",
+							color: "#216cf8",
 						},
 					}}
-					placeholder='חיפוש לפי מזהה, תאריך או מספר הזמנה...'
+					placeholder={text}
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
 					inputProps={{"aria-label": "search"}}
@@ -52,7 +53,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({searchQuery,setSearchQuer
 					<CloseIcon fontSize='small' />
 				</IconButton>
 			</Paper>
-		</div>
+		</Box>
 	);
 };
 export default SearchBox;

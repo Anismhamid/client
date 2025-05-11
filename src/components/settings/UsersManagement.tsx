@@ -23,9 +23,9 @@ import {
 import {io} from "socket.io-client";
 import {showInfo} from "../../atoms/Toast";
 import {useUser} from "../../context/useUSer";
+import SearchBox from "../../atoms/SearchBox";
 
 interface UersManagementProps {}
-
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -70,15 +70,11 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	}, []);
 
 	useEffect(() => {
-		const socket = io(
-			import.meta.env.VITE_API_SOCKET_URL,
-			{
-				auth: {
-					userId: auth._id,
-				},
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+			auth: {
+				userId: auth._id,
 			},
-			[],
-		);
+		});
 
 		const handleUserConnected = (data: {userId: string}) => {
 			setUsers((prevUsers) =>
@@ -103,33 +99,33 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 		};
 	}, [auth._id]);
 
-const handleStatusChange = async (userId: string) => {
-	try {
-		setUpdatingUserId(userId);
-		const userToUpdate = users.find((user) => user._id === userId);
-		if (!userToUpdate) {
-			showInfo("User not found");
-			return;
-		}
+	const handleStatusChange = async (userId: string) => {
+		try {
+			setUpdatingUserId(userId);
+			const userToUpdate = users.find((user) => user._id === userId);
+			if (!userToUpdate) {
+				showInfo("User not found");
+				return;
+			}
 
-		const newStatus = !userToUpdate.status;
-		const response = await patchUserStatus(userId, newStatus);
+			const newStatus = !userToUpdate.status;
+			const response = await patchUserStatus(userId, newStatus);
 
-		if (response.success) {
-			setUsers(
-				users.map((user) =>
-					user._id === userId ? {...user, status: newStatus} : user,
-				),
-			);
-			showInfo("Status updated successfully");
+			if (response.success) {
+				setUsers(
+					users.map((user) =>
+						user._id === userId ? {...user, status: newStatus} : user,
+					),
+				);
+				showInfo("Status updated successfully");
+			}
+		} catch (error: any) {
+			console.error("Update failed:", error);
+			showInfo(error.response?.data?.message || "Failed to update status");
+		} finally {
+			setUpdatingUserId(null);
 		}
-	} catch (error: any) {
-		console.error("Update failed:", error);
-		showInfo(error.response?.data?.message || "Failed to update status");
-	} finally {
-		setUpdatingUserId(null);
-	}
-};
+	};
 
 	// Change role
 	const changeRole = (email: string, newRole: string) => {
@@ -154,27 +150,32 @@ const handleStatusChange = async (userId: string) => {
 
 	return (
 		<main className='min-vh-100'>
-			<div className='container'>
+			<div className='container my-5'>
 				<h1 className='text-center display-6 rounded p-3 mb-4'>ניהול משתמשים</h1>
 
 				{/* Search Form */}
-				<div className='d-flex justify-content-center mb-4'>
+				<SearchBox
+					text={"חפש לפי שם או אימייל"}
+					setSearchQuery={setSearchQuery}
+					searchQuery={searchQuery}
+				/>
+				{/* <div className='d-flex justify-content-center mb-4'>
 					<div className='col-md-6'>
 						<div className='input-group'>
 							<input
 								autoComplete='on'
 								className='form-control border border-success'
 								type='search'
-								placeholder='חפש לפי שם או אימייל'
+								placeholder=''
 								aria-label='חפש לפי שם או אימייל'
 								value={searchQuery}
 								onChange={(e) => setSearchQuery(e.target.value)}
 							/>
 						</div>
 					</div>
-				</div>
+				</div> */}
 				<TableContainer component={Paper}>
-					<Table sx={{minWidth: 500}} aria-label='users table'>
+					<Table aria-label='users table'>
 						<TableHead>
 							<TableRow>
 								<StyledTableCell align='center'>שם</StyledTableCell>

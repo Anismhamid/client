@@ -63,9 +63,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		}
 	}, [decodedToken]);
 
-	const backOneStep = () =>
-		window.history.length > 1 ? navigate(-1) : navigate(path.Home);
-
 	const isAdmin = auth?.role === RoleType.Admin;
 
 	useEffect(() => {
@@ -82,6 +79,57 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	return (
 		<>
+			<Box
+				sx={{
+					display: "flex",
+					flexWrap: {xs: "nowrap", md: "wrap"},
+					overflowX: {xs: "auto", md: "visible"},
+					scrollSnapType: "x mandatory",
+					scrollbarWidth: "none",
+					"&::-webkit-scrollbar": {display: "none"},
+					py: 1,
+					gap: 1,
+					fontWeight: "bold",
+					backdropFilter: "blur(10px);",
+					"& > a": {
+						flexShrink: 0,
+					},
+					width: "100%",
+					m: "auto",
+					position: "sticky",
+					top: 0,
+					zIndex: 1000,
+					boxShadow: 1,
+					backgroundColor: "#fff",
+				}}
+			>
+				{navbarCategoryLinks.map((link) => (
+					<NavLink to={link.path} key={link.path}>
+						{({isActive}) => (
+							<Chip
+								label={t(link.labelKey)}
+								size='small'
+								sx={{
+									px: 1,
+									mx: 1,
+									"&:hover": {
+										transform: "scale(1.05)",
+										boxShadow: 7,
+										backgroundColor: "brown",
+									},
+									transition: "all 0.2s ease",
+									...(isActive && {
+										fontWeight: "bold",
+										boxShadow: 7,
+										transform: "scale(1.05)",
+									}),
+									color: "MenuText",
+								}}
+							/>
+						)}
+					</NavLink>
+				))}
+			</Box>
 			<AppBar position='relative' className='navbar-glass m-auto z-2'>
 				<Box
 					sx={{
@@ -277,78 +325,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					)}
 				</Box>
 			</AppBar>
-
-			{location.pathname !== path.Home && (
-				<Box
-					onClick={() => backOneStep()}
-					className='position-fixed border border-light fw-bold link-success z-3 d-flex align-items-center justify-content-center'
-					sx={{
-						cursor: "pointer",
-						width: "36px",
-						height: "35px",
-						right: "16px",
-						backgroundColor: "#1A1E22",
-						borderRadius: "100%",
-						top: "30%",
-					}}
-				>
-					<span style={{color: "#66B2FF"}} className='fs-2'>
-						{fontAwesomeIcon.backButton}
-					</span>
-				</Box>
-			)}
-
-			<Box
-				sx={{
-					display: "flex", // Show only on mobile/tablet
-					flexWrap: {xs: "nowrap", md: "wrap"},
-					overflowX: {xs: "auto", md: "visible"},
-					scrollSnapType: "x mandatory",
-					scrollbarWidth: "none",
-					"&::-webkit-scrollbar": {display: "none"},
-					py: 2,
-					gap: 1,
-					fontWeight: "bold",
-					mb: 5,
-					backdropFilter: "blur(10px);",
-					"& > a": {
-						flexShrink: 0,
-					},
-					width: "100%",
-					m: "auto",
-					position: "sticky",
-					top: 0,
-					zIndex: 1000,
-					boxShadow: 1,
-				}}
-			>
-				{navbarCategoryLinks.map((link) => (
-					<NavLink to={link.path} key={link.path}>
-						{({isActive}) => (
-							<Chip
-								label={t(link.labelKey)}
-								color={isActive ? "default" : "default"}
-								size='medium'
-								sx={{
-									px: 2,
-									mx:1,
-									"&:hover": {
-										transform: "scale(1.05)",
-										boxShadow: 7,
-									},
-									transition: "all 0.2s ease",
-									// Additional active state styling if needed
-									...(isActive && {
-										fontWeight: "bold",
-										boxShadow: 7,
-										transform: "scale(1.05)",
-									}),
-								}}
-							/>
-						)}
-					</NavLink>
-				))}
-			</Box>
 		</>
 	);
 };

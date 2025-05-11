@@ -30,6 +30,7 @@ import UpdateProductModal from "../../atoms/UpdateProductModal";
 import AlertDialogs from "../../atoms/alertDialod/AlertDialog";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
+import SearchBox from "../../atoms/SearchBox";
 
 interface HomeProps {}
 
@@ -179,47 +180,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 			{/* Search and filter products */}
 			<div className='container'>
 				<div className=''>
-					<Paper
-						component='div'
-						onSubmit={(e) => e.preventDefault()}
-						sx={{
-							width: {xs: "90%", sm: 400},
-							m: "auto",
-							mb: 4,
-							p: "2px 10px",
-							display: "flex",
-							alignItems: "center",
-							borderRadius: "50px",
-							background: "rgba(255, 255, 255, 0.08)",
-							boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-							backdropFilter: "blur(10px)",
-							border: "1px solid rgba(255, 255, 255, 0.2)",
-							transition: "0.3s ease",
-							"&:hover": {
-								boxShadow: "0 6px 25px rgba(0, 0, 0, 0.4)",
-							},
-						}}
-					>
-						<SearchIcon sx={{color: "#66b2ff", mr: 1}} />
-						<InputBase
-							sx={{
-								color: "#696969",
-								ml: 5,
-								flex: 1,
-								fontSize: "1rem",
-								"& input::placeholder": {
-									color: "#ff5151",
-								},
-							}}
-							placeholder='חיפוש מוצר'
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							inputProps={{"aria-label": "search"}}
-						/>
-						<IconButton onClick={() => setSearchQuery("")} size='small'>
-							<CloseIcon fontSize='small' />
-						</IconButton>
-					</Paper>
+					<SearchBox
+						searchQuery={searchQuery}
+						text='חפש מוצר'
+						setSearchQuery={setSearchQuery}
+					/>
+
 					{/* Discounts Section */}
 					{!searchQuery && <DiscountsAndOffers />}
 
@@ -247,10 +213,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 												<h5 className='card-title text-center fw-bol'>
 													{product.product_name}
 												</h5>
-
-												{/* <p className='text-success text-center mb-2'>
-													במלאי {product.quantity_in_stock}
-												</p> */}
 
 												{product.sale ? (
 													<>
