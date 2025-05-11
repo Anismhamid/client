@@ -1,19 +1,25 @@
 import {FunctionComponent} from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import styles from "./styles.module.css";
-import { Button } from "@mui/material";
+import {Button} from "@mui/material";
 
 interface AlertDialogProps {
 	openModal: () => void;
 	show: boolean;
 	handleDelete: () => void;
 	onHide: () => void;
-	title:string;
-	description:string;
+	title: string;
+	description: string;
 }
 
-const AlertDialogs: FunctionComponent<AlertDialogProps> = ({title,description,openModal,show,onHide,handleDelete}) => {
-
+const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
+	title,
+	description,
+	openModal,
+	show,
+	onHide,
+	handleDelete,
+}) => {
 	return (
 		<AlertDialog.Root
 			open={show}
@@ -29,20 +35,10 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({title,description,op
 						{description}
 					</AlertDialog.Description>
 					<div style={{display: "flex", gap: 25, justifyContent: "flex-end"}}>
-						<AlertDialog.Cancel asChild>
-							<Button
-							variant="contained"
-							color="primary"
-								className={`${styles.Button} ${styles.mauve}`}
-								onClick={onHide}
-							>
-								ביטול
-							</Button>
-						</AlertDialog.Cancel>
 						<AlertDialog.Action asChild>
 							<Button
-							variant="contained"
-							color="error"
+								variant='contained'
+								color='primary'
 								className={`${styles.Button} ${styles.red}`}
 								onClick={() => {
 									handleDelete();
@@ -52,6 +48,16 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({title,description,op
 								כן, מחק
 							</Button>
 						</AlertDialog.Action>
+						<AlertDialog.Cancel asChild>
+							<Button
+								variant='contained'
+								color='error'
+								className={`${styles.Button} ${styles.mauve}`}
+								onClick={onHide}
+							>
+								ביטול
+							</Button>
+						</AlertDialog.Cancel>
 					</div>
 				</AlertDialog.Content>
 			</AlertDialog.Portal>
