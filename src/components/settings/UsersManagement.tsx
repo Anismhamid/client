@@ -19,7 +19,6 @@ import {
 	TableHead,
 	Paper,
 	CircularProgress,
-	Typography,
 } from "@mui/material";
 import {io} from "socket.io-client";
 import {showInfo} from "../../atoms/Toast";
@@ -27,10 +26,6 @@ import {useUser} from "../../context/useUSer";
 
 interface UersManagementProps {}
 
-const STATUS = {
-	ACTIVE: true,
-	INACTIVE: false,
-} as const;
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -108,33 +103,33 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 		};
 	}, [auth._id]);
 
-	const handleStatusChange = async (userId: string) => {
-		try {
-			setUpdatingUserId(userId);
-			const userToUpdate = users.find((user) => user._id === userId);
-			if (!userToUpdate) {
-				showInfo("User not found");
-				return;
-			}
-
-			const newStatus = !userToUpdate.status;
-			const response = await patchUserStatus(userId, newStatus);
-
-			if (response.success) {
-				setUsers(
-					users.map((user) =>
-						user._id === userId ? {...user, status: newStatus} : user,
-					),
-				);
-				showInfo("Status updated successfully");
-			}
-		} catch (error: any) {
-			console.error("Update failed:", error);
-			showInfo(error.response?.data?.message || "Failed to update status");
-		} finally {
-			setUpdatingUserId(null);
+const handleStatusChange = async (userId: string) => {
+	try {
+		setUpdatingUserId(userId);
+		const userToUpdate = users.find((user) => user._id === userId);
+		if (!userToUpdate) {
+			showInfo("User not found");
+			return;
 		}
-	};
+
+		const newStatus = !userToUpdate.status;
+		const response = await patchUserStatus(userId, newStatus);
+
+		if (response.success) {
+			setUsers(
+				users.map((user) =>
+					user._id === userId ? {...user, status: newStatus} : user,
+				),
+			);
+			showInfo("Status updated successfully");
+		}
+	} catch (error: any) {
+		console.error("Update failed:", error);
+		showInfo(error.response?.data?.message || "Failed to update status");
+	} finally {
+		setUpdatingUserId(null);
+	}
+};
 
 	// Change role
 	const changeRole = (email: string, newRole: string) => {
@@ -235,22 +230,21 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 											</Box>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Typography
-											variant="body2"
+											<Button
 												color={user.status ? "success" : "error"}
-												// onClick={() =>
-												// 	handleStatusChange(user._id as string)
-												// }
-												// disabled={loading}
+												onClick={() =>
+													handleStatusChange(user._id as string)
+												}
+												disabled={updatingUserId === user._id}
 											>
-												{loading ? (
+												{updatingUserId === user._id ? (
 													<CircularProgress size={24} />
 												) : user.status ? (
 													"פעיל"
 												) : (
 													"לא פעיל"
 												)}
-											</Typography>
+											</Button>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											<Box sx={{display: "flex"}} className=''>
