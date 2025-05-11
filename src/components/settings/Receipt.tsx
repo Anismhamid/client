@@ -36,7 +36,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		const canvas = await html2canvas(input, {
 			scale: 2,
 			useCORS: true,
-			scrollY: -window.scrollY, // חשוב ל־full height
+			scrollY: -window.scrollY,
 		});
 
 		const imgData = canvas.toDataURL("image/jpeg", 1.0);
@@ -194,7 +194,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 			</div>
 			<div className=' container'>
 				<h2 className='text-center mb-4'>קבלות🧾</h2>
-				{filteredOrders.map((receipt) => (
+				{filteredOrders.reverse().map((receipt) => (
 					<div
 						id={`receipt-${receipt.orderNumber}`}
 						className=' container my-5 bg-light p-3 border border-primary rounded'
