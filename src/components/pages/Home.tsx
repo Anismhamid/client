@@ -202,7 +202,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 						borderRadius: 3,
 					}}
 				>
-					<Typography align='center' variant='h3' gutterBottom>
+					<Typography
+						align='center'
+						variant='h6'
+						gutterBottom
+					>
 						כל המוצרים שלנו נבחרים בקפידה כדי להעניק לכם חוויית קנייה איכותית,
 						משתלמת ונוחה. תמצאו כאן מגוון רחב של פריטים – טריים, מהימנים
 						ובמחירים מעולים. אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע
@@ -210,7 +214,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</Typography>
 				</Box>
 
-				<Row container spacing={3}>
+				<Row spacing={5}>
 					{visibleProducts.length > 0 ? (
 						visibleProducts.map((product) => {
 							const productQuantity = quantities[product.product_name] ?? 1;

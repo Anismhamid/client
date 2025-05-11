@@ -48,7 +48,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	};
 
 	const formik = useFormik({
-		enableReinitialize:true,
+		enableReinitialize: true,
 		initialValues: {
 			payment: false,
 			cashOnDelivery: false,
@@ -102,11 +102,11 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					getCartItems()
 						.then((items) => {
 							setCartItems(items);
-							setLoading(false);
 						})
-						.catch((err) => {
-							console.log(err);
-						});
+						.catch(() => {
+							showError("שגיאה בטעינת הסל או המידע העסקי");
+						})
+						.finally(() => setLoading(false));
 				});
 		}
 	}, [auth]);
@@ -190,7 +190,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	if (loading) return <Loader />;
 
 	return (
-		<main className='min-vh-100 '>
+		<main className='lead '>
 			<div className='container'>
 				<h1 className='text-center'>בחירת שיטת תשלום ואיסוף</h1>
 				<div className=' text-center m-auto'>
@@ -198,13 +198,14 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						לתשלום
 					</Button>
 				</div>
+
 				{/* Cart Summary */}
-				<section className='mt-4'>
+				<section className='mt-4 bg-gradient p-3'>
 					<h4>סיכום הסל</h4>
 					<ul className='list-group'>
 						{cartItems.length ? (
 							cartItems.map((item) => (
-								<div key={item._id}>
+								<div key={item._id} className=' rounded-3'>
 									{item.products.map((product) => (
 										<li
 											key={product.product_name}
@@ -241,11 +242,10 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							<h5 className='text-danger'>אין מוצרים בסל</h5>
 						)}
 					</ul>
-					<hr />
 				</section>
 
 				{/* Payment Methods Selection */}
-				<section>
+				<section className='bg-gradient p-3 rounded-3 my-5'>
 					<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
 						<h4>בחר שיטת תשלום</h4>
 						<fieldset disabled={formik.isSubmitting}>
@@ -326,11 +326,12 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 							{/* new coppon */}
 							<div className='form-group mt-3'>
-								<label htmlFor='discount'>קופון הנחה (%)</label>
+								<label htmlFor='discount'>קופון הנחה</label>
 								<input
-									type='number'
+									disabled
+									type='text'
 									name='discount'
-									className='form-control'
+									className='form-control w-25'
 									value={formik.values.discount}
 									onChange={formik.handleChange}
 								/>
@@ -338,18 +339,28 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 							<hr />
 							{/* --- Total Display --- */}
-							<div className='form-floating'>
-								<strong className='me-2'>סך הכל:</strong>
-								<input
-									type='text'
-									name='totalAmount'
-									value={finalAmount.toLocaleString("he-IL", {
-										style: "currency",
-										currency: "ILS",
-									})}
-									className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
-									disabled
-								/>
+							<div>
+								<div className='text-primary fw-bold bg-white border p-2'>
+									<h5 className='text-danger'>כתובת למשלוח:</h5>{" "}
+									<p>
+										{formik.values.address.city},
+										{formik.values.address.street}{" "}
+										{formik.values.address.houseNumber}
+									</p>
+								</div>
+								<div className=' text-center mt-5'>
+									<strong className='me-2 fw-bold'>סך הכל</strong>
+									<input
+										type='text'
+										name='totalAmount'
+										value={finalAmount.toLocaleString("he-IL", {
+											style: "currency",
+											currency: "ILS",
+										})}
+										className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
+										disabled
+									/>
+								</div>
 							</div>
 
 							{/* --- Submit Button --- */}
@@ -393,7 +404,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					try {
 						const orderToSend = {
 							...newOrder,
-							// creditCard: cardData, // אופציונלי –  אם שומרים בצד לקוח
+							// creditCard: cardData, // אופציונלי –  אם שומרים בצד שרת
 						};
 
 						setLoading(true);
@@ -402,7 +413,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 						navigate(path.AllTheOrders);
 						showInfo("התשלום התקבל וההזמנה ממתינה לאישור");
 						setLoading(false);
-						setQuantity((prev) => prev - prev);
+						setQuantity(0);
 					} catch (error) {
 						console.error(error);
 						showError("אירעה שגיאה בביצוע התשלום");
