@@ -202,11 +202,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 						borderRadius: 3,
 					}}
 				>
-					<Typography
-						align='center'
-						variant='h6'
-						gutterBottom
-					>
+					<Typography align='center' variant='h6' gutterBottom>
 						כל המוצרים שלנו נבחרים בקפידה כדי להעניק לכם חוויית קנייה איכותית,
 						משתלמת ונוחה. תמצאו כאן מגוון רחב של פריטים – טריים, מהימנים
 						ובמחירים מעולים. אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע

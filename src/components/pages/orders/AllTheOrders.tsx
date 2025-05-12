@@ -11,7 +11,7 @@ import {showError} from "../../../atoms/Toast";
 import {io} from "socket.io-client";
 import useNotificationSound from "../../../hooks/useNotificationSound";
 import SearchBox from "../../../atoms/SearchBox";
-import IncompleteOrders from "./IncompleteOrders";
+import IncompleteOrders from "./PreviousOrders";
 import NewOrders from "./NewOrders";
 
 interface AllTheOrdersProps {}
@@ -33,15 +33,23 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const [statusLoading, setStatusLoading] = useState<{[orderNumber: string]: boolean}>(
 		{},
 	);
-	const [incompleteOrders, setIncompleteOrders] = useState<Order[]>([]);
 
 	const canChangeStatus =
 		!!auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
 	const [viewIncomplete, setViewIncomplete] = useState(false);
 
-	const filteredOrders = useMemo(() => {
+	const newOrders = useMemo(() => {
+		const today = new Date().toLocaleDateString("he-IL");
+
 		return allOrders.filter((order) => {
+			const orderDate = new Date(order.date).toLocaleDateString("he-IL");
+			return orderDate === today;
+		});
+	}, [allOrders, searchQuery]);
+
+	const filteredOrders = useMemo(() => {
+		return newOrders.filter((order) => {
 			const query = searchQuery.toLowerCase();
 			const orderNumber = order.orderNumber?.toString().toLowerCase() || "";
 			const userId = order.userId?.toString().toLowerCase() || "";
@@ -53,18 +61,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				date.includes(query)
 			);
 		});
-	}, [allOrders, searchQuery]);
-
-	const findIncompleteOrders = () => {
-		const incomplete = allOrders.filter((order) => {
-			return (
-				!order.address?.city ||
-				!order.address?.street ||
-				!order.address?.houseNumber
-			);
-		});
-		setIncompleteOrders(incomplete);
-	};
+	}, [newOrders, searchQuery]);
 
 	useEffect(() => {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
@@ -144,22 +141,23 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					>
 						הצג את כל ההזמנות
 					</Button>
-
 					<Button
 						variant='contained'
 						color='error'
 						onClick={() => {
-							findIncompleteOrders();
 							setViewIncomplete(true);
 						}}
 					>
-						הצג הזמנות חסרות מידע
+						הצג הזמנות קודמות
 					</Button>
 				</div>
 			)}
 			<div className='container bg-gradient rounded  text-center align-items-center'>
 				{viewIncomplete ? (
-					<IncompleteOrders incompleteOrders={incompleteOrders} />
+					<IncompleteOrders
+						orderStatuses={orderStatuses}
+						setPrevious={allOrders}
+					/>
 				) : (
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>

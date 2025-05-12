@@ -5,7 +5,7 @@ import {
 	getStatusText,
 	handleOrderStatus,
 } from "../../../atoms/OrderStatusButtons/orderStatus";
-import {Button, Chip, CircularProgress} from "@mui/material";
+import {Box, Button, Chip, CircularProgress} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
 import RoleType from "../../../interfaces/UserType";
@@ -38,12 +38,12 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 
 	const {t} = useTranslation();
 	const navigate = useNavigate();
-  
-filteredOrders.forEach((order) => {
-	if (!order.phone) {
-		console.warn("Missing phone field for order:", order.orderNumber);
-	}
-});
+
+	filteredOrders.forEach((order) => {
+		if (!order.phone) {
+			console.warn("Missing phone field for order:", order.orderNumber);
+		}
+	});
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
@@ -109,7 +109,6 @@ filteredOrders.forEach((order) => {
 									/>
 								)}
 							</div>
-
 							<div className='mb-3'>
 								<strong>שיטת תשלום:</strong>{" "}
 								{order.payment ? (
@@ -120,7 +119,6 @@ filteredOrders.forEach((order) => {
 								) : (
 									<span className='text-warning'>
 										{fontAwesomeIcon.moneyBillWave}
-										מזומן
 									</span>
 								)}
 							</div>
@@ -155,7 +153,14 @@ filteredOrders.forEach((order) => {
 								</h5>
 							</div>
 
-							<div className='d-flex justify-content-center mt-3'>
+							<Box
+								sx={{
+									display: "flex",
+									justifyContent: "center",
+									mt: 3,
+								}}
+								className='d-flex justify-content-center mt-3'
+							>
 								<Button
 									startIcon={
 										statusLoading[order.orderNumber] ? (
@@ -168,11 +173,10 @@ filteredOrders.forEach((order) => {
 									variant='contained'
 									color='info'
 									size='small'
-									sx={{mt: 1}}
 								>
-									פרטים נוספים
+									פרטי הזמנה
 								</Button>
-							</div>
+							</Box>
 						</div>
 					</div>
 				))

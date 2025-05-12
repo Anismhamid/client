@@ -24,6 +24,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	const [productSearch, setProductSearch] = useState("");
 	const {decodedToken} = useToken();
 	const {t} = useTranslation();
+
 	// Generate to pdf file
 	const generatePDF = async (elementId: string) => {
 		const input = document.getElementById(`receipt-${elementId}`);
@@ -38,7 +39,6 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 			useCORS: true,
 			scrollY: -window.scrollY,
 		});
-
 		const imgData = canvas.toDataURL("image/jpeg", 1.0);
 		const pdf = new jsPDF("p", "mm", "a4");
 		const pageWidth = pdf.internal.pageSize.getWidth();
