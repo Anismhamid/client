@@ -14,7 +14,7 @@ import {showError} from "../../../atoms/toasts/ReactToast";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
 import handleRTL from "../../../locales/handleRTL";
-import { CardSubtitle, CardTitle } from "react-bootstrap";
+import {CardTitle} from "react-bootstrap";
 
 interface NewOrdersProps {
 	filteredOrders: Order[];
@@ -57,9 +57,7 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 				filteredOrders.map((order) => (
 					<Box key={order.orderNumber} className='mb-4 col-md-6 col-lg-3'>
 						<Card dir={diriction} className='h-100 p-3 shadow'>
-							<CardTitle
-								className='text-center bg-primary text-white p-2 rounded'
-							>
+							<CardTitle className='text-center bg-primary text-white p-2 rounded'>
 								<strong>{t("orderNumber")}</strong> {order.orderNumber}
 							</CardTitle>
 							<Box className='mb-3'>

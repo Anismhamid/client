@@ -1,15 +1,26 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {ReceiptsType} from "../../../interfaces/Receipts";
-import {Card, Table, Form} from "react-bootstrap";
+import {Table, Form} from "react-bootstrap";
 import {getUserReceiptsById, getUsersReceipts} from "../../../services/Receipts";
-import html2canvas from "html2canvas";
+import {PDFDownloadLink} from "@react-pdf/renderer";
 
-import jsPDF from "jspdf";
-import {Button, TextField} from "@mui/material";
+import {
+	Box,
+	Button,
+	Card,
+	CardContent,
+	CardHeader,
+	TableCell,
+	TableHead,
+	TableRow,
+	TextField,
+	Typography,
+} from "@mui/material";
 import useToken from "../../../hooks/useToken";
 import RoleType from "../../../interfaces/UserType";
 import {useTranslation} from "react-i18next";
 import Loader from "../../../atoms/loader/Loader";
+import ReceiptPDF from "../../../helpers/generatePdf";
 
 interface ReceiptProps {}
 /**
@@ -26,42 +37,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	const {t} = useTranslation();
 
 	// Generate to pdf file
-	const generatePDF = async (elementId: string) => {
-		const input = document.getElementById(`receipt-${elementId}`);
-		if (!input) {
-			console.error("Element not found");
-			return;
-		}
 
-		// יוצרים תמונה מה־HTML
-		const canvas = await html2canvas(input, {
-			scale: 2,
-			useCORS: true,
-			scrollY: -window.scrollY,
-		});
-		const imgData = canvas.toDataURL("image/jpeg", 1.0);
-		const pdf = new jsPDF("p", "mm", "a4");
-		const pageWidth = pdf.internal.pageSize.getWidth();
-		const pageHeight = pdf.internal.pageSize.getHeight();
-
-		const imgWidth = pageWidth;
-		const imgHeight = (canvas.height * imgWidth - 200) / canvas.width;
-
-		let heightLeft = imgHeight;
-		let position = 0;
-
-		pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-		heightLeft -= pageHeight;
-
-		while (heightLeft > 0) {
-			position = heightLeft - imgHeight;
-			pdf.addPage();
-			pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-			heightLeft -= pageHeight;
-		}
-
-		pdf.save("receipt.pdf");
-	};
 
 	// Custom search
 	const filteredOrders = useMemo(() => {
@@ -135,10 +111,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 	return (
 		<main>
 			{/* חיפוש מתקדם  */}
-			<div className='container mt-4 rounded'>
+			<Box className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
 					<h3>{t("pages.receipts.receiptSearchTitle")}</h3>
-					<div className='row border p-3 border-primary rounded'>
+					<div className='row border p-3 border-danger rounded'>
 						<div className='col-6'>
 							<TextField
 								label={t("pages.receipts.receiptSearch_1")}
@@ -191,25 +167,31 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 						</div>
 					</div>
 				</Form>
-			</div>
+			</Box>
 			<div className=' container'>
 				<h2 className='text-center mb-4'>קבלות🧾</h2>
 				{filteredOrders.reverse().map((receipt) => (
-					<div
+					<Box
 						id={`receipt-${receipt.orderNumber}`}
-						className=' container my-5 bg-light p-3 border border-primary rounded'
+						className='container my-5 p-3 border border-danger rounded'
 						key={receipt.orderNumber}
+						sx={{
+							backdropFilter: "blur(10px)",
+						}}
 					>
-						<Card className='card mb-1 shadow-sm'>
-							<Card.Header
-								as='h5'
-								className='text-center bg-primary text-white'
-							>
-								'קבלה מס {receipt.orderNumber}
-							</Card.Header>
-							<Card.Body>
-								<Card.Text>
-									<strong>תאריך:</strong>
+						<Card className='mb-1 shadow-sm'>
+							<CardHeader as='h5' className='text-center p-3 bg-primary'>
+								<Typography
+									sx={{
+										color: "error",
+									}}
+								>
+									'קבלה מס {receipt.orderNumber}
+								</Typography>
+							</CardHeader>
+							<CardContent>
+								<Typography>
+									<Typography component={"span"}>תאריך:</Typography>
 									{new Date(receipt.orderDate).toLocaleString("he-IL", {
 										year: "numeric",
 										month: "long",
@@ -217,9 +199,9 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 										hour: "2-digit",
 										minute: "2-digit",
 									})}
-								</Card.Text>
+								</Typography>
 
-								<Card.Text>
+								<CardContent>
 									{receipt.customer ? (
 										<>
 											<strong className='me-1'>לקוח:</strong>
@@ -239,20 +221,20 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 											${receipt.customer.address.houseNumber}`}
 										</>
 									) : (
-										<span className='text-muted'>
-											אין פרטי לקוח זמינים
-										</span>
+										<span className=''>אין פרטי לקוח זמינים</span>
 									)}
-								</Card.Text>
+								</CardContent>
 
 								<hr />
 
-								<Card.Text>
+								<CardContent>
 									<strong>שיטת תשלום:</strong>
 									{receipt.payment == "true" ? "כרטיס אשראי" : "מזומן"}
-								</Card.Text>
-								<Card.Text>
-									<strong>שיטת איסוף:</strong>{" "}
+								</CardContent>
+								<CardContent>
+									<Typography component={"span"}>
+										שיטת איסוף:
+									</Typography>
 									{receipt.deliveryFee
 										? `משלוח עד הבית ${receipt.deliveryFee.toLocaleString(
 												"he-IL",
@@ -262,52 +244,54 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 												},
 											)}`
 										: "איסוף עצמי "}
-								</Card.Text>
+								</CardContent>
 
-								<Card.Text className='fs-5 fw-bold'>
+								<CardContent className='fs-5 fw-bold'>
 									סה״כ לתשלום:
 									{receipt.totalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
 									})}
-								</Card.Text>
-							</Card.Body>
+								</CardContent>
+							</CardContent>
 						</Card>
 
-						<h5 className='text-center'>🛒 מוצרים</h5>
+						<h5 className='text-center mt-5'>🛒 מוצרים</h5>
 						<Table striped bordered hover dir='rtl' className='mb-5'>
-							<thead className='table-dark'>
-								<tr>
-									<th>מוצרים</th>
-									<th>כמות</th>
-									<th>מחיר ליחידה</th>
-									<th>סה״כ</th>
-								</tr>
-							</thead>
+							<TableHead className='table-dark'>
+								<TableRow>
+									<TableCell align='right'>מוצרים</TableCell>
+									<TableCell align='right'>כמות</TableCell>
+									<TableCell align='right'>מחיר ליחידה</TableCell>
+									<TableCell align='right'>סה״כ</TableCell>
+								</TableRow>
+							</TableHead>
 							<tbody>
 								{receipt.products.map((p, i) => (
-									<tr key={i}>
-										<td>{p.product_name}</td>
-										<td>{p.quantity}</td>
-										<td>
+									<TableRow key={i}>
+										<TableCell align='right'>
+											{p.product_name}
+										</TableCell>
+										<TableCell align='right'>{p.quantity}</TableCell>
+										<TableCell align='right'>
 											{(
 												p.product_price / p.quantity
 											).toLocaleString("he-IL", {
 												style: "currency",
 												currency: "ILS",
 											})}
-										</td>
-										<td>
+										</TableCell>
+										<TableCell align='right'>
 											{p.product_price.toLocaleString("he-IL", {
 												style: "currency",
 												currency: "ILS",
 											})}
-										</td>
-									</tr>
+										</TableCell>
+									</TableRow>
 								))}
 							</tbody>
 						</Table>
-						<Card.Text className=' text-dark'>
+						<CardContent className=''>
 							<strong>שם עסק:</strong>
 							{receipt.businessInfo.name}
 							<br />
@@ -322,22 +306,41 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							<br />
 							<strong>כתובת:</strong>
 							{receipt.businessInfo.address}
-						</Card.Text>
+						</CardContent>
 
 						<hr />
 						<div className=' text-center'>
-							<Button
+							<PDFDownloadLink
+								document={<ReceiptPDF receipt={receipt} />}
+								fileName={`receipt_${receipt.orderNumber}.pdf`}
+							>
+								{({loading}) => (
+									<Button
+										sx={{
+											width: "30%",
+											color: "darkturquoise",
+											bgcolor: "darkslategray",
+										}}
+										disabled={loading}
+									>
+										{loading
+											? "טוען..."
+											: t("pages.receipts.download") + " - PDF"}
+									</Button>
+								)}
+							</PDFDownloadLink>
+							{/* <Button
 								sx={{
 									width: "30%",
 									color: "darkturquoise",
 									bgcolor: "darkslategray",
 								}}
-								onClick={() => generatePDF(receipt.orderNumber)}
+								onClick={() => ReceiptPDF(receipt as ReceiptsType)}
 							>
 								{t("pages.receipts.download")} - PDF
-							</Button>
+							</Button> */}
 						</div>
-					</div>
+					</Box>
 				))}
 			</div>
 		</main>
