@@ -64,7 +64,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route
 				path={path.OrderDetails}
 				element={
-					auth && auth.role === RoleType.Admin ? (
+					auth  ? (
 						<OrderDetails />
 					) : (
 						<Navigate to={path.Login} />
