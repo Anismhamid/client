@@ -1,6 +1,6 @@
 import {FunctionComponent} from "react";
 import {Order} from "../../../interfaces/Order";
-import {Box, Button, Chip} from "@mui/material";
+import {Box, Button, Card, Chip, CircularProgress, Typography} from "@mui/material";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {
 	getStatusClass,
@@ -8,6 +8,10 @@ import {
 } from "../../../atoms/OrderStatusButtons/orderStatus";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
+import {showError} from "../../../atoms/toasts/ReactToast";
+import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons";
+import {CardTitle} from "react-bootstrap";
+import handleRTL from "../../../locales/handleRTL";
 
 interface PreviousOrdersProps {
 	setPrevious: Order[];
@@ -20,6 +24,8 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 }) => {
 	const {t} = useTranslation();
 
+	const navigate = useNavigate();
+
 	const now: string = new Date().toLocaleString("he-IL", {
 		year: "2-digit",
 		month: "short",
@@ -28,8 +34,7 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 		minute: "2-digit",
 	});
 
-	const navigate = useNavigate();
-
+	const diriction = handleRTL();
 	return (
 		<>
 			{setPrevious.length > 0 && (
@@ -43,20 +48,30 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 										key={order.orderNumber}
 										className='mb-4 col-md-6 col-lg-4'
 									>
-										<div className='card p-3 shadow'>
-											<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
-												<strong>מ"ס הזמנה:</strong>{" "}
+										<Card
+											dir={diriction}
+											className='h-100 p-3 shadow'
+										>
+											<CardTitle className='text-center bg-primary text-white p-2 rounded'>
+												<strong>{t("orderNumber")}</strong>{" "}
 												{order.orderNumber}
-											</h5>
-											<div className='mb-3'>
-												<div className='my-1'>
-													<strong className=''>ID מזמין</strong>
+											</CardTitle>
+											<Box className='mb-3'>
+												<Box className='my-1'>
+													<strong className=''>
+														{t("UserId")}
+													</strong>
 													<span className='fw-bold rounded d-block text-danger'>
 														{order.userId}
 													</span>
-												</div>
-												<div>
-													<strong>תאריך הזמנה:</strong>
+												</Box>
+												<Box>
+													<Typography
+														className='fw-bold p-1'
+														component={"strong"}
+													>
+														{t("date")}:
+													</Typography>
 													{new Date(order.date).toLocaleString(
 														"he-IL",
 														{
@@ -67,21 +82,36 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 															minute: "2-digit",
 														},
 													)}
-												</div>
-												<div className='text-start mt-3'>
-													<strong>טלפון מזמין:</strong>
+												</Box>
+												<Box className='mt-3'>
+													<Typography
+														className='fw-bold p-1'
+														component={"span"}
+													>
+														{t("phone")}:
+													</Typography>
 													{order.phone?.phone_1 ??
 														order.phone?.phone_2 ??
 														"לא זמין"}
-												</div>
-												<div className='text-start my-3'>
-													<strong>כתובת מזמין:</strong>
+												</Box>
+												<Box className='my-3'>
+													<Typography
+														className='p-1 fw-bold'
+														component={"span"}
+													>
+														{t("address")}:
+													</Typography>
 													{order.address
 														? `${order.address.city}, ${order.address.street}, ${order.address.houseNumber}`
 														: "לא זמין"}
-												</div>
-												<div className='mt-1'>
-													<strong>סטטוס:</strong>{" "}
+												</Box>
+												<Box className='mt-1'>
+													<Typography
+														className='p-1 fw-bold'
+														component={"strong"}
+													>
+														{t("currentStatus")}:
+													</Typography>
 													<Chip
 														label={getStatusText(
 															orderStatuses[
@@ -93,52 +123,110 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 															order.orderNumber,
 														)}
 													/>
-												</div>
-											</div>
-
-											<div className='mb-3'>
-												<strong>שיטת תשלום:</strong>{" "}
-												{order.payment ? (
-													<span className='text-success'>
-														{fontAwesomeIcon.creditCard}
-														כרטיס אשראי
-													</span>
-												) : (
-													<span className='text-warning'>
-														{fontAwesomeIcon.moneyBillWave}
-													</span>
+												</Box>
+											</Box>
+											{/* <Box className='mb-3 mx-auto text-center'>
+												{canChangeStatus && (
+													<OrderStatusButtons
+														orderNumber={order.orderNumber}
+														statusLoading={statusLoading}
+														handleOrderStatus={
+															handleOrderStatus
+														}
+														setOrderStatuses={
+															setOrderStatuses
+														}
+														setStatusLoading={
+															setStatusLoading
+														}
+														showError={showError}
+														currentStatus={
+															orderStatuses[
+																order.orderNumber
+															]
+														}
+													/>
 												)}
-											</div>
+											</Box> */}
+											<Box className='mb-3 border p-1'>
+												<Typography
+													component='strong'
+													variant='body1'
+													sx={{px: 1, fontWeight: "bold"}}
+												>
+													{t("paymentMethod")}
+												</Typography>
 
-											<div className='mb-3'>
-												<strong>שיטת איסוף:</strong>{" "}
+												{order.payment ? (
+													<Typography
+														sx={{
+															color: "success.main",
+														}}
+														variant='body1'
+													>
+														{fontAwesomeIcon.creditCard} |{" "}
+														{t("creditCard")}
+													</Typography>
+												) : (
+													<Typography
+														sx={{
+															color: "warning.main",
+														}}
+														variant='body1'
+													>
+														{fontAwesomeIcon.moneyBillWave} |{" "}
+														{t("cash")}
+													</Typography>
+												)}
+											</Box>
+
+											<Box className='mb-3 border p-1'>
+												<Typography
+													component={"strong"}
+													variant='body1'
+													sx={{p: 1, fontWeight: "bold"}}
+												>{`${t("collectionMethod")}`}</Typography>
 												{order.selfCollection ? (
-													<span className='text-info'>
-														{fontAwesomeIcon.boxOpen}
-														איסוף עצמי
-													</span>
+													<Typography
+														component={"span"}
+														className='text-info d-block'
+													>
+														{fontAwesomeIcon.boxOpen} |{" "}
+														{`${t("selfPickup")}`}
+													</Typography>
 												) : order.delivery &&
 												  order.deliveryFee ? (
-													<span className='text-primary'>
-														{fontAwesomeIcon.boxOpen}
-														{order.deliveryFee.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
-													</span>
+													<>
+														<Typography
+															component={"span"}
+															className='text-primary d-block'
+														>
+															{fontAwesomeIcon.boxOpen} |{" "}
+															{t("delivery")}
+															<Typography
+																component={"span"}
+																className='text-primary px-1'
+															>
+																{order.deliveryFee.toLocaleString(
+																	"he-IL",
+																	{
+																		style: "currency",
+																		currency: "ILS",
+																	},
+																)}
+															</Typography>
+														</Typography>
+													</>
 												) : (
 													<span className='text-muted'>
 														לא נבחר
 													</span>
 												)}
-											</div>
+											</Box>
 
 											<div>
 												<h5 className='text-center text-success'>
-													<strong>ס"כ מחיר הזמנה:</strong>{" "}
+													<strong>{`${t("totalOrderPrice")}:`}</strong>{" "}
 													{order.totalAmount.toLocaleString(
 														"he-IL",
 														{
@@ -170,7 +258,7 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 													פרטי הזמנה
 												</Button>
 											</Box>
-										</div>
+										</Card>
 									</div>
 								),
 						)}

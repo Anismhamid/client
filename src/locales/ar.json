@@ -1,5 +1,22 @@
 {
 	"price": "السعر",
+	"quantity": "العدد",
+	"currentStatus": "الحالة",
+	"priceAfterDiscount": "السعر بعد التخفيض",
+	"totalOrderPrice": "إجمالي سعر الطلب",
+	"collectionMethod": "طريقة الاستلام",
+	"paymentMethod": "طريقة الدفع",
+	"creditCard": "بطاقة إئتمان",
+	"selfPickup": "استلام ذاتي",
+	"delivery": "توصيل",
+	"cash": "نقدي",
+	"orderNumber": "رقم الطلب",
+	"UserId": "ID المستخدم",
+	"date": "تاريخ",
+	"phone": "هاتف",
+	"address": "العنوان",
+
+
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {

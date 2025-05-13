@@ -5,7 +5,7 @@ import {
 	getStatusText,
 	handleOrderStatus,
 } from "../../../atoms/OrderStatusButtons/orderStatus";
-import {Box, Button, Chip, CircularProgress} from "@mui/material";
+import {Box, Button, Card, Chip, CircularProgress, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
 import RoleType from "../../../interfaces/UserType";
@@ -13,6 +13,8 @@ import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons"
 import {showError} from "../../../atoms/toasts/ReactToast";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
+import handleRTL from "../../../locales/handleRTL";
+import { CardSubtitle, CardTitle } from "react-bootstrap";
 
 interface NewOrdersProps {
 	filteredOrders: Order[];
@@ -47,24 +49,33 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
+	const diriction = handleRTL();
+
 	return (
-		<div className='row mt-5'>
+		<Box dir={diriction} className='row mt-5'>
 			{filteredOrders.length ? (
 				filteredOrders.map((order) => (
-					<div key={order.orderNumber} className='mb-4 col-md-6 col-lg-4'>
-						<div className='card p-3 shadow'>
-							<h5 className='card-title text-center bg-primary text-white p-2 rounded'>
-								<strong>מ"ס הזמנה:</strong> {order.orderNumber}
-							</h5>
-							<div className='mb-3'>
-								<div className='my-1'>
-									<strong className=''>ID מזמין</strong>
+					<Box key={order.orderNumber} className='mb-4 col-md-6 col-lg-3'>
+						<Card dir={diriction} className='h-100 p-3 shadow'>
+							<CardTitle
+								className='text-center bg-primary text-white p-2 rounded'
+							>
+								<strong>{t("orderNumber")}</strong> {order.orderNumber}
+							</CardTitle>
+							<Box className='mb-3'>
+								<Box className='my-1'>
+									<strong className=''>{t("UserId")}</strong>
 									<span className='fw-bold rounded d-block text-danger'>
 										{order.userId}
 									</span>
-								</div>
-								<div>
-									<strong>תאריך הזמנה:</strong>
+								</Box>
+								<Box>
+									<Typography
+										className='fw-bold p-1'
+										component={"strong"}
+									>
+										{t("date")}:
+									</Typography>
 									{new Date(order.date).toLocaleString("he-IL", {
 										year: "2-digit",
 										month: "short",
@@ -72,21 +83,36 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 										hour: "2-digit",
 										minute: "2-digit",
 									})}
-								</div>
-								<div className='text-start mt-3'>
-									<strong>טלפון מזמין:</strong>
+								</Box>
+								<Box className='mt-3'>
+									<Typography
+										className='fw-bold p-1'
+										component={"span"}
+									>
+										{t("phone")}:
+									</Typography>
 									{order.phone?.phone_1 ??
 										order.phone?.phone_2 ??
 										"לא זמין"}
-								</div>
-								<div className='text-start my-3'>
-									<strong>כתובת מזמין:</strong>
+								</Box>
+								<Box className='my-3'>
+									<Typography
+										className='p-1 fw-bold'
+										component={"span"}
+									>
+										{t("address")}:
+									</Typography>
 									{order.address
 										? `${order.address.city}, ${order.address.street}, ${order.address.houseNumber}`
 										: "לא זמין"}
-								</div>
-								<div className='mt-1'>
-									<strong>סטטוס:</strong>{" "}
+								</Box>
+								<Box className='mt-1'>
+									<Typography
+										className='p-1 fw-bold'
+										component={"strong"}
+									>
+										{t("currentStatus")}:
+									</Typography>
 									<Chip
 										label={getStatusText(
 											orderStatuses[order.orderNumber],
@@ -94,9 +120,9 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 										)}
 										color={getStatusClass(order.orderNumber)}
 									/>
-								</div>
-							</div>
-							<div className='mb-3 mx-auto text-center'>
+								</Box>
+							</Box>
+							<Box className='mb-3 mx-auto text-center'>
 								{canChangeStatus && (
 									<OrderStatusButtons
 										orderNumber={order.orderNumber}
@@ -108,44 +134,79 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 										currentStatus={orderStatuses[order.orderNumber]}
 									/>
 								)}
-							</div>
-							<div className='mb-3'>
-								<strong>שיטת תשלום:</strong>{" "}
-								{order.payment ? (
-									<span className='text-success'>
-										{fontAwesomeIcon.creditCard}
-										כרטיס אשראי
-									</span>
-								) : (
-									<span className='text-warning'>
-										{fontAwesomeIcon.moneyBillWave}
-									</span>
-								)}
-							</div>
+							</Box>
+							<Box className='mb-3 border p-1'>
+								<Typography
+									component='strong'
+									variant='body1'
+									sx={{px: 1, fontWeight: "bold"}}
+								>
+									{t("paymentMethod")}
+								</Typography>
 
-							<div className='mb-3'>
-								<strong>שיטת איסוף:</strong>{" "}
+								{order.payment ? (
+									<Typography
+										sx={{
+											color: "success.main",
+										}}
+										variant='body1'
+									>
+										{fontAwesomeIcon.creditCard} | {t("creditCard")}
+									</Typography>
+								) : (
+									<Typography
+										sx={{
+											color: "warning.main",
+										}}
+										variant='body1'
+									>
+										{fontAwesomeIcon.moneyBillWave} | {t("cash")}
+									</Typography>
+								)}
+							</Box>
+
+							<Box className='mb-3 border p-1'>
+								<Typography
+									component={"strong"}
+									variant='body1'
+									sx={{p: 1, fontWeight: "bold"}}
+								>{`${t("collectionMethod")}`}</Typography>
 								{order.selfCollection ? (
-									<span className='text-info'>
-										{fontAwesomeIcon.boxOpen}
-										איסוף עצמי
-									</span>
+									<Typography
+										component={"span"}
+										className='text-info d-block'
+									>
+										{fontAwesomeIcon.boxOpen} | {`${t("selfPickup")}`}
+									</Typography>
 								) : order.delivery && order.deliveryFee ? (
-									<span className='text-primary'>
-										{fontAwesomeIcon.boxOpen}
-										{order.deliveryFee.toLocaleString("he-IL", {
-											style: "currency",
-											currency: "ILS",
-										})}
-									</span>
+									<>
+										<Typography
+											component={"span"}
+											className='text-primary d-block'
+										>
+											{fontAwesomeIcon.boxOpen} | {t("delivery")}
+											<Typography
+												component={"span"}
+												className='text-primary px-1'
+											>
+												{order.deliveryFee.toLocaleString(
+													"he-IL",
+													{
+														style: "currency",
+														currency: "ILS",
+													},
+												)}
+											</Typography>
+										</Typography>
+									</>
 								) : (
 									<span className='text-muted'>לא נבחר</span>
 								)}
-							</div>
+							</Box>
 
 							<div>
 								<h5 className='text-center text-success'>
-									<strong>ס"כ מחיר הזמנה:</strong>{" "}
+									<strong>{`${t("totalOrderPrice")}:`}</strong>{" "}
 									{order.totalAmount.toLocaleString("he-IL", {
 										style: "currency",
 										currency: "ILS",
@@ -177,13 +238,13 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 									פרטי הזמנה
 								</Button>
 							</Box>
-						</div>
-					</div>
+						</Card>
+					</Box>
 				))
 			) : (
 				<div className='text-center text-danger fs-4'>אין הזמנות עדיין</div>
 			)}
-		</div>
+		</Box>
 	);
 };
 

@@ -1,5 +1,21 @@
 {
 	"price": "מחיר",
+	"quantity": "כמות",
+	"currentStatus": "סטטוס",
+	"priceAfterDiscount": "מחיר אחרי מבצע",
+	"totalOrderPrice": "ס'כ מחיר הזמנה",
+	"collectionMethod": "שיטת איסוף",
+	"paymentMethod": "שיטת תשלום",
+	"creditCard": "אשראי",
+	"selfPickup": "איסוף עצמי",
+	"delivery": "משלוח",
+	"cash": "מזומן",
+	"orderNumber": "מ'ס הזמנה",
+	"UserId": "ID משתמש",
+	"date": "תאריך",
+	"phone": "טלפון",
+	"address": "כתובת",
+
 	"categories": {
 		"fruitAndVegetables": {
 			"title": "פירות וירקות",
@@ -124,7 +140,7 @@
 			"receiptSearch_2": "חפש לפי שם מוצר",
 			"receiptSearchFromDate": "מתאריך",
 			"receiptSearchToDate": "עד תאריך",
-			"download":"הורדה"
+			"download": "הורדה"
 		},
 		"contact": {
 			"title": "צור קשר",

@@ -1,5 +1,21 @@
 {
 	"price": "Price",
+	"quantity": "Quantity",
+	"currentStatus": "status",
+	"priceAfterDiscount": "Price after discount",
+	"totalOrderPrice": "Total order price",
+	"collectionMethod": "Collection method",
+	"paymentMethod": "Payment method",
+	"creditCard": "Credit card",
+	"selfPickup": "Self pickup",
+	"delivery": "Delivery",
+	"cash": "Cash",
+	"orderNumber": "orderNumber",
+	"UserId": "User ID",
+	"date": "date",
+	"phone": "Phone",
+	"address":"address",
+
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {
@@ -27,7 +43,7 @@
 			}
 		},
 		"dairy": {
-			"label": "Dairy Products",
+			"label": "Dairy",
 			"heading": "Dairy Products - Fresh, High Quality, and Diverse!",
 			"description": "Here you can find a wide selection of carefully chosen natural dairy products from our local suppliers. We guarantee high quality and excellent service to enjoy every product with ease and comfort."
 		},
@@ -47,7 +63,7 @@
 			"description": "A selection of juices, soft drinks, and water with high quality and great taste to quench your thirst at every moment."
 		},
 		"frozen": {
-			"label": "Frozen Products",
+			"label": "Frozen",
 			"heading": "Our Frozen Products - Fresh, Convenient, and Diverse!",
 			"description": "Enjoy a wide variety of high-quality frozen products that save you time and effort in preparing your favorite meals."
 		},
@@ -57,12 +73,12 @@
 			"description": "Discover our wide selection of crispy, sweet, and salty snacks. Perfect for picnics, hospitality, or simply enjoying a delicious moment."
 		},
 		"baby": {
-			"label": "Baby Products",
+			"label": "Baby",
 			"heading": "Baby Products - The Best Care for Your Kids!",
 			"description": "A carefully selected range of products that meet your child's needs from the start of life. From diapers to oils and creams, we offer you the best."
 		},
 		"cleaning": {
-			"label": "Cleaning Products",
+			"label": "Cleaning",
 			"heading": "Cleaning Products - Effective and Safe for Every Corner of Your Home!",
 			"description": "Discover our wide range of cleaning products that ensure cleanliness and disinfection, providing effective results without damaging surfaces or health. Quality and safety are at your fingertips."
 		},
@@ -77,12 +93,12 @@
 			"description": "A variety of essential and practical products that make your home more comfortable and organized. From kitchen tools to storage solutions – we have everything you need to make your daily life easier."
 		},
 		"alcohol": {
-			"label": "Alcoholic Beverages",
+			"label": "Alcoholic",
 			"heading": "Alcoholic Beverages - A Distinctive Selection for Your Special Times!",
 			"description": "A curated selection of premium alcoholic beverages from top brands. Enjoy a unique atmosphere with our special drinks."
 		},
 		"health": {
-			"label": "Health Products",
+			"label": "Health",
 			"heading": "Health Products - Enhance Your Health and Vitality!",
 			"description": "A range of dietary supplements and vitamins that help you improve your health. Discover natural products that support your healthy lifestyle."
 		},

@@ -98,9 +98,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					m: "auto",
 					position: "sticky",
 					top: 0,
-					zIndex: 1000,
 					boxShadow: 1,
 					backgroundColor: "#fff",
+					zIndex: 1100,
 				}}
 			>
 				{navbarCategoryLinks.map((link) => (

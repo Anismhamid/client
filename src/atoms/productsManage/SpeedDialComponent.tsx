@@ -49,7 +49,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 				<>
 					<SpeedDial
 						ariaLabel='SpeedDial basic example'
-						sx={{position: "fixed", bottom: 80, right: 10}}
+						sx={{position: "fixed", bottom: 80, right: 10, zIndex: 1100}}
 						icon={<SettingsIcon />}
 					>
 						{actions.map((action) => (
@@ -64,7 +64,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 					</SpeedDial>
 					<SpeedDial
 						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: 10}}
+						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
 						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {
 							navigate(path.Cart);
@@ -75,7 +75,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 				auth && (
 					<SpeedDial
 						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: 10}}
+						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
 						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {
 							navigate(path.Cart);
@@ -89,9 +89,9 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 					onClick={handleClick}
 					style={{
 						position: "fixed",
-						bottom: 30,
-						left: 30,
-						zIndex: 1000,
+						bottom: 16,
+						left: 16,
+						zIndex: 1100,
 					}}
 					size='medium'
 					aria-label='Back to top'
