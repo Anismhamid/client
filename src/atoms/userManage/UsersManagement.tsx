@@ -21,9 +21,9 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import {io} from "socket.io-client";
-import {showInfo} from "../../atoms/Toast";
+import {showInfo} from "../toasts/ReactToast";
 import {useUser} from "../../context/useUSer";
-import SearchBox from "../../atoms/SearchBox";
+import SearchBox from "../SearchBox";
 
 interface UersManagementProps {}
 

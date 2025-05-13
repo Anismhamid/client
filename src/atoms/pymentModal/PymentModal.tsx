@@ -1,8 +1,17 @@
 import {FunctionComponent} from "react";
-import {Box, Button, Modal, TextField, Typography} from "@mui/material";
+import {
+	Alert,
+	AlertTitle,
+	Box,
+	Button,
+	Modal,
+	TextField,
+	Typography,
+} from "@mui/material";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import { Order } from "../../interfaces/Order";
+import {Order} from "../../interfaces/Order";
+import WarningIcon from "@mui/icons-material/Warning";
 
 export interface CreditCardValues {
 	cardNumber: string;
@@ -48,7 +57,7 @@ const PaymentModal: FunctionComponent<PymentModalProps> = ({show, onHide, onConf
 	});
 
 	return (
-		<Modal open={show} onClose={onHide}>
+		<Modal sx={{direction: "rtl", textAlign: "right"}} open={show} onClose={onHide}>
 			<Box
 				sx={{
 					position: "absolute",
@@ -62,10 +71,26 @@ const PaymentModal: FunctionComponent<PymentModalProps> = ({show, onHide, onConf
 					boxShadow: 24,
 				}}
 			>
+				<Alert
+					// style={}
+					severity='warning'
+					icon={
+						<WarningIcon
+							style={{color: "red", fontSize: 30}}
+							fontSize='inherit'
+						/>
+					}
+				>
+					<AlertTitle>אזהרה</AlertTitle>
+					אין להזין פרטי אשראי אמתיים{" "}
+				</Alert>
 				<Typography variant='h6' mb={2}>
 					הזן פרטי אשראי
 				</Typography>
-				<form onSubmit={formik.handleSubmit}>
+				<form
+					style={{direction: "ltr", textAlign: "right"}}
+					onSubmit={formik.handleSubmit}
+				>
 					<TextField
 						label='מספר כרטיס'
 						name='cardNumber'

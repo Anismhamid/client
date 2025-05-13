@@ -4,8 +4,8 @@ import {Products} from "../../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../../helpers/fruitesFunctions";
 import {useUser} from "../../context/useUSer";
 import Loader from "../../atoms/loader/Loader";
-import UpdateProductModal from "../../atoms/UpdateProductModal";
-import {showError, showSuccess} from "../../atoms/Toast";
+import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
+import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
 import Tooltip from "@mui/material/Tooltip";
 import RoleType from "../../interfaces/UserType";
 import {useCartItems} from "../../context/useCart";
@@ -13,7 +13,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import {Button, Card, CardMedia, Chip, CircularProgress} from "@mui/material";
-import AlertDialogs from "../../atoms/alertDialod/AlertDialog";
+import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import Seo from "../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
@@ -95,9 +95,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				showSuccess("המוצר נמחק בהצלחה!");
 
 				setProducts((prevProducts) =>
-					prevProducts.filter(
-						(product) => product.product_name !== product_name,
-					),
+					prevProducts.filter((p) => p.product_name !== product_name),
 				);
 			})
 			.catch((err) => {
@@ -392,11 +390,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 				<AlertDialogs
 					show={showDeleteModal}
-					openModal={() => setShowDeleteModal(true)}
 					onHide={closeDeleteModal}
 					handleDelete={() => handleDelete(productToDelete)}
-					title={"מחיקת מוצר"}
-					description={""}
+					title={"אתה עומד למחוק מוצר מהחנות"}
+					description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}
 				/>
 			</main>
 		</>

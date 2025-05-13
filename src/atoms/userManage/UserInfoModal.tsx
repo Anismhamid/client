@@ -1,6 +1,7 @@
 import {
 	Box,
 	Button,
+	CircularProgress,
 	Dialog,
 	DialogActions,
 	DialogContent,
@@ -11,9 +12,9 @@ import {
 import {useFormik} from "formik";
 import {FunctionComponent, useEffect, useState} from "react";
 import * as yup from "yup";
-import {Cities} from "../interfaces/cities";
-import {getCities} from "../services/cities";
-import useAddressData from "../hooks/useAddressData";
+import {Cities} from "../../interfaces/cities";
+import {getCities} from "../../services/cities";
+import useAddressData from "../../hooks/useAddressData";
 
 interface UserInfoModalProps {
 	isOpen: boolean;
@@ -89,7 +90,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					<TextField
 						select
 						label='בחר עיר'
-						name='address.city'
+						name='city'
 						value={formik.values.city}
 						onChange={formik.handleChange}
 						error={formik.touched.city && Boolean(formik.errors.city)}
@@ -117,7 +118,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					<TextField
 						select
 						label='בחר רחוב'
-						name='address.street'
+						name='street'
 						value={formik.values.street}
 						onChange={formik.handleChange}
 						disabled={!formik.values.city || loadingStreets}
@@ -166,9 +167,13 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 						<Button variant='contained' onClick={onClose} color='error'>
 							ביטול רישום
 						</Button>
-						<Button type='submit' color='primary' variant='contained'>
-							המשך רישום
-						</Button>
+						{formik.isSubmitting ? (
+							<CircularProgress size={20} />
+						) : (
+							<Button type='submit' color='primary' variant='contained'>
+								המשך
+							</Button>
+						)}
 					</DialogActions>
 				</Box>
 			</DialogContent>

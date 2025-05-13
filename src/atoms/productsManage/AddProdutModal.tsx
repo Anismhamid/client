@@ -1,10 +1,10 @@
 import {FunctionComponent} from "react";
 import {FormikValues, useFormik} from "formik";
-import {Products} from "../interfaces/Products";
+import {Products} from "../../interfaces/Products";
 import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
-import {fontAwesomeIcon} from "../FontAwesome/Icons";
-import {createNewProduct} from "../services/productsServices";
+import {fontAwesomeIcon} from "../../FontAwesome/Icons";
+import {createNewProduct} from "../../services/productsServices";
 
 interface AddProdutModalProps {
 	show: boolean;

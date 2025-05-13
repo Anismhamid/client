@@ -1,18 +1,18 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import Loader from "../../atoms/loader/Loader";
-import useOrderDetails from "../../hooks/useOrderDetails";
-import {useUser} from "../../context/useUSer";
-import RoleType from "../../interfaces/UserType";
+import Loader from "../../../atoms/loader/Loader";
+import useOrderDetails from "../../../hooks/useOrderDetails";
+import {useUser} from "../../../context/useUSer";
+import RoleType from "../../../interfaces/UserType";
 import {
 	getStatusText,
 	handleOrderStatus,
-} from "../../atoms/OrderStatusButtons/orderStatus";
-import { CardMedia, Chip} from "@mui/material";
-import {showError} from "../../atoms/Toast";
+} from "../../../atoms/OrderStatusButtons/orderStatus";
+import {CardMedia, Chip} from "@mui/material";
+import {showError} from "../../../atoms/toasts/ReactToast";
 import {useTranslation} from "react-i18next";
-import OrderStatusButtons from "../../atoms/OrderStatusButtons/StatusButtons";
-import handleRTL from "../../locales/handleRTL";
+import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons";
+import handleRTL from "../../../locales/handleRTL";
 
 interface OrderDetailsProps {}
 
@@ -52,7 +52,6 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
 	const diriction = handleRTL();
-
 
 	return (
 		<main className='min-vh-50' dir={diriction}>

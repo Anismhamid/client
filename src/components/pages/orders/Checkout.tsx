@@ -1,20 +1,20 @@
 import {FunctionComponent, useState, useEffect, useRef} from "react";
 import {useNavigate} from "react-router-dom";
-import {Cart as CartType} from "../../interfaces/Cart";
-import {getCartItems} from "../../services/cart";
-import {path} from "../../routes/routes";
-import {postOrder} from "../../services/orders";
+import {Cart as CartType} from "../../../interfaces/Cart";
+import {getCartItems} from "../../../services/cart";
+import {path} from "../../../routes/routes";
+import {postOrder} from "../../../services/orders";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {showError, showInfo} from "../../atoms/Toast";
-import Loader from "../../atoms/loader/Loader";
-import {Order} from "../../interfaces/Order";
+import {showError, showInfo} from "../../../atoms/toasts/ReactToast";
+import Loader from "../../../atoms/loader/Loader";
+import {Order} from "../../../interfaces/Order";
 import Checkbox from "@mui/material/Checkbox";
-import {useUser} from "../../context/useUSer";
+import {useUser} from "../../../context/useUSer";
 import {Button, CircularProgress} from "@mui/material";
-import PaymentModal from "../../atoms/pymentModal/PymentModal";
-import {useCartItems} from "../../context/useCart";
-import {getBusinessInfo} from "../../services/businessInfo";
+import PaymentModal from "../../../atoms/pymentModal/PymentModal";
+import {useCartItems} from "../../../context/useCart";
+import {getBusinessInfo} from "../../../services/businessInfo";
 
 interface CheckoutProps {}
 /**

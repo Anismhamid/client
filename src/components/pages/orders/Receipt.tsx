@@ -1,15 +1,15 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
-import {ReceiptsType} from "../../interfaces/Receipts";
+import {ReceiptsType} from "../../../interfaces/Receipts";
 import {Card, Table, Form} from "react-bootstrap";
-import {getUserReceiptsById, getUsersReceipts} from "../../services/Receipts";
+import {getUserReceiptsById, getUsersReceipts} from "../../../services/Receipts";
 import html2canvas from "html2canvas";
 
 import jsPDF from "jspdf";
 import {Button, TextField} from "@mui/material";
-import useToken from "../../hooks/useToken";
-import RoleType from "../../interfaces/UserType";
+import useToken from "../../../hooks/useToken";
+import RoleType from "../../../interfaces/UserType";
 import {useTranslation} from "react-i18next";
-import Loader from "../../atoms/loader/Loader";
+import Loader from "../../../atoms/loader/Loader";
 
 interface ReceiptProps {}
 /**

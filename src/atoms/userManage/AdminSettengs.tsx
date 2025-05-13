@@ -16,7 +16,7 @@ import {FunctionComponent, useEffect, useState} from "react";
 import * as yup from "yup";
 import {getBusinessInfo, updateBusinessInfo} from "../../services/businessInfo";
 import {BusinessInfoType} from "../../interfaces/businessInfoType";
-import {showSuccess} from "../../atoms/Toast";
+import {showSuccess} from "../toasts/ReactToast";
 
 interface AdminSettingsProps {}
 

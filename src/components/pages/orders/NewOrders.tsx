@@ -10,7 +10,7 @@ import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
 import RoleType from "../../../interfaces/UserType";
 import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons";
-import {showError} from "../../../atoms/Toast";
+import {showError} from "../../../atoms/toasts/ReactToast";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
 

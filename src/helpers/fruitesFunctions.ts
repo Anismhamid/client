@@ -1,4 +1,4 @@
-import {showSuccess} from "../atoms/Toast";
+import {showSuccess} from "../atoms/toasts/ReactToast";
 import {addToCart} from "../services/cart";
 
 interface Quantities {
@@ -56,12 +56,12 @@ export const handleAddToCart = async (
 		);
 
 		if (response) {
-			showSuccess(`${quantity} ק"ג ${product_name} נוסף לעגלת הקניות בהצלחה`);
+			showSuccess(`${quantity} ${product_name} נוסף לעגלת הקניות בהצלחה`);
 
 			// Reset quantity for this specific product after adding it to the cart
 			setQuantities((prevQuantities) => ({
 				...prevQuantities,
-				[product_name]: 1,
+				[product_name]: 0,
 			}));
 		}
 	} catch (error) {

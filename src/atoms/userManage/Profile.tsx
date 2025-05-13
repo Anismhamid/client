@@ -13,11 +13,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import {path} from "../../routes/routes";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import useToken from "../../hooks/useToken";
-import Loader from "../../atoms/loader/Loader";
+import Loader from "../loader/Loader";
 import {useUser} from "../../context/useUSer";
 import {emptyAuthValues} from "../../interfaces/authValues";
-import DeleteAccountBox from "../../atoms/DeleteAccountBox";
-import UserDetailTable from "../../atoms/UesrDetailsTable";
+import DeleteAccountBox from "./DeleteAccountBox";
+import UserDetailTable from "./UesrDetailsTable";
 
 interface ProfileProps {}
 /**

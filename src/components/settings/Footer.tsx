@@ -2,6 +2,7 @@ import {FunctionComponent} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
+import {Box} from "@mui/material";
 
 interface FooterProps {}
 /**
@@ -12,11 +13,11 @@ const Footer: FunctionComponent<FooterProps> = () => {
 	const {t} = useTranslation();
 
 	return (
-		<footer className='text-white pt-4 pb-2 bottom-0 start-0 end-0'>
-			<div className='container py-5'>
-				<div className='row'>
+		<footer>
+			<Box className='container py-5'>
+				<Box className='row'>
 					{/* Store Info Section */}
-					<div className='col-md-5 mb-3'>
+					<Box className='col-md-5 mb-3'>
 						<h3>שוק הבינה</h3>
 						<p>פירות וירקות ועוד נשלחים אליכם עד דלת הבית</p>
 						<hr />
@@ -39,7 +40,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 								053-834-69-15
 							</Link>
 						</p>
-					</div>
+					</Box>
 
 					{/* Quick Links Section */}
 					<div className='col-4 mb-3'>
@@ -61,7 +62,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 					</div>
 
 					{/* Social Media Links Section */}
-					<div className='col-md-3 mb-3'>
+					<Box className='col-md-3 mb-3'>
 						<h5>עקוב אחרינו</h5>
 						<nav className='gap-3'>
 							<ul className='list-unstyled'>
@@ -94,16 +95,16 @@ const Footer: FunctionComponent<FooterProps> = () => {
 								</li>
 							</ul>
 						</nav>
-					</div>
-				</div>
+					</Box>
+				</Box>
 
 				{/* Footer Bottom */}
-				<div className='row' dir='ltr'>
+				<div className='row bg-transparent rounded border border-danger' dir='ltr'>
 					<div className='col text-center mt-3'>
 						<p>&copy; 2025 Corner Market Store. All rights reserved.</p>
 					</div>
 				</div>
-			</div>
+			</Box>
 		</footer>
 	);
 };

@@ -1,12 +1,12 @@
 import {Routes, Route, Navigate} from "react-router-dom";
-import UsersManagement from "../components/settings/UsersManagement";
+import UsersManagement from "../atoms/userManage/UsersManagement";
 import {path, productsPathes} from "./routes";
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
 import About from "../components/pages/About";
 import Cart from "../components/pages/Cart";
-import Checkout from "../components/pages/Checkout";
-import CompleteProfile from "../components/pages/CompleteProfile";
+import Checkout from "../components/pages/orders/Checkout";
+import CompleteProfile from "../atoms/userManage/CompleteProfile";
 import Contact from "../components/pages/Contact";
 import AllTheOrders from "../components/pages/orders/AllTheOrders";
 import PageNotFound from "../components/pages/Png";
@@ -29,13 +29,13 @@ import Spices from "../components/pages/products/Spices";
 import Vegetable from "../components/pages/products/Vegetable";
 import Register from "../components/pages/Register";
 import TermOfUse from "../components/pages/TermOfUse";
-import AdminSettings from "../components/settings/AdminSettengs";
-import Profile from "../components/settings/Profile";
-import Receipt from "../components/settings/Receipt";
+import AdminSettings from "../atoms/userManage/AdminSettengs";
+import Profile from "../atoms/userManage/Profile";
+import Receipt from "../components/pages/orders/Receipt";
 import RoleType from "../interfaces/UserType";
 import {FunctionComponent} from "react";
 import {AuthValues} from "../interfaces/authValues";
-import OrderDetails from "../components/pages/OrederDetails";
+import OrderDetails from "../components/pages/orders/OrederDetails";
 
 interface AppRoutesProps {
 	auth: AuthValues;

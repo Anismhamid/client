@@ -11,11 +11,11 @@ import {
 } from "../../services/usersServices";
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
-import {showError, showSuccess} from "../../atoms/Toast";
+import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import {Button, CircularProgress, TextField} from "@mui/material";
-import UserInfoModal from "../../atoms/UserInfoModal";
+import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
@@ -110,21 +110,20 @@ const Login: FunctionComponent<LoginProps> = () => {
 
 	useEffect(() => {
 		if (localStorage.token) {
-			navigate(-1);
+			navigate(path.Home);
 		}
 	}, [navigate]);
 
 	return (
-		<main className='min-vh-50'>
-			<div className='container pb-3'>
+		<main className='login'>
+			<Box className='container pb-3 d-flex align-items-center justify-content-center'>
 				<form
-					style={{maxWidth: "350px", margin: "auto"}}
+					style={{maxWidth: "350px", margin: "auto", backdropFilter: "blur(8)"}}
 					autoComplete='off'
 					noValidate
 					onSubmit={formik.handleSubmit}
 				>
 					<TextField
-						autoFocus
 						label='דו"אל'
 						type='email'
 						name='email'
@@ -150,11 +149,11 @@ const Login: FunctionComponent<LoginProps> = () => {
 						variant='outlined'
 					/>
 
-					<div className=''>
+					<Box>
 						{formik.isSubmitting ? (
-							<div className=' text-center my-2'>
+							<Box className=' text-center my-2'>
 								<CircularProgress size={30} color='inherit' />
-							</div>
+							</Box>
 						) : (
 							<Button
 								color='primary'
@@ -165,33 +164,34 @@ const Login: FunctionComponent<LoginProps> = () => {
 								כניסה
 							</Button>
 						)}
+					</Box>
+					<hr />
+					<GoogleLogin
+						ux_mode='popup'
+						shape='circle'
+						theme='filled_black'
+						onSuccess={handleGoogleLoginSuccess}
+						onError={() => showError("Google login failed")}
+					/>
 
-						<GoogleLogin
-							ux_mode='popup'
-							shape='circle'
-							theme='filled_blue'
-							onSuccess={handleGoogleLoginSuccess}
-							onError={() => showError("Google login failed")}
-						/>
-					</div>
-					<div className='m-3 text-center my-3'>
+					<Box className='m-3 text-center my-3'>
 						<span className='fw-bold me-2'>עדיין אין לך חשבון ?</span>
-						<Button
-							variant='contained'
-							onClick={() => navigate(path.Register)}
-						>
+						<Button color='primary' onClick={() => navigate(path.Register)}>
 							לחץ להרשמה
 						</Button>
-					</div>
+					</Box>
 					<div className=' my-3 d-flex justify-content-center gap-3'>
 						<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
 						<Link to={path.TermOfUse}>תנאי השימוש</Link>
 					</div>
 				</form>
-			</div>
+			</Box>
 			<UserInfoModal
 				isOpen={showModal}
-				onClose={() => setShowModal(false)}
+				onClose={() => {
+					setShowModal(false);
+					setGoogleResponse(null);
+				}}
 				onSubmit={handleUserInfoSubmit}
 			/>
 		</main>

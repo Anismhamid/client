@@ -4,13 +4,13 @@ import {Cart as CartType} from "../../interfaces/Cart";
 import useToken from "../../hooks/useToken";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import NavigathionButtons from "../../atoms/NavigathionButtons";
+import NavigathionButtons from "../../atoms/productsManage/NavigathionButtons";
 import Loader from "../../atoms/loader/Loader";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {Button, Tooltip} from "@mui/material";
 import {useCartItems} from "../../context/useCart";
 import {Products} from "../../interfaces/Products";
-import {showError, showSuccess} from "../../atoms/Toast";
+import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
 
 interface CartProps {}
 

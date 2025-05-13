@@ -1,15 +1,11 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import {useUser} from "../../context/useUSer";
-import AddProdutModal from "../../atoms/AddProdutModal";
 import {deleteProduct, getAllProducts} from "../../services/productsServices";
 import {Products} from "../../interfaces/Products";
 import {handleAddToCart, handleQuantity} from "../../helpers/fruitesFunctions";
 import Loader from "../../atoms/loader/Loader";
 import {
-	SpeedDial,
-	SpeedDialIcon,
-	SpeedDialAction,
 	Button,
 	Tooltip,
 	Fab,
@@ -25,11 +21,11 @@ import {
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import RoleType from "../../interfaces/UserType";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
-import {showError, showSuccess} from "../../atoms/Toast";
+import {showError} from "../../atoms/toasts/ReactToast";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import UpdateProductModal from "../../atoms/UpdateProductModal";
-import AlertDialogs from "../../atoms/alertDialod/AlertDialog";
+import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
+import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import SearchBox from "../../atoms/SearchBox";
@@ -44,7 +40,6 @@ interface HomeProps {}
 
 const Home: FunctionComponent<HomeProps> = () => {
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
-	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
@@ -67,9 +62,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
-
-	const showAddProductModal = () => setOnShowAddModal(true);
-	const hideAddProductModal = () => setOnShowAddModal(false);
 
 	useEffect(() => {
 		getAllProducts()
@@ -133,18 +125,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 		}
 	};
 
-	const actions = [
-		{
-			icon: <AddSharpIcon />,
-			name: "מוצר חדש",
-			addClick: () => showAddProductModal(),
-		},
-	];
-
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
 			.then(() => {
-				showSuccess("המוצר נמחק בהצלחה!");
 				setProducts((p) => p.filter((p) => p.product_name !== product_name));
 			})
 			.catch((err) => {
@@ -163,24 +146,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<Box component='main'>
-			{canEdit && (
-				<SpeedDial
-					ariaLabel='SpeedDial basic example'
-					sx={{position: "fixed", bottom: 100, right: 16}}
-					icon={<SpeedDialIcon />}
-				>
-					{actions.map((action) => (
-						<SpeedDialAction
-							key={action.name}
-							icon={action.icon}
-							tooltipTitle={action.name}
-							tooltipOpen
-							onClick={action.addClick}
-						/>
-					))}
-				</SpeedDial>
-			)}
-
 			{/* Search and filter products */}
 			<Box className='container'>
 				<Box>
@@ -513,9 +478,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 				</Box>
 			</Box>
 
-			{/* Add product modal */}
-			<AddProdutModal show={onShowAddModal} onHide={hideAddProductModal} />
-
 			<UpdateProductModal
 				product_name={productNameToUpdate}
 				show={showUpdateProductModal}
@@ -524,7 +486,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 			<AlertDialogs
 				show={showDeleteModal}
-				openModal={() => setShowDeleteModal(true)}
 				onHide={closeDeleteModal}
 				title={"אתה עומד למחוק מוצר מהחנות"}
 				description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}

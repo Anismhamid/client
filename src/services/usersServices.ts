@@ -1,6 +1,6 @@
 import axios from "axios";
 import {UserLogin, UserRegister} from "../interfaces/User";
-import {showError, showSuccess} from "../atoms/Toast";
+import {showError, showSuccess} from "../atoms/toasts/ReactToast";
 import {jwtDecode} from "jwt-decode";
 import GoogleJwtPayload from "../interfaces/google";
 import {CompleteUserPayload} from "../interfaces/completeProfile";

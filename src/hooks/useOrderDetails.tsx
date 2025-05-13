@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {getOrderByOrderNumber} from "../services/orders";
-import {showError} from "../atoms/Toast";
-import { Order } from "../interfaces/Order";
+import {showError} from "../atoms/toasts/ReactToast";
+import {Order} from "../interfaces/Order";
 
 // Custom Hook to Fetch Order Details
 const useOrderDetails = (orderNumber: string) => {

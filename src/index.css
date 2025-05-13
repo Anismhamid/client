@@ -24,40 +24,19 @@ main {
   background: transparent;
 }
 
-
-.swiper-scrollbar {
-  height: 10px !important;
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}
-
-.swiper-scrollbar-drag {
-  background-color: #ff5733 !important;
-}
-
 .MuiFormGroup-root {
-  /* background: rgba(17, 25, 40, 0.8) !important; */
   margin-bottom: 5px;
 }
 
 .navbar-glass {
-  /* background: rgba(17, 25, 40, 0.8) !important; */
   backdrop-filter: blur(12px);
   --a: 0 8px 32px rgba(0, 0, 0, 0.25);
   box-shadow: var(--a);
   border-radius: 16px;
-  padding:10px;
+  padding: 10px;
   max-width: 1200px;
   margin-bottom: 5px !important;
   margin-top: 30px !important;
-}
-
-.modal-content,
-.modal-body {
-  background:rgba(0, 43, 66, 0.5);
-  backdrop-filter: blur(1px);
-  box-shadow: var(--a);
-  color: #000 !important;
-  text-align: center !important;
 }
 
 .nav-item {
@@ -99,44 +78,16 @@ main {
   font-weight: bold;
 }
 
-.card {
-  transition: transform 0.2s ease-in-out !important;
-  -webkit-transition: transform 0.2s ease-in-out !important;
-  -moz-transition: transform 0.2s ease-in-out !important;
-  -ms-transition: transform 0.2s ease-in-out !important;
-  -o-transition: transform 0.2s ease-in-out !important;
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-
-}
 
 .login {
-  background: radial-gradient(#11171c00, #16181b);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-attachment: fixed;
-  background-size: contain;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
 
   & form {
     max-width: 350px;
     padding: 2rem;
-    background-color: #11171cd8;
-    margin: auto;
-    margin-bottom: 4rem;
-    border-radius: 20px;
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    -ms-border-radius: 20px;
-    -o-border-radius: 20px;
+    border: 1px solid rgb(255, 1, 1);
+    backdrop-filter: blur(18px);
+    border-radius: 10px;
   }
 }
 
@@ -149,31 +100,12 @@ main {
 }
 
 
-.card {
-  border-radius: 20px;
-  box-shadow: 0 0px 0px rgba(255, 255, 255, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  -webkit-transition: transform 0.3s ease, box-shadow 0.3s ease;
-  -moz-transition: transform 0.3s ease, box-shadow 0.3s ease;
-  -ms-transition: transform 0.3s ease, box-shadow 0.3s ease;
-  -o-transition: transform 0.3s ease, box-shadow 0.3s ease;
-  -webkit-border-radius: 20px;
-  -moz-border-radius: 20px;
-  -ms-border-radius: 20px;
-  -o-border-radius: 20px;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 10px rgb(36, 36, 36);
-  -webkit-transform: translateY(-5px);
-  -moz-transform: translateY(-5px);
-  -ms-transform: translateY(-5px);
-  -o-transform: translateY(-5px);
-}
 
 footer {
   background-color: #03090F;
+  color: aliceblue;
+  font-weight: bold;
+  line-height: 1.5;
 }
 
 .scroll-container {

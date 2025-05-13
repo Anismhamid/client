@@ -9,20 +9,15 @@ import {io} from "socket.io-client";
 import {useEffect, useMemo, useState} from "react";
 import {useUser} from "./context/useUSer.tsx";
 import RoleType from "./interfaces/UserType.ts";
-import {showInfo} from "./atoms/Toast.ts";
+import {showInfo} from "./atoms/toasts/ReactToast.ts";
 import {
 	CssBaseline,
-	RadioGroup,
-	Radio,
-	FormControl,
-	FormControlLabel,
 	ThemeProvider,
 	createTheme,
 	PaletteMode,
 	SpeedDial,
 } from "@mui/material";
 import "./locales/i18n.tsx";
-import LanguageSwitcher from "./locales/languageSwich.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
 import {Order} from "./interfaces/Order.ts";
 import {useTranslation} from "react-i18next";
@@ -30,13 +25,18 @@ import {getStatusText} from "./atoms/OrderStatusButtons/orderStatus.ts";
 import useNotificationSound from "./hooks/useNotificationSound.tsx";
 import {UserRegister} from "./interfaces/User.ts";
 import AppRoutes from "./routes/AppRoutes.tsx";
+import Theme from "./atoms/theme/AppTheme.tsx";
+import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
 
 function App() {
-	const {decodedToken} = useToken();
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
 	const {playNotificationSound} = useNotificationSound();
+
+	const isAdminAndModerator =
+		(auth && auth.role === RoleType.Admin) ||
+		(auth && auth.role === RoleType.Moderator);
 
 	useEffect(() => {
 		if (!auth) return;
@@ -51,7 +51,7 @@ function App() {
 		socket.on("new order", (newOrder: Order) => {
 			const orderNum = newOrder.orderNumber;
 
-			if (auth.role === RoleType.Admin || auth.role == RoleType.Moderator) {
+			if (isAdminAndModerator) {
 				playNotificationSound();
 				showNewOrderToast({
 					navigate,
@@ -99,15 +99,9 @@ function App() {
 		};
 	}, [auth]);
 
-	const handleThemeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const newMode = event.target.value as PaletteMode;
-		setMode(newMode);
-
-		localStorage.setItem("dark", newMode);
-	};
-
+	// Manage theme mode state
 	const getInitialMode = (): PaletteMode => {
-		const stored = localStorage.getItem("dark");
+		const stored = localStorage.getItem("theme");
 		return stored === "light" ? "light" : "dark";
 	};
 	const [mode, setMode] = useState<PaletteMode>(getInitialMode());
@@ -118,6 +112,7 @@ function App() {
 				palette: {
 					mode,
 				},
+				direction: "rtl",
 			}),
 		[mode],
 	);
@@ -125,32 +120,10 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
-			<FormControl sx={{width: "100%", display: "flex"}}>
-				<RadioGroup
-					aria-labelledby='demo-theme-toggle'
-					name='theme-toggle'
-					row
-					value={mode}
-					onChange={handleThemeChange}
-				>
-					<FormControlLabel value='light' control={<Radio />} label='Light' />
-					<FormControlLabel value='dark' control={<Radio />} label='Dark' />
-					<LanguageSwitcher />
-				</RadioGroup>
-			</FormControl>
-
 			<ToastContainer />
+			<Theme mode={mode} setMode={setMode} />
 			<NavBar />
-			{decodedToken && (
-				<SpeedDial
-					ariaLabel='cart'
-					sx={{position: "fixed", bottom: 40, right: "45%"}}
-					icon={fontAwesomeIcon.cartInoc}
-					onClick={() => {
-						navigate(path.Cart);
-					}}
-				/>
-			)}
+			<SpeedDialComponent />
 			<AppRoutes auth={auth} />
 			<Footer />
 		</ThemeProvider>

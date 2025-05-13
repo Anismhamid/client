@@ -4,7 +4,7 @@ import {path} from "../../routes/routes";
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
-import AccountMenu from "../../atoms/userMenu/AccountMenu";
+import AccountMenu from "../../atoms/userManage/AccountMenu";
 import {
 	AppBar,
 	Badge,

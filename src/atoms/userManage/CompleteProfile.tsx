@@ -1,12 +1,12 @@
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {showSuccess, showError} from "../../atoms/Toast";
+import {showSuccess, showError} from "../toasts/ReactToast";
 import {FunctionComponent, useEffect, useState} from "react";
 import {Box, Button, CircularProgress, MenuItem, TextField} from "@mui/material";
 import {Col, Form, Row} from "react-bootstrap";
 import {compleateProfileData, getUserById} from "../../services/usersServices";
 import useToken from "../../hooks/useToken";
-import Loader from "../../atoms/loader/Loader";
+import Loader from "../loader/Loader";
 import useAddressData from "../../hooks/useAddressData";
 
 interface CompleteProfileProps {}

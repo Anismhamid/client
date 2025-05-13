@@ -1,5 +1,5 @@
 import {FunctionComponent} from "react";
-import RoleType from "../interfaces/UserType";
+import RoleType from "../../interfaces/UserType";
 import {
 	styled,
 	TableContainer,
