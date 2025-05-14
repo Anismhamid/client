@@ -14,8 +14,10 @@
 	"UserId": "User ID",
 	"date": "date",
 	"phone": "Phone",
-	"address":"address",
-
+	"address": "address",
+	"customerInfo": "Customer details",
+	"customer": "Customer",
+	"email": "Email",
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {
@@ -136,11 +138,35 @@
 	},
 	"pages": {
 		"receipts": {
-			"receiptSearchTitle": "Advanced Search",
-			"receiptSearch_1": "Search by name, email or order number",
-			"receiptSearch_2": "Search by product name",
-			"receiptSearchFromDate": "From date",
-			"receiptSearchToDate": "To date",
+			"receiptSearchTitle": "Receipt Search",
+  "receiptSearch_1": "Name / Email / Order Number",
+  "receiptSearch_2": "Search by Product",
+  "receiptSearchFromDate": "From Date",
+  "receiptSearchToDate": "To Date",
+			"noReceiptsFound": "No receipts found",
+			"receiptListTitle": "Receipts 🧾",
+			"receiptNumber": "Receipt No. {{orderNumber}}",
+			"date": "Date",
+			"customer": "Customer",
+			"phone": "Phone",
+			"email": "Email",
+			"address": "Address",
+			"paymentMethod": "Payment Method",
+			"creditCard": "Credit Card",
+			"cash": "Cash",
+			"deliveryMethod": "Pickup Method",
+			"delivery": "Home Delivery",
+			"pickup": "Self Pickup",
+			"totalAmount": "Total Amount",
+			"products": "🛒 Products",
+			"productName": "Product",
+			"quantity": "Quantity",
+			"pricePerUnit": "Price per Unit",
+			"total": "Total",
+			"businessName": "Business Name",
+			"businessPhone": "Business Phone",
+			"businessEmail": "Business Email",
+			"businessAddress": "Business Address",
 			"download": "Download"
 		},
 		"contact": {

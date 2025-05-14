@@ -42,11 +42,13 @@
 		"yup": "~1.6.1"
 	},
 	"devDependencies": {
+		"@esbuild-plugins/node-globals-polyfill": "^0.2.3",
 		"@eslint/js": "~9.26.0",
 		"@types/jspdf": "~2.0.0",
 		"@types/react-dom": "~19.1.4",
 		"@types/react-helmet": "~6.1.11",
 		"@vitejs/plugin-react": "~4.4.1",
+		"buffer": "^6.0.3",
 		"eslint": "~9.26.0",
 		"eslint-plugin-react-hooks": "~5.2.0",
 		"eslint-plugin-react-refresh": "~0.4.20",

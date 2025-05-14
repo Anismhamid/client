@@ -7,6 +7,7 @@ declare module "swiper/css/scrollbar";
 declare module "socket.io-client";
 declare module "@radix-ui/react-alert-dialog";
 
+
 declare module "*.png" {
 	const value: string;
 	export default value;

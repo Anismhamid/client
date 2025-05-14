@@ -1,13 +1,16 @@
 // components/ReceiptPDF.tsx
 import {Page, Document, StyleSheet, View, Text, Image, Font} from "@react-pdf/renderer";
 import logo from "/Logo.png";
-import { ReceiptsType } from "../interfaces/Receipts";
+import {ReceiptsType} from "../interfaces/Receipts";
+import handleRTL from "../locales/handleRTL";
 
 // Register Hebrew font
 Font.register({
 	family: "Heebo",
 	src: "/Heebo-VariableFont_wght.ttf",
 });
+
+const rTL = () => (handleRTL() === "ltr" ? "row-reverse" : "row");
 
 // Create styles
 const styles = StyleSheet.create({
@@ -18,13 +21,13 @@ const styles = StyleSheet.create({
 		fontFamily: "Heebo",
 	},
 	header: {
-		flexDirection: "row-reverse",
+		flexDirection: rTL(),
 		justifyContent: "space-between",
 		marginBottom: 30,
 	},
 	logo: {
-		width: 70,
-		height: 50,
+		width: 150,
+		height: 150,
 	},
 	title: {
 		fontSize: 24,
@@ -44,9 +47,11 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: "#1976d2",
 		paddingBottom: 5,
+		textAlign: "right",
+		flexDirection: rTL(),
 	},
 	row: {
-		flexDirection: "row-reverse",
+		flexDirection: rTL(),
 		justifyContent: "space-between",
 		marginBottom: 5,
 	},
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
 		color: "#333",
 	},
 	tableHeader: {
-		flexDirection: "row-reverse",
+		flexDirection: rTL(),
 		backgroundColor: "#1976d2",
 		color: "#fff",
 		paddingVertical: 5,
@@ -68,7 +73,7 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 	},
 	tableRow: {
-		flexDirection: "row-reverse",
+		flexDirection: rTL(),
 		borderBottomWidth: 1,
 		borderBottomColor: "#e0e0e0",
 		paddingVertical: 8,
@@ -80,7 +85,7 @@ const styles = StyleSheet.create({
 		textAlign: "right",
 	},
 	totalRow: {
-		flexDirection: "row-reverse",
+		flexDirection: rTL(),
 		justifyContent: "flex-end",
 		marginTop: 15,
 		paddingTop: 10,
@@ -98,9 +103,8 @@ const styles = StyleSheet.create({
 });
 
 const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
-	const taxAmount = (receipt.totalAmount * 17) / (100 + 17);
+	const taxAmount = (receipt.totalAmount * 18) / (100 + 18);
 	const subtotalWithoutTax = receipt.totalAmount - taxAmount;
-
 	return (
 		<Document>
 			<Page size='A4' style={styles.page}>
@@ -123,7 +127,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 				<View style={{marginBottom: 20}}>
 					<View style={styles.row}>
 						<Text style={styles.value}>{receipt.orderNumber}</Text>
-						<Text style={styles.label}>מספר הזמנה:</Text>
+						<Text style={styles.label}>מספר הזמנה</Text>
 					</View>
 					<View style={styles.row}>
 						<Text style={styles.value}>
@@ -135,7 +139,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 								minute: "2-digit",
 							})}
 						</Text>
-						<Text style={styles.label}>תאריך:</Text>
+						<Text style={styles.label}>תאריך</Text>
 					</View>
 				</View>
 
@@ -149,11 +153,11 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									{receipt.customer.name.first}{" "}
 									{receipt.customer.name.last || ""}
 								</Text>
-								<Text style={styles.label}>לקוח:</Text>
+								<Text style={styles.label}>לקוח</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>{receipt.customer.email}</Text>
-								<Text style={styles.label}>אימייל:</Text>
+								<Text style={styles.label}>אימייל</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>
@@ -161,7 +165,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									{receipt.customer.phone.phone_2 &&
 										`, ${receipt.customer.phone.phone_2}`}
 								</Text>
-								<Text style={styles.label}>טלפון:</Text>
+								<Text style={styles.label}>טלפון</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>
@@ -169,7 +173,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									{receipt.customer.address.street}{" "}
 									{receipt.customer.address.houseNumber}
 								</Text>
-								<Text style={styles.label}>כתובת:</Text>
+								<Text style={styles.label}>כתובת</Text>
 							</View>
 						</View>
 					</>
@@ -186,7 +190,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>מוצר</Text>
 				</View>
 
-				{receipt.products.map((product:any, index:number) => {
+				{receipt.products.map((product: any, index: number) => {
 					const unitPrice = product.product_price / product.quantity;
 					return (
 						<View
@@ -226,7 +230,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 						<Text style={styles.value}>
 							{receipt.payment === "true" ? "כרטיס אשראי" : "מזומן"}
 						</Text>
-						<Text style={styles.label}>שיטת תשלום:</Text>
+						<Text style={styles.label}>שיטת תשלום</Text>
 					</View>
 					<View style={styles.row}>
 						<Text style={styles.value}>
@@ -240,7 +244,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									)}`
 								: "איסוף עצמי"}
 						</Text>
-						<Text style={styles.label}>שיטת משלוח:</Text>
+						<Text style={styles.label}>שיטת משלוח</Text>
 					</View>
 				</View>
 
@@ -263,7 +267,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									currency: "ILS",
 								})}
 							</Text>
-							<Text style={styles.label}>מע"מ (17%):</Text>
+							<Text style={styles.label}>מע"מ (18%):</Text>
 						</View>
 						<View style={styles.row}>
 							<Text style={[styles.value, {fontWeight: "bold"}]}>
