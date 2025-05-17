@@ -2,27 +2,27 @@ import {FunctionComponent} from "react";
 import ProductCategory from "../../settings/ProductsCategory";
 import {useTranslation} from "react-i18next";
 
-interface PastaRiceProps {}
+interface CigarettesProps {}
 /**
- * Mains pasta and rice products
- * @returns pasta and rice products
+ * Mains Cigarettess products
+ * @returns Cigarettess products
  */
-const PastaRice: FunctionComponent<PastaRiceProps> = () => {
+const Cigarettes: FunctionComponent<CigarettesProps> = () => {
 	const {t} = useTranslation();
 	return (
 		<main>
 			<div className='container'>
 				<h1 className='text-center mb-4 p-2 rounded display-6 fw-bold'>
-					{t("categories.pastaAndRice.heading")}
+					{t("categories.cigarettes.heading")}
 				</h1>
 				<hr />
 				<p className='text-center mb-4 p-2 rounded lead'>
-					{t("categories.pastaAndRice.description")}
+					{t("categories.cigarettes.description")}
 				</p>
 			</div>
-			<ProductCategory category='pasta & Rice' />
+			<ProductCategory category='Cigarettes' />
 		</main>
 	);
 };
 
-export default PastaRice;
+export default Cigarettes;

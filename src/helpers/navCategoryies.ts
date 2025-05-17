@@ -82,4 +82,24 @@ export const navbarCategoryLinks = [
 		path: productsPathes.health,
 		icon: fontAwesomeIcon.health,
 	},
+	{
+		labelKey: "categories.watches.label",
+		path: productsPathes.watches,
+		icon: fontAwesomeIcon.watches,
+	},
+	{
+		labelKey: "categories.womenClothes.label",
+		path: productsPathes.womenClothes,
+		icon: fontAwesomeIcon.womenClothes,
+	},
+	{
+		labelKey: "categories.womenBags.label",
+		path: productsPathes.womenBags,
+		icon: fontAwesomeIcon.womenClothes,
+	},
+	{
+		labelKey: "categories.cigarettes.label",
+		path: productsPathes.cigarettes,
+		icon: fontAwesomeIcon.cigarettes,
+	},
 ];

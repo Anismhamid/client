@@ -36,6 +36,10 @@ import RoleType from "../interfaces/UserType";
 import {FunctionComponent} from "react";
 import {AuthValues} from "../interfaces/authValues";
 import OrderDetails from "../components/pages/orders/OrederDetails";
+import Watchs from "../components/pages/products/Watches";
+import WomenClothes from "../components/pages/products/WomenClothes";
+import Cigarettes from "../components/pages/products/Cigarettes";
+import WomenBags from "../components/pages/products/WomenBags";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -63,13 +67,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Cart} element={<Cart />} />
 			<Route
 				path={path.OrderDetails}
-				element={
-					auth  ? (
-						<OrderDetails />
-					) : (
-						<Navigate to={path.Login} />
-					)
-				}
+				element={auth ? <OrderDetails /> : <Navigate to={path.Login} />}
 			/>
 			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 			<Route
@@ -105,6 +103,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={productsPathes.pastaRice} element={<PastaRice />} />
 			<Route path={productsPathes.house} element={<House />} />
 			<Route path={productsPathes.health} element={<Health />} />
+			<Route path={productsPathes.watches} element={<Watchs />} />
+			<Route path={productsPathes.womenClothes} element={<WomenClothes />} />
+			<Route path={productsPathes.womenBags} element={<WomenBags />} />
+			<Route path={productsPathes.cigarettes} element={<Cigarettes />} />
 			<Route path={path.Checkout} element={<Checkout />} />
 			<Route path={path.Png} element={<PageNotFound />} />
 		</Routes>

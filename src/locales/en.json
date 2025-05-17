@@ -104,6 +104,26 @@
 			"heading": "Health Products - Enhance Your Health and Vitality!",
 			"description": "A range of dietary supplements and vitamins that help you improve your health. Discover natural products that support your healthy lifestyle."
 		},
+		"watches": {
+			"label": "Watches",
+			"heading": "Watches – Timeless Style and Precision",
+			"description": "Discover our collection of watches that blend elegance, innovation, and craftsmanship. From classic designs to smartwatches, find the perfect piece for every occasion."
+		},
+		"womenClothes": {
+			"label": "Women’s Clothing",
+			"heading": "Women’s Clothing – Timeless Fashion and Perfect Comfort",
+			"description": "Discover our women’s clothing collection that combines modern style, quality, and comfort. From casual wear to evening dresses – find the perfect piece for every occasion."
+		},
+		"womenBags": {
+			"label": "Bags for Women",
+			"heading": "Bags for Women – A Perfect Blend of Style and Functionality",
+			"description": "Discover our collection of bags for women, featuring trendy designs and comfortable everyday carry options. From small purses to large totes, find the perfect bag for every style and occasion."
+		},
+		"cigarettes": {
+			"label": "Cigarettes",
+			"heading": "Cigarettes – Quality and Tradition in Every Puff",
+			"description": "Explore our wide selection of cigarettes offering rich flavors and premium blends. Whether you prefer classic tastes or lighter options, find your perfect smoke here."
+		},
 		"discountsAndOffers": {
 			"discountsAndOffersHeading": "Discounts and Offers",
 			"discountsAndOffersSpan": "Don't Miss Our Special Offers!",
@@ -139,10 +159,10 @@
 	"pages": {
 		"receipts": {
 			"receiptSearchTitle": "Receipt Search",
-  "receiptSearch_1": "Name / Email / Order Number",
-  "receiptSearch_2": "Search by Product",
-  "receiptSearchFromDate": "From Date",
-  "receiptSearchToDate": "To Date",
+			"receiptSearch_1": "Name / Email / Order Number",
+			"receiptSearch_2": "Search by Product",
+			"receiptSearchFromDate": "From Date",
+			"receiptSearchToDate": "To Date",
 			"noReceiptsFound": "No receipts found",
 			"receiptListTitle": "Receipts 🧾",
 			"receiptNumber": "Receipt No. {{orderNumber}}",

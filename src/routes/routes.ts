@@ -15,6 +15,10 @@ export const productsPathes = {
 	pastaRice: "/Pasta-&-Rice",
 	house: "/house",
 	health: "/health",
+	watches: "/watches",
+	womenClothes: "/women-clothes",
+	womenBags: "/women-bags",
+	cigarettes: "/cigarettes",
 	// will add other products here if nedded...
 };
 

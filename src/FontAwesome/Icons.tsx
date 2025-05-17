@@ -2,6 +2,7 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
 	faAppleWhole,
 	faBaby,
+	faBagShopping,
 	faBars,
 	faBottleWater,
 	faBowlFood,
@@ -12,6 +13,7 @@ import {
 	faChair,
 	faChampagneGlasses,
 	faChevronCircleRight,
+	faClock,
 	faCog,
 	faContactCard,
 	faCow,
@@ -28,6 +30,8 @@ import {
 	faMortarPestle,
 	faPersonWalkingArrowLoopLeft,
 	faShekel,
+	faShirt,
+	faSmoking,
 	faSnowflake,
 	faTrash,
 	faUserGear,
@@ -69,4 +73,8 @@ export const fontAwesomeIcon = {
 	setting: <FontAwesomeIcon icon={faCog} />,
 	addPerson: <FontAwesomeIcon icon={faUserPlus} />,
 	backButton: <FontAwesomeIcon icon={faChevronCircleRight} />,
+	watches: <FontAwesomeIcon icon={faClock} />,
+	womenClothes: <FontAwesomeIcon icon={faShirt} />,
+	cigarettes: <FontAwesomeIcon icon={faSmoking} />,
+	womenBags: <FontAwesomeIcon icon={faBagShopping} />,
 };

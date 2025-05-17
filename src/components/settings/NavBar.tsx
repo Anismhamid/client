@@ -108,7 +108,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						{({isActive}) => (
 							<Chip
 								label={t(link.labelKey)}
-								size='small'
+								size='medium'
 								sx={{
 									px: 1,
 									mx: 1,
