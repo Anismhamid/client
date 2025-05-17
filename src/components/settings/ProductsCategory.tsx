@@ -12,13 +12,15 @@ import {useCartItems} from "../../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
-import {Button, Card, CardMedia, Chip, CircularProgress} from "@mui/material";
+import {Box, Button, Card, CardMedia, Chip, CircularProgress} from "@mui/material";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import Seo from "../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
+import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
+import {CssVarsProvider} from "@mui/joy/styles";
 
 interface ProductCategoryProps {
 	category: string;
@@ -156,19 +158,20 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 							const productQuantity = quantities[product.product_name] || 1;
 
 							return (
-								<div className='col ' key={product.product_name}>
+								<Box className='col ' key={product.product_name}>
 									<Card className='card h-100 shadow rounded-4 overflow-hidden'>
 										<CardMedia
 											component='img'
-											height='250'
+											lang='he'
+											loading='lazy'
 											image={product.image_url}
 											alt={product.product_name}
+											title={product.product_name}
 											sx={{
 												objectFit: "cover",
-												transition: "transform 0.3s ease-in-out",
 											}}
 										/>
-										<div className='card-body d-flex flex-column justify-content-between'>
+										<Box className='card-body d-flex flex-column justify-content-between'>
 											<h6 className='card-title text-center fw-bold'>
 												{product.product_name}
 											</h6>
@@ -243,8 +246,16 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														? "ל / ק" + "\u05B2" + "ג"
 														: "ל-יחידה"}
 											</h6>
-
-											<div className='d-flex align-items-center justify-content-center gap-3'>
+											<Box
+												sx={{
+													margin: "auto",
+													textAlign: "center",
+													p: 0,
+												}}
+											>
+												<ColorsAndSizes category={category} />
+											</Box>
+											<Box className='d-flex align-items-center justify-content-center gap-3'>
 												<button
 													disabled={
 														product.quantity_in_stock <= 0
@@ -286,8 +297,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														width={15}
 													/>
 												</button>
-											</div>
-											<button
+											</Box>
+											<Button
 												onClick={() => {
 													handleAdd(
 														product.product_name,
@@ -320,12 +331,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												) : (
 													"הוספה לסל"
 												)}
-											</button>
+											</Button>
 											{((auth && auth.role === RoleType.Admin) ||
 												(auth &&
 													auth.role ===
 														RoleType.Moderator)) && (
-												<div className='card-footer mt-3 bg-transparent border-0 d-flex justify-content-around'>
+												<Box className='card-footer mt-3 bg-transparent border-0 d-flex justify-content-around'>
 													<Tooltip title='עריכה'>
 														<Fab
 															color='warning'
@@ -357,11 +368,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															<DeleteIcon />
 														</Fab>
 													</Tooltip>
-												</div>
+												</Box>
 											)}
-										</div>
+										</Box>
 									</Card>
-								</div>
+								</Box>
 							);
 						})}
 					</div>

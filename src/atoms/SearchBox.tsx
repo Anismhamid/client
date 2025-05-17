@@ -19,6 +19,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearc
 					width: {xs: "90%", sm: 400},
 					m: "auto",
 					mb: 4,
+					fontSize: "0.5rem",
 					p: "2px 10px",
 					display: "flex",
 					alignItems: "center",
@@ -39,7 +40,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearc
 						color: "#696969",
 						mr: 2,
 						flex: 1,
-						fontSize: "1.2rem",
+						fontSize: "0.5rem",
 						"& input::placeholder": {
 							color: "#216cf8",
 						},

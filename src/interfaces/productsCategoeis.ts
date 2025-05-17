@@ -1,0 +1,15 @@
+export const productCategories = [
+	{id: "Fruit", label: "פירות"},
+	{id: "Vegetable", label: "ירקות"},
+	{id: "Dairy", label: "מוצרי חלב"},
+	{id: "Meat", label: "בשר"},
+	{id: "Fish", label: "דגים"},
+	{id: "Spices", label: "תבלינים"},
+	{id: "Bakery", label: "מאפים"},
+	{id: "Beverages", label: "משקאות"},
+	{id: "Frozen", label: "מוצרים קפואים"},
+	{id: "Snacks", label: "חטיפים"},
+	{id: "Women-bags", label: "תיקי נשים"},
+	{id: "Women-clothes", label: "בגדי נשים"},
+	{id: "Cigarettes", label: "סיגריות"},
+];

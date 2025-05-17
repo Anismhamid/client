@@ -165,6 +165,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 						p: 1,
 						border: "1px solid red",
 						borderRadius: 3,
+						my: 5,
 					}}
 				>
 					<Typography align='center' variant='h6' gutterBottom>

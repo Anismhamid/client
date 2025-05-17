@@ -5,6 +5,8 @@ import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {createNewProduct} from "../../services/productsServices";
+import { productCategories } from "../../interfaces/productsCategoeis";
+import { Box } from "@mui/material";
 
 interface AddProdutModalProps {
 	show: boolean;
@@ -60,7 +62,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 				<div className='container '>
 					<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
 						{/* product_name */}
-						<div className='form-floating mb-3'>
+						<Box className='form-floating mb-3'>
 							<input
 								type='text'
 								name='product_name'
@@ -77,7 +79,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 									{formik.errors.product_name}
 								</p>
 							)}
-						</div>
+						</Box>
 
 						{/* category */}
 						<div className='input-group-sm mb-3 form-select'>
@@ -88,17 +90,14 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 								className='form-control'
 								id='category'
 							>
-								<option value=''>בחר קטגוריה</option>
-								<option value='Fruit'>פירות</option>
-								<option value='Vegetable'>ירקות</option>
-								<option value='Dairy'>מוצרי חלב</option>
-								<option value='Meat'>בשר</option>
-								<option value='Fish'>דגים</option>
-								<option value='Spices'>תבלינים</option>
-								<option value='Bakery'>מאפים</option>
-								<option value='Beverages'>משקאות</option>
-								<option value='Frozen'>מוצרים קפואים</option>
-								<option value='Snacks'>חטיפים</option>
+								<option disabled>בחר קטגוריה</option>
+								{productCategories.map(
+									(category: {id: string; label: string}) => (
+										<option value={category.id} key={category.id}>
+											{category.label}
+										</option>
+									),
+								)}
 							</select>
 							{(formik.touched.category || formik.errors.category) && (
 								<div className='text-danger fw-bold'>

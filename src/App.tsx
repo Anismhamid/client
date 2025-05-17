@@ -1,10 +1,7 @@
 import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {useNavigate} from "react-router-dom";
 import Footer from "./components/settings/Footer.tsx";
-import {path} from "./routes/routes";
 import {ToastContainer} from "react-toastify";
-import {fontAwesomeIcon} from "./FontAwesome/Icons.tsx";
-import useToken from "./hooks/useToken.ts";
 import {io} from "socket.io-client";
 import {useEffect, useMemo, useState} from "react";
 import {useUser} from "./context/useUSer.tsx";
@@ -15,7 +12,6 @@ import {
 	ThemeProvider,
 	createTheme,
 	PaletteMode,
-	SpeedDial,
 } from "@mui/material";
 import "./locales/i18n.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
@@ -119,13 +115,15 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<ToastContainer />
-			<Theme mode={mode} setMode={setMode} />
-			<NavBar />
-			<SpeedDialComponent />
-			<AppRoutes auth={auth} />
-			<Footer />
+	
+				<CssBaseline />
+				<ToastContainer />
+				<Theme mode={mode} setMode={setMode} />
+				<NavBar />
+				<SpeedDialComponent />
+				<AppRoutes auth={auth} />
+				<Footer />
+		
 		</ThemeProvider>
 	);
 }

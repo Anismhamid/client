@@ -1,5 +1,5 @@
 export const productsPathes = {
-	fruits: "/fruits",
+	fruits: "/fruit",
 	vegetable: "/vegetable",
 	fish: "/fish",
 	dairy: "/dairy",
