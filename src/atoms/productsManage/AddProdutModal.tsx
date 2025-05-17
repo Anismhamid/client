@@ -5,15 +5,16 @@ import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {createNewProduct} from "../../services/productsServices";
-import { productCategories } from "../../interfaces/productsCategoeis";
-import { Box } from "@mui/material";
+import {productCategories} from "../../interfaces/productsCategoeis";
+import {Box} from "@mui/material";
 
 interface AddProdutModalProps {
 	show: boolean;
 	onHide: Function;
+	refrehs: () => void;
 }
 
-const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) => {
+const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,refrehs}) => {
 	const formik: FormikValues = useFormik<Products>({
 		initialValues: {
 			product_name: "",
@@ -50,6 +51,7 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 		onSubmit(values, {resetForm}) {
 			createNewProduct(values);
 			resetForm();
+			refrehs();
 		},
 	});
 

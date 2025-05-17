@@ -45,6 +45,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
+	const [refresh, setRefresh] = useState<boolean>(false);
+
 	const {setQuantity} = useCartItems();
 	const navigate = useNavigate();
 
@@ -61,6 +63,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const icons = getFaviconForCategory(category);
+
+	const refreshAfterCange = () => setRefresh(!refresh);
 
 	const handleAdd = (
 		product_name: string,
@@ -394,6 +398,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				</div>
 
 				<UpdateProductModal
+					refresh={refreshAfterCange}
 					product_name={productNameToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}

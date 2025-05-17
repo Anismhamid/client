@@ -5,17 +5,20 @@ import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {getProductByspicificName, updateProduct} from "../../services/productsServices";
+import {productCategories} from "../../interfaces/productsCategoeis";
 
 interface UpdateProductModalProps {
 	show: boolean;
 	onHide: Function;
 	product_name: string;
+	refresh: () => void;
 }
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	show,
 	onHide,
 	product_name,
+	refresh,
 }) => {
 	const [product, setProduct] = useState<{
 		product_name: string;
@@ -84,9 +87,9 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		onSubmit(values, {resetForm}) {
 			updateProduct(product_name as string, values as Products)
 				.then(() => {
-					setProduct((prev) => ({...prev, ...values}));
-					resetForm();
 					onHide();
+					resetForm();
+					refresh();
 				})
 				.catch((err) => {
 					console.log(err);
@@ -131,17 +134,14 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								className='form-control'
 								id='category'
 							>
-								<option value=''>בחר קטגוריה</option>
-								<option value='Fruit'>פירות</option>
-								<option value='Vegetable'>ירקות</option>
-								<option value='Dairy'>מוצרי חלב</option>
-								<option value='Meat'>בשר</option>
-								<option value='Fish'>דגים</option>
-								<option value='Spices'>תבלינים</option>
-								<option value='Bakery'>מאפים</option>
-								<option value='Beverages'>משקאות</option>
-								<option value='Frozen'>מוצרים קפואים</option>
-								<option value='Snacks'>חטיפים</option>
+								<option disabled>בחר קטגוריה</option>
+								{productCategories.map(
+									(category: {id: string; label: string}) => (
+										<option value={category.id} key={category.id}>
+											{category.label}
+										</option>
+									),
+								)}
 							</select>
 							{(formik.touched.category || formik.errors.category) && (
 								<div className='text-danger fw-bold'>

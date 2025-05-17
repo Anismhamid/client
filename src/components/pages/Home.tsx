@@ -52,16 +52,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
-
+	
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
 		setShowDeleteModal(true);
 	};
 	const closeDeleteModal = () => setShowDeleteModal(false);
-
+	
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
+	
+	const refreshAfterCange = () => setRefresh(!refresh);
 
 	useEffect(() => {
 		getAllProducts()
@@ -480,6 +483,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			</Box>
 
 			<UpdateProductModal
+				refresh={refreshAfterCange}
 				product_name={productNameToUpdate}
 				show={showUpdateProductModal}
 				onHide={() => onHideUpdateProductModal()}

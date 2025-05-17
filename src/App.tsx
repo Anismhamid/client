@@ -7,12 +7,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useUser} from "./context/useUSer.tsx";
 import RoleType from "./interfaces/UserType.ts";
 import {showInfo} from "./atoms/toasts/ReactToast.ts";
-import {
-	CssBaseline,
-	ThemeProvider,
-	createTheme,
-	PaletteMode,
-} from "@mui/material";
+import {CssBaseline, ThemeProvider, createTheme, PaletteMode} from "@mui/material";
 import "./locales/i18n.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
 import {Order} from "./interfaces/Order.ts";
@@ -115,15 +110,13 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
-	
-				<CssBaseline />
-				<ToastContainer />
-				<Theme mode={mode} setMode={setMode} />
-				<NavBar />
-				<SpeedDialComponent />
-				<AppRoutes auth={auth} />
-				<Footer />
-		
+			<CssBaseline />
+			<ToastContainer />
+			<Theme mode={mode} setMode={setMode} />
+			<NavBar />
+			<SpeedDialComponent />
+			<AppRoutes auth={auth} />
+			<Footer />
 		</ThemeProvider>
 	);
 }
