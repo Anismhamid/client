@@ -20,10 +20,10 @@ import {
 	Paper,
 	CircularProgress,
 } from "@mui/material";
-import {io} from "socket.io-client";
 import {showInfo} from "../toasts/ReactToast";
 import {useUser} from "../../context/useUSer";
 import SearchBox from "../SearchBox";
+import socket from "../../socket/globalSocket";
 
 interface UersManagementProps {}
 
@@ -56,6 +56,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+	const [onlineUsers, setOnlineUsers] = useState<{[userId: string]: boolean}>({});
 	const {auth} = useUser();
 
 	useEffect(() => {
@@ -70,11 +71,11 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	}, []);
 
 	useEffect(() => {
-		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
-			auth: {
-				userId: auth._id,
-			},
-		});
+		// const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+		// 	auth: {
+		// 		userId: auth._id,
+		// 	},
+		// });
 
 		const handleUserConnected = (data: {userId: string}) => {
 			setUsers((prevUsers) =>
@@ -178,7 +179,31 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 					<Table aria-label='users table'>
 						<TableHead>
 							<TableRow>
-								<StyledTableCell align='center'>שם</StyledTableCell>
+								<StyledTableCell align='center'>
+									שם
+									{/* {users.map((user) => (
+										<div
+											key={user._id}
+											style={{
+												display: "flex",
+												alignItems: "center",
+											}}
+										>
+											<span
+												style={{
+													width: 10,
+													height: 10,
+													borderRadius: "50%",
+													backgroundColor: onlineUsers[user._id]
+														? "green"
+														: "red",
+													marginRight: 8,
+												}}
+											/>
+											<span>{user.name}</span>
+										</div>
+									))} */}
+								</StyledTableCell>
 								<StyledTableCell align='center'>דו"אל</StyledTableCell>
 								<StyledTableCell align='center'>תפקיד</StyledTableCell>
 								<StyledTableCell align='center'>סטטוס</StyledTableCell>

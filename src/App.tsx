@@ -2,7 +2,7 @@ import {showNewOrderToast} from "./atoms/bootStrapToast/SocketToast.tsx";
 import {useNavigate} from "react-router-dom";
 import Footer from "./components/settings/Footer.tsx";
 import {ToastContainer} from "react-toastify";
-import {io} from "socket.io-client";
+import socket from "./socket/globalSocket";
 import {useEffect, useMemo, useState} from "react";
 import {useUser} from "./context/useUSer.tsx";
 import RoleType from "./interfaces/UserType.ts";
@@ -32,13 +32,15 @@ function App() {
 	useEffect(() => {
 		if (!auth) return;
 
-		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+		socket.auth = {
 			auth: {
 				userId: auth._id,
 				role: auth.role,
 			},
 			withCredentials: true,
-		});
+		};
+
+		socket.connect();
 
 		socket.emit("join", {
 			userId: auth._id,
@@ -109,7 +111,7 @@ function App() {
 
 		return () => {
 			socket.off("new order");
-			// socket.off("order:status:client");
+			socket.off("order:status:client");
 			socket.off("order:status:updated");
 			socket.off("user:registered");
 			socket.off("user:newUserLoggedIn");

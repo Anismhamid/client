@@ -36,7 +36,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../atoms/SearchBox";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
-import {io} from "socket.io-client";
+import socket from "../../socket/globalSocket";
 
 interface ProductCategoryProps {
 	category: string;
@@ -166,7 +166,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 	// quantities in stock updates when the order is created
 	useEffect(() => {
-		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
 
 		socket.on("product:quantity_in_stock", (newProduct: Products) => {
 			setProducts((prev) => {

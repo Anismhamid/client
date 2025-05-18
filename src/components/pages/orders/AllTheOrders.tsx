@@ -8,11 +8,11 @@ import RoleType from "../../../interfaces/UserType";
 import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {showError} from "../../../atoms/toasts/ReactToast";
-import {io} from "socket.io-client";
 import useNotificationSound from "../../../hooks/useNotificationSound";
 import SearchBox from "../../../atoms/SearchBox";
 import NewOrders from "./NewOrders";
 import PreviousOrders from "./PreviousOrders";
+import socket from "../../../socket/globalSocket";
 
 interface AllTheOrdersProps {}
 /**
@@ -24,7 +24,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const [allOrders, setAllOrders] = useState<Order[]>([]);
 	const {playNotificationSound} = useNotificationSound();
 	const [loading, setLoading] = useState<boolean>(true);
-	const [searchQuery, setSearchQuery] = useState("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
 	const {auth} = useUser();
 
 	const [orderStatuses, setOrderStatuses] = useState<{[orderNumber: string]: string}>(
@@ -88,7 +88,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}, [previousOrders, searchQuery]);
 
 	useEffect(() => {
-		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
 
 		const handleStatusChange = (order: Order) => {
 			playNotificationSound();
@@ -108,8 +107,13 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 		socket.on("order:status:updated", handleStatusChange);
 
+		socket.on("new order", (newOrder: Order) => {
+			setAllOrders((prevOrders) => [newOrder, ...prevOrders]);
+		});
+
 		return () => {
-			socket.off("order:status:updated", handleStatusChange);
+			socket.off("order:status:updated");
+			socket.off("new order");
 			socket.disconnect();
 		};
 	}, []);

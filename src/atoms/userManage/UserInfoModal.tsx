@@ -10,10 +10,8 @@ import {
 	TextField,
 } from "@mui/material";
 import {useFormik} from "formik";
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent} from "react";
 import * as yup from "yup";
-import {Cities} from "../../interfaces/cities";
-import {getCities} from "../../services/cities";
 import useAddressData from "../../hooks/useAddressData";
 
 interface UserInfoModalProps {
