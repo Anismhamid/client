@@ -33,6 +33,7 @@ import SearchBox from "../../atoms/SearchBox";
 import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
+import {formatPrice} from "../../helpers/dateAndPriceFormat";
 
 interface HomeProps {}
 
@@ -240,13 +241,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 										<Link
 											to={`/product-details/${encodeURIComponent(product.product_name)}`}
 										>
-										<CardMedia
-											component='img'
-											height='200'
-											image={product.image_url}
-											alt={product.product_name}
-											loading='lazy'
-										/>
+											<CardMedia
+												component='img'
+												height='200'
+												image={product.image_url}
+												alt={product.product_name}
+												loading='lazy'
+											/>
 										</Link>
 										<CardContent>
 											<Typography
@@ -269,13 +270,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														align='center'
 													>
 														<s>
-															{product.price.toLocaleString(
-																"he-IL",
-																{
-																	style: "currency",
-																	currency: "ILS",
-																},
-															)}
+															{formatPrice(product.price)}
 														</s>
 													</Typography>
 													<Typography
@@ -283,13 +278,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														align='center'
 														color='success.main'
 													>
-														{discountedPrice.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
+														{formatPrice(discountedPrice)}
 													</Typography>
 												</>
 											) : (
@@ -312,13 +301,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														variant='h6'
 														align='center'
 													>
-														{product.price.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
+														{formatPrice(product.price)}
 													</Typography>
 												</>
 											)}

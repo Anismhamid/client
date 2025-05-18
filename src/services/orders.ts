@@ -8,7 +8,7 @@ const api = `${import.meta.env.VITE_API_URL}/orders`;
  * @param userId - The unique identifier of the user
  * @returns The user's orders if successful, or empty array if there's an error
  */
-export const getUserOrders = async (userId: string) => {
+export const getUserOrders = async (userId: string): Promise<Order[]> => {
 	try {
 		const orders = await axios.get(`${api}/${userId}`, {
 			headers: {Authorization: localStorage.getItem("token")},
@@ -41,7 +41,7 @@ export const getOrderByOrderNumber = async (orderNumber: string) => {
  * Get all orders for admin users
  * @returns An array of orders if successful, or empty array if there's an error
  */
-export const getAllOrders = async () => {
+export const getAllOrders = async (): Promise<Order[]> => {
 	try {
 		const response = await axios.get(api, {
 			headers: {Authorization: localStorage.getItem("token")},

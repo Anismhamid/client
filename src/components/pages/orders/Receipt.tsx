@@ -21,6 +21,7 @@ import RoleType from "../../../interfaces/UserType";
 import {useTranslation} from "react-i18next";
 import Loader from "../../../atoms/loader/Loader";
 import ReceiptPDF from "../../../helpers/generatePdf";
+import {formatDate, formatPrice} from "../../../helpers/dateAndPriceFormat";
 
 interface ReceiptProps {}
 /**
@@ -196,15 +197,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 										<>
 											<strong className='d-block'>
 												{t("date")}:
-												{new Date(
-													receipt.orderDate,
-												).toLocaleString("he-IL", {
-													year: "numeric",
-													month: "long",
-													day: "numeric",
-													hour: "2-digit",
-													minute: "2-digit",
-												})}
+												{formatDate(receipt.orderDate)}
 											</strong>
 											<strong className='me-1'>
 												{t("customer")}:
@@ -253,13 +246,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 									<strong>{t("pages.receipts.deliveryMethod")}:</strong>
 									<span className='mx-1'>
 										{receipt.deliveryFee
-											? `${t("pages.receipts.delivery")} ${receipt.deliveryFee.toLocaleString(
-													"he-IL",
-													{
-														style: "currency",
-														currency: "ILS",
-													},
-												)}`
+											? `${t("pages.receipts.delivery")} ${formatPrice(receipt.deliveryFee)}`
 											: `${t("pages.receipts.pickup")}`}
 									</span>
 								</CardContent>
@@ -267,10 +254,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 								<CardContent className='fs-5 fw-bold'>
 									{t("pages.receipts.totalAmount")}:
 									<span className='text-success mx-1'>
-										{receipt.totalAmount.toLocaleString("he-IL", {
-											style: "currency",
-											currency: "ILS",
-										})}
+										{formatPrice(receipt.totalAmount)}
 									</span>
 								</CardContent>
 							</CardContent>
@@ -301,18 +285,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 										</TableCell>
 										<TableCell align='right'>{p.quantity}</TableCell>
 										<TableCell align='right'>
-											{(
-												p.product_price / p.quantity
-											).toLocaleString("he-IL", {
-												style: "currency",
-												currency: "ILS",
-											})}
+											{formatPrice(p.product_price / p.quantity)}
 										</TableCell>
 										<TableCell align='right'>
-											{p.product_price.toLocaleString("he-IL", {
-												style: "currency",
-												currency: "ILS",
-											})}
+											{formatPrice(p.product_price)}
 										</TableCell>
 									</TableRow>
 								))}
@@ -359,16 +335,6 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							>
 								{t("pages.receipts.download") + " - PDF"}
 							</Button>
-							{/* <Button
-								sx={{
-									width: "30%",
-									color: "darkturquoise",
-									bgcolor: "darkslategray",
-								}}
-								onClick={() => ReceiptPDF(receipt as ReceiptsType)}
-							>
-								{t("pages.receipts.download")} - PDF
-							</Button> */}
 						</div>
 					</Box>
 				))}

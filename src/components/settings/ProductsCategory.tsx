@@ -35,6 +35,7 @@ import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../atoms/SearchBox";
+import { formatPrice } from "../../helpers/dateAndPriceFormat";
 
 interface ProductCategoryProps {
 	category: string;
@@ -273,13 +274,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															align='center'
 														>
 															<s className='ms-2'>
-																{product.price.toLocaleString(
-																	"he-IL",
-																	{
-																		style: "currency",
-																		currency: "ILS",
-																	},
-																)}
+																{formatPrice(product.price)}
 															</s>
 														</Typography>
 														<Chip
@@ -292,13 +287,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															align='center'
 															color='success.main'
 														>
-															{discountedPrice.toLocaleString(
-																"he-IL",
-																{
-																	style: "currency",
-																	currency: "ILS",
-																},
-															)}
+															{formatPrice(discountedPrice)}
 														</Typography>
 													</>
 												) : (
@@ -306,13 +295,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														variant='h6'
 														align='center'
 													>
-														{product.price.toLocaleString(
-															"he-IL",
-															{
-																style: "currency",
-																currency: "ILS",
-															},
-														)}
+														{formatPrice(product.price)}
 													</Typography>
 												)}
 

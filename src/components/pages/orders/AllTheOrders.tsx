@@ -11,8 +11,8 @@ import {showError} from "../../../atoms/toasts/ReactToast";
 import {io} from "socket.io-client";
 import useNotificationSound from "../../../hooks/useNotificationSound";
 import SearchBox from "../../../atoms/SearchBox";
-import IncompleteOrders from "./PreviousOrders";
 import NewOrders from "./NewOrders";
+import PreviousOrders from "./PreviousOrders";
 
 interface AllTheOrdersProps {}
 /**
@@ -37,7 +37,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const canChangeStatus =
 		!!auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
-	const [viewIncomplete, setViewIncomplete] = useState(false);
+	const [viewPreviousOrders, setViewPreviousOrders] = useState(false);
 
 	const newOrders = useMemo(() => {
 		const today = new Date().toLocaleDateString("he-IL");
@@ -46,7 +46,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			const orderDate = new Date(order.date).toLocaleDateString("he-IL");
 			return orderDate === today;
 		});
-	}, [allOrders, searchQuery]);
+	}, [allOrders]);
 
 	const filteredOrders = useMemo(() => {
 		return newOrders.filter((order) => {
@@ -62,6 +62,31 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			);
 		});
 	}, [newOrders, searchQuery]);
+
+	const previousOrders = useMemo(() => {
+		const today = new Date().toLocaleDateString("he-IL");
+
+		return allOrders.filter((order) => {
+			const orderDate = new Date(order.date).toLocaleDateString("he-IL");
+			return orderDate !== today;
+		});
+	}, [allOrders]);
+
+	const filteredPreviousOrders = useMemo(() => {
+		const query = searchQuery.toLowerCase();
+		return previousOrders.filter((order) => {
+			const orderNumber = order.orderNumber?.toString().toLowerCase() || "";
+			const userId = order.userId?.toString().toLowerCase() || "";
+			const date = new Date(order.date).toLocaleDateString("he-IL");
+
+			return (
+				orderNumber.includes(query) ||
+				userId.includes(query) ||
+				date.includes(query)
+			);
+		});
+	}, [previousOrders, searchQuery]);
+
 
 	useEffect(() => {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
@@ -81,47 +106,30 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		};
 	}, []);
 
+	const fetchOrders = async () => {
+		try {
+			const res = canChangeStatus
+				? await getAllOrders()
+				: await getUserOrders(auth._id as string);
+
+			const reversed = res.reverse();
+			setAllOrders(reversed);
+
+			const initialStatuses: {[orderNumber: string]: string} = {};
+			reversed.forEach(({orderNumber, status}) => {
+				initialStatuses[orderNumber] = status;
+			});
+			setOrderStatuses(initialStatuses);
+		} catch (error) {
+			showError("אחזור ההזמנות נכשל");
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		if (canChangeStatus) {
-			getAllOrders()
-				.then((res) => {
-					setAllOrders(res.reverse());
-
-					const initialStatuses: {[orderId: string]: string} = {};
-					res.forEach(
-						(order: {orderNumber: string | number; status: string}) => {
-							initialStatuses[order.orderNumber] = order.status;
-						},
-					);
-					setOrderStatuses(initialStatuses);
-				})
-				.catch(() => {
-					showError("Failed to fetch orders:");
-				})
-				.finally(() => {
-					setLoading(false);
-				});
-		} else {
-			if (auth) {
-				getUserOrders(auth._id as string)
-					.then((res) => {
-						setAllOrders(res.reverse());
-
-						const initialStatuses: {[orderId: string]: string} = {};
-						res.forEach(
-							(order: {orderNumber: string | number; status: string}) => {
-								initialStatuses[order.orderNumber] = order.status;
-							},
-						);
-						setOrderStatuses(initialStatuses);
-					})
-					.catch((error) => {
-						console.error("Failed to fetch orders:", error);
-					})
-					.finally(() => {
-						setLoading(false);
-					});
-			}
+		if (auth?._id) {
+			fetchOrders();
 		}
 	}, [auth]);
 
@@ -131,33 +139,39 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 	return (
 		<main>
-			{canChangeStatus && (
-				<div className='container my-3 d-flex align-items-center justify-content-between'>
-					<Button
-						variant='contained'
-						color='warning'
-						onClick={() => setViewIncomplete(false)}
-						sx={{ml: 5}}
-					>
-						הצג את כל ההזמנות
-					</Button>
-					<Button
-						variant='contained'
-						color='error'
-						onClick={() => {
-							setViewIncomplete(true);
-						}}
-					>
-						הצג הזמנות קודמות
-					</Button>
-				</div>
-			)}
+			<div className='container my-3 d-flex align-items-center justify-content-between'>
+				<Button
+					variant='contained'
+					color='warning'
+					onClick={() => setViewPreviousOrders(false)}
+					sx={{ml: 5}}
+				>
+					הצג את כל ההזמנות
+				</Button>
+				<Button
+					variant='contained'
+					color='error'
+					onClick={() => {
+						setViewPreviousOrders(true);
+					}}
+				>
+					הצג הזמנות קודמות
+				</Button>
+			</div>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
-				{viewIncomplete ? (
-					<IncompleteOrders
-						orderStatuses={orderStatuses}
-						setPrevious={allOrders}
-					/>
+				{viewPreviousOrders ? (
+					<>
+						<SearchBox
+							text="'חיפוש לפי מזהה, תאריך או מספר הזמנה...'"
+							searchQuery={searchQuery}
+							setSearchQuery={setSearchQuery}
+						/>
+						<PreviousOrders
+							orderStatuses={orderStatuses}
+							previous={allOrders}
+							filteredOrders={filteredPreviousOrders}
+						/>
+					</>
 				) : (
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>

@@ -15,6 +15,7 @@ import {useTranslation} from "react-i18next";
 import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons";
 import handleRTL from "../../../locales/handleRTL";
 import {CardBody} from "react-bootstrap";
+import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 
 interface OrderDetailsProps {}
 
@@ -43,7 +44,10 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 
 	if (!orderItems)
 		return (
-			<Typography variant="h4" className='text-center bg-primary text-white rounded p-3 mb-4'>
+			<Typography
+				variant='h4'
+				className='text-center bg-primary text-white rounded p-3 mb-4'
+			>
 				{t("No products found in this order.")}
 			</Typography>
 		);
@@ -59,7 +63,9 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 		<Box component={"main"} dir={diriction}>
 			<Box sx={{padding: 5}} className='container p-3'>
 				<Box className='text-center bg-gradient p-4 rounded shadow-sm'>
-					<Typography variant="h4" className='text-center mb-4'>{orderNumber}</Typography>
+					<Typography variant='h4' className='text-center mb-4'>
+						{orderNumber}
+					</Typography>
 
 					<Box className='d-flex justify-content-between align-items-center mb-3 flex-wrap'>
 						<Box className='d-flex align-items-center gap-2'>
@@ -138,11 +144,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 												variant='body1'
 												className='text-success fw-bold'
 											>
-												{t("price")}:
-												{finalPrice.toLocaleString("he-IL", {
-													style: "currency",
-													currency: "ILS",
-												})}
+												{t("price")}:{formatPrice(finalPrice)}
 											</Typography>
 										</CardContent>
 									</CardBody>

@@ -15,6 +15,7 @@ import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
 import handleRTL from "../../../locales/handleRTL";
 import {CardTitle} from "react-bootstrap";
+import {formatDate, formatPrice} from "../../../helpers/dateAndPriceFormat";
 
 interface NewOrdersProps {
 	filteredOrders: Order[];
@@ -24,7 +25,6 @@ interface NewOrdersProps {
 	setStatusLoading: React.Dispatch<
 		React.SetStateAction<{[orderNumber: string]: boolean}>
 	>;
-
 	orderStatuses: {[orderNumber: string]: string};
 	statusLoading: {[orderNumber: string]: boolean};
 }
@@ -41,11 +41,6 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 	const {t} = useTranslation();
 	const navigate = useNavigate();
 
-	filteredOrders.forEach((order) => {
-		if (!order.phone) {
-			console.warn("Missing phone field for order:", order.orderNumber);
-		}
-	});
 	const canChangeStatus =
 		auth && (auth.role === RoleType.Admin || auth.role === RoleType.Moderator);
 
@@ -74,13 +69,7 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 									>
 										{t("date")}:
 									</Typography>
-									{new Date(order.date).toLocaleString("he-IL", {
-										year: "2-digit",
-										month: "short",
-										day: "numeric",
-										hour: "2-digit",
-										minute: "2-digit",
-									})}
+									{formatDate(order.date)}
 								</Box>
 								<Box className='mt-3'>
 									<Typography
@@ -187,13 +176,7 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 												component={"span"}
 												className='text-primary px-1'
 											>
-												{order.deliveryFee.toLocaleString(
-													"he-IL",
-													{
-														style: "currency",
-														currency: "ILS",
-													},
-												)}
+												{formatPrice(order.deliveryFee)}
 											</Typography>
 										</Typography>
 									</>
@@ -205,10 +188,7 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 							<div>
 								<h5 className='text-center text-success'>
 									<strong>{`${t("totalOrderPrice")}:`}</strong>{" "}
-									{order.totalAmount.toLocaleString("he-IL", {
-										style: "currency",
-										currency: "ILS",
-									})}
+									{formatPrice(order.totalAmount)}
 								</h5>
 							</div>
 
