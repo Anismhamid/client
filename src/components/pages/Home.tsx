@@ -35,6 +35,7 @@ import {useRef} from "react";
 import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
 import handleRTL from "../../locales/handleRTL";
+import {io} from "socket.io-client";
 
 interface HomeProps {}
 
@@ -122,6 +123,42 @@ const Home: FunctionComponent<HomeProps> = () => {
 		setVisibleProducts(filteredProducts.slice(0, visibleCount));
 	}, [filteredProducts, visibleCount]);
 
+	// quantities in stock updates when the order is created
+	useEffect(() => {
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
+
+		socket.on("product:quantity_in_stock", (newProduct: Products) => {
+			setProducts((prev) => {
+				const exists = prev.some(
+					(p) => p.product_name === newProduct.product_name,
+				);
+				if (exists) {
+					return prev.map((p) =>
+						p.product_name === newProduct.product_name ? newProduct : p,
+					);
+				}
+				return [newProduct, ...prev];
+			});
+
+			setVisibleProducts((prev) => {
+				const exists = prev.some(
+					(p) => p.product_name === newProduct.product_name,
+				);
+				if (exists) {
+					return prev.map((p) =>
+						p.product_name === newProduct.product_name ? newProduct : p,
+					);
+				}
+				return [newProduct, ...prev];
+			});
+		});
+
+		// Cleaning the listenr
+		return () => {
+			socket.off("product:quantity_in_stock");
+		};
+	}, []);
+
 	const handleAdd = async (
 		product_name: string,
 		quantity: {[key: string]: number},
@@ -182,8 +219,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<Box
 					sx={{
 						position: "sticky",
-						zIndex: 2000,
-						top: 100,
+						zIndex: 1070,
+						top: {xs: 55, md: 135,lg:95},
 					}}
 				>
 					<SearchBox
@@ -297,7 +334,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													>
 														{isOutOfStock
 															? "אזל מהמלאי"
-															: "במלאי"}
+															: `במלאי: ${product.quantity_in_stock}`}
 													</Typography>
 
 													<Typography

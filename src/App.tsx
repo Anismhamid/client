@@ -58,7 +58,6 @@ function App() {
 			}
 		});
 
-
 		socket.on(
 			"order:status:client",
 			({orderNumber, status}: {orderNumber: string; status: string}) => {
@@ -79,26 +78,39 @@ function App() {
 			if (auth?._id && auth.role === RoleType.Admin) {
 				playNotificationSound();
 				const msg =
-					user.role === RoleType.Client
-						? `${user.email} משתמש התחבר`
-						: user.role === RoleType.Admin
-							? `${user.email} משתמש  אדמין התחבר`
-							: `${user.email} משתמש  מנחה התחבר`;
+					user.role === RoleType.Admin
+						? `${user.email} משתמש  אדמין התחבר`
+						: `${user.email} משתמש  מנחה התחבר` ||
+							`${user.email} משתמש התחבר`;
 				showInfo(msg);
 			}
 		});
 
-		socket.on("order:status:updated", (order: Order) => {
-			playNotificationSound();
-			showInfo(
-				`הזמנה מספר ${order.orderNumber} עודכנה לסטטוס: ${getStatusText(order.status, t)}`,
-			);
-			// אפשר פה גם לעדכן סטייט אם תרצה לשנות UI
-		});
+		socket.on(
+			"order:status:updated",
+			(data: {
+				orderNumber: string;
+				status: string;
+				userId: string;
+				updatedBy: string;
+			}) => {
+				playNotificationSound();
+				if (auth?._id === data.userId) {
+					showInfo(
+						`ההזמנה שלך (${data.orderNumber}) עודכנה לסטטוס: ${getStatusText(data.status, t)} ע"י ${data.updatedBy}`,
+					);
+				} else if (isAdminAndModerator) {
+					showInfo(
+						`הזמנה מספר ${data.orderNumber} עודכנה לסטטוס: ${getStatusText(data.status, t)} ע"י ${data.updatedBy}`,
+					);
+				}
+			},
+		);
 
 		return () => {
 			socket.off("new order");
-			socket.off("order:status:client");
+			// socket.off("order:status:client");
+			socket.off("order:status:updated");
 			socket.off("user:registered");
 			socket.off("user:newUserLoggedIn");
 			socket.disconnect();

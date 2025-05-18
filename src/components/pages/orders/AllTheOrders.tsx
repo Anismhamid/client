@@ -147,7 +147,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 	return (
 		<main>
-			<div className='container mt-5 d-flex align-items-center justify-content-between'>
+			<div className='container my-5 d-flex align-items-center justify-content-between'>
 				<Button
 					variant='contained'
 					color='warning'
@@ -175,7 +175,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
-						<h4 className='text-danger'>הזמנות קודמות</h4>
+						<h3 className='text-danger bg-gradient fw-bold'>הזמנות קודמות</h3>
 						<PreviousOrders
 							orderStatuses={orderStatuses}
 							previous={filteredPreviousOrders}
@@ -189,7 +189,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
-						<h4 className='text-primary'>!New</h4>
+						<h3 className='text-primary bg-gradient fw-bold'>הזמנות חדשות</h3>
 						<NewOrders
 							filteredOrders={filteredOrders}
 							orderStatuses={orderStatuses}

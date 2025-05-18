@@ -30,7 +30,7 @@ import Seo from "../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
 import {Link, useNavigate} from "react-router-dom";
-import {path, productsPathes} from "../../routes/routes";
+import {path} from "../../routes/routes";
 import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
@@ -50,16 +50,16 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	category,
 }: ProductCategoryProps) => {
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
+	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
 	const [products, setProducts] = useState<Products[]>([]);
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth, isLoggedIn} = useUser();
-	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
 	const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
-	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
@@ -194,35 +194,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			});
 		});
 
-		// // האזנה לעדכון מוצר
-		// socket.on("productUpdated", (updatedProduct: Products) => {
-		// 	setProducts((prev) =>
-		// 		prev.map((p) =>
-		// 			p.product_name === updatedProduct.product_name ? updatedProduct : p,
-		// 		),
-		// 	);
-		// 	setVisibleProducts((prev) =>
-		// 		prev.map((p) =>
-		// 			p.product_name === updatedProduct.product_name ? updatedProduct : p,
-		// 		),
-		// 	);
-		// });
 
-		// // האזנה למחיקת מוצר
-		// socket.on("productDeleted", (deletedProductName: string) => {
-		// 	setProducts((prev) =>
-		// 		prev.filter((p) => p.product_name !== deletedProductName),
-		// 	);
-		// 	setVisibleProducts((prev) =>
-		// 		prev.filter((p) => p.product_name !== deletedProductName),
-		// 	);
-		// });
-
-		// ניקוי מאזינים כשהקומפוננטה מתפרקת
+		// Cleaning the listenr
 		return () => {
 			socket.off("product:quantity_in_stock");
-			// socket.off("productAdded");
-			// socket.off("productDeleted");
 		};
 	}, []);
 
@@ -300,7 +275,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											<Link
 												to={`/product-details/${encodeURIComponent(product.product_name)}`}
 											>
-												{product.quantity_in_stock}
 												<CardMedia
 													component='img'
 													loading='lazy'
@@ -329,7 +303,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												>
 													{isOutOfStock
 														? "אזל מהמלאי"
-														: "במלאי "}
+														: `במלאי: ${product.quantity_in_stock}`}
 												</Typography>
 												{product.sale ? (
 													<>

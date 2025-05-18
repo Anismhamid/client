@@ -17,7 +17,6 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearc
 				onSubmit={(e) => e.preventDefault()}
 				sx={{
 					position: "sticky",
-					top: 800,
 					width: {xs: "90%", sm: 400},
 					m: "auto",
 					mt: 5,
@@ -30,10 +29,10 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearc
 					background: "rgba(255, 255, 255, 0.767)",
 					boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
 					backdropFilter: "blur(10px)",
-					border: "1px solid rgba(255, 0, 0, 0.2)",
+					border: "2px solid rgba(0, 89, 255, 0.637)",
 					transition: "0.3s ease",
 					"&:hover": {
-						boxShadow: "0 6px 25px rgba(124, 124, 124, 0.4)",
+						boxShadow: "0 0px 1px rgba(255, 255, 255, 0.884)",
 					},
 				}}
 			>

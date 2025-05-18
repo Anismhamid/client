@@ -50,7 +50,10 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 		<Box dir={diriction} className='row mt-5'>
 			{filteredOrders.length ? (
 				filteredOrders.map((order) => (
-					<Box key={order.orderNumber} className='mb-4 col-md-6 col-lg-3'>
+					<Box
+						key={order.orderNumber}
+						className='mb-4 col-md-6 col-lg-4 col-xl-3 '
+					>
 						<Card dir={diriction} className='h-100 p-3 shadow'>
 							<CardTitle className='text-center bg-primary text-white p-2 rounded'>
 								<strong>{t("orderNumber")}</strong> {order.orderNumber}

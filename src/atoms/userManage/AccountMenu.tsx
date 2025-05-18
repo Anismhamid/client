@@ -7,7 +7,7 @@ import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
-import {Fragment, FunctionComponent, useState} from "react";
+import { FunctionComponent, useState} from "react";
 import {useUser} from "../../context/useUSer";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
@@ -34,7 +34,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 		setAnchorEl(null);
 	};
 	return (
-		<Fragment>
+		<>
 			<Box
 				dir='rtl'
 				sx={{display: "flex", alignItems: "center", textAlign: "center"}}
@@ -95,7 +95,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				transformOrigin={{horizontal: "right", vertical: "top"}}
 				anchorOrigin={{horizontal: "left", vertical: "bottom"}}
 			>
-				<MenuItem onClick={() => navigate(path.Profile)}>
+				<MenuItem  onClick={() => navigate(path.Profile)}>
 					<Avatar
 						src={
 							(auth && auth?.image?.url) ||
@@ -128,7 +128,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					</Typography>
 				</MenuItem>
 			</Menu>
-		</Fragment>
+		</>
 	);
 };
 
