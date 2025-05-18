@@ -35,7 +35,8 @@ import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../atoms/SearchBox";
-import { formatPrice } from "../../helpers/dateAndPriceFormat";
+import {formatPrice} from "../../helpers/dateAndPriceFormat";
+import {io} from "socket.io-client";
 
 interface ProductCategoryProps {
 	category: string;
@@ -163,6 +164,68 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			.finally(() => setLoading(false));
 	}, []);
 
+	// quantities in stock updates when the order is created
+	useEffect(() => {
+		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
+
+		socket.on("product:quantity_in_stock", (newProduct: Products) => {
+			setProducts((prev) => {
+				const exists = prev.some(
+					(p) => p.product_name === newProduct.product_name,
+				);
+				if (exists) {
+					return prev.map((p) =>
+						p.product_name === newProduct.product_name ? newProduct : p,
+					);
+				}
+				return [newProduct, ...prev];
+			});
+
+			setVisibleProducts((prev) => {
+				const exists = prev.some(
+					(p) => p.product_name === newProduct.product_name,
+				);
+				if (exists) {
+					return prev.map((p) =>
+						p.product_name === newProduct.product_name ? newProduct : p,
+					);
+				}
+				return [newProduct, ...prev];
+			});
+		});
+
+		// // האזנה לעדכון מוצר
+		// socket.on("productUpdated", (updatedProduct: Products) => {
+		// 	setProducts((prev) =>
+		// 		prev.map((p) =>
+		// 			p.product_name === updatedProduct.product_name ? updatedProduct : p,
+		// 		),
+		// 	);
+		// 	setVisibleProducts((prev) =>
+		// 		prev.map((p) =>
+		// 			p.product_name === updatedProduct.product_name ? updatedProduct : p,
+		// 		),
+		// 	);
+		// });
+
+		// // האזנה למחיקת מוצר
+		// socket.on("productDeleted", (deletedProductName: string) => {
+		// 	setProducts((prev) =>
+		// 		prev.filter((p) => p.product_name !== deletedProductName),
+		// 	);
+		// 	setVisibleProducts((prev) =>
+		// 		prev.filter((p) => p.product_name !== deletedProductName),
+		// 	);
+		// });
+
+		// ניקוי מאזינים כשהקומפוננטה מתפרקת
+		return () => {
+			socket.off("product:quantity_in_stock");
+			// socket.off("productAdded");
+			// socket.off("productDeleted");
+		};
+	}, []);
+
 	const handleShowMore = () => {
 		setShowMoreLoading(true);
 		const nextVisibleCount = visibleProducts.length + 16;
@@ -237,6 +300,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											<Link
 												to={`/product-details/${encodeURIComponent(product.product_name)}`}
 											>
+												{product.quantity_in_stock}
 												<CardMedia
 													component='img'
 													loading='lazy'
@@ -274,7 +338,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															align='center'
 														>
 															<s className='ms-2'>
-																{formatPrice(product.price)}
+																{formatPrice(
+																	product.price,
+																)}
 															</s>
 														</Typography>
 														<Chip
