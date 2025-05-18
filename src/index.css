@@ -92,6 +92,13 @@ main {
   }
 }
 
+.cards{
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: column;
+}
+
 .link-success:hover {
   transform: scale(1.2);
   -webkit-transform: scale(1.2);

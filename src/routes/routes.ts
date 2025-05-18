@@ -19,6 +19,7 @@ export const productsPathes = {
 	womenClothes: "/women-clothes",
 	womenBags: "/women-bags",
 	cigarettes: "/cigarettes",
+	productDetails: "/product-details",
 	// will add other products here if nedded...
 };
 

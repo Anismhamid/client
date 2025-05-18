@@ -18,6 +18,8 @@
 	"customerInfo": "Customer details",
 	"customer": "Customer",
 	"email": "Email",
+	"searchin": "Search",
+
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {

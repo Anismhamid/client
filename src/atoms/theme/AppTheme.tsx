@@ -1,18 +1,9 @@
 import {FunctionComponent} from "react";
-import {
-	FormControl,
-	FormControlLabel,
-	PaletteMode,
-	Radio,
-	RadioGroup,
-	Stack,
-	FormGroup,
-	Typography,
-	Box,
-} from "@mui/material";
+import {FormControlLabel, PaletteMode, FormGroup, Box, Typography} from "@mui/material";
 import {styled} from "@mui/material/styles";
-import Switch, {SwitchProps} from "@mui/material/Switch";
+import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
+import {Link} from "react-router-dom";
 
 interface ThemeProps {
 	mode: PaletteMode;
@@ -45,7 +36,7 @@ const MaterialUISwitch = styled(Switch)(({theme}) => ({
 		},
 	},
 	"& .MuiSwitch-thumb": {
-		backgroundColor: "#001e3c",
+		backgroundColor: "#005db9",
 		width: 32,
 		height: 32,
 		"&::before": {
@@ -62,7 +53,7 @@ const MaterialUISwitch = styled(Switch)(({theme}) => ({
 			)}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
 		},
 		...theme.applyStyles("dark", {
-			backgroundColor: "#003892",
+			backgroundColor: "#003180",
 		}),
 	},
 	"& .MuiSwitch-track": {
@@ -86,20 +77,40 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	};
 
 	return (
-		<Box sx={{
-			display:"flex"
-		}}>
+		<Box
+			sx={{
+				zIndex: 1000,
+				display: "flex",
+				alignItems: "center",
+				justifyContent: "space-between",
+				backgroundColor: "#030000",
+			}}
+		>
 			<FormGroup>
 				<FormControlLabel
 					checked={mode === "dark"}
 					onChange={handleThemeChange}
-					control={
-						<MaterialUISwitch sx={{m: 1}} />
-					}
+					control={<MaterialUISwitch sx={{m: 1}} />}
 					label=''
 				/>
 			</FormGroup>
 			<LanguageSwitcher />
+			<Link
+				to='/'
+				style={{
+					textDecoration: "none",
+				}}
+			>
+				<Typography
+					variant='inherit'
+					sx={{
+						fontWeight: "bold",
+						color:"white"
+					}}
+				>
+					Shok Habena
+				</Typography>
+			</Link>
 		</Box>
 	);
 };

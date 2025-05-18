@@ -45,12 +45,11 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						sx={{
 							width: 44,
 							height: 44,
-							ml: 1,
-							border: "2px solid #4FC3F7",
-							transition: "0.3s",
+							border: "1px solid #f75a4f",
+							transition: ".2s",
 							"&:hover": {
 								borderColor: "#81D4FA",
-								transform: "scale(1.05)",
+								transform: "scale(1.1)",
 							},
 						}}
 					>
@@ -74,7 +73,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				onClick={handleClose}
 				slotProps={{
 					paper: {
-						elevation: 10,
+						elevation: 0,
 						sx: {
 							overflow: "hidden",
 							backgroundColor: "#1A1E22",

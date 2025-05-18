@@ -18,7 +18,7 @@
 	"customer": "العميل",
 	"email": "ايميل",
 	"address": "العنوان",
-
+	"searchin": "ابحث عن اسم المنتج",
 	"categories": {
 		"fruitAndVegetables": {
 			"fruits": {

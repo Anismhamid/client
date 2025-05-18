@@ -25,6 +25,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 	const handleClick = () => {
 		window.scrollTo({top: 0, behavior: "smooth"});
 	};
+
 	const isAdminAndModerator =
 		(auth && auth.role === RoleType.Admin) ||
 		(auth && auth.role === RoleType.Moderator);
@@ -39,10 +40,13 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 			addClick: () => showAddProductModal(),
 		},
 	];
+
+	// Back to top button
 	useEffect(() => {
 		window.addEventListener("scroll", handleScroll);
 		return () => window.removeEventListener("scroll", handleScroll);
 	}, []);
+
 	return (
 		<>
 			{isAdminAndModerator ? (
@@ -72,7 +76,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 					/>
 				</>
 			) : (
-				auth && (
+				auth?._id && (
 					<SpeedDial
 						ariaLabel='cart'
 						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
@@ -100,7 +104,13 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 				</Fab>
 			</Zoom>
 			{/* Add product modal */}
-			<AddProdutModal show={onShowAddModal} onHide={hideAddProductModal} />
+			<AddProdutModal
+				show={onShowAddModal}
+				onHide={hideAddProductModal}
+				refrehs={function (): void {
+					throw new Error("Function not implemented.");
+				}}
+			/>
 		</>
 	);
 };

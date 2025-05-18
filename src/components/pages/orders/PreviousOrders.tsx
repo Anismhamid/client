@@ -1,6 +1,6 @@
 import {FunctionComponent} from "react";
 import {Order} from "../../../interfaces/Order";
-import {Box, Button, Card, Chip, CircularProgress, Typography} from "@mui/material";
+import {Box, Button, Card, Chip, Typography} from "@mui/material";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {
 	getStatusClass,
@@ -8,8 +8,6 @@ import {
 } from "../../../atoms/OrderStatusButtons/orderStatus";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
-import {showError} from "../../../atoms/toasts/ReactToast";
-import OrderStatusButtons from "../../../atoms/OrderStatusButtons/StatusButtons";
 import {CardTitle} from "react-bootstrap";
 import handleRTL from "../../../locales/handleRTL";
 

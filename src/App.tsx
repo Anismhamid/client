@@ -102,6 +102,15 @@ function App() {
 			createTheme({
 				palette: {
 					mode,
+					...(mode === "light"
+						? {
+								primary: {main: "#005db9"},
+								background: {default: "#f5f5f5"},
+							}
+						: {
+								primary: {main: "#90caf9"},
+								background: {default: "#121212"},
+							}),
 				},
 				direction: "rtl",
 			}),

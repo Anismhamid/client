@@ -88,6 +88,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					scrollbarWidth: "none",
 					"&::-webkit-scrollbar": {display: "none"},
 					py: 1,
+
 					gap: 1,
 					fontWeight: "bold",
 					backdropFilter: "blur(10px);",
@@ -99,7 +100,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					position: "sticky",
 					top: 0,
 					boxShadow: 1,
-					backgroundColor: "#fff",
+					backgroundColor: "#ffffff",
 					zIndex: 1100,
 				}}
 			>
@@ -111,7 +112,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								size='medium'
 								sx={{
 									px: 1,
-									mx: 1,
+									backgroundColor: "#66B2FF",
+									mx: "3px",
 									"&:hover": {
 										transform: "scale(1.05)",
 										boxShadow: 7,
@@ -122,8 +124,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 										fontWeight: "bold",
 										boxShadow: 7,
 										transform: "scale(1.05)",
+										backgroundColor: "brown",
+										color: "white",
 									}),
-									color: "MenuText",
 								}}
 							/>
 						)}

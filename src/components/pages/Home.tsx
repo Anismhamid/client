@@ -16,8 +16,9 @@ import {
 	Box,
 	Typography,
 	CardContent,
-	IconButton,
+	CardActionArea,
 } from "@mui/material";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import RoleType from "../../interfaces/UserType";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
@@ -26,10 +27,12 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import SearchBox from "../../atoms/SearchBox";
 import {Col, Row} from "react-bootstrap";
+import {useRef} from "react";
+import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 
 interface HomeProps {}
 
@@ -41,29 +44,30 @@ interface HomeProps {}
 const Home: FunctionComponent<HomeProps> = () => {
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [products, setProducts] = useState<Products[]>([]);
-	const [searchQuery, setSearchQuery] = useState("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [loading, setLoading] = useState(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
-	const [visibleCount, setVisibleCount] = useState(16);
+	const [visibleCount, setVisibleCount] = useState(6);
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
+	const observerRef = useRef<HTMLDivElement | null>(null);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
-	
+
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
 		setShowDeleteModal(true);
 	};
 	const closeDeleteModal = () => setShowDeleteModal(false);
-	
+
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
-	
+
 	const refreshAfterCange = () => setRefresh(!refresh);
 
 	useEffect(() => {
@@ -77,7 +81,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			.catch((err) => {
 				console.log(err);
 			});
-	}, []);
+	}, [refresh]);
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -94,12 +98,27 @@ const Home: FunctionComponent<HomeProps> = () => {
 	}, [products, searchQuery]);
 
 	useEffect(() => {
-		const dataToDisplay = searchQuery
-			? filteredProducts
-			: products.slice(0, visibleCount);
+		if (!observerRef.current || searchQuery) return;
 
-		setVisibleProducts(dataToDisplay);
-	}, [products, searchQuery, filteredProducts, visibleCount]);
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && visibleCount < filteredProducts.length) {
+					setVisibleCount((prev) => prev + 6);
+				}
+			},
+			{threshold: 1},
+		);
+
+		observer.observe(observerRef.current);
+
+		return () => {
+			if (observerRef.current) observer.unobserve(observerRef.current);
+		};
+	}, [filteredProducts.length, visibleCount, searchQuery, loading]);
+
+	useEffect(() => {
+		setVisibleProducts(filteredProducts.slice(0, visibleCount));
+	}, [filteredProducts, visibleCount]);
 
 	const handleAdd = async (
 		product_name: string,
@@ -115,16 +134,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 			return;
 		} else {
 			setLoadingAddToCart(product_name);
-			await handleAddToCart(
-				setQuantities,
-				product_name,
-				productQuantity || 1,
-				price - (price * discount) / 100,
-				product_image,
-				sale,
-				discount,
-			);
-			setLoadingAddToCart(null);
+			try {
+				await handleAddToCart(
+					setQuantities,
+					product_name,
+					productQuantity || 1,
+					price - (price * discount) / 100,
+					product_image,
+					sale,
+					discount,
+				);
+			} catch (error) {
+				showError("אירעה שגיאה בהוספת מוצר לעגלה");
+			} finally {
+				setLoadingAddToCart(null);
+			}
 		}
 	};
 
@@ -143,15 +167,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return <Loader />;
 	}
 
-	const isAdmin = auth.role === RoleType.Admin;
-	const isModerator = auth.role === RoleType.Moderator;
+	const isAdmin = auth?.role === RoleType.Admin;
+	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
 
 	return (
 		<Box component='main'>
 			{/* Search and filter products */}
 			<Box className='container'>
-				<Box>
+				<Box
+					sx={{
+						position: "sticky",
+						zIndex: 2000,
+						top: 100,
+					}}
+				>
 					<SearchBox
 						searchQuery={searchQuery}
 						text='חפש שם מוצר, מחיר או מבצע...'
@@ -196,7 +226,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 									vegetable: 'ל/ק"ג',
 									meat: 'ל/ק"ג',
 									fish: 'ל/ק"ג',
-								}[product.category.toLowerCase()] || "ליחידה";
+								}[product.category?.toLowerCase()] || "ליחידה";
 
 							return (
 								<Col
@@ -206,20 +236,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 									md={4}
 									xl={3}
 								>
-									<Card sx={{mt: 3, height: "95%"}}>
+									<Card className='cards' sx={{mt: 3, height: "95%"}}>
+										<Link
+											to={`/product-details/${encodeURIComponent(product.product_name)}`}
+										>
 										<CardMedia
 											component='img'
 											height='200'
 											image={product.image_url}
 											alt={product.product_name}
+											loading='lazy'
 										/>
-										<CardContent
-											sx={{
-												display: "flex",
-												flexDirection: "column",
-												justifyContent: "space-between",
-											}}
-										>
+										</Link>
+										<CardContent>
 											<Typography
 												variant='h6'
 												align='center'
@@ -227,22 +256,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 											>
 												{product.product_name}
 											</Typography>
-
 											{product.sale ? (
 												<>
-													<Typography
-														variant='h6'
-														align='center'
-														className={`text-center fw-semibold ${
-															isOutOfStock
-																? "text-danger"
-																: "text-success"
-														}`}
-													>
-														{isOutOfStock
-															? "אזל מהמלאי"
-															: "במלאי"}
-													</Typography>
 													<Chip
 														label={`${product.discount}% הנחה`}
 														color='error'
@@ -252,7 +267,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 													<Typography
 														variant='h6'
 														align='center'
-														className='text-center'
 													>
 														<s>
 															{product.price.toLocaleString(
@@ -267,7 +281,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													<Typography
 														variant='h5'
 														align='center'
-														className='text-center text-success'
+														color='success.main'
 													>
 														{discountedPrice.toLocaleString(
 															"he-IL",
@@ -318,6 +332,17 @@ const Home: FunctionComponent<HomeProps> = () => {
 											</Typography>
 											<Box
 												sx={{
+													margin: "auto",
+													textAlign: "center",
+													p: 0,
+												}}
+											>
+												<ColorsAndSizes
+													category={product.category}
+												/>
+											</Box>
+											<Box
+												sx={{
 													display: "flex",
 													alignItems: "center",
 													justifyContent: "space-around",
@@ -333,20 +358,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 															product.product_name,
 														)
 													}
-												>
-													<IconButton>
-														<RemoveSharpIcon />
-													</IconButton>
-												</Button>
+													startIcon={<RemoveSharpIcon />}
+												/>
+
 												<Typography variant='h6' align='center'>
-													<b>{productQuantity}</b>
+													{productQuantity}
 												</Typography>
 												<Button
-													disabled={
-														product.quantity_in_stock <= 0
-															? true
-															: false
-													}
+													disabled={isOutOfStock}
 													onClick={() => {
 														handleQuantity(
 															setQuantities,
@@ -354,13 +373,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 															product.product_name,
 														);
 													}}
-												>
-													<IconButton>
-														<AddSharpIcon />
-													</IconButton>
-												</Button>
+													startIcon={<AddSharpIcon />}
+												/>
 											</Box>
-											<button
+											<Button
 												onClick={() => {
 													handleAdd(
 														product.product_name,
@@ -387,23 +403,25 @@ const Home: FunctionComponent<HomeProps> = () => {
 														color='inherit'
 													/>
 												) : (
-													"הוספה לסל"
+													<AddShoppingCartIcon />
 												)}
-											</button>
+											</Button>
 										</CardContent>
 										{canEdit && (
-											<Box
+											<CardActionArea
 												sx={{
 													display: "flex",
+													alignItems: "center",
 													justifyContent: "space-between",
-													p: 1,
+													p: 3,
+													width: "100%",
 												}}
 											>
-												<Tooltip title='ערוך מוצר'>
+												<Tooltip title='עריכה'>
 													<Fab
 														size='small'
 														color='warning'
-														aria-label='ערוך מוצר'
+														aria-label='עריכה'
 														onClick={() => {
 															setProductNameToUpdate(
 																product.product_name,
@@ -414,11 +432,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 														<EditIcon />
 													</Fab>
 												</Tooltip>
-												<Tooltip title='מחק מוצר'>
+												<Tooltip title='מחיקה'>
 													<Fab
 														size='small'
 														color='error'
-														aria-label='מחק מוצר'
+														aria-label='מחיקה'
 														onClick={() =>
 															openDeleteModal(
 																product.product_name,
@@ -428,7 +446,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														<DeleteIcon />
 													</Fab>
 												</Tooltip>
-											</Box>
+											</CardActionArea>
 										)}
 									</Card>
 								</Col>
@@ -447,19 +465,17 @@ const Home: FunctionComponent<HomeProps> = () => {
 						</>
 					)}
 				</Row>
-
-				{/* Show More Button */}
-				{!searchQuery && visibleCount < products.length && (
-					<Box textAlign='center' mt={4}>
-						<Fab
-							color='primary'
-							variant='extended'
-							onClick={() => setVisibleCount((prev) => prev + 15)}
-						>
-							הצג עוד מוצרים
-						</Fab>
-					</Box>
-				)}
+			</Box>
+			<Box
+				ref={observerRef}
+				sx={{
+					height: 40,
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<CircularProgress size={24} aria-busy={"true"} />
 			</Box>
 
 			<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
