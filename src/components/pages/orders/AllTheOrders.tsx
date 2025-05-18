@@ -87,7 +87,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		});
 	}, [previousOrders, searchQuery]);
 
-
 	useEffect(() => {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL);
 
@@ -97,11 +96,20 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 				...prev,
 				[order.orderNumber]: order.status,
 			}));
+
+			setAllOrders((prevOrders) =>
+				prevOrders.map((o) =>
+					o.orderNumber === order.orderNumber
+						? {...o, status: order.status}
+						: o,
+				),
+			);
 		};
-		socket.on("order:status:client", handleStatusChange);
+
+		socket.on("order:status:updated", handleStatusChange);
 
 		return () => {
-			socket.off("order:status:client", handleStatusChange);
+			socket.off("order:status:updated", handleStatusChange);
 			socket.disconnect();
 		};
 	}, []);
@@ -139,7 +147,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 
 	return (
 		<main>
-			<div className='container my-3 d-flex align-items-center justify-content-between'>
+			<div className='container mt-5 d-flex align-items-center justify-content-between'>
 				<Button
 					variant='contained'
 					color='warning'
@@ -161,25 +169,27 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 			<div className='container bg-gradient rounded  text-center align-items-center'>
 				{viewPreviousOrders ? (
 					<>
+						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
-							text="'חיפוש לפי מזהה, תאריך או מספר הזמנה...'"
+							text='חפוש לפי מספר הזמנה...'
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
+						<h4 className='text-danger'>הזמנות קודמות</h4>
 						<PreviousOrders
 							orderStatuses={orderStatuses}
-							previous={allOrders}
-							filteredOrders={filteredPreviousOrders}
+							previous={filteredPreviousOrders}
 						/>
 					</>
 				) : (
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
-							text="'חיפוש לפי מזהה, תאריך או מספר הזמנה...'"
+							text='חפוש לפי מספר הזמנה...'
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
+						<h4 className='text-primary'>!New</h4>
 						<NewOrders
 							filteredOrders={filteredOrders}
 							orderStatuses={orderStatuses}

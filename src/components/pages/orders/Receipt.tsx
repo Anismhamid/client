@@ -22,6 +22,7 @@ import {useTranslation} from "react-i18next";
 import Loader from "../../../atoms/loader/Loader";
 import ReceiptPDF from "../../../helpers/generatePdf";
 import {formatDate, formatPrice} from "../../../helpers/dateAndPriceFormat";
+import handleRTL from "../../../locales/handleRTL";
 
 interface ReceiptProps {}
 /**
@@ -108,8 +109,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		);
 	}
 
+	const diriction = handleRTL();
+
 	return (
-		<main>
+		<main dir={diriction}>
 			{/* חיפוש מתקדם  */}
 			<Box className='container mt-4 rounded'>
 				<Form className='text-center p-3 my-3 m-auto' role='search'>
@@ -169,7 +172,9 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 				</Form>
 			</Box>
 			<div className=' container'>
-				<h2 className='text-center mb-4'>{t("pages.receipts.productsTitle")}</h2>
+				<h2 className='text-center mb-4'>
+					{t("pages.receipts.receiptListTitle")}
+				</h2>
 				{filteredOrders.reverse().map((receipt) => (
 					<Box
 						id={`receipt-${receipt.orderNumber}`}
@@ -200,7 +205,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 												{formatDate(receipt.orderDate)}
 											</strong>
 											<strong className='me-1'>
-												{t("customer")}:
+												{t("pages.receipts.customer")}:
 											</strong>
 											{receipt.customer.name.first}
 											<br />
@@ -295,7 +300,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							</tbody>
 						</Table>
 						<CardContent className=''>
-							<strong>{t("pages.recipts.businessName")}:</strong>
+							<strong>{t("pages.receipts.businessName")}:</strong>
 							{receipt.businessInfo.name}
 							<br />
 							<br />
@@ -303,7 +308,7 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 							{receipt.businessInfo.phone}
 							<br />
 							<br />
-							<strong>{t("email")}:</strong>
+							<strong>{t("pages.receipts.email")}:</strong>
 							{receipt.businessInfo.email}
 							<br />
 							<br />

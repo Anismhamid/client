@@ -15,6 +15,7 @@ import {Button, CircularProgress} from "@mui/material";
 import PaymentModal from "../../../atoms/pymentModal/PymentModal";
 import {useCartItems} from "../../../context/useCart";
 import {getBusinessInfo} from "../../../services/businessInfo";
+import handleRTL from "../../../locales/handleRTL";
 
 interface CheckoutProps {}
 /**
@@ -188,9 +189,9 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	};
 
 	if (loading) return <Loader />;
-
+const diriction = handleRTL()
 	return (
-		<main className='lead '>
+		<main dir={diriction} className='lead '>
 			<div className='container'>
 				<h1 className='text-center'>בחירת שיטת תשלום ואיסוף</h1>
 				<div className=' text-center m-auto'>

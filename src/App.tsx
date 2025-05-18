@@ -35,8 +35,14 @@ function App() {
 		const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
 			auth: {
 				userId: auth._id,
+				role: auth.role,
 			},
 			withCredentials: true,
+		});
+
+		socket.emit("join", {
+			userId: auth._id,
+			role: auth.role,
 		});
 
 		socket.on("new order", (newOrder: Order) => {
@@ -52,6 +58,7 @@ function App() {
 			}
 		});
 
+
 		socket.on(
 			"order:status:client",
 			({orderNumber, status}: {orderNumber: string; status: string}) => {
@@ -62,23 +69,31 @@ function App() {
 		);
 
 		socket.on("user:registered", (user: UserRegister) => {
-			if (auth && auth.role === RoleType.Admin) {
+			if (auth?._id && auth.role === RoleType.Admin) {
 				playNotificationSound();
 				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
 			}
 		});
 
 		socket.on("user:newUserLoggedIn", (user: UserRegister) => {
-			if (auth && auth.role === RoleType.Admin) {
+			if (auth?._id && auth.role === RoleType.Admin) {
 				playNotificationSound();
-				showInfo(
+				const msg =
 					user.role === RoleType.Client
 						? `${user.email} משתמש התחבר`
 						: user.role === RoleType.Admin
-							? `${user.email} משתמש  אדמן התחבר`
-							: `${user.email} משתמש  מנחה התחבר`,
-				);
+							? `${user.email} משתמש  אדמין התחבר`
+							: `${user.email} משתמש  מנחה התחבר`;
+				showInfo(msg);
 			}
+		});
+
+		socket.on("order:status:updated", (order: Order) => {
+			playNotificationSound();
+			showInfo(
+				`הזמנה מספר ${order.orderNumber} עודכנה לסטטוס: ${getStatusText(order.status, t)}`,
+			);
+			// אפשר פה גם לעדכן סטייט אם תרצה לשנות UI
 		});
 
 		return () => {

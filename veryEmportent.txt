@@ -1,5 +1,5 @@
-There are 3 roles on this application, that's email address you can login with Admin ( מנהל האתר ): anes@g.com
+There are 3 roles on this application, that's email address you can login with Admin( מנהל האתר ): anes@g.com
 
-And this the email address that you can login with Moderator( מנחה ) role: anes 2@g.com
+And this the email address that you can login with Moderator( מנחה ): anes2@g.com
 
 And the password is for all of these emails ( Password ): abc123456

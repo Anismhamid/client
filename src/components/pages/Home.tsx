@@ -34,6 +34,7 @@ import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
+import handleRTL from "../../locales/handleRTL";
 
 interface HomeProps {}
 
@@ -172,8 +173,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
 
+	const diriction = handleRTL();
+
 	return (
-		<Box component='main'>
+		<Box dir={diriction} component='main'>
 			{/* Search and filter products */}
 			<Box className='container'>
 				<Box
