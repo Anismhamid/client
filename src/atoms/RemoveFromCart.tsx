@@ -1,4 +1,5 @@
 import {FunctionComponent} from "react";
+import {formatPrice} from "../helpers/dateAndPriceFormat";
 
 interface RemoveFromCartModalProps {
 	show: boolean;
@@ -60,10 +61,7 @@ const RemoveFromCartModal: FunctionComponent<RemoveFromCartModalProps> = ({
 						<hr />
 						<h5>
 							סך הכל:
-							{totalAmount.toLocaleString("he-IL", {
-								style: "currency",
-								currency: "ILS",
-							})}
+							{formatPrice(totalAmount)}
 						</h5>
 					</div>
 					<div className='modal-footer'>

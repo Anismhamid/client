@@ -1,4 +1,4 @@
-import {FunctionComponent, memo, useEffect, useState} from "react";
+import {FunctionComponent, memo, useCallback, useEffect, useState} from "react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {useUser} from "../../context/useUSer";
@@ -23,6 +23,8 @@ import {emptyAuthValues} from "../../interfaces/authValues";
 import {useCartItems} from "../../context/useCart";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useTranslation} from "react-i18next";
+import socket from "../../socket/globalSocket";
+import {patchUserStatus} from "../../services/usersServices";
 
 interface NavBarProps {}
 /**
@@ -65,17 +67,24 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	const isAdmin = auth?.role === RoleType.Admin;
 
+	const {pathname} = useLocation();
 	useEffect(() => {
 		window.scrollTo(0, 0);
-	}, [location]);
+	}, [pathname]);
 
-	const logout = () => {
+	const logout = useCallback(() => {
 		localStorage.removeItem("token");
 		setAuth(emptyAuthValues);
 		setIsLoggedIn(false);
 		setAfterDecode(null);
+
+		if (auth?._id) {
+			patchUserStatus(auth._id, false);
+		}
+
+		socket.disconnect();
 		navigate(path.Home);
-	};
+	}, [auth?._id]);
 
 	return (
 		<>
@@ -133,7 +142,11 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					</NavLink>
 				))}
 			</Box>
-			<AppBar position='relative' className='navbar-glass m-auto z-2'>
+			<AppBar
+				aria-label='Main navigation'
+				position='relative'
+				className='navbar-glass m-auto z-2'
+			>
 				<Box
 					sx={{
 						display: "flex",

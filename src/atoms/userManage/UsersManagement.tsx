@@ -31,10 +31,9 @@ import {
 	DialogActions,
 } from "@mui/material";
 import {showError, showInfo} from "../toasts/ReactToast";
-import {useUser} from "../../context/useUSer";
 import SearchBox from "../SearchBox";
-import socket from "../../socket/globalSocket";
 import EditUserData from "./EditUserData";
+import socket from "../../socket/globalSocket";
 
 interface UersManagementProps {}
 
@@ -67,41 +66,49 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
-		const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-	const {auth} = useUser();
+	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
 	useEffect(() => {
 		getAllUsers()
 			.then(setUsers)
-			.catch((err:string) => {
+			.catch((err: string) => {
 				showError(err);
 			})
 			.finally(() => setLoading(false));
 	}, []);
 
-	useEffect(() => {
-		const handleUserConnected = (data: {userId: string}) => {
-			setUsers((prevUsers) =>
-				prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
-			);
-		};
+useEffect(() => {
+	const handleUserConnected = async (data: {userId: string}) => {
+		await patchUserStatus(data.userId, true);
+		setUsers((prevUsers) =>
+			prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
+		);
+	};
 
-		const handleUserDisconnected = (data: {userId: string}) => {
+	socket.on("user:newUserLoggedIn", handleUserConnected);
+
+	return () => {
+		socket.off("user:newUserLoggedIn", handleUserConnected);
+		socket.disconnect();
+	};
+}, []);
+
+	useEffect(() => {
+
+		const handleUserDisconnected = async (data: {userId: string}) => {
+			await patchUserStatus(data.userId, false);
 			setUsers((prevUsers) =>
 				prevUsers.map((u) => (u._id === data.userId ? {...u, status: false} : u)),
 			);
-			patchUserStatus(data.userId, false);
 		};
 
-		socket.on("user:connected", handleUserConnected);
 		socket.on("user:disconnected", handleUserDisconnected);
 
 		return () => {
-			socket.off("user:connected", handleUserConnected);
 			socket.off("user:disconnected", handleUserDisconnected);
 			socket.disconnect();
 		};
-	}, [auth._id]);
+	}, []);
 
 	const handleStatusChange = async (userId: string) => {
 		try {
@@ -131,13 +138,13 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 		}
 	};
 
-		const handleEdit = (userId: string) => {
-			setSelectedUserId(userId);
-		};
+	const handleEdit = (userId: string) => {
+		setSelectedUserId(userId);
+	};
 
-		const handleClose = () => {
-			setSelectedUserId(null);
-		};
+	const handleClose = () => {
+		setSelectedUserId(null);
+	};
 
 	// Change role
 	const changeRole = (email: string, newRole: string) => {
@@ -339,7 +346,9 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 						)}
 					</DialogContent>
 					<DialogActions>
-						<Button variant="contained" color="error" onClick={handleClose}>סגור</Button>
+						<Button variant='contained' color='error' onClick={handleClose}>
+							סגור
+						</Button>
 					</DialogActions>
 				</Dialog>
 			</div>

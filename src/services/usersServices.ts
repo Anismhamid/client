@@ -255,11 +255,9 @@ export const changeUserPassword = async (userId: string, newPassword: string) =>
 	}
 };
 
-export const patchUserStatus = async (userId: string, newStatus: boolean) => {
+export const patchUserStatus = async (userId: string, status: boolean) => {
 	try {
-		const response = await axios.patch(`${api}/status/${userId}`, {
-			status: newStatus,
-		});
+		const response = await axios.patch(`${api}/status/${userId}`, {status});
 		return response.data;
 	} catch (error) {
 		console.error("Error updating status:", error);

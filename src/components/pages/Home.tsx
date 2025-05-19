@@ -220,7 +220,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					sx={{
 						position: "sticky",
 						zIndex: 1070,
-						top: {xs: 55, md: 135,lg:95},
+						top: {xs: 55, md: 135, lg: 95},
 					}}
 				>
 					<SearchBox
@@ -431,15 +431,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 											</Button>
 										</CardContent>
 										{canEdit && (
-											<CardActionArea
-												sx={{
-													display: "flex",
-													alignItems: "center",
-													justifyContent: "space-between",
-													p: 3,
-													width: "100%",
-												}}
-											>
+											<>
 												<Tooltip title='עריכה'>
 													<Fab
 														size='small'
@@ -469,7 +461,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 														<DeleteIcon />
 													</Fab>
 												</Tooltip>
-											</CardActionArea>
+											</>
 										)}
 									</Card>
 								</Col>

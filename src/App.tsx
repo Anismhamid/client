@@ -30,21 +30,37 @@ function App() {
 		(auth && auth.role === RoleType.Moderator);
 
 	useEffect(() => {
-		if (!auth) return;
+		if (!auth?._id) return;
 
 		socket.auth = {
-			auth: {
-				userId: auth._id,
-				role: auth.role,
-			},
+			userId: auth?._id,
+			role: auth?.role,
+			name: auth?.name.first,
 			withCredentials: true,
 		};
 
 		socket.connect();
 
-		socket.emit("join", {
-			userId: auth._id,
-			role: auth.role,
+		// Add these handlers after socket.connect()
+		socket.on("error", (error: any) => {
+			console.error("Socket error:", error);
+		});
+
+		socket.on("disconnect", (reason: any) => {
+			if (reason === "io server disconnect") {
+				// Reconnect manually
+				socket.connect();
+			}
+			console.log("Disconnected:", reason);
+		});
+
+		socket.on("connect", () => {
+			if (auth?.role === RoleType.Admin || auth?.role === RoleType.Moderator) {
+				socket.emit("joinAdminRoom", {
+					userId: auth._id,
+					role: auth.role,
+				});
+			}
 		});
 
 		socket.on("new order", (newOrder: Order) => {
@@ -117,7 +133,7 @@ function App() {
 			socket.off("user:newUserLoggedIn");
 			socket.disconnect();
 		};
-	}, [auth]);
+	}, [auth?._id]);
 
 	// Manage theme mode state
 	const getInitialMode = (): PaletteMode => {

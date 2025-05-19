@@ -56,35 +56,20 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route
 				path={path.UsersManagement}
 				element={
-					auth && auth.role === RoleType.Admin ? (
-						<UsersManagement />
-					) : (
-						<Navigate to={path.Login} />
-					)
+					auth && auth.role === RoleType.Admin ? <UsersManagement /> : <></>
 				}
-			/>
-			<Route path={path.Contact} element={<Contact />} />
-			<Route path={path.About} element={<About />} />
-			<Route path={path.Cart} element={<Cart />} />
-			<Route
-				path={path.OrderDetails}
-				element={auth ? <OrderDetails /> : <Navigate to={path.Login} />}
-			/>
-			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
-			<Route
-				path={path.Receipt}
-				element={auth ? <Receipt /> : <Navigate to={path.Login} />}
 			/>
 			<Route
 				path={path.AdminSettings}
-				element={
-					auth && auth.role === RoleType.Admin ? (
-						<AdminSettings />
-					) : (
-						<Navigate to={path.Login} />
-					)
-				}
+				element={auth && auth.role === RoleType.Admin ? <AdminSettings /> : <></>}
 			/>
+			<Route path={path.Receipt} element={auth?._id ? <Receipt /> : <></>} />
+
+			<Route path={path.Contact} element={<Contact />} />
+			<Route path={path.About} element={<About />} />
+			<Route path={path.Cart} element={<Cart />} />
+			<Route path={path.OrderDetails} element={auth ? <OrderDetails /> : <></>} />
+			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
 			<Route path={path.CompleteProfile} element={<EditUserData userId={""} />} />
