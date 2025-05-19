@@ -1,6 +1,11 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {UserRegister} from "../../interfaces/User";
-import {getAllUsers, patchUserStatus, patchUserRole} from "../../services/usersServices";
+import {
+	getAllUsers,
+	patchUserStatus,
+	patchUserRole,
+	deleteUserById,
+} from "../../services/usersServices";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import RoleType from "../../interfaces/UserType";
 import {
@@ -19,11 +24,17 @@ import {
 	TableHead,
 	Paper,
 	CircularProgress,
+	Tooltip,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
 } from "@mui/material";
-import {showInfo} from "../toasts/ReactToast";
+import {showError, showInfo} from "../toasts/ReactToast";
 import {useUser} from "../../context/useUSer";
 import SearchBox from "../SearchBox";
 import socket from "../../socket/globalSocket";
+import EditUserData from "./EditUserData";
 
 interface UersManagementProps {}
 
@@ -56,27 +67,19 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
-	const [onlineUsers, setOnlineUsers] = useState<{[userId: string]: boolean}>({});
+		const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 	const {auth} = useUser();
 
 	useEffect(() => {
 		getAllUsers()
-			.then((res) => {
-				setUsers(res);
-			})
-			.catch((err) => {
-				console.log(err);
+			.then(setUsers)
+			.catch((err:string) => {
+				showError(err);
 			})
 			.finally(() => setLoading(false));
 	}, []);
 
 	useEffect(() => {
-		// const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
-		// 	auth: {
-		// 		userId: auth._id,
-		// 	},
-		// });
-
 		const handleUserConnected = (data: {userId: string}) => {
 			setUsers((prevUsers) =>
 				prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
@@ -128,6 +131,14 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 		}
 	};
 
+		const handleEdit = (userId: string) => {
+			setSelectedUserId(userId);
+		};
+
+		const handleClose = () => {
+			setSelectedUserId(null);
+		};
+
 	// Change role
 	const changeRole = (email: string, newRole: string) => {
 		patchUserRole(email, newRole)
@@ -143,6 +154,15 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			});
 	};
 
+	const handleDeleteUser = async (userId: string) => {
+		try {
+			await deleteUserById(userId);
+			setUsers((prev) => prev.filter((u) => u._id !== userId));
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	const filteredUsers = (users || []).filter(
 		(user) =>
 			user.name.first.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -151,7 +171,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 
 	return (
 		<main className='min-vh-100'>
-			<div className='container my-5'>
+			<div className='container-fluid my-5'>
 				<h1 className='text-center display-6 rounded p-3 mb-4'>ניהול משתמשים</h1>
 
 				{/* Search Form */}
@@ -160,50 +180,11 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 					setSearchQuery={setSearchQuery}
 					searchQuery={searchQuery}
 				/>
-				{/* <div className='d-flex justify-content-center mb-4'>
-					<div className='col-md-6'>
-						<div className='input-group'>
-							<input
-								autoComplete='on'
-								className='form-control border border-success'
-								type='search'
-								placeholder=''
-								aria-label='חפש לפי שם או אימייל'
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-							/>
-						</div>
-					</div>
-				</div> */}
-				<TableContainer component={Paper}>
+				<TableContainer component={Paper} sx={{display: {md: "block"}}}>
 					<Table aria-label='users table'>
 						<TableHead>
 							<TableRow>
-								<StyledTableCell align='center'>
-									שם
-									{/* {users.map((user) => (
-										<div
-											key={user._id}
-											style={{
-												display: "flex",
-												alignItems: "center",
-											}}
-										>
-											<span
-												style={{
-													width: 10,
-													height: 10,
-													borderRadius: "50%",
-													backgroundColor: onlineUsers[user._id]
-														? "green"
-														: "red",
-													marginRight: 8,
-												}}
-											/>
-											<span>{user.name}</span>
-										</div>
-									))} */}
-								</StyledTableCell>
+								<StyledTableCell align='center'>שם</StyledTableCell>
 								<StyledTableCell align='center'>דו"אל</StyledTableCell>
 								<StyledTableCell align='center'>תפקיד</StyledTableCell>
 								<StyledTableCell align='center'>סטטוס</StyledTableCell>
@@ -223,13 +204,39 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 								filteredUsers.map((user) => (
 									<StyledTableRow key={user._id} hover>
 										<StyledTableCell component='th' scope='row'>
-											{user.name.first}
+											<div
+												key={user._id}
+												style={{
+													display: "flex",
+													alignItems: "center",
+												}}
+											>
+												<Tooltip
+													title={
+														user.status ? "מחובר" : "מנותק"
+													}
+												>
+													<span
+														style={{
+															width: 15,
+															height: 15,
+															borderRadius: "50%",
+															backgroundColor: user.status
+																? "green"
+																: "red",
+															marginLeft: 8,
+															display: "inline-block",
+														}}
+													/>
+												</Tooltip>
+												<span>{user.name.first}</span>
+											</div>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											{user.email}
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Box sx={{minWidth: 120}}>
+											<Box sx={{maxWidth: 100}}>
 												<FormControl fullWidth>
 													<Select
 														value={user.role}
@@ -273,13 +280,37 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 											</Button>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Box sx={{display: "flex"}} className=''>
-												<Button color='warning'>
-													{fontAwesomeIcon.edit}
-												</Button>
-												<Button color='error'>
-													{fontAwesomeIcon.trash}
-												</Button>
+											<Box
+												sx={{
+													display: "flex",
+													justifyContent: "space-between",
+												}}
+												className=''
+											>
+												<Tooltip title={"עריכת פרטי משתמש"}>
+													<Button
+														variant='outlined'
+														color='warning'
+														onClick={() =>
+															handleEdit(user._id as string)
+														}
+													>
+														{fontAwesomeIcon.edit}
+													</Button>
+												</Tooltip>
+												<Tooltip title={"מחיקת משתמש"}>
+													<Button
+														onClick={() =>
+															handleDeleteUser(
+																user._id as string,
+															)
+														}
+														variant='outlined'
+														color='error'
+													>
+														{fontAwesomeIcon.trash}
+													</Button>
+												</Tooltip>
 											</Box>
 										</StyledTableCell>
 									</StyledTableRow>
@@ -294,6 +325,23 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 						</TableBody>
 					</Table>
 				</TableContainer>
+				<Dialog
+					open={!!selectedUserId}
+					onClose={handleClose}
+					maxWidth='md'
+					dir='rtl'
+					fullWidth
+				>
+					<DialogTitle align='center'>עריכת פרופיל משתמש</DialogTitle>
+					<DialogContent>
+						{selectedUserId && (
+							<EditUserData userId={selectedUserId} mode='edit' />
+						)}
+					</DialogContent>
+					<DialogActions>
+						<Button variant="contained" color="error" onClick={handleClose}>סגור</Button>
+					</DialogActions>
+				</Dialog>
 			</div>
 		</main>
 	);

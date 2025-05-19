@@ -6,7 +6,7 @@ import Login from "../components/pages/Login";
 import About from "../components/pages/About";
 import Cart from "../components/pages/Cart";
 import Checkout from "../components/pages/orders/Checkout";
-import CompleteProfile from "../atoms/userManage/CompleteProfile";
+import EditUserData from "../atoms/userManage/EditUserData";
 import Contact from "../components/pages/Contact";
 import AllTheOrders from "../components/pages/orders/AllTheOrders";
 import PageNotFound from "../components/pages/Png";
@@ -41,6 +41,7 @@ import WomenClothes from "../components/pages/products/WomenClothes";
 import Cigarettes from "../components/pages/products/Cigarettes";
 import WomenBags from "../components/pages/products/WomenBags";
 import ProducDetails from "../components/pages/products/ProducDetails";
+import EditUserData from "../atoms/userManage/EditUserData";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -87,7 +88,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			/>
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
-			<Route path={path.CompleteProfile} element={<CompleteProfile />} />
+			<Route path={path.CompleteProfile} element={<EditUserData />} />
 			<Route path={productsPathes.fruits} element={<Fruits />} />
 			<Route path={productsPathes.vegetable} element={<Vegetable />} />
 			<Route path={productsPathes.fish} element={<Fish />} />

@@ -18,6 +18,7 @@ import {useUser} from "../../context/useUSer";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import DeleteAccountBox from "./DeleteAccountBox";
 import UserDetailTable from "./UesrDetailsTable";
+import EditUserData from "./EditUserData";
 
 interface ProfileProps {}
 /**
@@ -216,6 +217,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</Accordion>
 				</div>
 			</div>
+
+			<EditUserData userId={decodedToken._id} />
+
 			<div className='text-center my-4'>
 				<Button variant='contained' color='primary' onClick={changePassword}>
 					שינוי סיסמה

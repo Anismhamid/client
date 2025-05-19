@@ -14,7 +14,7 @@ import useToken from "../../hooks/useToken";
 import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import {Box, Button, CircularProgress, TextField} from "@mui/material";
 import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";

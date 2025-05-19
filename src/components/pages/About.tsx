@@ -3,7 +3,7 @@ import {FunctionComponent} from "react";
 interface AboutProps {}
 /**
  * Mains about
- * @returns  
+ * @returns about business information
  */
 const About: FunctionComponent<AboutProps> = () => {
 	return (

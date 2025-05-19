@@ -69,7 +69,8 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	}
 
 	return (
-		<main className=' d-flex align-items-center'>
+		<main className=' d-flex align-items-center flex-column'>
+			<img style={{marginBlock:100}} src='/Logo.png' alt="" />
 			<Box component='form' onSubmit={formik.handleSubmit} className='container'>
 				<TableContainer component={Paper}>
 					<Table
