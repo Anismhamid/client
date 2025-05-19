@@ -41,7 +41,6 @@ import WomenClothes from "../components/pages/products/WomenClothes";
 import Cigarettes from "../components/pages/products/Cigarettes";
 import WomenBags from "../components/pages/products/WomenBags";
 import ProducDetails from "../components/pages/products/ProducDetails";
-import EditUserData from "../atoms/userManage/EditUserData";
 
 interface AppRoutesProps {
 	auth: AuthValues;
