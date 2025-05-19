@@ -88,7 +88,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			/>
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
-			<Route path={path.CompleteProfile} element={<EditUserData />} />
+			<Route path={path.CompleteProfile} element={<EditUserData userId={""} />} />
 			<Route path={productsPathes.fruits} element={<Fruits />} />
 			<Route path={productsPathes.vegetable} element={<Vegetable />} />
 			<Route path={productsPathes.fish} element={<Fish />} />
