@@ -27,6 +27,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import React from "react";
 import useAddressData from "../../hooks/useAddressData";
 import {Col, Form, Row} from "react-bootstrap";
+import {useTranslation} from "react-i18next";
 
 interface RegisterProps {}
 /**
@@ -47,6 +48,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		event.preventDefault();
 	};
 	const navigate = useNavigate();
+	const {t} = useTranslation();
 
 	const formik = useFormik<UserRegister>({
 		initialValues: {
@@ -164,7 +166,6 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			<Card
 				sx={{
 					maxWidth: 800,
-					width: "100%",
 					p: 2,
 					mb: 8,
 					borderRadius: 3,
@@ -182,7 +183,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						onSubmit={formik.handleSubmit}
 					>
 						{/* first - last name  */}
-						<Row className='row row-cols-md-2 row-cols-sm-1'>
+						<Row className='row row-cols-1 row-cols-md-2'>
 							<Col>
 								<TextField
 									autoFocus
@@ -201,7 +202,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 							<Col>
@@ -221,13 +222,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 						</Row>
 
 						{/* phone 1 - 2  */}
-						<Row className='row row-cols-md-2 row-cols-sm-1'>
+						<Row className='row row-cols-md-2 row-cols-1'>
 							<Col>
 								<TextField
 									label='טלופן ראשי'
@@ -245,7 +246,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 							<Col>
@@ -257,13 +258,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									onChange={formik.handleChange}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 						</Row>
 
 						{/* email password gender */}
-						<Row className='row row-cols-md-2 row-cols-sm-1'>
+						<Row className='row row-cols-md-2 row-cols-1'>
 							<Col>
 								<TextField
 									label='דו"אל'
@@ -282,13 +283,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 							<Col dir='ltr'>
 								<FormControl
 									sx={{mt: 1}}
-									variant='outlined'
+									variant='filled'
 									error={
 										formik.touched.password &&
 										Boolean(formik.errors.password)
@@ -352,7 +353,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 							{/* gender */}
@@ -373,7 +374,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								>
 									<MenuItem value=''>בחר מגדר</MenuItem>
 									<MenuItem value='זכר'>זכר</MenuItem>
@@ -383,9 +384,11 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						</Row>
 
 						{/* image - alt */}
-						<hr className=' text-light' />
-						<h6 className='text-primary mb-2 text-center'>(אופציונלי)</h6>
-						<Row className='row row-cols-2'>
+						<hr className=' text-primary' />
+						<Typography color='primary' className='text- mb-2 text-center'>
+							(אופציונלי)
+						</Typography>
+						<Row className='row row-cols-1'>
 							<Col>
 								<TextField
 									id='imageUrl'
@@ -396,27 +399,18 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									onChange={formik.handleChange}
 									fullWidth
 									className='my-2'
-									variant='outlined'
-								/>
-							</Col>
-							<Col>
-								<TextField
-									label='שם תמונה'
-									type='text'
-									id='imageAlt'
-									name='image.alt'
-									value={formik.values.image?.alt}
-									onChange={formik.handleChange}
-									fullWidth
-									className='my-2'
-									variant='outlined'
+									variant='filled'
+									dir='rtl'
 								/>
 							</Col>
 						</Row>
 
 						{/* address - city - street - house number  */}
-						<hr className='text-light' />
-						<Row className='row row-cols-md-3'>
+						<hr className='text-primary' />
+						<Typography color='primary' textAlign={"center"}>
+							{t("address")}
+						</Typography>
+						<Row className='row row-cols-1 row-cols-md-3'>
 							<Col>
 								<TextField
 									select
@@ -434,7 +428,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 									SelectProps={{
 										MenuProps: {
 											PaperProps: {
@@ -473,7 +467,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								>
 									<MenuItem value=''>בחר רחוב</MenuItem>
 									{loadingStreets ? (
@@ -496,7 +490,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									onChange={formik.handleChange}
 									fullWidth
 									className='my-2'
-									variant='outlined'
+									variant='filled'
 								/>
 							</Col>
 						</Row>
