@@ -270,7 +270,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 								<Col
 									key={product.product_name}
 									xs={6}
-									sm={2}
 									md={4}
 									xl={3}
 								>
@@ -317,13 +316,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 															{formatPrice(product.price)}
 														</s>
 													</Typography>
-													<Typography
-														variant='h5'
-														align='center'
-														color='success.main'
-													>
-														{formatPrice(discountedPrice)}
-													</Typography>
 												</>
 											) : (
 												<>
@@ -360,6 +352,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 													category={product.category}
 												/>
 											</Box>
+											<Typography
+												variant='h5'
+												align='center'
+												color='success.main'
+											>
+												{formatPrice(discountedPrice)}
+											</Typography>
 										</CardContent>
 										<Box sx={{px: 2, pb: 2}}>
 											<Box

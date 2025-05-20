@@ -6,19 +6,16 @@ import {useUser} from "../../context/useUSer";
 import Loader from "../../atoms/loader/Loader";
 import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
 import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
-import Tooltip from "@mui/material/Tooltip";
 import RoleType from "../../interfaces/UserType";
 import {useCartItems} from "../../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
-import Fab from "@mui/material/Fab";
 import {
 	Box,
 	Button,
 	Card,
-	CardActionArea,
 	CardContent,
 	CardMedia,
 	Chip,
@@ -261,13 +258,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									}[product.category?.toLowerCase()] || "ליחידה";
 
 								return (
-									<Col
-										key={product.product_name}
-										xs={6}
-										sm={2}
-										md={4}
-										xl={3}
-									>
+									<Col key={product.product_name} xs={6} md={4} xl={3}>
 										<Card
 											style={{height: "95%"}}
 											className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
@@ -314,14 +305,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 																)}
 															</s>
 														</Typography>
-
-														<Typography
-															variant='h5'
-															align='center'
-															color='success.main'
-														>
-															{formatPrice(discountedPrice)}
-														</Typography>
 													</>
 												) : (
 													<Typography
@@ -354,6 +337,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												>
 													<ColorsAndSizes category={category} />
 												</Box>
+												<Typography
+													variant='h5'
+													align='center'
+													color='success.main'
+												>
+													{formatPrice(discountedPrice)}
+												</Typography>
 											</CardContent>
 
 											<Box sx={{px: 2, pb: 2}}>
