@@ -98,11 +98,19 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	});
 
 	return (
-		<Modal show={show} onHide={() => onHide()} centered dir='rtl'>
+		<Modal
+			style={{
+				zIndex: 2000,
+			}}
+			show={show}
+			onHide={() => onHide()}
+			centered
+			dir='rtl'
+		>
 			<ModalHeader closeButton>
 				<h6 className='display-6  p-2 fw-bold text-center'>עידכון פרטי מוצר</h6>
 			</ModalHeader>
-			<Modal.Body className=' bg-dark rounded  d-flex justify-content-center align-items-center'>
+			<Modal.Body className='rounded  d-flex justify-content-center align-items-center'>
 				<div className='container '>
 					<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
 						{/* product_name */}
@@ -236,7 +244,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						</div>
 
 						{/* sale */}
-						<div className='form-floating mb-3 text-light fw-bold'>
+						<div className='form-floating mb-3 fw-bold'>
 							<div className='form-check form-switch'>
 								<input
 									className='form-check-input'
@@ -259,7 +267,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								type='number'
 								name='discount'
 								disabled={formik.values.sale ? false : true}
-								value={formik.values.discount || 0}
+								value={formik.values.discount}
 								onChange={(e) => {
 									// If sale is unchecked, reset discount to 0
 									if (!formik.values.sale) {
@@ -272,7 +280,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 									formik.values.sale ? "" : "d-none"
 								}`}
 								id='discount'
-								placeholder='הנחה באחוזים'
+								placeholder='% הנחה באחוזים'
 							/>
 							<label
 								className={`${formik.values.sale ? "" : "d-none"}`}

@@ -19,8 +19,6 @@ import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
-import socket from "../../socket/globalSocket";
-import RoleType from "../../interfaces/UserType";
 
 interface LoginProps {}
 /**

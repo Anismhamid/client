@@ -22,7 +22,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
-
 	useEffect(() => {
 		getProductsInDiscount()
 			.then((res) => {
@@ -44,8 +43,8 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	}
 
 	return (
-		<main>
-			<div className='container'>
+		<div className=' border-bottom border-5 border-danger'>
+			<div>
 				<h1 className='text-center mb-4 display-5 fw-bold'>
 					{t("categories.discountsAndOffers.discountsAndOffersHeading")}
 				</h1>
@@ -57,16 +56,15 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				</p>
 			</div>
 
-			<div className='border border-top-0 border-bottom-0 border-5 rounded-3'>
+			<div>
 				<Swiper
 					modules={[Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow]}
 					pagination={{clickable: true}}
-					scrollbar={{draggable: true}}
 					autoplay={{delay: 3000}}
-					style={{height: "350px"}}
+				
 					loop={true}
-					spaceBetween={10}
-					slidesPerView={2}
+					spaceBetween={1}
+					slidesPerView={3}
 					freeMode={true}
 					coverflowEffect={{
 						rotate: 20,
@@ -83,14 +81,14 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 						return (
 							<SwiperSlide key={product._id}>
 								<div className='position-relative text-center'>
-										{!isLoaded && (
-											<Skeleton
-												variant='rectangular'
-												width='100%'
-												height='300px'
-												sx={{bgcolor: "grey.900"}}
-											/>
-										)}
+									{!isLoaded && (
+										<Skeleton
+											variant='rectangular'
+											width='100%'
+											height='300px'
+											sx={{bgcolor: "grey.900"}}
+										/>
+									)}
 									<Link to={product.category}>
 										<img
 											src={product.image_url}
@@ -105,14 +103,14 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											onLoad={() =>
 												setImageLoaded(product.product_name)
 											}
-											/>
+										/>
 										{/* מסכה מעל התמונה */}
 										<div
 											className='position-absolute top-0 start-0 w-100 h-100'
 											style={{
 												backgroundColor: "rgba(0, 0, 0, 0.596)",
 											}}
-											/>
+										/>
 										{/* טקסט מעל המסכה */}
 										<div className='position-absolute top-50 start-50 translate-middle text-white'>
 											<h5 className='fw-bold'>
@@ -123,16 +121,15 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 													? `הנחה ${product.discount}%`
 													: ""}
 											</p>
-											<p>{product.description}</p>
 										</div>
-											</Link>
+									</Link>
 								</div>
 							</SwiperSlide>
 						);
 					})}
 				</Swiper>
 			</div>
-		</main>
+		</div>
 	);
 };
 

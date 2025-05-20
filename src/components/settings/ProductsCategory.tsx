@@ -166,7 +166,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 	// quantities in stock updates when the order is created
 	useEffect(() => {
-
 		socket.on("product:quantity_in_stock", (newProduct: Products) => {
 			setProducts((prev) => {
 				const exists = prev.some(
@@ -192,7 +191,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				return [newProduct, ...prev];
 			});
 		});
-
 
 		// Cleaning the listenr
 		return () => {
@@ -270,7 +268,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 										md={4}
 										xl={3}
 									>
-										<Card className='cards'>
+										<Card
+											style={{height: "95%"}}
+											className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
+										>
 											<Link
 												to={`/product-details/${encodeURIComponent(product.product_name)}`}
 											>
@@ -280,47 +281,40 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 													image={product.image_url}
 													alt={product.product_name}
 													title={product.product_name}
-													height='200'
+													width='100%'
+													sx={{
+														height: 180,
+														objectFit: "contain",
+													}}
 												/>
 											</Link>
-											<CardContent>
+											<CardContent sx={{flexGrow: 1}}>
 												<Typography
 													variant='h6'
 													align='center'
 													fontWeight='bold'
+													gutterBottom
 												>
 													{product.product_name}
 												</Typography>
-												<Typography
-													variant='h6'
-													align='center'
-													className={`text-center fw-semibold ${
-														isOutOfStock
-															? "text-danger"
-															: "text-success"
-													}`}
-												>
-													{isOutOfStock
-														? "אזל מהמלאי"
-														: `במלאי: ${product.quantity_in_stock}`}
-												</Typography>
 												{product.sale ? (
 													<>
-														<Typography
-															variant='h6'
-															align='center'
-														>
-															<s className='ms-2'>
-																{formatPrice(
-																	product.price,
-																)}
-															</s>
-														</Typography>
 														<Chip
 															label={`${product.discount}% הנחה`}
 															color='error'
 															size='small'
 														/>
+														<Typography
+															variant='h6'
+															align='center'
+														>
+															<s>
+																{formatPrice(
+																	product.price,
+																)}
+															</s>
+														</Typography>
+
 														<Typography
 															variant='h5'
 															align='center'
@@ -331,29 +325,38 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 													</>
 												) : (
 													<Typography
-														variant='h6'
+														variant='body2'
 														align='center'
+														className={
+															isOutOfStock
+																? "text-danger"
+																: "text-success"
+														}
 													>
-														{formatPrice(product.price)}
+														{isOutOfStock
+															? "אזל מהמלאי"
+															: `במלאי: ${product.quantity_in_stock}`}
 													</Typography>
 												)}
 
 												<Typography
-													variant='h6'
+													variant='body2'
 													align='center'
-													color='primary'
+													color='text.secondary'
 												>
 													{unitText}
 												</Typography>
 												<Box
 													sx={{
-														margin: "auto",
+														mt: 1,
 														textAlign: "center",
-														p: 0,
 													}}
 												>
 													<ColorsAndSizes category={category} />
 												</Box>
+											</CardContent>
+
+											<Box sx={{px: 2, pb: 2}}>
 												<Box
 													sx={{
 														display: "flex",
@@ -363,6 +366,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 													}}
 												>
 													<Button
+														size='small'
 														disabled={isOutOfStock}
 														onClick={() =>
 															handleQuantity(
@@ -374,13 +378,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														startIcon={<RemoveSharpIcon />}
 													/>
 
-													<Typography
-														variant='h6'
-														align='center'
-													>
+													<Typography>
 														{productQuantity}
 													</Typography>
+
 													<Button
+														size='small'
 														disabled={isOutOfStock}
 														onClick={() =>
 															handleQuantity(
@@ -392,79 +395,76 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														startIcon={<AddSharpIcon />}
 													/>
 												</Box>
-												<Button
-													onClick={() => {
-														handleAdd(
-															product.product_name,
-															quantities,
-															product.price,
-															product.image_url,
-															product.sale || false,
-															product.discount || 0,
-														);
-													}}
-													disabled={isOutOfStock}
-													className={`w-100 btn shadow-sm mt-2 fw-bold rounded-pill d-block ${
-														product.quantity_in_stock <= 0
-															? "btn btn-outline-danger"
-															: "btn btn-outline-primary"
-													}`}
-												>
-													{isOutOfStock ? (
-														"אזל מהמלאי"
-													) : loadingAddToCart ===
-													  product.product_name ? (
-														<CircularProgress
-															size={20}
-															color='inherit'
-														/>
-													) : (
-														<AddShoppingCartIcon />
-													)}
-												</Button>
-												{canEdit && (
-													<CardActionArea
-														sx={{
-															display: "flex",
-															alignItems: "center",
-															justifyContent:
-																"space-between",
-															p: 3,
-															width: "100%",
-														}}
-													>
-														<Tooltip title='עריכה'>
-															<Fab
-																color='warning'
-																aria-label='עריכה'
-																onClick={() => {
-																	setProductNameToUpdate(
-																		product.product_name,
-																	);
-																	onShowUpdateProductModal();
-																}}
-																size='small'
-															>
-																<EditIcon />
-															</Fab>
-														</Tooltip>
-														<Tooltip title='מחיקה'>
-															<Fab
-																color='error'
-																aria-label='מחיקה'
-																onClick={() =>
-																	openDeleteModal(
-																		product.product_name,
-																	)
-																}
-																size='small'
-															>
-																<DeleteIcon />
-															</Fab>
-														</Tooltip>
-													</CardActionArea>
+											</Box>
+											<Button
+												fullWidth
+												onClick={() => {
+													handleAdd(
+														product.product_name,
+														quantities,
+														product.price,
+														product.image_url,
+														product.sale || false,
+														product.discount || 0,
+													);
+												}}
+												startIcon={<AddShoppingCartIcon />}
+												disabled={isOutOfStock}
+												variant='outlined'
+												color={isOutOfStock ? "error" : "primary"}
+											>
+												{loadingAddToCart ===
+												product.product_name ? (
+													<CircularProgress
+														size={20}
+														color='inherit'
+													/>
+												) : (
+													<>הוסף לעגלה</>
 												)}
-											</CardContent>
+											</Button>
+
+											{canEdit && (
+												<Box
+													sx={{
+														width: "100%",
+														display: "flex",
+														alignItems: "center",
+														justifyContent: "space-between",
+														p: 1,
+														mt: 1,
+														borderTop: "1px solid #ff0000",
+													}}
+													className='cards-footer'
+												>
+													<Button
+														size='small'
+														color='warning'
+														aria-label='עריכה'
+														onClick={() => {
+															setProductNameToUpdate(
+																product.product_name,
+															);
+															onShowUpdateProductModal();
+														}}
+														startIcon={<EditIcon />}
+														variant='outlined'
+													/>
+
+													<Button
+														size='small'
+														color='error'
+														aria-label='מחיקה'
+														onClick={() =>
+															openDeleteModal(
+																product.product_name,
+															)
+														}
+														startIcon={<DeleteIcon />}
+														variant='outlined'
+													/>
+												</Box>
+											)}
 										</Card>
 									</Col>
 								);

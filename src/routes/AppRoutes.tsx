@@ -1,4 +1,4 @@
-import {Routes, Route, Navigate} from "react-router-dom";
+import {Routes, Route} from "react-router-dom";
 import UsersManagement from "../atoms/userManage/UsersManagement";
 import {path, productsPathes} from "./routes";
 import Home from "../components/pages/Home";

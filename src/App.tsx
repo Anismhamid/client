@@ -39,7 +39,9 @@ function App() {
 			withCredentials: true,
 		};
 
+	if (!socket.connected) {
 		socket.connect();
+	}
 
 		// Add these handlers after socket.connect()
 		socket.on("error", (error: any) => {
@@ -50,6 +52,7 @@ function App() {
 			if (reason === "io server disconnect") {
 				// Reconnect manually
 				socket.connect();
+				console.log("Connected:", reason);
 			}
 			console.log("Disconnected:", reason);
 		});
@@ -98,8 +101,10 @@ function App() {
 				const msg =
 					user.role === RoleType.Admin
 						? `${user.email} משתמש  אדמין התחבר`
-						: `${user.email} משתמש  מנחה התחבר` ||
-							`${user.email} משתמש התחבר`;
+						: user.role === RoleType.Moderator
+							? `${user.email} משתמש  מנחה התחבר`
+							: `${user.email} משתמש התחבר`;
+
 				showInfo(msg);
 			}
 		});

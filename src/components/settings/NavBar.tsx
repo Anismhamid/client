@@ -110,7 +110,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					top: 0,
 					boxShadow: 1,
 					backgroundColor: "#ffffff",
-					zIndex: 1100,
+					zIndex: 100,
 				}}
 			>
 				{navbarCategoryLinks.map((link) => (

@@ -7,8 +7,6 @@ import {handleAddToCart, handleQuantity} from "../../helpers/fruitesFunctions";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
-	Tooltip,
-	Fab,
 	CircularProgress,
 	CardMedia,
 	Card,
@@ -16,7 +14,6 @@ import {
 	Box,
 	Typography,
 	CardContent,
-	CardActionArea,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
@@ -214,6 +211,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<Box dir={diriction} component='main'>
+			{!searchQuery && <DiscountsAndOffers />}
 			{/* Search and filter products */}
 			<Box className='container'>
 				<Box
@@ -230,7 +228,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 					/>
 				</Box>
 				{/* Discounts Section */}
-				{!searchQuery && <DiscountsAndOffers />}
 
 				<Box
 					sx={{
@@ -277,23 +274,31 @@ const Home: FunctionComponent<HomeProps> = () => {
 									md={4}
 									xl={3}
 								>
-									<Card className='cards' sx={{mt: 3, height: "95%"}}>
+									<Card
+										style={{height: "95%"}}
+										className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
+									>
 										<Link
 											to={`/product-details/${encodeURIComponent(product.product_name)}`}
 										>
 											<CardMedia
 												component='img'
-												height='200'
+												width='100%'
 												image={product.image_url}
 												alt={product.product_name}
 												loading='lazy'
+												sx={{
+													height: 180,
+													objectFit: "contain",
+												}}
 											/>
 										</Link>
-										<CardContent>
+										<CardContent sx={{flexGrow: 1}}>
 											<Typography
 												variant='h6'
 												align='center'
 												fontWeight='bold'
+												gutterBottom
 											>
 												{product.product_name}
 											</Typography>
@@ -304,7 +309,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 														color='error'
 														size='small'
 													/>
-													<hr />
 													<Typography
 														variant='h6'
 														align='center'
@@ -324,13 +328,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 											) : (
 												<>
 													<Typography
-														variant='h6'
+														variant='body2'
 														align='center'
-														className={`text-center fw-semibold ${
+														className={
 															isOutOfStock
 																? "text-danger"
 																: "text-success"
-														}`}
+														}
 													>
 														{isOutOfStock
 															? "אזל מהמלאי"
@@ -338,32 +342,26 @@ const Home: FunctionComponent<HomeProps> = () => {
 													</Typography>
 
 													<Typography
-														variant='h6'
+														variant='body2'
 														align='center'
+														color='text.secondary'
 													>
-														{formatPrice(product.price)}
+														{unitText}
 													</Typography>
 												</>
 											)}
-
-											<Typography
-												variant='h6'
-												align='center'
-												color='primary'
-											>
-												{unitText}
-											</Typography>
 											<Box
 												sx={{
-													margin: "auto",
+													mt: 1,
 													textAlign: "center",
-													p: 0,
 												}}
 											>
 												<ColorsAndSizes
 													category={product.category}
 												/>
 											</Box>
+										</CardContent>
+										<Box sx={{px: 2, pb: 2}}>
 											<Box
 												sx={{
 													display: "flex",
@@ -373,6 +371,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												}}
 											>
 												<Button
+													size='small'
 													disabled={isOutOfStock}
 													onClick={() =>
 														handleQuantity(
@@ -384,10 +383,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 													startIcon={<RemoveSharpIcon />}
 												/>
 
-												<Typography variant='h6' align='center'>
-													{productQuantity}
-												</Typography>
+												<Typography>{productQuantity}</Typography>
+
 												<Button
+													size='small'
 													disabled={isOutOfStock}
 													onClick={() => {
 														handleQuantity(
@@ -399,69 +398,72 @@ const Home: FunctionComponent<HomeProps> = () => {
 													startIcon={<AddSharpIcon />}
 												/>
 											</Box>
-											<Button
-												onClick={() => {
-													handleAdd(
-														product.product_name,
-														quantities,
-														product.price,
-														product.image_url,
-														product.sale || false,
-														product.discount || 0,
-													);
-												}}
-												disabled={isOutOfStock}
-												className={`w-100 btn shadow-sm py-2 fw-bold rounded-pill ${
-													isOutOfStock
-														? "btn-outline-danger"
-														: "btn-outline-primary"
-												}`}
-											>
-												{isOutOfStock ? (
-													"אזל מהמלאי"
-												) : loadingAddToCart ===
-												  product.product_name ? (
-													<CircularProgress
-														size={20}
-														color='inherit'
-													/>
-												) : (
-													<AddShoppingCartIcon />
-												)}
-											</Button>
-										</CardContent>
+										</Box>
+										<Button
+											onClick={() => {
+												handleAdd(
+													product.product_name,
+													quantities,
+													product.price,
+													product.image_url,
+													product.sale || false,
+													product.discount || 0,
+												);
+											}}
+											startIcon={<AddShoppingCartIcon />}
+											disabled={isOutOfStock}
+											variant='outlined'
+											color={isOutOfStock ? "primary" : "info"}
+										>
+											{loadingAddToCart === product.product_name ? (
+												<CircularProgress
+													size={20}
+													color='inherit'
+												/>
+											) : (
+												<>הוסף לעגלה</>
+											)}
+										</Button>
+
 										{canEdit && (
-											<>
-												<Tooltip title='עריכה'>
-													<Fab
-														size='small'
-														color='warning'
-														aria-label='עריכה'
-														onClick={() => {
-															setProductNameToUpdate(
-																product.product_name,
-															);
-															onShowUpdateProductModal();
-														}}
-													>
-														<EditIcon />
-													</Fab>
-												</Tooltip>
-												<Tooltip title='מחיקה'>
-													<Fab
-														size='small'
-														color='error'
-														aria-label='מחיקה'
-														onClick={() =>
-															openDeleteModal(
-																product.product_name,
-															)
-														}
-													>
-														<DeleteIcon />
-													</Fab>
-												</Tooltip>
-											</>
+											<Box
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "space-between",
+													p: 1,
+													mt: 1,
+													borderTop: "1px solid #ff0000",
+												}}
+												className='cards-footer'
+											>
+												<Button
+													size='small'
+													color='warning'
+													aria-label='עריכה'
+													onClick={() => {
+														setProductNameToUpdate(
+															product.product_name,
+														);
+														onShowUpdateProductModal();
+													}}
+													startIcon={<EditIcon />}
+													variant='outlined'
+												/>
+
+												<Button
+													size='small'
+													color='error'
+													aria-label='מחיקה'
+													onClick={() =>
+														openDeleteModal(
+															product.product_name,
+														)
+													}
+													startIcon={<DeleteIcon />}
+													variant='outlined'
+												/>
+											</Box>
 										)}
 									</Card>
 								</Col>
@@ -492,7 +494,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 			>
 				<CircularProgress size={24} aria-busy={"true"} />
 			</Box>
-
 			<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
 				<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
 					<Typography variant='h4' gutterBottom>
@@ -512,14 +513,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</Button>
 				</Box>
 			</Box>
-
 			<UpdateProductModal
 				refresh={refreshAfterCange}
 				product_name={productNameToUpdate}
 				show={showUpdateProductModal}
 				onHide={() => onHideUpdateProductModal()}
 			/>
-
 			<AlertDialogs
 				show={showDeleteModal}
 				onHide={closeDeleteModal}
