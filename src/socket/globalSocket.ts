@@ -1,11 +1,11 @@
 import {io} from "socket.io-client";
 
-const socket = io(import.meta.env.VITE_API_SOCKET_URL, {
+const SocketUrl = import.meta.env.VITE_API_SOCKET_URL;
+
+const socket = io(SocketUrl, {
 	withCredentials: true,
 	autoConnect: false,
-	reconnection: true,
-	reconnectionAttempts: 5,
-	reconnectionDelay: 2000,
+	transports: ["websocket"],
 });
 
 export default socket;

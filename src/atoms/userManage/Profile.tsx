@@ -8,6 +8,11 @@ import {
 	AccordionDetails,
 	Typography,
 	Skeleton,
+	List,
+	ListItem,
+	ListItemText,
+	Box,
+	ListItemIcon,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import {path} from "../../routes/routes";
@@ -19,6 +24,9 @@ import {emptyAuthValues} from "../../interfaces/authValues";
 import DeleteAccountBox from "./DeleteAccountBox";
 import UserDetailTable from "./UesrDetailsTable";
 import EditUserData from "./EditUserData";
+import TodayIcon from "@mui/icons-material/Today";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import HistoryIcon from "@mui/icons-material/History";
 
 interface ProfileProps {}
 /**
@@ -131,7 +139,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 					<hr />
 				</div>
-				<div className='text-center my-4'>
+				{/* <div className='text-center my-4'>
 					<Button
 						variant='contained'
 						color='warning'
@@ -140,7 +148,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					>
 						עריכת פרטים אישיים
 					</Button>
-				</div>
+				</div> */}
 			</div>
 			<div className='container table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
 				<div className=' fw-bold display-6 p-2'>פרטים אישיים</div>
@@ -179,43 +187,116 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</div>
 				</div>
 			</div>
-			<div className='row m-auto text-center'>
+			<div className=' '>
 				{/* 1 */}
-				<div>
-					<Accordion
-						sx={{
-							color: "CaptionText",
-							bgcolor: "AppWorkspace",
-						}}
+
+				<Accordion className='accordion'>
+					<AccordionSummary
+						expandIcon={<ArrowDownwardIcon />}
+						aria-controls='panel1-content'
+						id='panel1-header'
 					>
-						<AccordionSummary
-							expandIcon={<ArrowDownwardIcon />}
-							aria-controls='panel1-content'
-							id='panel1-header'
-						>
-							<Typography component='span'>היסטורייה התחברות</Typography>
-						</AccordionSummary>
-						<AccordionDetails>
-							{user.activity?.length ? (
-								<ul>
-									{user.activity.map((timestamp) => (
-										<li key={timestamp}>
-											{new Date(timestamp).toLocaleString("he-IL", {
+						<Typography component='span'>
+							היסטוריית התחברות (5 ימים אחרונים)
+						</Typography>
+					</AccordionSummary>
+
+					<AccordionDetails>
+						{user.activity?.length ? (
+							(() => {
+								const now = new Date();
+								const fiveDaysAgo = new Date();
+								fiveDaysAgo.setDate(now.getDate() - 5);
+
+								const recentActivity = user.activity.filter(
+									(timestamp) => {
+										const activityDate = new Date(timestamp);
+										return activityDate >= fiveDaysAgo;
+									},
+								);
+
+								return recentActivity.length ? (
+									<List dense>
+										{recentActivity.map((timestamp, index) => {
+											const date = new Date(timestamp);
+											const year = date.toLocaleString("he-IL", {
 												year: "numeric",
+											});
+											const month = date.toLocaleString("he-IL", {
 												month: "long",
+											});
+											const day = date.toLocaleString("he-IL", {
 												day: "numeric",
+											});
+											const time = date.toLocaleString("he-IL", {
 												hour: "2-digit",
 												minute: "2-digit",
-											})}
-										</li>
-									))}
-								</ul>
-							) : (
-								<Typography>אין נתוני התחברות</Typography>
-							)}
-						</AccordionDetails>
-					</Accordion>
-				</div>
+											});
+
+											// קביעת הסגנון והאייקון לפי ההבדל בתאריך
+											const isToday =
+												date.toDateString() ===
+												now.toDateString();
+											const isThisWeek =
+												date >= fiveDaysAgo && !isToday;
+
+											let icon = <HistoryIcon />;
+											let color = "text.secondary";
+
+											if (isToday) {
+												icon = <TodayIcon color='success' />;
+												color = "success.main";
+											} else if (isThisWeek) {
+												icon = <AccessTimeIcon color='primary' />;
+												color = "primary.main";
+											}
+
+											return (
+												<ListItem
+													key={index}
+													sx={{height: 60}}
+													className='accordion-item'
+												>
+													<ListItemIcon>{icon}</ListItemIcon>
+													<ListItemText
+														primary={
+															<Box
+																display='flex'
+																alignItems='center'
+																justifyContent='space-around'
+																width='100%'
+																color={color}
+															>
+																<Typography>
+																	{year}
+																</Typography>
+																<Typography>
+																	{month}
+																</Typography>
+																<Typography>
+																	{day}
+																</Typography>
+																<Typography>
+																	{time}
+																</Typography>
+															</Box>
+														}
+													/>
+												</ListItem>
+											);
+										})}
+									</List>
+								) : (
+									<Typography sx={{padding: 2}}>
+										אין התחברויות ב־5 ימים האחרונים
+									</Typography>
+								);
+							})()
+						) : (
+							<Typography sx={{padding: 2}}>אין נתוני התחברות</Typography>
+						)}
+					</AccordionDetails>
+				</Accordion>
 			</div>
 
 			<EditUserData userId={decodedToken._id} />

@@ -73,16 +73,16 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	}, [pathname]);
 
 	const logout = useCallback(() => {
+		if (socket.connected) {
+			socket.disconnect();
+			patchUserStatus(auth._id, false).catch((error) => {
+				console.log(error);
+			});
+		}
 		localStorage.removeItem("token");
 		setAuth(emptyAuthValues);
 		setIsLoggedIn(false);
 		setAfterDecode(null);
-
-		if (auth?._id) {
-			patchUserStatus(auth._id, false);
-		}
-
-		socket.disconnect();
 		navigate(path.Home);
 	}, [auth?._id]);
 

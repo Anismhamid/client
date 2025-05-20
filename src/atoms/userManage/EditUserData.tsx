@@ -232,7 +232,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						<div>
 							<TextField
 								label='תמונה'
-								name='address.houseNumber'
+								name='image.url'
 								type='text'
 								value={formik.values.image.url}
 								onChange={formik.handleChange}

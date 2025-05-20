@@ -1,5 +1,5 @@
 /**
- * Fruit interface
+ * Products interface
  */
 export interface Products {
 	_id?: string;
@@ -13,3 +13,13 @@ export interface Products {
 	discount: number;
 }
 
+export const initialProductValue = {
+	product_name: "",
+	category: "",
+	price: 0,
+	quantity_in_stock: 0,
+	description: "",
+	image_url: "",
+	sale: false,
+	discount: 0,
+};

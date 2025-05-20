@@ -1,14 +1,15 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {getProductByspicificName} from "../../../services/productsServices";
-import {Products} from "../../../interfaces/Products";
+import {initialProductValue, Products} from "../../../interfaces/Products";
 import {Box, CircularProgress, Typography, Paper, Button} from "@mui/material";
+import {showInfo} from "../../../atoms/toasts/ReactToast";
 
 interface ProducDetailsProps {}
 
 const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 	const {productName} = useParams<{productName: string}>();
-	const [product, setProduct] = useState<Products | null>(null);
+	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const navigate = useNavigate();
@@ -21,7 +22,7 @@ const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 				.then((res) => {
 					if (!res) {
 						setError("המוצר לא נמצא");
-						setProduct(null);
+						setProduct(initialProductValue);
 					} else {
 						setProduct(res);
 						setError("");
@@ -29,7 +30,7 @@ const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 				})
 				.catch(() => {
 					setError("אירעה שגיאה בטעינת המוצר");
-					setProduct(null);
+					setProduct(initialProductValue);
 				})
 				.finally(() => setLoading(false));
 		}
@@ -54,7 +55,7 @@ const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 			</Box>
 		);
 
-	if (!product) return null;
+	if (!productName) return;
 
 	return (
 		<Box component={"main"}>
@@ -104,7 +105,7 @@ const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 					<Button
 						variant='contained'
 						color='error'
-						onClick={() => alert("הוספה לעגלה (לא ממומש)")}
+						onClick={() => alert("הוספה לעגלה מכאן (לא ממומש)")}
 					>
 						הוסף לסל
 					</Button>

@@ -77,24 +77,23 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			.finally(() => setLoading(false));
 	}, []);
 
-useEffect(() => {
-	const handleUserConnected = async (data: {userId: string}) => {
-		await patchUserStatus(data.userId, true);
-		setUsers((prevUsers) =>
-			prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
-		);
-	};
+	useEffect(() => {
+		const handleUserConnected = async (data: {userId: string}) => {
+			await patchUserStatus(data.userId, true);
+			setUsers((prevUsers) =>
+				prevUsers.map((u) => (u._id === data.userId ? {...u, status: true} : u)),
+			);
+		};
 
-	socket.on("user:newUserLoggedIn", handleUserConnected);
+		socket
+			.on("user:newUserLoggedIn", handleUserConnected);
 
-	return () => {
-		socket.off("user:newUserLoggedIn", handleUserConnected);
-		socket.disconnect();
-	};
-}, []);
+		return () => {
+			socket.off("user:newUserLoggedIn", handleUserConnected);
+		};
+	}, []);
 
 	useEffect(() => {
-
 		const handleUserDisconnected = async (data: {userId: string}) => {
 			await patchUserStatus(data.userId, false);
 			setUsers((prevUsers) =>
@@ -106,7 +105,6 @@ useEffect(() => {
 
 		return () => {
 			socket.off("user:disconnected", handleUserDisconnected);
-			socket.disconnect();
 		};
 	}, []);
 

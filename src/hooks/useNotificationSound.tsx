@@ -8,7 +8,7 @@ const useNotificationSound = () => {
 	}
 
 	const playNotificationSound = () => {
-		notificationSoundRef.current?.play().catch((error) => {
+		(notificationSoundRef.current as HTMLAudioElement)?.play().catch((error) => {
 			console.error("Failed to play sound:", error);
 		});
 	};
