@@ -111,7 +111,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			handleAddToCart(
 				setQuantities,
 				product_name,
-				productQuantity,
+				productQuantity || 1,
 				price - (price * discount) / 100,
 				product_image,
 				sale,
