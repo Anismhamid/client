@@ -1,4 +1,4 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useEffect, useRef, useState} from "react";
 import {deleteUserById, getUserById} from "../../services/usersServices";
 import {useNavigate} from "react-router-dom";
 import {
@@ -39,6 +39,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
 	const {setAuth, setIsLoggedIn} = useUser();
+	const detailsRef = useRef<HTMLDivElement>(null);
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -65,9 +66,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	});
 
 	const updateProfile = () => {
-		// Logic to update the profile
-		console.log("Updating profile...");
-		navigate(path.CompleteProfile);
+		detailsRef.current?.scrollIntoView({behavior: "smooth"});
 	};
 
 	const changePassword = () => {
@@ -107,8 +106,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	}
 
 	return (
-		<main className='min-vh-100'>
-			<div className='container'>
+		<main>
+			<div className='container mt-5 border-top border-bottom py-4'>
 				<div>
 					<>
 						{!imageLoaded && (
@@ -126,29 +125,27 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
 							}
 							alt={
-								user.image.alt
-									? `${user.image?.alt}'s avatar`
-									: `${user.name.first ?? "User"}'s avatar`
+								user.image.alt?.trim()
+									? `${user.image.alt}'s avatar`
+									: `${user.name.first ?? "משתמש"}'s avatar`
 							}
 							role='img'
 							style={imageLoaded ? {} : {display: "none"}}
-							width={200}
+							height={250}
 							onLoad={() => setImageLoaded(true)}
 						/>
 					</>
-
-					<hr />
 				</div>
-				{/* <div className='text-center my-4'>
-					<Button
-						variant='contained'
-						color='warning'
-						startIcon={<EditIcon />}
-						onClick={updateProfile}
-					>
-						עריכת פרטים אישיים
-					</Button>
-				</div> */}
+			</div>
+			<div className='text-center my-4'>
+				<Button
+					variant='contained'
+					color='warning'
+					startIcon={<EditIcon />}
+					onClick={updateProfile}
+				>
+					עריכת פרטים אישיים
+				</Button>
 			</div>
 			<div className='container table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
 				<div className=' fw-bold display-6 p-2'>פרטים אישיים</div>
@@ -298,8 +295,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</AccordionDetails>
 				</Accordion>
 			</div>
-
-			<EditUserData userId={decodedToken._id} />
+			<Box ref={detailsRef}>
+				<EditUserData userId={decodedToken._id} />
+			</Box>
 
 			<div className='text-center my-4'>
 				<Button variant='contained' color='primary' onClick={changePassword}>

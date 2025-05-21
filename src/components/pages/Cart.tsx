@@ -27,14 +27,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 	const formRef = useRef<HTMLDivElement | null>(null);
 
 	const scrollToContent = () => {
-		if (formRef.current) {
-			const yOffset = -500;
-			const y =
-				formRef.current.getBoundingClientRect().top +
-				window.pageYOffset +
-				yOffset;
-			window.scrollTo({top: y, behavior: "smooth"});
-		}
+		formRef.current?.scrollIntoView({behavior: "smooth"});
 	};
 
 	/**
@@ -98,15 +91,22 @@ const Cart: FunctionComponent<CartProps> = () => {
 
 	return (
 		<main>
-			<div className='container'>
-				<div className=' text-center m-auto'>
-					<Button variant='contained' color='primary' onClick={scrollToContent}>
-						לתשלום
-					</Button>
-				</div>
+			<div className='container py-5'>
+				{items[0].products.length && (
+					<div className=' text-center m-auto my-5'>
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={scrollToContent}
+						>
+							{fontAwesomeIcon.arrowDown}{" "}
+							<span className='ms-3'>לתשלום</span>
+						</Button>
+					</div>
+				)}
 				<h1 className='text-center'>סל קניות</h1>
 				<ul className='list-group'>
-					{items.length ? (
+					{items[0].products.length ? (
 						items.map((item, index) => (
 							<div key={index}>
 								{item.products.map((product) => (
@@ -190,7 +190,10 @@ const Cart: FunctionComponent<CartProps> = () => {
 							</div>
 						))
 					) : (
-						<h5 className='text-danger'>אין מוצרים בסל</h5>
+						<>
+							<h5 className='text-danger text-center'>אין מוצרים בסל</h5>
+							<NavigathionButtons />
+						</>
 					)}
 				</ul>
 			</div>

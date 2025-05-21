@@ -55,7 +55,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					>
 						<Avatar
 							className='bg-primary'
-							sx={{width: 40, height: 40}}
+							sx={{width: 30, height: 30}}
 							children={auth && auth?.name?.last?.[0]}
 							src={
 								(auth && auth?.image?.url) ||

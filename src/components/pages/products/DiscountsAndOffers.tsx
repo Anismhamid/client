@@ -3,7 +3,7 @@ import {Products} from "../../../interfaces/Products";
 import {getProductsInDiscount} from "../../../services/productsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
-import {Skeleton} from "@mui/material";
+import {Chip, Skeleton} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow} from "swiper/modules";
@@ -43,7 +43,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	}
 
 	return (
-		<div className=' border-bottom border-5 border-danger'>
+		<div className=' border-bottom border-5 border-danger mt-5'>
 			<div>
 				<h1 className='text-center mb-4 display-5 fw-bold'>
 					{t("categories.discountsAndOffers.discountsAndOffersHeading")}
@@ -61,7 +61,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					modules={[Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow]}
 					pagination={{clickable: true}}
 					autoplay={{delay: 3000}}
-				
 					loop={true}
 					spaceBetween={1}
 					slidesPerView={3}
@@ -69,7 +68,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					coverflowEffect={{
 						rotate: 20,
 						stretch: 0,
-						depth: 30,
+						depth: 35,
 						modifier: 3,
 						slideShadows: true,
 					}}
@@ -85,7 +84,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										<Skeleton
 											variant='rectangular'
 											width='100%'
-											height='300px'
+											height='250px'
 											sx={{bgcolor: "grey.900"}}
 										/>
 									)}
@@ -96,31 +95,22 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											className='img-fluid'
 											style={{
 												display: isLoaded ? "block" : "none",
-												objectFit: "cover",
-												height: "300px",
-												width: "100%",
+												objectFit: "scale-down",
+												height: "250px",
+												width: "250px",
+												margin: "auto",
 											}}
 											onLoad={() =>
 												setImageLoaded(product.product_name)
 											}
 										/>
-										{/* מסכה מעל התמונה */}
-										<div
-											className='position-absolute top-0 start-0 w-100 h-100'
-											style={{
-												backgroundColor: "rgba(0, 0, 0, 0.596)",
-											}}
-										/>
-										{/* טקסט מעל המסכה */}
+
+										{/* טקסט */}
 										<div className='position-absolute top-50 start-50 translate-middle text-white'>
-											<h5 className='fw-bold'>
-												{product.product_name}
-											</h5>
-											<p className='text-danger fw-bold'>
-												{product.sale
-													? `הנחה ${product.discount}%`
-													: ""}
-											</p>
+											<Chip
+												label={`${product.discount}% הנחה`}
+												color='error'
+											/>
 										</div>
 									</Link>
 								</div>

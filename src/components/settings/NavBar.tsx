@@ -158,7 +158,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					component='nav'
 				>
 					<Tooltip title='בית' arrow>
-						<li className='nav-item'>
+						<li className='nav-item mx-3'>
 							<NavLink
 								className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
 								aria-current='page'
@@ -318,24 +318,22 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					</Tooltip>
 					{/* )} */}
 					{!isLoggedIn ? (
-						<li>
-							<Button
-								variant='contained'
-								color='primary'
-								onClick={() => navigate(path.Login)}
-								sx={{
-									borderRadius: "30px",
-									fontWeight: "bold",
-									backgroundColor: "#4FC3F7",
-									color: "#1A1E22",
-									"&:hover": {
-										backgroundColor: "#81D4FA",
-									},
-								}}
-							>
-								התחבר
-							</Button>
-						</li>
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={() => navigate(path.Login)}
+							sx={{
+								borderRadius: "30px",
+								fontWeight: "bold",
+								backgroundColor: "#4FC3F7",
+								color: "#1A1E22",
+								"&:hover": {
+									backgroundColor: "#81D4FA",
+								},
+							}}
+						>
+							התחבר
+						</Button>
 					) : (
 						isLoggedIn && <AccountMenu logout={logout} />
 					)}

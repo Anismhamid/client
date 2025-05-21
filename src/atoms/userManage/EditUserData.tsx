@@ -2,10 +2,21 @@ import {useFormik} from "formik";
 import * as yup from "yup";
 import {showSuccess, showError} from "../toasts/ReactToast";
 import {FunctionComponent, useEffect, useState} from "react";
-import {Box, Button, CircularProgress, MenuItem, TextField, Typography} from "@mui/material";
-import {compleateProfileData, getUserById} from "../../services/usersServices";
+import {
+	Box,
+	Button,
+	CircularProgress,
+	MenuItem,
+	TextField,
+	Typography,
+} from "@mui/material";
+import {
+	compleateProfileData,
+	getUserById,
+} from "../../services/usersServices";
 import Loader from "../loader/Loader";
 import useAddressData from "../../hooks/useAddressData";
+import {UserRegister} from "../../interfaces/User";
 
 interface EditUserDataProps {
 	userId: string;
@@ -18,15 +29,22 @@ interface EditUserDataProps {
  */
 const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 	const [loading, setIsLoading] = useState<boolean>(true);
+	const [preview, setPreview] = useState<boolean>(false);
+	const [users, setUsers] = useState<UserRegister | null>(null);
 
 	const formik = useFormik({
 		initialValues: {
+			name: {first: "", last: ""},
 			phone: {phone_1: "", phone_2: ""},
 			image: {url: "", alt: ""},
 			address: {city: "", street: "", houseNumber: ""},
 		},
 		enableReinitialize: true,
 		validationSchema: yup.object({
+			name: yup.object({
+				first: yup.string().required("שם פרטי חשוב"),
+				last: yup.string(),
+			}),
 			phone: yup.object({
 				phone_1: yup
 					.string()
@@ -63,12 +81,19 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 
 	const {cities, streets, loadingStreets} = useAddressData(formik.values.address.city);
 
+	const handleImageChange = () => setPreview(!preview);
+
 	useEffect(() => {
 		async function getUser() {
 			try {
 				const user = await getUserById(userId);
 
+				setUsers(user);
 				formik.setValues({
+					name: {
+						first: user.name.first || "",
+						last: user.name.last || "",
+					},
 					phone: {
 						phone_1: user.phone?.phone_1 || "",
 						phone_2: user.phone?.phone_2 || "",
@@ -79,7 +104,9 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 					},
 					address: {
 						city: user.address?.city || "בחר עיר",
-						street: user.address?.street || "שם רחוב לא הוזן",
+						street: user.address.city
+							? user.address?.street
+							: "שם רחוב לא הוזן",
 						houseNumber: user.address?.houseNumber || "",
 					},
 				});
@@ -96,8 +123,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 	if (loading) return <Loader />;
 
 	return (
-		<main
-			style={{minHeight: "600px"}}
+		<Box
+			style={{minHeight: "fit-content"}}
 			className=' d-flex align-items-center justify-content-center'
 		>
 			<Box className='container '>
@@ -108,6 +135,48 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 					<Box className=' row row-cols-md-1 row-cols-md-2  row-cols-lg-3'>
 						<div>
 							<TextField
+								aria-label='שם פרטי'
+								label='שם פרטי'
+								name='name.first'
+								type='text'
+								value={formik.values.name.first}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.name?.first &&
+									Boolean(formik.errors.name?.first)
+								}
+								helperText={
+									formik.touched.name?.first &&
+									formik.errors.name?.first
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
+						</div>
+						<div>
+							<TextField
+								aria-label="שם משפחה'"
+								label='שם משפחה'
+								name='name.last'
+								type='text'
+								value={formik.values.name.last}
+								onChange={formik.handleChange}
+								error={
+									formik.touched.name?.last &&
+									Boolean(formik.errors.name?.last)
+								}
+								helperText={
+									formik.touched.name?.last && formik.errors.name?.last
+								}
+								fullWidth
+								className='my-2'
+								variant='outlined'
+							/>
+						</div>
+						<div>
+							<TextField
+								aria-label="טלפון ראשי'"
 								label='טלפון ראשי'
 								name='phone.phone_1'
 								type='text'
@@ -129,6 +198,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 
 						<div>
 							<TextField
+								aria-label='טלפון נוסף (אופציונלי)'
 								label='טלפון נוסף (אופציונלי)'
 								name='phone.phone_2'
 								type='text'
@@ -143,6 +213,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						<div>
 							<TextField
 								select
+								autoComplete='address-level1'
+								aria-label='בחר עיר'
 								label='בחר עיר'
 								name='address.city'
 								value={formik.values.address.city}
@@ -168,7 +240,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 									},
 								}}
 							>
-								<MenuItem value=''>בחר עיר</MenuItem>
+								<MenuItem value='בחר עיר'>בחר עיר</MenuItem>
 								{cities.map((city, index) => (
 									<MenuItem key={index} value={city}>
 										{city}
@@ -179,6 +251,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						<div>
 							<TextField
 								select
+								aria-label='בחר רחוב'
 								label='בחר רחוב'
 								name='address.street'
 								value={formik.values.address.street}
@@ -207,10 +280,16 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 							>
 								<MenuItem value=''>בחר רחוב</MenuItem>
 								{loadingStreets ? (
-									<MenuItem disabled>טוען רחובות...</MenuItem>
+									<MenuItem disabled>
+										<CircularProgress
+											size={20}
+											sx={{marginInlineEnd: 1}}
+										/>
+										טוען רחובות...
+									</MenuItem>
 								) : (
 									streets.map((street, index) => (
-										<MenuItem key={index} value={street}>
+										<MenuItem key={street + index} value={street}>
 											{street}
 										</MenuItem>
 									))
@@ -219,6 +298,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
+								aria-label='מספר בית'
 								label='מספר בית'
 								name='address.houseNumber'
 								type='text'
@@ -231,6 +311,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
+								aria-label='שינוי קישור תמונה'
 								label='תמונה'
 								name='image.url'
 								type='text'
@@ -240,15 +321,52 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 								className='my-2'
 								variant='outlined'
 							/>
+							<Box
+								sx={{
+									textAlign: "end",
+									width: "100%",
+								}}
+							>
+								<Button
+									sx={{
+										borderRadius: 50,
+									}}
+									fullWidth
+									variant='outlined'
+									onClick={handleImageChange}
+								>
+									{preview ? "הסתיר תמונה פרופיל" : "דהצג תמונת פרופיל"}
+								</Button>
+								{preview && (
+									<div className='mt-3'>
+										<img
+											aria-label='תמונה'
+											height={250}
+											src={
+												formik.values.image.url ||
+												users?.image.url
+											}
+											alt='preview'
+											style={{
+												maxWidth: "300px",
+												borderRadius: "10px",
+											}}
+										/>
+									</div>
+								)}
+							</Box>
 						</div>
 					</Box>
-					<Box className='text-center mt-3 w-50 m-auto'>
+					<Box className='text-center mt-3 w-25 m-auto'>
 						<Button
 							type='submit'
-							variant='contained'
+							variant='outlined'
 							color='primary'
 							disabled={formik.isSubmitting}
 							fullWidth
+							sx={{
+								borderRadius: 50,
+							}}
 						>
 							{formik.isSubmitting ? (
 								<CircularProgress size={24} color='inherit' />
@@ -259,7 +377,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 					</Box>
 				</form>
 			</Box>
-		</main>
+		</Box>
 	);
 };
 

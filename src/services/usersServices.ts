@@ -109,6 +109,9 @@ export const compleateProfileData = async (
 				phone_1: values.phone.phone_1,
 				phone_2: values.phone.phone_2 || "",
 			},
+			image: {
+				url: values.image?.url,
+			},
 			address: {
 				city: values.address.city,
 				street: values.address.street,
@@ -264,3 +267,13 @@ export const patchUserStatus = async (userId: string, status: boolean) => {
 		throw error;
 	}
 };
+
+// export const getIPAddress = async () => {
+// 	try {
+// 		const res = await axios.get(`${api}/user/ip`);
+// 		return res.data.ip;
+// 	} catch (err) {
+// 		console.error("Error fetching IP:", err);
+
+// 	}
+// };

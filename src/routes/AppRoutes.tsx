@@ -64,7 +64,6 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 				element={auth && auth.role === RoleType.Admin ? <AdminSettings /> : <></>}
 			/>
 			<Route path={path.Receipt} element={auth?._id ? <Receipt /> : <></>} />
-
 			<Route path={path.Contact} element={<Contact />} />
 			<Route path={path.About} element={<About />} />
 			<Route path={path.Cart} element={<Cart />} />
@@ -72,7 +71,6 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
-			<Route path={path.CompleteProfile} element={<EditUserData userId={""} />} />
 			<Route path={productsPathes.fruits} element={<Fruits />} />
 			<Route path={productsPathes.vegetable} element={<Vegetable />} />
 			<Route path={productsPathes.fish} element={<Fish />} />
