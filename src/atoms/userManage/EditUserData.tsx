@@ -3,6 +3,7 @@ import * as yup from "yup";
 import {showSuccess, showError} from "../toasts/ReactToast";
 import {FunctionComponent, useEffect, useState} from "react";
 import {
+	Autocomplete,
 	Box,
 	Button,
 	CircularProgress,
@@ -211,90 +212,64 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 
 						<div>
-							<TextField
-								select
-								autoComplete='address-level1'
-								aria-label='בחר עיר'
-								label='בחר עיר'
-								name='address.city'
-								value={formik.values.address.city}
-								onChange={formik.handleChange}
-								error={
-									formik.touched.address?.city &&
-									Boolean(formik.errors.address?.city)
+							<Autocomplete
+								options={cities}
+								value={formik.values.address.city || null}
+								onChange={(_event, value) =>
+									formik.setFieldValue("address.city", value)
 								}
-								helperText={
-									formik.touched.address?.city &&
-									formik.errors.address?.city
+								onBlur={() =>
+									formik.setFieldTouched("address.city", true)
 								}
-								fullWidth
-								className='my-2'
-								variant='outlined'
-								SelectProps={{
-									MenuProps: {
-										PaperProps: {
-											style: {
-												maxHeight: 300,
-											},
-										},
-									},
-								}}
-							>
-								<MenuItem value='בחר עיר'>בחר עיר</MenuItem>
-								{cities.map((city, index) => (
-									<MenuItem key={index} value={city}>
-										{city}
-									</MenuItem>
-								))}
-							</TextField>
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label='בחר עיר'
+										variant='filled'
+										error={
+											formik.touched.address?.city &&
+											Boolean(formik.errors.address?.city)
+										}
+										helperText={
+											formik.touched.address?.city &&
+											formik.errors.address?.city
+										}
+										className='my-2'
+										fullWidth
+									/>
+								)}
+							/>
 						</div>
 						<div>
-							<TextField
-								select
-								aria-label='בחר רחוב'
-								label='בחר רחוב'
-								name='address.street'
-								value={formik.values.address.street}
-								onChange={formik.handleChange}
+							<Autocomplete
+								options={streets}
+								value={formik.values.address.street || null}
+								onChange={(_event, value) =>
+									formik.setFieldValue("address.street", value)
+								}
+								onBlur={() =>
+									formik.setFieldTouched("address.street", true)
+								}
 								disabled={!formik.values.address.city || loadingStreets}
-								error={
-									formik.touched.address?.street &&
-									Boolean(formik.errors.address?.street)
-								}
-								helperText={
-									formik.touched.address?.street &&
-									formik.errors.address?.street
-								}
-								fullWidth
-								className='my-2'
-								variant='outlined'
-								SelectProps={{
-									MenuProps: {
-										PaperProps: {
-											style: {
-												maxHeight: 300,
-											},
-										},
-									},
-								}}
-							>
-								<MenuItem value=''>בחר רחוב</MenuItem>
-								{loadingStreets ? (
-									<MenuItem disabled>
-										<CircularProgress
-											size={20}
-											sx={{marginInlineEnd: 1}}
-										/>
-										טוען רחובות...
-									</MenuItem>
-								) : (
-									streets.map((street, index) => (
-										<MenuItem key={street + index} value={street}>
-											{street}
-										</MenuItem>
-									))
+								loading={loadingStreets}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label='בחר רחוב'
+										variant='filled'
+										error={
+											formik.touched.address?.street &&
+											Boolean(formik.errors.address?.street)
+										}
+										helperText={
+											formik.touched.address?.street &&
+											formik.errors.address?.street
+										}
+										className='my-2'
+										fullWidth
+									/>
 								)}
-							</TextField>
+							/>
 						</div>
 						<div>
 							<TextField

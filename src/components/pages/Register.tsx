@@ -6,6 +6,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {registerNewUser} from "../../services/usersServices";
 import {
+	Autocomplete,
 	Box,
 	Button,
 	Card,
@@ -412,74 +413,66 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						</Typography>
 						<Row className='row row-cols-1 row-cols-md-3'>
 							<Col>
-								<TextField
-									select
-									label='בחר עיר'
-									name='address.city'
-									value={formik.values.address.city}
-									onChange={formik.handleChange}
-									error={
-										formik.touched.address?.city &&
-										Boolean(formik.errors.address?.city)
+								<Autocomplete
+									options={cities}
+									value={formik.values.address.city || null}
+									onChange={(_event, value) =>
+										formik.setFieldValue("address.city", value)
 									}
-									helperText={
-										formik.touched.address?.city &&
-										formik.errors.address?.city
+									onBlur={() =>
+										formik.setFieldTouched("address.city", true)
 									}
-									fullWidth
-									className='my-2'
-									variant='filled'
-									SelectProps={{
-										MenuProps: {
-											PaperProps: {
-												style: {
-													maxHeight: 300, // שורת מפתח
-												},
-											},
-										},
-									}}
-								>
-									<MenuItem value=''>בחר עיר</MenuItem>
-									{cities.map((city, index) => (
-										<MenuItem key={index} value={city}>
-											{city}
-										</MenuItem>
-									))}
-								</TextField>
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											label='בחר עיר'
+											variant='filled'
+											error={
+												formik.touched.address?.city &&
+												Boolean(formik.errors.address?.city)
+											}
+											helperText={
+												formik.touched.address?.city &&
+												formik.errors.address?.city
+											}
+											className='my-2'
+											fullWidth
+										/>
+									)}
+								/>
 							</Col>
 							<Col>
-								<TextField
-									select
-									label='בחר רחוב'
-									name='address.street'
-									value={formik.values.address.street}
-									onChange={formik.handleChange}
+								<Autocomplete
+									options={streets}
+									value={formik.values.address.street || null}
+									onChange={(_event, value) =>
+										formik.setFieldValue("address.street", value)
+									}
+									onBlur={() =>
+										formik.setFieldTouched("address.street", true)
+									}
 									disabled={
 										!formik.values.address.city || loadingStreets
 									}
-									error={
-										formik.touched.address?.street &&
-										Boolean(formik.errors.address?.street)
-									}
-									helperText={
-										formik.touched.address?.street &&
-										formik.errors.address?.street
-									}
-									fullWidth
-									className='my-2'
-									variant='filled'
-								>
-									<MenuItem value=''>בחר רחוב</MenuItem>
-									{loadingStreets ? (
-										<MenuItem disabled>טוען רחובות...</MenuItem>
-									) : (
-										streets.map((street, index) => (
-											<MenuItem key={index} value={street}>
-												{street}
-											</MenuItem>
-										))
+									loading={loadingStreets}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											label='בחר רחוב'
+											variant='filled'
+											error={
+												formik.touched.address?.street &&
+												Boolean(formik.errors.address?.street)
+											}
+											helperText={
+												formik.touched.address?.street &&
+												formik.errors.address?.street
+											}
+											className='my-2'
+											fullWidth
+										/>
 									)}
-								</TextField>
+								/>
 							</Col>
 							<Col>
 								<TextField

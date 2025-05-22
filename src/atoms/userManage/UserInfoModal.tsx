@@ -1,4 +1,5 @@
 import {
+	Autocomplete,
 	Box,
 	Button,
 	CircularProgress,
@@ -85,67 +86,54 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 						value={formik.values.phone_2}
 						onChange={formik.handleChange}
 					/>
-					<TextField
-						select
-						label='בחר עיר'
-						name='city'
-						value={formik.values.city}
-						onChange={formik.handleChange}
-						error={formik.touched.city && Boolean(formik.errors.city)}
-						helperText={formik.touched.city && formik.errors.city}
-						fullWidth
-						className='my-2'
-						variant='outlined'
-						SelectProps={{
-							MenuProps: {
-								PaperProps: {
-									style: {
-										maxHeight: 300,
-									},
-								},
-							},
-						}}
-					>
-						<MenuItem value=''>בחר עיר</MenuItem>
-						{cities.map((city, index) => (
-							<MenuItem key={index} value={city}>
-								{city}
-							</MenuItem>
-						))}
-					</TextField>
-					<TextField
-						select
-						label='בחר רחוב'
-						name='street'
-						value={formik.values.street}
-						onChange={formik.handleChange}
-						disabled={!formik.values.city || loadingStreets}
-						error={formik.touched.street && Boolean(formik.errors.street)}
-						helperText={formik.touched.street && formik.errors.street}
-						fullWidth
-						className='my-2'
-						variant='outlined'
-						SelectProps={{
-							MenuProps: {
-								PaperProps: {
-									style: {
-										maxHeight: 300,
-									},
-								},
-							},
-						}}
-					>
-						<MenuItem value=''>בחר רחוב</MenuItem>
-						{loadingStreets ? (
-							<MenuItem disabled>טוען רחובות...</MenuItem>
-						) : (
-							streets.map((street, index) => (
-								<MenuItem key={index} value={street}>
-									{street}
-								</MenuItem>
-							))
+					<Autocomplete
+						options={cities}
+						value={formik.values.city || null}
+						onChange={(_event, value) =>
+							formik.setFieldValue("city", value)
+						}
+						onBlur={() => formik.setFieldTouched("city", true)}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label='בחר עיר'
+								variant='filled'
+								error={
+									formik.touched.city &&
+									Boolean(formik.errors.city)
+								}
+								helperText={
+									formik.touched.city &&
+									formik.errors.city
+								}
+								className='my-2'
+								fullWidth
+							/>
 						)}
-					</TextField>
+					/>
+					<Autocomplete
+						options={streets}
+						value={formik.values.street || null}
+						onChange={(_event, value) =>
+							formik.setFieldValue("street", value)
+						}
+						onBlur={() => formik.setFieldTouched("street", true)}
+						disabled={!formik.values.city || loadingStreets}
+						loading={loadingStreets}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label='בחר רחוב'
+								variant='filled'
+								error={
+									formik.touched.street && Boolean(formik.errors.street)
+								}
+								helperText={formik.touched.street && formik.errors.street}
+								className='my-2'
+								fullWidth
+							/>
+						)}
+					/>
 					<TextField
 						margin='dense'
 						label='מספר בית'
