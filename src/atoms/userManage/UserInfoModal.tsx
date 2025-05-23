@@ -7,7 +7,6 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	MenuItem,
 	TextField,
 } from "@mui/material";
 import {useFormik} from "formik";

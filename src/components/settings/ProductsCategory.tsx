@@ -159,7 +159,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				console.log(err);
 			})
 			.finally(() => setLoading(false));
-	}, []);
+	}, [category]);
 
 	// quantities in stock updates when the order is created
 	useEffect(() => {

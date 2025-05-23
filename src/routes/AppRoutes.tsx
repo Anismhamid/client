@@ -6,27 +6,11 @@ import Login from "../components/pages/Login";
 import About from "../components/pages/About";
 import Cart from "../components/pages/Cart";
 import Checkout from "../components/pages/orders/Checkout";
-import EditUserData from "../atoms/userManage/EditUserData";
+// import EditUserData from "../atoms/userManage/EditUserData";
 import Contact from "../components/pages/Contact";
 import AllTheOrders from "../components/pages/orders/AllTheOrders";
 import PageNotFound from "../components/pages/Png";
 import PrivacyAdnPolicy from "../components/pages/PrivacyAndPolicy";
-import Alcohol from "../components/pages/products/Alcohol";
-import Baby from "../components/pages/products/Babys";
-import Bakery from "../components/pages/products/Bakery";
-import Beverages from "../components/pages/products/Beverages";
-import Cleaning from "../components/pages/products/Cleaning";
-import Dairy from "../components/pages/products/Dairy";
-import Fish from "../components/pages/products/Fish";
-import Frozen from "../components/pages/products/Frozen";
-import Fruits from "../components/pages/products/Fruits";
-import Health from "../components/pages/products/Health";
-import House from "../components/pages/products/House";
-import Meat from "../components/pages/products/Meat";
-import PastaRice from "../components/pages/products/PastaRice";
-import Snacks from "../components/pages/products/Snacks";
-import Spices from "../components/pages/products/Spices";
-import Vegetable from "../components/pages/products/Vegetable";
 import Register from "../components/pages/Register";
 import TermOfUse from "../components/pages/TermOfUse";
 import AdminSettings from "../atoms/userManage/AdminSettengs";
@@ -36,11 +20,8 @@ import RoleType from "../interfaces/UserType";
 import {FunctionComponent} from "react";
 import {AuthValues} from "../interfaces/authValues";
 import OrderDetails from "../components/pages/orders/OrederDetails";
-import Watchs from "../components/pages/products/Watches";
-import WomenClothes from "../components/pages/products/WomenClothes";
-import Cigarettes from "../components/pages/products/Cigarettes";
-import WomenBags from "../components/pages/products/WomenBags";
 import ProducDetails from "../components/pages/products/ProducDetails";
+import Products from "../components/pages/products/Products";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -71,26 +52,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
-			<Route path={productsPathes.fruits} element={<Fruits />} />
-			<Route path={productsPathes.vegetable} element={<Vegetable />} />
-			<Route path={productsPathes.fish} element={<Fish />} />
-			<Route path={productsPathes.meat} element={<Meat />} />
-			<Route path={productsPathes.spices} element={<Spices />} />
-			<Route path={productsPathes.dairy} element={<Dairy />} />
-			<Route path={productsPathes.bakery} element={<Bakery />} />
-			<Route path={productsPathes.beverages} element={<Beverages />} />
-			<Route path={productsPathes.frozen} element={<Frozen />} />
-			<Route path={productsPathes.snacks} element={<Snacks />} />
-			<Route path={productsPathes.baby} element={<Baby />} />
-			<Route path={productsPathes.alcohol} element={<Alcohol />} />
-			<Route path={productsPathes.cleaning} element={<Cleaning />} />
-			<Route path={productsPathes.pastaRice} element={<PastaRice />} />
-			<Route path={productsPathes.house} element={<House />} />
-			<Route path={productsPathes.health} element={<Health />} />
-			<Route path={productsPathes.watches} element={<Watchs />} />
-			<Route path={productsPathes.womenClothes} element={<WomenClothes />} />
-			<Route path={productsPathes.womenBags} element={<WomenBags />} />
-			<Route path={productsPathes.cigarettes} element={<Cigarettes />} />
+			<Route path='/category/:category' element={<Products />} />
 			<Route
 				path={`${productsPathes.productDetails}/:productName`}
 				element={<ProducDetails />}

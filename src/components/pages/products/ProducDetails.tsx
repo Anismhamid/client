@@ -3,7 +3,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {getProductByspicificName} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {Box, CircularProgress, Typography, Paper, Button} from "@mui/material";
-import {showInfo} from "../../../atoms/toasts/ReactToast";
 
 interface ProducDetailsProps {}
 
