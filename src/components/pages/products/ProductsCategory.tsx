@@ -1,13 +1,13 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
-import {deleteProduct, getProductsByCategory} from "../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
-import {Products} from "../../interfaces/Products";
-import {handleAddToCart, handleQuantity} from "../../helpers/fruitesFunctions";
-import {useUser} from "../../context/useUSer";
-import Loader from "../../atoms/loader/Loader";
-import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
-import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
-import RoleType from "../../interfaces/UserType";
-import {useCartItems} from "../../context/useCart";
+import {deleteProduct, getProductsByCategory} from "../../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
+import {Products} from "../../../interfaces/Products";
+import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
+import {useUser} from "../../../context/useUSer";
+import Loader from "../../../atoms/loader/Loader";
+import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
+import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
+import RoleType from "../../../interfaces/UserType";
+import {useCartItems} from "../../../context/useCart";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
@@ -20,20 +20,21 @@ import {
 	CardMedia,
 	Chip,
 	CircularProgress,
+	Skeleton,
 	Typography,
 } from "@mui/material";
-import AlertDialogs from "../../atoms/toasts/Sweetalert";
-import Seo from "../../atoms/Seo/Seo";
-import {getFaviconForCategory} from "../../FontAwesome/tapIcons";
+import AlertDialogs from "../../../atoms/toasts/Sweetalert";
+import Seo from "../../../atoms/Seo/Seo";
+import {getFaviconForCategory} from "../../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
 import {Link, useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
-import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
+import {path} from "../../../routes/routes";
+import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
-import SearchBox from "../../atoms/SearchBox";
-import {formatPrice} from "../../helpers/dateAndPriceFormat";
-import socket from "../../socket/globalSocket";
+import SearchBox from "../../../atoms/SearchBox";
+import {formatPrice} from "../../../helpers/dateAndPriceFormat";
+import socket from "../../../socket/globalSocket";
 
 interface ProductCategoryProps {
 	category: string;
@@ -60,6 +61,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
+	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
 	const {setQuantity} = useCartItems();
 	const navigate = useNavigate();
@@ -152,6 +154,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					},
 					{},
 				);
+				const setImageLoaded = (id: string) => {
+					setLoadedImages((prev) => ({...prev, [id]: true}));
+				};
+
 				setQuantities(initialQuantities);
 				setLoading(false);
 			})
@@ -257,15 +263,25 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 										fish: 'ל/ק"ג',
 									}[product.category?.toLowerCase()] || "ליחידה";
 
+								const isLoaded = loadedImages[product.product_name];
+
 								return (
 									<Col key={product.product_name} xs={6} md={4} xl={3}>
 										<Card
-											style={{height: "95%"}}
+											style={{height: "98%"}}
 											className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
 										>
 											<Link
 												to={`/product-details/${encodeURIComponent(product.product_name)}`}
 											>
+												{!isLoaded && (
+													<Skeleton
+														variant='rectangular'
+														width='100%'
+														height='200px'
+														sx={{bgcolor: "grey.900"}}
+													/>
+												)}
 												<CardMedia
 													component='img'
 													loading='lazy'
@@ -276,6 +292,15 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 													sx={{
 														height: 180,
 														objectFit: "contain",
+													}}
+													onLoad={() => {
+														console.log(
+															`Image for ${product.product_name} loaded!`,
+														);
+														setLoadedImages((prev) => ({
+															...prev,
+															[product.product_name]: true,
+														}));
 													}}
 												/>
 											</Link>

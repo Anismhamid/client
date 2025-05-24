@@ -68,7 +68,7 @@ export const navbarCategoryLinks = [
 		icon: fontAwesomeIcon.cleaning,
 	},
 	{
-		labelKey: "categories.pastaAndRice.label",
+		labelKey: "categories.pasta-and-Rice.label",
 		path: productsPathes.pastaRice,
 		icon: fontAwesomeIcon.pastaRice,
 	},
@@ -88,14 +88,14 @@ export const navbarCategoryLinks = [
 		icon: fontAwesomeIcon.watches,
 	},
 	{
-		labelKey: "categories.womenClothes.label",
+		labelKey: "categories.women-clothes.label",
 		path: productsPathes.womenClothes,
 		icon: fontAwesomeIcon.womenClothes,
 	},
 	{
-		labelKey: "categories.womenBags.label",
+		labelKey: "categories.women-bags.label",
 		path: productsPathes.womenBags,
-		icon: fontAwesomeIcon.womenClothes,
+		icon: fontAwesomeIcon.womenBags,
 	},
 	{
 		labelKey: "categories.cigarettes.label",

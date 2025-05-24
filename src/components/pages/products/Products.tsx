@@ -1,5 +1,5 @@
 import {FunctionComponent} from "react";
-import ProductCategory from "../../settings/ProductsCategory";
+import ProductCategory from "./ProductsCategory";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 

@@ -106,7 +106,9 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										/>
 
 										{/* טקסט */}
-										<div className='position-absolute top-50 start-50 translate-middle text-white'>
+										<div style={{
+											top:"90%"
+										}} className='position-absolute top-75 start-50 translate-middle text-white'>
 											<Chip
 												label={`${product.discount}% הנחה`}
 												color='error'

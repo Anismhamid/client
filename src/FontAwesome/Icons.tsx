@@ -78,5 +78,5 @@ export const fontAwesomeIcon = {
 	womenClothes: <FontAwesomeIcon icon={faShirt} />,
 	cigarettes: <FontAwesomeIcon icon={faSmoking} />,
 	womenBags: <FontAwesomeIcon icon={faBagShopping} />,
-	arrowDown: <FontAwesomeIcon icon={faArrowDown} />,
+	arrowDown: <FontAwesomeIcon icon={faArrowDown} />, 
 };
