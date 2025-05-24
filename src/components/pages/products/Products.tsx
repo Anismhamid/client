@@ -1,4 +1,4 @@
-import {FunctionComponent} from "react";
+import {FunctionComponent, useEffect} from "react";
 import ProductCategory from "./ProductsCategory";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
@@ -15,6 +15,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
 	if (!category) {
 		return <div className='text-center mt-4'>Category not found</div>;
 	}
+
 
 	return (
 		<main>

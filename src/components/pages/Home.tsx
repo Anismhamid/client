@@ -14,6 +14,7 @@ import {
 	Box,
 	Typography,
 	CardContent,
+	Skeleton,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
@@ -56,6 +57,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const observerRef = useRef<HTMLDivElement | null>(null);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
 
@@ -227,8 +229,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 						setSearchQuery={setSearchQuery}
 					/>
 				</Box>
-				{/* Discounts Section */}
 
+				{/* Discounts Section */}
 				<Box
 					sx={{
 						backdropFilter: "blur(10px)",
@@ -267,31 +269,56 @@ const Home: FunctionComponent<HomeProps> = () => {
 								}[product.category?.toLowerCase()] || "ליחידה";
 
 							return (
-								<Col
-									key={product.product_name}
-									xs={6}
-									md={4}
-									xl={3}
-								>
+								<Col key={product.product_name} xs={6} md={4} xl={3}>
 									<Card
 										style={{height: "95%"}}
 										className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
 									>
-										<Link
-											to={`/product-details/${encodeURIComponent(product.product_name)}`}
+										<Box
+											position='relative'
+											width='100%'
+											height='250px'
 										>
-											<CardMedia
-												component='img'
-												width='100%'
-												image={product.image_url}
-												alt={product.product_name}
-												loading='lazy'
-												sx={{
-													height: 180,
-													objectFit: "contain",
-												}}
-											/>
-										</Link>
+											<Link
+												to={`/product-details/${encodeURIComponent(product.product_name)}`}
+											>
+												{!loadedImages[product.product_name] && (
+													<Skeleton
+														variant='rounded'
+														width='100%'
+														height='100%'
+														animation='wave'
+														sx={{
+															position: "absolute",
+															top: 0,
+															left: 0,
+															zIndex: 1,
+														}}
+													/>
+												)}
+												<CardMedia
+													component='img'
+													loading='lazy'
+													image={product.image_url}
+													alt={product.product_name}
+													title={product.product_name}
+													sx={{
+														width: "100%",
+														height: "100%",
+														objectFit: "cover",
+													}}
+													onLoad={() => {
+														console.log(
+															`Image for ${product.product_name} loaded!`,
+														);
+														setLoadedImages((prev) => ({
+															...prev,
+															[product.product_name]: true,
+														}));
+													}}
+												/>
+											</Link>
+										</Box>
 										<CardContent sx={{flexGrow: 1}}>
 											<Typography
 												variant='h6'

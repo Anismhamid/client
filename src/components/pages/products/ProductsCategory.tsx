@@ -154,9 +154,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					},
 					{},
 				);
-				const setImageLoaded = (id: string) => {
-					setLoadedImages((prev) => ({...prev, [id]: true}));
-				};
 
 				setQuantities(initialQuantities);
 				setLoading(false);
@@ -263,225 +260,255 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 										fish: 'ל/ק"ג',
 									}[product.category?.toLowerCase()] || "ליחידה";
 
-								const isLoaded = loadedImages[product.product_name];
-
 								return (
-									<Col key={product.product_name} xs={6} md={4} xl={3}>
-										<Card
-											style={{height: "98%"}}
-											className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
+									<>
+										<Col
+											key={product.product_name}
+											xs={6}
+											md={4}
+											xl={3}
 										>
-											<Link
-												to={`/product-details/${encodeURIComponent(product.product_name)}`}
+											<Card
+												style={{height: "98%"}}
+												className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
 											>
-												{!isLoaded && (
-													<Skeleton
-														variant='rectangular'
-														width='100%'
-														height='200px'
-														sx={{bgcolor: "grey.900"}}
-													/>
-												)}
-												<CardMedia
-													component='img'
-													loading='lazy'
-													image={product.image_url}
-													alt={product.product_name}
-													title={product.product_name}
+												<Box
+													position='relative'
 													width='100%'
-													sx={{
-														height: 180,
-														objectFit: "contain",
-													}}
-													onLoad={() => {
-														console.log(
-															`Image for ${product.product_name} loaded!`,
-														);
-														setLoadedImages((prev) => ({
-															...prev,
-															[product.product_name]: true,
-														}));
-													}}
-												/>
-											</Link>
-											<CardContent sx={{flexGrow: 1}}>
-												<Typography
-													variant='h6'
-													align='center'
-													fontWeight='bold'
-													gutterBottom
+													height='200px'
 												>
-													{product.product_name}
-												</Typography>
-												{product.sale ? (
-													<>
-														<Chip
-															label={`${product.discount}% הנחה`}
-															color='error'
-															size='small'
+													<Link
+														to={`/product-details/${encodeURIComponent(product.product_name)}`}
+													>
+														{!loadedImages[
+															product.product_name
+														] && (
+															<Skeleton
+																variant='rounded'
+																width='100%'
+																height='100%'
+																animation='wave'
+																sx={{
+																	position: "absolute",
+																	top: 0,
+																	left: 0,
+																	zIndex: 1,
+																}}
+															/>
+														)}
+														<CardMedia
+															component='img'
+															loading='lazy'
+															image={product.image_url}
+															alt={product.product_name}
+															title={product.product_name}
+															sx={{
+																width: "100%",
+																height: "100%",
+															}}
+															onLoad={() => {
+																console.log(
+																	`Image for ${product.product_name} loaded!`,
+																);
+																setLoadedImages(
+																	(prev) => ({
+																		...prev,
+																		[product.product_name]:
+																			true,
+																	}),
+																);
+															}}
 														/>
+													</Link>
+												</Box>
+												<CardContent sx={{flexGrow: 1}}>
+													<Typography
+														variant='h6'
+														align='center'
+														fontWeight='bold'
+														gutterBottom
+													>
+														{product.product_name}
+													</Typography>
+													{product.sale ? (
+														<>
+															<Chip
+																label={`${product.discount}% הנחה`}
+																color='error'
+																size='small'
+															/>
+															<Typography
+																variant='h6'
+																align='center'
+															>
+																<s>
+																	{formatPrice(
+																		product.price,
+																	)}
+																</s>
+															</Typography>
+														</>
+													) : (
 														<Typography
-															variant='h6'
+															variant='body2'
 															align='center'
+															className={
+																isOutOfStock
+																	? "text-danger"
+																	: "text-success"
+															}
 														>
-															<s>
-																{formatPrice(
-																	product.price,
-																)}
-															</s>
+															{isOutOfStock
+																? "אזל מהמלאי"
+																: `במלאי: ${product.quantity_in_stock}`}
 														</Typography>
-													</>
-												) : (
+													)}
+
 													<Typography
 														variant='body2'
 														align='center'
-														className={
-															isOutOfStock
-																? "text-danger"
-																: "text-success"
-														}
+														color='text.secondary'
 													>
-														{isOutOfStock
-															? "אזל מהמלאי"
-															: `במלאי: ${product.quantity_in_stock}`}
+														{unitText}
 													</Typography>
-												)}
-
-												<Typography
-													variant='body2'
-													align='center'
-													color='text.secondary'
-												>
-													{unitText}
-												</Typography>
-												<Box
-													sx={{
-														mt: 1,
-														textAlign: "center",
-													}}
-												>
-													<ColorsAndSizes category={category} />
-												</Box>
-												<Typography
-													variant='h5'
-													align='center'
-													color='success.main'
-												>
-													{formatPrice(discountedPrice)}
-												</Typography>
-											</CardContent>
-
-											<Box sx={{px: 2, pb: 2}}>
-												<Box
-													sx={{
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "space-around",
-														my: 1,
-													}}
-												>
-													<Button
-														size='small'
-														disabled={isOutOfStock}
-														onClick={() =>
-															handleQuantity(
-																setQuantities,
-																"-",
-																product.product_name,
-															)
-														}
-														startIcon={<RemoveSharpIcon />}
-													/>
-
-													<Typography>
-														{productQuantity}
-													</Typography>
-
-													<Button
-														size='small'
-														disabled={isOutOfStock}
-														onClick={() =>
-															handleQuantity(
-																setQuantities,
-																"+",
-																product.product_name,
-															)
-														}
-														startIcon={<AddSharpIcon />}
-													/>
-												</Box>
-											</Box>
-											<Button
-												fullWidth
-												onClick={() => {
-													handleAdd(
-														product.product_name,
-														quantities,
-														product.price,
-														product.image_url,
-														product.sale || false,
-														product.discount || 0,
-													);
-												}}
-												startIcon={<AddShoppingCartIcon />}
-												disabled={isOutOfStock}
-												variant='outlined'
-												color={isOutOfStock ? "error" : "primary"}
-											>
-												{loadingAddToCart ===
-												product.product_name ? (
-													<CircularProgress
-														size={20}
-														color='inherit'
-													/>
-												) : (
-													<>הוסף לעגלה</>
-												)}
-											</Button>
-
-											{canEdit && (
-												<Box
-													sx={{
-														width: "100%",
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "space-between",
-														p: 1,
-														mt: 1,
-														borderTop: "1px solid #ff0000",
-													}}
-													className='cards-footer'
-												>
-													<Button
-														size='small'
-														color='warning'
-														aria-label='עריכה'
-														onClick={() => {
-															setProductNameToUpdate(
-																product.product_name,
-															);
-															onShowUpdateProductModal();
+													<Box
+														sx={{
+															mt: 1,
+															textAlign: "center",
 														}}
-														startIcon={<EditIcon />}
-														variant='outlined'
-													/>
+													>
+														<ColorsAndSizes
+															category={category}
+														/>
+													</Box>
+													<Typography
+														variant='h5'
+														align='center'
+														color='success.main'
+													>
+														{formatPrice(discountedPrice)}
+													</Typography>
+												</CardContent>
 
-													<Button
-														size='small'
-														color='error'
-														aria-label='מחיקה'
-														onClick={() =>
-															openDeleteModal(
-																product.product_name,
-															)
-														}
-														startIcon={<DeleteIcon />}
-														variant='outlined'
-													/>
+												<Box sx={{px: 2, pb: 2}}>
+													<Box
+														sx={{
+															display: "flex",
+															alignItems: "center",
+															justifyContent:
+																"space-around",
+															my: 1,
+														}}
+													>
+														<Button
+															size='small'
+															disabled={isOutOfStock}
+															onClick={() =>
+																handleQuantity(
+																	setQuantities,
+																	"-",
+																	product.product_name,
+																)
+															}
+															startIcon={
+																<RemoveSharpIcon />
+															}
+														/>
+
+														<Typography>
+															{productQuantity}
+														</Typography>
+
+														<Button
+															size='small'
+															disabled={isOutOfStock}
+															onClick={() =>
+																handleQuantity(
+																	setQuantities,
+																	"+",
+																	product.product_name,
+																)
+															}
+															startIcon={<AddSharpIcon />}
+														/>
+													</Box>
 												</Box>
-											)}
-										</Card>
-									</Col>
+												<Button
+													fullWidth
+													onClick={() => {
+														handleAdd(
+															product.product_name,
+															quantities,
+															product.price,
+															product.image_url,
+															product.sale || false,
+															product.discount || 0,
+														);
+													}}
+													startIcon={<AddShoppingCartIcon />}
+													disabled={isOutOfStock}
+													variant='outlined'
+													color={
+														isOutOfStock ? "error" : "primary"
+													}
+												>
+													{loadingAddToCart ===
+													product.product_name ? (
+														<CircularProgress
+															size={20}
+															color='inherit'
+														/>
+													) : (
+														<>הוסף לעגלה</>
+													)}
+												</Button>
+
+												{canEdit && (
+													<Box
+														sx={{
+															width: "100%",
+															display: "flex",
+															alignItems: "center",
+															justifyContent:
+																"space-between",
+															p: 1,
+															mt: 1,
+															borderTop:
+																"1px solid #ff0000",
+														}}
+														className='cards-footer'
+													>
+														<Button
+															size='small'
+															color='warning'
+															aria-label='עריכה'
+															onClick={() => {
+																setProductNameToUpdate(
+																	product.product_name,
+																);
+																onShowUpdateProductModal();
+															}}
+															startIcon={<EditIcon />}
+															variant='outlined'
+														/>
+
+														<Button
+															size='small'
+															color='error'
+															aria-label='מחיקה'
+															onClick={() =>
+																openDeleteModal(
+																	product.product_name,
+																)
+															}
+															startIcon={<DeleteIcon />}
+															variant='outlined'
+														/>
+													</Box>
+												)}
+											</Card>
+										</Col>
+									</>
 								);
 							})}
 					</Row>
