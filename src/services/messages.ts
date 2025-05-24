@@ -10,7 +10,6 @@ export const postMessage = async (data: {
 	isImportant?: boolean;
 	replyTo?: string;
 }): Promise<UserMessage> => {
-	// Added Promise<UserMessage> for better type safety
 	try {
 		const token = localStorage.getItem("token");
 		const response = await axios.post(api, data, {
@@ -18,14 +17,12 @@ export const postMessage = async (data: {
 				Authorization: token,
 			},
 		});
-		// Assuming your backend returns the created message directly in response.data
 		return response.data;
 	} catch (error: any) {
 		console.error(
 			"Error in postMessage service:",
 			error.response?.data || error.message || error,
 		);
-		// *** CRITICAL CHANGE: Re-throw the error ***
 		throw error;
 	}
 };

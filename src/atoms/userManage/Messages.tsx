@@ -48,12 +48,16 @@ const MessagingPage: React.FC = () => {
 		if (!auth._id) return;
 		setLoading(true);
 		try {
-			if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
-				const usersData = await getAllUsers();
-				setUsers(usersData.filter((u: User) => u._id !== auth._id));
-			}
+			const usersData = await getAllUsers();
+			setUsers(usersData);
+
 			const {messages, pagination} = await getUserMessages(auth._id, page);
-			setUserMessages(messages);
+
+			const incoming = messages.filter((msg) => msg.to._id === auth._id);
+			const outgoing = messages.filter((msg) => msg.from._id === auth._id);
+			setUserMessages(incoming);
+			setSentMessages(outgoing);
+
 			setTotalPages(pagination.pages);
 		} catch (error) {
 			showInfo("עדיין אין הודעות");
@@ -68,15 +72,22 @@ const MessagingPage: React.FC = () => {
 
 	useEffect(() => {
 		if (!socket || !auth._id) return;
+
 		const handleNewMessage = (newMessage: UserMessage) => {
 			if (newMessage.to === auth._id) {
-				setUserMessages((prev) => [newMessage, ...prev]);
-				const sender = users.find((u) => u._id === newMessage.from._id);
-				showSuccess(`הודעה חדשה מאת ${sender?.email || "مستخدم غير معروف"}`);
+				if (newMessage.from._id !== auth._id) {
+					setUserMessages((prev) => [newMessage, ...prev]);
+					const sender = users.find((u) => u._id === newMessage.from._id);
+					showSuccess(`הודעה חדשה מאת ${sender?.email || "משתמש לא ידוע"}`);
+				}
 			}
 		};
+
 		socket.on("message:received", handleNewMessage);
-		return () => socket.off("message:received", handleNewMessage);
+
+		return () => {
+			socket.off("message:received", handleNewMessage);
+		};
 	}, [auth._id, users]);
 
 	const validateRecipient = useCallback(
@@ -95,59 +106,23 @@ const MessagingPage: React.FC = () => {
 			)
 				return true;
 
+			// Client can send to moderator
+			if (auth.role === RoleType.Client && recipient.role === RoleType.Moderator) {
+				return true;
+			}
 			return false;
 		},
 		[auth.role, users],
 	);
 
-	// const handleSubmit = async (e: React.FormEvent) => {
-	// 	e.preventDefault();
-	// 	setStatus("");
-	// 	setLoading(true);
-
-	// 	try {
-	// 		await postMessage({
-	// 			toUserId,
-	// 			message,
-	// 			warning,
-	// 			isImportant,
-	// 			replyTo: replyTo || undefined,
-	// 		});
-	// 		const newMessage: UserMessage = {
-	// 			_id: auth._id,
-	// 			from: {
-	// 				_id: auth._id,
-	// 				email: auth.email,
-	// 			},
-	// 			to: toUserId,
-	// 			message,
-	// 			warning,
-	// 			isImportant,
-	// 			status: "sent",
-	// 			replyTo: replyTo || undefined,
-	// 			createdAt: new Date().toISOString(),
-	// 		};
-	// 		const newMessageFromServer = newMessage;
-
-	// 		setSentMessages((prev) => [newMessageFromServer, ...prev]);
-	// 		setMessage("");
-	// 		setWarning(false);
-	// 		setIsImportant(false);
-	// 		setToUserId("");
-	// 		setReplyTo("");
-	// 		setStatus("تم إرسال الرسالة بنجاح");
-	// 		showSuccess("تم إرسال الرسالة بنجاح");
-	// 	} catch (err: any) {
-	// 		const errorMsg =
-	// 			err.response?.data?.error ||
-	// 			err.response?.data?.message ||
-	// 			"فشل في إرسال الرسالة";
-	// 		setStatus(errorMsg);
-	// 		showError(errorMsg);
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
+	// Reset form fields
+	const resetTheFields = () => {
+		setMessage("");
+		setWarning(false);
+		setIsImportant(false);
+		setToUserId("");
+		setReplyTo("");
+	};
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -155,7 +130,6 @@ const MessagingPage: React.FC = () => {
 		setLoading(true);
 
 		try {
-			// 1. AWAIT AND CAPTURE THE MESSAGE OBJECT RETURNED FROM THE SERVER
 			const sentMessageFromServer: UserMessage = await postMessage({
 				toUserId,
 				message,
@@ -164,23 +138,15 @@ const MessagingPage: React.FC = () => {
 				replyTo: replyTo || undefined,
 			});
 
-			// 2. Use the actual server-returned message to update the state
+			resetTheFields();
 			setSentMessages((prev) => [sentMessageFromServer, ...prev]);
-
-			// Reset form fields
-			setMessage("");
-			setWarning(false);
-			setIsImportant(false);
-			setToUserId("");
-			setReplyTo("");
-
 			setStatus("ההודעה נשלחה בהצלחה");
 			showSuccess("ההודעה נשלחה בהצלחה");
 		} catch (err: any) {
 			const errorMsg =
 				err.response?.data?.error ||
 				err.response?.data?.message ||
-				"נכשלה שליחת ההודעה";
+				"שליחת ההודעה נכשלה";
 			setStatus(errorMsg);
 			showError(errorMsg);
 		} finally {
@@ -242,19 +208,6 @@ const MessagingPage: React.FC = () => {
 					</Select>
 				</FormControl>
 
-				{/* {auth.role === RoleType.Client &&
-					users.length > 0 &&
-					!users.some((u) => u.role === RoleType.Moderator) && (
-						<Alert severity='warning' sx={{mb: 2}}>
-							אין כרגע מנהלים זמינים לשליחת הודעות. אנא נסה שוב מאוחר יותר.
-						</Alert>
-					)}
-				{auth.role === RoleType.Client && users.length === 0 && loading && (
-					<Box display='flex' justifyContent='center' my={4}>
-						<CircularProgress />
-						<Typography ml={2}>جاري البحث عن المشرفين...</Typography>
-					</Box>
-				)} */}
 				{replyTo && (
 					<Alert
 						dir={direction}
@@ -277,7 +230,7 @@ const MessagingPage: React.FC = () => {
 
 				<TextField
 					dir={direction}
-					label='الرسالة'
+					label='גוף הודעה'
 					multiline
 					rows={6}
 					fullWidth
@@ -408,7 +361,7 @@ const MessagingPage: React.FC = () => {
 							color='textSecondary'
 							gutterBottom
 						>
-							من: {getUserEmail((msg.from._id as string) || "")} -{" "}
+							מ: {msg.from.email || ""} -{" "}
 							{new Date(msg.createdAt).toLocaleString()}
 						</Typography>
 						{msg.replyTo && (
