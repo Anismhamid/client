@@ -7,7 +7,7 @@ import NavBar from "./components/settings/NavBar.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
 import Theme from "./atoms/theme/AppTheme.tsx";
 import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
-import {useSocketEvents} from "./hooks/useSocketEvents.ts";
+import useSocketEvents from "./hooks/useSocketEvents.ts";
 import {useMemo, useState} from "react";
 
 function App() {

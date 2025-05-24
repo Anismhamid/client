@@ -35,6 +35,7 @@ import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/SearchBox";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import socket from "../../../socket/globalSocket";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface ProductCategoryProps {
 	category: string;
@@ -275,7 +276,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												<Box
 													position='relative'
 													width='100%'
-													height='200px'
+													sx={{
+														height: {
+															xs: "230px",
+															md: "230px",
+															xl: "300px",
+														},
+													}}
 												>
 													<Link
 														to={`/product-details/${encodeURIComponent(product.product_name)}`}
@@ -375,6 +382,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														sx={{
 															mt: 1,
 															textAlign: "center",
+															margin: "auto",
 														}}
 													>
 														<ColorsAndSizes
@@ -433,7 +441,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 														/>
 													</Box>
 												</Box>
-												<Button
+												<LoadingButton
 													fullWidth
 													onClick={() => {
 														handleAdd(
@@ -445,23 +453,18 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 															product.discount || 0,
 														);
 													}}
+													loading={
+														loadingAddToCart ===
+														product.product_name
+													}
+													loadingPosition='start'
 													startIcon={<AddShoppingCartIcon />}
 													disabled={isOutOfStock}
 													variant='outlined'
 													color={
 														isOutOfStock ? "error" : "primary"
 													}
-												>
-													{loadingAddToCart ===
-													product.product_name ? (
-														<CircularProgress
-															size={20}
-															color='inherit'
-														/>
-													) : (
-														<>הוסף לעגלה</>
-													)}
-												</Button>
+												/>
 
 												{canEdit && (
 													<Box

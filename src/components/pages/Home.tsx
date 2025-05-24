@@ -277,7 +277,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 										<Box
 											position='relative'
 											width='100%'
-											height='250px'
+											sx={{
+												height: {
+													xs: "230px",
+													md: "250px",
+												},
+											}}
 										>
 											<Link
 												to={`/product-details/${encodeURIComponent(product.product_name)}`}
@@ -305,7 +310,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 													sx={{
 														width: "100%",
 														height: "100%",
-														objectFit: "cover",
 													}}
 													onLoad={() => {
 														console.log(

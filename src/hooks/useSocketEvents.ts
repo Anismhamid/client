@@ -1,4 +1,4 @@
-import {useMemo, useEffect} from "react";
+import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {showNewOrderToast} from "../atoms/bootStrapToast/SocketToast";
@@ -11,7 +11,7 @@ import RoleType from "../interfaces/UserType";
 import socket from "../socket/globalSocket";
 import useNotificationSound from "./useNotificationSound";
 
-export const useSocketEvents = () => {
+const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
@@ -156,3 +156,5 @@ export const useSocketEvents = () => {
 		};
 	}, [auth?._id, auth?.role, auth?.name?.first]);
 };
+
+export default useSocketEvents;

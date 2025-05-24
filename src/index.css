@@ -30,7 +30,7 @@ main {
 
 .navbar-glass {
   backdrop-filter: blur(12px);
-  --a: 0 8px 30px rgba(56, 56, 56, 0.377) ;
+  --a: 0 8px 30px rgba(56, 56, 56, 0.377);
   box-shadow: var(--a) !important;
   border-radius: 16px;
   padding: 10px;

@@ -16,16 +16,12 @@ const colors = ["primary", "secondary", "error", "success", "warning"] as const;
 const sizes = ["XS", "S", "M", "L", "XL"];
 
 const ColorsAndSizes: FunctionComponent<ColorsAndSizesProps> = ({category}) => {
-	const clothestype = ["Women-clothes"].includes(category);
-	const bagstype = ["Women-bags"].includes(category);
+	const clothestype = ["women-clothes"].includes(category);
+	const bagstype = ["women-bags"].includes(category);
 
 	return (
 		<>
 			<Box
-				sx={{
-					margin: "auto",
-					textAlign: "center",
-				}}
 			>
 				{clothestype ? (
 					<>
@@ -181,6 +177,7 @@ const ColorsAndSizes: FunctionComponent<ColorsAndSizesProps> = ({category}) => {
 										alignItems: "center",
 										justifyContent: "center",
 										position: "relative",
+										margin:"auto"
 									}}
 								>
 									<Radio
