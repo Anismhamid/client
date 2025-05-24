@@ -287,6 +287,7 @@
 		}
 	},
 	"accountMenu": {
+		"messages": "הודעות",
 		"account": "החשבון שלי",
 		"profile": "הפרופיל שלי",
 		"settings": "הגדרות",

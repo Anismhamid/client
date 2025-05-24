@@ -286,6 +286,7 @@
 		}
 	},
 	"accountMenu": {
+		"messages": "الرسائل",
 		"account": "حسابي",
 		"profile": "ملفي الشخصي",
 		"settings": "الإعدادات",

@@ -10,6 +10,7 @@ import {
 	TextField,
 	Button,
 	CircularProgress,
+	Typography,
 } from "@mui/material";
 import {useFormik} from "formik";
 import {FunctionComponent, useEffect, useState} from "react";
@@ -17,18 +18,20 @@ import * as yup from "yup";
 import {getBusinessInfo, updateBusinessInfo} from "../../services/businessInfo";
 import {BusinessInfoType} from "../../interfaces/businessInfoType";
 import {showSuccess} from "../toasts/ReactToast";
+import Loader from "../loader/Loader";
+import {useNavigate} from "react-router-dom";
 
 interface AdminSettingsProps {}
 
 const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
-
 	const [businessInfoState, setBusinessInfoState] = useState<BusinessInfoType>({
 		deliveryFee: 0,
 		businessName: "",
 		businessSAddress: "",
 		businessPhone: "",
 	});
+	const navigate = useNavigate();
 
 	const formik = useFormik({
 		initialValues: {
@@ -65,36 +68,54 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	}, []);
 
 	if (!businessInfoState) {
-		return <div>Loading...</div>;
+		return <Loader />;
 	}
 
 	return (
-		<main className=' d-flex align-items-center flex-column'>
-			<img style={{marginBlock:100}} src='/Logo.png' alt="" />
-			<Box component='form' onSubmit={formik.handleSubmit} className='container'>
-				<TableContainer component={Paper}>
+		<main>
+			<Box
+				style={{
+					width: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					marginRight: "auto",
+					marginBlock: 50,
+				}}
+			>
+				<img src='/Logo.png' alt={businessInfoState.businessName} />
+			</Box>
+			<Box
+				maxWidth='md'
+				sx={{
+					backdropFilter: "blur(8px)",
+					p: 8,
+					border: 1,
+					borderRadius: 5,
+				}}
+				component='form'
+				onSubmit={formik.handleSubmit}
+				className='container'
+			>
+				<Typography variant='h4' gutterBottom textAlign={"center"}>
+					שינוי הגדרות אתר
+				</Typography>
+				<TableContainer sx={{borderRadius: 5, p: 1, border: 1}} component={Paper}>
 					<Table
 						sx={{
+							p: 5,
 							"& .MuiTableRow-root": {
-								"&:nth-of-type(even)": {
-									backgroundColor: "#f9f9f9",
-								},
 								"&:hover": {
-									backgroundColor: "#585858",
+									backgroundColor: "#5595d5ac",
 								},
 							},
 						}}
 					>
 						<TableHead>
 							<TableRow>
-								<TableCell align='center'>מחיר משלוח</TableCell>
-								<TableCell align='center'>שם העסק</TableCell>
-								<TableCell align='center'>כתובת העסק</TableCell>
-								<TableCell align='center'>טלפון העסק</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							<TableRow>
+								<TableCell width={"40%"} align='center'>
+									מחיר משלוח
+								</TableCell>
 								<TableCell>
 									<TextField
 										fullWidth
@@ -106,6 +127,9 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 										onChange={formik.handleChange}
 									/>
 								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell align='center'>שם העסק</TableCell>
 								<TableCell>
 									<TextField
 										fullWidth
@@ -125,6 +149,9 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 										}
 									/>
 								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell align='center'>כתובת העסק</TableCell>
 								<TableCell>
 									<TextField
 										fullWidth
@@ -144,6 +171,9 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 										}
 									/>
 								</TableCell>
+							</TableRow>
+							<TableRow>
+								<TableCell align='center'>טלפון העסק</TableCell>
 								<TableCell>
 									<TextField
 										fullWidth
@@ -164,15 +194,48 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 									/>
 								</TableCell>
 							</TableRow>
-						</TableBody>
+						</TableHead>
 					</Table>
 				</TableContainer>
-				<Box mt={2} textAlign='center'>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-between",
+					}}
+					mt={2}
+					textAlign='center'
+				>
+					<Button
+						onClick={() => navigate(-1)}
+						variant='outlined'
+						sx={{
+							fontSize: "1rem",
+							boxShadow: "0 0 10px red",
+							"&:hover": {
+								backgroundColor: "#be4848",
+								color: "gainsboro",
+							},
+							margin: "auto",
+						}}
+					>
+						חזרה
+					</Button>
 					<Button
 						type='submit'
-						variant='contained'
+						variant='outlined'
 						color='primary'
-						disabled={loadingSubmit}
+						size='large'
+						sx={{
+							fontSize: "1rem",
+							boxShadow: "0 0 10px #61bd2c",
+							"&:hover": {
+								backgroundColor: "#61bd2c",
+								color: "gainsboro",
+							},
+							margin: "auto",
+						}}
+						disabled={loadingSubmit || (formik.isValid && !formik.dirty)}
 					>
 						{loadingSubmit ? <CircularProgress size={20} /> : "עדכון"}
 					</Button>

@@ -22,6 +22,7 @@ import {AuthValues} from "../interfaces/authValues";
 import OrderDetails from "../components/pages/orders/OrederDetails";
 import ProducDetails from "../components/pages/products/ProducDetails";
 import Products from "../components/pages/products/Products";
+import Messages from "../atoms/userManage/Messages";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -34,6 +35,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Login} element={<Login />} />
 			<Route path={path.Profile} element={<Profile />} />
 			<Route path={path.Register} element={<Register />} />
+			<Route path={path.Messages} element={<Messages />} />
 			<Route
 				path={path.UsersManagement}
 				element={
@@ -42,7 +44,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			/>
 			<Route
 				path={path.AdminSettings}
-				element={auth && auth.role === RoleType.Admin ? <AdminSettings /> : <></>}
+				element={
+					(auth && auth.role === RoleType.Admin 
+					&& <AdminSettings />)
+				}
 			/>
 			<Route path={path.Receipt} element={auth?._id ? <Receipt /> : <></>} />
 			<Route path={path.Contact} element={<Contact />} />

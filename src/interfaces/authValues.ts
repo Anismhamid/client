@@ -27,6 +27,7 @@ export interface AuthValues {
 		first: string;
 		last: string;
 	};
+	email?:string,
 	phone: {
 		phone_1: string;
 		phone_2: string;

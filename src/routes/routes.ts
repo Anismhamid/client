@@ -28,6 +28,7 @@ export enum path {
 	Login = "/login",
 	Profile = "/profile",
 	Register = "/register",
+	Messages = "/messages",
 	UsersManagement = "/usersManagement",
 	Fruits = "/fruits",
 	AdminSettings = "/adminSettings",

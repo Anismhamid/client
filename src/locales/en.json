@@ -291,6 +291,7 @@
 		}
 	},
 	"accountMenu": {
+		"messages": "messages",
 		"account": "My Account",
 		"profile": "My Profile",
 		"settings": "Settings",
