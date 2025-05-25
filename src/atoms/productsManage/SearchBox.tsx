@@ -17,7 +17,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({text,searchQuery,setSearc
 				onSubmit={(e) => e.preventDefault()}
 				sx={{
 					position: "sticky",
-					width: {xs: "90%", sm: 400},
+					width: {xs: "60%", sm: 400},
 					m: "auto",
 					mt: 5,
 					mb: 4,

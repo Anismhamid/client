@@ -17,8 +17,8 @@ import {FunctionComponent, useEffect, useState} from "react";
 import * as yup from "yup";
 import {getBusinessInfo, updateBusinessInfo} from "../../services/businessInfo";
 import {BusinessInfoType} from "../../interfaces/businessInfoType";
-import {showSuccess} from "../toasts/ReactToast";
-import Loader from "../loader/Loader";
+import {showSuccess} from "../../atoms/toasts/ReactToast";
+import Loader from "../../atoms/loader/Loader";
 import {useNavigate} from "react-router-dom";
 
 interface AdminSettingsProps {}

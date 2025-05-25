@@ -9,7 +9,7 @@ import {Button} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import useNotificationSound from "../../../hooks/useNotificationSound";
-import SearchBox from "../../../atoms/SearchBox";
+import SearchBox from "../../../atoms/productsManage/SearchBox";
 import NewOrders from "./NewOrders";
 import PreviousOrders from "./PreviousOrders";
 import socket from "../../../socket/globalSocket";
@@ -88,7 +88,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	}, [previousOrders, searchQuery]);
 
 	useEffect(() => {
-
 		const handleStatusChange = (order: Order) => {
 			playNotificationSound();
 			setOrderStatuses((prev) => ({

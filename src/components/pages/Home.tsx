@@ -27,13 +27,14 @@ import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import SearchBox from "../../atoms/SearchBox";
+import SearchBox from "../../atoms/productsManage/SearchBox";
 import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import ColorsAndSizes from "../../atoms/productsManage/ColorsAndSizes";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
 import handleRTL from "../../locales/handleRTL";
 import {io} from "socket.io-client";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 interface HomeProps {}
 
@@ -166,7 +167,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		sale: boolean,
 		discount: number,
 	) => {
-		const productQuantity = quantity[product_name]; // Access the quantity of the specific product
+		const productQuantity = quantity[product_name] || 1; // Access the quantity of the specific product
 		if (!isLoggedIn) {
 			navigate(path.Login);
 			return;
@@ -213,6 +214,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<Box dir={diriction} component='main'>
+			<Typography variant='h5' my={10} textAlign={"center"}>
+				משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
+			</Typography>
 			{!searchQuery && <DiscountsAndOffers />}
 			{/* Search and filter products */}
 			<Box className='container'>
@@ -271,7 +275,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							return (
 								<Col key={product.product_name} xs={6} md={4} xl={3}>
 									<Card
-										style={{height: "95%"}}
+										style={{height: "98%"}}
 										className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
 									>
 										<Box
@@ -330,8 +334,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 											>
 												{product.product_name}
 											</Typography>
-											{product.sale ? (
-												<>
+											{product.sale && (
+												<Box
+													sx={{
+														textAlign: "center",
+													}}
+												>
 													<Chip
 														label={`${product.discount}% הנחה`}
 														color='error'
@@ -345,32 +353,30 @@ const Home: FunctionComponent<HomeProps> = () => {
 															{formatPrice(product.price)}
 														</s>
 													</Typography>
-												</>
-											) : (
-												<>
-													<Typography
-														variant='body2'
-														align='center'
-														className={
-															isOutOfStock
-																? "text-danger"
-																: "text-success"
-														}
-													>
-														{isOutOfStock
-															? "אזל מהמלאי"
-															: `במלאי: ${product.quantity_in_stock}`}
-													</Typography>
-
-													<Typography
-														variant='body2'
-														align='center'
-														color='text.secondary'
-													>
-														{unitText}
-													</Typography>
-												</>
+												</Box>
 											)}
+											<Typography
+												variant='body2'
+												align='center'
+												className={
+													isOutOfStock
+														? "text-danger"
+														: "text-success"
+												}
+											>
+												{isOutOfStock
+													? "אזל מהמלאי"
+													: `במלאי: ${product.quantity_in_stock}`}
+											</Typography>
+
+											<Typography
+												variant='body2'
+												align='center'
+												color='text.secondary'
+											>
+												{unitText}
+											</Typography>
+
 											<Box
 												sx={{
 													mt: 1,
@@ -400,6 +406,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 											>
 												<Button
 													size='small'
+													color='error'
 													disabled={isOutOfStock}
 													onClick={() =>
 														handleQuantity(
@@ -415,6 +422,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 												<Button
 													size='small'
+													color='error'
 													disabled={isOutOfStock}
 													onClick={() => {
 														handleQuantity(
@@ -427,7 +435,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												/>
 											</Box>
 										</Box>
-										<Button
+										<LoadingButton
 											onClick={() => {
 												handleAdd(
 													product.product_name,
@@ -438,20 +446,20 @@ const Home: FunctionComponent<HomeProps> = () => {
 													product.discount || 0,
 												);
 											}}
+											loadingPosition='center'
 											startIcon={<AddShoppingCartIcon />}
-											disabled={isOutOfStock}
+											disabled={
+												isOutOfStock ||
+												loadingAddToCart === product.product_name
+											}
 											variant='outlined'
-											color={isOutOfStock ? "primary" : "info"}
-										>
-											{loadingAddToCart === product.product_name ? (
-												<CircularProgress
-													size={20}
-													color='inherit'
-												/>
-											) : (
-												"הוסף לעגלה"
-											)}
-										</Button>
+											color={
+												isOutOfStock ||
+												loadingAddToCart === product.product_name
+													? "error"
+													: "success"
+											}
+										/>
 
 										{canEdit && (
 											<Box
@@ -459,13 +467,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 													display: "flex",
 													alignItems: "center",
 													justifyContent: "space-between",
-													p: 3,
+													p: 1,
 													mt: 1,
 												}}
-												className='cards-footer'
 											>
 												<Button
-													size='small'
+													size='medium'
 													color='warning'
 													aria-label='עריכה'
 													onClick={() => {
@@ -476,10 +483,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 													}}
 													startIcon={<EditIcon />}
 													variant='outlined'
+													sx={{
+														borderRadius: "0px 0px 10px 0px",
+													}}
 												/>
 
 												<Button
-													size='small'
+													size='medium'
 													color='error'
 													aria-label='מחיקה'
 													onClick={() =>
@@ -489,6 +499,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 													}
 													startIcon={<DeleteIcon />}
 													variant='outlined'
+													sx={{
+														borderRadius: "0px 0px 0px 10px",
+													}}
 												/>
 											</Box>
 										)}

@@ -30,9 +30,9 @@ import {
 	DialogContent,
 	DialogActions,
 } from "@mui/material";
-import {showError, showInfo} from "../toasts/ReactToast";
-import SearchBox from "../SearchBox";
-import EditUserData from "./EditUserData";
+import {showError, showInfo} from "../../atoms/toasts/ReactToast";
+import SearchBox from "../../atoms/productsManage/SearchBox";
+import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
 
 interface UersManagementProps {}
@@ -85,8 +85,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			);
 		};
 
-		socket
-			.on("user:newUserLoggedIn", handleUserConnected);
+		socket.on("user:newUserLoggedIn", handleUserConnected);
 
 		return () => {
 			socket.off("user:newUserLoggedIn", handleUserConnected);

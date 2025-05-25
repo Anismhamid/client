@@ -1,5 +1,5 @@
 import {Routes, Route} from "react-router-dom";
-import UsersManagement from "../atoms/userManage/UsersManagement";
+import UsersManagement from "../components/pages/UsersManagement";
 import {path, productsPathes} from "./routes";
 import Home from "../components/pages/Home";
 import Login from "../components/pages/Login";
@@ -13,8 +13,8 @@ import PageNotFound from "../components/pages/Png";
 import PrivacyAdnPolicy from "../components/pages/PrivacyAndPolicy";
 import Register from "../components/pages/Register";
 import TermOfUse from "../components/pages/TermOfUse";
-import AdminSettings from "../atoms/userManage/AdminSettengs";
-import Profile from "../atoms/userManage/Profile";
+import AdminSettings from "../components/pages/AdminSettengs";
+import Profile from "../components/pages/Profile";
 import Receipt from "../components/pages/orders/Receipt";
 import RoleType from "../interfaces/UserType";
 import {FunctionComponent} from "react";
@@ -22,7 +22,7 @@ import {AuthValues} from "../interfaces/authValues";
 import OrderDetails from "../components/pages/orders/OrederDetails";
 import ProducDetails from "../components/pages/products/ProducDetails";
 import Products from "../components/pages/products/Products";
-import Messages from "../atoms/userManage/Messages";
+import Messages from "../components/pages/Messages";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -44,10 +44,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			/>
 			<Route
 				path={path.AdminSettings}
-				element={
-					(auth && auth.role === RoleType.Admin 
-					&& <AdminSettings />)
-				}
+				element={auth && auth.role === RoleType.Admin && <AdminSettings />}
 			/>
 			<Route path={path.Receipt} element={auth?._id ? <Receipt /> : <></>} />
 			<Route path={path.Contact} element={<Contact />} />

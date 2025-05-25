@@ -1,7 +1,13 @@
 import Footer from "./components/settings/Footer.tsx";
 import {ToastContainer} from "react-toastify";
 import {useUser} from "./context/useUSer.tsx";
-import {CssBaseline, ThemeProvider, createTheme, PaletteMode, IconButton} from "@mui/material";
+import {
+	CssBaseline,
+	ThemeProvider,
+	createTheme,
+	PaletteMode,
+	IconButton,
+} from "@mui/material";
 import "./locales/i18n.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
@@ -10,7 +16,8 @@ import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
 import useSocketEvents from "./hooks/useSocketEvents.ts";
 import {useMemo, useState} from "react";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import handleRTL from "./locales/handleRTL.ts";
 
 function App() {
 	const {auth} = useUser();
@@ -23,7 +30,7 @@ function App() {
 		return stored === "light" ? "light" : "dark";
 	};
 	const [mode, setMode] = useState<PaletteMode>(getInitialMode());
-
+	const diriction = handleRTL();
 	const theme = useMemo(
 		() =>
 			createTheme({
@@ -35,11 +42,11 @@ function App() {
 								background: {default: "#f5f5f5"},
 							}
 						: {
-								primary: {main: "#90caf9"},
-								background: {default: "#121212"},
+								primary: {main: "#011c31"},
+								background: {default: "#000000"},
 							}),
 				},
-				direction: "rtl",
+				direction: diriction,
 			}),
 		[mode],
 	);
@@ -54,13 +61,12 @@ function App() {
 				sx={{
 					position: "sticky",
 					top: 60,
-					right:60,
+					right: 15,
 					zIndex: 5,
-					backgroundColor:"primary.main"
-
+					backgroundColor: "primary.main",
 				}}
 				onClick={() => navigate(-1)}
-				aria-label='back'
+				aria-label='back one step'
 			>
 				<ArrowForwardIcon />
 			</IconButton>

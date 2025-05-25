@@ -61,7 +61,7 @@ export const handleAddToCart = async (
 			// Reset quantity for this specific product after adding it to the cart
 			setQuantities((prevQuantities) => ({
 				...prevQuantities,
-				[product_name]: 0,
+				[product_name]:1,
 			}));
 		}
 	} catch (error) {

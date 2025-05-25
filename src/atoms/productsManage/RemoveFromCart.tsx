@@ -1,5 +1,5 @@
 import {FunctionComponent} from "react";
-import {formatPrice} from "../helpers/dateAndPriceFormat";
+import {formatPrice} from "../../helpers/dateAndPriceFormat";
 
 interface RemoveFromCartModalProps {
 	show: boolean;

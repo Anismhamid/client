@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import WarningIcon from "@mui/icons-material/Warning";
 import {getAllUsers} from "../../services/usersServices";
-import {showError, showInfo, showSuccess} from "../toasts/ReactToast";
+import {showError, showInfo, showSuccess} from "../../atoms/toasts/ReactToast";
 import {getUserMessages, postMessage} from "../../services/messages";
 import handleRTL from "../../locales/handleRTL";
 import RoleType from "../../interfaces/UserType";

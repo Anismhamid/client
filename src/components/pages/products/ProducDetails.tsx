@@ -94,7 +94,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	if (!productName) navigate(-1);
 
 	return (
-		<Container maxWidth='lg' sx={{py: 4}}>
+		<Container maxWidth='xl' sx={{py: 4, my: 5}}>
 			{/* Breadcrumbs Navigation */}
 			<Box sx={{mb: 4}}>
 				<Breadcrumbs aria-label='breadcrumb' separator='›'>
@@ -102,7 +102,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						color='inherit'
 						href={path.Home}
 						sx={{display: "flex", alignItems: "center"}}
-						startIcon={<HomeIcon sx={{mr: 0.5,ml:1}} fontSize='inherit' />}
+						startIcon={<HomeIcon sx={{mr: 0.5, ml: 1}} fontSize='inherit' />}
 					>
 						בית
 					</Button>
@@ -116,7 +116,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
 						מוצרים
 					</Button>
-					<Typography color='text.primary'>{product.product_name}</Typography>
+					<Typography p={3} color='primary.dark'>{product.product_name}</Typography>
 				</Breadcrumbs>
 			</Box>
 

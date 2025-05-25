@@ -25,7 +25,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useTranslation} from "react-i18next";
 import socket from "../../socket/globalSocket";
 import {patchUserStatus} from "../../services/usersServices";
-import ChipNavigation from "../../atoms/ChepNavigation";
+import ChipNavigation from "../../atoms/productsManage/ChepNavigation";
 
 interface NavBarProps {}
 /**
@@ -89,7 +89,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	return (
 		<>
-			<ChipNavigation/>
+			<ChipNavigation />
 			<AppBar
 				aria-label='Main navigation'
 				position='relative'

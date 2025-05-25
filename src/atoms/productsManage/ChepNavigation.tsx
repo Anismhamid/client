@@ -2,7 +2,7 @@ import {useRef, useState, useEffect, useCallback} from "react"; // Add useCallba
 import {Box, Chip, IconButton} from "@mui/material";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import {NavLink} from "react-router-dom";
-import {navbarCategoryLinks} from "../helpers/navCategoryies";
+import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
@@ -102,7 +102,7 @@ const ChipNavigation = () => {
 					scrollbarWidth: "none",
 					"&::-webkit-scrollbar": {display: "none"},
 					maskImage:
-						"linear-gradient(to right, transparent, white 16px, white 90%, transparent)",
+						"linear-gradient(to right, transparent, white 50px, white 90%, transparent)",
 				}}
 			>
 				{navbarCategoryLinks.map((link) => (
@@ -114,16 +114,15 @@ const ChipNavigation = () => {
 								sx={{
 									px: 2,
 									backgroundColor: isActive ? "black" : "primary.main",
-									color: isActive
-										? "white"
-										: "text.primary",
+									color: isActive ? "white" : "text.primary",
 									"&:hover": {
 										backgroundColor: isActive
 											? "primary.dark"
-											: "white",
-											boxShadow:7
+											: "deafult.main",
+										boxShadow: 7,
+										color:"primary.main"
 									},
-									boxShadow:5,
+									boxShadow: 5,
 									transition: "all 0.2s ease",
 									transform: isActive ? "scale(1.05)" : "scale(1)",
 								}}
