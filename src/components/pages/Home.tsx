@@ -220,7 +220,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					sx={{
 						position: "sticky",
 						zIndex: 1,
-						top: {xs: 55, md: 135, lg: 95},
+						top: 60,
 					}}
 				>
 					<SearchBox
@@ -280,7 +280,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 											sx={{
 												height: {
 													xs: "230px",
-													md: "250px",
+													md: "300px",
+													xl: "340px",
 												},
 											}}
 										>
@@ -312,9 +313,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 														height: "100%",
 													}}
 													onLoad={() => {
-														console.log(
-															`Image for ${product.product_name} loaded!`,
-														);
 														setLoadedImages((prev) => ({
 															...prev,
 															[product.product_name]: true,
@@ -451,7 +449,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													color='inherit'
 												/>
 											) : (
-												<>הוסף לעגלה</>
+												"הוסף לעגלה"
 											)}
 										</Button>
 
@@ -461,9 +459,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 													display: "flex",
 													alignItems: "center",
 													justifyContent: "space-between",
-													p: 1,
+													p: 3,
 													mt: 1,
-													borderTop: "1px solid #ff0000",
 												}}
 												className='cards-footer'
 											>

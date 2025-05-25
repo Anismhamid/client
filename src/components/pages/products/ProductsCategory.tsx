@@ -19,7 +19,7 @@ import {
 	CardContent,
 	CardMedia,
 	Chip,
-	CircularProgress,
+	IconButton,
 	Skeleton,
 	Typography,
 } from "@mui/material";
@@ -230,7 +230,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					sx={{
 						position: "sticky",
 						zIndex: 1,
-						top: {xs: 55, md: 135, lg: 95},
+						top: 60,
 					}}
 				>
 					<SearchBox
@@ -240,7 +240,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					/>
 				</Box>
 				<Box className='container pb-5'>
-					<Row spacing={5}>
+					
+					<Row className='mt-3' spacing={5}>
 						{filteredProducts
 							.slice(0, visibleProducts.length)
 							.map((product: Products) => {
@@ -279,8 +280,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 													sx={{
 														height: {
 															xs: "230px",
-															md: "230px",
-															xl: "300px",
+															md: "300px",
+															xl: "340px",
 														},
 													}}
 												>

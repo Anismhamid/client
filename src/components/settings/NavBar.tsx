@@ -25,6 +25,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useTranslation} from "react-i18next";
 import socket from "../../socket/globalSocket";
 import {patchUserStatus} from "../../services/usersServices";
+import ChipNavigation from "../../atoms/ChepNavigation";
 
 interface NavBarProps {}
 /**
@@ -88,60 +89,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 
 	return (
 		<>
-			<Box
-				sx={{
-					display: "flex",
-					flexWrap: {xs: "nowrap", md: "wrap"},
-					overflowX: {xs: "auto", md: "visible"},
-					scrollSnapType: "x mandatory",
-					scrollbarWidth: "none",
-					"&::-webkit-scrollbar": {display: "none"},
-					py: 1,
-
-					gap: 1,
-					fontWeight: "bold",
-					backdropFilter: "blur(10px);",
-					"& > a": {
-						flexShrink: 0,
-					},
-					width: "100%",
-					m: "auto",
-					position: "sticky",
-					top: 0,
-					boxShadow: 1,
-					backgroundColor: "#ffffff",
-					zIndex: 100,
-				}}
-			>
-				{navbarCategoryLinks.map((link) => (
-					<NavLink to={link.path} key={link.path}>
-						{({isActive}) => (
-							<Chip
-								label={t(link.labelKey)}
-								size='medium'
-								sx={{
-									px: 1,
-									backgroundColor: "#66B2FF",
-									mx: "3px",
-									"&:hover": {
-										transform: "scale(1.05)",
-										boxShadow: 7,
-										backgroundColor: "brown",
-									},
-									transition: "all 0.2s ease",
-									...(isActive && {
-										fontWeight: "bold",
-										boxShadow: 7,
-										transform: "scale(1.05)",
-										backgroundColor: "brown",
-										color: "white",
-									}),
-								}}
-							/>
-						)}
-					</NavLink>
-				))}
-			</Box>
+			<ChipNavigation/>
 			<AppBar
 				aria-label='Main navigation'
 				position='relative'

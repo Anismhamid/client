@@ -2,16 +2,43 @@ import {FunctionComponent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {getProductByspicificName} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
-import {Box, CircularProgress, Typography, Paper, Button} from "@mui/material";
+import {
+	Box,
+	CircularProgress,
+	Typography,
+	Button,
+	Card,
+	CardContent,
+	CardMedia,
+	IconButton,
+	Container,
+	Grid,
+	Divider,
+	Chip,
+	Breadcrumbs,
+	Link,
+	Rating,
+	useTheme,
+	useMediaQuery,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ShareIcon from "@mui/icons-material/Share";
+import HomeIcon from "@mui/icons-material/Home";
+import StoreIcon from "@mui/icons-material/Store";
+import {path} from "../../../routes/routes";
 
-interface ProducDetailsProps {}
+interface ProductDetailsProps {}
 
-const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
+const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const navigate = useNavigate();
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
 	useEffect(() => {
 		if (productName) {
@@ -37,81 +64,274 @@ const ProducDetails: FunctionComponent<ProducDetailsProps> = () => {
 
 	if (loading)
 		return (
-			<Box display='flex' justifyContent='center' mt={5}>
-				<CircularProgress />
+			<Box
+				display='flex'
+				justifyContent='center'
+				alignItems='center'
+				minHeight='80vh'
+			>
+				<CircularProgress color='primary' size={60} />
 			</Box>
 		);
 
 	if (error)
 		return (
-			<Box textAlign='center' mt={5}>
-				<Typography variant='h6' color='error' gutterBottom>
+			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
+				<Typography variant='h5' color='error' gutterBottom>
 					{error}
 				</Typography>
-				<Button variant='contained' onClick={() => navigate(-1)}>
-					חזור אחורה
+				<Button
+					variant='contained'
+					startIcon={<ArrowBackIcon />}
+					onClick={() => navigate(-1)}
+					sx={{mt: 3}}
+				>
+					חזור לדף הקודם
 				</Button>
-			</Box>
+			</Container>
 		);
 
-	if (!productName) return;
+	if (!productName) navigate(-1);
 
 	return (
-		<Box component={"main"}>
-			<Paper
-				elevation={3}
-				sx={{maxWidth: 600, margin: "30px auto", padding: 3, direction: "rtl"}}
-			>
-				<Typography variant='h4' gutterBottom>
-					{product.product_name}
-				</Typography>
-
-				{product.image_url && (
-					<Box
-						component='img'
-						src={product.image_url}
-						alt={product.product_name}
-						sx={{
-							width: "100%",
-							height: "auto",
-							maxHeight: 300,
-							objectFit: "contain",
-							mb: 2,
-							borderRadius: 1,
-						}}
-					/>
-				)}
-
-				{product.description && (
-					<Typography variant='body1' paragraph>
-						{product.description}
-					</Typography>
-				)}
-
-				{product.price && (
-					<Typography variant='h6' color='primary' gutterBottom>
-						מחיר: ₪{product.price.toFixed(2)}
-					</Typography>
-				)}
-
-				{product.category && (
-					<Typography variant='subtitle1' color='text.secondary'>
-						קטגוריה: {product.category}
-					</Typography>
-				)}
-
-				<Box mt={3}>
+		<Container maxWidth='lg' sx={{py: 4}}>
+			{/* Breadcrumbs Navigation */}
+			<Box sx={{mb: 4}}>
+				<Breadcrumbs aria-label='breadcrumb' separator='›'>
 					<Button
-						variant='contained'
-						color='error'
-						onClick={() => alert("הוספה לעגלה מכאן (לא ממומש)")}
+						color='inherit'
+						href={path.Home}
+						sx={{display: "flex", alignItems: "center"}}
+						startIcon={<HomeIcon sx={{mr: 0.5,ml:1}} fontSize='inherit' />}
 					>
-						הוסף לסל
+						בית
 					</Button>
-				</Box>
-			</Paper>
-		</Box>
+					<Button
+						color='inherit'
+						onClick={() => {
+							navigate(-1);
+						}}
+						sx={{display: "flex", alignItems: "center"}}
+					>
+						<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
+						מוצרים
+					</Button>
+					<Typography color='text.primary'>{product.product_name}</Typography>
+				</Breadcrumbs>
+			</Box>
+
+			<Grid container spacing={4}>
+				{/* Product Image */}
+				<Grid size={{xs: 12, md: 6}}>
+					<Card
+						sx={{
+							borderRadius: 2,
+							overflow: "hidden",
+							boxShadow: theme.shadows[3],
+							height: "100%",
+							display: "flex",
+							flexDirection: "column",
+						}}
+					>
+						{product.image_url && (
+							<CardMedia
+								component='img'
+								image={product.image_url}
+								alt={product.product_name}
+								sx={{
+									height: isMobile ? "300px" : "500px",
+									objectFit: "contain",
+									p: 2,
+									backgroundColor: "#f5f5f5",
+								}}
+							/>
+						)}
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								p: 2,
+								borderTop: `1px solid ${theme.palette.divider}`,
+							}}
+						>
+							<IconButton aria-label='add to favorites'>
+								<FavoriteBorderIcon color='primary' />
+							</IconButton>
+							<IconButton aria-label='share'>
+								<ShareIcon color='primary' />
+							</IconButton>
+						</Box>
+					</Card>
+				</Grid>
+
+				{/* Product Details */}
+				<Grid size={{xs: 12, md: 4}}>
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							height: "100%",
+						}}
+					>
+						<Typography
+							variant='h3'
+							component='h1'
+							gutterBottom
+							sx={{fontWeight: 700}}
+						>
+							{product.product_name}
+						</Typography>
+
+						{product.category && (
+							<Chip
+								label={product.category}
+								color='secondary'
+								sx={{mb: 3, alignSelf: "flex-start"}}
+							/>
+						)}
+
+						<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
+							<Rating value={4.5} precision={0.5} readOnly sx={{mr: 1}} />
+							<Typography variant='body2' color='text.secondary'>
+								(24 חוות דעת)
+							</Typography>
+						</Box>
+
+						{product.price !== undefined && (
+							<Typography
+								variant='h4'
+								color='primary'
+								gutterBottom
+								sx={{fontWeight: 700, mb: 3}}
+							>
+								₪{product.price.toFixed(2)}
+							</Typography>
+						)}
+
+						<Divider sx={{my: 3}} />
+
+						{product.description && (
+							<>
+								<Typography
+									variant='h6'
+									gutterBottom
+									sx={{fontWeight: 600}}
+								>
+									תיאור המוצר
+								</Typography>
+								<Typography
+									variant='body1'
+									color='text.secondary'
+									paragraph
+									sx={{mb: 3, lineHeight: 1.8}}
+								>
+									{product.description}
+								</Typography>
+							</>
+						)}
+
+						<Box sx={{mt: "auto", pt: 3}}>
+							<Grid container spacing={2}>
+								<Grid size={{xs: 12, md: 6}}>
+									<Button
+										fullWidth
+										variant='outlined'
+										size='large'
+										onClick={() => navigate(-1)}
+										sx={{
+											py: 1.5,
+											fontWeight: 700,
+											fontSize: "1.1rem",
+											borderRadius: 1,
+										}}
+									>
+										חזור לחנות
+									</Button>
+								</Grid>
+								<Grid size={{xs: 12, md: 6}}>
+									<Button
+										fullWidth
+										variant='contained'
+										size='large'
+										startIcon={<ShoppingCartIcon />}
+										onClick={() => alert("הוספה לעגלה")}
+										sx={{
+											py: 1.5,
+											fontWeight: 700,
+											fontSize: "1.1rem",
+											borderRadius: 1,
+										}}
+									>
+										הוסף לסל
+									</Button>
+								</Grid>
+							</Grid>
+						</Box>
+					</Box>
+				</Grid>
+			</Grid>
+
+			{/* Additional Information Section */}
+			<Box sx={{mt: 8}}>
+				<Typography variant='h5' gutterBottom sx={{fontWeight: 700, mb: 4}}>
+					פרטים נוספים
+				</Typography>
+				<Grid container spacing={4}>
+					<Grid size={{xs: 12, md: 4}}>
+						<Card
+							sx={{
+								p: 3,
+								height: "100%",
+								borderRadius: 2,
+								boxShadow: theme.shadows[2],
+							}}
+						>
+							<Typography variant='h6' gutterBottom sx={{fontWeight: 600}}>
+								משלוחים והחזרות
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
+							</Typography>
+						</Card>
+					</Grid>
+					<Grid size={{xs: 12, md: 4}}>
+						<Card
+							sx={{
+								p: 3,
+								height: "100%",
+								borderRadius: 2,
+								boxShadow: theme.shadows[2],
+							}}
+						>
+							<Typography variant='h6' gutterBottom sx={{fontWeight: 600}}>
+								תמיכה
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								צוות התמיכה שלנו זמין 24/7 לעזור עם כל שאלה או בעיה.
+							</Typography>
+						</Card>
+					</Grid>
+					<Grid size={{xs: 12, md: 4}}>
+						<Card
+							sx={{
+								p: 3,
+								height: "100%",
+								borderRadius: 2,
+								boxShadow: theme.shadows[2],
+							}}
+						>
+							<Typography variant='h6' gutterBottom sx={{fontWeight: 600}}>
+								אחריות
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								אחריות יצרן לשנה על כל המוצרים שלנו.
+							</Typography>
+						</Card>
+					</Grid>
+				</Grid>
+			</Box>
+		</Container>
 	);
 };
 
-export default ProducDetails;
+export default ProductDetails;

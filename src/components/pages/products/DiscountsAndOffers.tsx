@@ -88,7 +88,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											sx={{bgcolor: "grey.900"}}
 										/>
 									)}
-									<Link to={product.category}>
+									<Link to={`/category/${product.category}`}>
 										<img
 											src={product.image_url}
 											alt={product.product_name}
