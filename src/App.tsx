@@ -38,11 +38,11 @@ function App() {
 					mode,
 					...(mode === "light"
 						? {
-								primary: {main: "#005db9"},
+								primary: {main: "#002b57"},
 								background: {default: "#f5f5f5"},
 							}
 						: {
-								primary: {main: "#011c31"},
+								primary: {main: "#272727"},
 								background: {default: "#000000"},
 							}),
 				},
@@ -60,10 +60,12 @@ function App() {
 			<IconButton
 				sx={{
 					position: "sticky",
-					top: 60,
+					top: 63,
 					right: 15,
 					zIndex: 5,
-					backgroundColor: "primary.main",
+					border: 1,
+					borderColor: "#015396",
+					backgroundColor: "background.default",
 				}}
 				onClick={() => navigate(-1)}
 				aria-label='back one step'

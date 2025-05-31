@@ -1,5 +1,5 @@
 import {FunctionComponent, memo, useCallback, useEffect, useState} from "react";
-import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
@@ -285,6 +285,25 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					) : (
 						isLoggedIn && <AccountMenu logout={logout} />
 					)}
+					<Link
+						target='_blank'
+						rel='noopener noreferrer'
+						to='https://anismhamid.github.io/shok-habena-server-documentation/'
+					>
+						<Chip
+							variant='outlined'
+							sx={{
+								fontWeight: "bold",
+								boxShadow: 10,
+								"&:hover": {
+									transform: "scale(1.04)",
+								},
+								color: "#5B9601",
+							}}
+							// color='warning'
+							label='API documentation'
+						/>
+					</Link>
 				</Box>
 			</AppBar>
 		</>

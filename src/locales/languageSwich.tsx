@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {FunctionComponent} from "react";
 import {useTranslation} from "react-i18next";
 
@@ -13,10 +13,16 @@ const LanguageSwitcher: FunctionComponent<LanguageSwitcherProps> = () => {
 	};
 
 	return (
-		<Box >
-			<Button color="error" onClick={() => changeLanguage("ar")}>عربي</Button>
-			<Button centerRipple color="error" onClick={() => changeLanguage("he")}>עברית</Button>
-			<Button color="error" onClick={() => changeLanguage("en")}>English</Button>
+		<Box>
+			<Button color='error' onClick={() => changeLanguage("ar")}>
+				ar |
+			</Button>
+			<Button centerRipple color='error' onClick={() => changeLanguage("he")}>
+				he |
+			</Button>
+			<Button color='error' onClick={() => changeLanguage("en")}>
+				En |
+			</Button>
 		</Box>
 	);
 };

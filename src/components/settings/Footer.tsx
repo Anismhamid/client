@@ -13,9 +13,33 @@ const Footer: FunctionComponent<FooterProps> = () => {
 	const {t} = useTranslation();
 
 	return (
-		<footer>
+		<Box
+			component={"footer"}
+			sx={{
+				borderTop: "1px solid red",
+				borderColor: "red",
+			}}
+		>
 			<Box className='container py-5'>
 				<Box className='row'>
+					{/* Quick Links Section */}
+					<div className='col-4 mb-3'>
+						<h5>קישורים מהירים</h5>
+						<nav className='flex-column'>
+							<ul className='list-unstyled'>
+								{navbarCategoryLinks.map((pathes, index) => (
+									<li key={index}>
+										<NavLink
+											to={pathes.path}
+											className='text-primaty text-decoration-none'
+										>
+											{t(`${pathes.labelKey}`)}
+										</NavLink>
+									</li>
+								))}
+							</ul>
+						</nav>
+					</div>
 					{/* Store Info Section */}
 					<Box className='col-md-5 mb-3'>
 						<h3>שוק הבינה</h3>
@@ -41,25 +65,6 @@ const Footer: FunctionComponent<FooterProps> = () => {
 							</Link>
 						</p>
 					</Box>
-
-					{/* Quick Links Section */}
-					<div className='col-4 mb-3'>
-						<h5>קישורים מהירים</h5>
-						<nav className='flex-column'>
-							<ul className='list-unstyled'>
-								{navbarCategoryLinks.map((pathes, index) => (
-									<li key={index}>
-										<NavLink
-											to={pathes.path}
-											className='text-primaty text-decoration-none'
-										>
-											{t(`${pathes.labelKey}`)}
-										</NavLink>
-									</li>
-								))}
-							</ul>
-						</nav>
-					</div>
 
 					{/* Social Media Links Section */}
 					<Box className='col-md-3 mb-3'>
@@ -97,15 +102,23 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						</nav>
 					</Box>
 				</Box>
-
 				{/* Footer Bottom */}
-				<div className='row bg-transparent rounded border border-danger' dir='ltr'>
-					<div className='col text-center mt-3'>
-						<p>&copy; 2025 Corner Market Store. All rights reserved.</p>
-					</div>
-				</div>
+				<Box
+					dir='ltr'
+					sx={{
+						width: "100%",
+						mt: "30px",
+						textAlign: "center",
+						border: 1,
+						borderColor: "red",
+						p: 1,
+						borderRadius: 2,
+					}}
+				>
+					<p>&copy; 2025 Corner Market Store. All rights reserved.</p>
+				</Box>
 			</Box>
-		</footer>
+		</Box>
 	);
 };
 

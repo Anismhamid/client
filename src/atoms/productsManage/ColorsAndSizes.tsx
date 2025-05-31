@@ -18,11 +18,11 @@ const sizes = ["XS", "S", "M", "L", "XL"];
 const ColorsAndSizes: FunctionComponent<ColorsAndSizesProps> = ({category}) => {
 	const clothestype = ["women-clothes"].includes(category);
 	const bagstype = ["women-bags"].includes(category);
+	console.log(clothestype, bagstype);
 
 	return (
 		<>
-			<Box
-			>
+			<Box>
 				{clothestype ? (
 					<>
 						<Divider
@@ -177,7 +177,7 @@ const ColorsAndSizes: FunctionComponent<ColorsAndSizesProps> = ({category}) => {
 										alignItems: "center",
 										justifyContent: "center",
 										position: "relative",
-										margin:"auto"
+										margin: "auto",
 									}}
 								>
 									<Radio

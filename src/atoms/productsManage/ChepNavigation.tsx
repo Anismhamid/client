@@ -114,13 +114,13 @@ const ChipNavigation = () => {
 								sx={{
 									px: 2,
 									backgroundColor: isActive ? "black" : "primary.main",
-									color: isActive ? "white" : "text.primary",
+									color: isActive ? "white" : "white",
 									"&:hover": {
 										backgroundColor: isActive
 											? "primary.dark"
 											: "deafult.main",
 										boxShadow: 7,
-										color:"primary.main"
+										color: "primary.main",
 									},
 									boxShadow: 5,
 									transition: "all 0.2s ease",

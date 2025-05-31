@@ -83,7 +83,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "space-between",
-				backgroundColor: "#030000",
+				backgroundColor: "primary.main",
 			}}
 		>
 			<FormGroup>
@@ -102,13 +102,14 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				}}
 			>
 				<Typography
-					variant='inherit'
+					variant='overline'
 					sx={{
 						fontWeight: "bold",
-						color:"white"
+						color: "white",
+						ml: 1,
 					}}
 				>
-					Shok Habena
+					| Shok Habena
 				</Typography>
 			</Link>
 		</Box>
