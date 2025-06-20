@@ -89,9 +89,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
-			const productPrice = product.price || "";
+			const productPrice = product.price || 0;
 			const productInDiscount = product.sale ? "מבצע" : "";
-
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				(searchQuery && productPrice.toString().includes(searchQuery)) ||
@@ -115,7 +114,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		observer.observe(observerRef.current);
 
 		return () => {
-			if (observerRef.current) observer.unobserve(observerRef.current);
+			if (observer) observer.disconnect();
 		};
 	}, [filteredProducts.length, visibleCount, searchQuery, loading]);
 
@@ -156,6 +155,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		// Cleaning the listenr
 		return () => {
 			socket.off("product:quantity_in_stock");
+			socket.disconnect();
 		};
 	}, []);
 
@@ -183,6 +183,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					sale,
 					discount,
 				);
+				setQuantities((prev) => ({...prev, [product_name]: 1}));
 			} catch (error) {
 				showError("אירעה שגיאה בהוספת מוצר לעגלה");
 			} finally {
@@ -211,6 +212,22 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const canEdit = isAdmin || isModerator;
 
 	const diriction = handleRTL();
+
+	if (!loading && products.length === 0)
+		return (
+			<Box component={"main"} textAlign={"center"}>
+				<Typography textAlign={"center"} variant='h6' color='error'>
+					לא נמצאו מוצרים בחנות
+				</Typography>
+				<Button
+					onClick={() => window.location.reload()}
+					variant='contained'
+					sx={{mt: 5}}
+				>
+					נסה שוב
+				</Button>
+			</Box>
+		);
 
 	return (
 		<Box dir={diriction} component='main'>

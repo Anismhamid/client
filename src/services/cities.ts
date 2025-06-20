@@ -7,7 +7,6 @@ export const getCities = async (): Promise<string[]> => {
 		const citeis = await axios.get(`${api}/cities`);
 		return citeis.data;
 	} catch (error) {
-		console.log(error);
 		return [];
 	}
 };

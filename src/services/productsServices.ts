@@ -50,8 +50,7 @@ export const getAllProducts = async () => {
 	try {
 		const response = await axios.get(`${api}/products`);
 		return response.data;
-	} catch (error) {
-		console.log(error);
+	} catch (error: any) {
 		return [];
 	}
 };
@@ -69,7 +68,6 @@ export async function createNewProduct(products: Products) {
 
 		return response.data;
 	} catch (error) {
-		console.log(error);
 		return null;
 	}
 }
@@ -83,7 +81,6 @@ export async function getProductsInDiscount() {
 		const response = await axios.get(`${api}/discounts`);
 		return response.data;
 	} catch (error) {
-		console.log(error);
 		return [];
 	}
 }
