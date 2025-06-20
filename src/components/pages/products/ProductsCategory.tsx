@@ -210,8 +210,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
 
-		const clothestype = ["women-clothes"].includes(category);
-		const bagstype = ["women-bags"].includes(category);
 
 	if (loading) {
 		return <Loader />;
