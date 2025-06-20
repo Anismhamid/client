@@ -20,6 +20,11 @@
 	"email": "Email",
 	"searchin": "Search",
 
+	"loader": {
+		"welcome": "Welcome to Shok Habena store",
+		"message": "The first load may take up to 50 seconds because the server is free. Please be patient"
+	},
+
 	"categories": {
 		"fruit": {
 			"label": "Fruits",

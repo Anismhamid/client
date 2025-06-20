@@ -1,10 +1,12 @@
 import {FunctionComponent} from "react";
 import Style from "./loader.module.css";
 import {Box, Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 
 interface LoaderProps {}
 
 const Loader: FunctionComponent<LoaderProps> = () => {
+	const {t} = useTranslation();
 	return (
 		<Box component={"main"} role='status' aria-live='polite'>
 			<Box
@@ -15,11 +17,10 @@ const Loader: FunctionComponent<LoaderProps> = () => {
 				gap={4}
 			>
 				<Typography variant='h4' align='center'>
-					ברוכים הבאים לחנות שוק הפינה
+					{t("loader.welcome")}
 				</Typography>
 				<Typography variant='subtitle1' align='center' sx={{mt: 2}}>
-					הטעינה הראשונה עשויה להימשך עד 50 שניות מהסיבה שהשרת חינמי, אנא התאזרו
-					בסבלנות
+					{t("loader.message")}
 				</Typography>
 			</Box>
 			<div className={Style.loader}>
