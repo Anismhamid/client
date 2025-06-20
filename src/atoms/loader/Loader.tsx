@@ -1,11 +1,27 @@
 import {FunctionComponent} from "react";
 import Style from "./loader.module.css";
+import {Box, Typography} from "@mui/material";
 
 interface LoaderProps {}
 
 const Loader: FunctionComponent<LoaderProps> = () => {
 	return (
-		<main >
+		<Box component={"main"} role='status' aria-live='polite'>
+			<Box
+				display='flex'
+				flexDirection='column'
+				justifyContent='center'
+				alignItems='center'
+				gap={4}
+			>
+				<Typography variant='h4' align='center'>
+					ברוכים הבאים לחנות שוק הפינה
+				</Typography>
+				<Typography variant='subtitle1' align='center' sx={{mt: 2}}>
+					הטעינה הראשונה עשויה להימשך עד 50 שניות מהסיבה שהשרת חינמי, אנא התאזרו
+					בסבלנות
+				</Typography>
+			</Box>
 			<div className={Style.loader}>
 				<div className={Style.truckWrapper}>
 					<div className={Style.truckBody}>
@@ -135,7 +151,7 @@ h78.747C231.693,100.736,232.77,106.162,232.77,111.694z'
 					</svg>
 				</div>
 			</div>
-		</main>
+		</Box>
 	);
 };
 
