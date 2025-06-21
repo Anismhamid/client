@@ -28,7 +28,6 @@ import StoreIcon from "@mui/icons-material/Store";
 import {path} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
-import { Category } from "@mui/icons-material";
 
 interface ProductDetailsProps {}
 
@@ -92,8 +91,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			</Container>
 		);
 
-		const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
-
+	const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
 
 	if (!productName) navigate(-1);
 
