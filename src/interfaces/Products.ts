@@ -11,6 +11,8 @@ export interface Products {
 	image_url: string;
 	sale: boolean;
 	discount: number;
+	rating?: number;
+	reviewCount?: number;
 }
 
 export const initialProductValue = {
@@ -22,4 +24,6 @@ export const initialProductValue = {
 	image_url: "",
 	sale: false,
 	discount: 0,
+	rating: 0,
+	reviewCount: 0,
 };

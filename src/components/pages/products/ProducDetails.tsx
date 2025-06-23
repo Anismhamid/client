@@ -39,6 +39,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const navigate = useNavigate();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const [rating, setRating] = useState<number | null>(product.rating || null);
 
 	useEffect(() => {
 		if (productName) {
@@ -199,13 +200,14 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 							<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
 								<Rating
-									value={4.5}
+									// dir='ltr'
+									value={rating}
 									precision={0.5}
-									readOnly
+									onChange={(_, newValue) => setRating(newValue)}
 									sx={{mr: 1}}
 								/>
 								<Typography variant='body2' color='text.secondary'>
-									(24 חוות דעת)
+									( חוות דעת - {product.reviewCount || 0} )
 								</Typography>
 							</Box>
 
@@ -217,7 +219,9 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 							>
 								{formatPrice(product.price)}
 							</Typography>
+
 							<ColorsAndSizes category={capitalize(product.category)} />
+
 							<Divider sx={{my: 3}} />
 
 							{product.description && (

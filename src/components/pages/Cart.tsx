@@ -76,12 +76,9 @@ const Cart: FunctionComponent<CartProps> = () => {
 			getCartItems()
 				.then((cartItems) => {
 					setItems(cartItems);
-					setLoading(false);
 				})
-				.catch((err) => {
-					console.error(err);
-					setLoading(false);
-				});
+				.catch(() => {})
+				.finally(() => setLoading(false));
 		}
 	}, [decodedToken]);
 
