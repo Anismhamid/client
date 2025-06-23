@@ -144,7 +144,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		getProductsByCategory(category)
 			.then((res) => {
 				setProducts(res);
-
 				setVisibleProducts(res.slice(0, 16));
 
 				const initialQuantities = res.reduce(
@@ -214,6 +213,18 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	if (loading) {
 		return <Loader />;
 	}
+
+	if (!loading && products.length === 0)
+		return (
+			<Box component={"main"} textAlign={"center"}>
+				<Typography textAlign={"center"} variant='h6' color='error'>
+					לא נמצאו מוצרים בחנות
+				</Typography>
+				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
+					נסה שוב
+				</Button>
+			</Box>
+		);
 
 	return (
 		<>
