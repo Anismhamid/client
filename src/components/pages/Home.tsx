@@ -76,17 +76,20 @@ const Home: FunctionComponent<HomeProps> = () => {
 	useEffect(() => {
 		getAllProducts()
 			.then((products) => {
-				setProducts(products);
-				setVisibleProducts(products.slice(0, 16));
-				setLoading(false);
+				const safeProducts = Array.isArray(products) ? products : [];
+				setProducts(safeProducts);
+				setVisibleProducts(safeProducts.slice(0, 16));
 				window.scrollTo(0, 0);
 			})
-			.catch((err) => {
-				console.log(err);
-			});
+			.catch(() => {
+				setProducts([]);
+				setVisibleProducts([]);
+			})
+			.finally(() => setLoading(false));
 	}, [refresh]);
 
 	const filteredProducts = useMemo(() => {
+		if (!Array.isArray(products)) return [];
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || 0;
@@ -219,11 +222,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<Typography textAlign={"center"} variant='h6' color='error'>
 					לא נמצאו מוצרים בחנות
 				</Typography>
-				<Button
-					onClick={() => window.location.reload()}
-					variant='contained'
-					sx={{mt: 5}}
-				>
+				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
 					נסה שוב
 				</Button>
 			</Box>
@@ -540,17 +539,20 @@ const Home: FunctionComponent<HomeProps> = () => {
 					)}
 				</Row>
 			</Box>
-			<Box
-				ref={observerRef}
-				sx={{
-					height: 40,
-					display: "flex",
-					justifyContent: "center",
-					alignItems: "center",
-				}}
-			>
-				<CircularProgress size={24} aria-busy={"true"} />
-			</Box>
+			{visibleCount < filteredProducts.length && (
+				<Box
+					ref={observerRef}
+					sx={{
+						height: 40,
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+					}}
+				>
+					<CircularProgress size={24} aria-busy={"true"} />
+				</Box>
+			)}
+
 			<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
 				<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
 					<Typography variant='h4' gutterBottom>

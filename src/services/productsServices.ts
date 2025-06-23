@@ -49,8 +49,10 @@ export const updateProduct = async (productName: string, updatedProduct: Product
 export const getAllProducts = async () => {
 	try {
 		const response = await axios.get(`${api}/products`);
-		return response.data;
+		if (Array.isArray(response.data)) return response.data;
+		return [];
 	} catch (error: any) {
+		console.error(error);
 		return [];
 	}
 };
