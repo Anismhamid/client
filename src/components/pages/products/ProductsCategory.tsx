@@ -1,24 +1,15 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {deleteProduct, getProductsByCategory} from "../../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../../../interfaces/Products";
-import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
+import {handleAddToCart} from "../../../helpers/fruitesFunctions";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
 import {useCartItems} from "../../../context/useCart";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {
 	Box,
-	Card,
-	CardContent,
-	CardMedia,
-	Chip,
-	Skeleton,
 	Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
@@ -26,15 +17,12 @@ import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import Seo from "../../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
-import {Link, useNavigate} from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
-import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
-import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import socket from "../../../socket/globalSocket";
-import LoadingButton from "@mui/lab/LoadingButton";
+import ProductCard from "./ProductCard";
 
 interface ProductCategoryProps {
 	category: string;
@@ -257,7 +245,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 							.map((product: Products) => {
 								const isOutOfStock = product.quantity_in_stock <= 0;
 								const productQuantity =
-									quantities[product.product_name] || 1;
+									quantities[product.product_name] ?? 1;
 								const discountedPrice = product.sale
 									? product.price -
 										(product.price * (product.discount || 0)) / 100
@@ -273,254 +261,36 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									}[product.category?.toLowerCase()] || "ליחידה";
 
 								return (
-									<Col key={product._id} style={{marginBlock:10,border:1}} xs={6} md={4} xl={2}>
-										<Card
-											style={{height: "100%"}}
-											className='d-flex p-2 flex-column justify-content-between shadow-sm rounded-4'
-										>
-											<Box
-												position='relative'
-												width='100%'
-												sx={{
-													minHeight: {
-														xs: "230px",
-														md: "300px",
-														lg: "200px",
-													},
-												}}
-											>
-												<Link
-													to={`/product-details/${encodeURIComponent(product.product_name)}`}
-												>
-													{!loadedImages[
-														product.product_name
-													] && (
-														<Skeleton
-															variant='rounded'
-															width='100%'
-															height='100%'
-															animation='wave'
-															sx={{
-																position: "absolute",
-																top: 0,
-																left: 0,
-																zIndex: 1,
-															}}
-														/>
-													)}
-													<CardMedia
-														component='img'
-														loading='lazy'
-														image={product.image_url}
-														alt={product.product_name}
-														title={product.product_name}
-														sx={{
-															width: "100%",
-															height: "100%",
-														}}
-														onLoad={() => {
-															setLoadedImages((prev) => ({
-																...prev,
-																[product.product_name]:
-																	true,
-															}));
-														}}
-													/>
-												</Link>
-											</Box>
-											<CardContent sx={{flexGrow: 1}}>
-												<Typography
-													variant='h6'
-													align='center'
-													fontWeight='bold'
-													gutterBottom
-												>
-													{product.product_name}
-												</Typography>
-												{product.sale ? (
-													<Box
-														sx={{
-															textAlign: "center",
-														}}
-													>
-														<Chip
-															label={`${product.discount}% הנחה`}
-															color='error'
-															size='small'
-														/>
-														<Typography
-															variant='h6'
-															align='center'
-														>
-															<s>
-																{formatPrice(
-																	product.price,
-																)}
-															</s>
-														</Typography>
-													</Box>
-												) : (
-													<Typography
-														variant='body2'
-														align='center'
-														className={
-															isOutOfStock
-																? "text-danger"
-																: "text-success"
-														}
-													>
-														{isOutOfStock
-															? "אזל מהמלאי"
-															: `במלאי: ${product.quantity_in_stock}`}
-													</Typography>
-												)}
-
-												<Typography
-													variant='body2'
-													align='center'
-													color='text.secondary'
-												>
-													{unitText}
-												</Typography>
-												<Box
-													sx={{
-														textAlign: "center",
-													}}
-												>
-													<ColorsAndSizes category={category} />
-												</Box>
-												<Typography
-													variant='h5'
-													align='center'
-													color='success.main'
-												>
-													{formatPrice(discountedPrice)}
-												</Typography>
-											</CardContent>
-
-											<Box >
-												<Box
-													sx={{
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "space-between",
-														my: 1,
-													}}
-												>
-													<Button
-														size='small'
-														color='error'
-														disabled={isOutOfStock}
-														onClick={() =>
-															handleQuantity(
-																setQuantities,
-																"-",
-																product.product_name,
-															)
-														}
-														startIcon={<RemoveSharpIcon />}
-													/>
-
-													<Typography>
-														{productQuantity}
-													</Typography>
-
-													<Button
-														size='small'
-														color='error'
-														disabled={isOutOfStock}
-														onClick={() =>
-															handleQuantity(
-																setQuantities,
-																"+",
-																product.product_name,
-															)
-														}
-														startIcon={<AddSharpIcon />}
-													/>
-												</Box>
-											</Box>
-											<LoadingButton
-												fullWidth
-												onClick={() => {
-													handleAdd(
-														product.product_name,
-														quantities,
-														product.price,
-														product.image_url,
-														product.sale || false,
-														product.discount || 0,
-													);
-												}}
-												loading={
-													loadingAddToCart ===
-													product.product_name
-												}
-												loadingPosition='center'
-												startIcon={<AddShoppingCartIcon />}
-												disabled={
-													isOutOfStock ||
-													loadingAddToCart ===
-														product.product_name
-												}
-												variant='outlined'
-												color={
-													isOutOfStock ||
-													loadingAddToCart ===
-														product.product_name
-														? "error"
-														: "success"
-												}
-											/>
-
-											{canEdit && (
-												<Box
-													sx={{
-														width: "100%",
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "space-between",
-														p: 1,
-														mt: 1,
-													}}
-												>
-													<Button
-														size='medium'
-														color='warning'
-														aria-label='עריכה'
-														onClick={() => {
-															setProductNameToUpdate(
-																product.product_name,
-															);
-															onShowUpdateProductModal();
-														}}
-														startIcon={<EditIcon />}
-														variant='outlined'
-														sx={{
-															borderRadius:
-																"0px 0px 10px 0px",
-														}}
-													/>
-
-													<Button
-														size='medium'
-														color='error'
-														aria-label='מחיקה'
-														onClick={() =>
-															openDeleteModal(
-																product.product_name,
-															)
-														}
-														startIcon={<DeleteIcon />}
-														variant='outlined'
-														sx={{
-															borderRadius:
-																"0px 0px 0px 10px",
-														}}
-													/>
-												</Box>
-											)}
-										</Card>
+									<Col
+										key={product._id}
+										style={{marginBlock: 10, border: 1}}
+										xs={6}
+										md={4}
+										xl={2}
+									>
+										<ProductCard
+											key={product._id}
+											product={product}
+											productQuantity={productQuantity}
+											discountedPrice={discountedPrice}
+											unitText={unitText}
+											isOutOfStock={isOutOfStock}
+											quantities={quantities}
+											setQuantities={setQuantities}
+											loadingAddToCart={loadingAddToCart}
+											canEdit={canEdit}
+											setProductNameToUpdate={
+												setProductNameToUpdate
+											}
+											onShowUpdateProductModal={
+												onShowUpdateProductModal
+											}
+											openDeleteModal={openDeleteModal}
+											setLoadedImages={setLoadedImages}
+											loadedImages={loadedImages}
+											handleAdd={handleAdd}
+											category={category}
+										/>
 									</Col>
 								);
 							})}

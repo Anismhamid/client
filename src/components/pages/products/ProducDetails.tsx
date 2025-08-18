@@ -139,6 +139,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								height: "100%",
 								display: "flex",
 								flexDirection: "column",
+								// backgroundColor: "#FFFFFF",
 							}}
 						>
 							{product.image_url && (
@@ -150,7 +151,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										height: isMobile ? "300px" : "500px",
 										objectFit: "contain",
 										p: 2,
-										backgroundColor: "#f5f5f5",
+										backgroundColor: "#FFFFFF",
 									}}
 								/>
 							)}
