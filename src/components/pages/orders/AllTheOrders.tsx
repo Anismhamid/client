@@ -157,7 +157,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					onClick={() => setViewPreviousOrders(false)}
 					sx={{ml: 5}}
 				>
-					הצג את כל ההזמנות
+					הצג הזמנות קודמות
 				</Button>
 				<Button
 					variant='contained'

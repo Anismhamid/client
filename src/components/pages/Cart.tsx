@@ -91,14 +91,14 @@ const Cart: FunctionComponent<CartProps> = () => {
 	return (
 		<main>
 			<div className='container py-5'>
-				{items[0].products.length && (
+				{items.length > 0 && items[0].products.length > 0 && (
 					<div className=' text-center m-auto my-5'>
 						<Button
 							variant='contained'
 							color='primary'
 							onClick={scrollToContent}
 						>
-							{fontAwesomeIcon.arrowDown}{" "}
+							{fontAwesomeIcon.arrowDown}
 							<span className='ms-3'>לתשלום</span>
 						</Button>
 					</div>
@@ -134,7 +134,12 @@ const Cart: FunctionComponent<CartProps> = () => {
 											</Link>
 											{product.sale ? (
 												<>
+													<strong>
+														{product.product_name}
+													</strong>
+													| -{product.quantity} ק"ג
 													<h5 className='text-muted m-3'>
+														|
 														{formatPrice(
 															product.product_price,
 														)}
@@ -148,8 +153,6 @@ const Cart: FunctionComponent<CartProps> = () => {
 													{formatPrice(product.product_price)}
 												</h5>
 											)}
-											<strong>{product.product_name}</strong> -
-											{product.quantity} ק"ג{" "}
 										</div>
 
 										<Tooltip title='Delete'>

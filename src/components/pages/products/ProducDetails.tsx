@@ -29,9 +29,11 @@ import {path} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 
-interface ProductDetailsProps {}
+interface ProductDetailsProps {
+	handleAdd: Function;
+}
 
-const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
+const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => {
 	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -75,6 +77,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			</Box>
 		);
 
+	if (!productName) navigate(-1);
 	if (error)
 		return (
 			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
@@ -93,8 +96,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 		);
 
 	const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
-
-	if (!productName) navigate(-1);
 
 	return (
 		<Box component={"main"}>
@@ -268,7 +269,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 											variant='contained'
 											size='large'
 											startIcon={<ShoppingCartIcon />}
-											onClick={() => alert("הוספה לעגלה")}
+											onClick={() => handleAdd()}
 											sx={{
 												py: 1.5,
 												fontWeight: 700,
