@@ -273,19 +273,19 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									}[product.category?.toLowerCase()] || "ליחידה";
 
 								return (
-									<Col key={product._id} xs={6} md={4} xl={3}>
+									<Col key={product._id} style={{marginBlock:10,border:1}} xs={6} md={4} xl={2}>
 										<Card
-											style={{height: "98%"}}
-											className='d-flex mb-4 flex-column justify-content-between shadow-sm rounded-4'
+											style={{height: "100%"}}
+											className='d-flex p-2 flex-column justify-content-between shadow-sm rounded-4'
 										>
 											<Box
 												position='relative'
 												width='100%'
 												sx={{
-													height: {
+													minHeight: {
 														xs: "230px",
 														md: "300px",
-														xl: "340px",
+														lg: "200px",
 													},
 												}}
 											>
@@ -384,7 +384,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												</Typography>
 												<Box
 													sx={{
-														mt: 1,
 														textAlign: "center",
 													}}
 												>
@@ -399,12 +398,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												</Typography>
 											</CardContent>
 
-											<Box sx={{px: 2, pb: 2}}>
+											<Box >
 												<Box
 													sx={{
 														display: "flex",
 														alignItems: "center",
-														justifyContent: "space-around",
+														justifyContent: "space-between",
 														my: 1,
 													}}
 												>
