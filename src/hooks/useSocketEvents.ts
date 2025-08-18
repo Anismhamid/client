@@ -15,7 +15,7 @@ const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
-	const {playNotificationSound} = useNotificationSound();
+	const {playNotificationSound, showNotification} = useNotificationSound();
 
 	useEffect(() => {
 		if (!auth?._id) return;
@@ -73,6 +73,7 @@ const useSocketEvents = () => {
 					navigateTo: `/orderDetails/${newOrder.orderNumber}`,
 					orderNum: newOrder.orderNumber,
 				});
+				showNotification(`בוצעה הזמה חדשה על ידי ${newOrder.userId}`);
 			}
 		};
 
@@ -86,6 +87,7 @@ const useSocketEvents = () => {
 		}) => {
 			playNotificationSound();
 			showInfo(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
+			showNotification(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
 		};
 
 		// עדכון סטטוס כללי
@@ -108,7 +110,10 @@ const useSocketEvents = () => {
 						? `הזמנה מספר ${orderNumber} עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
 						: null;
 
-			if (msg) showInfo(msg);
+			if (msg) {
+				showInfo(msg);
+				showNotification(msg);
+			}
 		};
 
 		// משתמש חדש נרשם
@@ -116,6 +121,7 @@ const useSocketEvents = () => {
 			if (auth.role === RoleType.Admin) {
 				playNotificationSound();
 				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
+				showNotification(`${user.email} ${user.role} משתמש חדש נרשם`);
 			}
 		};
 
@@ -123,6 +129,7 @@ const useSocketEvents = () => {
 		const handleUserLoggedIn = (user: UserRegister) => {
 			if (auth.role === RoleType.Admin) {
 				playNotificationSound();
+
 				const msg =
 					user.role === RoleType.Admin
 						? `${user.email} משתמש אדמין התחבר`
@@ -130,6 +137,7 @@ const useSocketEvents = () => {
 							? `${user.email} משתמש מנחה התחבר`
 							: `${user.email} משתמש התחבר`;
 				showInfo(msg);
+				showNotification(msg);
 			}
 		};
 
