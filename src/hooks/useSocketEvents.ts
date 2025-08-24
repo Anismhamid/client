@@ -73,7 +73,7 @@ const useSocketEvents = () => {
 					navigateTo: `/orderDetails/${newOrder.orderNumber}`,
 					orderNum: newOrder.orderNumber,
 				});
-				showNotification(`בוצעה הזמה חדשה על ידי ${newOrder.userId}`);
+				showNotification(`تم إصدار أمر جديد بواسطة ${newOrder.userId}`);
 			}
 		};
 

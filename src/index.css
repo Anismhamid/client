@@ -115,3 +115,13 @@ footer {
   overscroll-behavior-x: contain;
   /* Prevent scroll chaining */
 }
+
+.logo-img{
+  background-image: url("/shokAlsakhnini.jpg");
+  width: 100%;
+  height: 600px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}

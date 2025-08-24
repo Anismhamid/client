@@ -212,162 +212,167 @@ const Home: FunctionComponent<HomeProps> = () => {
 		);
 
 	return (
-		<Box dir={diriction} component='main'>
-			<Typography variant='h5' my={10} textAlign={"center"}>
-				משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
-			</Typography>
-			{!searchQuery && <DiscountsAndOffers />}
-			{/* Search and filter products */}
-			<Box className='container'>
-				<Box
-					sx={{
-						position: "sticky",
-						zIndex: 1,
-						top: 60,
-					}}
-				>
-					<SearchBox
-						searchQuery={searchQuery}
-						text='חפש שם מוצר, מחיר או מבצע...'
-						setSearchQuery={setSearchQuery}
-					/>
-				</Box>
-
-				{/* Discounts Section */}
-				<Box
-					sx={{
-						backdropFilter: "blur(10px)",
-						width: "100%",
-						p: 1,
-						border: "1px solid red",
-						borderRadius: 3,
-						my: 5,
-					}}
-				>
-					<Typography align='center' variant='h6' gutterBottom>
-						כל המוצרים שלנו נבחרים בקפידה כדי להעניק לכם חוויית קנייה איכותית,
-						משתלמת ונוחה. תמצאו כאן מגוון רחב של פריטים – טריים, מהימנים
-						ובמחירים מעולים. אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע
-						הזמנה – אל תהססו לפנות אלינו! קנייה נעימה!
-					</Typography>
-				</Box>
-				<Box className='container pb-5'>
-					<Row className='mt-3' spacing={5}>
-						{visibleProducts.length > 0 ? (
-							visibleProducts.map((product) => {
-								const productQuantity =
-									quantities[product.product_name] ?? 1;
-								const isOutOfStock = product.quantity_in_stock <= 0;
-								const discountedPrice = product.sale
-									? product.price -
-										(product.price * (product.discount || 0)) / 100
-									: product.price;
-
-								const unitText =
-									{
-										spices: "ל/100 גרם",
-										fruit: 'ל/ק"ג',
-										vegetable: 'ל/ק"ג',
-										meat: 'ל/ק"ג',
-										fish: 'ל/ק"ג',
-									}[product.category?.toLowerCase()] || "ליחידה";
-
-								return (
-									<Col
-										key={product.product_name}
-										style={{marginBlock: 10, border: 1}}
-										xs={6}
-										md={4}
-										xl={2}
-									>
-										<ProductCard
-											key={product._id}
-											product={product}
-											productQuantity={productQuantity}
-											discountedPrice={discountedPrice}
-											unitText={unitText}
-											isOutOfStock={isOutOfStock}
-											quantities={quantities}
-											setQuantities={setQuantities}
-											loadingAddToCart={loadingAddToCart}
-											canEdit={canEdit}
-											setProductNameToUpdate={
-												setProductNameToUpdate
-											}
-											onShowUpdateProductModal={
-												onShowUpdateProductModal
-											}
-											openDeleteModal={openDeleteModal}
-											setLoadedImages={setLoadedImages}
-											loadedImages={loadedImages}
-											handleAdd={handleAdd}
-											category={""}
-										/>
-									</Col>
-								);
-							})
-						) : (
-							<>
-								<Typography variant='body1'>
-									לא נמצאו מוצרים תואמים. נסו לחפש לפי:
-								</Typography>
-								<Box mt={1}>
-									<Chip label='שם מוצר' sx={{mx: 0.5}} />
-									<Chip label='מחיר' sx={{mx: 0.5}} />
-									<Chip label='מבצע' sx={{mx: 0.5}} />
-								</Box>
-							</>
-						)}
-					</Row>
-				</Box>
-			</Box>
-			{visibleCount < filteredProducts.length && (
-				<Box
-					ref={observerRef}
-					sx={{
-						height: 40,
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-					}}
-				>
-					<CircularProgress size={24} aria-busy={"true"} />
-				</Box>
-			)}
-
-			<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
-				<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
-					<Typography variant='h4' gutterBottom>
-						אנו כאן לשירותכם!
-					</Typography>
-					<Typography variant='body1'>
-						אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע הזמנה, אל תהססו
-						לפנות אלינו! צוות שירות הלקוחות שלנו זמין 24/7 כדי לעזור לכם.
-					</Typography>
-					<Button
-						variant='contained'
-						size='large'
-						onClick={() => navigate(path.Contact)}
-						sx={{mt: 2}}
+		<>
+			<Box dir={diriction} component='main'>
+			<Box className="logo-img"/>
+				{/* <Typography variant='h5' my={10} textAlign={"center"}>
+					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
+				</Typography> */}
+				{!searchQuery && <DiscountsAndOffers />}
+				{/* Search and filter products */}
+				<Box className='container'>
+					<Box
+						sx={{
+							position: "sticky",
+							zIndex: 1,
+							top: 60,
+						}}
 					>
-						צור קשר
-					</Button>
+						<SearchBox
+							searchQuery={searchQuery}
+							text='חפש שם מוצר, מחיר או מבצע...'
+							setSearchQuery={setSearchQuery}
+						/>
+					</Box>
+
+					{/* Discounts Section */}
+					<Box
+						sx={{
+							backdropFilter: "blur(10px)",
+							width: "100%",
+							p: 1,
+							border: "1px solid red",
+							borderRadius: 3,
+							my: 5,
+						}}
+					>
+						<Typography align='center' variant='h6' gutterBottom>
+							כל המוצרים שלנו נבחרים בקפידה כדי להעניק לכם חוויית קנייה
+							איכותית, משתלמת ונוחה. תמצאו כאן מגוון רחב של פריטים – טריים,
+							מהימנים ובמחירים מעולים. אם יש לכם שאלות על המוצרים, המבצעים,
+							או איך לבצע הזמנה – אל תהססו לפנות אלינו! קנייה נעימה!
+						</Typography>
+					</Box>
+					<Box className='container pb-5'>
+						<Row className='mt-3' spacing={5}>
+							{visibleProducts.length > 0 ? (
+								visibleProducts.map((product) => {
+									const productQuantity =
+										quantities[product.product_name] ?? 1;
+									const isOutOfStock = product.quantity_in_stock <= 0;
+									const discountedPrice = product.sale
+										? product.price -
+											(product.price * (product.discount || 0)) /
+												100
+										: product.price;
+
+									const unitText =
+										{
+											spices: "ל/100 גרם",
+											fruit: 'ל/ק"ג',
+											vegetable: 'ל/ק"ג',
+											meat: 'ל/ק"ג',
+											fish: 'ל/ק"ג',
+										}[product.category?.toLowerCase()] || "ליחידה";
+
+									return (
+										<Col
+											key={product.product_name}
+											style={{marginBlock: 10, border: 1}}
+											xs={6}
+											md={4}
+											xl={2}
+										>
+											<ProductCard
+												key={product._id}
+												product={product}
+												productQuantity={productQuantity}
+												discountedPrice={discountedPrice}
+												unitText={unitText}
+												isOutOfStock={isOutOfStock}
+												quantities={quantities}
+												setQuantities={setQuantities}
+												loadingAddToCart={loadingAddToCart}
+												canEdit={canEdit}
+												setProductNameToUpdate={
+													setProductNameToUpdate
+												}
+												onShowUpdateProductModal={
+													onShowUpdateProductModal
+												}
+												openDeleteModal={openDeleteModal}
+												setLoadedImages={setLoadedImages}
+												loadedImages={loadedImages}
+												handleAdd={handleAdd}
+												category={""}
+											/>
+										</Col>
+									);
+								})
+							) : (
+								<>
+									<Typography variant='body1'>
+										לא נמצאו מוצרים תואמים. נסו לחפש לפי:
+									</Typography>
+									<Box mt={1}>
+										<Chip label='שם מוצר' sx={{mx: 0.5}} />
+										<Chip label='מחיר' sx={{mx: 0.5}} />
+										<Chip label='מבצע' sx={{mx: 0.5}} />
+									</Box>
+								</>
+							)}
+						</Row>
+					</Box>
 				</Box>
+				{visibleCount < filteredProducts.length && (
+					<Box
+						ref={observerRef}
+						sx={{
+							height: 40,
+							display: "flex",
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<CircularProgress size={24} aria-busy={"true"} />
+					</Box>
+				)}
+
+				<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
+					<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
+						<Typography variant='h4' gutterBottom>
+							אנו כאן לשירותכם!
+						</Typography>
+						<Typography variant='body1'>
+							אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע הזמנה, אל
+							תהססו לפנות אלינו! צוות שירות הלקוחות שלנו זמין 24/7 כדי לעזור
+							לכם.
+						</Typography>
+						<Button
+							variant='contained'
+							size='large'
+							onClick={() => navigate(path.Contact)}
+							sx={{mt: 2}}
+						>
+							צור קשר
+						</Button>
+					</Box>
+				</Box>
+				<UpdateProductModal
+					refresh={refreshAfterCange}
+					product_name={productNameToUpdate}
+					show={showUpdateProductModal}
+					onHide={() => onHideUpdateProductModal()}
+				/>
+				<AlertDialogs
+					show={showDeleteModal}
+					onHide={closeDeleteModal}
+					title={"אתה עומד למחוק מוצר מהחנות"}
+					description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}
+					handleDelete={() => handleDelete(productToDelete)}
+				/>
 			</Box>
-			<UpdateProductModal
-				refresh={refreshAfterCange}
-				product_name={productNameToUpdate}
-				show={showUpdateProductModal}
-				onHide={() => onHideUpdateProductModal()}
-			/>
-			<AlertDialogs
-				show={showDeleteModal}
-				onHide={closeDeleteModal}
-				title={"אתה עומד למחוק מוצר מהחנות"}
-				description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}
-				handleDelete={() => handleDelete(productToDelete)}
-			/>
-		</Box>
+		</>
 	);
 };
 
