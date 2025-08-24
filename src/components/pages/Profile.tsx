@@ -261,7 +261,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 																display='flex'
 																alignItems='center'
 																justifyContent='space-around'
-																width='100%'
+																width='80%'
+																margin={"auto"}
 																color={color}
 															>
 																<Typography>

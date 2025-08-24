@@ -253,11 +253,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 								const unitText =
 									{
-										spices: "ל/100 גרם",
-										fruit: 'ל/ק"ג',
-										vegetable: 'ל/ק"ג',
-										meat: 'ל/ק"ג',
-										fish: 'ל/ק"ג',
+										// spices: "ל/100 גרם",
+										fruit: "للكيلو",
+										vegetable: "للكيلو",
+										// meat: 'ל/ק"ג',
+										// fish: 'ל/ק"ג',
 									}[product.category?.toLowerCase()] || "ליחידה";
 
 								return (

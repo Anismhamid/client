@@ -21,7 +21,6 @@ import {handleQuantity} from "../../../helpers/fruitesFunctions";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 
-
 interface ProductCardProps {
 	product: Products;
 	productQuantity: number;
@@ -68,10 +67,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 				position='relative'
 				width='100%'
 				sx={{
-					minHeight: {
-						xs: "160px",
-						md: "200px",
-						lg: "200px",
+					maxHeight: {
+						xs: "130px",
+						md: "163px",
+						lg: "130px",
 					},
 				}}
 			>
@@ -99,8 +98,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						sx={{
 							width: "100%",
 							height: "100%",
-              borderRadius:3,
-              overflow: "hidden",
+							borderRadius: 3,
+							overflow: "hidden",
 						}}
 						onLoad={() => {
 							setLoadedImages((prev) => ({
@@ -122,8 +121,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						}}
 					>
 						<Chip
-							label={`${product.discount}% הנחה`}
-							color='error'
+							label={`${product.discount}% تخفيض`}
+							color='info'
 							size='small'
 						/>
 						<Typography variant='h6' align='center'>
@@ -132,13 +131,12 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 					</Box>
 				) : (
 					<Typography
-						variant='body2'
+						variant='h6'
 						align='center'
 						className={isOutOfStock ? "text-danger" : "text-success"}
 					>
-						{isOutOfStock
-							? "אזל מהמלאי"
-							: `במלאי: ${product.quantity_in_stock}`}
+						{isOutOfStock && "غير متوفر"}
+						{/* {product.quantity_in_stock} */}
 					</Typography>
 				)}
 

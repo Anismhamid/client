@@ -178,13 +178,13 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 				await postOrder(newOrder as Order);
 				setOrderDetails(newOrder as Order);
 				navigate(path.AllTheOrders);
-				showInfo("ממתין לאישור");
+				showInfo("في انتظار الموافقة على طلبك");
 				setQuantity((prev) => prev - prev);
 			}
 
 			setLoading(false);
 		} catch (error) {
-			showError("שגיאה בביצוע ההזמנה");
+			showError("حدث خطأ أثناء تقديم الطلب");
 		}
 	};
 
@@ -193,16 +193,16 @@ const diriction = handleRTL()
 	return (
 		<main dir={diriction} className='lead '>
 			<div className='container'>
-				<h1 className='text-center'>בחירת שיטת תשלום ואיסוף</h1>
+				<h1 className='text-center'>اختيار طريقة الدفع والاستلام</h1>
 				<div className=' text-center m-auto'>
 					<Button variant='contained' color='primary' onClick={scrollToContent}>
-						לתשלום
+						انتقال للدفع مباشرة
 					</Button>
 				</div>
 
 				{/* Cart Summary */}
 				<section className='mt-4 bg-gradient p-3'>
-					<h4>סיכום הסל</h4>
+					<h4>ملخص السلة</h4>
 					<ul className='list-group'>
 						{cartItems.length ? (
 							cartItems.map((item) => (
@@ -222,7 +222,7 @@ const diriction = handleRTL()
 												<strong>{product.product_name}</strong>
 												<h6>
 													{product.discount
-														? `הנחה ${product.discount}%`
+														? `تخفيض ${product.discount}%`
 														: ""}
 												</h6>
 											</div>
@@ -248,7 +248,7 @@ const diriction = handleRTL()
 				{/* Payment Methods Selection */}
 				<section className='bg-gradient p-3 rounded-3 my-5'>
 					<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
-						<h4>בחר שיטת תשלום</h4>
+						<h4>اختر طريقة الدفع</h4>
 						<fieldset disabled={formik.isSubmitting}>
 							<div className='mt-3'>
 								<div className='form-check mb-2'>
@@ -261,7 +261,7 @@ const diriction = handleRTL()
 										disabled={formik.values.cashOnDelivery}
 									/>
 									<label htmlFor='payment' className='form-check-label'>
-										כרטיס אשראי
+										بطاقة إئتمان
 									</label>
 								</div>
 								<div className='form-check'>
@@ -277,12 +277,12 @@ const diriction = handleRTL()
 										htmlFor='cashOnDelivery'
 										className='form-check-label'
 									>
-										מזומן
+										نقدي
 									</label>
 								</div>
 							</div>
 
-							<h4 className='mt-5'>בחר שיטת איסוף</h4>
+							<h4 className='mt-5'>اختر طريقة الاستلام</h4>
 							<div>
 								<div className='form-check'>
 									<Checkbox
@@ -297,7 +297,7 @@ const diriction = handleRTL()
 										htmlFor='selfCollection'
 										className='form-check-label'
 									>
-										איסוף עצמי
+										استلام ذاتي
 									</label>
 								</div>
 								<div className='form-check'>
@@ -313,7 +313,7 @@ const diriction = handleRTL()
 										htmlFor='delivery'
 										className='form-check-label'
 									>
-										משלוח
+										خدمة توصيل
 										<span className='text-danger fw-bold ms-2'>
 											+{" "}
 											{deliveryFee.toLocaleString("he-IL", {
@@ -380,7 +380,7 @@ const diriction = handleRTL()
 									{formik.isSubmitting ? (
 										<CircularProgress size={30} color='inherit' />
 									) : (
-										"אישור"
+										"تم"
 									)}
 								</Button>
 								<Button
@@ -388,7 +388,7 @@ const diriction = handleRTL()
 									color='error'
 									className='btn btn-danger me-5'
 								>
-									ביטול
+									إلغاء
 								</Button>
 							</div>
 						</fieldset>

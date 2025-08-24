@@ -95,6 +95,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				/>
 			</FormGroup>
 			<LanguageSwitcher />
+			خضار وفواكه
 			<Link
 				to='/'
 				style={{
@@ -102,15 +103,16 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				}}
 			>
 				<Typography
-					variant='overline'
+					variant='h6'
+					color='error'
 					sx={{
 						fontWeight: "bold",
-						color: "white",
 						ml: 1,
 					}}
 				>
-					| Shok Habena
+					| سوق السخنيني
 				</Typography>
+				<img style={{width: 50, margin: 1}} src='/myLogo2.png' alt='' />
 			</Link>
 		</Box>
 	);
