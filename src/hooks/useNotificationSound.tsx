@@ -20,7 +20,12 @@ const useNotificationSound = () => {
 			} else if (Notification.permission !== "denied") {
 				Notification.requestPermission().then((permission) => {
 					if (permission === "granted") {
-						new Notification(message);
+						new Notification(message, {
+							icon: "/myLogo2.png",
+						});
+						if ("vibrate" in navigator) {
+							navigator.vibrate([200, 100, 200]); // يهتز: 200ms توقف 100ms يهتز 200ms
+						}
 					}
 				});
 			}
