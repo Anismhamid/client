@@ -189,7 +189,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	};
 
 	if (loading) return <Loader />;
-const diriction = handleRTL()
+	const diriction = handleRTL();
 	return (
 		<main dir={diriction} className='lead '>
 			<div className='container'>
@@ -240,7 +240,7 @@ const diriction = handleRTL()
 								</div>
 							))
 						) : (
-							<h5 className='text-danger'>אין מוצרים בסל</h5>
+							<h5 className='text-danger'>لا يوجد منتجات في السلة</h5>
 						)}
 					</ul>
 				</section>

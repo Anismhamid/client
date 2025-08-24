@@ -95,7 +95,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				/>
 			</FormGroup>
 			<LanguageSwitcher />
-			خضار وفواكه
+			<img style={{width: 50, margin: 1}} src='/myLogo2.png' alt='' />
 			<Link
 				to='/'
 				style={{
@@ -108,11 +108,11 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					sx={{
 						fontWeight: "bold",
 						ml: 1,
+						letterSpacing: "0.15em",
 					}}
 				>
 					| سوق السخنيني
 				</Typography>
-				<img style={{width: 50, margin: 1}} src='/myLogo2.png' alt='' />
 			</Link>
 		</Box>
 	);
