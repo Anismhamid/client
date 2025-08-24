@@ -214,7 +214,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	return (
 		<>
 			<Box dir={diriction} component='main'>
-			<Box className="logo-img"/>
+				<Box className='logo-img' />
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
 					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
 				</Typography> */}
@@ -268,11 +268,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 									const unitText =
 										{
-											spices: "ל/100 גרם",
-											fruit: 'ל/ק"ג',
-											vegetable: 'ל/ק"ג',
-											meat: 'ל/ק"ג',
-											fish: 'ל/ק"ג',
+											// spices: "ל/100 גרם",
+											fruit: "للكيلو-1",
+											vegetable: "للكيلو-1",
+											// meat: 'ל/ק"ג',
+											// fish: 'ל/ק"ג',
 										}[product.category?.toLowerCase()] || "ליחידה";
 
 									return (
@@ -341,12 +341,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
 					<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
 						<Typography variant='h4' gutterBottom>
-							אנו כאן לשירותכם!
+							نحن هنا لخدمتكم!
 						</Typography>
 						<Typography variant='body1'>
-							אם יש לכם שאלות על המוצרים, המבצעים, או איך לבצע הזמנה, אל
-							תהססו לפנות אלינו! צוות שירות הלקוחות שלנו זמין 24/7 כדי לעזור
-							לכם.
+							إذا كانت لديك أي أسئلة حول منتجاتنا أو عروضنا الترويجية أو
+							كيفية تقديم طلب، فلا تتردد في التواصل معنا! فريق خدمة العملاء
+							لدينا متاح على مدار الساعة طوال أيام الأسبوع لمساعدتك
 						</Typography>
 						<Button
 							variant='contained'
@@ -354,7 +354,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							onClick={() => navigate(path.Contact)}
 							sx={{mt: 2}}
 						>
-							צור קשר
+							اتصل بنا
 						</Button>
 					</Box>
 				</Box>

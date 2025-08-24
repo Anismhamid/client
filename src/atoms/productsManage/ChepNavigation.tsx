@@ -56,9 +56,9 @@ const ChipNavigation = () => {
 				top: 0,
 				zIndex: 10,
 				backgroundColor: "white",
-				"& .scroll-button": {
-					opacity: 1,
-				},
+				// "& .scroll-button": {
+				// 	opacity: 1,
+				// },
 			}}
 			// onMouseEnter={() => setShowControls(true)}
 			// onMouseLeave={() => setShowControls(false)}
@@ -115,11 +115,13 @@ const ChipNavigation = () => {
 								clickable
 								sx={{
 									px: 2,
-									backgroundColor: isActive ? "black" : "primary.main",
+									backgroundColor: isActive
+										? "primary.main"
+										: "primary.main",
 									color: isActive ? "white" : "white",
 									"&:hover": {
 										backgroundColor: isActive
-											? "primary.dark"
+											? "#D52941"
 											: "deafult.main",
 										boxShadow: 7,
 										color: "primary.main",

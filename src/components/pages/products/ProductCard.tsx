@@ -60,8 +60,18 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 }) => {
 	return (
 		<Card
-			style={{height: "100%"}}
-			className='d-flex p-1 flex-column justify-content-between shadow-sm rounded-4'
+			style={{
+				height: "100%",
+				borderRadius: 20,
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				justifyContent: "space-around",
+				border: "1px solid black",
+				padding: 10,
+				boxShadow: "0px 0px 1px white",
+			}}
+			className='card-hover'
 		>
 			<Box
 				position='relative'

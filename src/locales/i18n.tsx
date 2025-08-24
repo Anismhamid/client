@@ -5,7 +5,7 @@ import translationEN from "./en.json";
 import translationHE from "./he.json";
 import translationAR from "./ar.json";
 
-const savedLanguage = localStorage.getItem("lang") || "he";
+const savedLanguage = localStorage.getItem("lang") || "ar";
 
 i18n.use(initReactI18next).init({
 	resources: {
@@ -14,7 +14,7 @@ i18n.use(initReactI18next).init({
 		ar: {translation: translationAR},
 	},
 	lng: savedLanguage,
-	fallbackLng: ["ar", "en"],
+	fallbackLng: ["en", "he","ar"],
 
 	interpolation: {
 		escapeValue: false,

@@ -116,7 +116,7 @@ footer {
   /* Prevent scroll chaining */
 }
 
-.logo-img{
+.logo-img {
   background-image: url("/shokAlsakhnini.jpg");
   width: 100%;
   height: 600px;
@@ -124,4 +124,19 @@ footer {
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
+}
+
+.card-hover:hover {
+  animation: identifier 1s ease-in-out infinite alternate;
+  transition: all 0.3s ease-out;
+}
+
+@keyframes identifier {
+  from {
+    transform: rotateX(0deg);
+  }
+
+  to {
+    transform: rotateX(20deg);
+  }
 }
