@@ -4,6 +4,7 @@ import {styled} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
 import {Link} from "react-router-dom";
+import handleRTL from "../../locales/handleRTL";
 
 interface ThemeProps {
 	mode: PaletteMode;
@@ -76,45 +77,72 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 		localStorage.setItem("theme", newMode);
 	};
 
+	const dir = handleRTL();
+
 	return (
-		<Box
-			sx={{
-				zIndex: 1000,
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "space-between",
-				backgroundColor: "primary.main",
-			}}
-		>
-			<FormGroup>
-				<FormControlLabel
-					checked={mode === "dark"}
-					onChange={handleThemeChange}
-					control={<MaterialUISwitch sx={{m: 1}} />}
-					label=''
-				/>
-			</FormGroup>
-			<LanguageSwitcher />
-			<img style={{width: 50, margin: 1}} src='/myLogo2.png' alt='' />
-			<Link
-				to='/'
-				style={{
-					textDecoration: "none",
+		<>
+			<Box
+				dir={dir}
+				sx={{
+					zIndex: 1000,
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "space-between",
+					backgroundColor: "primary.main",
+				}}
+			>
+				<FormGroup>
+					<FormControlLabel
+						checked={mode === "dark"}
+						onChange={handleThemeChange}
+						control={<MaterialUISwitch sx={{m: 1}} />}
+						label=''
+					/>
+				</FormGroup>
+				<LanguageSwitcher />
+				<img style={{width: 50, padding: 0}} src='/myLogo2.png' alt='' />
+				<Link
+					to='/'
+					style={{
+						textDecoration: "none",
+					}}
+				>
+					<Typography
+						variant='h6'
+						color='error'
+						sx={{
+							fontWeight: "bold",
+							ml: 1,
+							fontSize: "2rem",
+							fontFamily: "Hebbo",
+						}}
+					>
+						| سـوق الـسـخـنـيـني
+					</Typography>
+				</Link>
+			</Box>
+			<Box
+				sx={{
+					display: "block",
+					backgroundColor: "primary.main",
+					borderTop: "2px solid #7E9810",
 				}}
 			>
 				<Typography
 					variant='h6'
 					color='error'
 					sx={{
-						fontWeight: "bold",
-						ml: 1,
-						letterSpacing: "0.15em",
+						fontSize: "0.9rem",
+						fontFamily: "Hebbo",
+						color: "white",
+						p: 1,
+						textAlign: "center",
 					}}
 				>
-					| سوق السخنيني
+					الـسـخـنـيـني للخـضـار وفـواكـة
 				</Typography>
-			</Link>
-		</Box>
+			</Box>
+		</>
 	);
 };
 

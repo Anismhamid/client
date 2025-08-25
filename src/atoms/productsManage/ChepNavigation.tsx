@@ -56,6 +56,10 @@ const ChipNavigation = () => {
 				top: 0,
 				zIndex: 10,
 				backgroundColor: "white",
+				boxShadow: 9,
+				borderBottom: "1px solid black",
+				m: 1,
+				borderRadius: 5,
 				// "& .scroll-button": {
 				// 	opacity: 1,
 				// },
@@ -102,6 +106,7 @@ const ChipNavigation = () => {
 					overflowX: "auto",
 					scrollBehavior: "smooth",
 					scrollbarWidth: "none",
+
 					"&::-webkit-scrollbar": {display: "none"},
 					maskImage:
 						"linear-gradient(to right, transparent, white 50px, white 90%, transparent)",

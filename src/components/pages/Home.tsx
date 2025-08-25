@@ -247,13 +247,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 						}}
 					>
 						<Typography align='center' variant='h6' gutterBottom>
-							כל המוצרים שלנו נבחרים בקפידה כדי להעניק לכם חוויית קנייה
-							איכותית, משתלמת ונוחה. תמצאו כאן מגוון רחב של פריטים – טריים,
-							מהימנים ובמחירים מעולים. אם יש לכם שאלות על המוצרים, המבצעים,
-							או איך לבצע הזמנה – אל תהססו לפנות אלינו! קנייה נעימה!
+							جميع منتجاتنا مختارة بعناية لنقدم لكم تجربة تسوق مريحة وعالية
+							الجودة وبأسعار معقولة. ستجدون هنا تشكيلة واسعة من المنتجات
+							الطازجة والموثوقة وبأسعار مميزة. لأي استفسارات حول المنتجات أو
+							العروض الترويجية أو كيفية الطلب، تواصلوا معنا! استمتعوا
+							بتسوقكم!
 						</Typography>
 					</Box>
-					<Box className='container pb-5'>
+					<Box  className='container pb-5 home-row'>
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (
 								visibleProducts.map((product) => {
@@ -338,7 +339,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</Box>
 				)}
 
-				<Box sx={{bgcolor: "background.paper", py: 6, mt: 6}}>
+				<Box sx={{bgcolor: "background.paper", py: 6}}>
 					<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
 						<Typography variant='h4' gutterBottom>
 							نحن هنا لخدمتكم!

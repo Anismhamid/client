@@ -9,6 +9,7 @@ import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useTranslation } from "react-i18next";
 
 interface SpeedDialComponentProps {}
 
@@ -17,6 +18,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const [visible, setVisible] = useState(false);
+	const {t} = useTranslation();
 
 	const handleScroll = () => {
 		setVisible(window.scrollY > 300);
@@ -36,7 +38,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 	const actions = [
 		{
 			icon: <AddSharpIcon />,
-			name: "מוצר חדש",
+			name: t("SpeedDial.actions.addProduct"),
 			addClick: () => showAddProductModal(),
 		},
 	];
@@ -78,7 +80,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 			) : (
 				auth?._id && (
 					<SpeedDial
-						ariaLabel='cart'
+						ariaLabel={t("SpeedDial.actions.cart")}
 						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
 						icon={fontAwesomeIcon.cartInoc}
 						onClick={() => {

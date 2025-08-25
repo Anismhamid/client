@@ -6,6 +6,8 @@ import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {getProductByspicificName, updateProduct} from "../../services/productsServices";
 import {productCategories} from "../../interfaces/productsCategoeis";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../locales/handleRTL";
 
 interface UpdateProductModalProps {
 	show: boolean;
@@ -20,6 +22,8 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	product_name,
 	refresh,
 }) => {
+	const {t} = useTranslation();
+
 	const [product, setProduct] = useState<{
 		product_name: string;
 		category: string;
@@ -65,22 +69,26 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		validationSchema: yup.object({
 			product_name: yup
 				.string()
-				.min(2, "שם המוצר חייב להיות באורך של לפחות 2 תווים")
-				.required("שם מוצר שדה חובה"),
-			category: yup.string().required(""),
-			price: yup.number().required("מחיר הוא שדה חובה"),
+				.min(2, t("modals.updateProductModal.validation.productNameMin"))
+				.required(t("modals.updateProductModal.validation.productNameRequired")),
+			category: yup
+				.string()
+				.required(t("modals.updateProductModal.validation.categoryRequired")),
+			price: yup
+				.number()
+				.required(t("modals.updateProductModal.validation.priceRequired")),
 			quantity_in_stock: yup
 				.number()
-				.min(1, "כמות המוצר במלאי חייב להיות 1 לפחות")
-				.required("כמות המוצרים במלאי הוא שדה חובה"),
+				.min(1, t("modals.updateProductModal.validation.quantityMin"))
+				.required(t("modals.updateProductModal.validation.quantityRequired")),
 			description: yup
 				.string()
-				.min(2, "התיאור חייב להיות באורך 2 תווים לפחות")
-				.max(500, "התיאור חייב להיות באורך של 500 תווים לכל היותר"),
+				.min(2, t("modals.updateProductModal.validation.descriptionMin"))
+				.max(500, t("modals.updateProductModal.validation.descriptionMax")),
 			image_url: yup
 				.string()
-				.required("כתובת אתר תמונה היא שדה חובה")
-				.url("כתובת האתר של התמונה חייבת להיות כתובת אתר חוקית"),
+				.required(t("modals.updateProductModal.validation.imageUrlRequired"))
+				.url(t("modals.updateProductModal.validation.imageUrlInvalid")),
 			sale: yup.boolean(),
 			discount: yup.number(),
 		}),
@@ -97,6 +105,8 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		},
 	});
 
+	const dir = handleRTL();
+
 	return (
 		<Modal
 			style={{
@@ -105,10 +115,16 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			show={show}
 			onHide={() => onHide()}
 			centered
-			dir='rtl'
+			dir={dir}
 		>
 			<ModalHeader closeButton>
-				<h6 className='display-6  p-2 fw-bold text-center'>עידכון פרטי מוצר</h6>
+				<h6
+					title={t("modals.updateProductModal.title")}
+					aria-label={t("modals.updateProductModal.title")}
+					className='display-6  p-2 fw-bold text-center'
+				>
+					{t("modals.updateProductModal.title")}
+				</h6>
 			</ModalHeader>
 			<Modal.Body className='rounded  d-flex justify-content-center align-items-center'>
 				<div className='container '>
@@ -122,9 +138,17 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								onChange={formik.handleChange}
 								className='form-control'
 								id='product_name'
-								placeholder='שם מוצר'
+								placeholder={t(
+									"modals.updateProductModal.productNamePlaceholder",
+								)}
 							/>
-							<label htmlFor='product_name'>שם מוצר (ייחודי)</label>
+							<label
+								htmlFor='product_name'
+								title={t("modals.updateProductModal.productName")}
+								aria-label={t("modals.updateProductModal.productName")}
+							>
+								{t("modals.updateProductModal.productName")}
+							</label>
 							{(formik.touched.product_name ||
 								formik.errors.product_name) && (
 								<p className='text-danger fw-bold'>
@@ -136,16 +160,27 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						{/* category */}
 						<div className='input-group-sm mb-3 form-select'>
 							<select
+								title={t("modals.updateProductModal.selectCategory")}
+								aria-label={t("modals.updateProductModal.selectCategory")}
 								name='category'
 								value={formik.values.category}
 								onChange={formik.handleChange}
 								className='form-control'
 								id='category'
 							>
-								<option disabled>בחר קטגוריה</option>
+								<option disabled>
+									{t("modals.updateProductModal.selectCategory")}
+								</option>
 								{productCategories.map(
 									(category: {id: string; label: string}) => (
-										<option value={category.id} key={category.id}>
+										<option
+											aria-label={t(
+												"modals.updateProductModal.selectCategory",
+											)}
+											title={category.id}
+											value={category.id}
+											key={category.id}
+										>
 											{category.label}
 										</option>
 									),

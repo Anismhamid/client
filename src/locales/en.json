@@ -19,7 +19,71 @@
 	"customer": "Customer",
 	"email": "Email",
 	"searchin": "Search",
-
+	"SpeedDial": {
+		"actions": {
+			"addProduct": "Add Product",
+			"cart": "Cart",
+			"backToTop": "Back to top"
+		}
+	},
+	"modals": {
+		"addProductModal": {
+			"title": "Add New Product",
+			"productName": "Product Name (Unique)",
+			"productNamePlaceholder": "Product Name",
+			"category": "Category",
+			"selectCategory": "Select Category",
+			"price": "Price",
+			"quantity": "Quantity in Stock",
+			"description": "Product Description",
+			"descriptionPlaceholder": "Enter product description",
+			"imageUrl": "Image URL",
+			"sale": "On Sale",
+			"discount": "Discount %",
+			"addButton": "Add",
+			"closeButton": "Close",
+			"validation": {
+				"productNameRequired": "Product name is required",
+				"productNameMin": "Product name must be at least 2 characters",
+				"categoryRequired": "Category is required",
+				"priceRequired": "Price is required",
+				"quantityRequired": "Quantity in stock is required",
+				"quantityMin": "Quantity in stock must be at least 1",
+				"descriptionMin": "Description must be at least 2 characters",
+				"descriptionMax": "Description must not exceed 500 characters",
+				"imageUrlRequired": "Image URL is required",
+				"imageUrlInvalid": "Image URL must be valid"
+			}
+		},
+		"updateProductModal": {
+			"title": "Update Product Details",
+			"productName": "Product Name (Unique)",
+			"productNamePlaceholder": "Product Name",
+			"category": "Category",
+			"selectCategory": "Select Category",
+			"price": "Price",
+			"quantity": "Quantity in Stock",
+			"description": "Product Description",
+			"descriptionPlaceholder": "Enter product description",
+			"imageUrl": "Image URL",
+			"sale": "On Sale",
+			"discount": "Discount %",
+			"updateButton": "Update",
+			"closeButton": "Close",
+			"validation": {
+				"productNameRequired": "Product name is required",
+				"productNameMin": "Product name must be at least 2 characters",
+				"categoryRequired": "Category is required",
+				"priceRequired": "Price is required",
+				"quantityRequired": "Quantity in stock is required",
+				"quantityMin": "Quantity in stock must be at least 1",
+				"descriptionMin": "Description must be at least 2 characters",
+				"descriptionMax": "Description must not exceed 500 characters",
+				"imageUrlRequired": "Image URL is required",
+				"imageUrlInvalid": "Image URL must be valid"
+			}
+		}
+	},
 	"loader": {
 		"welcome": "Welcome to Shok Habena store",
 		"message": "The first load may take up to 50 seconds because the server is free. Please be patient"

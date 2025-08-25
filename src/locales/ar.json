@@ -19,7 +19,72 @@
 	"email": "ايميل",
 	"address": "العنوان",
 	"searchin": "ابحث عن اسم المنتج",
-
+	"SpeedDial": {
+		"actions": {
+			"addProduct": "إضافة منتج",
+			"cart": "سلة المشتريات",
+			"backToTop": "العودة للأعلى"
+		}
+	},
+	"modals": {
+		"addProductModal": {
+			"title": "إضافة منتج جديد",
+			"productName": "اسم المنتج (فريد)",
+			"productNamePlaceholder": "اسم المنتج",
+			"category": "الفئة",
+			"selectCategory": "اختر الفئة",
+			"price": "السعر",
+			"quantity": "كمية في المخزون",
+			"description": "وصف المنتج",
+			"descriptionPlaceholder": "أدخل وصف المنتج",
+			"imageUrl": "رابط الصورة",
+			"sale": "في العرض",
+			"discount": "نسبة الخصم",
+			"addButton": "إضافة",
+			"closeButton": "إغلاق",
+			"productNamePlaceholderdefrent": "[ اسم المنتج ] لا يمكن اضافه منتج موجود",
+			"validation": {
+				"productNameRequired": "اسم المنتج حقل مطلوب",
+				"productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
+				"categoryRequired": "حقل الفئة مطلوب",
+				"priceRequired": "السعر حقل مطلوب",
+				"quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
+				"quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
+				"descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
+				"descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
+				"imageUrlRequired": "رابط الصورة حقل مطلوب",
+				"imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
+			}
+		},
+		"updateProductModal": {
+			"title": "تحديث بيانات المنتج",
+			"productName": "اسم المنتج (فريد)",
+			"productNamePlaceholder": "اسم المنتج",
+			"category": "الفئة",
+			"selectCategory": "اختر الفئة",
+			"price": "السعر",
+			"quantity": "الكمية في المخزون",
+			"description": "وصف المنتج",
+			"descriptionPlaceholder": "أدخل وصف المنتج",
+			"imageUrl": "رابط الصورة",
+			"sale": "في العرض",
+			"discount": "نسبة الخصم",
+			"updateButton": "تحديث",
+			"closeButton": "إغلاق",
+			"validation": {
+				"productNameRequired": "اسم المنتج حقل مطلوب",
+				"productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
+				"categoryRequired": "حقل الفئة مطلوب",
+				"priceRequired": "السعر حقل مطلوب",
+				"quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
+				"quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
+				"descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
+				"descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
+				"imageUrlRequired": "رابط الصورة حقل مطلوب",
+				"imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
+			}
+		}
+	},
 	"loader": {
 		"welcome": "مرحبًا بكم في متجر سوق الزاوية",
 		"message": "قد تستغرق عملية التحميل الأولى حتى 50 ثانية لأن الخادم مجاني. يرجى التحلي بالصبر"

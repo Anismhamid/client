@@ -91,6 +91,9 @@ main {
   }
 }
 
+.sale-switch:hover {
+  cursor: pointer;
+}
 
 .link-success:hover {
   transform: scale(1.2);
@@ -139,4 +142,13 @@ footer {
   to {
     transform: rotateX(20deg);
   }
+}
+
+
+.home-row {
+  background-image: url("/myLogo2.png");
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }

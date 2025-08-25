@@ -7,6 +7,8 @@ import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {createNewProduct} from "../../services/productsServices";
 import {productCategories} from "../../interfaces/productsCategoeis";
 import {Box} from "@mui/material";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../locales/handleRTL";
 
 interface AddProdutModalProps {
 	show: boolean;
@@ -14,7 +16,13 @@ interface AddProdutModalProps {
 	refrehs: () => void;
 }
 
-const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,refrehs}) => {
+const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({
+	show,
+	onHide,
+	refrehs,
+}) => {
+	const {t} = useTranslation();
+
 	const formik: FormikValues = useFormik<Products>({
 		initialValues: {
 			product_name: "",
@@ -29,22 +37,26 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 		validationSchema: yup.object({
 			product_name: yup
 				.string()
-				.min(2, "שם המוצר חייב להיות באורך של לפחות 2 תווים")
-				.required("שם מוצר שדה חובה"),
-			category: yup.string().required(""),
-			price: yup.number().required("מחיר הוא שדה חובה"),
+				.min(2, t("modals.addProductModal.validation.productNameMin"))
+				.required(t("modals.addProductModal.validation.productNameRequired")),
+			category: yup
+				.string()
+				.required(t("modals.addProductModal.validation.categoryRequired")),
+			price: yup
+				.number()
+				.required(t("modals.addProductModal.validation.priceRequired")),
 			quantity_in_stock: yup
 				.number()
-				.min(1, "כמות המוצר במלאי חייב להיות 1 לפחות")
-				.required("כמות המוצרים במלאי הוא שדה חובה"),
+				.min(1, t("modals.addProductModal.validation.quantityMin"))
+				.required(t("modals.addProductModal.validation.quantityRequired")),
 			description: yup
 				.string()
-				.min(2, "התיאור חייב להיות באורך 2 תווים לפחות")
-				.max(500, "התיאור חייב להיות באורך של 500 תווים לכל היותר"),
+				.min(2, t("modals.addProductModal.validation.descriptionMin"))
+				.max(500, t("modals.addProductModal.validation.descriptionMax")),
 			image_url: yup
 				.string()
-				.required("כתובת אתר תמונה היא שדה חובה")
-				.url("כתובת האתר של התמונה חייבת להיות כתובת אתר חוקית"),
+				.required(t("modals.addProductModal.validation.imageUrlRequired"))
+				.url(t("modals.addProductModal.validation.imageUrlInvalid")),
 			sale: yup.boolean(),
 			discount: yup.number(),
 		}),
@@ -55,10 +67,13 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 		},
 	});
 
+	const dir = handleRTL();
 	return (
-		<Modal show={show} onHide={() => onHide()} centered dir='rtl'>
+		<Modal dir={dir} show={show} onHide={() => onHide()} centered>
 			<ModalHeader closeButton>
-				<h6 className='display-6 p-2 fw-bold text-center'>הוספת מוצר חדש</h6>
+				<h1 className='display-6 fw-bold text-center'>
+					{t("modals.addProductModal.title")}
+				</h1>
 			</ModalHeader>
 			<Modal.Body className='rounded d-flex justify-content-center align-items-center'>
 				<div className='container '>
@@ -72,9 +87,16 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								onChange={formik.handleChange}
 								className='form-control'
 								id='product_name'
-								placeholder='שם מוצר'
+								placeholder={t(
+									"modals.addProductModal.productNamePlaceholder",
+								)}
+								title={t(
+									"modals.addProductModal.productNamePlaceholderdefrent",
+								)}
 							/>
-							<label htmlFor='product_name'>שם מוצר (ייחודי)</label>
+							<label htmlFor='product_name'>
+								{t("modals.addProductModal.productName")}
+							</label>
 							{(formik.touched.product_name ||
 								formik.errors.product_name) && (
 								<p className='text-danger fw-bold'>
@@ -91,8 +113,17 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								onChange={formik.handleChange}
 								className='form-control'
 								id='category'
+								aria-label={t("modals.addProductModal.selectCategory")}
+								title={t("modals.addProductModal.selectCategory")}
 							>
-								<option disabled>בחר קטגוריה</option>
+								<option
+									disabled
+									aria-label={t(
+										"modals.addProductModal.selectCategory",
+									)}
+								>
+									{t("modals.addProductModal.selectCategory")}
+								</option>
 								{productCategories.map(
 									(category: {id: string; label: string}) => (
 										<option value={category.id} key={category.id}>
@@ -117,11 +148,12 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								type='number'
 								name='price'
 								className='form-control'
-								placeholder='מחיר'
-								aria-label='מחיר'
-								aria-describedby='price'
+								placeholder={t("modals.addProductModal.price")}
+								aria-label={t("modals.addProductModal.price")}
+								aria-describedby={t("modals.addProductModal.price")}
 								value={formik.values.price}
 								onChange={formik.handleChange}
+								title={t("modals.addProductModal.price")}
 							/>
 						</div>
 						{(formik.touched.price ||
@@ -141,9 +173,13 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								onChange={formik.handleChange}
 								className='form-control'
 								id='quantity_in_stock'
-								placeholder='כמות במלאי'
+								placeholder={t("modals.addProductModal.quantity")}
+								title={t("modals.addProductModal.quantity")}
+								aria-label={t("modals.addProductModal.quantity")}
 							/>
-							<label htmlFor='quantity_in_stock'>כמות במלאי</label>
+							<label htmlFor='quantity_in_stock'>
+								{t("modals.addProductModal.quantity")}
+							</label>
 							{(formik.touched.quantity_in_stock ||
 								formik.errors.quantity_in_stock) && (
 								<div className='text-danger fw-bold'>
@@ -160,11 +196,19 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								onChange={formik.handleChange}
 								className='form-control'
 								id='description'
-								placeholder='תיאור המוצר'
+								placeholder={t(
+									"modals.addProductModal.descriptionPlaceholder",
+								)}
+								aria-label={t(
+									"modals.addProductModal.descriptionPlaceholder",
+								)}
 								rows={4}
 							/>
-							<label htmlFor='description'>
-								תיאור המוצר
+							<label
+								htmlFor='description'
+								aria-label={t("modals.addProductModal.description")}
+							>
+								{t("modals.addProductModal.description")}
 								<hr />
 							</label>
 							{formik.touched.description && formik.errors.description && (
@@ -183,9 +227,12 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 								onChange={formik.handleChange}
 								className='form-control'
 								id='image_url'
-								placeholder='כתובת תמונה'
+								placeholder={t("modals.addProductModal.imageUrl")}
+								aria-label={t("modals.addProductModal.imageUrl")}
 							/>
-							<label htmlFor='image_url'>כתובת תמונה</label>
+							<label htmlFor='image_url'>
+								{t("modals.addProductModal.imageUrl")}
+							</label>
 							{formik.touched.image_url && formik.errors.image_url && (
 								<div className='text-danger fw-bold'>
 									{formik.errors.image_url}
@@ -194,10 +241,10 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 						</div>
 
 						{/* sale */}
-						<div className='form-floating mb-3 text-light fw-bold'>
-							<div className='form-check form-switch'>
+						<div className='form-floating mb-3 text-primary fw-bold'>
+							<div className='form-check form-switch sale-switch'>
 								<input
-									className='form-check-input'
+									className='form-check-input sale-switch'
 									type='checkbox'
 									role='switch'
 									id='sale'
@@ -205,8 +252,12 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 									checked={formik.values.sale ? true : false}
 									onChange={formik.handleChange}
 								/>
-								<label className='form-check-label' htmlFor='sale'>
-									במבצע
+								<label
+									className='form-check-label sale-switch'
+									htmlFor='sale'
+									aria-label={t("modals.addProductModal.sale")}
+								>
+									{t("modals.addProductModal.sale")}
 								</label>
 							</div>
 						</div>
@@ -223,24 +274,25 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide,re
 									formik.values.sale ? "" : "d-none"
 								}`}
 								id='discount'
-								placeholder='הנחה באחוזים'
+								placeholder={t("modals.addProductModal.discount")}
+								aria-label={t("modals.addProductModal.discount")}
 							/>
 							<label
 								className={`${formik.values.sale ? "" : "d-none"}`}
 								htmlFor='discount'
 							>
-								אחוז הנחה
+								{t("modals.addProductModal.discount")}
 							</label>
 						</div>
 						<div className=' d-flex gap-5'>
-							<button type='submit' className='btn btn-primary w-100'>
-								הוספה
-							</button>
 							<button
 								onClick={() => onHide()}
 								className='btn btn-danger w-100'
 							>
-								סגירה
+								{t("modals.addProductModal.closeButton")}
+							</button>
+							<button type='submit' className='btn btn-primary w-100'>
+								{t("modals.addProductModal.addButton")}
 							</button>
 						</div>
 					</form>
