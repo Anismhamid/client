@@ -19,7 +19,7 @@ export const productsPathes = {
 	// womenClothes: "/category/women-clothes",
 	// womenBags: "/category/women-bags",
 	// cigarettes: "/category/cigarettes",
-	// productDetails: "/product-details",
+	productDetails: "/product-details",
 	// will add other products here if nedded...
 };
 

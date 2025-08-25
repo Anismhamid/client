@@ -258,17 +258,22 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 										checked={formik.values.payment}
 										onChange={formik.handleChange}
 										onBlur={formik.handleBlur}
-										disabled={formik.values.cashOnDelivery}
+										disabled
+										// ={formik.values.cashOnDelivery}
 									/>
-									<label htmlFor='payment' className='form-check-label'>
-										بطاقة إئتمان
+									<label
+										htmlFor='payment'
+										className='form-check-label disabled text-danger'
+									>
+										بطاقة إئتمان (لا يوجد دفع عبر بطاقه الائتمان
+										حاليه)
 									</label>
 								</div>
 								<div className='form-check'>
 									<Checkbox
 										id='cashOnDelivery'
 										name='cashOnDelivery'
-										checked={formik.values.cashOnDelivery}
+										checked={formik.values.cashOnDelivery || true}
 										onChange={formik.handleChange}
 										onBlur={formik.handleBlur}
 										disabled={formik.values.payment}
@@ -327,7 +332,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 
 							{/* new coppon */}
 							<div className='form-group mt-3'>
-								<label htmlFor='discount'>קופון הנחה</label>
+								<label htmlFor='discount'>قسيمة خصم</label>
 								<input
 									disabled
 									type='text'
@@ -342,7 +347,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							{/* --- Total Display --- */}
 							<div>
 								<div className='text-primary fw-bold bg-white border p-2'>
-									<h5 className='text-danger'>כתובת למשלוח:</h5>{" "}
+									<h5 className='text-danger'>عنوان الشحن:</h5>{" "}
 									<p>
 										{formik.values.address.city},
 										{formik.values.address.street}{" "}
@@ -367,28 +372,29 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							{/* --- Submit Button --- */}
 							<div className=' d-flex align-items-start my-5'>
 								<Button
+									variant='contained'
+									onClick={() => navigate(-1)}
+									color='error'
+									className=' me-5'
+								>
+									إلغاء
+								</Button>
+								<Button
 									type='submit'
+									variant='contained'
 									disabled={
 										formik.isSubmitting ||
-										(!formik.values.payment &&
-											!formik.values.cashOnDelivery) ||
+										// !formik.values.payment &&
+										// !formik.values.cashOnDelivery) ||
 										(!formik.values.selfCollection &&
 											!formik.values.delivery)
 									}
-									className='btn btn-primary me-5'
 								>
 									{formik.isSubmitting ? (
 										<CircularProgress size={30} color='inherit' />
 									) : (
 										"تم"
 									)}
-								</Button>
-								<Button
-									onClick={() => navigate(-1)}
-									color='error'
-									className='btn btn-danger me-5'
-								>
-									إلغاء
 								</Button>
 							</div>
 						</fieldset>

@@ -24,7 +24,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 				<Box className='row'>
 					{/* Quick Links Section */}
 					<div className='col-4 mb-3'>
-						<h5>קישורים מהירים</h5>
+						<h5>روابط سريعة</h5>
 						<nav className='flex-column'>
 							<ul className='list-unstyled'>
 								{navbarCategoryLinks.map((pathes, index) => (
@@ -42,11 +42,11 @@ const Footer: FunctionComponent<FooterProps> = () => {
 					</div>
 					{/* Store Info Section */}
 					<Box className='col-md-5 mb-3'>
-						<h3>שוק הבינה</h3>
-						<p>פירות וירקות ועוד נשלחים אליכם עד דלת הבית</p>
+						<h3>سـوق الـسـخـنـيـني</h3>
+						<p>الفواكه والخضروات والمزيد يتم توصيلها إلى باب منزلك</p>
 						<hr />
 						<p>
-							צור איתנו קשר:
+							اتصل بنا:
 							<Link
 								to='mailto:support@fruitsandveg.com'
 								className='text-primary ms-1 text-decoration-none'
@@ -56,29 +56,44 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						</p>
 
 						<p>
-							טלפון:
+							هاتف:
 							<Link
-								to='tel:+97538346915'
+								to='tel:+9746310374'
 								className='text-primary text-decoration-none ms-1'
 							>
-								053-834-69-15
+								046310374
 							</Link>
 						</p>
 					</Box>
 
 					{/* Social Media Links Section */}
 					<Box className='col-md-3 mb-3'>
-						<h5>עקוב אחרינו</h5>
+						<h5>تابعنا</h5>
 						<nav className='gap-3'>
 							<ul className='list-unstyled'>
 								<li>
-									<NavLink
-										to='https://facebook.com'
-										className='text-primaty text-decoration-none'
-										target='_blank'
-									>
-										Facebook
-									</NavLink>
+									<div style={{display: "flex"}}>
+										<NavLink
+											to='https://www.facebook.com/shokshknini/?locale=ar_AR'
+											className='text-primaty text-decoration-none'
+											target='_blank'
+										>
+											سوق السخنيني ام الفحم
+										</NavLink>
+										<div
+											style={{
+												borderRadius: "50%",
+												width: "30px",
+												height: "30px",
+												backgroundColor: "#0966FF",
+												textAlign: "center",
+												fontSize: "1.5rem",
+												marginRight: 10,
+											}}
+										>
+											f
+										</div>
+									</div>
 								</li>
 								<li>
 									<NavLink
@@ -110,12 +125,12 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						mt: "30px",
 						textAlign: "center",
 						border: 1,
-						borderColor: "red",
+						borderColor: "#0966FF",
 						p: 1,
-						borderRadius: 2,
+						borderRadius: 5,
 					}}
 				>
-					<p>&copy; 2025 Corner Market Store. All rights reserved.</p>
+					<p>&copy; {new Date().getFullYear()} جميع الحقوق محفوظة سوق الـسـخـنـيـني</p>
 				</Box>
 			</Box>
 		</Box>

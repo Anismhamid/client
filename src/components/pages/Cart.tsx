@@ -99,11 +99,11 @@ const Cart: FunctionComponent<CartProps> = () => {
 							onClick={scrollToContent}
 						>
 							{fontAwesomeIcon.arrowDown}
-							<span className='ms-3'>לתשלום</span>
+							<span className='ms-3'>الى الاسفل</span>
 						</Button>
 					</div>
 				)}
-				<h1 className='text-center'>סל קניות</h1>
+				<h1 className='text-center'>السلة</h1>
 				<IconButton onClick={() => navigate(-1)} aria-label='back'>
 					<ArrowForwardIcon sx={{fontSize: "2rem"}} color='error' />
 				</IconButton>
@@ -145,7 +145,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 														)}
 													</h5>
 													<strong className='me-2 text-danger'>
-														הנחה {product.discount}% |
+														تخفيض {product.discount}% |
 													</strong>
 												</>
 											) : (
@@ -168,7 +168,8 @@ const Cart: FunctionComponent<CartProps> = () => {
 									</li>
 								))}
 								<h4 className='text-right my-5'>
-									<strong>סך הכל:</strong> {formatPrice(totalAmount)}
+									<strong> السع الاجمالي:</strong>{" "}
+									{formatPrice(totalAmount)}
 								</h4>
 
 								<div className='d-flex justify-content-center mt-3'>
@@ -178,7 +179,7 @@ const Cart: FunctionComponent<CartProps> = () => {
 										disabled={totalAmount == 0}
 										onClick={() => navigate(path.Checkout)}
 									>
-										המשך לקופה
+										اكمل الطلب
 									</Button>
 								</div>
 								<NavigathionButtons />
