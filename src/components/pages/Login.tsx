@@ -175,7 +175,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					</Box>
 					<hr />
 					<GoogleLogin
-						ux_mode='redirect'
+						ux_mode='popup'
 						shape='circle'
 						theme='outline'
 						onSuccess={handleGoogleLoginSuccess}

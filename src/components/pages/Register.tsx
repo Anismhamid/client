@@ -81,53 +81,55 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			name: yup.object({
 				first: yup
 					.string()
-					.required("נדרש שם פרטי")
-					.min(2, "שם פרטי חייב לכלול לפחות 2 תווים"),
+					.required(t("register.validation.firstNameRequired"))
+					.min(2, t("register.validation.firstNameMin")),
 				last: yup
 					.string()
-					.required("נדרש שם משפחה")
-					.min(2, "שם משפחה חייב לכלול לפחות 2 תווים"),
+					.required(t("register.validation.lastNameRequired"))
+					.min(2, t("register.validation.lastNameMin")),
 			}),
 			phone: yup.object({
 				phone_1: yup
 					.string()
-					.min(10, "מספר הטלפון חייב להיות בן 9 תווים לפחות")
-					.max(11, "מספר הטלפון חייב להיות באורך 10 תווים לכל היותר")
-					.required('נדרש מ"ס טלפון'),
+					.min(9, t("register.validation.phone1Min"))
+					.max(10, t("register.validation.phone1Max"))
+					.required(t("register.validation.phone1Required")),
 				phone_2: yup.string(),
 			}),
 			address: yup.object({
 				city: yup
 					.string()
-					.required("נדרש שם עיר")
-					.min(3, "עיר חייבת להיות באורך 2 תווים לפחות"),
+					.required(t("register.validation.cityRequired"))
+					.min(2, t("register.validation.cityMin")),
 				street: yup
 					.string()
-					.min(2, "שם רחוב חייבת להיות באורך של לפחות 2 תווים")
-					.required("נדרש שם רחוב"),
+					.required(t("register.validation.streetRequired"))
+					.min(2, t("register.validation.streetMin")),
 				houseNumber: yup.string(),
 			}),
 			email: yup
 				.string()
-				.min(5, 'הדוא"ל חייב להיות באורך 5 תווים לפחות')
-				.email("אימייל לא חוקי")
-				.required("נדרש אימייל"),
+				.min(5, t("register.validation.emailMin"))
+				.email(t("register.validation.emailInvalid"))
+				.required(t("register.validation.emailRequired")),
 			password: yup
 				.string()
-				.required("נדרשת סיסמה")
-				.min(8, "הסיסמה חייבת לכלול לפחות 8 תווים עד 60 תווים")
-				.max(60, "הסיסמה ארוכה מדי"),
+				.required(t("register.validation.passwordRequired"))
+				.min(8, t("register.validation.passwordMin"))
+				.max(60, t("register.validation.passwordMax")),
 			confirmPassword: yup
 				.string()
-				.oneOf([yup.ref("password")], "הסיסמאות אינן תואמות")
-				.required("יש לאשר את הסיסמה"),
-			gender: yup.string().required("יש לבחור מגדר"),
-			role: yup.string().default("Client"),
+				.oneOf(
+					[yup.ref("password")],
+					t("register.validation.confirmPasswordMatch"),
+				)
+				.required(t("register.validation.confirmPasswordRequired")),
+			gender: yup.string().required(t("register.validation.genderRequired")),
+			terms: yup.boolean().oneOf([true], t("register.validation.termsRequired")),
 			image: yup.object({
-				url: yup.string().url("פורמט כתובת אתר לא חוקי"),
+				url: yup.string().url(t("register.validation.imageUrlInvalid")),
 				alt: yup.string(),
 			}),
-			terms: yup.boolean().oneOf([true], "יש לאשר את תנאי השימוש"),
 		}),
 		onSubmit: async (user: UserRegister) => {
 			const dataToSend = {
@@ -175,7 +177,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			>
 				<CardContent>
 					<Typography variant='h4' align='center' gutterBottom>
-						הרשמה
+						{t("register.title")}
 					</Typography>
 					<Form
 						autoComplete='off'
@@ -188,7 +190,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							<Col>
 								<TextField
 									autoFocus
-									label='שם'
+									label={t("register.firstName")}
 									name='name.first'
 									type='text'
 									value={formik.values.name.first}
@@ -208,7 +210,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							</Col>
 							<Col>
 								<TextField
-									label='שם משפחה'
+									label={t("register.lastName")}
 									name='name.last'
 									type='text'
 									value={formik.values.name.last}
@@ -232,7 +234,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						<Row className='row row-cols-md-2 row-cols-1'>
 							<Col>
 								<TextField
-									label='טלופן ראשי'
+									label={t("register.phone1")}
 									name='phone.phone_1'
 									type='text'
 									value={formik.values.phone.phone_1}
@@ -252,7 +254,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							</Col>
 							<Col>
 								<TextField
-									label='טלופן שני (לא חובה)'
+									label={t("register.phone2")}
 									name='phone.phone_2'
 									type='text'
 									value={formik.values.phone.phone_2}
@@ -268,7 +270,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						<Row className='row row-cols-md-2 row-cols-1'>
 							<Col>
 								<TextField
-									label='דו"אל'
+									label={t("register.email")}
 									name='email'
 									type='email'
 									id='email'
@@ -297,7 +299,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									}
 									fullWidth
 								>
-									<InputLabel htmlFor='password'>סיסמה</InputLabel>
+									<InputLabel htmlFor='password'>
+										{t("register.password")}
+									</InputLabel>
 									<OutlinedInput
 										id='password'
 										type={showPassword ? "text" : "password"}
@@ -323,7 +327,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 												</IconButton>
 											</InputAdornment>
 										}
-										label='סיסמה'
+										label={t("register.password")}
 										name='password'
 										value={formik.values.password}
 										onChange={formik.handleChange}
@@ -338,7 +342,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							</Col>
 							<Col>
 								<TextField
-									label='אישור סיסמה'
+									label={t("register.confirmPassword")}
 									type='password'
 									autoComplete='current-password'
 									name='confirmPassword'
@@ -361,7 +365,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							<Col>
 								<TextField
 									select
-									label='מגדר'
+									label={t("register.gender")}
 									id='gender'
 									name='gender'
 									value={formik.values.gender}
@@ -377,9 +381,11 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									className='my-2'
 									variant='filled'
 								>
-									<MenuItem value=''>בחר מגדר</MenuItem>
-									<MenuItem value='זכר'>זכר</MenuItem>
-									<MenuItem value='נקבה'>נקבה</MenuItem>
+									<MenuItem value=''>{t("register.gender")}</MenuItem>
+									<MenuItem value='זכר'>{t("register.male")}</MenuItem>
+									<MenuItem value='נקבה'>
+										{t("register.female")}
+									</MenuItem>
 								</TextField>
 							</Col>
 						</Row>
@@ -393,7 +399,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							<Col>
 								<TextField
 									id='imageUrl'
-									label='קישור לתמונה'
+									label={t("register.imageUrl")}
 									type='text'
 									name='image.url'
 									value={formik.values.image?.url}
@@ -409,7 +415,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 						{/* address - city - street - house number  */}
 						<hr className='text-primary' />
 						<Typography color='primary' textAlign={"center"}>
-							{t("address")}
+							{t("register.address")}
 						</Typography>
 						<Row className='row row-cols-1 row-cols-md-3'>
 							<Col>
@@ -425,7 +431,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									renderInput={(params) => (
 										<TextField
 											{...params}
-											label='בחר עיר'
+											label={t("register.city")}
 											variant='filled'
 											error={
 												formik.touched.address?.city &&
@@ -458,7 +464,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									renderInput={(params) => (
 										<TextField
 											{...params}
-											label='בחר רחוב'
+											label={t("register.street")}
 											variant='filled'
 											error={
 												formik.touched.address?.street &&
@@ -476,7 +482,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							</Col>
 							<Col>
 								<TextField
-									label='מספר בית'
+									label={t("register.houseNumber")}
 									name='address.houseNumber'
 									type='text'
 									value={formik.values.address.houseNumber}
@@ -497,10 +503,10 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									onChange={formik.handleChange}
 								/>
 							}
-							label='אני מסכים לתנאי השימוש והפרטיות'
+							label={t("register.terms")}
 						/>
 						<Link className=' ms-4 mt-3' to={path.TermOfUse}>
-							תנאי השימוש
+							{t("login.termsOfUse")}
 						</Link>
 						{formik.touched.terms && formik.errors.terms && (
 							<div className='text-danger small'>{formik.errors.terms}</div>
@@ -513,16 +519,18 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								type='submit'
 								disabled={!formik.dirty}
 							>
-								{isLoading ? "טוען..." : "הרשמה"}
+								{isLoading ? t("register.loading") : t("register.submit")}
 							</Button>
 						</Box>
 						<Box className='mt-5'>
-							<span className='fw-bold me-3'>יש לך חשבון ?</span>
+							<span className='fw-bold me-3'>
+								{t("register.haveAccount")}
+							</span>
 							<Button
 								variant='contained'
 								onClick={() => navigate(path.Login)}
 							>
-								התחבר כאן
+								{t("register.loginHere")}
 							</Button>
 						</Box>
 					</Form>
