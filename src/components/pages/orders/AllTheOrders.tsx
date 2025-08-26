@@ -157,7 +157,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					onClick={() => setViewPreviousOrders(false)}
 					sx={{ml: 5}}
 				>
-					הצג הזמנות קודמות
+					عرض الطلبات الجديدة
 				</Button>
 				<Button
 					variant='contained'
@@ -166,7 +166,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 						setViewPreviousOrders(true);
 					}}
 				>
-					הצג הזמנות קודמות
+					عرض الطلبات السابقة
 				</Button>
 			</div>
 			<div className='container bg-gradient rounded  text-center align-items-center'>
@@ -174,7 +174,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
-							text='חפוש לפי מספר הזמנה...'
+							text='البحث حسب رقم الطلب...'
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
@@ -188,7 +188,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 					<>
 						<h1 className='text-center'>{t("links.orders")}</h1>
 						<SearchBox
-							text='חפוש לפי מספר הזמנה...'
+							text='البحث حسب رقم الطلب...'
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>

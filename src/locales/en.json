@@ -9,13 +9,13 @@
 		"privacyPolicy": "Privacy Policy",
 		"termsOfUse": "Terms of Use",
 		"validation": {
-			"emailInvalid": "Invalid email address",
+			"emailInvalid": "Invalid email",
 			"emailRequired": "Email is required",
 			"passwordMin": "Password must be at least 8 characters and up to 60 characters",
 			"passwordMax": "Password is too long",
 			"passwordRequired": "Password is required"
 		},
-		"success": "Logged in successfully!",
+		"success": "Login successful!",
 		"error": "Login failed",
 		"googleError": "Google login error: {{message}}"
 	},
@@ -24,7 +24,7 @@
 		"firstName": "First Name",
 		"lastName": "Last Name",
 		"phone1": "Primary Phone",
-		"phone2": "Secondary Phone (Optional)",
+		"phone2": "Secondary Phone (optional)",
 		"email": "Email",
 		"password": "Password",
 		"confirmPassword": "Confirm Password",
@@ -32,12 +32,12 @@
 		"selectGender": "Select Gender",
 		"male": "Male",
 		"female": "Female",
-		"imageUrl": "Image URL (Optional)",
+		"imageUrl": "Image URL (optional)",
 		"address": "Address",
 		"city": "Select City",
 		"street": "Select Street",
 		"houseNumber": "House Number",
-		"terms": "I agree to the terms and privacy policy",
+		"terms": "I agree to the terms and policy",
 		"submit": "Register",
 		"loading": "Loading...",
 		"haveAccount": "Already have an account?",
@@ -48,49 +48,49 @@
 			"lastNameRequired": "Last name is required",
 			"lastNameMin": "Last name must be at least 2 characters",
 			"phone1Required": "Phone number is required",
-			"phone1Min": "Phone number must be at least 9 characters",
-			"phone1Max": "Phone number must be at most 10 characters",
+			"phone1Min": "Phone number must be at least 9 digits",
+			"phone1Max": "Phone number must not exceed 10 digits",
 			"cityRequired": "City name is required",
 			"cityMin": "City name must be at least 2 characters",
 			"streetRequired": "Street name is required",
 			"streetMin": "Street name must be at least 2 characters",
 			"emailRequired": "Email is required",
 			"emailMin": "Email must be at least 5 characters",
-			"emailInvalid": "Invalid email address",
+			"emailInvalid": "Invalid email",
 			"passwordRequired": "Password is required",
 			"passwordMin": "Password must be at least 8 characters and up to 60 characters",
 			"passwordMax": "Password is too long",
-			"confirmPasswordRequired": "Confirm password is required",
+			"confirmPasswordRequired": "Please confirm your password",
 			"confirmPasswordMatch": "Passwords do not match",
-			"genderRequired": "Gender is required",
+			"genderRequired": "Gender selection is required",
 			"termsRequired": "You must agree to the terms"
 		}
 	},
 	"price": "Price",
 	"quantity": "Quantity",
-	"currentStatus": "status",
+	"currentStatus": "Status",
 	"priceAfterDiscount": "Price after discount",
 	"totalOrderPrice": "Total order price",
-	"collectionMethod": "Collection method",
-	"paymentMethod": "Payment method",
-	"creditCard": "Credit card",
-	"selfPickup": "Self pickup",
+	"collectionMethod": "Collection Method",
+	"paymentMethod": "Payment Method",
+	"creditCard": "Credit Card",
+	"selfPickup": "Self Pickup",
 	"delivery": "Delivery",
 	"cash": "Cash",
-	"orderNumber": "orderNumber",
+	"orderNumber": "Order Number",
 	"UserId": "User ID",
-	"date": "date",
+	"date": "Date",
 	"phone": "Phone",
-	"address": "address",
-	"customerInfo": "Customer details",
+	"customerInfo": "Customer Details",
 	"customer": "Customer",
 	"email": "Email",
-	"searchin": "Search",
+	"address": "Address",
+	"searchin": "Search for product name",
 	"SpeedDial": {
 		"actions": {
 			"addProduct": "Add Product",
-			"cart": "Cart",
-			"backToTop": "Back to top"
+			"cart": "Shopping Cart",
+			"backToTop": "Back to Top"
 		}
 	},
 	"modals": {
@@ -101,40 +101,41 @@
 			"category": "Category",
 			"selectCategory": "Select Category",
 			"price": "Price",
-			"quantity": "Quantity in Stock",
+			"quantity": "Stock Quantity",
 			"description": "Product Description",
 			"descriptionPlaceholder": "Enter product description",
 			"imageUrl": "Image URL",
 			"sale": "On Sale",
-			"discount": "Discount %",
+			"discount": "Discount Percentage",
 			"addButton": "Add",
 			"closeButton": "Close",
+			"productNamePlaceholderdefrent": "[Product Name] cannot add existing product",
 			"validation": {
 				"productNameRequired": "Product name is required",
 				"productNameMin": "Product name must be at least 2 characters",
 				"categoryRequired": "Category is required",
 				"priceRequired": "Price is required",
-				"quantityRequired": "Quantity in stock is required",
-				"quantityMin": "Quantity in stock must be at least 1",
+				"quantityRequired": "Stock quantity is required",
+				"quantityMin": "Stock quantity must be at least 1",
 				"descriptionMin": "Description must be at least 2 characters",
-				"descriptionMax": "Description must not exceed 500 characters",
+				"descriptionMax": "Description cannot exceed 500 characters",
 				"imageUrlRequired": "Image URL is required",
 				"imageUrlInvalid": "Image URL must be valid"
 			}
 		},
 		"updateProductModal": {
-			"title": "Update Product Details",
+			"title": "Update Product",
 			"productName": "Product Name (Unique)",
 			"productNamePlaceholder": "Product Name",
 			"category": "Category",
 			"selectCategory": "Select Category",
 			"price": "Price",
-			"quantity": "Quantity in Stock",
+			"quantity": "Stock Quantity",
 			"description": "Product Description",
 			"descriptionPlaceholder": "Enter product description",
 			"imageUrl": "Image URL",
 			"sale": "On Sale",
-			"discount": "Discount %",
+			"discount": "Discount Percentage",
 			"updateButton": "Update",
 			"closeButton": "Close",
 			"validation": {
@@ -142,162 +143,49 @@
 				"productNameMin": "Product name must be at least 2 characters",
 				"categoryRequired": "Category is required",
 				"priceRequired": "Price is required",
-				"quantityRequired": "Quantity in stock is required",
-				"quantityMin": "Quantity in stock must be at least 1",
+				"quantityRequired": "Stock quantity is required",
+				"quantityMin": "Stock quantity must be at least 1",
 				"descriptionMin": "Description must be at least 2 characters",
-				"descriptionMax": "Description must not exceed 500 characters",
+				"descriptionMax": "Description cannot exceed 500 characters",
 				"imageUrlRequired": "Image URL is required",
 				"imageUrlInvalid": "Image URL must be valid"
 			}
 		}
 	},
 	"loader": {
-		"welcome": "Welcome to Shok Habena store",
-		"message": "The first load may take up to 50 seconds because the server is free. Please be patient"
+		"welcome": "Welcome to Souk Al-Sakhnini Store",
+		"message": "The first load may take up to 50 seconds because the server is free. Please be patient."
 	},
-
 	"categories": {
 		"fruit": {
 			"label": "Fruits",
-			"heading": "Our Fruits - Fresh, High Quality, and Diverse!",
-			"description": "Here you can find a wide variety of freshly picked fruits from our local farms. We promise high quality and excellent service to enjoy every fruit with ease and comfort."
+			"heading": "Our Fruits – Fresh, High-Quality, and Varied!",
+			"description": "Here you can find a wide range of freshly picked fruits from our local farms. We promise high quality and excellent service so you can enjoy every fruit with ease."
 		},
 		"vegetable": {
 			"label": "Vegetables",
-			"heading": "Our Vegetables - Fresh and Healthy for the Whole Family!",
-			"description": "Our vegetables are grown in fertile fields with great attention to freshness and health. You will find seasonal vegetables specially selected for you."
+			"heading": "Our Vegetables – Fresh and Healthy for the Whole Family!",
+			"description": "Our vegetables are grown in fertile fields with great care for freshness and health. You will find seasonal vegetables selected especially for you."
 		},
 		"meat": {
 			"label": "Meat",
-			"heading": "Our Meat - Fresh, High Quality, and Diverse!",
-			"description": "Here you can find a wide variety of fresh meats carefully selected from our local suppliers. We guarantee high quality and excellent service to enjoy every piece of meat with ease and comfort."
+			"heading": "Our Meats – Fresh, High-Quality, and Varied!",
+			"description": "Here you can find a wide range of carefully selected fresh meats from our local suppliers. We guarantee high quality and excellent service for you to enjoy every piece of meat with ease."
 		},
 		"fish": {
 			"label": "Fish",
-			"heading": "Our Fish - Fresh, High Quality, and Diverse!",
-			"description": "Here you can find a wide variety of freshly caught fish by our local fishermen. We promise high quality and excellent service to enjoy every fish with ease and comfort."
-		},
-		"fruitAndVegetables": {
-			"fruits": {
-				"label": "Fruits",
-				"heading": "Our Fruits - Fresh, High Quality, and Diverse!",
-				"description": "Here you can find a wide variety of freshly picked fruits from our local farms. We promise high quality and excellent service to enjoy every fruit with ease and comfort."
-			},
-			"vegetable": {
-				"label": "Vegetables",
-				"heading": "Our Vegetables - Fresh and Healthy for the Whole Family!",
-				"description": "Our vegetables are grown in fertile fields with great attention to freshness and health. You will find seasonal vegetables specially selected for you."
-			}
-		},
-
-		"meatAndFish": {
-			"meat": {
-				"label": "Meat",
-				"heading": "Our Meat - Fresh, High Quality, and Diverse!",
-				"description": "Here you can find a wide variety of fresh meats carefully selected from our local suppliers. We guarantee high quality and excellent service to enjoy every piece of meat with ease and comfort."
-			},
-			"fish": {
-				"label": "Fish",
-				"heading": "Our Fish - Fresh, High Quality, and Diverse!",
-				"description": "Here you can find a wide variety of freshly caught fish by our local fishermen. We promise high quality and excellent service to enjoy every fish with ease and comfort."
-			}
-		},
-		"dairy": {
-			"label": "Dairy",
-			"heading": "Dairy Products - Fresh, High Quality, and Diverse!",
-			"description": "Here you can find a wide selection of carefully chosen natural dairy products from our local suppliers. We guarantee high quality and excellent service to enjoy every product with ease and comfort."
-		},
-		"spices": {
-			"label": "Spices",
-			"heading": "Our Spices - Natural, Diverse, and Aromatic!",
-			"description": "A wide variety of natural spices carefully selected from our local suppliers. We promise excellent quality and refined service."
-		},
-		"bakery": {
-			"label": "Bakery",
-			"heading": "Our Bakery - Fresh, High Quality, and Diverse!",
-			"description": "Here you can find a large selection of freshly baked goods prepared daily. We guarantee high quality and excellent service to enjoy every piece with ease and comfort."
-		},
-		"beverages": {
-			"label": "Beverages",
-			"heading": "Our Beverages - Refreshing, Healthy, and Diverse!",
-			"description": "A selection of juices, soft drinks, and water with high quality and great taste to quench your thirst at every moment."
-		},
-		"frozen": {
-			"label": "Frozen",
-			"heading": "Our Frozen Products - Fresh, Convenient, and Diverse!",
-			"description": "Enjoy a wide variety of high-quality frozen products that save you time and effort in preparing your favorite meals."
-		},
-		"snacks": {
-			"label": "Snacks",
-			"heading": "Our Snacks - Delicious, Diverse, and Suitable for Every Occasion!",
-			"description": "Discover our wide selection of crispy, sweet, and salty snacks. Perfect for picnics, hospitality, or simply enjoying a delicious moment."
-		},
-		"baby": {
-			"label": "Baby",
-			"heading": "Baby Products - The Best Care for Your Kids!",
-			"description": "A carefully selected range of products that meet your child's needs from the start of life. From diapers to oils and creams, we offer you the best."
-		},
-		"cleaning": {
-			"label": "Cleaning",
-			"heading": "Cleaning Products - Effective and Safe for Every Corner of Your Home!",
-			"description": "Discover our wide range of cleaning products that ensure cleanliness and disinfection, providing effective results without damaging surfaces or health. Quality and safety are at your fingertips."
-		},
-		"pasta-and-Rice": {
-			"label": "Pasta and Rice",
-			"heading": "Pasta and Rice - Delicious and Diverse!",
-			"description": "Enjoy a great selection of pasta and rice with various flavors and shapes to suit every taste."
-		},
-		"house": {
-			"label": "Household Essentials",
-			"heading": "Household Essentials - Everything You Need Under One Roof!",
-			"description": "A variety of essential and practical products that make your home more comfortable and organized. From kitchen tools to storage solutions – we have everything you need to make your daily life easier."
-		},
-		"alcohol": {
-			"label": "Alcoholic",
-			"heading": "Alcoholic Beverages - A Distinctive Selection for Your Special Times!",
-			"description": "A curated selection of premium alcoholic beverages from top brands. Enjoy a unique atmosphere with our special drinks."
-		},
-		"health": {
-			"label": "Health",
-			"heading": "Health Products - Enhance Your Health and Vitality!",
-			"description": "A range of dietary supplements and vitamins that help you improve your health. Discover natural products that support your healthy lifestyle."
-		},
-		"watches": {
-			"label": "Watches",
-			"heading": "Watches – Timeless Style and Precision",
-			"description": "Discover our collection of watches that blend elegance, innovation, and craftsmanship. From classic designs to smartwatches, find the perfect piece for every occasion."
-		},
-		"women-clothes": {
-			"label": "Women’s Clothing",
-			"heading": "Women’s Clothing – Timeless Fashion and Perfect Comfort",
-			"description": "Discover our women’s clothing collection that combines modern style, quality, and comfort. From casual wear to evening dresses – find the perfect piece for every occasion."
-		},
-		"women-bags": {
-			"label": "Bags for Women",
-			"heading": "Bags for Women – A Perfect Blend of Style and Functionality",
-			"description": "Discover our collection of bags for women, featuring trendy designs and comfortable everyday carry options. From small purses to large totes, find the perfect bag for every style and occasion."
-		},
-		"cigarettes": {
-			"label": "Cigarettes",
-			"heading": "Cigarettes – Quality and Tradition in Every Puff",
-			"description": "Explore our wide selection of cigarettes offering rich flavors and premium blends. Whether you prefer classic tastes or lighter options, find your perfect smoke here."
-		},
-		"discountsAndOffers": {
-			"discountsAndOffersHeading": "Discounts and Offers",
-			"discountsAndOffersSpan": "Don't Miss Our Special Offers!",
-			"discountsAndOffersDescription": "We always offer discounts and benefits on seasonal fruits and vegetables, as well as packages suitable for families. Stay updated on our page to save even more!"
+			"heading": "Our Fish – Fresh, High-Quality, and Varied!",
+			"description": "Here you can find a wide range of freshly caught fish by our local fishermen. We promise high quality and excellent service so you can enjoy every fish easily."
 		}
 	},
-
 	"seo": {
-		"categoryTitle": "{{category}} Category | Corner Market",
-		"categoryDescription": "Browse a variety of fresh and high-quality {{category}} on our website!"
+		"categoryTitle": "Category {{category}} | Corner Market",
+		"categoryDescription": "Browse a wide variety of fresh and high-quality {{category}} on our website!"
 	},
-
 	"links": {
 		"home": "Home",
 		"products": "Products",
-		"cart": "Shopping Cart",
+		"cart": "Cart",
 		"about": "About",
 		"contact": "Contact",
 		"login": "Login",
@@ -309,21 +197,21 @@
 		"status": {
 			"pending": "Pending",
 			"preparing": "Preparing",
-			"delivered": "Delivered",
-			"shipped": "Shipped",
+			"delivered": "Sent",
+			"shipped": "Delivered",
 			"cancelled": "Cancelled"
 		}
 	},
 	"pages": {
 		"receipts": {
-			"receiptSearchTitle": "Receipt Search",
+			"receiptSearchTitle": "Search Receipts",
 			"receiptSearch_1": "Name / Email / Order Number",
 			"receiptSearch_2": "Search by Product",
 			"receiptSearchFromDate": "From Date",
 			"receiptSearchToDate": "To Date",
 			"noReceiptsFound": "No receipts found",
 			"receiptListTitle": "Receipts 🧾",
-			"receiptNumber": "Receipt No. {{orderNumber}}",
+			"receiptNumber": "Receipt #{{orderNumber}}",
 			"date": "Date",
 			"customer": "Customer",
 			"phone": "Phone",
@@ -332,110 +220,113 @@
 			"paymentMethod": "Payment Method",
 			"creditCard": "Credit Card",
 			"cash": "Cash",
-			"deliveryMethod": "Pickup Method",
+			"deliveryMethod": "Delivery Method",
 			"delivery": "Home Delivery",
-			"pickup": "Self Pickup",
+			"pickup": "Pickup",
 			"totalAmount": "Total Amount",
 			"products": "🛒 Products",
 			"productName": "Product",
 			"quantity": "Quantity",
 			"pricePerUnit": "Price per Unit",
 			"total": "Total",
-			"businessName": "Business Name",
-			"businessPhone": "Business Phone",
-			"businessEmail": "Business Email",
-			"businessAddress": "Business Address",
+			"businessName": "Store Name",
+			"businessPhone": "Store Phone",
+			"businessEmail": "Store Email",
+			"businessAddress": "Store Address",
 			"download": "Download"
 		},
 		"contact": {
 			"title": "Contact Us",
-			"heading": "Shuk HaBina - Organic Fruits and Vegetables",
-			"intro": "At 'Shuk HaBina', we are proud to offer fresh organic fruits and vegetables delivered straight to your doorstep, with an emphasis on quality and excellent service.",
-			"goal": "Our goal is to provide our customers with the healthiest fruits and vegetables, while adhering to organic farming and sustainable agriculture principles. Join us for a healthy and delicious lifestyle.",
-			"team": "Contact the 'Shuk HaBina' Team",
-			"teamDesc": "We have a skilled and dedicated team ready to help with any questions. Whether you're inquiring about our products, placing an order, or discussing another topic – we are here for you.",
+			"heading": "Sakhnini Market - Fruits & Vegetables",
+			"intro": "At 'Sakhnini Market', we pride ourselves on offering organic and fresh fruits and vegetables delivered directly to your doorstep, with a focus on quality and excellent service.",
+			"goal": "Our goal is to provide our customers with the healthiest fruits and vegetables while adhering to organic and sustainable farming principles. Join us for a healthy and delicious lifestyle.",
+			"team": "Get in Touch with the Sakhnini Market Team",
+			"teamDesc": "Our team is skilled and dedicated, always ready to help and answer any inquiries. Whether you want to learn more about our products, place an order, or discuss anything else – we are here for you.",
 			"contactInfo": "Contact Information:",
 			"email": "Email: support@fruitsandveg.com",
-			"phone": "Phone: 03-1234567",
-			"note": "We are always happy to hear from our customers, and our team works hard to ensure you receive the best service. Don’t hesitate to reach out with any questions or requests.",
+			"phone": "Phone: 046310374",
+			"note": "We always welcome your inquiries. Our team works hard to ensure you receive the best service. Feel free to contact us anytime.",
 			"addressTitle": "Address",
-			"address": "If you’d like to visit us in person, we are located at: 45 Jerusalem Blvd, Tel Aviv",
-			"thanks": "Thank you for choosing us – we’re happy to help you enjoy healthy, quality food!"
+			"address": "If you wish to visit us in person, we are located at: Umm al-Fahm, Market Street",
+			"thanks": "Thank you for choosing us – we are happy to help you enjoy healthy, quality food!"
 		},
 		"privacy": {
 			"title": "Privacy Policy",
 			"lastUpdated": "Last updated {{date}}",
 			"intro": {
 				"title": "Introduction",
-				"text": "In our app, Corner Market, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when signing in with Google."
+				"text": "In our Corner Market app, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when you log in using Google."
 			},
 			"collectedInfo": {
 				"title": "What Information Do We Collect?",
 				"text": "When logging in via Google, we obtain the following information from your account:",
 				"info": {
-					"name": "First and last name – as defined in your Google profile.",
-					"email": "Email address – the address used for registration.",
-					"image": "Profile picture – if available, will be displayed in your app profile."
+					"name": "First and last name – as specified in your Google profile.",
+					"email": "Email – your address used for registration.",
+					"image": "Profile picture – if available, it will be displayed in your profile inside the app."
 				},
-				"technical": "Additionally, we may store technical data such as IP address, browser type, and operating system for security and service improvement purposes."
+				"technical": "Additionally, we may store technical information such as IP address, browser type, and operating system for security and service improvement purposes."
 			},
 			"usage": {
 				"title": "How Do We Use the Information?",
 				"points": {
 					"p1": "To register the user and verify identity.",
-					"p2": "To improve the user experience in the app.",
-					"p3": "To send relevant notifications, updates, or reminders.",
-					"p4": "To secure the system and protect your account."
+					"p2": "To improve the in-app user experience.",
+					"p3": "To send notifications, updates, or relevant reminders.",
+					"p4": "To protect the system and secure your account."
 				}
 			},
 			"consent": {
-				"title": "Transparency and Consent",
-				"text": "When logging in via Google, you will be asked to grant access to your information. We only request the permissions necessary for proper functionality, maintaining full transparency."
+				"title": "Transparency & Consent",
+				"text": "When logging in via Google, you will be asked to consent to sharing your information. We request only the necessary permissions to operate the service, with full transparency."
 			},
 			"sharing": {
 				"title": "Sharing Information with Third Parties",
 				"points": {
-					"external": "External services: Information is shared only with providers essential for operating the app.",
-					"law": "Legal compliance: We only share information if legally required."
+					"external": "External services: Information is transferred only to providers necessary for app operation.",
+					"law": "Legal compliance: We share information only if legally required."
 				}
 			},
 			"protection": {
-				"title": "Data Protection",
-				"text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend avoiding password sharing and choosing a strong password."
+				"title": "Information Protection",
+				"text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend not sharing passwords and choosing a strong password."
 			},
 			"updates": {
 				"title": "Policy Updates",
-				"text": "This policy may change from time to time. We will notify you within the app or via direct message. Continued use of the app constitutes acceptance of the updates."
+				"text": "This policy may be amended from time to time. We will notify you in-app or via direct notification. Continued use of the app constitutes acceptance of the changes."
 			},
 			"rights": {
 				"title": "Your Rights",
 				"points": {
-					"p1": "Right to access the personal information stored about you.",
-					"p2": "Right to correct incorrect or incomplete information.",
-					"p3": "Right to request deletion of data – unless legally required to retain it."
+					"p1": "The right to access personal information stored about you.",
+					"p2": "The right to correct incorrect or incomplete information.",
+					"p3": "The right to request deletion of information – as long as there is no legal obligation to retain it."
 				}
 			},
 			"contact": {
-				"title": "Contact",
-				"text": "For any question or request regarding privacy, you can contact us via phone:",
+				"title": "Contact Information",
+				"text": "For any inquiry or request regarding privacy, you can contact via phone:",
 				"phone": "053-834-6915"
 			},
 			"userConsent": {
 				"title": "User Consent",
-				"text": "By using the app, you confirm that you have read, understood, and agreed to this privacy policy. If you do not agree – please refrain from using the app."
+				"text": "By using the app, you agree that you have read, understood, and accepted this privacy policy. If you do not agree, please do not use the app."
 			}
 		}
 	},
 	"accountMenu": {
-		"messages": "messages",
+		"messages": "Messages",
 		"account": "My Account",
 		"profile": "My Profile",
 		"settings": "Settings",
-		"logout": "Log Out"
+		"logout": "Logout"
+	},
+	"about": {
+		"about": "About"
 	},
 	"removeAccount": {
 		"heading": "Delete Account",
-		"description": "If you delete the account, this action cannot be undone",
+		"description": "If you delete your account, this action cannot be undone",
 		"buttonText": "Delete Permanently"
 	}
 }

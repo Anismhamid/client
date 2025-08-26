@@ -20,7 +20,6 @@ import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
-import handleRTL from "../../locales/handleRTL";
 
 interface LoginProps {}
 /**
