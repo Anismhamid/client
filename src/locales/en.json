@@ -1,4 +1,44 @@
 {
+	"login": {
+		"email": "Email",
+		"password": "Password",
+		"loginButton": "Login",
+		"googleLoginError": "Google login failed",
+		"noAccount": "Don't have an account yet?",
+		"register": "Click to register",
+		"privacyPolicy": "Privacy Policy",
+		"termsOfUse": "Terms of Use",
+		"validation": {
+			"emailInvalid": "Invalid email address",
+			"emailRequired": "Email is required",
+			"passwordMin": "Password must be at least 8 characters and up to 60 characters",
+			"passwordMax": "Password is too long",
+			"passwordRequired": "Password is required"
+		},
+		"success": "Logged in successfully!",
+		"error": "Login failed",
+		"googleError": "Google login error: {{message}}"
+	},
+	"register": {
+		"title": "تسجيل حساب جديد",
+		"name": "الاسم الكامل",
+		"email": "البريد الإلكتروني",
+		"password": "كلمة المرور",
+		"confirmPassword": "تأكيد كلمة المرور",
+		"registerButton": "إنشاء حساب",
+		"haveAccount": "لديك حساب بالفعل؟",
+		"login": "اضغط لتسجيل الدخول",
+		"success": "تم إنشاء الحساب بنجاح!",
+		"error": "فشل إنشاء الحساب",
+		"validation": {
+			"nameRequired": "الاسم مطلوب",
+			"emailInvalid": "البريد الإلكتروني غير صالح",
+			"emailRequired": "البريد الإلكتروني مطلوب",
+			"passwordMatch": "كلمتا المرور غير متطابقتين",
+			"passwordMin": "كلمة المرور يجب أن تتكون من 8 أحرف على الأقل",
+			"passwordRequired": "كلمة المرور مطلوبة"
+		}
+	},
 	"price": "Price",
 	"quantity": "Quantity",
 	"currentStatus": "status",

@@ -80,13 +80,12 @@ main {
 
 
 .login {
-  display: flex;
 
   & form {
     max-width: 350px;
     padding: 2rem;
-    border: 1px solid rgb(255, 1, 1);
-    backdrop-filter: blur(18px);
+    border: 1px solid rgb(9, 102, 255);
+    backdrop-filter: blur(28px);
     border-radius: 10px;
   }
 }

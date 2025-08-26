@@ -19,6 +19,8 @@ import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../locales/handleRTL";
 
 interface LoginProps {}
 /**
@@ -32,18 +34,23 @@ const Login: FunctionComponent<LoginProps> = () => {
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [googleResponse, setGoogleResponse] = useState<any>(null);
 
+	const {t} = useTranslation();
+
 	const formik = useFormik<UserLogin>({
 		initialValues: {
 			email: "",
 			password: "",
 		},
 		validationSchema: yup.object({
-			email: yup.string().email("אימייל לא חוקי").required("נדרש אימייל"),
+			email: yup
+				.string()
+				.email(t("login.validation.emailInvalid"))
+				.required(t("login.validation.emailRequired")),
 			password: yup
 				.string()
-				.min(8, "הסיסמה חייבת לכלול לפחות 8 תווים עד 60 תווים")
-				.max(60, "הסיסמה ארוכה מדי")
-				.required("נדרשת סיסמה"),
+				.min(8, t("login.validation.passwordMin"))
+				.max(60, t("login.validation.passwordMax"))
+				.required(t("login.validation.passwordRequired")),
 		}),
 		onSubmit: async (values, {resetForm}) => {
 			try {
@@ -114,6 +121,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 		}
 	}, [navigate]);
 
+
 	return (
 		<main className='login'>
 			<Box className='container pb-3 d-flex align-items-center justify-content-center'>
@@ -124,7 +132,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					onSubmit={formik.handleSubmit}
 				>
 					<TextField
-						label='דו"אל'
+						label={t("login.email")}
 						type='email'
 						name='email'
 						value={formik.values.email}
@@ -137,7 +145,7 @@ const Login: FunctionComponent<LoginProps> = () => {
 					/>
 
 					<TextField
-						label='סיסמה'
+						label={t("login.password")}
 						type='password'
 						name='password'
 						value={formik.values.password}
@@ -161,28 +169,32 @@ const Login: FunctionComponent<LoginProps> = () => {
 								type='submit'
 								className=' w-100 my-3  rounded-5 '
 							>
-								כניסה
+								{t("login.loginButton")}
 							</Button>
 						)}
 					</Box>
 					<hr />
 					<GoogleLogin
-						ux_mode='popup'
+						ux_mode='redirect'
 						shape='circle'
-						theme='filled_black'
+						theme='outline'
 						onSuccess={handleGoogleLoginSuccess}
-						onError={() => showError("Google login failed")}
+						onError={() => showError(t("login.googleLoginError"))}
 					/>
 
 					<Box className='m-3 text-center my-3'>
-						<span className='fw-bold me-2'>עדיין אין לך חשבון ?</span>
-						<Button color='primary' onClick={() => navigate(path.Register)}>
-							לחץ להרשמה
+						<span className='fw-bold me-2'> {t("login.noAccount")}</span>
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={() => navigate(path.Register)}
+						>
+							{t("login.register")}
 						</Button>
 					</Box>
 					<div className=' my-3 d-flex justify-content-center gap-3'>
-						<Link to={path.PrivacyAndPolicy}>מדיניות הפרטיות</Link>
-						<Link to={path.TermOfUse}>תנאי השימוש</Link>
+						<Link to={path.PrivacyAndPolicy}>{t("login.privacyPolicy")}</Link>
+						<Link to={path.TermOfUse}>{t("login.termsOfUse")}</Link>
 					</div>
 				</form>
 			</Box>

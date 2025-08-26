@@ -1,4 +1,24 @@
 {
+	"login": {
+		"email": "אימייל",
+		"password": "סיסמה",
+		"loginButton": "התחבר",
+		"googleLoginError": "התחברות עם Google נכשלה",
+		"noAccount": "אין לך חשבון עדיין?",
+		"register": "לחץ להירשם",
+		"privacyPolicy": "מדיניות פרטיות",
+		"termsOfUse": "תנאי שימוש",
+		"validation": {
+			"emailInvalid": "כתובת האימייל לא תקינה",
+			"emailRequired": "אימייל נדרש",
+			"passwordMin": "הסיסמה חייבת להכיל לפחות 8 תווים ועד 60 תווים",
+			"passwordMax": "הסיסמה ארוכה מדי",
+			"passwordRequired": "נדרשת סיסמה"
+		},
+		"success": "התחברת בהצלחה!",
+		"error": "התחברות נכשלה",
+		"googleError": "שגיאת התחברות עם Google: {{message}}"
+	},
 	"price": "מחיר",
 	"quantity": "כמות",
 	"currentStatus": "סטטוס",

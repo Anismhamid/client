@@ -1,4 +1,24 @@
 {
+	"login": {
+		"email": "البريد الإلكتروني",
+		"password": "كلمة المرور",
+		"loginButton": "تسجيل الدخول",
+		"googleLoginError": "فشل تسجيل الدخول بواسطة Google",
+		"noAccount": "ليس لديك حساب بعد؟",
+		"register": "اضغط للتسجيل",
+		"privacyPolicy": "سياسة الخصوصية",
+		"termsOfUse": "شروط الاستخدام",
+		"validation": {
+			"emailInvalid": "البريد الإلكتروني غير صالح",
+			"emailRequired": "البريد الإلكتروني مطلوب",
+			"passwordMin": "كلمة المرور يجب أن تتكون من 8 أحرف على الأقل وحتى 60 حرفاً",
+			"passwordMax": "كلمة المرور طويلة جداً",
+			"passwordRequired": "كلمة المرور مطلوبة"
+		},
+		"success": "تم تسجيل الدخول بنجاح!",
+		"error": "فشل تسجيل الدخول",
+		"googleError": "خطأ في تسجيل الدخول باستخدام Google: {{message}}"
+	},
 	"price": "السعر",
 	"quantity": "العدد",
 	"currentStatus": "الحالة",
