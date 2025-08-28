@@ -1,6 +1,6 @@
 import {FunctionComponent} from "react";
-import {NavLink, useNavigate} from "react-router-dom";
-import {Box, Button, Chip} from "@mui/material";
+import {Link, NavLink, useNavigate} from "react-router-dom";
+import {Box, Button, Chip, Typography} from "@mui/material";
 import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
 import {path} from "../../routes/routes";
@@ -13,6 +13,26 @@ const NavigathionButtons: FunctionComponent<NavigathionButtonsProps> = () => {
 
 	return (
 		<Box className='w-100'>
+			<img style={{width: 50, padding: 0}} src='/myLogo2.png' alt='' />
+			<Link
+				to='/'
+				style={{
+					textDecoration: "none",
+				}}
+			>
+				<Typography
+					variant='h6'
+					color='error'
+					sx={{
+						fontWeight: "bold",
+						ml: 1,
+						fontSize: "2rem",
+						fontFamily: "Hebbo",
+					}}
+				>
+					| سـوق الـسـخـنـيـني
+				</Typography>
+			</Link>
 			<hr />
 			<p className='fw-bold fs-3 rounded'>הזמנה חדשה</p>
 

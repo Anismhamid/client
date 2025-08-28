@@ -311,9 +311,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						sx={{
 							borderRadius: "0px 0px 10px 0px",
 						}}
-					>
-						تعديل
-					</Button>
+					/>
 
 					<Button
 						size='medium'
@@ -325,9 +323,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						sx={{
 							borderRadius: "0px 0px 0px 10px",
 						}}
-					>
-						حذف
-					</Button>
+					/>
 				</Box>
 			)}
 		</Card>

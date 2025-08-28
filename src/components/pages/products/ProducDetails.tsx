@@ -25,15 +25,17 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import HomeIcon from "@mui/icons-material/Home";
 import StoreIcon from "@mui/icons-material/Store";
-import {path} from "../../../routes/routes";
+import {path, productsPathes} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
+import {useTranslation} from "react-i18next";
 
 interface ProductDetailsProps {
 	handleAdd: Function;
 }
 
 const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => {
+	const {t} = useTranslation();
 	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -90,7 +92,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 					onClick={() => navigate(-1)}
 					sx={{mt: 3}}
 				>
-					חזור לדף הקודם
+					{t("backOneStep")}
 				</Button>
 			</Container>
 		);
@@ -111,17 +113,20 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 								<HomeIcon sx={{mr: 0.5, ml: 1}} fontSize='inherit' />
 							}
 						>
-							בית
+							{t("home")}
 						</Button>
 						<Button
 							color='inherit'
 							onClick={() => {
-								navigate(-1);
+								product.category === "Fruit"
+									? navigate(productsPathes.fruits)
+									: navigate(productsPathes.vegetable);
 							}}
 							sx={{display: "flex", alignItems: "center"}}
 						>
 							<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-							מוצרים
+							{/* {t("products")} */}
+							{product.category === "Fruit" ? "فواكه" : "خضار"}
 						</Button>
 						<Typography p={3} color='info'>
 							{product.product_name}

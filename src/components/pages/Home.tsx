@@ -10,8 +10,8 @@ import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
 import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
-import {useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
+import {Link, useNavigate} from "react-router-dom";
+import {path, productsPathes} from "../../routes/routes";
 import SearchBox from "../../atoms/productsManage/SearchBox";
 import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
@@ -203,7 +203,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return (
 			<Box component={"main"} textAlign={"center"}>
 				<Typography textAlign={"center"} variant='h6' color='error'>
-					לא נמצאו מוצרים בחנות
+					لم يتم العثور على أي منتجات في المتجر
 				</Typography>
 				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
 					נסה שוב
@@ -213,28 +213,24 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<head>
-				<title>سوق السخنيني – فواكة وخضار طازجة</title>
-				<meta
-					name='description'
-					content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة.'
-				/>
-				<link rel='canonical' href='https://client-qqq1.vercel.app/' />
-				{/* Open Graph */}
-				<meta property='og:title' content='سوق السخنيني – متجر منتجات طازجة' />
-				<meta
-					property='og:description'
-					content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market.'
-				/>
-				<meta
-					property='og:image'
-					content='https://client-qqq1.vercel.app/logo.png'
-				/>
-				<meta property='og:url' content='https://client-qqq1.vercel.app/' />
-				<meta name='twitter:card' content='summary_large_image' />
-				{/* Structured Data */}
-				<script type='application/ld+json'>
-					{`
+			<title>سوق السخنيني</title>
+			<meta
+				name='description'
+				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة.'
+			/>
+			<link rel='canonical' href='https://client-qqq1.vercel.app/' />
+			{/* Open Graph */}
+			<meta property='og:title' content='سوق السخنيني – متجر منتجات طازجة' />
+			<meta
+				property='og:description'
+				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market.'
+			/>
+			<meta property='og:image' content='https://client-qqq1.vercel.app/logo.png' />
+			<meta property='og:url' content='https://client-qqq1.vercel.app/' />
+			<meta name='twitter:card' content='summary_large_image' />
+			{/* Structured Data */}
+			<script type='application/ld+json'>
+				{`
           {
             "@context": "https://schema.org",
             "@type": "Store",
@@ -248,8 +244,8 @@ const Home: FunctionComponent<HomeProps> = () => {
             ]
           }
           `}
-				</script>
-			</head>
+			</script>
+
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
@@ -283,9 +279,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 						}}
 					>
 						<Typography
-							align='center'
-							variant='h1'
-							className=' fs-3'
+							sx={{
+								textAlign: "center",
+								my: 4,
+								fontWeight: "bold",
+							}}
+							component='h1'
+							variant='h5'
 							gutterBottom
 						>
 							جميع منتجاتنا مختارة بعناية لنقدم لكم تجربة تسوق مريحة وعالية
@@ -295,8 +295,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 							بتسوقكم!
 						</Typography>
 					</Box>
-					<Box m={1}>
-						{visibleProducts.map((product, i) => (
+
+					<Box
+						m={1}
+						sx={{border: 1, borderRadius: 5, backdropFilter: "blure(10px)"}}
+					>
+						{products.map((product, i) => (
 							<Button
 								key={i}
 								variant={
@@ -307,6 +311,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 								sx={{
 									borderRadius: 5,
 									m: 1,
+									fontSize: "1rem",
+									fontWeight: "bold",
 								}}
 								onClick={() => {
 									setSearchQuery(product.product_name);
@@ -386,7 +392,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 										border: "1px solid red",
 									}}
 								>
-									<Typography color='primary.main' variant='body1'>
+									<Typography
+										color='primary.main'
+										component='h1'
+										variant='body1'
+									>
 										لم يتم العثور على منتجات مطابقة. حاول البحث
 										باستخدام:
 									</Typography>
@@ -397,7 +407,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												borderRadius: 5,
 											}}
 											onClick={() => {
-												setSearchQuery("عنب")
+												setSearchQuery("عنب");
 											}}
 										>
 											<Chip
@@ -458,7 +468,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 				<Box sx={{bgcolor: "background.paper", py: 6}}>
 					<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
-						<Typography variant='h4' gutterBottom>
+						<Typography component={"h2"} variant='h4' gutterBottom>
 							نحن هنا لخدمتكم!
 						</Typography>
 						<Typography variant='body1'>

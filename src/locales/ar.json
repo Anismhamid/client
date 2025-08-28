@@ -66,6 +66,9 @@
 			"termsRequired": "يجب الموافقة على الشروط"
 		}
 	},
+	"home":"الرئيسيه",
+	"backOneStep":"العودة إلى الصفحة السابقة",
+	"products":"منتجات",
 	"price": "السعر",
 	"quantity": "العدد",
 	"currentStatus": "الحالة",

@@ -116,15 +116,14 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
 			.then(() => {
-				showSuccess("המוצר נמחק בהצלחה!");
-
 				setProducts((prevProducts) =>
 					prevProducts.filter((p) => p.product_name !== product_name),
 				);
+				refreshAfterCange()
 			})
 			.catch((err) => {
 				console.error(err);
-				showError("שגיאה במחיקת המוצר!");
+				showError("خطأ في حذف المنتج");
 			});
 	};
 
@@ -238,6 +237,32 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						setSearchQuery={setSearchQuery}
 					/>
 				</Box>
+				<Box
+					m={1}
+					sx={{border: 1, borderRadius: 5, backdropFilter: "blure(10px)"}}
+				>
+					{products.map((product, i) => (
+						<Button
+							key={i}
+							variant={
+								searchQuery === product.product_name
+									? "contained"
+									: "outlined"
+							}
+							sx={{
+								borderRadius: 5,
+								m: 1,
+								fontSize: "1rem",
+								fontWeight: "bold",
+							}}
+							onClick={() => {
+								setSearchQuery(product.product_name);
+							}}
+						>
+							{product.product_name}
+						</Button>
+					))}
+				</Box>
 				<Box className='container pb-5'>
 					<Row className='mt-3' spacing={5}>
 						{filteredProducts
@@ -306,7 +331,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 								disabled={showMoreLoading}
 								className='rounded-pill shadow'
 							>
-								הצג עוד מוצרים
+								عرض المزيد من المنتجات
 							</Button>
 						</div>
 					)}
@@ -323,8 +348,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					show={showDeleteModal}
 					onHide={closeDeleteModal}
 					handleDelete={() => handleDelete(productToDelete)}
-					title={"אתה עומד למחוק מוצר מהחנות"}
-					description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}
+					title={"أنت على وشك حذف منتج من السوق"}
+					description={`هل أنت متأكد أنك تريد حذف ال${productToDelete} ? لا يمكن التراجع عن هذا الإجراء`}
 				/>
 			</Box>
 		</>

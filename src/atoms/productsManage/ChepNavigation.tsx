@@ -1,7 +1,7 @@
 import {useRef} from "react"; // Add useCallback
-import {Box, Chip} from "@mui/material";
+import {Box, Chip, Typography} from "@mui/material";
 // import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import {NavLink} from "react-router-dom";
+import {Link, NavLink} from "react-router-dom";
 import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
 
@@ -139,6 +139,25 @@ const ChipNavigation = () => {
 						)}
 					</NavLink>
 				))}
+				<Link
+					to='/'
+					style={{
+						textDecoration: "none",
+					}}
+				>
+					<Typography
+						component='h1'
+						variant='h6'
+						color='error'
+						sx={{
+							fontWeight: "bold",
+							ml: 1,
+							fontFamily: "Hebbo",
+						}}
+					>
+						سـوق الـسـخـنـيـني | للخضار والفواكه
+					</Typography>
+				</Link>
 			</Box>
 
 			{/* Right Scroll Button */}

@@ -1,7 +1,6 @@
 import {FunctionComponent, useEffect} from "react";
 import Swal from "sweetalert2";
 
-
 interface AlertDialogProps {
 	show: boolean;
 	handleDelete: () => void;
@@ -22,9 +21,9 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 			const swalWithBootstrapButtons = Swal.mixin({
 				customClass: {
 					confirmButton: "btn btn-success",
-					cancelButton: "btn btn-danger",
+					cancelButton: "btn btn-danger ms-5",
 				},
-				buttonsStyling: false,
+				buttonsStyling: true,
 			});
 
 			swalWithBootstrapButtons
@@ -32,17 +31,16 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 					title,
 					text: description,
 					icon: "warning",
-					confirmButtonText: "כן, מחק",
+					confirmButtonText: "نعم, حذف",
 					showCancelButton: true,
-					cancelButtonText: "ביטול",
+					cancelButtonText: "الغاء الحذف",
 					reverseButtons: false,
 				})
 				.then((result) => {
 					if (result.isConfirmed) {
 						handleDelete();
 						swalWithBootstrapButtons.fire({
-							title: "נמחק!",
-							text: "הפריט נמחק בהצלחה.",
+							text: "تم الحذف بنجاح",
 							icon: "success",
 						});
 					}
@@ -50,7 +48,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 				});
 		}
 	}, [show]);
-	return null
+	return null;
 };
 
 export default AlertDialogs;
