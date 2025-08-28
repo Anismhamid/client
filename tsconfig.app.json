@@ -22,5 +22,5 @@
 		"noFallthroughCasesInSwitch": true,
 		"noUncheckedSideEffectImports": true
 	},
-	"include": ["src", "public/scripts", "src/hooks"]
+	"include": ["src", "public/scripts", "src/hooks", "utils/structuredData.ts"]
 }

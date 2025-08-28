@@ -1,0 +1,94 @@
+import {Products} from "../src/interfaces/Products";
+
+interface ProductStructuredDataProps {
+	productName: string;
+	productUrl: string;
+	description?: string;
+	image?: string;
+	price: number;
+	currency?: string;
+	inStock?: boolean;
+	category?: string;
+	brand?: string;
+}
+
+// For a general product (category or type)
+export const generateProductJsonLd = ({
+	productName,
+	productUrl,
+	description = "منتج عالي الجودة من سوق السخنيني",
+	image,
+	price,
+	currency = "ILS",
+	inStock = true,
+	category = "منتجات طازجة",
+	brand = "سوق السخنيني",
+}: ProductStructuredDataProps) => ({
+	"@context": "https://schema.org",
+	"@type": "Product",
+	name: productName,
+	description,
+	image,
+	brand: {
+		"@type": "Brand",
+		name: brand,
+	},
+	category,
+	offers: {
+		"@type": "Offer",
+		url: productUrl,
+		priceCurrency: currency,
+		price,
+		availability: inStock
+			? "https://schema.org/InStock"
+			: "https://schema.org/OutOfStock",
+	},
+});
+
+// On an individual product page
+export const generateSingleProductJsonLd = (product: Products) => ({
+	"@context": "https://schema.org",
+	"@type": "Product",
+	name: product.product_name,
+	description: product.description || "منتج مميز من سوق السخنيني",
+	image: product.image_url,
+	category: product.category,
+	offers: {
+		"@type": "Offer",
+		priceCurrency: "ILS",
+		price: product.sale
+			? product.price - (product.price * (product.discount || 0)) / 100
+			: product.price,
+		url: `https://client-qqq1.vercel.app/products/${encodeURIComponent(
+			product.product_name,
+		)}`,
+		availability:
+			product.quantity_in_stock > 0
+				? "https://schema.org/InStock"
+				: "https://schema.org/OutOfStock",
+	},
+});
+
+// When displaying a list of products on a page
+export const generateProductsItemListJsonLd = (products: Products[]) => ({
+	"@context": "https://schema.org",
+	"@type": "ItemList",
+	itemListElement: products.map((product, index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		name: product.product_name,
+		url: `https://client-qqq1.vercel.app/products/${encodeURIComponent(
+			product.product_name,
+		)}`,
+	})),
+});
+
+export const generateDiscountsJsonLd = (products: Products[]) => ({
+	"@context": "https://schema.org",
+	"@type": "ItemList",
+	itemListElement: products.map((product, index) => ({
+		"@type": "ListItem",
+		position: index + 1,
+		item: generateSingleProductJsonLd(product),
+	})),
+});

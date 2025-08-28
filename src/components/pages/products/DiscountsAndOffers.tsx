@@ -9,7 +9,8 @@ import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/scrollbar";
-import ProductDiscountStructuredData from "../../../atoms/structuredData.ts/ProductDiscountStructuredData";
+import { generateDiscountsJsonLd } from "../../../../utils/structuredData";
+import JsonLd from "../../../../utils/JsonLd";
 
 interface DiscountsAndOffersProps {}
 
@@ -43,12 +44,17 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		return <Loader />;
 	}
 
+const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
+
+
 	return (
 		<Box
 			component='section'
 			className='border-bottom border-5 border-danger mt-5'
 			aria-labelledby='discounts-heading'
 		>
+			<JsonLd data={jsonLdData} />
+
 			{/* تحسين العناوين للسيو */}
 			<Box textAlign='center' mb={4}>
 				<Typography
@@ -79,56 +85,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					{t("categories.discountsAndOffers.discountsAndOffersDescription")}
 				</Typography>
 			</Box>
-
-			{/* إضافة بيانات منظمة للعروض */}
-			{/* <script type='application/ld+json'>
-				{`
-          {
-            "@context": "https://schema.org",
-            "@type": "OfferCatalog",
-            "name": "عروض وتخفيضات سوق السخنيني",
-            "description": "أفضل العروض والتخفيضات على الفواكه والخضروات في سوق السخنيني",
-            "numberOfItems": "${productsInDiscount.length}",
-            "itemListElement": [
-              ${productsInDiscount
-					.map(
-						(product, index) => `
-                {
-                  "@type": "Offer",
-                  "position": "${index + 1}",
-                  "itemOffered": {
-                    "@type": "Product",
-                    "name": "${product.product_name}",
-                    "description": "${product.product_name} بجودة عالية مع خصم ${product.discount}%",
-                    "image": "${product.image_url}",
-                    "category": "${product.category}"
-                  },
-                  "priceSpecification": {
-                    "@type": "UnitPriceSpecification",
-                    "priceCurrency": "ILS",
-                    "price": "${product.price - (product.price * product.discount) / 100}",
-                    "referenceQuantity": {
-                      "@type": "QuantitativeValue",
-                      "value": "1",
-                      "unitCode": "KGM"
-                    }
-                  },
-                  "price": "${product.price - (product.price * product.discount) / 100}",
-                  "priceCurrency": "ILS",
-                  "availability": "https://schema.org/InStock",
-                  "seller": {
-                    "@type": "GroceryStore",
-                    "name": "سوق السخنيني"
-                  }
-                }
-              `,
-					)
-					.join(",")}
-            ]
-          }
-        `}
-			</script> */}
-			<ProductDiscountStructuredData products={productsInDiscount} />
 
 			<Box>
 				<Swiper

@@ -20,7 +20,8 @@ import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {handleQuantity} from "../../../helpers/fruitesFunctions";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import ProductStructuredData from "../../../atoms/structuredData.ts/ProductStructuredData";
+import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
+import JsonLd from "../../../../utils/JsonLd";
 
 interface ProductCardProps {
 	product: Products;
@@ -64,6 +65,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 		return `${productName} طازج من سوق السخنيني - ${category} عالي الجودة`;
 	};
 
+	const jsonLdData = generateSingleProductJsonLd(product);
+
 	return (
 		<Card
 			style={{
@@ -83,12 +86,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 			role='article'
 			aria-label={`منتج: ${product.product_name}`}
 		>
-			<ProductStructuredData
-				product={product}
-				discountedPrice={discountedPrice}
-				isOutOfStock={isOutOfStock}
-				category={category}
-			/>
+			<JsonLd data={jsonLdData} />
+
 			<Box
 				position='relative'
 				width='100%'
