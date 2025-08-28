@@ -87,7 +87,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 			aria-label={`منتج: ${product.product_name}`}
 		>
 			<JsonLd data={jsonLdData} />
-
 			<Box
 				position='relative'
 				width='100%'
@@ -205,7 +204,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 					{formatPrice(discountedPrice)}
 				</Typography>
 			</CardContent>
-
 			<Box role='group' aria-label='إدارة الكمية'>
 				<Box
 					sx={{
@@ -239,7 +237,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						aria-label='زيادة الكمية'
 					/>
 				</Box>
-			</Box>
+			</Box>{" "}
+			<Typography variant='h6' align='center'>
+				{product.description}
+			</Typography>
 			<LoadingButton
 				fullWidth
 				onClick={() => {
@@ -266,7 +267,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 			>
 				{isOutOfStock ? "غير متوفر" : "أضف إلى السلة"}
 			</LoadingButton>
-
 			{canEdit && (
 				<Box
 					sx={{
