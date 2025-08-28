@@ -49,6 +49,7 @@
 		"@types/jspdf": "^2.0.0",
 		"@types/react-dom": "^19.1.5",
 		"@types/react-helmet": "^6.1.11",
+		"@vercel/node": "^5.3.17",
 		"@vitejs/plugin-react": "^4.5.0",
 		"buffer": "^6.0.3",
 		"eslint": "^9.27.0",
