@@ -58,7 +58,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 	handleAdd,
 	category,
 }) => {
-	// Create descriptive alt text for the image
+	// descriptive alt text for the image
 	const generateImageAlt = (productName: string, category: string) => {
 		return `${productName} طازج من سوق السخنيني - ${category} عالي الجودة`;
 	};

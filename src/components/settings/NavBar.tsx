@@ -91,11 +91,14 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 		<>
 			<ChipNavigation />
 			<AppBar
-				aria-label='Main navigation'
+				aria-label='القائمة الرئيسية'
 				position='relative'
 				className='navbar-glass m-auto z-2'
+				role='navigation'
 			>
 				<Box
+					component='nav'
+					aria-label='القائمة الرئيسية'
 					sx={{
 						display: "flex",
 						justifyContent: "space-between",
@@ -103,16 +106,17 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						flexWrap: "wrap",
 						padding: "5px 5px",
 					}}
-					component='nav'
 				>
-					<Tooltip title='בית' arrow>
+					<Tooltip title='الصفحة الرئيسية - سوق السخنيني' arrow>
 						<li className='nav-item mx-3'>
 							<NavLink
 								className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
 								aria-current='page'
 								to={path.Home}
+								aria-label='الصفحة الرئيسية - سوق السخنيني'
 							>
 								{fontAwesomeIcon.home}
+								<span className='visually-hidden'>الصفحة الرئيسية</span>
 							</NavLink>
 						</li>
 					</Tooltip>
@@ -143,6 +147,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							py: 1,
 							fontWeight: 800,
 						}}
+						aria-haspopup='true'
+						aria-expanded={openMenu ? "true" : "false"}
+						aria-label='قائمة الفئات والمنتجات'
 					>
 						<Stack direction='row' alignItems='center' spacing={0}>
 							<Typography>{t("links.products")}</Typography>
@@ -154,6 +161,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 										? "rotate(180deg)"
 										: "rotate(0deg)",
 								}}
+								aria-hidden='true'
 							/>
 						</Stack>
 
@@ -172,6 +180,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							}}
 							transformOrigin={{horizontal: "center", vertical: "top"}}
 							anchorOrigin={{horizontal: "center", vertical: "bottom"}}
+							role='menu'
+							aria-label='قائمة الفئات'
 						>
 							{/* Category Links */}
 							{navbarCategoryLinks.map(({labelKey, path, icon}) => (
@@ -180,6 +190,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									component={NavLink}
 									to={path}
 									onClick={handleMenuClose}
+									role='menuitem'
+									aria-label={`تصفح ${t(labelKey)}`}
 								>
 									{icon}
 									<span className=' me-2'>{t(labelKey)}</span>
@@ -188,7 +200,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						</Menu>
 					</Box>
 					{isLoggedIn && (
-						<li className='nav-item'>
+						<li className='nav-item' role='none'>
 							<NavLink
 								className={` ${
 									isActive(path.AllTheOrders)
@@ -197,24 +209,38 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								} nav-link`}
 								aria-current='page'
 								to={path.AllTheOrders}
+								aria-label='الطلبات - سوق السخنيني'
 							>
 								{t("links.orders")}
 							</NavLink>
 						</li>
 					)}
-					<li className='nav-item'>
+					<li className='nav-item' role='none'>
 						<NavLink
 							className={`${
 								isActive(path.About) ? "text-danger fw-bold" : ""
 							} nav-link`}
-							aria-current='page'
+							aria-current={isActive(path.About) ? "page" : undefined}
 							to={path.About}
+							aria-label='من نحن - معلومات عن سوق السخنيني'
 						>
 							{t("links.about")}
 						</NavLink>
 					</li>
+					<li className='nav-item' role='none'>
+						<NavLink
+							className={`${
+								isActive(path.Contact) ? "text-danger " : ""
+							} nav-link`}
+							aria-current={isActive(path.Contact) ? "page" : undefined}
+							to={path.Contact}
+							aria-label='اتصل بنا - خدمة عملاء سوق السخنيني'
+						>
+							{t("links.contact")}
+						</NavLink>
+					</li>
 					{isLoggedIn && (
-						<li className='nav-item'>
+						<li className='nav-item' role='none'>
 							<NavLink
 								className={`${
 									isActive(path.Receipt) ? "text-danger" : ""
@@ -226,20 +252,10 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</NavLink>
 						</li>
 					)}
-					<li className='nav-item'>
-						<NavLink
-							className={`${
-								isActive(path.Contact) ? "text-danger " : ""
-							} nav-link`}
-							aria-current='page'
-							to={path.Contact}
-						>
-							{t("links.contact")}
-						</NavLink>
-					</li>
+
 					{/* {auth && isLoggedIn && ( */}
-					<Tooltip title='סל קניות' arrow>
-						<li className='nav-item ms-1'>
+					<li className='nav-item ms-1' role='none'>
+						<Tooltip title='عربة التسوق - سوق السخنيني' arrow>
 							<Box>
 								<Badge
 									badgeContent={quantity}
@@ -250,41 +266,51 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 											fontWeight: "bold",
 										},
 									}}
+									aria-label={`${quantity} عنصر في عربة التسوق`}
 								>
 									<NavLink
 										className={`${
 											isActive(path.Cart) ? "text-danger" : ""
 										} nav-link fs-5`}
-										aria-current='page'
+										aria-current={
+											isActive(path.Cart) ? "page" : undefined
+										}
 										to={path.Cart}
+										aria-label='عربة التسوق - سوق السخنيني'
 									>
 										{fontAwesomeIcon.cartInoc}
+										<span className='visually-hidden'>
+											عربة التسوق
+										</span>
 									</NavLink>
 								</Badge>
 							</Box>
-						</li>
-					</Tooltip>
-					{/* )} */}
-					{!isLoggedIn ? (
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={() => navigate(path.Login)}
-							sx={{
-								borderRadius: "30px",
-								fontWeight: "bold",
-								backgroundColor: "#4FC3F7",
-								color: "#1A1E22",
-								"&:hover": {
-									backgroundColor: "#81D4FA",
-								},
-							}}
-						>
-							התחבר
-						</Button>
-					) : (
-						isLoggedIn && <AccountMenu logout={logout} />
-					)}
+						</Tooltip>
+					</li>
+
+					<li className='nav-item' role='none'>
+						{!isLoggedIn ? (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={() => navigate(path.Login)}
+								sx={{
+									borderRadius: "30px",
+									fontWeight: "bold",
+									backgroundColor: "#4FC3F7",
+									color: "#1A1E22",
+									"&:hover": {
+										backgroundColor: "#81D4FA",
+									},
+								}}
+								aria-label='تسجيل الدخول إلى حسابك في سوق السخنيني'
+							>
+								تسجيل الدخول
+							</Button>
+						) : (
+							isLoggedIn && <AccountMenu logout={logout} />
+						)}
+					</li>
 					{/* <Link
 						target='_blank'
 						rel='noopener noreferrer'

@@ -31,7 +31,7 @@ import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {useTranslation} from "react-i18next";
 
 interface ProductDetailsProps {
-	handleAdd: Function;
+	handleAdd: () => void;
 }
 
 const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => {
@@ -265,7 +265,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 												borderRadius: 1,
 											}}
 										>
-											חזור לחנות
+											العودة إلى السوق
 										</Button>
 									</Grid>
 									<Grid size={{xs: 12, md: 6}}>
@@ -282,7 +282,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 												borderRadius: 1,
 											}}
 										>
-											הוסף לסל
+											أضف إلى السلة
 										</Button>
 									</Grid>
 								</Grid>
