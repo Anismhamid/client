@@ -1,1 +1,3 @@
+User-agent: *
+Allow: /
 Sitemap: https://client-qqq1.vercel.app/sitemap.xml
