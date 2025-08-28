@@ -32,7 +32,7 @@
 			property="og:description"
 			content="اكتشف أجود أنواع الخضار والفواكه الطازجة في سوق السخنيني بأم الفحم. جودة عالية، أسعار مناسبة، وتوصيل سريع إلى باب المنزل."
 		/>
-		<meta property="og:image" content="https://client-qqq1.vercel.app/myLogo2.jpg" />
+		<meta property="og:image" content="https://client-qqq1.vercel.app/myLogo2.png" />
 		<meta property="og:locale" content="ar_IL" />
 		<meta property="og:site_name" content="سوق السخنيني" />
 
@@ -49,7 +49,7 @@
 		/>
 		<meta
 			property="twitter:image"
-			content="https://client-qqq1.vercel.app/twitter-image.jpg"
+			content="https://client-qqq1.vercel.app/myLogo.png"
 		/>
 		<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
@@ -60,50 +60,47 @@
 			{
 				"@context": "https://schema.org",
 				"@type": "GroceryStore",
-				"name": "سوق السخنيني للخضار والفواكه",
-				"description": "متجر متخصص في بيع الخضار والفواكه الطازجة في أم الفحم بجودة عالية وأسعار مناسبة",
+				"name": "سوق السخنيني",
 				"url": "https://client-qqq1.vercel.app/",
+				"logo": "https://client-qqq1.vercel.app/myLogo2.png",
+				"image": "https://client-qqq1.vercel.app/myLogo2.png",
+				"description": "متجر يقدم تشكيلة واسعة من الفواكه والخضار الطازجة بأم الفحم بجودة عالية وأسعار مناسبة.",
 				"telephone": "+972-46310374",
 				"address": {
 					"@type": "PostalAddress",
 					"streetAddress": "شارع السوق",
 					"addressLocality": "أم الفحم",
 					"addressRegion": "المنطقة الشمالية",
-					"addressCountry": "IL",
-					"postalCode": "3001000"
+					"postalCode": "3001000",
+					"addressCountry": "IL"
 				},
 				"geo": {
 					"@type": "GeoCoordinates",
-					"latitude": "32.5180",
-					"longitude": "35.1555"
+					"latitude": 32.518,
+					"longitude": 35.1555
 				},
 				"openingHours": ["Mo-Su 07:00-22:00"],
 				"priceRange": "$$",
-				"image": "https://client-qqq1.vercel.app/myLogo2.png",
-				"logo": "https://client-qqq1.vercel.app/myLogo2.png",
 				"sameAs": [
 					"https://www.facebook.com/shokshknini",
 					"https://www.tiktok.com/discover/%D8%B3%D9%88%D9%82-%D8%A7%D9%84%D8%B3%D8%AE%D9%86%D9%8A%D9%86%D9%8A"
 				],
-				"potentialAction": {
-					"@type": "SearchAction",
-					"target": "https://client-qqq1.vercel.app/search?q={search_term_string}",
-					"query-input": "required name=search_term_string"
-				},
 				"hasOfferCatalog": {
 					"@type": "OfferCatalog",
 					"name": "منتجات السوق",
 					"itemListElement": [
 						{
-							"@type": "Offer",
-							"itemOffered": {
+							"@type": "ListItem",
+							"position": 1,
+							"item": {
 								"@type": "Product",
 								"name": "خضار طازجة"
 							}
 						},
 						{
-							"@type": "Offer",
-							"itemOffered": {
+							"@type": "ListItem",
+							"position": 2,
+							"item": {
 								"@type": "Product",
 								"name": "فواكه طازجة"
 							}
@@ -113,18 +110,12 @@
 			}
 		</script>
 
-		<!-- بيانات منظمة إضافية للصفحة الرئيسية -->
 		<script type="application/ld+json">
 			{
 				"@context": "https://schema.org",
 				"@type": "WebSite",
 				"name": "سوق السخنيني",
-				"url": "https://client-qqq1.vercel.app/",
-				"potentialAction": {
-					"@type": "SearchAction",
-					"target": "https://client-qqq1.vercel.app/search?q={search_term_string}",
-					"query-input": "required name=search_term_string"
-				}
+				"url": "https://client-qqq1.vercel.app/"
 			}
 		</script>
 
