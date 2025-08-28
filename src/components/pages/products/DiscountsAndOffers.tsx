@@ -3,12 +3,13 @@ import {Products} from "../../../interfaces/Products";
 import {getProductsInDiscount} from "../../../services/productsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
-import {Chip, Skeleton, Box, Typography} from "@mui/material";
+import { Skeleton, Box, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/scrollbar";
+import ProductDiscountStructuredData from "../../../atoms/structuredData.ts/ProductDiscountStructuredData";
 
 interface DiscountsAndOffersProps {}
 
@@ -80,7 +81,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 			</Box>
 
 			{/* إضافة بيانات منظمة للعروض */}
-			<script type='application/ld+json'>
+			{/* <script type='application/ld+json'>
 				{`
           {
             "@context": "https://schema.org",
@@ -126,7 +127,8 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
             ]
           }
         `}
-			</script>
+			</script> */}
+			<ProductDiscountStructuredData products={productsInDiscount} />
 
 			<Box>
 				<Swiper

@@ -20,6 +20,7 @@ import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {handleQuantity} from "../../../helpers/fruitesFunctions";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import ProductStructuredData from "../../../atoms/structuredData.ts/ProductStructuredData";
 
 interface ProductCardProps {
 	product: Products;
@@ -63,27 +64,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 		return `${productName} طازج من سوق السخنيني - ${category} عالي الجودة`;
 	};
 
-	// Structured product data (Schema.org)
-	const productSchema = {
-		"@context": "https://schema.org",
-		"@type": "Product",
-		name: product.product_name,
-		description: `${product.product_name} طازج من سوق السخنيني`,
-		image: product.image_url,
-		offers: {
-			"@type": "Offer",
-			price: discountedPrice,
-			priceCurrency: "ILS",
-			availability: isOutOfStock
-				? "https://schema.org/OutOfStock"
-				: "https://schema.org/InStock",
-			priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-				.toISOString()
-				.split("T")[0],
-		},
-		category: category,
-	};
-
 	return (
 		<Card
 			style={{
@@ -103,9 +83,12 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 			role='article'
 			aria-label={`منتج: ${product.product_name}`}
 		>
-			{/* بيانات منظمة مخفية */}
-			<script type='application/ld+json'>{JSON.stringify(productSchema)}</script>
-
+			<ProductStructuredData
+				product={product}
+				discountedPrice={discountedPrice}
+				isOutOfStock={isOutOfStock}
+				category={category}
+			/>
 			<Box
 				position='relative'
 				width='100%'
