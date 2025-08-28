@@ -9,7 +9,7 @@ interface AboutProps {}
 const About: FunctionComponent<AboutProps> = () => {
 	return (
 		<main className='min-vh-100'>
-			<div className='container py-5'>
+			<div className='container-fluid py-5'>
 				<div className='row justify-content-center'>
 					<div className='col-md-8 text-center'>
 						{/* Header */}
@@ -18,10 +18,10 @@ const About: FunctionComponent<AboutProps> = () => {
 						</h1>
 
 						<div className='about-section'>
-							<p className='lead mb-4 fs-3'>
+							<h2 className='lead mb-4 fs-3'>
 								فواكه وخضروات طازجة وعضوية تصل إليكم حتى باب المنزل، مع
 								مجموعة واسعة من المنتجات عالية الجودة.
-							</p>
+							</h2>
 						</div>
 
 						{/* الحياة العصرية والخدمات */}

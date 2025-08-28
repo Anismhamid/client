@@ -76,7 +76,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || 0;
-			const productInDiscount = product.sale ? "מבצע" : "";
+			const productInDiscount = product.sale ? "عروض" : "";
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				(searchQuery && productPrice.toString().includes(searchQuery)) ||
@@ -213,6 +213,43 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
+			<head>
+				<title>سوق السخنيني – فواكة وخضار طازجة</title>
+				<meta
+					name='description'
+					content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة.'
+				/>
+				<link rel='canonical' href='https://client-qqq1.vercel.app/' />
+				{/* Open Graph */}
+				<meta property='og:title' content='سوق السخنيني – متجر منتجات طازجة' />
+				<meta
+					property='og:description'
+					content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market.'
+				/>
+				<meta
+					property='og:image'
+					content='https://client-qqq1.vercel.app/logo.png'
+				/>
+				<meta property='og:url' content='https://client-qqq1.vercel.app/' />
+				<meta name='twitter:card' content='summary_large_image' />
+				{/* Structured Data */}
+				<script type='application/ld+json'>
+					{`
+          {
+            "@context": "https://schema.org",
+            "@type": "Store",
+            "name": "سوق السخنيني",
+            "url": "https://client-qqq1.vercel.app/",
+            "logo": "https://client-qqq1.vercel.app/myLogo2.png",
+            "description": "متجر يقدم تشكيلة واسعة من الفواكه والخضار والمنتجات الطازجة.",
+            "sameAs": [
+              "https://www.facebook.com/shokshknini",
+							"https://www.tiktok.com/discover/%D8%B3%D9%88%D9%82-%D8%A7%D9%84%D8%B3%D8%AE%D9%86%D9%8A%D9%86%D9%8A"
+            ]
+          }
+          `}
+				</script>
+			</head>
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
@@ -230,11 +267,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 					>
 						<SearchBox
 							searchQuery={searchQuery}
-							text='חפש שם מוצר, מחיר או מבצע...'
+							text='ابحث عن منتج أو سعر أو عروض...'
 							setSearchQuery={setSearchQuery}
 						/>
 					</Box>
-
 					{/* Discounts Section */}
 					<Box
 						sx={{
@@ -246,7 +282,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 							my: 5,
 						}}
 					>
-						<Typography align='center' variant='h6' gutterBottom>
+						<Typography
+							align='center'
+							variant='h1'
+							className=' fs-3'
+							gutterBottom
+						>
 							جميع منتجاتنا مختارة بعناية لنقدم لكم تجربة تسوق مريحة وعالية
 							الجودة وبأسعار معقولة. ستجدون هنا تشكيلة واسعة من المنتجات
 							الطازجة والموثوقة وبأسعار مميزة. لأي استفسارات حول المنتجات أو
@@ -254,7 +295,28 @@ const Home: FunctionComponent<HomeProps> = () => {
 							بتسوقكم!
 						</Typography>
 					</Box>
-					<Box  className='container pb-5 home-row'>
+					<Box m={1}>
+						{visibleProducts.map((product, i) => (
+							<Button
+								key={i}
+								variant={
+									searchQuery === product.product_name
+										? "contained"
+										: "outlined"
+								}
+								sx={{
+									borderRadius: 5,
+									m: 1,
+								}}
+								onClick={() => {
+									setSearchQuery(product.product_name);
+								}}
+							>
+								{product.product_name}
+							</Button>
+						))}
+					</Box>
+					<Box className='container pb-5 home-row'>
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (
 								visibleProducts.map((product) => {
@@ -270,8 +332,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 									const unitText =
 										{
 											// spices: "ל/100 גרם",
-											fruit: "للكيلو-1",
-											vegetable: "للكيلو-1",
+											fruit: "الكيلو-1",
+											vegetable: "الكيلو-1",
 											// meat: 'ל/ק"ג',
 											// fish: 'ל/ק"ג',
 										}[product.category?.toLowerCase()] || "ליחידה";
@@ -311,16 +373,71 @@ const Home: FunctionComponent<HomeProps> = () => {
 									);
 								})
 							) : (
-								<>
-									<Typography variant='body1'>
-										לא נמצאו מוצרים תואמים. נסו לחפש לפי:
+								<Box
+									sx={{
+										backgroundColor: "white",
+										p: 5,
+										width: "80%",
+
+										m: "auto",
+										mt: 5,
+										textAlign: "center",
+										borderRadius: 5,
+										border: "1px solid red",
+									}}
+								>
+									<Typography color='primary.main' variant='body1'>
+										لم يتم العثور على منتجات مطابقة. حاول البحث
+										باستخدام:
 									</Typography>
-									<Box mt={1}>
-										<Chip label='שם מוצר' sx={{mx: 0.5}} />
-										<Chip label='מחיר' sx={{mx: 0.5}} />
-										<Chip label='מבצע' sx={{mx: 0.5}} />
+									<Box m={1}>
+										<Button
+											variant='contained'
+											sx={{
+												borderRadius: 5,
+											}}
+											onClick={() => {
+												setSearchQuery("عنب")
+											}}
+										>
+											<Chip
+												label='اسم المنتج'
+												sx={{
+													mx: 0.5,
+													color: "white",
+												}}
+											/>
+										</Button>
+										<Button
+											variant='contained'
+											sx={{
+												borderRadius: 5,
+											}}
+											onClick={() => {
+												console.log(setSearchQuery("2"));
+											}}
+										>
+											<Chip
+												label='سعر المنتج'
+												sx={{mx: 0.5, color: "white"}}
+											/>
+										</Button>
+										<Button
+											variant='contained'
+											sx={{
+												borderRadius: 5,
+											}}
+											onClick={() => {
+												console.log(setSearchQuery("عروض"));
+											}}
+										>
+											<Chip
+												label='عروض'
+												sx={{mx: 0.5, color: "white"}}
+											/>
+										</Button>
 									</Box>
-								</>
+								</Box>
 							)}
 						</Row>
 					</Box>

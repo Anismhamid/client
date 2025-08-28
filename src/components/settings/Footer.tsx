@@ -106,11 +106,11 @@ const Footer: FunctionComponent<FooterProps> = () => {
 								</li>
 								<li>
 									<NavLink
-										to='https://twitter.com'
+										to='https://www.tiktok.com/discover/%D8%B3%D9%88%D9%82-%D8%A7%D9%84%D8%B3%D8%AE%D9%86%D9%8A%D9%86%D9%8A'
 										className='text-primaty text-decoration-none'
 										target='_blank'
 									>
-										Twitter
+										Tiktok
 									</NavLink>
 								</li>
 							</ul>
@@ -130,7 +130,10 @@ const Footer: FunctionComponent<FooterProps> = () => {
 						borderRadius: 5,
 					}}
 				>
-					<p>&copy; {new Date().getFullYear()} جميع الحقوق محفوظة سوق الـسـخـنـيـني</p>
+					<p>
+						&copy; {new Date().getFullYear()} جميع الحقوق محفوظة سوق
+						الـسـخـنـيـني
+					</p>
 				</Box>
 			</Box>
 		</Box>
