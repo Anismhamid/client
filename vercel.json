@@ -1,5 +1,16 @@
 {
-	"rewrites": [{"source": "/(.*)", "destination": "/"}],
+	"rewrites": [
+		{
+			"source": "/(.*)",
+			"destination": "/",
+			"has": [
+				{
+					"type": "missing",
+					"value": "/(sitemap\\.xml|robots\\.txt)"
+				}
+			]
+		}
+	],
 	"headers": [
 		{
 			"source": "/sitemap.xml",
