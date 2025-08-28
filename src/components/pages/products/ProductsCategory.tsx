@@ -5,7 +5,7 @@ import {handleAddToCart} from "../../../helpers/fruitesFunctions";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
-import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
+import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
 import {useCartItems} from "../../../context/useCart";
 import {
