@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
+
+Disallow: /profile
+Disallow: /cart
+Disallow: /messages
+Disallow: /all-orders
+Disallow: /usersManagement
+Disallow: /receipt
+
 Sitemap: https://client-qqq1.vercel.app/sitemap.xml
