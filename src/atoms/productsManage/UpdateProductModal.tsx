@@ -226,9 +226,11 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								onChange={formik.handleChange}
 								className='form-control'
 								id='quantity_in_stock'
-								placeholder='כמות במלאי'
+								placeholder={t("modals.updateProductModal.quantity")}
 							/>
-							<label htmlFor='quantity_in_stock'>כמות במלאי</label>
+							<label htmlFor='quantity_in_stock'>
+								{t("modals.updateProductModal.quantity")}
+							</label>
 							{(formik.touched.quantity_in_stock ||
 								formik.errors.quantity_in_stock) && (
 								<div className='text-danger fw-bold'>
@@ -240,16 +242,20 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						{/* description */}
 						<div className='form-floating mb-3'>
 							<textarea
+								aria-label={t("modals.updateProductModal.description")}
 								name='description'
 								value={formik.values.description}
 								onChange={formik.handleChange}
 								className='form-control'
 								id='description'
-								placeholder='תיאור המוצר'
+								placeholder={t("modals.updateProductModal.description")}
 								rows={4}
 							/>
-							<label htmlFor='description'>
-								תיאור המוצר
+							<label
+								htmlFor='description'
+								aria-label={t("modals.updateProductModal.description")}
+							>
+								{t("modals.updateProductModal.description")}
 								<hr />
 							</label>
 							{formik.touched.description && formik.errors.description && (
@@ -262,15 +268,18 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						{/* image_url */}
 						<div className='form-floating mb-3'>
 							<input
+								aria-label={t("modals.updateProductModal.imageUrl")}
 								type='text'
 								name='image_url'
 								value={formik.values.image_url}
 								onChange={formik.handleChange}
 								className='form-control'
 								id='image_url'
-								placeholder='כתובת תמונה'
+								placeholder={t("modals.updateProductModal.imageUrl")}
 							/>
-							<label htmlFor='image_url'>כתובת תמונה</label>
+							<label htmlFor='image_url'>
+								{t("modals.updateProductModal.imageUrl")}
+							</label>
 							{formik.touched.image_url && formik.errors.image_url && (
 								<div className='text-danger fw-bold'>
 									{formik.errors.image_url}
@@ -282,6 +291,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						<div className='form-floating mb-3 fw-bold'>
 							<div className='form-check form-switch'>
 								<input
+									aria-label={t("modals.updateProductModal.sale")}
 									className='form-check-input'
 									type='checkbox'
 									role='switch'
@@ -290,8 +300,12 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 									checked={formik.values.sale ? true : false}
 									onChange={formik.handleChange}
 								/>
-								<label className='form-check-label' htmlFor='sale'>
-									במבצע
+								<label
+									className='form-check-label'
+									htmlFor='sale'
+									aria-label={t("modals.updateProductModal.sale")}
+								>
+									{t("modals.updateProductModal.sale")}
 								</label>
 							</div>
 						</div>
@@ -299,6 +313,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 						{/* discount */}
 						<div className='form-floating mb-3'>
 							<input
+								aria-label={t("modals.updateProductModal.discount")}
 								type='number'
 								name='discount'
 								disabled={formik.values.sale ? false : true}
@@ -315,24 +330,29 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 									formik.values.sale ? "" : "d-none"
 								}`}
 								id='discount'
-								placeholder='% הנחה באחוזים'
 							/>
 							<label
 								className={`${formik.values.sale ? "" : "d-none"}`}
 								htmlFor='discount'
+								aria-label={t("modals.updateProductModal.discount")}
 							>
-								אחוז הנחה
+								{t("modals.updateProductModal.discount")}
 							</label>
 						</div>
 
-						<button type='submit' className='btn btn-success w-100'>
-							עדכן
+						<button
+							type='submit'
+							className='btn btn-success w-100'
+							aria-label={t("modals.updateProductModal.updateButton")}
+						>
+							{t("modals.updateProductModal.updateButton")}
 						</button>
 						<button
 							onClick={() => onHide()}
 							className='my-3 btn btn-danger w-100'
+							aria-label={t("modals.updateProductModal.closeButton")}
 						>
-							סגירה
+							{t("modals.updateProductModal.closeButton")}
 						</button>
 					</form>
 				</div>

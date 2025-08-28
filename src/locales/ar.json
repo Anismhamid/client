@@ -124,7 +124,7 @@
 			}
 		},
 		"updateProductModal": {
-			"title": "تحديث بيانات المنتج",
+			"title": "تحديث المنتج",
 			"productName": "اسم المنتج (فريد)",
 			"productNamePlaceholder": "اسم المنتج",
 			"category": "الفئة",

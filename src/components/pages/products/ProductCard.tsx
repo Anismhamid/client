@@ -34,7 +34,7 @@ interface ProductCardProps {
 	setProductNameToUpdate: Dispatch<SetStateAction<string>>;
 	onShowUpdateProductModal: () => void;
 	openDeleteModal: (name: string) => void;
-	setLoadedImages: React.Dispatch<SetStateAction<Record<string, boolean>>>;
+	setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadedImages: Record<string, boolean>;
 	handleAdd: Function;
 	category: string;
@@ -58,6 +58,32 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 	handleAdd,
 	category,
 }) => {
+	// Create descriptive alt text for the image
+	const generateImageAlt = (productName: string, category: string) => {
+		return `${productName} طازج من سوق السخنيني - ${category} عالي الجودة`;
+	};
+
+	// Structured product data (Schema.org)
+	const productSchema = {
+		"@context": "https://schema.org",
+		"@type": "Product",
+		name: product.product_name,
+		description: `${product.product_name} طازج من سوق السخنيني`,
+		image: product.image_url,
+		offers: {
+			"@type": "Offer",
+			price: discountedPrice,
+			priceCurrency: "ILS",
+			availability: isOutOfStock
+				? "https://schema.org/OutOfStock"
+				: "https://schema.org/InStock",
+			priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+				.toISOString()
+				.split("T")[0],
+		},
+		category: category,
+	};
+
 	return (
 		<Card
 			style={{
@@ -72,7 +98,14 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 				boxShadow: "0px 0px 1px white",
 			}}
 			className='card-hover'
+			itemScope
+			itemType='https://schema.org/Product'
+			role='article'
+			aria-label={`منتج: ${product.product_name}`}
 		>
+			{/* بيانات منظمة مخفية */}
+			<script type='application/ld+json'>{JSON.stringify(productSchema)}</script>
+
 			<Box
 				position='relative'
 				width='100%'
@@ -84,7 +117,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 					},
 				}}
 			>
-				<Link to={`/product-details/${encodeURIComponent(product.product_name)}`}>
+				<Link
+					to={`/product-details/${encodeURIComponent(product.product_name)}`}
+					aria-label={`تفاصيل عن ${product.product_name}`}
+				>
 					{!loadedImages[product.product_name] && (
 						<Skeleton
 							variant='rounded'
@@ -97,13 +133,14 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 								left: 0,
 								zIndex: 1,
 							}}
+							aria-hidden='true'
 						/>
 					)}
 					<CardMedia
 						component='img'
 						loading='lazy'
 						image={product.image_url}
-						alt={product.product_name}
+						alt={generateImageAlt(product.product_name, category)}
 						title={product.product_name}
 						sx={{
 							width: "100%",
@@ -117,11 +154,18 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 								[product.product_name]: true,
 							}));
 						}}
+						itemProp='image'
 					/>
 				</Link>
 			</Box>
 			<CardContent sx={{flexGrow: 1}}>
-				<Typography variant='h6' align='center' fontWeight='bold' gutterBottom>
+				<Typography
+					variant='h6'
+					align='center'
+					fontWeight='bold'
+					gutterBottom
+					itemProp='name'
+				>
 					{product.product_name}
 				</Typography>
 				{product.sale ? (
@@ -134,6 +178,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 							label={`${product.discount}% تخفيض`}
 							color='info'
 							size='small'
+							aria-label={`خصم ${product.discount} بالمئة`}
 						/>
 						<Typography variant='h6' align='center'>
 							<s>{formatPrice(product.price)}</s>
@@ -144,13 +189,18 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						variant='h6'
 						align='center'
 						className={isOutOfStock ? "text-danger" : "text-success"}
+						aria-live='polite'
 					>
-						{isOutOfStock && "غير متوفر"}
-						{/* {product.quantity_in_stock} */}
+						{isOutOfStock ? "غير متوفر حالياً" : "متوفر"}
 					</Typography>
 				)}
 
-				<Typography variant='body2' align='center' color='text.secondary'>
+				<Typography
+					variant='body2'
+					align='center'
+					color='text.secondary'
+					itemProp='description'
+				>
 					{unitText}
 				</Typography>
 				<Box
@@ -160,12 +210,21 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 				>
 					<ColorsAndSizes category={category} />
 				</Box>
-				<Typography variant='h5' align='center' color='success.main'>
+				<Typography
+					variant='h5'
+					align='center'
+					color='success.main'
+					itemProp='offers'
+					itemScope
+					itemType='https://schema.org/Offer'
+				>
+					<meta itemProp='price' content={discountedPrice.toString()} />
+					<meta itemProp='priceCurrency' content='ILS' />
 					{formatPrice(discountedPrice)}
 				</Typography>
 			</CardContent>
 
-			<Box>
+			<Box role='group' aria-label='إدارة الكمية'>
 				<Box
 					sx={{
 						display: "flex",
@@ -182,9 +241,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 							handleQuantity(setQuantities, "-", product.product_name)
 						}
 						startIcon={<RemoveSharpIcon />}
+						aria-label='تقليل الكمية'
 					/>
 
-					<Typography>{productQuantity}</Typography>
+					<Typography aria-live='polite'>الكمية: {productQuantity}</Typography>
 
 					<Button
 						size='small'
@@ -194,6 +254,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 							handleQuantity(setQuantities, "+", product.product_name)
 						}
 						startIcon={<AddSharpIcon />}
+						aria-label='زيادة الكمية'
 					/>
 				</Box>
 			</Box>
@@ -219,7 +280,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						? "error"
 						: "success"
 				}
-			/>
+				aria-label={`إضافة ${product.product_name} إلى السلة`}
+			>
+				{isOutOfStock ? "غير متوفر" : "أضف إلى السلة"}
+			</LoadingButton>
 
 			{canEdit && (
 				<Box
@@ -231,11 +295,13 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						p: 1,
 						mt: 1,
 					}}
+					role='group'
+					aria-label='خيارات إدارة المنتج'
 				>
 					<Button
 						size='medium'
 						color='warning'
-						aria-label='עריכה'
+						aria-label='تعديل المنتج'
 						onClick={() => {
 							setProductNameToUpdate(product.product_name);
 							onShowUpdateProductModal();
@@ -245,19 +311,23 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						sx={{
 							borderRadius: "0px 0px 10px 0px",
 						}}
-					/>
+					>
+						تعديل
+					</Button>
 
 					<Button
 						size='medium'
 						color='error'
-						aria-label='מחיקה'
+						aria-label='حذف المنتج'
 						onClick={() => openDeleteModal(product.product_name)}
 						startIcon={<DeleteIcon />}
 						variant='outlined'
 						sx={{
 							borderRadius: "0px 0px 0px 10px",
 						}}
-					/>
+					>
+						حذف
+					</Button>
 				</Box>
 			)}
 		</Card>
