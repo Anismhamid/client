@@ -1,4 +1,5 @@
 import {createRoot} from "react-dom/client";
+import {SpeedInsights} from "@vercel/speed-insights/react";
 import "./index.css";
 import App from "./App.tsx";
 import {BrowserRouter} from "react-router-dom";
@@ -11,6 +12,7 @@ window.Buffer = Buffer;
 createRoot(document.getElementById("root")!).render(
 	<GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API}>
 		<UserProvider>
+			<SpeedInsights/>
 			<CartProvider>
 				<BrowserRouter>
 					<App />
