@@ -107,19 +107,23 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						padding: "5px 5px",
 					}}
 				>
-					<Tooltip title='الصفحة الرئيسية - سوق السخنيني' arrow>
-						<li className='nav-item mx-3'>
-							<NavLink
-								className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
-								aria-current='page'
-								to={path.Home}
-								aria-label='الصفحة الرئيسية - سوق السخنيني'
-							>
-								{fontAwesomeIcon.home}
-								<span className='visually-hidden'>الصفحة الرئيسية</span>
-							</NavLink>
-						</li>
-					</Tooltip>
+					{auth.role !== "delivery" && (
+						<Tooltip title='الصفحة الرئيسية - سوق السخنيني' arrow>
+							<li className='nav-item mx-3'>
+								<NavLink
+									className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
+									aria-current='page'
+									to={path.Home}
+									aria-label='الصفحة الرئيسية - سوق السخنيني'
+								>
+									{fontAwesomeIcon.home}
+									<span className='visually-hidden'>
+										الصفحة الرئيسية
+									</span>
+								</NavLink>
+							</li>
+						</Tooltip>
+					)}
 					{auth && isAdmin && (
 						<Tooltip title='ניהול משתמשים' arrow>
 							<li className='nav-item'>
@@ -137,68 +141,70 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
-					<Box
-						onClick={handleMenuClick}
-						sx={{
-							cursor: "pointer",
-							display: "flex",
-							alignItems: "center",
-							px: 0,
-							py: 1,
-							fontWeight: 800,
-						}}
-						aria-haspopup='true'
-						aria-expanded={openMenu ? "true" : "false"}
-						aria-label='قائمة الفئات والمنتجات'
-					>
-						<Stack direction='row' alignItems='center' spacing={0}>
-							<Typography>{t("links.products")}</Typography>
-							<KeyboardArrowDownIcon
-								sx={{
-									fontSize: 22,
-									transition: "transform 0.3s ease-in-out",
-									transform: openMenu
-										? "rotate(180deg)"
-										: "rotate(0deg)",
-								}}
-							/>
-						</Stack>
-
-						<Menu
-							anchorEl={anchorEl}
-							open={openMenu}
-							onClose={handleMenuClose}
-							PaperProps={{
-								sx: {
-									backgroundColor: "rgba(40, 40, 40, 0.95)",
-									borderRadius: 1,
-									color: "#fff",
-									mt: 2.5,
-									minWidth: 200,
-								},
+					{auth.role !== "delivery" && (
+						<Box
+							onClick={handleMenuClick}
+							sx={{
+								cursor: "pointer",
+								display: "flex",
+								alignItems: "center",
+								px: 0,
+								py: 1,
+								fontWeight: 800,
 							}}
-							transformOrigin={{horizontal: "center", vertical: "top"}}
-							anchorOrigin={{horizontal: "center", vertical: "bottom"}}
-							role='menu'
-							aria-label='قائمة الفئات'
+							aria-haspopup='true'
+							aria-expanded={openMenu ? "true" : "false"}
+							aria-label='قائمة الفئات والمنتجات'
 						>
-							{/* Category Links */}
-							{navbarCategoryLinks.map(({labelKey, path, icon}) => (
-								<MenuItem
-									key={path}
-									component={NavLink}
-									to={path}
-									onClick={handleMenuClose}
-									role='menuitem'
-									aria-label={`تصفح ${t(labelKey)}`}
-								>
-									{icon}
-									<span className=' me-2'>{t(labelKey)}</span>
-								</MenuItem>
-							))}
-						</Menu>
-					</Box>
-					{isLoggedIn && (
+							<Stack direction='row' alignItems='center' spacing={0}>
+								<Typography>{t("links.products")}</Typography>
+								<KeyboardArrowDownIcon
+									sx={{
+										fontSize: 22,
+										transition: "transform 0.3s ease-in-out",
+										transform: openMenu
+											? "rotate(180deg)"
+											: "rotate(0deg)",
+									}}
+								/>
+							</Stack>
+
+							<Menu
+								anchorEl={anchorEl}
+								open={openMenu}
+								onClose={handleMenuClose}
+								PaperProps={{
+									sx: {
+										backgroundColor: "rgba(40, 40, 40, 0.95)",
+										borderRadius: 1,
+										color: "#fff",
+										mt: 2.5,
+										minWidth: 200,
+									},
+								}}
+								transformOrigin={{horizontal: "center", vertical: "top"}}
+								anchorOrigin={{horizontal: "center", vertical: "bottom"}}
+								role='menu'
+								aria-label='قائمة الفئات'
+							>
+								{/* Category Links */}
+								{navbarCategoryLinks.map(({labelKey, path, icon}) => (
+									<MenuItem
+										key={path}
+										component={NavLink}
+										to={path}
+										onClick={handleMenuClose}
+										role='menuitem'
+										aria-label={`تصفح ${t(labelKey)}`}
+									>
+										{icon}
+										<span className=' me-2'>{t(labelKey)}</span>
+									</MenuItem>
+								))}
+							</Menu>
+						</Box>
+					)}
+					{isLoggedIn && auth.role !== "delivery" && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={` ${
@@ -256,7 +262,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							{t("links.contact")}
 						</NavLink>
 					</li>
-					{isLoggedIn && (
+					{isLoggedIn && auth.role !== "delivery" && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={`${
@@ -271,39 +277,41 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					)}
 
 					{/* {auth && isLoggedIn && ( */}
-					<li className='nav-item ms-1' role='none'>
-						<Tooltip title='عربة التسوق - سوق السخنيني' arrow>
-							<Box>
-								<Badge
-									badgeContent={quantity}
-									sx={{
-										"& .MuiBadge-badge": {
-											backgroundColor: "#4FC3F7",
-											color: "#1A1E22",
-											fontWeight: "bold",
-										},
-									}}
-									aria-label={`${quantity} عنصر في عربة التسوق`}
-								>
-									<NavLink
-										className={`${
-											isActive(path.Cart) ? "text-danger" : ""
-										} nav-link fs-5`}
-										aria-current={
-											isActive(path.Cart) ? "page" : undefined
-										}
-										to={path.Cart}
-										aria-label='عربة التسوق - سوق السخنيني'
+					{auth.role !== "delivery" && (
+						<li className='nav-item ms-1' role='none'>
+							<Tooltip title='عربة التسوق - سوق السخنيني' arrow>
+								<Box>
+									<Badge
+										badgeContent={quantity}
+										sx={{
+											"& .MuiBadge-badge": {
+												backgroundColor: "#4FC3F7",
+												color: "#1A1E22",
+												fontWeight: "bold",
+											},
+										}}
+										aria-label={`${quantity} عنصر في عربة التسوق`}
 									>
-										{fontAwesomeIcon.cartInoc}
-										<span className='visually-hidden'>
-											عربة التسوق
-										</span>
-									</NavLink>
-								</Badge>
-							</Box>
-						</Tooltip>
-					</li>
+										<NavLink
+											className={`${
+												isActive(path.Cart) ? "text-danger" : ""
+											} nav-link fs-5`}
+											aria-current={
+												isActive(path.Cart) ? "page" : undefined
+											}
+											to={path.Cart}
+											aria-label='عربة التسوق - سوق السخنيني'
+										>
+											{fontAwesomeIcon.cartInoc}
+											<span className='visually-hidden'>
+												عربة التسوق
+											</span>
+										</NavLink>
+									</Badge>
+								</Box>
+							</Tooltip>
+						</li>
+					)}
 
 					<li className='nav-item' role='none'>
 						{!isLoggedIn ? (

@@ -1,7 +1,14 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../../interfaces/Order";
 import Loader from "../../atoms/loader/Loader";
-import {Button, CircularProgress} from "@mui/material";
+import {
+	Box,
+	Button,
+	Card,
+	CardContent,
+	CircularProgress,
+	Typography,
+} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import SearchBox from "../../atoms/productsManage/SearchBox";
 import socket from "../../socket/globalSocket";
@@ -9,7 +16,7 @@ import {getAllOrders} from "../../services/orders";
 import {handleOrderStatus} from "../../atoms/OrderStatusButtons/orderStatus";
 import {getUserById} from "../../services/usersServices";
 import {Link} from "react-router-dom";
-import { formatDate } from "../../helpers/dateAndPriceFormat";
+import {formatDate} from "../../helpers/dateAndPriceFormat";
 
 const DeliveryPage: FunctionComponent = () => {
 	const {t} = useTranslation();
@@ -44,7 +51,6 @@ const DeliveryPage: FunctionComponent = () => {
 			console.error("Failed to fetch users:", err);
 		}
 	};
-
 
 	const fetchOrders = async () => {
 		try {
@@ -148,55 +154,92 @@ const DeliveryPage: FunctionComponent = () => {
 						const canMarkShipped = currentStatus === "Delivered";
 
 						return (
-							<div
-								key={order.orderNumber}
-								className='p-3 my-2 border rounded shadow-sm bg-light'
-							>
-								<h5>رقم الطلب: {order.orderNumber}</h5>
-								<h5>وقت الطلب: {formatDate(order.createdAt)}</h5>
-								<p>العميل: {users[order.userId] ?? <CircularProgress size={15}/>}</p>
-								<p>الحالة: {getArabicStatus(currentStatus)}</p>
-								<p>
-									الهاتف:{" "}
-									<Link to={`tel:+972${order.phone.phone_1}`}>
-										{order.phone.phone_1}
-									</Link>
-								</p>
-								<p>
-									العنوان:{" "}
-									<Link
-										to={`https://www.waze.com/ul?q=${encodeURIComponent(
-											`${order.address.city}, ${order.address.street} ${order.address.houseNumber}`,
-										)}`}
-										target='_blank'
-										rel='noopener noreferrer'
-									>
-										{order.address.city}, {order.address.street}{" "}
-										{order.address.houseNumber}
-									</Link>
-								</p>
-
-								<Button
-									variant='contained'
-									color='primary'
-									disabled={
-										statusLoading[order.orderNumber] ||
-										!canMarkShipped
-									}
-									onClick={() =>
-										handleOrderStatus(
-											"Shipped",
-											order.orderNumber,
-											setOrderStatuses,
-											setStatusLoading,
-										).catch((err) => console.error(err))
-									}
+							<>
+							{order.delivery&&	<Card
+									key={order.orderNumber}
+									sx={{
+										mb: 2,
+										borderRadius: 3,
+										boxShadow: 3,
+										backgroundColor: "#f9f9f9",
+									}}
 								>
-									{statusLoading[order.orderNumber]
-										? <CircularProgress size={20}/>
-										: "تم التسليم"}
-								</Button>
-							</div>
+									<CardContent>
+										<Box
+											display='flex'
+											justifyContent='space-between'
+											alignItems='center'
+											mb={1}
+										>
+											<Typography variant='h6'>
+												رقم الطلب: {order.orderNumber}
+											</Typography>
+											<Typography
+												variant='body2'
+												color='text.secondary'
+											>
+												{formatDate(order.createdAt)}
+											</Typography>
+										</Box>
+
+										<Typography variant='body1' mb={0.5}>
+											العميل:{" "}
+											{users[order.userId] ?? (
+												<CircularProgress size={15} />
+											)}
+										</Typography>
+
+										<Typography variant='body1' mb={0.5}>
+											الحالة: {getArabicStatus(currentStatus)}
+										</Typography>
+
+										<Typography variant='body1' mb={0.5}>
+											الهاتف:{" "}
+											<Link to={`tel:+972${order.phone.phone_1}`}>
+												{order.phone.phone_1}
+											</Link>
+										</Typography>
+
+										<Typography variant='body1' mb={2}>
+											العنوان:{" "}
+											<Link
+												to={`https://www.waze.com/ul?q=${encodeURIComponent(
+													`${order.address.city}, ${order.address.street} ${order.address.houseNumber}`,
+												)}`}
+												target='_blank'
+												rel='noopener noreferrer'
+											>
+												{order.address.city},{" "}
+												{order.address.street}{" "}
+												{order.address.houseNumber}
+											</Link>
+										</Typography>
+
+										<Button
+											variant='contained'
+											color='primary'
+											disabled={
+												statusLoading[order.orderNumber] ||
+												!canMarkShipped
+											}
+											onClick={() =>
+												handleOrderStatus(
+													"Shipped",
+													order.orderNumber,
+													setOrderStatuses,
+													setStatusLoading,
+												).catch((err) => console.error(err))
+											}
+										>
+											{statusLoading[order.orderNumber] ? (
+												<CircularProgress size={20} />
+											) : (
+												"تم التسليم"
+											)}
+										</Button>
+									</CardContent>
+								</Card>}
+							</>
 						);
 					})}
 				</div>
