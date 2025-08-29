@@ -213,21 +213,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<title>سوق السخنيني</title>
+			<title>الرئيسيه | سوق السخنيني</title>
 			<meta
 				name='description'
-				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة.'
+				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة'
 			/>
-			{/* <link rel='canonical' href='https://client-qqq1.vercel.app/' />
-			<meta property='og:title' content='سوق السخنيني – متجر منتجات طازجة' />
-			<meta
-				property='og:description'
-				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market.'
-			/>
-			<meta property='og:image' content='https://client-qqq1.vercel.app/logo.png' />
-			<meta property='og:url' content='https://client-qqq1.vercel.app/' />
-			<meta name='twitter:card' content='summary_large_image' /> */}
-
 
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />

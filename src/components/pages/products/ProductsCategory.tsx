@@ -216,9 +216,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	return (
 		<>
 			<Seo
-				title={t("seo.categoryTitle", {category: t(`categories.${category}`)})}
+				title={t("seo.categoryTitle", {category: t(`categories.${category}.label`)})}
 				description={t("seo.categoryDescription", {
-					category: t(`categories.${category}`),
+					category: t(`categories.${category}.label`),
 				})}
 				image={icons}
 				type='category'
