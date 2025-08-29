@@ -158,7 +158,7 @@ const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
 										/>
 									)}
 									<Link
-										to={`/category/${product.category}`}
+										to={`/category/${product.category.toLocaleLowerCase()}`}
 										aria-label={`عرض تفاصيل ${product.product_name} مع خصم ${product.discount}%`}
 										style={{textDecoration: "none"}}
 									>
