@@ -76,10 +76,12 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 						<StyledTableCell align='center'>סוג חשבון</StyledTableCell>
 						<TableCell sx={{color: "success.main", fontWeight: "bold"}}>
 							{user.role === RoleType.Admin
-								? "מנהל ומנחה"
+								? "مدير ومشرف"
 								: user.role === RoleType.Moderator
-									? "מנחה"
-									: "לקוח"}
+									? "مشرف"
+									: user.role === RoleType.Delivery
+										? "مرسل"
+										: "مستخدم"}
 						</TableCell>
 					</TableRow>
 				</TableBody>

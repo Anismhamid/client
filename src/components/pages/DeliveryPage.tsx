@@ -1,7 +1,7 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import {Order} from "../../interfaces/Order";
 import Loader from "../../atoms/loader/Loader";
-import {Button} from "@mui/material";
+import {Button, CircularProgress} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import SearchBox from "../../atoms/productsManage/SearchBox";
 import socket from "../../socket/globalSocket";
@@ -9,6 +9,7 @@ import {getAllOrders} from "../../services/orders";
 import {handleOrderStatus} from "../../atoms/OrderStatusButtons/orderStatus";
 import {getUserById} from "../../services/usersServices";
 import {Link} from "react-router-dom";
+import { formatDate } from "../../helpers/dateAndPriceFormat";
 
 const DeliveryPage: FunctionComponent = () => {
 	const {t} = useTranslation();
@@ -24,23 +25,26 @@ const DeliveryPage: FunctionComponent = () => {
 	);
 
 	const fetchUserNames = async (orders: Order[]) => {
-		const newUsers: {[id: string]: string} = {};
 		const missingIds = orders.map((o) => o.userId).filter((id) => !users[id]);
 
-		for (const id of missingIds) {
-			try {
-				const res = await getUserById(id);
-				newUsers[id] = `${res.name.first} ${res.name.last}`;
-			} catch (err) {
-				console.error("Failed to fetch user:", id, err);
-				newUsers[id] = id;
-			}
-		}
+		if (!missingIds.length) return;
 
-		if (Object.keys(newUsers).length > 0) {
+		try {
+			const results = await Promise.all(missingIds.map((id) => getUserById(id)));
+			const newUsers = missingIds.reduce(
+				(acc, id, idx) => {
+					acc[id] = `${results[idx].name.first} ${results[idx].name.last}`;
+					return acc;
+				},
+				{} as {[id: string]: string},
+			);
+
 			setUsers((prev) => ({...prev, ...newUsers}));
+		} catch (err) {
+			console.error("Failed to fetch users:", err);
 		}
 	};
+
 
 	const fetchOrders = async () => {
 		try {
@@ -120,7 +124,7 @@ const DeliveryPage: FunctionComponent = () => {
 	};
 
 	return (
-		<main className='container my-5 delivery'>
+		<main className=' my-5 delivery'>
 			<h1 className='text-center'>{t("links.orders")} - صفحة المرسل</h1>
 			<SearchBox
 				text='البحث حسب رقم الطلب...'
@@ -149,7 +153,8 @@ const DeliveryPage: FunctionComponent = () => {
 								className='p-3 my-2 border rounded shadow-sm bg-light'
 							>
 								<h5>رقم الطلب: {order.orderNumber}</h5>
-								<p>العميل: {users[order.userId] ?? "جارٍ التحميل..."}</p>
+								<h5>وقت الطلب: {formatDate(order.createdAt)}</h5>
+								<p>العميل: {users[order.userId] ?? <CircularProgress size={15}/>}</p>
 								<p>الحالة: {getArabicStatus(currentStatus)}</p>
 								<p>
 									الهاتف:{" "}
@@ -159,8 +164,8 @@ const DeliveryPage: FunctionComponent = () => {
 								</p>
 								<p>
 									العنوان:{" "}
-									<a
-										href={`https://www.waze.com/ul?q=${encodeURIComponent(
+									<Link
+										to={`https://www.waze.com/ul?q=${encodeURIComponent(
 											`${order.address.city}, ${order.address.street} ${order.address.houseNumber}`,
 										)}`}
 										target='_blank'
@@ -168,7 +173,7 @@ const DeliveryPage: FunctionComponent = () => {
 									>
 										{order.address.city}, {order.address.street}{" "}
 										{order.address.houseNumber}
-									</a>
+									</Link>
 								</p>
 
 								<Button
@@ -188,7 +193,7 @@ const DeliveryPage: FunctionComponent = () => {
 									}
 								>
 									{statusLoading[order.orderNumber]
-										? "..."
+										? <CircularProgress size={20}/>
 										: "تم التسليم"}
 								</Button>
 							</div>

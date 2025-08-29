@@ -24,13 +24,13 @@ import {
 	TableHead,
 	Paper,
 	CircularProgress,
-	Tooltip,
 	Dialog,
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	Chip,
 } from "@mui/material";
-import {showError, showInfo} from "../../atoms/toasts/ReactToast";
+import {showError} from "../../atoms/toasts/ReactToast";
 import SearchBox from "../../atoms/productsManage/SearchBox";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
@@ -65,7 +65,6 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [users, setUsers] = useState<UserRegister[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");
-	const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
 	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -106,34 +105,6 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			socket.off("user:disconnected", handleUserDisconnected);
 		};
 	}, []);
-
-	const handleStatusChange = async (userId: string) => {
-		try {
-			setUpdatingUserId(userId);
-			const userToUpdate = users.find((user) => user._id === userId);
-			if (!userToUpdate) {
-				showInfo("User not found");
-				return;
-			}
-
-			const newStatus = !userToUpdate.status;
-			const response = await patchUserStatus(userId, newStatus);
-
-			if (response.success) {
-				setUsers(
-					users.map((user) =>
-						user._id === userId ? {...user, status: newStatus} : user,
-					),
-				);
-				showInfo("Status updated successfully");
-			}
-		} catch (error: any) {
-			console.error("Update failed:", error);
-			showInfo(error.response?.data?.message || "Failed to update status");
-		} finally {
-			setUpdatingUserId(null);
-		}
-	};
 
 	const handleEdit = (userId: string) => {
 		setSelectedUserId(userId);
@@ -180,20 +151,31 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 
 				{/* Search Form */}
 				<SearchBox
-					text={"חפש לפי שם או אימייל"}
+					text={"بحث حسب الاسم أو البريد الإلكتروني"}
 					setSearchQuery={setSearchQuery}
 					searchQuery={searchQuery}
 				/>
-				<TableContainer component={Paper} sx={{display: {md: "block"}}}>
+				<TableContainer
+					component={Paper}
+					sx={{boxShadow: 3, borderRadius: 3, overflowX: "auto"}}
+				>
 					<Table aria-label='users table'>
 						<TableHead>
-							<TableRow>
-								<StyledTableCell align='center'>שם</StyledTableCell>
-								<StyledTableCell align='center'>דו"אל</StyledTableCell>
-								<StyledTableCell align='center'>תפקיד</StyledTableCell>
-								<StyledTableCell align='center'>סטטוס</StyledTableCell>
-								<StyledTableCell align='center'>
-									עריכה | מחיקה
+							<TableRow sx={{backgroundColor: "primary.main"}}>
+								<StyledTableCell align='center' sx={{color: "white"}}>
+									الاسم
+								</StyledTableCell>
+								<StyledTableCell align='center' sx={{color: "white"}}>
+									البريد إلكتروني
+								</StyledTableCell>
+								<StyledTableCell align='center' sx={{color: "white"}}>
+									الدور
+								</StyledTableCell>
+								<StyledTableCell align='center' sx={{color: "white"}}>
+									الحاله
+								</StyledTableCell>
+								<StyledTableCell align='center' sx={{color: "white"}}>
+									تحرير | حذف
 								</StyledTableCell>
 							</TableRow>
 						</TableHead>
@@ -206,128 +188,103 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 								</TableRow>
 							) : filteredUsers.length > 0 ? (
 								filteredUsers.map((user) => (
-									<StyledTableRow key={user._id} hover>
-										<StyledTableCell component='th' scope='row'>
-											<div
-												key={user._id}
-												style={{
-													display: "flex",
-													alignItems: "center",
-												}}
+									<StyledTableRow
+										key={user._id}
+										hover
+										sx={{
+											transition: "0.3s",
+											"&:hover": {boxShadow: 6},
+										}}
+									>
+										<StyledTableCell>
+											<Box
+												display='flex'
+												alignItems='center'
+												justifyContent='center'
 											>
-												<Tooltip
-													title={
-														user.status ? "מחובר" : "מנותק"
-													}
-												>
-													<span
-														style={{
-															width: 15,
-															height: 15,
-															borderRadius: "50%",
-															backgroundColor: user.status
-																? "green"
-																: "red",
-															marginLeft: 8,
-															display: "inline-block",
-														}}
-													/>
-												</Tooltip>
-												<span>{user.name.first}</span>
-											</div>
+												<Box
+													sx={{
+														width: 15,
+														height: 15,
+														borderRadius: "50%",
+														backgroundColor: user.status
+															? "green"
+															: "red",
+														marginRight: 1,
+													}}
+												/>
+												{user.name.first}
+											</Box>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											{user.email}
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Box sx={{maxWidth: 100}}>
-												<FormControl fullWidth>
-													<Select
-														value={user.role}
-														onChange={(e) =>
-															changeRole(
-																user.email as string,
-																e.target.value,
-															)
-														}
-													>
-														<MenuItem value={RoleType.Admin}>
-															مدير
-														</MenuItem>
-														<MenuItem
-															value={RoleType.Moderator}
-														>
-															مشرف
-														</MenuItem>
-														<MenuItem
-															value={RoleType.Delivery}
-														>
-															مرسل
-														</MenuItem>
-														<MenuItem value={RoleType.Client}>
-															مستخدم
-														</MenuItem>
-													</Select>
-												</FormControl>
-											</Box>
+											<FormControl fullWidth>
+												<Select
+													value={user.role}
+													onChange={(e) =>
+														changeRole(
+															user.email,
+															e.target.value,
+														)
+													}
+													sx={{borderRadius: 2}}
+												>
+													<MenuItem value={RoleType.Admin}>
+														مدير
+													</MenuItem>
+													<MenuItem value={RoleType.Moderator}>
+														مشرف
+													</MenuItem>
+													<MenuItem value={RoleType.Delivery}>
+														مرسل
+													</MenuItem>
+													<MenuItem value={RoleType.Client}>
+														مستخدم
+													</MenuItem>
+												</Select>
+											</FormControl>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
-											<Button
+											<Chip
+												label={user.status ? "نشط" : "غير نشط"}
 												color={user.status ? "success" : "error"}
-												onClick={() =>
-													handleStatusChange(user._id as string)
-												}
-												disabled={updatingUserId === user._id}
-											>
-												{updatingUserId === user._id ? (
-													<CircularProgress size={24} />
-												) : user.status ? (
-													"פעיל"
-												) : (
-													"לא פעיל"
-												)}
-											</Button>
+												sx={{borderRadius: 5}}
+											></Chip>
 										</StyledTableCell>
 										<StyledTableCell align='center'>
 											<Box
-												sx={{
-													display: "flex",
-													justifyContent: "space-between",
-												}}
-												className=''
+												display='flex'
+												justifyContent='center'
+												gap={1}
 											>
-												<Tooltip title={"עריכת פרטי משתמש"}>
-													<Button
-														variant='outlined'
-														color='warning'
-														onClick={() =>
-															handleEdit(user._id as string)
-														}
-													>
-														{fontAwesomeIcon.edit}
-													</Button>
-												</Tooltip>
-												<Tooltip title={"מחיקת משתמש"}>
-													<Button
-														onClick={() =>
-															handleDeleteUser(
-																user._id as string,
-															)
-														}
-														variant='outlined'
-														color='error'
-													>
-														{fontAwesomeIcon.trash}
-													</Button>
-												</Tooltip>
+												<Button
+													variant='outlined'
+													color='warning'
+													onClick={() => handleEdit(user._id!)}
+													sx={{borderRadius: 2}}
+												>
+													{fontAwesomeIcon.edit}
+												</Button>
+												<Button
+													variant='outlined'
+													color='error'
+													onClick={() =>
+														handleDeleteUser(user._id!)
+													}
+													sx={{borderRadius: 2}}
+												>
+													{fontAwesomeIcon.trash}
+												</Button>
 											</Box>
 										</StyledTableCell>
 									</StyledTableRow>
 								))
 							) : (
-								<StyledTableRow hover>
-									<StyledTableCell align='center'>
-										לא נמצאו משתמשים תואמים
+								<StyledTableRow>
+									<StyledTableCell colSpan={5} align='center'>
+										لم يتم العثور على مستخدمين متطابقين
 									</StyledTableCell>
 								</StyledTableRow>
 							)}
