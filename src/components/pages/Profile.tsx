@@ -74,7 +74,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	});
 
 	const updateProfile = () => {
-	(	detailsRef.current?.scrollIntoView({behavior: "smooth"}));
+		detailsRef.current?.scrollIntoView({behavior: "smooth"});
 	};
 
 	const changePassword = () => {
@@ -254,23 +254,25 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					<AccordionDetails>
 						{user.activity?.length ? (
 							<List dense>
-								{user.activity.slice(0, 5).map((timestamp, index) => {
-									const date = new Date(timestamp);
-									return (
-										<ListItem
-											key={index}
-											className='rounded-3 shadow-sm mb-2'
-										>
-											<ListItemIcon>
-												<HistoryIcon color='primary' />
-											</ListItemIcon>
-											<ListItemText
-												primary={date.toLocaleString("he-IL")}
-												secondary='نشاط حديث'
-											/>
-										</ListItem>
-									);
-								})}
+								{user.activity
+									.slice(user.activity.length - 1)
+									.map((timestamp, index) => {
+										const date = new Date(timestamp);
+										return (
+											<ListItem
+												key={index}
+												className='rounded-3 shadow-sm mb-2'
+											>
+												<ListItemIcon>
+													<HistoryIcon color='primary' />
+												</ListItemIcon>
+												<ListItemText
+													primary={date.toLocaleString("he-IL")}
+													secondary='نشاط حديث'
+												/>
+											</ListItem>
+										);
+									})}
 							</List>
 						) : (
 							<Typography sx={{padding: 2}} color='text.secondary'>

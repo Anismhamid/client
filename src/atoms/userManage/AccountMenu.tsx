@@ -70,7 +70,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 								}
 							/>
 						) : (
-							<BrokenImageOutlinedIcon />
+							<Avatar src='https://i.ibb.co/5GzXkwq/user.png' />
 						)}
 					</IconButton>
 				</Tooltip>

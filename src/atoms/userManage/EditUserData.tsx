@@ -10,10 +10,7 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import {
-	compleateProfileData,
-	getUserById,
-} from "../../services/usersServices";
+import {compleateProfileData, getUserById} from "../../services/usersServices";
 import Loader from "../loader/Loader";
 import useAddressData from "../../hooks/useAddressData";
 import {UserRegister} from "../../interfaces/User";
@@ -135,8 +132,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 					<Box className=' row row-cols-md-1 row-cols-md-2  row-cols-lg-3'>
 						<div>
 							<TextField
-								aria-label='שם פרטי'
-								label='שם פרטי'
+								aria-label='الاسم الأول'
+								label='الاسم الأول'
 								name='name.first'
 								type='text'
 								value={formik.values.name.first}
@@ -156,8 +153,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
-								aria-label="שם משפחה'"
-								label='שם משפחה'
+								aria-label='اسم العائلة'
+								label='اسم العائلة'
 								name='name.last'
 								type='text'
 								value={formik.values.name.last}
@@ -176,8 +173,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
-								aria-label="טלפון ראשי'"
-								label='טלפון ראשי'
+								aria-label='الهاتف الرئيسي'
+								label='الهاتف الرئيسي'
 								name='phone.phone_1'
 								type='text'
 								value={formik.values.phone.phone_1}
@@ -198,8 +195,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 
 						<div>
 							<TextField
-								aria-label='טלפון נוסף (אופציונלי)'
-								label='טלפון נוסף (אופציונלי)'
+								aria-label='هاتف آخر (اختياري)'
+								label='هاتف آخر (اختياري)'
 								name='phone.phone_2'
 								type='text'
 								value={formik.values.phone.phone_2}
@@ -223,7 +220,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 								renderInput={(params) => (
 									<TextField
 										{...params}
-										label='בחר עיר'
+										label='اختر مدينة'
 										variant='filled'
 										error={
 											formik.touched.address?.city &&
@@ -254,7 +251,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 								renderInput={(params) => (
 									<TextField
 										{...params}
-										label='בחר רחוב'
+										label='اختر شارعًا'
 										variant='filled'
 										error={
 											formik.touched.address?.street &&
@@ -272,8 +269,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
-								aria-label='מספר בית'
-								label='מספר בית'
+								aria-label='رقم المنزل'
+								label='رقم المنزل'
 								name='address.houseNumber'
 								type='text'
 								value={formik.values.address.houseNumber}
@@ -285,8 +282,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 						</div>
 						<div>
 							<TextField
-								aria-label='שינוי קישור תמונה'
-								label='תמונה'
+								aria-label='تغيير رابط الصورة'
+								label='تغيير رابط الصورة'
 								name='image.url'
 								type='text'
 								value={formik.values.image.url}
@@ -309,18 +306,20 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 									variant='outlined'
 									onClick={handleImageChange}
 								>
-									{preview ? "הסתיר תמונה פרופיל" : "דהצג תמונת פרופיל"}
+									{preview
+										? "إخفاء صورة الملف الشخصي"
+										: "إظهار صورة الملف الشخصي"}
 								</Button>
 								{preview && (
 									<div className='mt-3'>
 										<img
-											aria-label='תמונה'
+											aria-label='صورة'
 											height={250}
 											src={
 												formik.values.image.url ||
 												users?.image.url
 											}
-											alt='preview'
+											alt={`${users?.name.first} avatar`}
 											style={{
 												maxWidth: "300px",
 												borderRadius: "10px",
@@ -345,7 +344,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 							{formik.isSubmitting ? (
 								<CircularProgress size={24} color='inherit' />
 							) : (
-								"שמור"
+								"حفظ التغييرات"
 							)}
 						</Button>
 					</Box>

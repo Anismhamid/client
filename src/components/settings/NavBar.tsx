@@ -161,7 +161,6 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 										? "rotate(180deg)"
 										: "rotate(0deg)",
 								}}
-								aria-hidden='true'
 							/>
 						</Stack>
 
