@@ -252,15 +252,20 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 														}
 													>
 														<MenuItem value={RoleType.Admin}>
-															מנהל
+															مدير
 														</MenuItem>
 														<MenuItem
 															value={RoleType.Moderator}
 														>
-															מודרטור
+															مشرف
+														</MenuItem>
+														<MenuItem
+															value={RoleType.Delivery}
+														>
+															مرسل
 														</MenuItem>
 														<MenuItem value={RoleType.Client}>
-															משתמש
+															مستخدم
 														</MenuItem>
 													</Select>
 												</FormControl>

@@ -216,7 +216,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						</li>
 					)}
 					{/* المرسل */}
-					{auth?.name.last === "one miunte delivery" && (
+					{auth?.role === "delivery" && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={` ${

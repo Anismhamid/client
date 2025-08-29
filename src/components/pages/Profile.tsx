@@ -13,6 +13,10 @@ import {
 	ListItemText,
 	Box,
 	ListItemIcon,
+	Stack,
+	Card,
+	CardContent,
+	Avatar,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import {path} from "../../routes/routes";
@@ -27,6 +31,8 @@ import EditUserData from "../../atoms/userManage/EditUserData";
 import TodayIcon from "@mui/icons-material/Today";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import HistoryIcon from "@mui/icons-material/History";
+import {getUserOrders} from "../../services/orders";
+import {formatPrice} from "../../helpers/dateAndPriceFormat";
 
 interface ProfileProps {}
 /**
@@ -40,6 +46,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const {decodedToken, setAfterDecode} = useToken();
 	const {setAuth, setIsLoggedIn} = useUser();
 	const detailsRef = useRef<HTMLDivElement>(null);
+	const [userOdredsLength, setUserOrdersLength] = useState<number>(0);
+	const [userOdredsPrice, setUserOrdersPrice] = useState<number>(0);
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -66,7 +74,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	});
 
 	const updateProfile = () => {
-		detailsRef.current?.scrollIntoView({behavior: "smooth"});
+	(	detailsRef.current?.scrollIntoView({behavior: "smooth"}));
 	};
 
 	const changePassword = () => {
@@ -80,13 +88,22 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 	useEffect(() => {
 		if (decodedToken) {
-			getUserById(decodedToken._id)
-				.then((res) => {
-					setUser(res);
+			Promise.all([getUserById(decodedToken._id), getUserOrders(decodedToken._id)])
+				.then(([userRes, ordersRes]) => {
+					setUser(userRes);
+					setUserOrdersLength(ordersRes.length);
+					setUserOrdersPrice(
+						ordersRes.reduce((totalOrders, order) => {
+							// مجموع أسعار منتجات الطلب الحالي
+							const orderTotal = order.products.reduce(
+								(sum, product) => sum + product.product_price,
+								0,
+							);
+							return totalOrders + orderTotal;
+						}, 0),
+					);
 				})
-				.catch((err) => {
-					console.error("Error fetching user:", err);
-				})
+				.catch((err) => console.error("Error fetching user data:", err))
 				.finally(() => setLoading(false));
 		}
 	}, [decodedToken]);
@@ -106,212 +123,192 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	}
 
 	return (
-		<main>
-			<div className='container mt-5 border-top border-bottom py-4'>
-				<div>
-					<>
-						{!imageLoaded && (
-							<Skeleton
-								sx={{bgcolor: "grey.900"}}
-								variant='rectangular'
-								width={200}
-								height={118}
-							/>
-						)}
-						<img
-							className='border border-light rounded'
-							src={
-								user.image.url ||
-								"https://media2.giphy.com/media/l0MYO6VesS7Hc1uPm/200.webp?cid=ecf05e47hxvvpx851ogwi8s26zbj1b3lay9lke6lzvo76oyx&ep=v1_gifs_search&rid=200.webp&ct=g"
-							}
-							alt={
-								user.image.alt?.trim()
-									? `${user.image.alt}'s avatar`
-									: `${user.name.first ?? "משתמש"}'s avatar`
-							}
-							role='img'
-							style={imageLoaded ? {} : {display: "none"}}
-							height={250}
-							onLoad={() => setImageLoaded(true)}
+		<main className=' min-vh-100 py-5'>
+			{/* صورة البروفايل */}
+			<Box className='container d-flex flex-column align-items-center'>
+				<div
+					className='border border-3 border-primary-subtle rounded-circle shadow overflow-hidden'
+					style={{width: 200, height: 200}}
+				>
+					{!imageLoaded && (
+						<Skeleton
+							sx={{bgcolor: "grey.300"}}
+							variant='circular'
+							width={200}
+							height={200}
 						/>
-					</>
+					)}
+
+					<Avatar
+						className='w-100 h-100'
+						src={user.image?.url || "https://i.ibb.co/5GzXkwq/user.png"}
+						alt={
+							user.image?.alt?.trim()
+								? `${user.image.alt}'s avatar`
+								: `${user.name?.first || "משתמש"}'s avatar`
+						}
+						role='img'
+						sx={{
+							objectFit: "cover",
+							display: imageLoaded ? "block" : "none",
+						}}
+						onLoad={() => setImageLoaded(true)}
+					/>
 				</div>
-			</div>
-			<div className='text-center my-4'>
+
+				{/* زر تحرير */}
 				<Button
 					variant='contained'
 					color='warning'
 					startIcon={<EditIcon />}
-					onClick={updateProfile}
+					onClick={() => updateProfile()}
+					className='mt-3 rounded-pill shadow-sm px-4'
 				>
-					עריכת פרטים אישיים
+					تحرير البيانات الشخصية
 				</Button>
-			</div>
-			<div className='container table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
-				<div className=' fw-bold display-6 p-2'>פרטים אישיים</div>
-				<UserDetailTable user={user} />
+			</Box>
 
-				<div className=' m-auto text-center mt-5 w-100'>
-					<div className='table-responsive m-auto text-center my-5 rounded p-3 bg-gradient'>
-						<div className=' fw-bold display-6 p-2'>הזמנות קודמות</div>
-						<table className='table table-striped-columns'>
-							<tbody>
-								<tr className=' bg-danger-subtle'>
-									<th>מ"ס הזמנות</th>
-									<td>
-										<span className='fw-bold'>10</span>
-										<Button
-											onClick={() => {
-												navigate(`${path.MyOrders}`);
-											}}
-											className='ms-5 border border-info'
-										>
-											פרטים נוספים
-										</Button>
-									</td>
-								</tr>
-								<tr>
-									<th>ס"כ קניות באתר</th>
-									<td>
-										{(2500).toLocaleString("he-IL", {
-											style: "currency",
-											currency: "ILS",
-										})}
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
+			{/* بيانات المستخدم */}
+			<div className='container mt-5'>
+				<Card className='shadow-lg rounded-4'>
+					<CardContent>
+						<Typography
+							variant='h4'
+							align='center'
+							gutterBottom
+							className='fw-bold text-primary'
+						>
+							البيانات الشخصية
+						</Typography>
+						<UserDetailTable user={user} />
+					</CardContent>
+				</Card>
 			</div>
-			<div className=' '>
-				{/* 1 */}
 
-				<Accordion className='accordion'>
-					<AccordionSummary
-						expandIcon={<ArrowDownwardIcon />}
-						aria-controls='panel1-content'
-						id='panel1-header'
-					>
-						<Typography component='span'>
-							היסטוריית התחברות (5 ימים אחרונים)
+			{/* الطلبات */}
+			<div className='container mt-5'>
+				<Card className='shadow-sm rounded-4 border border-2 border-danger-subtle'>
+					<CardContent>
+						<Typography
+							variant='h4'
+							align='center'
+							gutterBottom
+							className='fw-bold text-danger'
+						>
+							الطلبات السابقة
+						</Typography>
+
+						<Box className='d-flex justify-content-around flex-wrap gap-4 mt-4'>
+							<Card
+								className='shadow-sm rounded-4'
+								sx={{minWidth: 250, flex: 1, textAlign: "center"}}
+							>
+								<CardContent>
+									<Typography variant='h6' color='text.secondary'>
+										عدد الطلبات
+									</Typography>
+									<Typography variant='h4' color='error'>
+										{userOdredsLength}
+									</Typography>
+									<Button
+										variant='outlined'
+										color='info'
+										className='mt-3 rounded-pill'
+										onClick={() =>
+											navigate(
+												`${path.CompleteOrders}?userId=${decodedToken._id}`,
+											)
+										}
+									>
+										مزيد من التفاصيل
+									</Button>
+								</CardContent>
+							</Card>
+
+							<Card
+								className='shadow-sm rounded-4'
+								sx={{minWidth: 250, flex: 1, textAlign: "center"}}
+							>
+								<CardContent>
+									<Typography variant='h6' color='text.secondary'>
+										إجمالي المشتريات
+									</Typography>
+									<Typography variant='h4' color='success.main'>
+										{formatPrice(userOdredsPrice)}
+									</Typography>
+								</CardContent>
+							</Card>
+						</Box>
+					</CardContent>
+				</Card>
+			</div>
+
+			{/* سجل الدخول */}
+			<div className='container mt-5'>
+				<Accordion className='shadow-sm rounded-4'>
+					<AccordionSummary expandIcon={<ArrowDownwardIcon />}>
+						<Typography component='span' variant='h6' className='fw-bold'>
+							سجل تسجيل الدخول
 						</Typography>
 					</AccordionSummary>
-
 					<AccordionDetails>
 						{user.activity?.length ? (
-							(() => {
-								const now = new Date();
-								const fiveDaysAgo = new Date();
-								fiveDaysAgo.setDate(now.getDate() - 5);
-
-								const recentActivity = user.activity.filter(
-									(timestamp) => {
-										const activityDate = new Date(timestamp);
-										return activityDate >= fiveDaysAgo;
-									},
-								);
-
-								return recentActivity.length ? (
-									<List dense>
-										{recentActivity.map((timestamp, index) => {
-											const date = new Date(timestamp);
-											const year = date.toLocaleString("he-IL", {
-												year: "numeric",
-											});
-											const month = date.toLocaleString("he-IL", {
-												month: "long",
-											});
-											const day = date.toLocaleString("he-IL", {
-												day: "numeric",
-											});
-											const time = date.toLocaleString("he-IL", {
-												hour: "2-digit",
-												minute: "2-digit",
-											});
-
-											// קביעת הסגנון והאייקון לפי ההבדל בתאריך
-											const isToday =
-												date.toDateString() ===
-												now.toDateString();
-											const isThisWeek =
-												date >= fiveDaysAgo && !isToday;
-
-											let icon = <HistoryIcon />;
-											let color = "text.secondary";
-
-											if (isToday) {
-												icon = <TodayIcon color='success' />;
-												color = "success.main";
-											} else if (isThisWeek) {
-												icon = <AccessTimeIcon color='primary' />;
-												color = "primary.main";
-											}
-
-											return (
-												<ListItem
-													key={index}
-													sx={{height: 60}}
-													className='accordion-item'
-												>
-													<ListItemIcon>{icon}</ListItemIcon>
-													<ListItemText
-														primary={
-															<Box
-																display='flex'
-																alignItems='center'
-																justifyContent='space-around'
-																width='80%'
-																margin={"auto"}
-																color={color}
-															>
-																<Typography>
-																	{year}
-																</Typography>
-																<Typography>
-																	{month}
-																</Typography>
-																<Typography>
-																	{day}
-																</Typography>
-																<Typography>
-																	{time}
-																</Typography>
-															</Box>
-														}
-													/>
-												</ListItem>
-											);
-										})}
-									</List>
-								) : (
-									<Typography sx={{padding: 2}}>
-										אין התחברויות ב־5 ימים האחרונים
-									</Typography>
-								);
-							})()
+							<List dense>
+								{user.activity.slice(0, 5).map((timestamp, index) => {
+									const date = new Date(timestamp);
+									return (
+										<ListItem
+											key={index}
+											className='rounded-3 shadow-sm mb-2'
+										>
+											<ListItemIcon>
+												<HistoryIcon color='primary' />
+											</ListItemIcon>
+											<ListItemText
+												primary={date.toLocaleString("he-IL")}
+												secondary='نشاط حديث'
+											/>
+										</ListItem>
+									);
+								})}
+							</List>
 						) : (
-							<Typography sx={{padding: 2}}>אין נתוני התחברות</Typography>
+							<Typography sx={{padding: 2}} color='text.secondary'>
+								لا يوجد نشاطات حديثة
+							</Typography>
 						)}
 					</AccordionDetails>
 				</Accordion>
 			</div>
 			<Box ref={detailsRef}>
-				<EditUserData userId={decodedToken._id} />
+				<EditUserData userId={decodedToken._id} />{" "}
 			</Box>
-
-			<div className='text-center my-4'>
-				<Button variant='contained' color='primary' onClick={changePassword}>
-					שינוי סיסמה
-				</Button>
+			{/* أزرار إضافية */}
+			<div className='container text-center mt-5'>
+				<Stack spacing={2} direction='row' justifyContent='center'>
+					<Button
+						variant='contained'
+						color='primary'
+						onClick={changePassword}
+						className='rounded-pill'
+					>
+						تغيير كلمة المرور
+					</Button>
+					<Button
+						variant='contained'
+						color='secondary'
+						onClick={contactSupport}
+						className='rounded-pill'
+					>
+						دعم فني
+					</Button>
+				</Stack>
 			</div>
 
-			<div className='text-center my-4'>
-				<Button variant='contained' color='secondary' onClick={contactSupport}>
-					צור קשר עם תמיכה
-				</Button>
+			{/* حذف الحساب */}
+			<div className='container mt-5'>
+				<DeleteAccountBox onDelete={handleDeleteAccount} />
 			</div>
-			<DeleteAccountBox onDelete={handleDeleteAccount} />
 		</main>
 	);
 };
