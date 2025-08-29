@@ -30,6 +30,7 @@ export enum path {
 	Register = "/register",
 	Messages = "/messages",
 	UsersManagement = "/usersManagement",
+	DeliveryPage = "/delivery-page",
 	Fruits = "/fruits",
 	AdminSettings = "/adminSettings",
 	Vegetable = "/vegetable",

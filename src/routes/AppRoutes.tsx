@@ -23,6 +23,7 @@ import OrderDetails from "../components/pages/orders/OrederDetails";
 import ProducDetails from "../components/pages/products/ProducDetails";
 import Products from "../components/pages/products/Products";
 import Messages from "../components/pages/Messages";
+import DeliveryPage from "../components/pages/DeliveryPage";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -38,26 +39,25 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Messages} element={<Messages />} />
 			<Route
 				path={path.UsersManagement}
-				element={
-					auth && auth.role === RoleType.Admin ? <UsersManagement /> : <></>
-				}
+				element={auth && auth.role === RoleType.Admin && <UsersManagement />}
 			/>
 			<Route
 				path={path.AdminSettings}
 				element={auth && auth.role === RoleType.Admin && <AdminSettings />}
 			/>
-			<Route path={path.Receipt} element={auth?._id ? <Receipt /> : <></>} />
+			<Route path={path.Receipt} element={auth?._id && <Receipt />} />
+			<Route path={path.DeliveryPage} element={<DeliveryPage />} />
 			<Route path={path.Contact} element={<Contact />} />
 			<Route path={path.About} element={<About />} />
 			<Route path={path.Cart} element={<Cart />} />
-			<Route path={path.OrderDetails} element={auth ? <OrderDetails /> : <></>} />
+			<Route path={path.OrderDetails} element={auth && <OrderDetails />} />
 			<Route path={path.AllTheOrders} element={<AllTheOrders />} />
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
 			<Route path='/category/:category' element={<Products />} />
 			<Route
 				path={`${productsPathes.productDetails}/:productName`}
-				element={<ProducDetails handleAdd={()=>{}} />}
+				element={<ProducDetails handleAdd={() => {}} />}
 			/>
 
 			<Route path={path.Checkout} element={<Checkout />} />

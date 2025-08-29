@@ -3,97 +3,81 @@
   <url>
     <loc>https://client-qqq1.vercel.app/</loc> 
     <lastmod>2024-01-15</lastmod>
-    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/login</loc> 
     <lastmod>2024-01-15</lastmod>
-    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/register</loc> 
     <lastmod>2024-01-15</lastmod>
-    <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/category/fruit</loc>
     <lastmod>2024-01-14</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/category/vegetable</loc>
     <lastmod>2024-01-14</lastmod>
-    <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/product-details</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/about</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/contact</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/profile</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/cart</loc> 
     <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/messages</loc> 
     <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/all-orders</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/usersManagement</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/receipt</loc> 
-    <lastmod>2024-01-10</lastmod> 
-    <changefreq>monthly</changefreq> 
+    <lastmod>2024-01-10</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/Privacy-and-policy</loc> 
-    <lastmod>2024-01-05</lastmod> 
-    <changefreq>yearly</changefreq> 
+    <lastmod>2024-01-05</lastmod>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://client-qqq1.vercel.app/term-of-use</loc> 
     <lastmod>2024-01-05</lastmod> 
-    <changefreq>yearly</changefreq> 
     <priority>0.3</priority>
   </url>
 </urlset>
