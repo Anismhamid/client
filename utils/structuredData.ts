@@ -59,7 +59,7 @@ export const generateSingleProductJsonLd = (product: Products) => ({
 		price: product.sale
 			? product.price - (product.price * (product.discount || 0)) / 100
 			: product.price,
-		url: `https://client-qqq1.vercel.app/products/${encodeURIComponent(
+		url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
 			product.product_name,
 		)}`,
 		availability:
@@ -77,7 +77,7 @@ export const generateProductsItemListJsonLd = (products: Products[]) => ({
 		"@type": "ListItem",
 		position: index + 1,
 		name: product.product_name,
-		url: `https://client-qqq1.vercel.app/products/${encodeURIComponent(
+		url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
 			product.product_name,
 		)}`,
 	})),

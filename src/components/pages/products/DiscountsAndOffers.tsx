@@ -97,7 +97,7 @@ const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
 					}}
 					loop={true}
 					spaceBetween={20}
-					slidesPerView={1}
+					slidesPerView={3}
 					breakpoints={{
 						640: {
 							slidesPerView: 2,
@@ -178,7 +178,6 @@ const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
 												onLoad={() =>
 													setImageLoaded(product.product_name)
 												}
-												loading='lazy'
 											/>
 
 											{/* شريط الخصم */}
