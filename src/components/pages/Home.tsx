@@ -206,7 +206,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					لم يتم العثور على أي منتجات في المتجر
 				</Typography>
 				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
-					נסה שוב
+					حاول ثانية
 				</Button>
 			</Box>
 		);
@@ -218,8 +218,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				name='description'
 				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة.'
 			/>
-			<link rel='canonical' href='https://client-qqq1.vercel.app/' />
-			{/* Open Graph */}
+			{/* <link rel='canonical' href='https://client-qqq1.vercel.app/' />
 			<meta property='og:title' content='سوق السخنيني – متجر منتجات طازجة' />
 			<meta
 				property='og:description'
@@ -227,24 +226,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 			/>
 			<meta property='og:image' content='https://client-qqq1.vercel.app/logo.png' />
 			<meta property='og:url' content='https://client-qqq1.vercel.app/' />
-			<meta name='twitter:card' content='summary_large_image' />
-			{/* Structured Data */}
-			<script type='application/ld+json'>
-				{`
-          {
-            "@context": "https://schema.org",
-            "@type": "Store",
-            "name": "سوق السخنيني",
-            "url": "https://client-qqq1.vercel.app/",
-            "logo": "https://client-qqq1.vercel.app/myLogo2.png",
-            "description": "متجر يقدم تشكيلة واسعة من الفواكه والخضار والمنتجات الطازجة.",
-            "sameAs": [
-              "https://www.facebook.com/shokshknini",
-							"https://www.tiktok.com/discover/%D8%B3%D9%88%D9%82-%D8%A7%D9%84%D8%B3%D8%AE%D9%86%D9%8A%D9%86%D9%8A"
-            ]
-          }
-          `}
-			</script>
+			<meta name='twitter:card' content='summary_large_image' /> */}
+
 
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />

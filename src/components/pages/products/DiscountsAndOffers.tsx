@@ -97,7 +97,7 @@ const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
 					}}
 					loop={true}
 					spaceBetween={20}
-					slidesPerView={3}
+					// slidesPerView={3}
 					breakpoints={{
 						640: {
 							slidesPerView: 2,
