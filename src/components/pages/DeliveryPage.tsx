@@ -120,7 +120,7 @@ const DeliveryPage: FunctionComponent = () => {
 	};
 
 	return (
-		<main className='container my-5'>
+		<main className='container my-5 delivery'>
 			<h1 className='text-center'>{t("links.orders")} - صفحة المرسل</h1>
 			<SearchBox
 				text='البحث حسب رقم الطلب...'

@@ -215,6 +215,24 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</NavLink>
 						</li>
 					)}
+					{/* المرسل */}
+					{auth?.name.last === "one miunte delivery" && (
+						<li className='nav-item' role='none'>
+							<NavLink
+								className={` ${
+									isActive(path.DeliveryPage)
+										? "text-danger fw-bold"
+										: ""
+								} nav-link`}
+								aria-current='page'
+								to={path.DeliveryPage}
+								aria-label='الطلبات - سوق السخنيني'
+							>
+								دقيقة عندك
+							</NavLink>
+						</li>
+					)}
+
 					<li className='nav-item' role='none'>
 						<NavLink
 							className={`${
