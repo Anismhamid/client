@@ -79,7 +79,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				.required(t("modals.updateProductModal.validation.priceRequired")),
 			quantity_in_stock: yup
 				.number()
-				.min(1, t("modals.updateProductModal.validation.quantityMin"))
+				.min(0, t("modals.updateProductModal.validation.quantityMin"))
 				.required(t("modals.updateProductModal.validation.quantityRequired")),
 			description: yup
 				.string()
