@@ -279,7 +279,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										gutterBottom
 										sx={{fontWeight: 600}}
 									>
-										תיאור המוצר
+										وصف المنتج
 									</Typography>
 									<Typography
 										variant='body1'
@@ -317,7 +317,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										aria-label='تقليل الكمية'
 									/>
 
-									<Typography aria-live='polite'>
+									<Typography aria-live='polite' fontSize={30}>
 										{productQuantity}
 									</Typography>
 
@@ -342,7 +342,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									<Grid size={{xs: 12, md: 6}}>
 										<Button
 											fullWidth
-											variant='outlined'
+											variant='contained'
 											size='large'
 											onClick={() => navigate(-1)}
 											sx={{
@@ -375,15 +375,17 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 												loadingAddToCart === product.product_name
 											}
 											sx={{
-												py: 1.5,
+												py: 2.2,
 												fontWeight: 700,
 												fontSize: "1rem",
 												borderRadius: 1,
 											}}
 										>
-											{loadingAddToCart === product.product_name
-												? "جاري الإضافة..."
-												: "أضف إلى السلة"}
+											{loadingAddToCart === product.product_name ? (
+												<CircularProgress size={24} />
+											) : (
+												""
+											)}
 										</Button>
 									</Grid>
 								</Grid>
@@ -412,11 +414,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									gutterBottom
 									sx={{fontWeight: 600}}
 								>
-									الشحن والإرجاع
+									توصيل
 								</Typography>
 								<Typography variant='body2' color='text.secondary'>
-									شحن مجاني لجميع المشتريات التي تزيد قيمتها عن 300
-									شيكل. إمكانية الإرجاع خلال ١٤ يومًا
+									توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه,
+									إمكانية الإرجاع خلال 24 ساعة
 								</Typography>
 							</Card>
 						</Grid>
@@ -456,10 +458,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									gutterBottom
 									sx={{fontWeight: 600}}
 								>
-									مسؤولية
+									جودة وانتقاء
 								</Typography>
 								<Typography variant='body2' color='text.secondary'>
-									ضمان الشركة المصنعة لمدة عام واحد على جميع منتجاتنا
+									جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع
+									المحلية يومياً
 								</Typography>
 							</Card>
 						</Grid>

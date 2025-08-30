@@ -225,7 +225,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				<Box
 					sx={{
 						position: "sticky",
-						zIndex: 1,
+						zIndex: 2,
 						top: 60,
 					}}
 				>

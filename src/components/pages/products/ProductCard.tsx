@@ -138,6 +138,24 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						itemProp='image'
 					/>
 				</Link>
+				{product.sale && (
+					<Chip
+						label={`${product.discount}% تخفيض`}
+						color='error'
+						size='small'
+						aria-label={`خصم ${product.discount} بالمئة`}
+						sx={{
+							position: "absolute",
+							top: 10,
+							right: 10,
+							bgcolor: "#d32f2f",
+							color: "#fff",
+							fontWeight: "bold",
+							zIndex: 1,
+							py: 2,
+						}}
+					/>
+				)}
 			</Box>
 			<CardContent sx={{flexGrow: 1}}>
 				<Typography
@@ -150,29 +168,26 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 					{product.product_name}
 				</Typography>
 				{product.sale ? (
-					<Box
-						sx={{
-							textAlign: "center",
-						}}
-					>
-						<Chip
-							label={`${product.discount}% تخفيض`}
-							color='info'
-							size='small'
-							aria-label={`خصم ${product.discount} بالمئة`}
-						/>
-						<Typography variant='h6' align='center'>
-							<s>{formatPrice(product.price)}</s>
+					<Box textAlign='center' my={1}>
+						<Typography
+							variant='body2'
+							color='text.secondary'
+							sx={{textDecoration: "line-through"}}
+						>
+							{formatPrice(product.price)}
+						</Typography>
+						<Typography variant='h5' color='success.main' fontWeight={700}>
+							{formatPrice(discountedPrice)}
 						</Typography>
 					</Box>
 				) : (
 					<Typography
 						variant='h6'
 						align='center'
-						className={isOutOfStock ? "text-danger" : "text-success"}
+						color={isOutOfStock ? "error" : "success.main"}
 						aria-live='polite'
 					>
-						{isOutOfStock ? "غير متوفر حالياً" : "متوفر"}
+						{isOutOfStock ? "غير متوفر حالياً" : formatPrice(product.price)}
 					</Typography>
 				)}
 
@@ -191,18 +206,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 				>
 					<ColorsAndSizes category={category} />
 				</Box>
-				<Typography
-					variant='h5'
-					align='center'
-					color='success.main'
-					itemProp='offers'
-					itemScope
-					itemType='https://schema.org/Offer'
-				>
-					<meta itemProp='price' content={discountedPrice.toString()} />
-					<meta itemProp='priceCurrency' content='ILS' />
-					{formatPrice(discountedPrice)}
-				</Typography>
 			</CardContent>
 			<Box role='group' aria-label='إدارة الكمية'>
 				<Box
@@ -224,7 +227,9 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						aria-label='تقليل الكمية'
 					/>
 
-					<Typography aria-live='polite'>الكمية: {productQuantity}</Typography>
+					<Typography aria-live='polite' fontSize={25}>
+						{productQuantity}
+					</Typography>
 
 					<Button
 						size='small'
@@ -237,10 +242,28 @@ const ProductCard: FunctionComponent<ProductCardProps> = ({
 						aria-label='زيادة الكمية'
 					/>
 				</Box>
-			</Box>{" "}
-			<Typography variant='h6' align='center'>
-				{product.description}
-			</Typography>
+			</Box>
+			{product.description && (
+				<Box sx={{my: 1}}>
+					<Typography
+						variant='subtitle1'
+						align='center'
+						fontWeight='bold'
+						color='text.primary'
+					>
+						وصف المنتج
+					</Typography>
+					<Typography
+						component='p'
+						variant='body2'
+						align='center'
+						color='text.secondary'
+						sx={{lineHeight: 1.6}}
+					>
+						{product.description}
+					</Typography>
+				</Box>
+			)}
 			<LoadingButton
 				fullWidth
 				onClick={() => {
