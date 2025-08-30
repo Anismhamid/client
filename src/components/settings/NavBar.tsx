@@ -290,7 +290,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 												fontWeight: "bold",
 											},
 										}}
-										aria-label={`${quantity} عنصر في عربة التسوق`}
+										aria-label={`${quantity} عنصر في سلة التسوق`}
 									>
 										<NavLink
 											className={`${
@@ -300,12 +300,10 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 												isActive(path.Cart) ? "page" : undefined
 											}
 											to={path.Cart}
-											aria-label='عربة التسوق - سوق السخنيني'
+											aria-label='سلة التسوق - سوق السخنيني'
 										>
 											{fontAwesomeIcon.cartInoc}
-											<span className='visually-hidden'>
-												عربة التسوق
-											</span>
+											<span className='visually-hidden'>السلة</span>
 										</NavLink>
 									</Badge>
 								</Box>

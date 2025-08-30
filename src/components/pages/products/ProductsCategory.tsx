@@ -8,16 +8,13 @@ import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
 import {useCartItems} from "../../../context/useCart";
-import {
-	Box,
-	Typography,
-} from "@mui/material";
+import {Box, Chip, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import Seo from "../../../atoms/Seo/Seo";
 import {getFaviconForCategory} from "../../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
-import { useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
@@ -74,7 +71,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		return products.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || "";
-			const productInDiscount = product.sale ? "מבצע" : "";
+			const productInDiscount = product.sale ? "عروض" : "";
 
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -119,7 +116,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				setProducts((prevProducts) =>
 					prevProducts.filter((p) => p.product_name !== product_name),
 				);
-				refreshAfterCange()
+				refreshAfterCange();
 			})
 			.catch((err) => {
 				console.error(err);
@@ -196,7 +193,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
 
-
 	if (loading) {
 		return <Loader />;
 	}
@@ -205,10 +201,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		return (
 			<Box component={"main"} textAlign={"center"}>
 				<Typography textAlign={"center"} variant='h6' color='error'>
-					לא נמצאו מוצרים בחנות
+					لم يتم العثور على أي منتجات في المتجر
 				</Typography>
 				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
-					נסה שוב
+					حاول ثانية
 				</Button>
 			</Box>
 		);
@@ -216,7 +212,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	return (
 		<>
 			<Seo
-				title={t("seo.categoryTitle", {category: t(`categories.${category}.label`)})}
+				title={t("seo.categoryTitle", {
+					category: t(`categories.${category}.label`),
+				})}
 				description={t("seo.categoryDescription", {
 					category: t(`categories.${category}.label`),
 				})}
@@ -237,89 +235,108 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						setSearchQuery={setSearchQuery}
 					/>
 				</Box>
-				<Box
-					m={1}
-					sx={{border: 1, borderRadius: 5, backdropFilter: "blure(10px)"}}
-				>
-					{products.map((product, i) => (
-						<Button
-							key={i}
-							variant={
-								searchQuery === product.product_name
-									? "contained"
-									: "outlined"
-							}
-							sx={{
-								borderRadius: 5,
-								m: 1,
-								fontSize: "1rem",
-								fontWeight: "bold",
-							}}
-							onClick={() => {
-								setSearchQuery(product.product_name);
-							}}
-						>
-							{product.product_name}
-						</Button>
-					))}
-				</Box>
 				<Box className='container pb-5'>
-					<Row className='mt-3' spacing={5}>
-						{filteredProducts
-							.slice(0, visibleProducts.length)
-							.map((product: Products) => {
-								const isOutOfStock = product.quantity_in_stock <= 0;
-								const productQuantity =
-									quantities[product.product_name] ?? 1;
-								const discountedPrice = product.sale
-									? product.price -
-										(product.price * (product.discount || 0)) / 100
-									: product.price;
+					<Row className='mt-3 g-3'>
+						{filteredProducts.length ? (
+							filteredProducts
+								.slice(0, visibleProducts.length)
+								.map((product: Products) => {
+									const isOutOfStock = product.quantity_in_stock <= 0;
+									const productQuantity =
+										quantities[product.product_name] ?? 1;
+									const discountedPrice = product.sale
+										? product.price -
+											(product.price * (product.discount || 0)) /
+												100
+										: product.price;
 
-								const unitText =
-									{
-										// spices: "ל/100 גרם",
-										fruit: "للكيلو",
-										vegetable: "للكيلو",
-										// meat: 'ל/ק"ג',
-										// fish: 'ל/ק"ג',
-									}[product.category?.toLowerCase()] || "ליחידה";
+									const unitText =
+										{
+											fruit: "للكيلو",
+											vegetable: "للكيلو",
+										}[product.category?.toLowerCase()] || "للوحدة";
 
-								return (
-									<Col
-										key={product._id}
-										style={{marginBlock: 10, border: 1}}
-										xs={6}
-										md={4}
-										xl={2}
-									>
-										<ProductCard
+									return (
+										<Col
 											key={product._id}
-											product={product}
-											productQuantity={productQuantity}
-											discountedPrice={discountedPrice}
-											unitText={unitText}
-											isOutOfStock={isOutOfStock}
-											quantities={quantities}
-											setQuantities={setQuantities}
-											loadingAddToCart={loadingAddToCart}
-											canEdit={canEdit}
-											setProductNameToUpdate={
-												setProductNameToUpdate
-											}
-											onShowUpdateProductModal={
-												onShowUpdateProductModal
-											}
-											openDeleteModal={openDeleteModal}
-											setLoadedImages={setLoadedImages}
-											loadedImages={loadedImages}
-											handleAdd={handleAdd}
-											category={category}
-										/>
-									</Col>
-								);
-							})}
+											style={{marginBlock: 10, border: 1}}
+											xs={6}
+											md={4}
+											xl={2}
+										>
+											<ProductCard
+												key={product._id}
+												product={product}
+												productQuantity={productQuantity}
+												discountedPrice={discountedPrice}
+												unitText={unitText}
+												isOutOfStock={isOutOfStock}
+												quantities={quantities}
+												setQuantities={setQuantities}
+												loadingAddToCart={loadingAddToCart}
+												canEdit={canEdit}
+												setProductNameToUpdate={
+													setProductNameToUpdate
+												}
+												onShowUpdateProductModal={
+													onShowUpdateProductModal
+												}
+												openDeleteModal={openDeleteModal}
+												setLoadedImages={setLoadedImages}
+												loadedImages={loadedImages}
+												handleAdd={handleAdd}
+												category={category}
+											/>
+										</Col>
+									);
+								})
+						) : (
+							<Box
+								sx={{
+									backgroundColor: "white",
+									p: 5,
+									width: "80%",
+									m: "auto",
+									mt: 5,
+									textAlign: "center",
+									borderRadius: 5,
+									border: "1px solid red",
+								}}
+							>
+								<Typography
+									color='primary.main'
+									component='h1'
+									variant='body1'
+								>
+									لم يتم العثور على منتجات مطابقة. حاول البحث باستخدام:
+								</Typography>
+								<Box m={1}>
+									<Button
+										variant='contained'
+										sx={{borderRadius: 5}}
+										onClick={() => setSearchQuery("عنب")}
+									>
+										<Chip label='عنب' sx={{color: "white"}} />
+									</Button>
+									<Button
+										variant='contained'
+										sx={{borderRadius: 5, m: 1}}
+										onClick={() => setSearchQuery("2")}
+									>
+										<Chip label='سعر المنتج' sx={{color: "white"}} />
+									</Button>
+									<Button
+										variant='contained'
+										sx={{borderRadius: 5}}
+										onClick={() => setSearchQuery("عروض")}
+									>
+										<Chip label='عروض' sx={{color: "white"}} />
+									</Button>
+								</Box>
+							</Box>
+						)}
 					</Row>
+
 					{/* Show More Button */}
 					{products.length > visibleProducts.length && (
 						<div className='text-center my-4 '>

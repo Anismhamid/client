@@ -213,7 +213,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<title>الرئيسيه | سوق السخنيني</title>
+			<title>سوق السخنيني | الرئيسيه</title>
 			<meta
 				name='description'
 				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة'
@@ -269,32 +269,20 @@ const Home: FunctionComponent<HomeProps> = () => {
 						</Typography>
 					</Box>
 
-					<Box
-						m={1}
-						sx={{border: 1, borderRadius: 5, backdropFilter: "blure(10px)"}}
+					<Button
+						variant={searchQuery === "" ? "outlined" : "contained"}
+						sx={{
+							borderRadius: 5,
+							m: 1,
+							fontSize: "1rem",
+							fontWeight: "bold",
+						}}
+						onClick={() => {
+							setSearchQuery("عروض");
+						}}
 					>
-						{products.map((product, i) => (
-							<Button
-								key={i}
-								variant={
-									searchQuery === product.product_name
-										? "contained"
-										: "outlined"
-								}
-								sx={{
-									borderRadius: 5,
-									m: 1,
-									fontSize: "1rem",
-									fontWeight: "bold",
-								}}
-								onClick={() => {
-									setSearchQuery(product.product_name);
-								}}
-							>
-								{product.product_name}
-							</Button>
-						))}
-					</Box>
+						عروض
+					</Button>
 					<Box className='container pb-5 home-row'>
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (
@@ -384,9 +372,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 											}}
 										>
 											<Chip
-												label='اسم المنتج'
+												label='عنب'
 												sx={{
-													mx: 0.5,
 													color: "white",
 												}}
 											/>
@@ -395,6 +382,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 											variant='contained'
 											sx={{
 												borderRadius: 5,
+												m: 1,
 											}}
 											onClick={() => {
 												console.log(setSearchQuery("2"));
@@ -402,7 +390,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 										>
 											<Chip
 												label='سعر المنتج'
-												sx={{mx: 0.5, color: "white"}}
+												sx={{color: "white"}}
 											/>
 										</Button>
 										<Button
@@ -414,10 +402,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												console.log(setSearchQuery("عروض"));
 											}}
 										>
-											<Chip
-												label='عروض'
-												sx={{mx: 0.5, color: "white"}}
-											/>
+											<Chip label='عروض' sx={{color: "white"}} />
 										</Button>
 									</Box>
 								</Box>
@@ -468,8 +453,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<AlertDialogs
 					show={showDeleteModal}
 					onHide={closeDeleteModal}
-					title={"אתה עומד למחוק מוצר מהחנות"}
-					description={`האם אתה בטוח שברצונך למחוק את המוצר ( ${productToDelete} ) ? פעולה זו לא ניתנת לביטול`}
+					title={"أنت على وشك حذف منتج من المتجر"}
+					description={`هل أنت متأكد من أنك تريد حذف المنتج ( ${productToDelete} )؟ لا يمكن التراجع عن هذا الإجراء`}
 					handleDelete={() => handleDelete(productToDelete)}
 				/>
 			</Box>

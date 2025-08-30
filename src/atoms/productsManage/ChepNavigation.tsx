@@ -1,7 +1,7 @@
 import {useRef} from "react"; // Add useCallback
 import {Box, Chip, Typography} from "@mui/material";
 // import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import {Link, NavLink} from "react-router-dom";
+import { Link, NavLink} from "react-router-dom";
 import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
 
@@ -112,6 +112,26 @@ const ChipNavigation = () => {
 						"linear-gradient(to right, transparent, white 50px, white 90%, transparent)",
 				}}
 			>
+				{" "}
+				<Link
+					to='/'
+					style={{
+						textDecoration: "none",
+					}}
+				>
+					<Typography
+						component='h1'
+						variant='h6'
+						color='error'
+						sx={{
+							fontWeight: "bold",
+							ml: 1,
+							fontFamily: "Hebbo",
+						}}
+					>
+						الـسـخـنـيـني
+					</Typography>
+				</Link>
 				{navbarCategoryLinks.map((link) => (
 					<NavLink to={link.path} key={link.path}>
 						{({isActive}) => (
@@ -139,25 +159,6 @@ const ChipNavigation = () => {
 						)}
 					</NavLink>
 				))}
-				<Link
-					to='/'
-					style={{
-						textDecoration: "none",
-					}}
-				>
-					<Typography
-						component='h1'
-						variant='h6'
-						color='error'
-						sx={{
-							fontWeight: "bold",
-							ml: 1,
-							fontFamily: "Hebbo",
-						}}
-					>
-						سـوق الـسـخـنـيـني | للخضار والفواكه
-					</Typography>
-				</Link>
 			</Box>
 
 			{/* Right Scroll Button */}
