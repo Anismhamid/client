@@ -155,90 +155,94 @@ const DeliveryPage: FunctionComponent = () => {
 
 						return (
 							<>
-							{order.delivery&&	<Card
-									key={order.orderNumber}
-									sx={{
-										mb: 2,
-										borderRadius: 3,
-										boxShadow: 3,
-										backgroundColor: "#f9f9f9",
-									}}
-								>
-									<CardContent>
-										<Box
-											display='flex'
-											justifyContent='space-between'
-											alignItems='center'
-											mb={1}
-										>
-											<Typography variant='h6'>
-												رقم الطلب: {order.orderNumber}
-											</Typography>
-											<Typography
-												variant='body2'
-												color='text.secondary'
+								{order.delivery && (
+									<Card
+										key={order.orderNumber}
+										sx={{
+											mb: 2,
+											borderRadius: 3,
+											boxShadow: 3,
+											backgroundColor: "#f9f9f9",
+										}}
+									>
+										<CardContent>
+											<Box
+												display='flex'
+												justifyContent='space-between'
+												alignItems='center'
+												mb={1}
 											>
-												{formatDate(order.createdAt)}
+												<Typography variant='h6'>
+													رقم الطلب: {order.orderNumber}
+												</Typography>
+												<Typography
+													variant='body2'
+													color='text.secondary'
+												>
+													{formatDate(order.createdAt)}
+												</Typography>
+											</Box>
+
+											<Typography variant='body1' mb={0.5}>
+												العميل:{" "}
+												{users[order.userId] ?? (
+													<CircularProgress size={15} />
+												)}
 											</Typography>
-										</Box>
 
-										<Typography variant='body1' mb={0.5}>
-											العميل:{" "}
-											{users[order.userId] ?? (
-												<CircularProgress size={15} />
-											)}
-										</Typography>
+											<Typography variant='body1' mb={0.5}>
+												الحالة: {getArabicStatus(currentStatus)}
+											</Typography>
 
-										<Typography variant='body1' mb={0.5}>
-											الحالة: {getArabicStatus(currentStatus)}
-										</Typography>
+											<Typography variant='body1' mb={0.5}>
+												الهاتف:{" "}
+												<Link
+													to={`tel:+972${order.phone.phone_1}`}
+												>
+													{order.phone.phone_1}
+												</Link>
+											</Typography>
 
-										<Typography variant='body1' mb={0.5}>
-											الهاتف:{" "}
-											<Link to={`tel:+972${order.phone.phone_1}`}>
-												{order.phone.phone_1}
-											</Link>
-										</Typography>
+											<Typography variant='body1' mb={2}>
+												العنوان:{" "}
+												<Link
+													to={`https://www.waze.com/ul?q=${encodeURIComponent(
+														`${order.address.city}, ${order.address.street} ${order.address.houseNumber}`,
+													)}`}
+													target='_blank'
+													rel='noopener noreferrer'
+												>
+													{order.address.city},{" "}
+													{order.address.street}{" "}
+													{order.address.houseNumber}
+												</Link>
+											</Typography>
 
-										<Typography variant='body1' mb={2}>
-											العنوان:{" "}
-											<Link
-												to={`https://www.waze.com/ul?q=${encodeURIComponent(
-													`${order.address.city}, ${order.address.street} ${order.address.houseNumber}`,
-												)}`}
-												target='_blank'
-												rel='noopener noreferrer'
+											<Button
+												variant='contained'
+												color='primary'
+												disabled={
+													statusLoading[order.orderNumber] ||
+													!canMarkShipped
+												}
+												onClick={() =>
+													handleOrderStatus(
+														"Shipped",
+														order.orderNumber,
+														setOrderStatuses,
+														setStatusLoading,
+													).catch((err) => console.error(err))
+												}
 											>
-												{order.address.city},{" "}
-												{order.address.street}{" "}
-												{order.address.houseNumber}
-											</Link>
-										</Typography>
-
-										<Button
-											variant='contained'
-											color='primary'
-											disabled={
-												statusLoading[order.orderNumber] ||
-												!canMarkShipped
-											}
-											onClick={() =>
-												handleOrderStatus(
-													"Shipped",
-													order.orderNumber,
-													setOrderStatuses,
-													setStatusLoading,
-												).catch((err) => console.error(err))
-											}
-										>
-											{statusLoading[order.orderNumber] ? (
-												<CircularProgress size={20} />
-											) : (
-												"تم التسليم"
-											)}
-										</Button>
-									</CardContent>
-								</Card>}
+												{statusLoading[order.orderNumber] ? (
+													<CircularProgress size={20} />
+												) : (
+													"تم التسليم"
+												)}
+											</Button>
+										</CardContent>
+									</Card>
+								)}
 							</>
 						);
 					})}

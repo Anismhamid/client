@@ -107,7 +107,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						padding: "5px 5px",
 					}}
 				>
-					{auth.role !== "delivery" && (
+					{auth?.role !== "delivery" && (
 						<Tooltip title='الصفحة الرئيسية - سوق السخنيني' arrow>
 							<li className='nav-item mx-3'>
 								<NavLink
@@ -141,7 +141,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</li>
 						</Tooltip>
 					)}
-					{auth.role !== "delivery" && (
+					{auth?.role !== "delivery" && (
 						<Box
 							onClick={handleMenuClick}
 							sx={{
@@ -204,7 +204,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							</Menu>
 						</Box>
 					)}
-					{isLoggedIn && auth.role !== "delivery" && (
+					{isLoggedIn && auth?.role !== "delivery" && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={` ${
@@ -262,7 +262,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							{t("links.contact")}
 						</NavLink>
 					</li>
-					{isLoggedIn && auth.role !== "delivery" && (
+					{isLoggedIn && auth?.role !== "delivery" && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={`${
@@ -277,7 +277,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					)}
 
 					{/* {auth && isLoggedIn && ( */}
-					{auth.role !== "delivery" && (
+					{auth?.role !== "delivery" && (
 						<li className='nav-item ms-1' role='none'>
 							<Tooltip title='عربة التسوق - سوق السخنيني' arrow>
 								<Box>

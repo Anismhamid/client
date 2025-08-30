@@ -17,7 +17,7 @@ export const emptyAuthValues = {
 		street: "",
 		houseNumber: "",
 	},
-	role: "",
+	role: "Client",
 	iat: 0,
 };
 
