@@ -29,21 +29,60 @@ import {path, productsPathes} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {useTranslation} from "react-i18next";
+import {useUser} from "../../../context/useUSer";
+import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
+import {showError} from "../../../atoms/toasts/ReactToast";
+import AddSharpIcon from "@mui/icons-material/AddSharp";
+import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 
-interface ProductDetailsProps {
-	handleAdd: () => void;
-}
+interface ProductDetailsProps {}
 
-const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => {
+const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {t} = useTranslation();
+	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const navigate = useNavigate();
+	const {auth, isLoggedIn} = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
+	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
+
+	const handleAdd = async (
+		product_name: string,
+		quantity: {[key: string]: number},
+		price: number,
+		product_image: string,
+		sale: boolean,
+		discount: number,
+	) => {
+		const productQuantity = quantity[product_name] || 1; // Access the quantity of the specific product
+		if (!isLoggedIn) {
+			navigate(path.Login);
+			return;
+		} else {
+			setLoadingAddToCart(product_name);
+			try {
+				await handleAddToCart(
+					setQuantities,
+					product_name,
+					productQuantity || 1,
+					price - (price * discount) / 100,
+					product_image,
+					sale,
+					discount,
+				);
+				setQuantities((prev) => ({...prev, [product_name]: 1}));
+			} catch (error) {
+				showError("אירעה שגיאה בהוספת מוצר לעגלה");
+			} finally {
+				setLoadingAddToCart(null);
+			}
+		}
+	};
 
 	useEffect(() => {
 		if (productName) {
@@ -98,6 +137,8 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 		);
 
 	const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
+	const isOutOfStock = product.quantity_in_stock === 0;
+	const productQuantity = quantities[product.product_name] || 1;
 
 	return (
 		<Box component={"main"}>
@@ -249,7 +290,53 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 									</Typography>
 								</>
 							)}
+							<Box role='group' aria-label='إدارة الكمية'>
+								<Box
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "space-between",
+										my: 1,
+										width: 200,
+										backgroundColor: "white",
+										p: 1,
+									}}
+								>
+									<Button
+										size='small'
+										color='error'
+										disabled={isOutOfStock || productQuantity <= 1}
+										onClick={() =>
+											handleQuantity(
+												setQuantities,
+												"-",
+												product.product_name,
+											)
+										}
+										startIcon={<RemoveSharpIcon />}
+										aria-label='تقليل الكمية'
+									/>
 
+									<Typography aria-live='polite'>
+										{productQuantity}
+									</Typography>
+
+									<Button
+										size='small'
+										color='success'
+										disabled={isOutOfStock}
+										onClick={() =>
+											handleQuantity(
+												setQuantities,
+												"+",
+												product.product_name,
+											)
+										}
+										startIcon={<AddSharpIcon />}
+										aria-label='زيادة الكمية'
+									/>
+								</Box>
+							</Box>
 							<Box sx={{mt: "auto", pt: 3}}>
 								<Grid container spacing={2}>
 									<Grid size={{xs: 12, md: 6}}>
@@ -274,7 +361,19 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 											variant='contained'
 											size='large'
 											startIcon={<ShoppingCartIcon />}
-											onClick={() => handleAdd()}
+											onClick={() =>
+												handleAdd(
+													product.product_name,
+													quantities,
+													product.price,
+													product.image_url,
+													product.sale,
+													product.discount || 0,
+												)
+											}
+											disabled={
+												loadingAddToCart === product.product_name
+											}
 											sx={{
 												py: 1.5,
 												fontWeight: 700,
@@ -282,7 +381,9 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 												borderRadius: 1,
 											}}
 										>
-											أضف إلى السلة
+											{loadingAddToCart === product.product_name
+												? "جاري الإضافة..."
+												: "أضف إلى السلة"}
 										</Button>
 									</Grid>
 								</Grid>
@@ -294,7 +395,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 				{/* Additional Information Section */}
 				<Box sx={{mt: 8}}>
 					<Typography variant='h5' gutterBottom sx={{fontWeight: 700, mb: 4}}>
-						פרטים נוספים
+						مزيد من التفاصيل
 					</Typography>
 					<Grid container spacing={4}>
 						<Grid size={{xs: 12, md: 4}}>
@@ -311,11 +412,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 									gutterBottom
 									sx={{fontWeight: 600}}
 								>
-									משלוחים והחזרות
+									الشحن والإرجاع
 								</Typography>
 								<Typography variant='body2' color='text.secondary'>
-									משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14
-									יום.
+									شحن مجاني لجميع المشتريات التي تزيد قيمتها عن 300
+									شيكل. إمكانية الإرجاع خلال ١٤ يومًا
 								</Typography>
 							</Card>
 						</Grid>
@@ -333,10 +434,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 									gutterBottom
 									sx={{fontWeight: 600}}
 								>
-									תמיכה
+									دعم
 								</Typography>
 								<Typography variant='body2' color='text.secondary'>
-									צוות התמיכה שלנו זמין 24/7 לעזור עם כל שאלה או בעיה.
+									فريق الدعم لدينا متاح على مدار الساعة طوال أيام
+									الأسبوع للمساعدة في أي أسئلة أو مشكلات
 								</Typography>
 							</Card>
 						</Grid>
@@ -354,10 +456,10 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = ({handleAdd}) => 
 									gutterBottom
 									sx={{fontWeight: 600}}
 								>
-									אחריות
+									مسؤولية
 								</Typography>
 								<Typography variant='body2' color='text.secondary'>
-									אחריות יצרן לשנה על כל המוצרים שלנו.
+									ضمان الشركة المصنعة لمدة عام واحد على جميع منتجاتنا
 								</Typography>
 							</Card>
 						</Grid>

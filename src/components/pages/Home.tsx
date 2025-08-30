@@ -31,7 +31,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState<boolean>(true);
 	const {auth, isLoggedIn} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [visibleCount, setVisibleCount] = useState(6);
@@ -171,7 +171,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				);
 				setQuantities((prev) => ({...prev, [product_name]: 1}));
 			} catch (error) {
-				showError("אירעה שגיאה בהוספת מוצר לעגלה");
+				showError("حدث خطأ أثناء إضافة منتج إلى سلة التسوق");
 			} finally {
 				setLoadingAddToCart(null);
 			}
