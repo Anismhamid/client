@@ -6,11 +6,11 @@ import handleRTL from "../locales/handleRTL";
 
 // Register Hebrew font
 Font.register({
-	family: "Heebo",
-	src: "/Heebo-VariableFont_wght.ttf",
+	family: "Cairo",
+	src: "/cairo/Cairo-VariableFont_slnt,wght.ttf",
 });
 
-const rTL = () => (handleRTL() === "ltr" ? "row-reverse" : "row");
+// const rTL = () => (handleRTL() === "ltr" ? "row" : "row");
 
 // Create styles
 const styles = StyleSheet.create({
@@ -18,10 +18,10 @@ const styles = StyleSheet.create({
 		flexDirection: "column",
 		backgroundColor: "#FFFFFF",
 		padding: 40,
-		fontFamily: "Heebo",
+		fontFamily: "Cairo",
 	},
 	header: {
-		flexDirection: rTL(),
+		flexDirection: "row",
 		justifyContent: "space-between",
 		marginBottom: 30,
 	},
@@ -48,10 +48,10 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#1976d2",
 		paddingBottom: 5,
 		textAlign: "right",
-		flexDirection: rTL(),
+		flexDirection: "row",
 	},
 	row: {
-		flexDirection: rTL(),
+		flexDirection: "row",
 		justifyContent: "space-between",
 		marginBottom: 5,
 	},
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
 		color: "#333",
 	},
 	tableHeader: {
-		flexDirection: rTL(),
+		flexDirection: "row",
 		backgroundColor: "#1976d2",
 		color: "#fff",
 		paddingVertical: 5,
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
 		marginTop: 15,
 	},
 	tableRow: {
-		flexDirection: rTL(),
+		flexDirection: "row",
 		borderBottomWidth: 1,
 		borderBottomColor: "#e0e0e0",
 		paddingVertical: 8,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
 		textAlign: "right",
 	},
 	totalRow: {
-		flexDirection: rTL(),
+		flexDirection: "row",
 		justifyContent: "flex-end",
 		marginTop: 15,
 		paddingTop: 10,
@@ -111,7 +111,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 				{/* Header */}
 				<View style={styles.header}>
 					<View>
-						<Text style={styles.title}>שוק הבינה מרקט</Text>
+						<Text style={styles.title}>سوق السخنيني</Text>
 						<Text style={styles.subtitle}>www.Shok-Habena.com</Text>
 						<Text style={styles.subtitle}>
 							support@ShokHabenamarket.com | +972-53-834-6915
@@ -121,13 +121,13 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 				</View>
 
 				{/* Receipt Title */}
-				<Text style={styles.sectionTitle}>קבלה</Text>
+				<Text style={styles.sectionTitle}>ايصال</Text>
 
 				{/* Order Info */}
 				<View style={{marginBottom: 20}}>
 					<View style={styles.row}>
 						<Text style={styles.value}>{receipt.orderNumber}</Text>
-						<Text style={styles.label}>מספר הזמנה</Text>
+						<Text style={styles.label}>رقم الطلب</Text>
 					</View>
 					<View style={styles.row}>
 						<Text style={styles.value}>
@@ -139,25 +139,25 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 								minute: "2-digit",
 							})}
 						</Text>
-						<Text style={styles.label}>תאריך</Text>
+						<Text style={styles.label}>تاريخ الطلب</Text>
 					</View>
 				</View>
 
 				{/* Customer Info */}
 				{receipt.customer && (
 					<>
-						<Text style={styles.sectionTitle}>פרטי הלקוח</Text>
+						<Text style={styles.sectionTitle}>تفاصيل العميل</Text>
 						<View style={{marginBottom: 20}}>
 							<View style={styles.row}>
 								<Text style={styles.value}>
 									{receipt.customer.name.first}{" "}
 									{receipt.customer.name.last || ""}
 								</Text>
-								<Text style={styles.label}>לקוח</Text>
+								<Text style={styles.label}>عميل</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>{receipt.customer.email}</Text>
-								<Text style={styles.label}>אימייל</Text>
+								<Text style={styles.label}>بريد إلكتروني</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>
@@ -165,7 +165,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									{receipt.customer.phone.phone_2 &&
 										`, ${receipt.customer.phone.phone_2}`}
 								</Text>
-								<Text style={styles.label}>טלפון</Text>
+								<Text style={styles.label}>هاتف</Text>
 							</View>
 							<View style={styles.row}>
 								<Text style={styles.value}>
@@ -173,21 +173,21 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									{receipt.customer.address.street}{" "}
 									{receipt.customer.address.houseNumber}
 								</Text>
-								<Text style={styles.label}>כתובת</Text>
+								<Text style={styles.label}>العنوان</Text>
 							</View>
 						</View>
 					</>
 				)}
 
 				{/* Products Table */}
-				<Text style={styles.sectionTitle}>פירוט המוצרים</Text>
+				<Text style={styles.sectionTitle}>تفاصيل المنتج</Text>
 				<View style={styles.tableHeader}>
-					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>מחיר</Text>
+					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>سعر</Text>
 					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>
-						מחיר ליחידה
+						السعر الكيلو
 					</Text>
-					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>כמות</Text>
-					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>מוצר</Text>
+					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>الكمية</Text>
+					<Text style={[styles.tableCell, {fontWeight: "bold"}]}>المنتج</Text>
 				</View>
 
 				{receipt.products.map((product: any, index: number) => {
@@ -223,28 +223,25 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 
 				{/* Payment Info */}
 				<Text style={[styles.sectionTitle, {marginTop: 20}]}>
-					שיטת תשלום ומשלוח
+					طريقة الدفع و الاستلام
 				</Text>
 				<View style={{marginBottom: 20}}>
 					<View style={styles.row}>
 						<Text style={styles.value}>
-							{receipt.payment === "true" ? "כרטיס אשראי" : "מזומן"}
+							{receipt.payment === "true" ? "بطاقة إئتمان" : "نقدي"}
 						</Text>
-						<Text style={styles.label}>שיטת תשלום</Text>
+						<Text style={styles.label}>طريقة الدفع</Text>
 					</View>
 					<View style={styles.row}>
 						<Text style={styles.value}>
 							{receipt.deliveryFee
-								? `משלוח לבית - ${receipt.deliveryFee.toLocaleString(
-										"he-IL",
-										{
-											style: "currency",
-											currency: "ILS",
-										},
-									)}`
-								: "איסוף עצמי"}
+								? ` ${receipt.deliveryFee.toLocaleString("he-IL", {
+										style: "currency",
+										currency: "ILS",
+									})} ${receipt.deliveryFee} - التوصيل إلى المنازل `
+								: "استلام الذاتي"}
 						</Text>
-						<Text style={styles.label}>שיטת משלוח</Text>
+						<Text style={styles.label}>طريقة الاستلام</Text>
 					</View>
 				</View>
 
@@ -258,7 +255,9 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									currency: "ILS",
 								})}
 							</Text>
-							<Text style={styles.label}>סה"כ לפני מע"מ:</Text>
+							<Text style={styles.label}>
+								الإجمالي قبل ضريبة القيمة المضافة:
+							</Text>
 						</View>
 						<View style={styles.row}>
 							<Text style={styles.value}>
@@ -267,7 +266,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 									currency: "ILS",
 								})}
 							</Text>
-							<Text style={styles.label}>מע"מ (18%):</Text>
+							<Text style={styles.label}>ضريبة القيمة المضافة (18%):</Text>
 						</View>
 						<View style={styles.row}>
 							<Text style={[styles.value, {fontWeight: "bold"}]}>
@@ -277,7 +276,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 								})}
 							</Text>
 							<Text style={[styles.label, {fontWeight: "bold"}]}>
-								סה"כ לתשלום:
+								السعر الإجمالي:
 							</Text>
 						</View>
 					</View>
