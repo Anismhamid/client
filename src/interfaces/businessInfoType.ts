@@ -1,5 +1,6 @@
+
 export interface BusinessInfoType {
-	deliveryFee: number;
+	deliveryFee:[ {area: string; fee: number}];
 	businessName: string;
 	businessSAddress: string;
 	businessPhone: string;

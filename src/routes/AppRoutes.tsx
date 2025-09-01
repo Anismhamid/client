@@ -24,7 +24,6 @@ import ProducDetails from "../components/pages/products/ProducDetails";
 import Products from "../components/pages/products/Products";
 import Messages from "../components/pages/Messages";
 import DeliveryPage from "../components/pages/DeliveryPage";
-import PreviousOrders from "../components/pages/orders/PreviousOrders";
 import CompleteOrdersPage from "../components/pages/orders/CompleteOrdersPage";
 
 interface AppRoutesProps {
@@ -61,7 +60,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path='/category/:category' element={<Products />} />
 			<Route
 				path={`${productsPathes.productDetails}/:productName`}
-				element={<ProducDetails handleAdd={() => {}} />}
+				element={<ProducDetails />}
 			/>
 
 			<Route path={path.Checkout} element={<Checkout />} />

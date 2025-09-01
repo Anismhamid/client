@@ -48,7 +48,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 				variant='h4'
 				className='text-center bg-primary text-white rounded p-3 mb-4'
 			>
-				{t("No products found in this order.")}
+				{"لم يتم العثور على منتجات في هذا الطلب"}
 			</Typography>
 		);
 

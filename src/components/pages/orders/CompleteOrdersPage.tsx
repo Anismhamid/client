@@ -19,7 +19,6 @@ const CompleteOrdersPage = () => {
 			getUserOrders(userId)
 				.then((res) => {
 					setOrders(res);
-					// هون فيك تعبي orderStatuses إذا عندك API بترجع ستاتوس
 					const statuses: {[k: string]: string} = {};
 					res.forEach((o: any) => {
 						statuses[o.orderNumber] = o.status;

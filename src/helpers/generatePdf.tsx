@@ -1,6 +1,6 @@
 // components/ReceiptPDF.tsx
 import {Page, Document, StyleSheet, View, Text, Image, Font} from "@react-pdf/renderer";
-import logo from "/Logo.png";
+import logo from "/myLogo2.png";
 import {ReceiptsType} from "../interfaces/Receipts";
 import handleRTL from "../locales/handleRTL";
 

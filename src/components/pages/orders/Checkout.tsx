@@ -1,4 +1,4 @@
-import {FunctionComponent, useState, useEffect, useRef} from "react";
+import {FunctionComponent, useState, useEffect, useRef, useMemo} from "react";
 import {useNavigate} from "react-router-dom";
 import {Cart as CartType} from "../../../interfaces/Cart";
 import {getCartItems} from "../../../services/cart";
@@ -31,7 +31,27 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	const [newOrder, setNewOrder] = useState<Order | null>(null);
 	const [showPymentModal, setShowPymentModal] = useState<boolean>(false);
 	const formRef = useRef<HTMLFormElement | null>(null);
-	const [deliveryFee, setDeliveryFee] = useState<number>(0);
+	const [deliveryFees, setDeliveryFees] = useState<{area: string; fee: number}[]>([]);
+
+	// useEffect(() => {
+	// 	if (!auth) return;
+
+	// 	const fetchData = async () => {
+	// 		try {
+	// 			const res = await getBusinessInfo();
+	// 			if (res.deliveryFee) setDeliveryFees(res.deliveryFee);
+
+	// 			const items = await getCartItems();
+	// 			setCartItems(items);
+	// 		} catch {
+	// 			showError("שגיאה בטעינת הסל או המידע העסקי");
+	// 		} finally {
+	// 			setLoading(false);
+	// 		}
+	// 	};
+
+	// 	fetchData();
+	// }, [auth]);
 
 	const onShowPymentModal = () => setShowPymentModal(true);
 	const hidePymentModal = () => setShowPymentModal(false);
@@ -93,40 +113,44 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		},
 	});
 
+	const deliveryFeeValue = useMemo(() => {
+		if (!formik.values.address.city || deliveryFees.length === 0) return 0;
+
+		const feeObj = deliveryFees.find((d) => d.area === formik.values.address.city);
+
+		return feeObj?.fee || 0;
+	}, [formik.values.address.city, deliveryFees]);
+
 	useEffect(() => {
 		if (auth) {
 			getBusinessInfo()
 				.then((res) => {
-					setDeliveryFee(res.deliveryFee || 0);
+					setDeliveryFees(res.deliveryFee || []);
 				})
 				.then(() => {
 					getCartItems()
-						.then((items) => {
-							setCartItems(items);
-						})
-						.catch(() => {
-							showError("שגיאה בטעינת הסל או המידע העסקי");
-						})
+						.then((items) => setCartItems(items))
+						.catch(() =>
+							showError("خطأ في تحميل عربة التسوق أو معلومات العمل"),
+						)
 						.finally(() => setLoading(false));
 				});
 		}
 	}, [auth]);
 
 	// Calculate total amount of the cart
-	const totalAmount = cartItems.reduce((total, item) => {
-		return (
-			total +
-			item.products.reduce(
-				(productTotal, product) => productTotal + product.product_price,
-				0,
-			)
+	const totalAmount = useMemo(() => {
+		return cartItems.reduce(
+			(total, item) =>
+				total + item.products.reduce((pTotal, p) => pTotal + p.product_price, 0),
+			0,
 		);
-	}, 0);
+	}, [cartItems]);
 
 	const discountedAmount = totalAmount - (totalAmount * formik.values.discount) / 100;
 
 	const finalAmount = formik.values.delivery
-		? discountedAmount + deliveryFee
+		? discountedAmount + deliveryFeeValue
 		: discountedAmount;
 
 	const handleCheckout = async (value: {
@@ -155,7 +179,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 			cashOnDelivery: value.cashOnDelivery,
 			selfCollection: value.selfCollection,
 			delivery: value.delivery,
-			deliveryFee: value.delivery ? deliveryFee : 0,
+			deliveryFee: value.delivery ? deliveryFeeValue : 0,
 			totalAmount: finalAmount,
 			phone: {
 				phone_1: auth.phone?.phone_1 || "",
@@ -189,7 +213,9 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 	};
 
 	if (loading) return <Loader />;
+
 	const diriction = handleRTL();
+
 	return (
 		<main dir={diriction} className='lead '>
 			<div className='container'>
@@ -261,12 +287,12 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 										disabled
 										// ={formik.values.cashOnDelivery}
 									/>
+									<p>(لا يوجد دفع عبر بطاقه الائتمان حاليا)</p>
 									<label
 										htmlFor='payment'
-										className='form-check-label disabled text-danger'
+										className='form-check-label disabled '
 									>
-										بطاقة إئتمان (لا يوجد دفع عبر بطاقه الائتمان
-										حاليه)
+										بطاقة إئتمان
 									</label>
 								</div>
 								<div className='form-check'>
@@ -321,7 +347,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 										خدمة توصيل
 										<span className='text-danger fw-bold ms-2'>
 											+{" "}
-											{deliveryFee.toLocaleString("he-IL", {
+											{deliveryFeeValue.toLocaleString("he-IL", {
 												style: "currency",
 												currency: "ILS",
 											})}
@@ -347,15 +373,16 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							{/* --- Total Display --- */}
 							<div>
 								<div className='text-primary fw-bold bg-white border p-2'>
-									<h5 className='text-danger'>عنوان الشحن:</h5>{" "}
+									<h5 className='text-danger'>عنوان التوصيل:</h5>{" "}
 									<p>
-										{formik.values.address.city},
-										{formik.values.address.street}{" "}
-										{formik.values.address.houseNumber}
+										{auth.address.city} ,{auth.address.street},{" "}
+										{auth.address.houseNumber}
 									</p>
 								</div>
 								<div className=' text-center mt-5'>
-									<strong className='me-2 fw-bold'>סך הכל</strong>
+									<strong className='me-2 fw-bold'>
+										إجمالي المبلغ
+									</strong>
 									<input
 										type='text'
 										name='totalAmount'

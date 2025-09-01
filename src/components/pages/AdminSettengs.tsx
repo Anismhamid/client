@@ -10,6 +10,7 @@ import {
 	Button,
 	CircularProgress,
 	Typography,
+	TableBody,
 } from "@mui/material";
 import {useFormik} from "formik";
 import {FunctionComponent, useEffect, useState} from "react";
@@ -25,7 +26,7 @@ interface AdminSettingsProps {}
 const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 	const [businessInfoState, setBusinessInfoState] = useState<BusinessInfoType>({
-		deliveryFee: 0,
+		deliveryFee: [{area: "", fee: 0}],
 		businessName: "",
 		businessSAddress: "",
 		businessPhone: "",
@@ -34,14 +35,19 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 
 	const formik = useFormik({
 		initialValues: {
-			deliveryFee: businessInfoState.deliveryFee,
+			deliveryFee: businessInfoState.deliveryFee || [{area: "", fee: 0}],
 			businessName: businessInfoState.businessName,
 			businessSAddress: businessInfoState.businessSAddress,
 			businessPhone: businessInfoState.businessPhone,
 		},
 		enableReinitialize: true,
 		validationSchema: yup.object({
-			deliveryFee: yup.number(),
+			deliveryFee: yup.array().of(
+				yup.object({
+					area: yup.string().required("حقل المنطقة مطلوب"),
+					fee: yup.number().min(0, "يجب أن يكون الرقم 0 أو أكثر"),
+				}),
+			),
 			businessName: yup
 				.string()
 				.min(3, "שם העסק חייב להכיל לפחות 3 תווים")
@@ -71,7 +77,7 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	}
 
 	return (
-		<main>
+		<main style={{fontFamily: "Heebo"}}>
 			<Box
 				style={{
 					width: "100%",
@@ -82,8 +88,21 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 					marginBlock: 50,
 				}}
 			>
-				<img src='/Logo.png' alt={businessInfoState.businessName} />
+				<img
+					src='/myLogo2.png'
+					width={200}
+					alt={businessInfoState.businessName}
+				/>
 			</Box>
+			<Typography
+				color='error'
+				component={"h1"}
+				variant='h4'
+				gutterBottom
+				textAlign={"center"}
+			>
+				{businessInfoState.businessName}
+			</Typography>
 			<Box
 				maxWidth='md'
 				sx={{
@@ -99,7 +118,10 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 				<Typography variant='h4' gutterBottom textAlign={"center"}>
 					שינוי הגדרות אתר
 				</Typography>
-				<TableContainer sx={{borderRadius: 5, p: 1, border: 1}} component={Paper}>
+				<TableContainer
+					sx={{borderRadius: 5, p: 10, border: 1}}
+					component={Paper}
+				>
 					<Table
 						sx={{
 							p: 5,
@@ -111,11 +133,11 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 						}}
 					>
 						<TableHead>
-							<TableRow>
-								<TableCell width={"40%"} align='center'>
+							{/* <TableRow> */}
+							{/* <TableCell width={"40%"} align='center'>
 									מחיר משלוח
-								</TableCell>
-								<TableCell>
+								</TableCell> */}
+							{/* <TableCell>
 									<TextField
 										fullWidth
 										variant='outlined'
@@ -125,8 +147,8 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 										value={formik.values.deliveryFee || 0}
 										onChange={formik.handleChange}
 									/>
-								</TableCell>
-							</TableRow>
+								</TableCell> */}
+							{/* </TableRow> */}
 							<TableRow>
 								<TableCell align='center'>שם העסק</TableCell>
 								<TableCell>
@@ -195,6 +217,52 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 							</TableRow>
 						</TableHead>
 					</Table>
+					<Table>
+						<TableHead>
+							<TableRow>
+								<TableCell>منطقة</TableCell>
+								<TableCell>رسوم التوصيل</TableCell>
+								<TableCell>إجراءات</TableCell>
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{formik.values.deliveryFee.map((d, index) => (
+								<TableRow key={index}>
+									<TableCell>
+										<TextField
+											name={`deliveryFee[${index}].area`}
+											value={d.area}
+											onChange={formik.handleChange}
+										/>
+									</TableCell>
+									<TableCell>
+										<TextField
+											type='number'
+											name={`deliveryFee[${index}].fee`}
+											value={d.fee}
+											onChange={formik.handleChange}
+										/>
+									</TableCell>
+									<TableCell>
+										<Button
+											onClick={() => {
+												const newFees = [
+													...(formik.values.deliveryFee as any),
+												];
+												newFees.splice(index, 1);
+												formik.setFieldValue(
+													"deliveryFee",
+													newFees,
+												);
+											}}
+										>
+											حذف
+										</Button>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
 				</TableContainer>
 				<Box
 					sx={{
@@ -207,10 +275,11 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 				>
 					<Button
 						onClick={() => navigate(-1)}
-						variant='outlined'
+						variant='contained'
 						sx={{
 							fontSize: "1rem",
-							boxShadow: "0 0 10px red",
+							boxShadow: "0 0 5px red",
+							border: "1px dashed red",
 							"&:hover": {
 								backgroundColor: "#be4848",
 								color: "gainsboro",
@@ -222,14 +291,15 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 					</Button>
 					<Button
 						type='submit'
-						variant='outlined'
+						variant='contained'
 						color='primary'
 						size='large'
 						sx={{
 							fontSize: "1rem",
-							boxShadow: "0 0 10px #61bd2c",
+							border: "1px dashed green",
+							boxShadow: "0 0 8px #76b84f",
 							"&:hover": {
-								backgroundColor: "#61bd2c",
+								backgroundColor: "#6cb840",
 								color: "gainsboro",
 							},
 							margin: "auto",

@@ -45,7 +45,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const navigate = useNavigate();
-	const {auth, isLoggedIn} = useUser();
+	const { isLoggedIn} = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
