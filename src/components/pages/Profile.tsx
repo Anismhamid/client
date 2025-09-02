@@ -209,7 +209,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 								variant='body1'
 							>
 								إجمالي العمولة لصاحب الموقع:
-								<strong>{totalCommission}₪</strong>
+								<strong>{formatPrice(totalCommission)}</strong>
 							</Typography>
 						</CardContent>
 					</Card>

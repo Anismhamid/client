@@ -13,13 +13,11 @@ import handleRTL from "../../locales/handleRTL";
 interface AddProdutModalProps {
 	show: boolean;
 	onHide: Function;
-	refrehs: () => void;
 }
 
 const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({
 	show,
 	onHide,
-	refrehs,
 }) => {
 	const {t} = useTranslation();
 
@@ -61,9 +59,11 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({
 			discount: yup.number(),
 		}),
 		onSubmit(values, {resetForm}) {
+  console.log("Submitting product:", values);
+
 			createNewProduct(values);
+
 			resetForm();
-			refrehs();
 		},
 	});
 

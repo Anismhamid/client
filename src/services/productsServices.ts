@@ -32,7 +32,10 @@ export const updateProduct = async (productName: string, updatedProduct: Product
 			`${api}/products/${productName}`,
 			updatedProduct,
 			{
-				headers: {Authorization: localStorage.getItem("token")},
+				headers: {
+					Authorization: localStorage.getItem("token"),
+					"Content-Type": "application/json",
+				},
 			},
 		);
 		return product.data;
@@ -65,7 +68,10 @@ export const getAllProducts = async () => {
 export async function createNewProduct(products: Products) {
 	try {
 		const response = await axios.post(`${api}/products`, products, {
-			headers: {Authorization: localStorage.getItem("token")},
+			headers: {
+				Authorization: localStorage.getItem("token"),
+				"Content-Type": "application/json",
+			},
 		});
 
 		return response.data;
