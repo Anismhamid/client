@@ -1,5 +1,6 @@
 export interface Order {
 	userId: string;
+	commission: number;
 	orderNumber: string;
 	products: [
 		{

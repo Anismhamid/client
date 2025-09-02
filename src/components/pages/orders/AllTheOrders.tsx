@@ -148,6 +148,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		return <Loader />;
 	}
 
+
 	return (
 		<main>
 			<div className='container my-5 d-flex align-items-center justify-content-between'>
@@ -178,7 +179,9 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
-						<h3 className='text-danger bg-gradient fw-bold'>الطلبات السابقة</h3>
+						<h3 className='text-danger bg-gradient fw-bold'>
+							الطلبات السابقة
+						</h3>
 						<PreviousOrders
 							orderStatuses={orderStatuses}
 							previous={filteredPreviousOrders}
@@ -192,7 +195,9 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 							searchQuery={searchQuery}
 							setSearchQuery={setSearchQuery}
 						/>
-						<h3 className='text-primary bg-gradient fw-bold'>الطلبات الجديدة</h3>
+						<h3 className='text-primary bg-gradient fw-bold'>
+							الطلبات الجديدة
+						</h3>
 						<NewOrders
 							filteredOrders={filteredOrders}
 							orderStatuses={orderStatuses}

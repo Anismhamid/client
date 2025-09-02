@@ -29,8 +29,9 @@ import DeleteAccountBox from "../../atoms/userManage/DeleteAccountBox";
 import UserDetailTable from "../../atoms/userManage/UesrDetailsTable";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import HistoryIcon from "@mui/icons-material/History";
-import {getUserOrders} from "../../services/orders";
+import {getAllOrders, getUserOrders} from "../../services/orders";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
+import {Order} from "../../interfaces/Order";
 
 interface ProfileProps {}
 /**
@@ -42,10 +43,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
-	const {setAuth, setIsLoggedIn} = useUser();
+	const {setAuth, setIsLoggedIn, auth} = useUser();
 	const detailsRef = useRef<HTMLDivElement>(null);
 	const [userOdredsLength, setUserOrdersLength] = useState<number>(0);
 	const [userOdredsPrice, setUserOrdersPrice] = useState<number>(0);
+	const [allOrders, setAllOrders] = useState<Order[]>([]);
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -105,6 +107,14 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				.finally(() => setLoading(false));
 		}
 	}, [decodedToken]);
+
+	useEffect(() => {
+		getAllOrders().then((ord) => setAllOrders(ord));
+	}, []);
+
+	const totalCommission = allOrders.reduce((sum, order) => {
+		return sum + (order.commission || 0);
+	}, 0);
 
 	if (loading) {
 		return <Loader />;
@@ -184,7 +194,26 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 			</div>
 
 			{/* الطلبات */}
-			<div className='container mt-5'>
+			<Box className='container mt-5'>
+				{(auth.role === "Admin" || auth.role === "Moderator") && (
+					<Card className='my-5 rounded-5 shadow'>
+						<CardContent>
+							<Typography variant='body1' fontSize={20} component={"p"}>
+								عدد الطلبات على الموقع:{" "}
+								<strong>{allOrders.length}</strong>
+							</Typography>
+							<Typography
+								textAlign={"center"}
+								fontSize={25}
+								component={"p"}
+								variant='body1'
+							>
+								إجمالي العمولة لصاحب الموقع:
+								<strong>{totalCommission}₪</strong>
+							</Typography>
+						</CardContent>
+					</Card>
+				)}
 				<Card className='shadow-sm rounded-4 border border-2 border-danger-subtle'>
 					<CardContent>
 						<Typography
@@ -239,7 +268,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</Box>
 					</CardContent>
 				</Card>
-			</div>
+			</Box>
 
 			{/* سجل الدخول */}
 			<div className='container mt-5'>
