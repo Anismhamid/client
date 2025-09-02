@@ -293,7 +293,7 @@ const ReceiptPDF = ({receipt}: {receipt: ReceiptsType}) => {
 
 				{/* Thank you message */}
 				<Text style={[styles.footer, {textAlign: "center", marginTop: 20}]}>
-					תודה שקניתם אצלנו! נשמח לראותכם שוב
+					شكرًا لشرائكم من موقعنا! نتطلع لرؤيتكم مجددًا.
 				</Text>
 			</Page>
 		</Document>
