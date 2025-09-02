@@ -10,145 +10,180 @@ const TermOfUse: FunctionComponent<TermOfUseProps> = () => {
 			<div className='container border border-primary shadow p-5 rounded-4'>
 				<h1 className='text-center my-5 text-primary'>תנאי שימוש</h1>
 				<p className='text-center mb-5'>
-					עודכן לאחרונה: <strong>15/04/2025</strong>
+					آخر تحديث: <strong>15/04/2025</strong>
 				</p>
 
-				<section className='my-5'>
-					<h2 className='display-6'>1. זכאות</h2>
+				<section aria-labelledby='section1' className='my-5'>
+					<h2 id='section1' className='display-6'>
+						1. الأهلية
+					</h2>
 					<p className='lead'>
-						עליך להיות בן 18 לפחות (או בגיל הבגרות החוקי באזורך) כדי להשתמש
-						בפלטפורמה. בשימושך בפלטפורמה, הנך מצהיר ומתחייב כי אתה עומד
-						בדרישות אלו.
+						يجب أن تكون قد بلغت الثامنة عشرة من عمرك لاستخدام المنصة.
+						باستخدامك المنصة، فإنك تُقر وتضمن امتثالك لهذه المتطلبات.
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>2. הרשמה לחשבון</h2>
+				<section aria-labelledby='section2' className='my-5'>
+					<h2 id='section2' className='display-6'>
+						2. سجل للحصول على حساب
+					</h2>
 					<p className='lead'>
-						ייתכן שתידרש ליצור חשבון כדי להשתמש בתכונות מסוימות. אתה אחראי
-						לספק מידע מדויק ולעדכנו, וכן לשמור על סודיות הסיסמה שלך. אנו
-						שומרים לעצמנו את הזכות להשעות או למחוק חשבון במקרה של פעילות חשודה
-						או הפרת{" "}
+						يُطلب منك إنشاء حساب لاضافه المنتجات للسله والشراء من موقعنا. أنت
+						مسؤول عن تزويدنا بمعلومات دقيقة ومحدثة، والحفاظ على سرية كلمة
+						مرورك. نحتفظ بالحق في تعليق أو حذف أي حساب في حال وجود أي نشاط
+						مشبوه أو انتهاك سياسة الخصوصية.
 						<Link
 							to={path.PrivacyAndPolicy}
 							className='ms-1 text-decoration-underline text-primary'
 						>
-							מדיניות הפרטיות
+							سياسة الخصوصية
 						</Link>
 						.
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>3. מוצרים והזמנות</h2>
+				<section aria-labelledby='section3' className='my-5'>
+					<h2 id='section3' className='display-6'>
+						3. المنتجات والطلبات
+					</h2>
 					<p className='lead'>
-						המחירים, הזמינות והתיאורים של המוצרים עשויים להשתנות בכל עת. הגשת
-						הזמנה אינה מבטיחה את קבלתה, ואנו רשאים לדחות או לבטל הזמנות לפי
-						שיקול דעתנו.
+						الأسعار، وتوافر المنتجات، وأوصافها قابلة للتغيير في أي وقت. تقديم
+						الطلب لا يضمن قبوله، ويحق لنا رفض أو إلغاء الطلبات وفقًا لتقديرنا
+						الخاص.
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>4. תשלומים</h2>
+				<section aria-labelledby='section4' className='mb-5'>
+					<h2 id='section4' className='display-6'>
+						4. الدفع
+					</h2>
 					<p className='lead'>
-						אנו מקבלים שיטות תשלום מגוונות, לרבות כרטיסי אשראי, מזומן בעת
-						אספקה ואחרות. בהזנת פרטי תשלום, הנך מצהיר כי אתה מורשה להשתמש
-						בשיטה זו וכי הפרטים שסיפקת נכונים.
+						(حاليا يمكنك فقط الدفع نقدي)نقبل مجموعة متنوعة من طرق الدفع، بما
+						في ذلك بطاقات الائتمان، والدفع النقدي عند استلام الطلب. بإدخالك
+						معلومات الدفع، فإنك تُقرّ بأنك مخوّل باستخدام هذه الطريقة وأن
+						المعلومات التي قدّمتها صحيحة.
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>5. משלוחים ואיסוף</h2>
+				<section aria-labelledby='section5' className='mb-5'>
+					<h2 id='section5' className='display-6'>
+						5. التوصيل والاستلام
+					</h2>
 					<p className='lead'>
-						הזמנים לאספקה ואיסוף הם הערכות בלבד ואינם מובטחים. ייתכנו עיכובים
-						שאינם בשליטתנו. הלקוח רשאי לבחור בין משלוח לבין איסוף עצמי, בהתאם
-						לזמינות.
+						أوقات التسليم والاستلام تقديرية فقط وليست مضمونة. قد تحدث تأخيرات
+						خارجة عن إرادتنا. للعميل حرية الاختيار بين التسليم والاستلام
+						الذاتي، رهناً بتوافر المنتج.
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>6. החזרות והחזרים</h2>
-					<p className='lead'>
-						אנא עיין במדיניות ההחזרות וההחזרים שלנו לפרטים מלאים בנוגע לתנאים,
-						מועדים וזכאות.
-					</p>
+				<section aria-labelledby='section6' className='mb-5'>
+					<h2 id='section6' className='display-6'>
+						6. الإرجاعات واسترداد الأموال
+					</h2>
+					الإرجاعات واسترداد الأموال حتى 24 ساعه
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>7. התנהגות משתמשים</h2>
+				<section aria-labelledby='section7' className='mb-5'>
+					<h2 id='section7' className='display-6'>
+						7. سلوك المستخدم
+					</h2>
 					<ul className='lead'>
-						<li>אין להשתמש בפלטפורמה לצרכים לא חוקיים.</li>
-						<li>אין להתחזות לאחר או למסור מידע כוזב.</li>
-						<li>אין להעלות קוד זדוני או לפגוע בפעילות הפלטפורמה.</li>
-						<li>אין לנסות לגשת למערכות שאינך מורשה להן.</li>
+						<li>لا تستخدم المنصة لأغراض غير قانونية.</li>
+						<li>لا تنتحل شخصية شخص آخر أو تقدم معلومات كاذبة.</li>
+						<li>لا تقم بتحميل أي أكواد ضارة أو تتداخل مع تشغيل المنصة</li>
+						<li>
+							لا تحاول الوصول إلى الأنظمة التي لا تملك تصريحاً لاستخدامها
+						</li>
 					</ul>
 					<p className='lead'>
-						הפרת תנאים אלו עלולה להוביל לחסימה או לתביעה משפטית.
+						قد يؤدي انتهاك هذه الشروط إلى الحظر أو اتخاذ إجراء قانوني
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>8. קניין רוחני</h2>
+				<section aria-labelledby='section8' className='mb-5'>
+					<h2 id='section8' className='display-6'>
+						8. الملكية الفكرية
+					</h2>
 					<p className='lead'>
-						כל התכנים, הסמלים, הלוגואים והתוכנה שייכים ל-Corner Market או
-						למורשיה. אין להעתיק, לשכפל או לשלב תכנים אלה ללא רשות בכתב.
+						جميع المحتويات والأيقونات والشعارات والبرامج مملوكة لسوق السخنيني
+						ام الفحم أو الجهات المرخصة لها. لا يجوز لك نسخ أو إعادة إنتاج أو
+						دمج هذا المحتوى دون إذن كتابي
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>9. עדכונים בזמן אמת</h2>
+				<section aria-labelledby='section9' className='mb-5'>
+					<h2 id='section9' className='display-6'>
+						9. تحديثات في الوقت الحقيقي
+					</h2>
 					<p className='lead'>
-						אנו משתמשים בטכנולוגיות מתקדמות לצורך עדכונים בזמן אמת, כולל סטטוס
-						הזמנה, הודעות אדמין והתראות הנחות. בשימושך בפלטפורמה, אתה מסכים
-						לקבל התראות אלה.
+						نستخدم تقنيات متطورة لتحديثات فورية، بما في ذلك حالة الطلب، ورسائل
+						الإدارة، وتنبيهات الخصومات. باستخدامك المنصة، فإنك توافق على
+						استلام هذه الإشعارات
 					</p>
 				</section>
 
-				<section className='mb-5'>
-					<h2 className='display-6'>10. כתב ויתור</h2>
+				<section aria-labelledby='section10' className='mb-5'>
+					<h2 id='section10' className='display-6'>
+						10. تنصل
+					</h2>
 					<p className='lead'>
-						השירות ניתן "כמות שהוא" וללא אחריות מכל סוג. איננו מתחייבים כי
-						הפלטפורמה תהיה זמינה תמיד או נטולת תקלות.
+						تُقدّم الخدمة "كما هي" ودون أي ضمان من أي نوع. لا نضمن أن تكون
+						المنصة متاحة دائمًا أو خالية من الأخطاء
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>11. הגבלת אחריות</h2>
+				<section aria-labelledby='section11' className='my-5'>
+					<h2 id='section11' className='display-6'>
+						11. حدود المسؤولية
+					</h2>
 					<p className='lead'>
-						במידת המרב המותרת על פי חוק, לא נהיה אחראים לנזקים עקיפים, אובדן
-						נתונים, הכנסות, או כל נזק תוצאתי אחר בגין שימושך בפלטפורמה.
+						إلى الحد الأقصى المسموح به بموجب القانون، لن نكون مسؤولين عن
+						الأضرار غير المباشرة، أو فقدان البيانات، أو الدخل، أو أي أضرار
+						لاحقة أخرى ناشئة عن استخدامك للمنصة
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>12. שינויים בתנאים</h2>
+				<section aria-labelledby='section12' className='my-5'>
+					<h2 id='section12' className='display-6'>
+						12. تغييرات على الشروط والأحكام
+					</h2>
 					<p className='lead'>
-						אנו עשויים לעדכן תנאים אלו מעת לעת. נודיע על כך בתוך הפלטפורמה.
-						שימוש מתמשך מהווה הסכמה לגרסה המעודכנת.
+						قد نقوم بتحديث هذه الشروط من وقت لآخر. سنُعلمك بذلك عبر المنصة.
+						يُعدّ الاستمرار في استخدام هذه الشروط موافقةً على النسخة المُحدّثة
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>13. סיום שימוש</h2>
+				<section aria-labelledby='section13' className='my-5'>
+					<h2 id='section13' className='display-6'>
+						13. نهاية الاستخدام
+					</h2>
 					<p className='lead'>
-						אנו שומרים לעצמנו את הזכות להפסיק את גישתך לשירות בכל עת, ללא
-						הודעה מוקדמת, בשל כל סיבה, כולל הפרת תנאים אלו.
+						نحتفظ بالحق في إنهاء وصولك إلى الخدمة في أي وقت، دون إشعار، لأي
+						سبب، بما في ذلك انتهاك هذه الشروط
 					</p>
 				</section>
 
-				<section className='my-5'>
-					<h2 className='display-6'>14. הדין החל</h2>
+				<section aria-labelledby='section14' className='my-5'>
+					<h2 id='section14' className='display-6'>
+						14. القانون ينطبق
+					</h2>
 					<p className='lead'>
-						תנאים אלה יפורשו בהתאם לחוקי מדינת ישראל. כל מחלוקת תתברר בבתי
-						המשפט בישראל.
+						سيتم تفسير هذه الشروط وفقًا لقوانين دولة إسرائيل. سيتم حل أي نزاع
+						في محاكم إسرائيل
 					</p>
 				</section>
 
-				<section>
-					<h2 className='display-6'>15. יצירת קשר</h2>
+				<section aria-labelledby='section15' className='my-5'>
+					<h2 id='section15' className='display-6'>
+						15. اتصل بنا
+					</h2>
 					<p className='lead'>
-						לשאלות או בקשות הקשורות לתנאים אלה, ניתן לפנות אלינו במייל:{" "}
+						لأي أسئلة أو طلبات تتعلق بهذه الشروط، يمكنك الاتصال بنا عبر البريد
+						الإلكتروني:{" "}
 						<a href='mailto:anesmhamed1@gmail.com'>anesmhamed1@gmail.com</a>
+					</p>
+					<p className='lead'>
+						هاتف: <a href='tel:+972538346915'>0538346915</a>
 					</p>
 				</section>
 			</div>

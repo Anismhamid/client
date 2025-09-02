@@ -2,8 +2,15 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@100;200;300;400;500;600;700&display=swap');
 @import "react-toastify/dist/ReactToastify.css";
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Heebo";
+}
+
 #root {
-  background-image: url('./assets/bbblurry.svg');
+  background: url('./assets/bbblurry.svg');
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -11,12 +18,9 @@
 }
 
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Heebo";
-}
+
+
+
 
 main {
   min-height: 90vh;
@@ -152,7 +156,7 @@ footer {
   background-attachment: fixed;
 }
 
-.delivery{
+.delivery {
   background-image: url("/one miunte delivery.jpg");
   background-position: center;
   background-repeat: no-repeat;

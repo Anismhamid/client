@@ -49,12 +49,12 @@ const Cart: FunctionComponent<CartProps> = () => {
 
 		DeleteCartItems(product_name)
 			.then(() => {
-				showSuccess("the item has been removed from cart");
+				showSuccess("تم إزالة المنتج من سلة");
 			})
 			.catch((err) => {
 				console.log(err);
 
-				showError("Error while deleting item:");
+				showError("خطأ أثناء حذف المنتج");
 			});
 		setQuantity((prev) => prev - 1);
 	};
@@ -187,7 +187,9 @@ const Cart: FunctionComponent<CartProps> = () => {
 						))
 					) : (
 						<>
-							<h5 className='text-danger text-center'>אין מוצרים בסל</h5>
+							<h5 className='text-danger text-center'>
+								لا يوجد منتجات في سلة التسوق.
+							</h5>
 							<NavigathionButtons />
 						</>
 					)}

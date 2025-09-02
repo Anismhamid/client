@@ -63,13 +63,13 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 	return (
 		<Dialog open={isOpen} onClose={onClose} maxWidth='xs' fullWidth>
 			<DialogTitle className=' text-center'>
-				יש להשלם את פרטיך להמשך להרשמה
+				يجب عليك إكمال التفاصيل لمواصلة التسجيل.
 			</DialogTitle>
 			<DialogContent>
 				<Box component='form' onSubmit={formik.handleSubmit} noValidate>
 					<TextField
 						margin='dense'
-						label='טלפון ראשי'
+						label='الهاتف الرئيسي'
 						fullWidth
 						name='phone_1'
 						value={formik.values.phone_1}
@@ -79,7 +79,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					/>
 					<TextField
 						margin='dense'
-						label='טלפון נוסף'
+						label='هاتف آخر اختياري'
 						fullWidth
 						name='phone_2'
 						value={formik.values.phone_2}
@@ -88,23 +88,15 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					<Autocomplete
 						options={cities}
 						value={formik.values.city || null}
-						onChange={(_event, value) =>
-							formik.setFieldValue("city", value)
-						}
+						onChange={(_event, value) => formik.setFieldValue("city", value)}
 						onBlur={() => formik.setFieldTouched("city", true)}
 						renderInput={(params) => (
 							<TextField
 								{...params}
-								label='בחר עיר'
+								label='اختر المدينة'
 								variant='filled'
-								error={
-									formik.touched.city &&
-									Boolean(formik.errors.city)
-								}
-								helperText={
-									formik.touched.city &&
-									formik.errors.city
-								}
+								error={formik.touched.city && Boolean(formik.errors.city)}
+								helperText={formik.touched.city && formik.errors.city}
 								className='my-2'
 								fullWidth
 							/>
@@ -122,7 +114,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 						renderInput={(params) => (
 							<TextField
 								{...params}
-								label='בחר רחוב'
+								label='اختر الشارع'
 								variant='filled'
 								error={
 									formik.touched.street && Boolean(formik.errors.street)
@@ -135,7 +127,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					/>
 					<TextField
 						margin='dense'
-						label='מספר בית'
+						label='رقم لبيت'
 						fullWidth
 						name='houseNumber'
 						value={formik.values.houseNumber}
@@ -150,13 +142,13 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 					/>
 					<DialogActions className='d-flex align-items-center justify-content-between mt-3'>
 						<Button variant='contained' onClick={onClose} color='error'>
-							ביטול רישום
+							إلغاء التسجيل
 						</Button>
 						{formik.isSubmitting ? (
 							<CircularProgress size={20} />
 						) : (
 							<Button type='submit' color='primary' variant='contained'>
-								המשך
+								استمرار التسجيل
 							</Button>
 						)}
 					</DialogActions>

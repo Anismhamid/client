@@ -21,7 +21,7 @@ interface OrderDetailsProps {}
 
 const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const {orderNumber} = useParams<{orderNumber: string}>();
-	const {orderItems, loading, error} = useOrderDetails(orderNumber as string);
+	const {orderItems, loading, user, error} = useOrderDetails(orderNumber as string);
 	const {t} = useTranslation();
 	const {auth} = useUser();
 
@@ -60,11 +60,20 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	const diriction = handleRTL();
 
 	return (
-		<Box component={"main"} dir={diriction}>
+		<Box component={"main"} sx={{padding: 10}} dir={diriction}>
 			<Box sx={{padding: 5}} className='container p-3'>
 				<Box className='text-center bg-gradient p-4 rounded shadow-sm'>
 					<Typography variant='h4' className='text-center mb-4'>
 						{orderNumber}
+					</Typography>
+					<Typography variant='h4' className='text-center mb-4'>
+						الطلب بأسم: {user.name.first} {user.name.last}
+					</Typography>
+					<Typography variant='h4' className='text-center mb-4'>
+						هاتف: {user.phone.phone_1}
+					</Typography>
+					<Typography variant='h4' className='text-center mb-4'>
+						العنوان: {user.address.city}, {user.address.street}
 					</Typography>
 
 					<Box className='d-flex justify-content-between align-items-center mb-3 flex-wrap'>
@@ -101,6 +110,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 
 						return (
 							<Box key={product.product_image + index} className='col'>
+								<Box>{user.name.first}</Box>
 								<Card className='card h-100 shadow-sm border-0 overflow-hidden'>
 									<CardMedia
 										component='img'

@@ -216,14 +216,14 @@ const NewOrders: FunctionComponent<NewOrdersProps> = ({
 									color='info'
 									size='small'
 								>
-									פרטי הזמנה
+									تفاصيل الطلب
 								</Button>
 							</Box>
 						</Card>
 					</Box>
 				))
 			) : (
-				<div className='text-center text-danger fs-4'>אין הזמנות עדיין</div>
+				<div className='text-center text-danger fs-4'>لا توجد طلبات حتى الآن</div>
 			)}
 		</Box>
 	);

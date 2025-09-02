@@ -11,7 +11,7 @@ import Loader from "../../../atoms/loader/Loader";
 import {Order} from "../../../interfaces/Order";
 import Checkbox from "@mui/material/Checkbox";
 import {useUser} from "../../../context/useUSer";
-import {Button, CircularProgress} from "@mui/material";
+import {Box, Button, CircularProgress, Typography} from "@mui/material";
 import PaymentModal from "../../../atoms/pymentModal/PymentModal";
 import {useCartItems} from "../../../context/useCart";
 import {getBusinessInfo} from "../../../services/businessInfo";
@@ -276,7 +276,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 					<form ref={formRef} onSubmit={formik.handleSubmit} className='mt-5'>
 						<h4>اختر طريقة الدفع</h4>
 						<fieldset disabled={formik.isSubmitting}>
-							<div className='mt-3'>
+							<div className='border rounded-5'>
 								<div className='form-check mb-2'>
 									<Checkbox
 										id='payment'
@@ -314,7 +314,7 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 							</div>
 
 							<h4 className='mt-5'>اختر طريقة الاستلام</h4>
-							<div>
+							<div className='border rounded-5'>
 								<div className='form-check'>
 									<Checkbox
 										id='selfCollection'
@@ -352,7 +352,9 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 												currency: "ILS",
 											})}
 										</span>
+										منطقة : {auth.address.street}
 									</label>
+									<Typography></Typography>
 								</div>
 							</div>
 
@@ -368,36 +370,21 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 									onChange={formik.handleChange}
 								/>
 							</div>
-
-							<hr />
-							{/* --- Total Display --- */}
-							<div>
-								<div className='text-primary fw-bold bg-white border p-2'>
-									<h5 className='text-danger'>عنوان التوصيل:</h5>{" "}
-									<p>
-										{auth.address.city} ,{auth.address.street},{" "}
-										{auth.address.houseNumber}
-									</p>
-								</div>
-								<div className=' text-center mt-5'>
-									<strong className='me-2 fw-bold'>
-										إجمالي المبلغ
-									</strong>
-									<input
-										type='text'
-										name='totalAmount'
-										value={finalAmount.toLocaleString("he-IL", {
-											style: "currency",
-											currency: "ILS",
-										})}
-										className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
-										disabled
-									/>
-								</div>
+							<div className='text-center mt-5'>
+								<strong className='me-2 fw-bold'>إجمالي المبلغ</strong>
+								<input
+									type='text'
+									name='totalAmount'
+									value={finalAmount.toLocaleString("he-IL", {
+										style: "currency",
+										currency: "ILS",
+									})}
+									className='form-control bg-black text-light border-0 fs-4 text-center w-50 m-auto'
+									disabled
+								/>
 							</div>
-
 							{/* --- Submit Button --- */}
-							<div className=' d-flex align-items-start my-5'>
+							<Box className=' d-flex align-items-start my-5'>
 								<Button
 									variant='contained'
 									onClick={() => navigate(-1)}
@@ -423,6 +410,17 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 										"تم"
 									)}
 								</Button>
+							</Box>
+							<hr />
+
+							<div>
+								<div className='text-primary fw-bold bg-white border p-2'>
+									<h5 className='text-danger'>عنوان التوصيل:</h5>{" "}
+									<p>
+										{auth.address.city} ,{auth.address.street},{" "}
+										{auth.address.houseNumber}
+									</p>
+								</div>
 							</div>
 						</fieldset>
 					</form>

@@ -123,9 +123,9 @@ const Login: FunctionComponent<LoginProps> = () => {
 
 	return (
 		<main className='login'>
-			<Box className='container pb-3 d-flex align-items-center justify-content-center'>
+			<Box className='container d-flex align-items-center justify-content-center'>
 				<form
-					style={{maxWidth: "350px", margin: "auto", backdropFilter: "blur(8)"}}
+					style={{maxWidth: "350px", margin: "auto"}}
 					autoComplete='off'
 					noValidate
 					onSubmit={formik.handleSubmit}

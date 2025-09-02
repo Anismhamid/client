@@ -109,7 +109,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 				});
 			} catch (err) {
 				console.log("Error getting user:", err);
-				showError("שגיאה בטעינת הפרופיל");
+				showError("خطأ في تحميل الملف الشخصي");
 			} finally {
 				setIsLoading(false);
 			}
@@ -123,11 +123,17 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 		<Box
 			style={{minHeight: "fit-content"}}
 			className=' d-flex align-items-center justify-content-center'
+			aria-label='شاشه منبثقه لتحديث الملف الشخصي'
 		>
 			<Box className='container '>
 				<form onSubmit={formik.handleSubmit} className='mt-4'>
-					<Typography variant='h4' align='center' gutterBottom>
-						עדכון פרופיל
+					<Typography
+						aria-label='تحديث الملف الشخصي'
+						variant='h4'
+						align='center'
+						gutterBottom
+					>
+						تحديث الملف الشخصي
 					</Typography>
 					<Box className=' row row-cols-md-1 row-cols-md-2  row-cols-lg-3'>
 						<div>

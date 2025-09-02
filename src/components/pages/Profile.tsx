@@ -28,8 +28,6 @@ import {emptyAuthValues} from "../../interfaces/authValues";
 import DeleteAccountBox from "../../atoms/userManage/DeleteAccountBox";
 import UserDetailTable from "../../atoms/userManage/UesrDetailsTable";
 import EditUserData from "../../atoms/userManage/EditUserData";
-import TodayIcon from "@mui/icons-material/Today";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import HistoryIcon from "@mui/icons-material/History";
 import {getUserOrders} from "../../services/orders";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";

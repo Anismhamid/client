@@ -38,43 +38,50 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
 const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 	return (
 		<TableContainer component={Paper}>
-			<Table aria-label='user details table'>
+			<Table aria-label='user details table '>
 				<TableBody>
 					<TableRow>
-						<StyledTableCell align='center'>שם מלא</StyledTableCell>
-						<TableCell>
+						<StyledTableCell align='center'>الاسم الكامل</StyledTableCell>
+						<TableCell className=' fs-5'>
 							{user.name?.first} {user.name?.last}
 						</TableCell>
 					</TableRow>
 
 					<TableRow>
-						<StyledTableCell align='center'>טלפון</StyledTableCell>
-						<TableCell>{user.phone.phone_1 || "-"}</TableCell>
+						<StyledTableCell align='center'>هاتف</StyledTableCell>
+						<TableCell className=' fs-5'>
+							{user.phone.phone_1 || "-"}
+						</TableCell>
 					</TableRow>
 
 					{user.phone.phone_2 && (
 						<TableRow>
-							<StyledTableCell>טלפון נוסף</StyledTableCell>
-							<TableCell>{user.phone.phone_2}</TableCell>
+							<StyledTableCell>هاتف ثانوي</StyledTableCell>
+							<TableCell className=' fs-5'>{user.phone.phone_2}</TableCell>
 						</TableRow>
 					)}
 
 					<TableRow>
-						<StyledTableCell align='center'>כתובת</StyledTableCell>
-						<TableCell>
-							{`${user.address.city} ${user.address.street} ${user.address.houseNumber}` ||
+						<StyledTableCell align='center'>العنوان</StyledTableCell>
+						<TableCell className=' fs-5'>
+							{`البلد: ${user.address.city} شارع: ${user.address.street} رفم البيت: ${user.address.houseNumber}` ||
 								"-"}
 						</TableCell>
 					</TableRow>
 
 					<TableRow>
-						<StyledTableCell align='center'>דוא"ל</StyledTableCell>
-						<TableCell>{user.email}</TableCell>
+						<StyledTableCell align='center'>
+							البريد الالكتروني
+						</StyledTableCell>
+						<TableCell className=' fs-5'>{user.email}</TableCell>
 					</TableRow>
 
 					<TableRow>
-						<StyledTableCell align='center'>סוג חשבון</StyledTableCell>
-						<TableCell sx={{color: "success.main", fontWeight: "bold"}}>
+						<StyledTableCell align='center'>نوع المستخدم</StyledTableCell>
+						<TableCell
+							className='fs-5'
+							sx={{color: "success.main", fontWeight: "bold"}}
+						>
 							{user.role === RoleType.Admin
 								? "مدير ومشرف"
 								: user.role === RoleType.Moderator

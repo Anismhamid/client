@@ -60,7 +60,7 @@ const MessagingPage: React.FC = () => {
 
 			setTotalPages(pagination.pages);
 		} catch (error) {
-			showInfo("עדיין אין הודעות");
+			return null;
 		} finally {
 			setLoading(false);
 		}
