@@ -72,7 +72,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
 	) => {
-		const newMode: PaletteMode = !checked ? "dark" : "light";
+		const newMode: PaletteMode = checked ? "dark" : "light";
 		setMode(newMode);
 		localStorage.setItem("theme", newMode);
 	};
@@ -141,6 +141,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				>
 					الـسـخـنـيـني للخـضـار وفـواكـة
 				</Typography>
+				<p className=" text-light lead m-2">شركه التوصيل One minute delivery</p>
 			</Box>
 		</>
 	);
