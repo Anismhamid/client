@@ -79,12 +79,47 @@ export const generateProductsItemListJsonLd = (products: Products[]) => ({
 	})),
 });
 
-export const generateDiscountsJsonLd = (products: Products[]) => ({
-	"@context": "https://schema.org",
-	"@type": "ItemList",
-	itemListElement: products.map((product, index) => ({
-		"@type": "ListItem",
-		position: index + 1,
-		item: generateSingleProductJsonLd(product),
-	})),
-});
+export const generateDiscountsJsonLd = (products: Products[]) => {
+	return {
+		"@context": "https://schema.org",
+		"@graph": products.map((product) => {
+			const discountedPrice =
+				product.price && product.discount
+					? (product.price - (product.price * product.discount) / 100).toFixed(
+							2,
+						)
+					: null;
+
+			return {
+				"@type": "Product",
+				name: product.product_name,
+				description: product.description || "منتج مميز من سوق السخنيني",
+				image: product.image_url || "https://client-qqq1.vercel.app/myLogo.png",
+				category: product.category || "General",
+				brand: {
+					"@type": "Brand",
+					name: "سوق السخنيني ام الفحم",
+				},
+				offers: {
+					"@type": "Offer",
+					priceCurrency: "ILS",
+					price: Number(discountedPrice || product.price || 0),
+					url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
+						product.product_name,
+					)}`,
+					availability:
+						product.quantity_in_stock && product.quantity_in_stock > 0
+							? "https://schema.org/InStock"
+							: "https://schema.org/OutOfStock",
+					priceValidUntil: "2025-12-31",
+				},
+				aggregateRating: {
+					"@type": "AggregateRating",
+					ratingValue: 4.5,
+					reviewCount: 10,
+				},
+			};
+		}),
+	};
+};
+

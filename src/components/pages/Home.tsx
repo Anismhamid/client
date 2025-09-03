@@ -213,10 +213,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<title>سوق السخنيني | الرئيسيه</title>
+			<title>سوق السخنيني</title>
 			<meta
 				name='description'
-				content='تسوق فواكه وخضار طازجة وعروض خاصة مع Corner Market. تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة'
+				content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة لكل عائله'
 			/>
 
 			<Box dir={diriction} component='main'>

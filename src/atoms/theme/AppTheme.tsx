@@ -72,7 +72,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
 	) => {
-		const newMode: PaletteMode = checked ? "dark" : "light";
+		const newMode: PaletteMode = !checked ? "dark" : "light";
 		setMode(newMode);
 		localStorage.setItem("theme", newMode);
 	};
