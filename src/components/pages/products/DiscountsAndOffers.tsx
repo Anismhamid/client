@@ -3,13 +3,13 @@ import {Products} from "../../../interfaces/Products";
 import {getProductsInDiscount} from "../../../services/productsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
-import { Skeleton, Box, Typography} from "@mui/material";
+import {Skeleton, Box, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import {Swiper, SwiperSlide} from "swiper/react";
 import {Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow} from "swiper/modules";
 import "swiper/css";
 import "swiper/css/scrollbar";
-import { generateDiscountsJsonLd } from "../../../../utils/structuredData";
+import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 
 interface DiscountsAndOffersProps {}
@@ -44,18 +44,14 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		return <Loader />;
 	}
 
-const jsonLdData = generateDiscountsJsonLd(productsInDiscount);
-
-
 	return (
 		<Box
 			component='section'
 			className='border-bottom border-5 border-danger mt-5'
 			aria-labelledby='discounts-heading'
 		>
-			<JsonLd data={jsonLdData} />
+			<JsonLd data={generateDiscountsJsonLd(productsInDiscount)} />
 
-			{/* تحسين العناوين للسيو */}
 			<Box textAlign='center' mb={4}>
 				<Typography
 					variant='h2'

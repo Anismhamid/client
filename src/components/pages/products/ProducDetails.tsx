@@ -34,6 +34,8 @@ import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions
 import {showError} from "../../../atoms/toasts/ReactToast";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
+import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
+import JsonLd from "../../../../utils/JsonLd";
 
 interface ProductDetailsProps {}
 
@@ -45,7 +47,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const navigate = useNavigate();
-	const { isLoggedIn} = useUser();
+	const {isLoggedIn} = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
@@ -141,335 +143,346 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const productQuantity = quantities[product.product_name] || 1;
 
 	return (
-		<Box component={"main"}>
-			<Container maxWidth='xl' sx={{py: 4, my: 5}}>
-				{/* Breadcrumbs Navigation */}
-				<Box sx={{mb: 4}}>
-					<Breadcrumbs aria-label='breadcrumb' separator='›'>
-						<Button
-							color='inherit'
-							href={path.Home}
-							sx={{display: "flex", alignItems: "center"}}
-							startIcon={
-								<HomeIcon sx={{mr: 0.5, ml: 1}} fontSize='inherit' />
-							}
-						>
-							{t("home")}
-						</Button>
-						<Button
-							color='inherit'
-							onClick={() => {
-								product.category === "Fruit"
-									? navigate(productsPathes.fruits)
-									: navigate(productsPathes.vegetable);
-							}}
-							sx={{display: "flex", alignItems: "center"}}
-						>
-							<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-							{/* {t("products")} */}
-							{product.category === "Fruit" ? "فواكه" : "خضار"}
-						</Button>
-						<Typography p={3} color='info'>
-							{product.product_name}
-						</Typography>
-					</Breadcrumbs>
-				</Box>
+		<>
+			<JsonLd data={generateSingleProductJsonLd(product)} />
+			<Box component={"main"}>
+				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
+					{/* Breadcrumbs Navigation */}
+					<Box sx={{mb: 4}}>
+						<Breadcrumbs aria-label='breadcrumb' separator='›'>
+							<Button
+								color='inherit'
+								href={path.Home}
+								sx={{display: "flex", alignItems: "center"}}
+								startIcon={
+									<HomeIcon sx={{mr: 0.5, ml: 1}} fontSize='inherit' />
+								}
+							>
+								{t("home")}
+							</Button>
+							<Button
+								color='inherit'
+								onClick={() => {
+									product.category === "Fruit"
+										? navigate(productsPathes.fruits)
+										: navigate(productsPathes.vegetable);
+								}}
+								sx={{display: "flex", alignItems: "center"}}
+							>
+								<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
+								{/* {t("products")} */}
+								{product.category === "Fruit" ? "فواكه" : "خضار"}
+							</Button>
+							<Typography p={3} color='info'>
+								{product.product_name}
+							</Typography>
+						</Breadcrumbs>
+					</Box>
 
-				<Grid container spacing={4}>
-					{/* Product Image */}
-					<Grid size={{xs: 12, md: 6}}>
-						<Card
-							sx={{
-								borderRadius: 2,
-								overflow: "hidden",
-								boxShadow: theme.shadows[3],
-								height: "100%",
-								display: "flex",
-								flexDirection: "column",
-								// backgroundColor: "#FFFFFF",
-							}}
-						>
-							{product.image_url && (
-								<CardMedia
-									component='img'
-									image={product.image_url}
-									alt={product.product_name}
+					<Grid container spacing={4}>
+						{/* Product Image */}
+						<Grid size={{xs: 12, md: 6}}>
+							<Card
+								sx={{
+									borderRadius: 2,
+									overflow: "hidden",
+									boxShadow: theme.shadows[3],
+									height: "100%",
+									display: "flex",
+									flexDirection: "column",
+									// backgroundColor: "#FFFFFF",
+								}}
+							>
+								{product.image_url && (
+									<CardMedia
+										component='img'
+										image={product.image_url}
+										alt={product.product_name}
+										sx={{
+											height: isMobile ? "300px" : "500px",
+											objectFit: "contain",
+											p: 2,
+											backgroundColor: "#FFFFFF",
+										}}
+									/>
+								)}
+								<Box
 									sx={{
-										height: isMobile ? "300px" : "500px",
-										objectFit: "contain",
+										display: "flex",
+										justifyContent: "space-between",
 										p: 2,
-										backgroundColor: "#FFFFFF",
+										borderTop: `1px solid ${theme.palette.divider}`,
 									}}
-								/>
-							)}
+								>
+									<IconButton aria-label='add to favorites'>
+										<FavoriteBorderIcon color='primary' />
+									</IconButton>
+									<IconButton aria-label='share'>
+										<ShareIcon color='primary' />
+									</IconButton>
+								</Box>
+							</Card>
+						</Grid>
+
+						{/* Product Details */}
+						<Grid size={{xs: 12, md: 6}}>
 							<Box
 								sx={{
 									display: "flex",
-									justifyContent: "space-between",
-									p: 2,
-									borderTop: `1px solid ${theme.palette.divider}`,
+									flexDirection: "column",
+									height: "100%",
 								}}
 							>
-								<IconButton aria-label='add to favorites'>
-									<FavoriteBorderIcon color='primary' />
-								</IconButton>
-								<IconButton aria-label='share'>
-									<ShareIcon color='primary' />
-								</IconButton>
+								<Typography
+									variant='h3'
+									component='h1'
+									gutterBottom
+									sx={{fontWeight: 700}}
+								>
+									{product.product_name}
+								</Typography>
+
+								{product.category && (
+									<Chip
+										label={product.category}
+										color='secondary'
+										sx={{mb: 3, alignSelf: "flex-start"}}
+									/>
+								)}
+
+								<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
+									<Rating
+										// dir='ltr'
+										value={rating}
+										precision={0.5}
+										onChange={(_, newValue) => setRating(newValue)}
+										sx={{mr: 1}}
+									/>
+									<Typography variant='body2' color='text.secondary'>
+										( חוות דעת - {product.reviewCount || 0} )
+									</Typography>
+								</Box>
+
+								<Typography
+									variant='h4'
+									color='info'
+									gutterBottom
+									sx={{fontWeight: 700, mb: 3}}
+								>
+									{formatPrice(product.price)}
+								</Typography>
+
+								<ColorsAndSizes category={capitalize(product.category)} />
+
+								<Divider sx={{my: 3}} />
+
+								{product.description && (
+									<>
+										<Typography
+											variant='h6'
+											gutterBottom
+											sx={{fontWeight: 600}}
+										>
+											وصف المنتج
+										</Typography>
+										<Typography
+											variant='body1'
+											color='text.secondary'
+											sx={{mb: 3, lineHeight: 1.8}}
+										>
+											{product.description}
+										</Typography>
+									</>
+								)}
+								<Box role='group' aria-label='إدارة الكمية'>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "space-between",
+											my: 1,
+											width: 200,
+											backgroundColor: "white",
+											p: 1,
+										}}
+									>
+										<Button
+											size='small'
+											color='error'
+											disabled={
+												isOutOfStock || productQuantity <= 1
+											}
+											onClick={() =>
+												handleQuantity(
+													setQuantities,
+													"-",
+													product.product_name,
+												)
+											}
+											startIcon={<RemoveSharpIcon />}
+											aria-label='تقليل الكمية'
+										/>
+
+										<Typography aria-live='polite' fontSize={30}>
+											{productQuantity}
+										</Typography>
+
+										<Button
+											size='small'
+											color='success'
+											disabled={isOutOfStock}
+											onClick={() =>
+												handleQuantity(
+													setQuantities,
+													"+",
+													product.product_name,
+												)
+											}
+											startIcon={<AddSharpIcon />}
+											aria-label='زيادة الكمية'
+										/>
+									</Box>
+								</Box>
+								<Box sx={{mt: "auto", pt: 3}}>
+									<Grid container spacing={2}>
+										<Grid size={{xs: 12, md: 6}}>
+											<Button
+												fullWidth
+												variant='contained'
+												size='large'
+												onClick={() => navigate(-1)}
+												sx={{
+													py: 1.5,
+													fontWeight: 700,
+													fontSize: "1.1rem",
+													borderRadius: 1,
+												}}
+											>
+												العودة إلى السوق
+											</Button>
+										</Grid>
+										<Grid size={{xs: 12, md: 6}}>
+											<Button
+												fullWidth
+												variant='contained'
+												size='large'
+												startIcon={<ShoppingCartIcon />}
+												onClick={() =>
+													handleAdd(
+														product.product_name,
+														quantities,
+														product.price,
+														product.image_url,
+														product.sale,
+														product.discount || 0,
+													)
+												}
+												disabled={
+													loadingAddToCart ===
+													product.product_name
+												}
+												sx={{
+													py: 2.2,
+													fontWeight: 700,
+													fontSize: "1rem",
+													borderRadius: 1,
+												}}
+											>
+												{loadingAddToCart ===
+												product.product_name ? (
+													<CircularProgress size={24} />
+												) : (
+													""
+												)}
+											</Button>
+										</Grid>
+									</Grid>
+								</Box>
 							</Box>
-						</Card>
+						</Grid>
 					</Grid>
 
-					{/* Product Details */}
-					<Grid size={{xs: 12, md: 6}}>
-						<Box
-							sx={{
-								display: "flex",
-								flexDirection: "column",
-								height: "100%",
-							}}
+					{/* Additional Information Section */}
+					<Box sx={{mt: 8}}>
+						<Typography
+							variant='h5'
+							gutterBottom
+							sx={{fontWeight: 700, mb: 4}}
 						>
-							<Typography
-								variant='h3'
-								component='h1'
-								gutterBottom
-								sx={{fontWeight: 700}}
-							>
-								{product.product_name}
-							</Typography>
-
-							{product.category && (
-								<Chip
-									label={product.category}
-									color='secondary'
-									sx={{mb: 3, alignSelf: "flex-start"}}
-								/>
-							)}
-
-							<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
-								<Rating
-									// dir='ltr'
-									value={rating}
-									precision={0.5}
-									onChange={(_, newValue) => setRating(newValue)}
-									sx={{mr: 1}}
-								/>
-								<Typography variant='body2' color='text.secondary'>
-									( חוות דעת - {product.reviewCount || 0} )
-								</Typography>
-							</Box>
-
-							<Typography
-								variant='h4'
-								color='info'
-								gutterBottom
-								sx={{fontWeight: 700, mb: 3}}
-							>
-								{formatPrice(product.price)}
-							</Typography>
-
-							<ColorsAndSizes category={capitalize(product.category)} />
-
-							<Divider sx={{my: 3}} />
-
-							{product.description && (
-								<>
+							مزيد من التفاصيل
+						</Typography>
+						<Grid container spacing={4}>
+							<Grid size={{xs: 12, md: 4}}>
+								<Card
+									sx={{
+										p: 3,
+										height: "100%",
+										borderRadius: 2,
+										boxShadow: theme.shadows[2],
+									}}
+								>
 									<Typography
 										variant='h6'
 										gutterBottom
 										sx={{fontWeight: 600}}
 									>
-										وصف المنتج
+										توصيل
 									</Typography>
-									<Typography
-										variant='body1'
-										color='text.secondary'
-										sx={{mb: 3, lineHeight: 1.8}}
-									>
-										{product.description}
+									<Typography variant='body2' color='text.secondary'>
+										توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه,
+										إمكانية الإرجاع خلال 24 ساعة
 									</Typography>
-								</>
-							)}
-							<Box role='group' aria-label='إدارة الكمية'>
-								<Box
+								</Card>
+							</Grid>
+							<Grid size={{xs: 12, md: 4}}>
+								<Card
 									sx={{
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "space-between",
-										my: 1,
-										width: 200,
-										backgroundColor: "white",
-										p: 1,
+										p: 3,
+										height: "100%",
+										borderRadius: 2,
+										boxShadow: theme.shadows[2],
 									}}
 								>
-									<Button
-										size='small'
-										color='error'
-										disabled={isOutOfStock || productQuantity <= 1}
-										onClick={() =>
-											handleQuantity(
-												setQuantities,
-												"-",
-												product.product_name,
-											)
-										}
-										startIcon={<RemoveSharpIcon />}
-										aria-label='تقليل الكمية'
-									/>
-
-									<Typography aria-live='polite' fontSize={30}>
-										{productQuantity}
+									<Typography
+										variant='h6'
+										gutterBottom
+										sx={{fontWeight: 600}}
+									>
+										دعم
 									</Typography>
-
-									<Button
-										size='small'
-										color='success'
-										disabled={isOutOfStock}
-										onClick={() =>
-											handleQuantity(
-												setQuantities,
-												"+",
-												product.product_name,
-											)
-										}
-										startIcon={<AddSharpIcon />}
-										aria-label='زيادة الكمية'
-									/>
-								</Box>
-							</Box>
-							<Box sx={{mt: "auto", pt: 3}}>
-								<Grid container spacing={2}>
-									<Grid size={{xs: 12, md: 6}}>
-										<Button
-											fullWidth
-											variant='contained'
-											size='large'
-											onClick={() => navigate(-1)}
-											sx={{
-												py: 1.5,
-												fontWeight: 700,
-												fontSize: "1.1rem",
-												borderRadius: 1,
-											}}
-										>
-											العودة إلى السوق
-										</Button>
-									</Grid>
-									<Grid size={{xs: 12, md: 6}}>
-										<Button
-											fullWidth
-											variant='contained'
-											size='large'
-											startIcon={<ShoppingCartIcon />}
-											onClick={() =>
-												handleAdd(
-													product.product_name,
-													quantities,
-													product.price,
-													product.image_url,
-													product.sale,
-													product.discount || 0,
-												)
-											}
-											disabled={
-												loadingAddToCart === product.product_name
-											}
-											sx={{
-												py: 2.2,
-												fontWeight: 700,
-												fontSize: "1rem",
-												borderRadius: 1,
-											}}
-										>
-											{loadingAddToCart === product.product_name ? (
-												<CircularProgress size={24} />
-											) : (
-												""
-											)}
-										</Button>
-									</Grid>
-								</Grid>
-							</Box>
-						</Box>
-					</Grid>
-				</Grid>
-
-				{/* Additional Information Section */}
-				<Box sx={{mt: 8}}>
-					<Typography variant='h5' gutterBottom sx={{fontWeight: 700, mb: 4}}>
-						مزيد من التفاصيل
-					</Typography>
-					<Grid container spacing={4}>
-						<Grid size={{xs: 12, md: 4}}>
-							<Card
-								sx={{
-									p: 3,
-									height: "100%",
-									borderRadius: 2,
-									boxShadow: theme.shadows[2],
-								}}
-							>
-								<Typography
-									variant='h6'
-									gutterBottom
-									sx={{fontWeight: 600}}
+									<Typography variant='body2' color='text.secondary'>
+										فريق الدعم لدينا متاح على مدار الساعة طوال أيام
+										الأسبوع للمساعدة في أي أسئلة أو مشكلات
+									</Typography>
+								</Card>
+							</Grid>
+							<Grid size={{xs: 12, md: 4}}>
+								<Card
+									sx={{
+										p: 3,
+										height: "100%",
+										borderRadius: 2,
+										boxShadow: theme.shadows[2],
+									}}
 								>
-									توصيل
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه,
-									إمكانية الإرجاع خلال 24 ساعة
-								</Typography>
-							</Card>
+									<Typography
+										variant='h6'
+										gutterBottom
+										sx={{fontWeight: 600}}
+									>
+										جودة وانتقاء
+									</Typography>
+									<Typography variant='body2' color='text.secondary'>
+										جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع
+										المحلية يومياً
+									</Typography>
+								</Card>
+							</Grid>
 						</Grid>
-						<Grid size={{xs: 12, md: 4}}>
-							<Card
-								sx={{
-									p: 3,
-									height: "100%",
-									borderRadius: 2,
-									boxShadow: theme.shadows[2],
-								}}
-							>
-								<Typography
-									variant='h6'
-									gutterBottom
-									sx={{fontWeight: 600}}
-								>
-									دعم
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									فريق الدعم لدينا متاح على مدار الساعة طوال أيام
-									الأسبوع للمساعدة في أي أسئلة أو مشكلات
-								</Typography>
-							</Card>
-						</Grid>
-						<Grid size={{xs: 12, md: 4}}>
-							<Card
-								sx={{
-									p: 3,
-									height: "100%",
-									borderRadius: 2,
-									boxShadow: theme.shadows[2],
-								}}
-							>
-								<Typography
-									variant='h6'
-									gutterBottom
-									sx={{fontWeight: 600}}
-								>
-									جودة وانتقاء
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع
-									المحلية يومياً
-								</Typography>
-							</Card>
-						</Grid>
-					</Grid>
-				</Box>
-			</Container>
-		</Box>
+					</Box>
+				</Container>
+			</Box>
+		</>
 	);
 };
 

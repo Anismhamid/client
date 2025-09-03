@@ -11,8 +11,6 @@ import {useCartItems} from "../../../context/useCart";
 import {Box, Chip, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
-import Seo from "../../../atoms/Seo/Seo";
-import {getFaviconForCategory} from "../../../FontAwesome/tapIcons";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
@@ -20,6 +18,8 @@ import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
 import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
+import { generateCategoryJsonLd } from "../../../../utils/structuredData";
+import JsonLd from "../../../../utils/JsonLd";
 
 interface ProductCategoryProps {
 	category: string;
@@ -63,7 +63,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
-	const icons = getFaviconForCategory(category);
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
@@ -211,16 +210,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 	return (
 		<>
-			<Seo
-				title={t("seo.categoryTitle", {
-					category: t(`categories.${category}.label`),
-				})}
-				description={t("seo.categoryDescription", {
-					category: t(`categories.${category}.label`),
-				})}
-				image={icons}
-				type='category'
-			/>
+			<JsonLd data={generateCategoryJsonLd(category, products)} />
 			<Box component='main'>
 				<Box
 					sx={{
