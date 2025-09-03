@@ -13,37 +13,20 @@ interface ProductStructuredDataProps {
 }
 
 // For a general product (category or type)
-export const generateProductJsonLd = ({
-	productName,
-	productUrl,
-	description = "منتج عالي الجودة من سوق السخنيني",
-	image,
-	price,
-	currency = "ILS",
-	inStock = true,
-	category = "منتجات طازجة",
-	brand = "سوق السخنيني ام الفحم",
-}: ProductStructuredDataProps) => ({
+export const generateCategoryJsonLd = (categoryName: string, products: Products[]) => ({
 	"@context": "https://schema.org",
-	"@type": "Product",
-	name: productName,
-	description,
-	image,
-	brand: {
-		"@type": "Brand",
-		name: brand,
-	},
-	category,
-	offers: {
-		"@type": "Offer",
-		url: productUrl,
-		priceCurrency: currency,
-		price,
-		availability: inStock
-			? "https://schema.org/InStock"
-			: "https://schema.org/OutOfStock",
+	"@type": "CollectionPage",
+	name: categoryName,
+	mainEntity: {
+		"@type": "ItemList",
+		itemListElement: products.map((product, index) => ({
+			"@type": "ListItem",
+			position: index + 1,
+			item: generateSingleProductJsonLd(product),
+		})),
 	},
 });
+
 
 // On an individual product page
 export const generateSingleProductJsonLd = (product: Products) => ({
@@ -53,20 +36,28 @@ export const generateSingleProductJsonLd = (product: Products) => ({
 	description: product.description || "منتج مميز من سوق السخنيني",
 	image: product.image_url || "https://client-qqq1.vercel.app/myLogo.png",
 	category: product.category || "منتجات طازجة",
-	offers: product.price
-		? {
-				"@type": "Offer",
-				priceCurrency: "ILS",
-				price: product.sale
-					? product.price - (product.price * (product.discount || 0)) / 100
-					: product.price,
-				url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(product.product_name)}`,
-				availability:
-					product.quantity_in_stock > 0
-						? "https://schema.org/InStock"
-						: "https://schema.org/OutOfStock",
-			}
-		: undefined,
+	brand: {
+		"@type": "Brand",
+		name: "سوق السخنيني ام الفحم",
+	},
+	offers:
+		product.price !== undefined
+			? {
+					"@type": "Offer",
+					priceCurrency: "ILS",
+					price: Number(
+						product.sale
+							? product.price -
+									(product.price * (product.discount || 0)) / 100
+							: product.price,
+					),
+					url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(product.product_name)}`,
+					availability:
+						product.quantity_in_stock > 0
+							? "https://schema.org/InStock"
+							: "https://schema.org/OutOfStock",
+				}
+			: undefined,
 	aggregateRating: {
 		"@type": "AggregateRating",
 		ratingValue: 4.5,
