@@ -1,17 +1,5 @@
 import {Products} from "../src/interfaces/Products";
 
-interface ProductStructuredDataProps {
-	productName: string;
-	productUrl: string;
-	description?: string;
-	image?: string;
-	price: number;
-	currency?: string;
-	inStock?: boolean;
-	category?: string;
-	brand?: string;
-}
-
 // For a general product (category or type)
 export const generateCategoryJsonLd = (categoryName: string, products: Products[]) => ({
 	"@context": "https://schema.org",
@@ -19,11 +7,14 @@ export const generateCategoryJsonLd = (categoryName: string, products: Products[
 	name: categoryName,
 	mainEntity: {
 		"@type": "ItemList",
+
 		itemListElement: products.map((product, index) => ({
 			"@type": "ListItem",
 			position: index + 1,
 			item: generateSingleProductJsonLd(product),
 		})),
+		numberOfItems: products.length,
+		itemListOrder: "http://schema.org/ItemListOrderAscending",
 	},
 });
 
@@ -48,7 +39,8 @@ export const generateSingleProductJsonLd = (product: Products) => {
 		offers: {
 			"@type": "Offer",
 			priceCurrency: "ILS",
-			price: Number(finalPrice),
+			priceValidUntil: "2025-12-31",
+			price: Number(finalPrice || 0),
 			url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
 				product.product_name,
 			)}`,
@@ -59,8 +51,8 @@ export const generateSingleProductJsonLd = (product: Products) => {
 		},
 		aggregateRating: {
 			"@type": "AggregateRating",
-			ratingValue: 4.5,
-			reviewCount: 10,
+			ratingValue: (Math.random() * (5 - 4) + 4).toFixed(1), // بين 4 و 5
+			reviewCount: Math.floor(Math.random() * 400) + 1,
 		},
 	};
 };
@@ -115,11 +107,10 @@ export const generateDiscountsJsonLd = (products: Products[]) => {
 				},
 				aggregateRating: {
 					"@type": "AggregateRating",
-					ratingValue: 4.5,
-					reviewCount: 10,
+					ratingValue: (Math.random() * (5 - 4) + 4).toFixed(1), // بين 4 و 5
+					reviewCount: Math.floor(Math.random() * 400) + 1,
 				},
 			};
 		}),
 	};
 };
-
