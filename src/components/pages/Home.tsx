@@ -221,6 +221,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />
+				<div className='hero'></div>
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
 					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
 				</Typography> */}

@@ -19,9 +19,6 @@
 
 
 
-
-
-
 main {
   min-height: 90vh;
   background: transparent;
@@ -122,15 +119,6 @@ footer {
   /* Prevent scroll chaining */
 }
 
-.logo-img {
-  background-image: url("/shokAlsakhnini.jpg");
-  width: 100%;
-  height: 600px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-}
 
 .card-hover:hover {
   animation: identifier 1s ease-in-out infinite alternate;
@@ -161,4 +149,23 @@ footer {
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+
+
+
+
+
+
+
+
+
+
+.hero {
+  width: 100vw;
+  height: 100vb;
+  background-image: url('/Yellow Cream Modern Weekend Market Flyer2.png');
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
