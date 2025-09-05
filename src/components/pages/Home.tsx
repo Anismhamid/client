@@ -213,15 +213,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
+			<div className='hero'></div>
 			<title>سوق السخنيني</title>
 			<meta
 				name='description'
 				content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة لكل عائله'
 			/>
-
 			<Box dir={diriction} component='main'>
 				<Box className='logo-img' />
-				<div className='hero'></div>
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
 					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
 				</Typography> */}

@@ -163,9 +163,9 @@ footer {
 
 .hero {
   width: 100vw;
-  height: 100vb;
-  background-image: url('/Yellow Cream Modern Weekend Market Flyer2.png');
+  height: 100vh;
+  background-image: url('/Yellow Cream Modern Weekend Market Flyer.gif');
   background-position: center;
   background-size: contain;
-  background-repeat: no-repeat;
+  background-repeat: repeat;
 }
