@@ -25,15 +25,11 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 
 	const navigate = useNavigate();
 
-	const nonTodayOrders = previous.filter(
-		(order) =>
-			new Date(order.date).toLocaleDateString("he-IL") !==
-			new Date().toLocaleDateString("he-IL"),
-	);
+	const nonTodayOrders = previous.filter((order) => order.status === "Shipped");
 	const ordersToDisplay = nonTodayOrders;
 
 	const diriction = handleRTL();
-	
+
 	return (
 		<Box dir={diriction} className='row mt-5'>
 			{ordersToDisplay.length > 0 ? (

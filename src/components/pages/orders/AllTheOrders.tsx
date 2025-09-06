@@ -40,11 +40,8 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	const [viewPreviousOrders, setViewPreviousOrders] = useState(false);
 
 	const newOrders = useMemo(() => {
-		const today = new Date().toLocaleDateString("he-IL");
-
 		return allOrders.filter((order) => {
-			const orderDate = new Date(order.date).toLocaleDateString("he-IL");
-			return orderDate === today;
+			return order.status !== "Shipped";
 		});
 	}, [allOrders]);
 
@@ -63,12 +60,18 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		});
 	}, [newOrders, searchQuery]);
 
-	const previousOrders = useMemo(() => {
-		const today = new Date().toLocaleDateString("he-IL");
+	// const previousOrders = useMemo(() => {
+	// 	const today = new Date().toLocaleDateString("he-IL");
 
+	// 	return allOrders.filter((order) => {
+	// 		const orderDate = new Date(order.date).toLocaleDateString("he-IL");
+	// 		return orderDate !== today;
+	// 	});
+	// }, [allOrders]);
+
+	const previousOrders = useMemo(() => {
 		return allOrders.filter((order) => {
-			const orderDate = new Date(order.date).toLocaleDateString("he-IL");
-			return orderDate !== today;
+			return order.status === "Shipped";
 		});
 	}, [allOrders]);
 
@@ -147,7 +150,6 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 	if (loading) {
 		return <Loader />;
 	}
-
 
 	return (
 		<main>

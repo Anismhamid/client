@@ -129,10 +129,9 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				}}
 			>
 				<Typography
-					variant='h6'
+					variant='h5'
 					color='error'
 					sx={{
-						fontSize: "0.9rem",
 						fontFamily: "Hebbo",
 						color: "white",
 						p: 1,
@@ -141,7 +140,15 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				>
 					الـسـخـنـيـني للخـضـار وفـواكـة
 				</Typography>
-				<p className=" text-light lead m-2">شركه التوصيل One minute delivery</p>
+				<Box display={"flex"} justifyContent={"center"} gap={1} textAlign={"center"}>
+					<Typography component={"p"} variant='h6' color='#0C6EFD'>
+						شركه التوصيل
+					</Typography>
+					_
+					<Typography component={"p"} variant='h6' color='#F08623'>
+						One minute delivery
+					</Typography>
+				</Box>
 			</Box>
 		</>
 	);

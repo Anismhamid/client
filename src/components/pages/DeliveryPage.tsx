@@ -16,7 +16,7 @@ import {getAllOrders} from "../../services/orders";
 import {handleOrderStatus} from "../../atoms/OrderStatusButtons/orderStatus";
 import {getUserById} from "../../services/usersServices";
 import {Link} from "react-router-dom";
-import {formatDate} from "../../helpers/dateAndPriceFormat";
+import {formatDate, formatPrice} from "../../helpers/dateAndPriceFormat";
 
 const DeliveryPage: FunctionComponent = () => {
 	const {t} = useTranslation();
@@ -159,10 +159,10 @@ const DeliveryPage: FunctionComponent = () => {
 									<Card
 										key={order.orderNumber}
 										sx={{
-											mb: 2,
 											borderRadius: 3,
 											boxShadow: 3,
-											backgroundColor: "#f9f9f9",
+											maxWidth: 650,
+											m: "auto",
 										}}
 									>
 										<CardContent>
@@ -216,6 +216,11 @@ const DeliveryPage: FunctionComponent = () => {
 													{order.address.street}{" "}
 													{order.address.houseNumber}
 												</Link>
+											</Typography>
+
+											<Typography variant='body1' mb={0.5}>
+												سعر الطلب :
+												{formatPrice(order.totalAmount) || 0}
 											</Typography>
 
 											<Button
