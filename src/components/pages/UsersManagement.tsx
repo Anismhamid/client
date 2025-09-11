@@ -298,7 +298,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 					dir='rtl'
 					fullWidth
 				>
-					<DialogTitle align='center'>עריכת פרופיל משתמש</DialogTitle>
+					<DialogTitle align='center'>تعديل ملف تعريف</DialogTitle>
 					<DialogContent>
 						{selectedUserId && (
 							<EditUserData userId={selectedUserId} mode='edit' />
@@ -306,7 +306,7 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 					</DialogContent>
 					<DialogActions>
 						<Button variant='contained' color='error' onClick={handleClose}>
-							סגור
+							اغلاق
 						</Button>
 					</DialogActions>
 				</Dialog>
