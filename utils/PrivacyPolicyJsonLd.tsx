@@ -1,5 +1,4 @@
 // components/PrivacyPolicyJsonLd.tsx
-import React from "react";
 import {FunctionComponent} from "react";
 
 const PrivacyPolicyJsonLd: FunctionComponent = () => {
@@ -18,7 +17,7 @@ const PrivacyPolicyJsonLd: FunctionComponent = () => {
 				url: "https://client-qqq1.vercel.app/myLogo.png",
 			},
 		},
-		inLanguage: "ar",
+		availableLanguage: ["ar", "he", "en"],
 		datePublished: "2025-04-13",
 		dateModified: "2025-04-13",
 	};

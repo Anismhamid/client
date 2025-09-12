@@ -23,11 +23,17 @@ main {
   min-height: 90vh;
   background: transparent;
   backdrop-filter: blur(8px);
+  padding-top: 50px;
 }
+
 
 .MuiFormGroup-root {
   margin-bottom: 5px;
+  
 }
+
+.MuiButtonBase{
+position: absolute !important;}
 
 .navbar-glass {
   backdrop-filter: blur(12px);
@@ -161,11 +167,191 @@ footer {
 
 
 
-.hero {
-  width: 100vw;
+/* .hero {
+  width: 95%;
   height: 100vh;
+  margin: 0 auto;
   background-image: url('/Yellow Cream Modern Weekend Market Flyer.gif');
-  background-position: center;
-  background-size: contain;
-  background-repeat: repeat-X;
+  background-position: top;
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  border-radius: 50px ;
+  border: 1px dashed #03090F;
+  box-shadow: 0px 0px 30px 1px black inset;
 }
+@media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
+} */
+
+.hero {
+  position: relative;
+  width: 95%;
+  height: 100vh;
+  margin: 0 auto;
+  border-radius: 40px;
+  overflow: hidden;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* الخلفية فيديو/صورة */
+/* .hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/Yellow-Cream-Modern-Weekend-Market-Flyer2.png') center/cover no-repeat;
+  background-attachment: fixed;
+  z-index: 0;
+  filter: brightness(0.6);
+}
+
+/* طبقة تدرج */
+/* .hero::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom right,
+      rgba(0, 0, 0, 0.6),
+      rgba(0, 0, 0, 0.2));
+  z-index: 1;
+} */
+
+/* المحتوى */
+/* .hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0 20px;
+} */
+
+/* .hero-content h1 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  background: linear-gradient(90deg, #ffda00, #ff5c5c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+} */
+
+/* .hero-content p {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  margin-bottom: 30px;
+  color: #f1f1f1;
+}
+
+.hero-content .btn {
+  display: inline-block;
+  padding: 15px 35px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #ff7b00, #ff1e56);
+  color: white;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transition: 0.3s;
+} */
+
+
+/* .hero-content .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.6);
+}
+
+.hero::before {
+  background: url('/Yellow-Cream-Modern-Weekend-Market-Flyer2.png') center/cover no-repeat;
+  animation: zoomHero 20s infinite alternate ease-in-out;
+}
+
+@keyframes zoomHero {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.1);
+  }
+} */
+
+/* .hero-content h1 {
+  animation: fadeInDown 1.5s ease forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content p {
+  animation: fadeInUp 2s ease forwards;
+} */
+
+/* @keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-content .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content .btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), transparent, rgba(255, 255, 255, 0.3));
+  transform: rotate(25deg);
+  animation: shine 3s infinite;
+} */
+
+/* @keyframes shine {
+  from {
+    transform: translateX(-100%) rotate(25deg);
+  }
+
+  to {
+    transform: translateX(100%) rotate(25deg);
+  }
+} */
+
+/* @media (max-width: 768px) {
+  .hero {
+    height: 70vh;
+  }
+
+  .hero::before {
+    background-attachment: scroll;
+  }
+} */

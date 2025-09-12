@@ -15,14 +15,11 @@ import Theme from "./atoms/theme/AppTheme.tsx";
 import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
 import useSocketEvents from "./hooks/useSocketEvents.ts";
 import {useMemo, useState} from "react";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForwardIos";
-import {useNavigate} from "react-router-dom";
 import handleRTL from "./locales/handleRTL.ts";
 
 function App() {
 	const {auth} = useUser();
 	useSocketEvents();
-	const navigate = useNavigate();
 
 	// Manage theme mode state
 	const getInitialMode = (): PaletteMode => {
@@ -57,21 +54,7 @@ function App() {
 			<ToastContainer />
 			<Theme mode={mode} setMode={setMode} />
 			<NavBar />
-			<IconButton
-				sx={{
-					position: "sticky",
-					top: 63,
-					right: 15,
-					zIndex: 5,
-					border: 1,
-					borderColor: "#015396",
-					backgroundColor: "background.default",
-				}}
-				onClick={() => navigate(-1)}
-				aria-label='back one step'
-			>
-				<ArrowForwardIcon />
-			</IconButton>
+			
 			<SpeedDialComponent />
 			<AppRoutes auth={auth} />
 			<Footer />

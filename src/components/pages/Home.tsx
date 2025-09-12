@@ -18,6 +18,7 @@ import {useRef} from "react";
 import handleRTL from "../../locales/handleRTL";
 import {io} from "socket.io-client";
 import ProductCard from "./products/ProductCard";
+import {Helmet} from "react-helmet";
 
 interface HomeProps {}
 
@@ -213,13 +214,25 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<div className='hero'></div>
-			<title>سوق السخنيني</title>
-			<meta
-				name='description'
-				content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة لكل عائله'
-			/>
+			<Helmet>
+				<title>سوق السخنيني</title>
+				<meta
+					name='description'
+					content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة لكل عائله'
+				/>
+			</Helmet>
+			{/* <div className='hero'>
+			</div> */}
+
 			<Box dir={diriction} component='main'>
+				{" "}
+				<div className=' text-center  p-5'>
+					<h1>الصفحة الرئيسية</h1>
+					<h2 className=' lead mt-4'>
+						تجربة تسوق لا مثيل لها مع المنتجات الطازجة والحرف اليدوية
+					</h2>
+				</div>
+				<hr className=' w-75 m-auto border border-3 rounded-5 border-5 border-dark-subtle mt-5' />
 				<Box className='logo-img' />
 				{/* <Typography variant='h5' my={10} textAlign={"center"}>
 					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
@@ -271,6 +284,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 					<Button
 						variant={searchQuery === "" ? "outlined" : "contained"}
+						color='primary'
 						sx={{
 							borderRadius: 5,
 							m: 1,
@@ -399,10 +413,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 												borderRadius: 5,
 											}}
 											onClick={() => {
-												console.log(setSearchQuery("عروض"));
+												setSearchQuery("عروض");
 											}}
 										>
-											<Chip label='عروض' sx={{color: "white"}} />
+											<Chip
+												label='عروض'
+												color='default'
+												variant='outlined'
+											/>
 										</Button>
 									</Box>
 								</Box>
@@ -423,7 +441,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 						<CircularProgress size={24} aria-busy={"true"} />
 					</Box>
 				)}
-
 				<Box sx={{bgcolor: "background.paper", py: 6}}>
 					<Box sx={{maxWidth: 800, mx: "auto", px: 2, textAlign: "center"}}>
 						<Typography component={"h2"} variant='h4' gutterBottom>

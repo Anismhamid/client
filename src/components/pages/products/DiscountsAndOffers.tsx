@@ -132,13 +132,15 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 									sx={{
 										margin: "10px",
 										padding: "10px",
-										border: "1px solid #e0e0e0",
+										// border: "1px solid #e0e0e0",
 										borderRadius: "8px",
 										backgroundColor: "white",
+										color: "ThreeDLightShadow",
+
 										transition: "transform 0.3s ease",
 										"&:hover": {
 											transform: "scale(1.02)",
-											boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+											boxShadow: "0 4px 20px rgb(0, 0, 0) inset",
 										},
 									}}
 								>
@@ -155,7 +157,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 									)}
 									<Link
 										to={`/category/${product.category.toLocaleLowerCase()}`}
-										aria-label={`عرض تفاصيل ${product.product_name} مع خصم ${product.discount}%`}
+										aria-label={`عرض تفاصيل ${product.product_name} خصم ${product.discount}%`}
 										style={{textDecoration: "none"}}
 									>
 										<Box sx={{position: "relative"}}>
@@ -176,7 +178,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 												}
 											/>
 
-											{/* شريط الخصم */}
+											{/* الخصم */}
 											<Box
 												sx={{
 													position: "absolute",
@@ -192,7 +194,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 												{product.discount}% خصم
 											</Box>
 
-											{/* معلومات السعر */}
+											{/* السعر */}
 											<Box
 												sx={{
 													position: "absolute",
@@ -233,7 +235,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											sx={{
 												marginTop: "10px",
 												fontWeight: "bold",
-												color: "text.primary",
+												color: "primary.main",
 											}}
 										>
 											{product.product_name}
@@ -242,10 +244,12 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										{/* الفئة */}
 										<Typography
 											variant='body2'
-											color='text.secondary'
+											color='primary.secondary'
 											sx={{marginBottom: "10px"}}
 										>
-											{product.category}
+											{product.category === "Fruit"
+												? "فواكه"
+												: "خضروات"}
 										</Typography>
 									</Link>
 								</Box>
