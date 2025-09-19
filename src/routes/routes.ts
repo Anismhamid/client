@@ -27,6 +27,7 @@ export enum path {
 	Home = "/",
 	Login = "/login",
 	Profile = "/profile",
+	CustomerProfile = "/customer/profile",
 	Register = "/register",
 	Messages = "/messages",
 	WebSiteAdmins = "/admins",

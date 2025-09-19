@@ -1,6 +1,6 @@
-import {FunctionComponent, useEffect, useRef, useState} from "react";
+import {FunctionComponent, useCallback, useEffect, useRef, useState} from "react";
 import {deleteUserById, getUserById} from "../../services/usersServices";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {
 	Accordion,
 	Button,
@@ -73,6 +73,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		activity: [],
 	});
 
+	const {id} = useParams();
+	// useEffect(() => {
+	// 	if (id) getUserById(id).then(setUser);
+	// }, [id]);
+
 	const updateProfile = () => {
 		detailsRef.current?.scrollIntoView({behavior: "smooth"});
 	};
@@ -87,8 +92,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	};
 
 	useEffect(() => {
-		if (decodedToken) {
-			Promise.all([getUserById(decodedToken._id), getUserOrders(decodedToken._id)])
+		const targetId = id || decodedToken?._id;
+		if (targetId) {
+			Promise.all([getUserById(targetId), getUserOrders(targetId)])
 				.then(([userRes, ordersRes]) => {
 					setUser(userRes);
 					setUserOrdersLength(ordersRes.length);
@@ -106,11 +112,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				.catch((err) => console.error("Error fetching user data:", err))
 				.finally(() => setLoading(false));
 		}
-	}, [decodedToken]);
+	}, [id, decodedToken]);
 
 	useEffect(() => {
-		getAllOrders().then((ord) => setAllOrders(ord));
-	}, []);
+		if (auth.role === "Admin" || auth.role === "Moderator") {
+			getAllOrders().then((ord) => setAllOrders(ord));
+		}
+	}, [auth.role]);
 
 	const totalCommission = allOrders.reduce((sum, order) => {
 		return sum + (order.commission || 0);
@@ -175,7 +183,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					تحرير البيانات الشخصية
 				</Button>
 			</Box>
-
 			{/* بيانات المستخدم */}
 			<div className='container mt-5'>
 				<Card className='shadow-lg rounded-4'>
@@ -192,10 +199,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</CardContent>
 				</Card>
 			</div>
-
 			{/* الطلبات */}
 			<Box className='container mt-5'>
-				{(auth.role === "Admin" || auth.role === "Moderator") && (
+				{/* {(auth.role === "Admin" || auth.role === "Moderator") && (
 					<Card className='my-5 rounded-5 shadow'>
 						<CardContent>
 							<Typography variant='body1' fontSize={20} component={"p"}>
@@ -213,7 +219,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</Typography>
 						</CardContent>
 					</Card>
-				)}
+				)} */}
 				<Card className='shadow-sm rounded-4 border border-2 border-danger-subtle'>
 					<CardContent>
 						<Typography
@@ -258,7 +264,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							>
 								<CardContent>
 									<Typography variant='h6' color='text.secondary'>
-										إجمالي المشتريات
+										إجمالي المشتريات على الموقع
 									</Typography>
 									<Typography variant='h4' color='success.main'>
 										{formatPrice(userOdredsPrice)}
@@ -269,13 +275,12 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					</CardContent>
 				</Card>
 			</Box>
-
 			{/* سجل الدخول */}
-			<div className='container mt-5'>
+			<Box className='container mt-5'>
 				<Accordion className='shadow-sm rounded-4'>
 					<AccordionSummary expandIcon={<ArrowDownwardIcon />}>
 						<Typography component='span' variant='h6' className='fw-bold'>
-							سجل تسجيل الدخول
+							سِجِل تَسجيل الدُلخول
 						</Typography>
 					</AccordionSummary>
 					<AccordionDetails>
@@ -308,18 +313,15 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						)}
 					</AccordionDetails>
 				</Accordion>
-			</div>
-			<Box ref={detailsRef}>
-				<EditUserData userId={decodedToken._id} />{" "}
 			</Box>
 			{/* أزرار إضافية */}
-			<div className='container text-center mt-5'>
+			<Box className='container text-center mt-5'>
 				<Stack spacing={2} direction='row' justifyContent='center'>
 					<Button
 						variant='contained'
-						color='primary'
+						color='success'
 						onClick={changePassword}
-						className='rounded-pill'
+						className='rounded-pill mx-3'
 					>
 						تغيير كلمة المرور
 					</Button>
@@ -327,12 +329,15 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						variant='contained'
 						color='secondary'
 						onClick={contactSupport}
-						className='rounded-pill'
+						className='rounded-pill mx-5'
 					>
 						دعم فني
 					</Button>
 				</Stack>
-			</div>
+			</Box>
+			<Box ref={detailsRef}>
+				<EditUserData userId={id || decodedToken._id} />
+			</Box>
 
 			{/* حذف الحساب */}
 			<div className='container mt-5'>

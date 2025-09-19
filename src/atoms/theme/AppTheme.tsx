@@ -1,10 +1,20 @@
 import {FunctionComponent} from "react";
-import {FormControlLabel, PaletteMode, FormGroup, Box, Typography} from "@mui/material";
+import {
+	FormControlLabel,
+	PaletteMode,
+	FormGroup,
+	Box,
+	Typography,
+	Button,
+} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
+import {path} from "../../routes/routes";
+import {useUser} from "../../context/useUSer";
+import {Dashboard} from "@mui/icons-material";
 
 interface ThemeProps {
 	mode: PaletteMode;
@@ -68,6 +78,10 @@ const MaterialUISwitch = styled(Switch)(({theme}) => ({
 }));
 
 const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
+	const {auth} = useUser();
+
+	const canView = auth?.role === "Admin" || auth?.role === "Moderator";
+	const navigate = useNavigate();
 	const handleThemeChange = (
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
@@ -140,15 +154,37 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				>
 					الـسـخـنـيـني للخـضـار وفـواكـة
 				</Typography>
-				<Box display={"flex"} justifyContent={"center"} gap={1} textAlign={"center"}>
+				<Box
+					display={"flex"}
+					justifyContent={"center"}
+					gap={1}
+					textAlign={"center"}
+				>
 					<Typography component={"p"} variant='h6' color='#0C6EFD'>
-						شركه التوصيل
+						التوصيل برعاية
 					</Typography>
 					_
 					<Typography component={"p"} variant='h6' color='#F08623'>
 						One minute delivery
 					</Typography>
 				</Box>
+				{canView && (
+					<Button
+						sx={{
+							m: 1,
+							"& .MuiButton-startIcon": {
+								mx: 1,
+							},
+							fontSize: 17,
+						}}
+						variant='outlined'
+						color='warning'
+						startIcon={<Dashboard />}
+						onClick={() => navigate(path.WebSiteAdmins)}
+					>
+						إحصائيات المتجر
+					</Button>
+				)}
 			</Box>
 		</>
 	);

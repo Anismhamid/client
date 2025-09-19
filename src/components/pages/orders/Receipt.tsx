@@ -19,7 +19,6 @@ import {
 import useToken from "../../../hooks/useToken";
 import RoleType from "../../../interfaces/UserType";
 import {useTranslation} from "react-i18next";
-import Loader from "../../../atoms/loader/Loader";
 import ReceiptPDF from "../../../helpers/generatePdf";
 import {formatDate, formatPrice} from "../../../helpers/dateAndPriceFormat";
 import handleRTL from "../../../locales/handleRTL";
@@ -93,18 +92,10 @@ const Receipt: FunctionComponent<ReceiptProps> = () => {
 		}
 	}, [decodedToken]);
 
-	if (!receipts) {
+	if (receipts.length < 1) {
 		return (
 			<main className='text-center mt-5 min-vh-50'>
-				<p>לא נמצאו קבלות</p>
-			</main>
-		);
-	}
-
-	if (receipts.length === 0) {
-		return (
-			<main className=''>
-				<Loader />
+				<p>لم يتم العثور على أي إيصالات</p>
 			</main>
 		);
 	}

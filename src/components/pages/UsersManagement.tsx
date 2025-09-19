@@ -34,6 +34,9 @@ import {showError} from "../../atoms/toasts/ReactToast";
 import SearchBox from "../../atoms/productsManage/SearchBox";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
+import {useNavigate} from "react-router-dom";
+import Profile from "./Profile";
+import {path} from "../../routes/routes";
 
 interface UersManagementProps {}
 
@@ -66,6 +69,8 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		getAllUsers()
@@ -201,6 +206,11 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 												display='flex'
 												alignItems='center'
 												justifyContent='center'
+												onClick={() =>
+													navigate(
+														`${path.CustomerProfile}/${user._id}`,
+													)
+												}
 											>
 												<Box
 													sx={{
@@ -211,11 +221,13 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 															? "green"
 															: "red",
 														marginRight: 1,
+														cursor: "pointer",
 													}}
 												/>
-												{user.name.first}
+												{user.name.first} {user.name.last}
 											</Box>
 										</StyledTableCell>
+
 										<StyledTableCell align='center'>
 											{user.email}
 										</StyledTableCell>

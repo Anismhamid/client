@@ -32,6 +32,15 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 
 	return (
 		<Box dir={diriction} className='row mt-5'>
+			<Typography
+				textAlign={"center"}
+				variant='h4'
+				className='fw-bold p-1'
+				component={"h1"}
+				my={3}
+			>
+				الطلبات المكتمله
+			</Typography>
 			{ordersToDisplay.length > 0 ? (
 				previous.map((order) => (
 					<div key={order.orderNumber} className='mb-4 col-md-6 col-lg-4'>

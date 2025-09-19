@@ -3,6 +3,7 @@ export interface User {
 	name: {_id?: string; email?: string; first?: string; last?: string};
 	email: string;
 	role: string;
+	createdAt?: string;
 }
 
 export interface UserMessage {

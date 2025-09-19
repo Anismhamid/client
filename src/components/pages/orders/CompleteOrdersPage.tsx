@@ -35,10 +35,9 @@ const CompleteOrdersPage = () => {
 	if (loading) return <Loader />;
 
 	return (
-		<main>
-			<div className='container my-5 d-flex align-items-center justify-content-between'>
-				<PreviousOrders previous={orders} orderStatuses={orderStatuses} />
-			</div>
+		<main style={{margin:50}}>
+			
+			<PreviousOrders previous={orders} orderStatuses={orderStatuses} />
 		</main>
 	);
 };
