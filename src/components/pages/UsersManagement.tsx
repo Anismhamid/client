@@ -35,7 +35,6 @@ import SearchBox from "../../atoms/productsManage/SearchBox";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
 import {useNavigate} from "react-router-dom";
-import Profile from "./Profile";
 import {path} from "../../routes/routes";
 
 interface UersManagementProps {}

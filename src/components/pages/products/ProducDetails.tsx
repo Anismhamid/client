@@ -21,8 +21,9 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import HomeIcon from "@mui/icons-material/Home";
 import StoreIcon from "@mui/icons-material/Store";
 import {path, productsPathes} from "../../../routes/routes";
@@ -31,7 +32,7 @@ import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
 import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
-import {showError} from "../../../atoms/toasts/ReactToast";
+import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
@@ -52,6 +53,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
+	const [liked, setLiked] = useState(false);
 
 	const handleAdd = async (
 		product_name: string,
@@ -79,12 +81,34 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 				);
 				setQuantities((prev) => ({...prev, [product_name]: 1}));
 			} catch (error) {
-				showError("אירעה שגיאה בהוספת מוצר לעגלה");
+				showError("حدث خطأ أثناء إضافة منتج إلى السلة");
 			} finally {
 				setLoadingAddToCart(null);
 			}
 		}
 	};
+
+const handleLike = () => {
+	const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+	if (liked) {
+		const newFavorites = favorites.filter((p: string) => p !== productName);
+		localStorage.setItem("favorites", JSON.stringify(newFavorites));
+		setLiked(false);
+	} else {
+		favorites.push(productName as string);
+		localStorage.setItem("favorites", JSON.stringify(favorites));
+		setLiked(true);
+	}
+};
+
+
+useEffect(() => {
+	const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+	if (favorites.includes(productName as string)) {
+		setLiked(true);
+	}
+}, [productName]);
+
 
 	useEffect(() => {
 		if (productName) {
@@ -93,7 +117,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			getProductByspicificName(decodedName)
 				.then((res) => {
 					if (!res) {
-						setError("המוצר לא נמצא");
+						setError("لم يتم العثور على المنتج");
 						setProduct(initialProductValue);
 					} else {
 						setProduct(res);
@@ -101,7 +125,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 					}
 				})
 				.catch(() => {
-					setError("אירעה שגיאה בטעינת המוצר");
+					setError("حدث خطأ أثناء تحميل المنتج");
 					setProduct(initialProductValue);
 				})
 				.finally(() => setLoading(false));
@@ -214,11 +238,41 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										borderTop: `1px solid ${theme.palette.divider}`,
 									}}
 								>
-									<IconButton aria-label='add to favorites'>
-										<FavoriteBorderIcon color='primary' />
+									<IconButton
+										aria-label='add to favorites'
+										onClick={handleLike}
+									>
+										{liked ? (
+											<FavoriteIcon color='error' />
+										) : (
+											<FavoriteBorderIcon />
+										)}
 									</IconButton>
-									<IconButton aria-label='share'>
-										<ShareIcon color='primary' />
+
+									<IconButton
+										aria-label='share'
+										onClick={() => {
+											if (navigator.share) {
+												navigator
+													.share({
+														title: "منتج ال ${productName} رائع",
+														text: `شوف  ${productName} المميز!`,
+														url: window.location.href,
+													})
+													.then(() =>
+														showSuccess("تمت المشاركة بنجاح"),
+													)
+													.catch((_) =>
+														showError("فشل المشاركة"),
+													);
+											} else {
+												showError(
+													"المشاركة غير مدعومة في هذا المتصفح",
+												);
+											}
+										}}
+									>
+										<ShareIcon />
 									</IconButton>
 								</Box>
 							</Card>
@@ -323,7 +377,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 											aria-label='تقليل الكمية'
 										/>
 
-										<Typography aria-live='polite' fontSize={30}>
+										<Typography
+											aria-live='polite'
+											fontSize={30}
+											color='primary'
+										>
 											{productQuantity}
 										</Typography>
 

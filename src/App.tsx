@@ -6,6 +6,7 @@ import {
 	ThemeProvider,
 	createTheme,
 	PaletteMode,
+	IconButton,
 } from "@mui/material";
 import "./locales/i18n.tsx";
 import NavBar from "./components/settings/NavBar.tsx";
@@ -34,12 +35,12 @@ function App() {
 					mode,
 					...(mode === "light"
 						? {
-								primary: {main: "#002b57"},
+								primary: {main: "#003264"},
 								background: {default: "#f5f5f5"},
 							}
 						: {
-								primary: {main: "#272727"},
-								background: {default: "#000000"},
+								primary: {main: "#001224"},
+								background: {default: "#000711"},
 							}),
 				},
 				direction: diriction,
