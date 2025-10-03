@@ -1,4 +1,11 @@
-import {FunctionComponent, useEffect, useMemo, useState} from "react";
+import {
+	FunctionComponent,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import {deleteProduct, getProductsByCategory} from "../../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../../../interfaces/Products";
 import {handleAddToCart} from "../../../helpers/fruitesFunctions";
@@ -18,7 +25,7 @@ import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
 import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
-import { generateCategoryJsonLd } from "../../../../utils/structuredData";
+import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 
 interface ProductCategoryProps {
@@ -38,7 +45,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth, isLoggedIn} = useUser();
-	const [showMoreLoading, setShowMoreLoading] = useState<boolean>(false);
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
@@ -47,6 +53,24 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+	const observerRef = useRef<IntersectionObserver | null>(null);
+
+	const lastProductRef = useCallback(
+		(node: HTMLDivElement | null) => {
+			if (loading) return; // ما نراقب إذا في تحميل
+
+			if (observerRef.current) observerRef.current.disconnect();
+
+			observerRef.current = new IntersectionObserver((entries) => {
+				if (entries[0].isIntersecting) {
+					handleShowMore();
+				}
+			});
+
+			if (node) observerRef.current.observe(node);
+		},
+		[loading, products, visibleProducts],
+	);
 
 	const {setQuantity} = useCartItems();
 	const navigate = useNavigate();
@@ -62,7 +86,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	// Update product
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
-
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
@@ -80,34 +103,37 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		});
 	}, [products, searchQuery]);
 
-	const handleAdd = (
-		product_name: string,
-		quantity: {[key: string]: number},
-		price: number,
-		product_image: string,
-		sale: boolean,
-		discount: number,
-	) => {
-		const productQuantity = quantity[product_name];
+	const handleAdd = useCallback(
+		(
+			product_name: string,
+			quantity: {[key: string]: number},
+			price: number,
+			product_image: string,
+			sale: boolean,
+			discount: number,
+		) => {
+			const productQuantity = quantity[product_name];
 
-		if (!isLoggedIn) {
-			navigate(path.Login);
-		} else {
-			setLoadingAddToCart(product_name);
-			handleAddToCart(
-				setQuantities,
-				product_name,
-				productQuantity || 1,
-				price - (price * discount) / 100,
-				product_image,
-				sale,
-				discount,
-			).then(() => {
-				setQuantity((prev) => prev + productQuantity);
-				setLoadingAddToCart(null);
-			});
-		}
-	};
+			if (!isLoggedIn) {
+				navigate(path.Login);
+			} else {
+				setLoadingAddToCart(product_name);
+				handleAddToCart(
+					setQuantities,
+					product_name,
+					productQuantity || 1,
+					price - (price * discount) / 100,
+					product_image,
+					sale,
+					discount,
+				).then(() => {
+					setQuantity((prev) => prev + (productQuantity ?? 1));
+					setLoadingAddToCart(null);
+				});
+			}
+		},
+		[isLoggedIn, navigate, setQuantities, setQuantity],
+	);
 
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
@@ -181,11 +207,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	}, []);
 
 	const handleShowMore = () => {
-		setShowMoreLoading(true);
 		const nextVisibleCount = visibleProducts.length + 16;
 		const newVisibleProducts = products.slice(0, nextVisibleCount);
 		setVisibleProducts(newVisibleProducts);
-		setShowMoreLoading(false);
 	};
 
 	const isAdmin = auth?.role === RoleType.Admin;
@@ -230,7 +254,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						{filteredProducts.length ? (
 							filteredProducts
 								.slice(0, visibleProducts.length)
-								.map((product: Products) => {
+								.map((product: Products, index) => {
 									const isOutOfStock = product.quantity_in_stock <= 0;
 									const productQuantity =
 										quantities[product.product_name] ?? 1;
@@ -246,6 +270,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											vegetable: "للكيلو",
 										}[product.category?.toLowerCase()] || "للوحدة";
 
+									const isLast = index === visibleProducts.length - 1;
+
 									return (
 										<Col
 											key={product._id}
@@ -253,6 +279,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											xs={6}
 											md={4}
 											xl={2}
+											ref={isLast ? lastProductRef : null}
 										>
 											<ProductCard
 												key={product._id}
@@ -326,22 +353,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 							</Box>
 						)}
 					</Row>
-
-					{/* Show More Button */}
-					{products.length > visibleProducts.length && (
-						<div className='text-center my-4 '>
-							<Button
-								onClick={handleShowMore}
-								color='primary'
-								variant='contained'
-								size='large'
-								disabled={showMoreLoading}
-								className='rounded-pill shadow'
-							>
-								عرض المزيد من المنتجات
-							</Button>
-						</div>
-					)}
 				</Box>
 
 				<UpdateProductModal

@@ -161,16 +161,21 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 							<Box display='flex' alignItems='center'>
 								<MonetizationOn
 									color='primary'
-									sx={{fontSize: 40, mr: 1}}
+									sx={{fontSize: 40, m: 5}}
 								/>
 								<Box>
-									<Typography variant='h6' component='p'>
+									<Typography
+										variant='h6'
+										color='primary'
+										component='p'
+									>
 										المبيعات
 									</Typography>
 									<Typography
 										variant='h5'
 										component='p'
 										fontWeight='bold'
+										sx={{color: "black"}}
 									>
 										{formatPrice(
 											timeFrame === "today"
@@ -178,7 +183,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 												: monthSales,
 										)}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography variant='body2' color='gray'>
 										{timeFrame === "today"
 											? "مبيعات اليوم"
 											: "مبيعات الشهر"}
@@ -190,18 +195,26 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 				</Grid>
 
 				<Grid size={{xs: 12, md: 6, lg: 3}}>
-					<Card className='rounded-5 shadow' sx={{bgcolor: "#e8f5e9"}}>
+					<Card
+						className='rounded-5 shadow'
+						sx={{bgcolor: "#e8f5e9", color: "black"}}
+					>
 						<CardContent>
 							<Box display='flex' alignItems='center'>
-								<TrendingUp color='success' sx={{fontSize: 40, mr: 1}} />
+								<TrendingUp color='success' sx={{fontSize: 40, m: 5}} />
 								<Box>
-									<Typography variant='h6' component='p'>
+									<Typography
+										variant='h6'
+										color='primary'
+										component='p'
+									>
 										العمولة
 									</Typography>
 									<Typography
 										variant='h5'
 										component='p'
 										fontWeight='bold'
+										sx={{color: "black"}}
 									>
 										{formatPrice(
 											timeFrame === "today"
@@ -209,7 +222,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 												: monthCommission,
 										)}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography variant='body2' color='gray'>
 										{timeFrame === "today"
 											? "عمولة اليوم"
 											: "عمولة الشهر"}
@@ -224,21 +237,29 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 					<Card className='rounded-5 shadow' sx={{bgcolor: "#fff3e0", px: 5}}>
 						<CardContent>
 							<Box display='flex' alignItems='center'>
-								<People color='warning' sx={{fontSize: 40, mr: 1}} />
+								<People
+									color='warning'
+									sx={{m: 5, fontSize: 40, mr: 1}}
+								/>
 								<Box>
-									<Typography variant='h6' component='p'>
+									<Typography
+										variant='h6'
+										color='primary'
+										component='p'
+									>
 										المستخدمون الجدد
 									</Typography>
 									<Typography
 										variant='h5'
 										component='p'
 										fontWeight='bold'
+										sx={{color: "black"}}
 									>
 										{timeFrame === "today"
 											? newUsersToday
 											: newUsersMonth}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography variant='body2' color='gray'>
 										{timeFrame === "today"
 											? "مستخدم جديد اليوم"
 											: "مستخدم جديد هذا الشهر"}
@@ -253,19 +274,27 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 					<Card className='rounded-5 shadow' sx={{bgcolor: "#fbe9e7"}}>
 						<CardContent>
 							<Box display='flex' alignItems='center'>
-								<ShoppingCart color='error' sx={{fontSize: 40, mr: 1}} />
+								<ShoppingCart
+									color='error'
+									sx={{m: 5, fontSize: 40, margin: 5}}
+								/>
 								<Box>
-									<Typography variant='h6' component='p'>
+									<Typography
+										variant='h6'
+										component='p'
+										color='primary'
+									>
 										إجمالي الطلبات على الموقع
 									</Typography>
 									<Typography
 										variant='h5'
 										component='p'
 										fontWeight='bold'
+										sx={{color: "black"}}
 									>
 										{orders.length}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
+									<Typography variant='body2' color='gray'>
 										عدد الطلبات الكلي
 									</Typography>
 								</Box>
