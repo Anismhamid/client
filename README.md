@@ -1,4 +1,4 @@
-# E-Commerce Platform - Shok Habena Market
+# E-Commerce C2C Marketplace - بيع وشراء
 
 ## Project Summary
 

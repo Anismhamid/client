@@ -45,16 +45,20 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		});
 	}, [allOrders]);
 
+	useEffect(() => {
+		console.log(allOrders);
+	}, []);
+
 	const filteredOrders = useMemo(() => {
 		return newOrders.filter((order) => {
 			const query = searchQuery.toLowerCase();
 			const orderNumber = order.orderNumber?.toString().toLowerCase() || "";
-			const userId = order.userId?.toString().toLowerCase() || "";
 			const date = new Date(order.date).toLocaleDateString("he-IL");
+			const user = order.user._id?.toString().toLowerCase() ?? "";
 
 			return (
 				orderNumber.includes(query) ||
-				userId.includes(query) ||
+				user.includes(query) ||
 				date.includes(query)
 			);
 		});
@@ -79,7 +83,7 @@ const AllTheOrders: FunctionComponent<AllTheOrdersProps> = () => {
 		const query = searchQuery.toLowerCase();
 		return previousOrders.filter((order) => {
 			const orderNumber = order.orderNumber?.toString().toLowerCase() || "";
-			const userId = order.userId?.toString().toLowerCase() || "";
+			const userId = order.user?.toString().toLowerCase() || "";
 			const date = new Date(order.date).toLocaleDateString("he-IL");
 
 			return (

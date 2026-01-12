@@ -22,7 +22,7 @@ export const emptyAuthValues = {
 };
 
 export interface AuthValues {
-	_id: string;
+	_id?: string;
 	name: {
 		first: string;
 		last: string;

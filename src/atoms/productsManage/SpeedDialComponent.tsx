@@ -62,7 +62,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 							<SpeedDialAction
 								key={action.name}
 								icon={action.icon}
-								tooltipOpen
+								// tooltipOpen
 								tooltipTitle={action.name}
 								onClick={action.addClick}
 							/>
@@ -109,9 +109,9 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 			<AddProdutModal
 				show={onShowAddModal}
 				onHide={hideAddProductModal}
-				refrehs={function (): void {
-					throw new Error("Function not implemented.");
-				}}
+				// refrehs={function (): void {
+				// 	throw new Error("Function not implemented.");
+				// }}
 			/>
 		</>
 	);

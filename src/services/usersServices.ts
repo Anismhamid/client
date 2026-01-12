@@ -29,7 +29,7 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 /**
  * Responses handle google login
  * @param response
- * @returns
+ * @returns userData
  */
 export const handleGoogleLogin = async (response: any, extraData: any) => {
 	try {

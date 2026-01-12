@@ -1,8 +1,7 @@
-// components/JsonLd.tsx
-import {FunctionComponent} from "react";
+import {memo, FunctionComponent} from "react";
 
 interface JsonLdProps {
-	data: object;
+	data: Record<string, unknown>;
 }
 
 const JsonLd: FunctionComponent<JsonLdProps> = ({data}) => (
@@ -12,4 +11,4 @@ const JsonLd: FunctionComponent<JsonLdProps> = ({data}) => (
 	/>
 );
 
-export default JsonLd;
+export default memo(JsonLd);

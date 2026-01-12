@@ -40,7 +40,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 	}, [orderItems]);
 
 	if (error) return <div>{error}</div>;
-	if (loading) return <Loader />;
+	if (loading || !user || !orderItems) return <Loader />;
 
 	if (!orderItems)
 		return (
@@ -67,13 +67,13 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 						{orderNumber}
 					</Typography>
 					<Typography variant='h4' className='text-center mb-4'>
-						الطلب بأسم: {user.name.first} {user.name.last}
+						الطلب بأسم: {user?.name?.first} {user?.name?.last}
 					</Typography>
 					<Typography variant='h4' className='text-center mb-4'>
-						هاتف: {user.phone.phone_1}
+						هاتف: {user?.phone?.phone_1}
 					</Typography>
 					<Typography variant='h4' className='text-center mb-4'>
-						العنوان: {user.address.city}, {user.address.street}
+						العنوان: {user?.address?.city}, {user?.address?.street}
 					</Typography>
 
 					<Box className='d-flex justify-content-between align-items-center mb-3 flex-wrap'>
@@ -110,7 +110,7 @@ const OrderDetails: FunctionComponent<OrderDetailsProps> = () => {
 
 						return (
 							<Box key={product.product_image + index} className='col'>
-								<Box>{user.name.first}</Box>
+								<Box>{user?.name?.first ?? ""}</Box>
 								<Card className='card h-100 shadow-sm border-0 overflow-hidden'>
 									<CardMedia
 										component='img'

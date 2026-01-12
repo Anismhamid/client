@@ -1,17 +1,17 @@
+import {User} from "./usersMessages";
+
 export interface Order {
-	userId: string;
+	user: User;
 	commission: number;
 	orderNumber: string;
-	products: [
-		{
-			product_name: string;
-			product_image: string;
-			product_price: number;
-			quantity: number;
-			sale: boolean;
-			discount: number;
-		},
-	];
+	products: {
+		product_name: string;
+		product_image: string;
+		product_price: number;
+		quantity: number;
+		sale: boolean;
+		discount: number;
+	}[];
 	payment: boolean;
 	cashOnDelivery: boolean;
 	selfCollection: boolean;

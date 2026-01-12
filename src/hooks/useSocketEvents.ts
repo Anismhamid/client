@@ -18,7 +18,7 @@ const useSocketEvents = () => {
 	const {playNotificationSound, showNotification} = useNotificationSound();
 
 	useEffect(() => {
-		if (!auth?._id) return;
+		if (!auth) return;
 
 		const isAdminOrModerator =
 			auth.role === RoleType.Admin || auth.role === RoleType.Moderator;
@@ -27,7 +27,7 @@ const useSocketEvents = () => {
 		socket.auth = {
 			userId: auth._id,
 			role: auth.role,
-			name: auth.name.first,
+			name: auth.name?.first,
 			withCredentials: true,
 		};
 
@@ -73,7 +73,7 @@ const useSocketEvents = () => {
 					navigateTo: `/orderDetails/${newOrder.orderNumber}`,
 					orderNum: newOrder.orderNumber,
 				});
-				showNotification(`تم إصدار أمر جديد بواسطة ${newOrder.userId}`);
+				showNotification(`تم إصدار أمر جديد بواسطة ${newOrder.user}`);
 			}
 		};
 

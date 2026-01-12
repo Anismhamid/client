@@ -163,7 +163,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										<Box sx={{position: "relative"}}>
 											<img
 												src={product.image_url}
-												alt={`${product.product_name} - خصم ${product.discount}% - سوق السخنيني`}
+												alt={`${product.product_name} - خصم ${product.discount}% - بيع وشراء`}
 												className='img-fluid'
 												style={{
 													display: isLoaded ? "block" : "none",
@@ -267,12 +267,11 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					gutterBottom
 					sx={{fontWeight: "bold"}}
 				>
-					استفد من أفضل العروض في سوق السخنيني
+					استفد من أفضل العروض في بيع وشراء
 				</Typography>
 				<Typography variant='body1' color='text.secondary'>
 					نقدم لكم يومياً مجموعة مميزة من العروض والتخفيضات على أجود أنواع
-					الفواكه والخضروات. تسوق الآن ووفر أكثر مع ضمان الجودة والطزاجة في كل
-					منتج.
+					المنتجات. تسوق الآن ووفر أكثر مع ضمان الجودة في كل منتج.
 				</Typography>
 			</Box>
 		</Box>

@@ -35,8 +35,7 @@ const CompleteOrdersPage = () => {
 	if (loading) return <Loader />;
 
 	return (
-		<main style={{margin:50}}>
-			
+		<main style={{margin: 50}}>
 			<PreviousOrders previous={orders} orderStatuses={orderStatuses} />
 		</main>
 	);

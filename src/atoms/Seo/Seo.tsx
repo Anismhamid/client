@@ -12,7 +12,7 @@ interface SeoProps {
 const Seo: FunctionComponent<SeoProps> = ({
 	title,
 	description,
-	keywords = "سوق السخنيني, سوق, منتجات طازجه, توصيل,فواكه,خضار ",
+	keywords = "بيع وشراء جميع المنتجات في مكان واحد, توصيل",
 	image = "",
 	type = "website",
 }) => {

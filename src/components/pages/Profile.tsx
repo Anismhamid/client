@@ -32,6 +32,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import {getAllOrders, getUserOrders} from "../../services/orders";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
 import {Order} from "../../interfaces/Order";
+import RoleType from "../../interfaces/UserType";
 
 interface ProfileProps {}
 /**
@@ -115,7 +116,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	}, [id, decodedToken]);
 
 	useEffect(() => {
-		if (auth.role === "Admin" || auth.role === "Moderator") {
+		if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
 			getAllOrders().then((ord) => setAllOrders(ord));
 		}
 	}, [auth.role]);
@@ -155,21 +156,23 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						/>
 					)}
 
-					<Avatar
-						className='w-100 h-100'
-						src={user.image?.url || "https://i.ibb.co/5GzXkwq/user.png"}
-						alt={
-							user.image?.alt?.trim()
-								? `${user.image.alt}'s avatar`
-								: `${user.name?.first || "משתמש"}'s avatar`
-						}
-						role='img'
-						sx={{
-							objectFit: "cover",
-							display: imageLoaded ? "block" : "none",
-						}}
-						onLoad={() => setImageLoaded(true)}
-					/>
+					{user && (
+						<Avatar
+							className='w-100 h-100'
+							src={user?.image?.url || "https://i.ibb.co/5GzXkwq/user.png"}
+							alt={
+								user.image?.alt?.trim()
+									? `${user.image?.alt}'s avatar`
+									: `${user.name?.first || "משתמש"}'s avatar`
+							}
+							role='img'
+							sx={{
+								objectFit: "cover",
+								display: imageLoaded ? "block" : "none",
+							}}
+							onLoad={() => setImageLoaded(true)}
+						/>
+					)}
 				</div>
 
 				{/* زر تحرير */}

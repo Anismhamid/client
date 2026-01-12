@@ -18,8 +18,8 @@ const useOrderDetails = (orderNumber: string) => {
 				const orderData = await getOrderByOrderNumber(orderNumber);
 				setOrderItems(orderData);
 
-				if (orderData?.userId) {
-					const userData = await getUserById(orderData.userId);
+				if (orderData) {
+					const userData = await getUserById(orderData.user);
 					setUser(userData);
 				}
 			} catch (err: any) {

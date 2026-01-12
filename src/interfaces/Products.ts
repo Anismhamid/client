@@ -3,6 +3,7 @@
  */
 export interface Products {
 	_id?: string;
+	seller: {name: string; _id: string};
 	product_name: string;
 	category: string;
 	price: number;

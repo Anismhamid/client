@@ -6,7 +6,6 @@ import {
 	ThemeProvider,
 	createTheme,
 	PaletteMode,
-	IconButton,
 } from "@mui/material";
 import "./locales/i18n.tsx";
 import NavBar from "./components/settings/NavBar.tsx";

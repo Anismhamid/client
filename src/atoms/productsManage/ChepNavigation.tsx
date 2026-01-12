@@ -1,53 +1,53 @@
-import {useRef} from "react"; // Add useCallback
-import {Box, Chip, Typography} from "@mui/material";
-// import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import { Link, NavLink} from "react-router-dom";
+import {useCallback, useEffect, useRef, useState} from "react"; // Add useCallback
+import {Box, Chip, IconButton, Typography} from "@mui/material";
+import {ChevronLeft, ChevronRight} from "@mui/icons-material";
+import {Link, NavLink} from "react-router-dom";
 import {navbarCategoryLinks} from "../../helpers/navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
-	const containerRef = useRef<HTMLDivElement>(null); // Specify type for ref
-	// const [showControls, setShowControls] = useState(false);
-	// const [canScrollLeft, setCanScrollLeft] = useState(false);
-	// const [canScrollRight, setCanScrollRight] = useState(true);
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [showControls, setShowControls] = useState(false);
+	const [canScrollLeft, setCanScrollLeft] = useState(false);
+	const [canScrollRight, setCanScrollRight] = useState(true);
 	const {t} = useTranslation();
 
-	// const checkScroll = useCallback(() => {
-	// 	if (containerRef.current) {
-	// 		const {scrollLeft, scrollWidth, clientWidth} = containerRef.current;
-	// 		setCanScrollLeft(scrollLeft < 10);
-	// 		setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-	// 	}
-	// }, [setCanScrollLeft, setCanScrollRight]);
+	const checkScroll = useCallback(() => {
+		if (containerRef.current) {
+			const {scrollLeft, scrollWidth, clientWidth} = containerRef.current;
+			setCanScrollLeft(scrollLeft < 10);
+			setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
+		}
+	}, [setCanScrollLeft, setCanScrollRight]);
 
-	// const scroll = (direction: "left" | "right") => {
-	// 	const container = containerRef.current;
-	// 	if (!container) return;
-	// 	const scrollAmount = container.clientWidth * 0.8;
-	// 	const newScrollLeft =
-	// 		direction === "left"
-	// 			? container.scrollLeft - scrollAmount
-	// 			: container.scrollLeft + scrollAmount;
+	const scroll = (direction: "left" | "right") => {
+		const container = containerRef.current;
+		if (!container) return;
+		const scrollAmount = container.clientWidth * 0.8;
+		const newScrollLeft =
+			direction === "left"
+				? container.scrollLeft - scrollAmount
+				: container.scrollLeft + scrollAmount;
 
-	// 	container.scrollTo({
-	// 		left: newScrollLeft,
-	// 		behavior: "smooth",
-	// 	});
-	// 	setTimeout(checkScroll, 100);
-	// };
+		container.scrollTo({
+			left: newScrollLeft,
+			behavior: "smooth",
+		});
+		setTimeout(checkScroll, 100);
+	};
 
-	// useEffect(() => {
-	// 	const container = containerRef.current;
-	// 	if (container) {
-	// 		container.addEventListener("scroll", checkScroll);
-	// 		// checkScroll();
-	// 	}
-	// 	return () => {
-	// 		if (container) {
-	// 			container.removeEventListener("scroll", checkScroll);
-	// 		}
-	// 	};
-	// }, [containerRef.current, checkScroll]);
+	useEffect(() => {
+		const container = containerRef.current;
+		if (container) {
+			container.addEventListener("scroll", checkScroll);
+			// checkScroll();
+		}
+		return () => {
+			if (container) {
+				container.removeEventListener("scroll", checkScroll);
+			}
+		};
+	}, [containerRef.current, checkScroll]);
 
 	return (
 		<Box
@@ -57,41 +57,37 @@ const ChipNavigation = () => {
 				zIndex: 10,
 				backgroundColor: "white",
 				boxShadow: 9,
-				borderBottom: "1px solid black",
 				m: 1,
 				borderRadius: 5,
-				// "& .scroll-button": {
-				// 	opacity: 1,
-				// },
 			}}
-			// onMouseEnter={() => setShowControls(true)}
-			// onMouseLeave={() => setShowControls(false)}
+			onMouseEnter={() => setShowControls(true)}
+			onMouseLeave={() => setShowControls(false)}
 		>
 			{/* Left Scroll Button */}
-			{/* {showControls && canScrollLeft && (
+			{showControls && canScrollLeft && (
 				<IconButton
 					className='scroll-button'
 					onClick={() => scroll("left")}
 					sx={{
 						position: "absolute",
 						left: 0,
-						top: "50%",
 						transform: "translateY(-50%)",
+						top: "50%",
 						zIndex: 2,
 						backgroundColor: "background.paper",
 						color: "text.primary",
 						boxShadow: 2,
 						transition: "all 0.3s ease",
 						"&:hover": {
-							backgroundColor: "primary.main",
 							color: "white",
-							transform: "translateY(-50%) scale(1.1)",
+							backgroundColor: "warning.main",
+							transform: "translateY(-50%) scale(1.3)",
 						},
 					}}
 				>
 					<ChevronLeft />
 				</IconButton>
-			)} */}
+			)}
 
 			{/* Chip Container */}
 			<Box
@@ -109,14 +105,17 @@ const ChipNavigation = () => {
 
 					"&::-webkit-scrollbar": {display: "none"},
 					maskImage:
-						"linear-gradient(to right, transparent, white 50px, white 90%, transparent)",
+						"linear-gradient(to right, transparent, #ff0101 30px, #ffffff calc(100% - 30px), transparent)",
+					WebkitMaskImage:
+						"linear-gradient(to right, transparent, #ff1010 30px, #ffffff calc(100% - 30px), transparent)",
 				}}
 			>
-				{" "}
 				<Link
 					to='/'
 					style={{
 						textDecoration: "none",
+						flexShrink: 0,
+						marginLeft: "auto",
 					}}
 				>
 					<Typography
@@ -126,10 +125,18 @@ const ChipNavigation = () => {
 						sx={{
 							fontWeight: "bold",
 							ml: 1,
-							fontFamily: "Hebbo",
+							fontFamily: "'Noto Sans Arabic', 'Hebbo', sans-serif",
+							whiteSpace: "nowrap",
+							direction: "rtl",
+							textAlign: "right",
+							"&:hover": {
+								color: "warning.main",
+								textShadow: "1px 1px 5px rgba(0, 0, 0, 0.5)",
+							},
+							transition: "all 0.3s ease",
 						}}
 					>
-						الـسـخـنـيـني
+						الرئيسـيه
 					</Typography>
 				</Link>
 				{navbarCategoryLinks.map((link) => (
@@ -162,7 +169,7 @@ const ChipNavigation = () => {
 			</Box>
 
 			{/* Right Scroll Button */}
-			{/* {showControls && canScrollRight && (
+			{showControls && canScrollRight && (
 				<IconButton
 					className='scroll-button'
 					onClick={() => scroll("right")}
@@ -177,14 +184,15 @@ const ChipNavigation = () => {
 						boxShadow: 2,
 						transition: "all 0.3s ease",
 						"&:hover": {
-							backgroundColor: "primary.main",
 							color: "white",
+							backgroundColor: "warning.main",
+							transform: "translateY(-50%) scale(1.3)",
 						},
 					}}
 				>
 					<ChevronRight />
 				</IconButton>
-			)} */}
+			)}
 		</Box>
 	);
 };

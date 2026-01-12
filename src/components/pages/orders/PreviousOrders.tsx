@@ -52,7 +52,9 @@ const PreviousOrders: FunctionComponent<PreviousOrdersProps> = ({
 								<Box className='my-1'>
 									<strong className=''>{t("UserId")}</strong>
 									<span className='fw-bold rounded d-block text-danger'>
-										{order.userId}
+										{typeof order.user === "string"
+											? order.user
+											: (order.user?._id ?? "غير متوفر")}
 									</span>
 								</Box>
 								<Box>

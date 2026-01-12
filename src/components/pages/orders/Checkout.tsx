@@ -173,7 +173,6 @@ const Checkout: FunctionComponent<CheckoutProps> = () => {
 		);
 
 		const newOrder = {
-			userId: auth._id,
 			products: [...itemsToOrder],
 			payment: value.payment,
 			cashOnDelivery: value.cashOnDelivery,

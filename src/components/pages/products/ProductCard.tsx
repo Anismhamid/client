@@ -64,7 +64,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 	}) => {
 		// descriptive alt text for the image
 		const generateImageAlt = (productName: string, category: string) => {
-			return `${productName} طازج من سوق السخنيني - ${category} عالي الجودة`;
+			return `${productName} منتج من بيع وشراء - ${category} عالي الجودة`;
 		};
 
 		const jsonLdData = generateSingleProductJsonLd(product);
