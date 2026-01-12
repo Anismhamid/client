@@ -53,8 +53,8 @@ export const generateSingleProductJsonLd = (product: Products) => {
 
 			seller: {
 				"@type": "Person",
-				name: product.seller.name || "مستخدم مسجل",
-				url: `https://client-qqq1.vercel.app/user/${product.seller._id}`,
+				name: product.seller?.name || "مستخدم مسجل",
+				url: `https://client-qqq1.vercel.app/user/${product.seller?._id}`,
 			},
 		},
 	};
@@ -111,8 +111,8 @@ export const generateDiscountsJsonLd = (products: Products[]) => ({
 						: "https://schema.org/OutOfStock",
 				seller: {
 					"@type": "Person",
-					name: product.seller.name || "مستخدم مسجل",
-					url: `https://client-qqq1.vercel.app/user/${product.seller._id}`,
+					name: product.seller?.name || "مستخدم مسجل",
+					url: `https://client-qqq1.vercel.app/user/${product.seller?._id}`,
 				},
 			},
 		};
