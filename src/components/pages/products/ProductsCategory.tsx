@@ -27,6 +27,7 @@ import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
+import { Helmet } from "react-helmet";
 
 interface ProductCategoryProps {
 	category: string;
@@ -235,6 +236,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	return (
 		<>
 			<JsonLd data={generateCategoryJsonLd(category, products)} />
+			<Helmet>
+				<script type='application/ld+json'>
+					{JSON.stringify(generateCategoryJsonLd("سيارات", products))}
+				</script>
+			</Helmet>
 			<Box component='main'>
 				<Box
 					sx={{

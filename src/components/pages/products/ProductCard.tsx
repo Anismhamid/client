@@ -163,6 +163,12 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							}}
 						/>
 					)}
+					<Link
+						to={`/profile/${product.seller?._id}`}
+						style={{textAlign: "center"}}
+					>
+						עבור לדף מוכר - {product.seller?.name}
+					</Link>
 				</Box>
 				<CardContent sx={{flexGrow: 1}}>
 					<Typography

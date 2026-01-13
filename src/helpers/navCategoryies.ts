@@ -102,4 +102,9 @@ export const navbarCategoryLinks = [
 		path: productsPathes.cigarettes,
 		icon: fontAwesomeIcon.cigarettes,
 	},
+	{
+		labelKey: "categories.cars.label",
+		path: productsPathes.cars,
+		icon: fontAwesomeIcon.cars,
+	},
 ];

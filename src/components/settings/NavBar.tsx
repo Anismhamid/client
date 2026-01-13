@@ -1,5 +1,5 @@
 import {FunctionComponent, memo, useCallback, useEffect, useState} from "react";
-import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
@@ -10,7 +10,7 @@ import {
 	Badge,
 	Box,
 	Button,
-	// Chip,
+	Chip,
 	Menu,
 	MenuItem,
 	Stack,
@@ -74,7 +74,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 	}, [pathname]);
 
 	const logout = useCallback(() => {
-		if (socket.connected) {
+		if (socket.connected && auth._id) {
 			socket.disconnect();
 			patchUserStatus(auth._id, false).catch((error) => {
 				console.log(error);
@@ -107,7 +107,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						padding: "5px 5px",
 					}}
 				>
-					{auth?.role !== "delivery" && (
+					{auth?.role != RoleType.Delivery && (
 						<Tooltip title='الصفحة الرئيسية - سوق السخنيني' arrow>
 							<li className='nav-item mx-3'>
 								<NavLink
@@ -334,7 +334,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							isLoggedIn && <AccountMenu logout={logout} />
 						)}
 					</li>
-					{/* <Link
+					<Link
 						target='_blank'
 						rel='noopener noreferrer'
 						to='https://anismhamid.github.io/shok-habena-server-documentation/'
@@ -350,9 +350,9 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 								color: "#5B9601",
 							}}
 							// color='warning'
-							label='API documentation'
+							label='docs'
 						/>
-					</Link> */}
+					</Link>
 				</Box>
 			</AppBar>
 		</>

@@ -19,13 +19,17 @@ import {
 	useTheme,
 	useMediaQuery,
 } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ShareIcon from "@mui/icons-material/Share";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import HomeIcon from "@mui/icons-material/Home";
-import StoreIcon from "@mui/icons-material/Store";
+import {
+	ArrowBack as ArrowBackIcon,
+	ShoppingCart as ShoppingCartIcon,
+	Share as ShareIcon,
+	Favorite as FavoriteIcon,
+	FavoriteBorder as FavoriteBorderIcon,
+	Home as HomeIcon,
+	Store as StoreIcon,
+	AddSharp as AddSharpIcon,
+	RemoveSharp as RemoveSharpIcon,
+} from "@mui/icons-material";
 import {path, productsPathes} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
@@ -33,10 +37,10 @@ import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
 import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
-import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
+import {Helmet} from "react-helmet";
+import {generateSingleVehicleJsonLd} from "../../../../utils/vehiclesJsonLd";
 
 interface ProductDetailsProps {}
 
@@ -55,6 +59,46 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [liked, setLiked] = useState(false);
 
+	// ----- Category Labels -----
+	const categoryLabels: Record<string, string> = {
+		Fruit: "فواكه",
+		Vegetable: "خضار",
+		Fish: "أسماك",
+		Dairy: "ألبان",
+		Meat: "لحوم",
+		Spices: "بهارات",
+		Bakery: "مخبوزات",
+		Beverages: "مشروبات",
+		Frozen: "مجمدات",
+		Snacks: "وجبات خفيفة",
+		Baby: "أطفال",
+		Alcohol: "كحول",
+		Cleaning: "تنظيف",
+		PastaRice: "مكرونة وأرز",
+		House: "منزل",
+		Health: "صحة",
+		Watches: "ساعات",
+		WomenClothes: "ملابس نسائية",
+		WomenBags: "حقائب نسائية",
+		Cigarettes: "سجائر",
+		Car: "سيارات",
+		Motorcycle: "دراجات نارية",
+		Truck: "شاحنات",
+		Bike: "دراجات هوائية",
+		ElectricVehicle: "مركبات كهربائية",
+	};
+
+	const categoryPathMap: Record<string, string> = {
+		Fruit: productsPathes.fruits,
+		Vegetable: productsPathes.vegetable,
+		Car: productsPathes.cars,
+		Motorcycle: productsPathes.motorcycles,
+		Truck: productsPathes.trucks,
+		Bike: productsPathes.bikes,
+		ElectricVehicle: productsPathes.electricVehicles,
+	};
+
+	// ----- Handle Add to Cart -----
 	const handleAdd = async (
 		product_name: string,
 		quantity: {[key: string]: number},
@@ -63,53 +107,54 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 		sale: boolean,
 		discount: number,
 	) => {
-		const productQuantity = quantity[product_name] || 1; // Access the quantity of the specific product
+		const productQuantity = quantity[product_name] || 1;
 		if (!isLoggedIn) {
 			navigate(path.Login);
 			return;
-		} else {
-			setLoadingAddToCart(product_name);
-			try {
-				await handleAddToCart(
-					setQuantities,
-					product_name,
-					productQuantity || 1,
-					price - (price * discount) / 100,
-					product_image,
-					sale,
-					discount,
-				);
-				setQuantities((prev) => ({...prev, [product_name]: 1}));
-			} catch (error) {
-				showError("حدث خطأ أثناء إضافة منتج إلى السلة");
-			} finally {
-				setLoadingAddToCart(null);
-			}
+		}
+
+		setLoadingAddToCart(product_name);
+		try {
+			await handleAddToCart(
+				setQuantities,
+				product_name,
+				productQuantity,
+				price - (price * discount) / 100,
+				product_image,
+				sale,
+				discount,
+			);
+			setQuantities((prev) => ({...prev, [product_name]: 1}));
+			showSuccess("تمت إضافة المنتج إلى السلة بنجاح");
+		} catch (error) {
+			showError("حدث خطأ أثناء إضافة المنتج إلى السلة");
+		} finally {
+			setLoadingAddToCart(null);
 		}
 	};
 
-const handleLike = () => {
-	const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-	if (liked) {
-		const newFavorites = favorites.filter((p: string) => p !== productName);
-		localStorage.setItem("favorites", JSON.stringify(newFavorites));
-		setLiked(false);
-	} else {
-		favorites.push(productName as string);
-		localStorage.setItem("favorites", JSON.stringify(favorites));
-		setLiked(true);
-	}
-};
+	// ----- Handle Like -----
+	const handleLike = () => {
+		const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+		if (liked) {
+			const newFavorites = favorites.filter((p: string) => p !== productName);
+			localStorage.setItem("favorites", JSON.stringify(newFavorites));
+			setLiked(false);
+		} else {
+			favorites.push(productName as string);
+			localStorage.setItem("favorites", JSON.stringify(favorites));
+			setLiked(true);
+		}
+	};
 
+	useEffect(() => {
+		const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+		if (favorites.includes(productName as string)) {
+			setLiked(true);
+		}
+	}, [productName]);
 
-useEffect(() => {
-	const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-	if (favorites.includes(productName as string)) {
-		setLiked(true);
-	}
-}, [productName]);
-
-
+	// ----- Fetch Product -----
 	useEffect(() => {
 		if (productName) {
 			const decodedName = decodeURIComponent(productName);
@@ -145,6 +190,7 @@ useEffect(() => {
 		);
 
 	if (!productName) navigate(-1);
+
 	if (error)
 		return (
 			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
@@ -166,12 +212,28 @@ useEffect(() => {
 	const isOutOfStock = product.quantity_in_stock === 0;
 	const productQuantity = quantities[product.product_name] || 1;
 
+	// ----- JSON-LD Vehicles -----
+	const vehicleTypes = ["Car", "Motorcycle", "Truck", "Bike", "ElectricVehicle"];
+	const vehicleType = vehicleTypes.includes(product.category)
+		? product.category
+		: undefined;
+
 	return (
 		<>
 			<JsonLd data={generateSingleProductJsonLd(product)} />
+			{vehicleType && (
+				<Helmet>
+					<script type='application/ld+json'>
+						{JSON.stringify(
+							generateSingleVehicleJsonLd(product,"Bike"),
+						)}
+					</script>
+				</Helmet>
+			)}
+
 			<Box component={"main"}>
 				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
-					{/* Breadcrumbs Navigation */}
+					{/* Breadcrumbs */}
 					<Box sx={{mb: 4}}>
 						<Breadcrumbs aria-label='breadcrumb' separator='›'>
 							<Button
@@ -184,25 +246,28 @@ useEffect(() => {
 							>
 								{t("home")}
 							</Button>
+
 							<Button
 								color='inherit'
 								onClick={() => {
-									product.category === "Fruit"
-										? navigate(productsPathes.fruits)
-										: navigate(productsPathes.vegetable);
+									const catPath =
+										categoryPathMap[product.category] ||
+										productsPathes.fruits;
+									navigate(catPath);
 								}}
 								sx={{display: "flex", alignItems: "center"}}
 							>
 								<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-								{/* {t("products")} */}
-								{product.category === "Fruit" ? "فواكه" : "خضار"}
+								{categoryLabels[product.category] || "منتجات"}
 							</Button>
+
 							<Typography p={3} color='info'>
 								{product.product_name}
 							</Typography>
 						</Breadcrumbs>
 					</Box>
 
+					{/* Main Grid */}
 					<Grid container spacing={4}>
 						{/* Product Image */}
 						<Grid size={{xs: 12, md: 6}}>
@@ -214,7 +279,6 @@ useEffect(() => {
 									height: "100%",
 									display: "flex",
 									flexDirection: "column",
-									// backgroundColor: "#FFFFFF",
 								}}
 							>
 								{product.image_url && (
@@ -255,21 +319,20 @@ useEffect(() => {
 											if (navigator.share) {
 												navigator
 													.share({
-														title: "منتج ال ${productName} رائع",
-														text: `شوف  ${productName} المميز!`,
+														title: `منتج ${product.product_name} رائع`,
+														text: `شوف ${product.product_name} المميز!`,
 														url: window.location.href,
 													})
 													.then(() =>
 														showSuccess("تمت المشاركة بنجاح"),
 													)
-													.catch((_) =>
+													.catch(() =>
 														showError("فشل المشاركة"),
 													);
-											} else {
+											} else
 												showError(
 													"المشاركة غير مدعومة في هذا المتصفح",
 												);
-											}
 										}}
 									>
 										<ShareIcon />
@@ -298,7 +361,7 @@ useEffect(() => {
 
 								{product.category && (
 									<Chip
-										label={product.category}
+										label={categoryLabels[product.category]}
 										color='secondary'
 										sx={{mb: 3, alignSelf: "flex-start"}}
 									/>
@@ -306,7 +369,6 @@ useEffect(() => {
 
 								<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
 									<Rating
-										// dir='ltr'
 										value={rating}
 										precision={0.5}
 										onChange={(_, newValue) => setRating(newValue)}
@@ -348,6 +410,8 @@ useEffect(() => {
 										</Typography>
 									</>
 								)}
+
+								{/* Quantity Controls */}
 								<Box role='group' aria-label='إدارة الكمية'>
 									<Box
 										sx={{
@@ -376,7 +440,6 @@ useEffect(() => {
 											startIcon={<RemoveSharpIcon />}
 											aria-label='تقليل الكمية'
 										/>
-
 										<Typography
 											aria-live='polite'
 											fontSize={30}
@@ -384,7 +447,6 @@ useEffect(() => {
 										>
 											{productQuantity}
 										</Typography>
-
 										<Button
 											size='small'
 											color='success'
@@ -401,6 +463,7 @@ useEffect(() => {
 										/>
 									</Box>
 								</Box>
+
 								<Box sx={{mt: "auto", pt: 3}}>
 									<Grid container spacing={2}>
 										<Grid size={{xs: 12, md: 6}}>
@@ -460,7 +523,7 @@ useEffect(() => {
 						</Grid>
 					</Grid>
 
-					{/* Additional Information Section */}
+					{/* Additional Info */}
 					<Box sx={{mt: 8}}>
 						<Typography
 							variant='h5'
@@ -470,72 +533,45 @@ useEffect(() => {
 							مزيد من التفاصيل
 						</Typography>
 						<Grid container spacing={4}>
-							<Grid size={{xs: 12, md: 4}}>
-								<Card
-									sx={{
-										p: 3,
-										height: "100%",
-										borderRadius: 2,
-										boxShadow: theme.shadows[2],
-									}}
-								>
-									<Typography
-										variant='h6'
-										gutterBottom
-										sx={{fontWeight: 600}}
+							{[
+								{
+									title: "توصيل",
+									text: "توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه, إمكانية الإرجاع خلال 24 ساعة",
+								},
+								{
+									title: "دعم",
+									text: "فريق الدعم لدينا متاح على مدار الساعة طوال أيام الأسبوع للمساعدة في أي أسئلة أو مشكلات",
+								},
+								{
+									title: "جودة وانتقاء",
+									text: "جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع المحلية يومياً",
+								},
+							].map((item, idx) => (
+								<Grid key={idx} size={{xs: 12, md: 4}}>
+									<Card
+										sx={{
+											p: 3,
+											height: "100%",
+											borderRadius: 2,
+											boxShadow: theme.shadows[2],
+										}}
 									>
-										توصيل
-									</Typography>
-									<Typography variant='body2' color='text.secondary'>
-										توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه,
-										إمكانية الإرجاع خلال 24 ساعة
-									</Typography>
-								</Card>
-							</Grid>
-							<Grid size={{xs: 12, md: 4}}>
-								<Card
-									sx={{
-										p: 3,
-										height: "100%",
-										borderRadius: 2,
-										boxShadow: theme.shadows[2],
-									}}
-								>
-									<Typography
-										variant='h6'
-										gutterBottom
-										sx={{fontWeight: 600}}
-									>
-										دعم
-									</Typography>
-									<Typography variant='body2' color='text.secondary'>
-										فريق الدعم لدينا متاح على مدار الساعة طوال أيام
-										الأسبوع للمساعدة في أي أسئلة أو مشكلات
-									</Typography>
-								</Card>
-							</Grid>
-							<Grid size={{xs: 12, md: 4}}>
-								<Card
-									sx={{
-										p: 3,
-										height: "100%",
-										borderRadius: 2,
-										boxShadow: theme.shadows[2],
-									}}
-								>
-									<Typography
-										variant='h6'
-										gutterBottom
-										sx={{fontWeight: 600}}
-									>
-										جودة وانتقاء
-									</Typography>
-									<Typography variant='body2' color='text.secondary'>
-										جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع
-										المحلية يومياً
-									</Typography>
-								</Card>
-							</Grid>
+										<Typography
+											variant='h6'
+											gutterBottom
+											sx={{fontWeight: 600}}
+										>
+											{item.title}
+										</Typography>
+										<Typography
+											variant='body2'
+											color='text.secondary'
+										>
+											{item.text}
+										</Typography>
+									</Card>
+								</Grid>
+							))}
 						</Grid>
 					</Box>
 				</Container>

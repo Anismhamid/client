@@ -176,6 +176,31 @@
 			"label": "Fish",
 			"heading": "Our Fish – Fresh, High-Quality, and Varied!",
 			"description": "Here you can find a wide range of freshly caught fish by our local fishermen. We promise high quality and excellent service so you can enjoy every fish easily."
+		},
+		"cars": {
+			"label": "Cars",
+			"heading": "Cars – New & Used Cars",
+			"description": "Discover a wide range of premium cars. Whether you prefer classic or other options, find them here."
+		},
+		"motorcycles": {
+			"label": "Motorcycles",
+			"heading": "Motorcycles – New & Used",
+			"description": "Browse the best motorcycles, whether new or used, with detailed info for each model."
+		},
+		"trucks": {
+			"label": "Trucks",
+			"heading": "Trucks – Large & Small",
+			"description": "Explore a variety of trucks for commercial or personal use, with multiple options."
+		},
+		"bikes": {
+			"label": "Bicycles",
+			"heading": "Bicycles – For All Ages",
+			"description": "Discover the perfect bicycles for outings or sports, in all sizes and brands."
+		},
+		"electricVehicles": {
+			"label": "Electric Vehicles",
+			"heading": "Electric Vehicles – Eco-Friendly Cars",
+			"description": "Learn about the latest electric vehicles with details on battery, range, and performance."
 		}
 	},
 	"seo": {

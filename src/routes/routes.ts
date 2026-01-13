@@ -1,4 +1,12 @@
 export const productsPathes = {
+	// Vehicles
+	cars: "/category/cars",
+	motorcycles: "/category/motorcycles",
+	bikes: "/category/bikes",
+	trucks: "/category/trucks",
+	electricVehicles: "/category/electric-vehicles",
+
+	// Other products (optional)
 	fruits: "/category/fruit",
 	vegetable: "/category/vegetable",
 	fish: "/category/fish",
@@ -19,34 +27,53 @@ export const productsPathes = {
 	womenClothes: "/category/women-clothes",
 	womenBags: "/category/women-bags",
 	cigarettes: "/category/cigarettes",
+
+	// Product details
 	productDetails: "/product-details",
 	// will add other products here if nedded...
 };
 
 export enum path {
+	// Main
 	Home = "/",
 	Login = "/login",
+	Register = "/register",
 	Profile = "/profile",
 	CustomerProfile = "/customer/profile",
-	Register = "/register",
-	Messages = "/messages",
-	WebSiteAdmins = "/admins",
 	UsersManagement = "/usersManagement",
-	DeliveryPage = "/delivery-page",
+	WebSiteAdmins = "/admins",
+	Messages = "/messages",
+	DeliveryPage = "/delivery",
+
+	// Vehicles Pages
+	Cars = "/category/cars",
+	Motorcycles = "/category/motorcycles",
+	Bikes = "/category/bikes",
+	Trucks = "/category/trucks",
+	ElectricVehicles = "/category/electric-vehicles",
+
+	// Other products (optional)
 	Fruits = "/fruits",
-	AdminSettings = "/adminSettings",
 	Vegetable = "/vegetable",
-	AllTheOrders = "/all-orders",
-	CompleteOrders = "/complete-orders",
-	PrivacyAndPolicy = "/Privacy-and-policy",
-	TermOfUse = "/term-of-use",
-	CompleteProfile = "/completeProfile",
+	AdminSettings = "/adminSettings",
+
+	// Orders & Checkout
 	MyOrders = "/all-orders",
 	OrderDetails = "/orderDetails/:orderNumber",
 	Checkout = "/checkout",
 	Receipt = "/receipt",
+	CompleteOrders = "/complete-orders",
+	AllTheOrders = "/all-orders",
+
+	// Other Pages
+	PrivacyAndPolicy = "/Privacy-and-policy",
+	CompleteProfile = "/completeProfile",
+	TermOfUse = "/term-of-use",
 	Contact = "/contact",
 	About = "/about",
 	Cart = "/cart",
+
+	// Catch-all
 	Png = "*",
 }
+

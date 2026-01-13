@@ -19,4 +19,5 @@ export const productCategories = [
 	{id: "Women-clothes", label: "ביגוד נשים"},
 	{id: "Women-bags", label: "תיקים לנשים"},
 	{id: "Cigarettes", label: "סיגריות"},
+	{id: "Cars", label: "מכוניות"},
 ];

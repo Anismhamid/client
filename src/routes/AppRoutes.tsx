@@ -37,7 +37,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Home} element={<Home />} />
 			<Route path={path.Login} element={<Login />} />
 			<Route path={path.Profile} element={<Profile />} />
-			<Route path={`${path.CustomerProfile}/:id`} element={<Profile />} />
+			<Route path={`${path.Profile}/:id`} element={<Profile />} />
 
 			<Route path={path.Register} element={<Register />} />
 			<Route path={path.Messages} element={<Messages />} />

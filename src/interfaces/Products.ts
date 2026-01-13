@@ -6,6 +6,11 @@ export interface Products {
 	seller?: {name?: string; _id?: string};
 	product_name: string;
 	category: string;
+	brand?: string;
+	year?: string;
+	fuel?: string;
+	mileage?: number;
+	color?: string;
 	price: number;
 	quantity_in_stock: number;
 	description: string;
@@ -17,6 +22,7 @@ export interface Products {
 }
 
 export const initialProductValue = {
+	seller: {name: "", _id: ""},
 	product_name: "",
 	category: "",
 	price: 0,

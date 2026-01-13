@@ -215,21 +215,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 	return (
 		<>
 			<Helmet>
-				<title>سوق السخنيني</title>
+				<title>بيع وشراء</title>
 				<meta
 					name='description'
 					content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة وعالية الجودة وبأسعار مناسبة لكل عائله'
 				/>
 			</Helmet>
-			{/* <div className='hero'>
-			</div> */}
 
 			<Box dir={diriction} component='main'>
 				{" "}
 				<div className=' text-center  p-5'>
 					<h1>الصفحة الرئيسية</h1>
 					<h2 className=' lead mt-4'>
-						تجربة تسوق لا مثيل لها مع المنتجات الطازجة والحرف اليدوية
+						اكتشف أفضل المنتجات من جميع الفئات مع تجربة تسوق ممتعة وسهلة
 					</h2>
 				</div>
 				<hr className=' w-75 m-auto border border-3 rounded-5 border-5 border-dark-subtle mt-5' />
@@ -274,17 +272,47 @@ const Home: FunctionComponent<HomeProps> = () => {
 							variant='h5'
 							gutterBottom
 						>
-							جميع منتجاتنا مختارة بعناية لنقدم لكم تجربة تسوق مريحة وعالية
-							الجودة وبأسعار معقولة. ستجدون هنا تشكيلة واسعة من المنتجات
-							الطازجة والموثوقة وبأسعار مميزة. لأي استفسارات حول المنتجات أو
-							العروض الترويجية أو كيفية الطلب، تواصلوا معنا! استمتعوا
-							بتسوقكم!
+							جميع المنتجات لتلبية جميع احتياجاتكم. ستجدون هنا تشكيلة واسعة
+							من المنتجات الجديدة والمستعملة، من الإلكترونيات إلى الملابس،
+							ومن الأدوات المنزلية إلى الألعاب. لأي استفسارات حول المنتجات
+							أو العروض أو كيفية الطلب، تواصلوا معنا واستمتعوا بتجربة تسوق
+							مميزة!
 						</Typography>
 					</Box>
-
+					{/* ازرار التصفيه */}
 					<Button
-						variant={searchQuery === "" ? "outlined" : "contained"}
-						color='primary'
+						variant={"contained"}
+						color={searchQuery === "سيارات" ? "error" : "primary"}
+						sx={{
+							borderRadius: 5,
+							m: 1,
+							fontSize: "1rem",
+							fontWeight: "bold",
+						}}
+						onClick={() => {
+							setSearchQuery("سيارات");
+						}}
+					>
+						سيارات
+					</Button>
+					<Button
+						variant={"contained"}
+						color={searchQuery === "اعمال يدويه" ? "error" : "primary"}
+						sx={{
+							borderRadius: 5,
+							m: 1,
+							fontSize: "1rem",
+							fontWeight: "bold",
+						}}
+						onClick={() => {
+							setSearchQuery("اعمال يدويه");
+						}}
+					>
+						اعمال يدويه
+					</Button>
+					<Button
+						variant={"contained"}
+						color={searchQuery === "عروض" ? "error" : "primary"}
 						sx={{
 							borderRadius: 5,
 							m: 1,
@@ -295,8 +323,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 							setSearchQuery("عروض");
 						}}
 					>
-						عروض
+						عروض اليوم
 					</Button>
+
 					<Box className='container pb-5 home-row'>
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (

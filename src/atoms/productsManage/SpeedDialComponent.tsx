@@ -1,7 +1,7 @@
 import {Fab, SpeedDial, SpeedDialAction, Zoom} from "@mui/material";
 import {FunctionComponent, useEffect, useState} from "react";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
-import AddProdutModal from "./AddProdutModal";
+import AddProdutModal from "./addProduct/AddProdutModal";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {useUser} from "../../context/useUSer";
 import RoleType from "../../interfaces/UserType";
@@ -9,7 +9,7 @@ import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 
 interface SpeedDialComponentProps {}
 

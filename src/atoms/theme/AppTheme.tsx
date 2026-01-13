@@ -5,16 +5,13 @@ import {
 	FormGroup,
 	Box,
 	Typography,
-	Button,
 } from "@mui/material";
 import {styled} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
-import {path} from "../../routes/routes";
-import {useUser} from "../../context/useUSer";
-import {Dashboard} from "@mui/icons-material";
+
 
 interface ThemeProps {
 	mode: PaletteMode;
@@ -78,10 +75,7 @@ const MaterialUISwitch = styled(Switch)(({theme}) => ({
 }));
 
 const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
-	const {auth} = useUser();
 
-	const canView = auth?.role === "Admin" || auth?.role === "Moderator";
-	const navigate = useNavigate();
 	const handleThemeChange = (
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
@@ -114,7 +108,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					/>
 				</FormGroup>
 				<LanguageSwitcher />
-				<img style={{width: 50, padding: 0}} src='/myLogo2.png' alt='' />
+				<img style={{width: 150, padding: 0}} src='/myLogo2.png' alt='' />
 				<Link
 					to='/'
 					style={{
@@ -122,16 +116,16 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					}}
 				>
 					<Typography
-						variant='h6'
+						variant='h1'
 						color='error'
 						sx={{
 							fontWeight: "bold",
 							ml: 1,
-							fontSize: "2rem",
+							fontSize: "1.5rem",
 							fontFamily: "Hebbo",
 						}}
 					>
-						| سـوق الـسـخـنـيـني
+						بيـع وشــراء
 					</Typography>
 				</Link>
 			</Box>
@@ -143,16 +137,16 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				}}
 			>
 				<Typography
+					component='h2'
 					variant='h5'
-					color='error'
-					sx={{
-						fontFamily: "Hebbo",
-						color: "white",
-						p: 1,
-						textAlign: "center",
-					}}
+					color='white'
+					textAlign='center'
+					p={1}
 				>
-					الـسـخـنـيـني للخـضـار وفـواكـة
+					بيـع وشــراء | منصة بيع وشراء بين المستخدمين
+				</Typography>
+				<Typography component='h3' variant='h6' color='#0C6EFD'>
+					اشترِ وبِع منتجات مباشرة مع مستخدمين آخرين بكل سهولة وأمان
 				</Typography>
 				<Box
 					display={"flex"}
@@ -160,7 +154,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					gap={1}
 					textAlign={"center"}
 				>
-					<Typography component={"p"} variant='h6' color='#0C6EFD'>
+					<Typography component={"p"} variant='h6' color='#e4e4e4'>
 						التوصيل برعاية
 					</Typography>
 					_
@@ -168,23 +162,6 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						One minute delivery
 					</Typography>
 				</Box>
-				{canView && (
-					<Button
-						sx={{
-							m: 1,
-							"& .MuiButton-startIcon": {
-								mx: 1,
-							},
-							fontSize: 17,
-						}}
-						variant='outlined'
-						color='warning'
-						startIcon={<Dashboard />}
-						onClick={() => navigate(path.WebSiteAdmins)}
-					>
-						إحصائيات المتجر
-					</Button>
-				)}
 			</Box>
 		</>
 	);
