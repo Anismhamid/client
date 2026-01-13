@@ -163,13 +163,17 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							}}
 						/>
 					)}
-					<Link
-						to={`/profile/${product.seller?._id}`}
-						style={{textAlign: "center"}}
-					>
-						עבור לדף מוכר - {product.seller?.name}
-					</Link>
 				</Box>
+				{product.seller && (
+					<Box textAlign={"center"} m={1}>
+						<Link
+							to={`/users/customer/${product.seller.slug}`}
+							aria-label={`الانتقال إلى صفحة البائع ${product.seller.slug}`}
+						>
+							@{product.seller.slug}
+						</Link>
+					</Box>
+				)}
 				<CardContent sx={{flexGrow: 1}}>
 					<Typography
 						variant='h6'

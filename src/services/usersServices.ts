@@ -268,12 +268,11 @@ export const patchUserStatus = async (userId: string, status: boolean) => {
 	}
 };
 
-// export const getIPAddress = async () => {
-// 	try {
-// 		const res = await axios.get(`${api}/user/ip`);
-// 		return res.data.ip;
-// 	} catch (err) {
-// 		console.error("Error fetching IP:", err);
-
-// 	}
-// };
+export const getCustomerProfileBySlug = async (slug: string) => {
+	try {
+		const res = await axios.get(`${api}/customer/${slug}`);
+		return res.data;
+	} catch (err) {
+		console.error("Error fetching customer profile by slug:", err);
+	}
+};

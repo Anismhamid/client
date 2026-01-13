@@ -1,4 +1,4 @@
-import {FunctionComponent, useCallback, useEffect, useRef, useState} from "react";
+import {FunctionComponent, useEffect, useRef, useState} from "react";
 import {deleteUserById, getUserById} from "../../services/usersServices";
 import {useNavigate, useParams} from "react-router-dom";
 import {
@@ -174,7 +174,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						/>
 					)}
 				</div>
-
 				{/* زر تحرير */}
 				<Button
 					variant='contained'

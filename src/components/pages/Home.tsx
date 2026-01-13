@@ -291,6 +291,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 						}}
 						onClick={() => {
 							setSearchQuery("سيارات");
+							navigate(path.Cars)
 						}}
 					>
 						سيارات

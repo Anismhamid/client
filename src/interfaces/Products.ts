@@ -2,8 +2,9 @@
  * Products interface
  */
 export interface Products {
+  isNew?: boolean;
 	_id?: string;
-	seller?: {name?: string; _id?: string};
+	seller?: {name?: string; slug?:string };
 	product_name: string;
 	category: string;
 	brand?: string;
@@ -22,7 +23,7 @@ export interface Products {
 }
 
 export const initialProductValue = {
-	seller: {name: "", _id: ""},
+	seller: {name: "", slug: ""},
 	product_name: "",
 	category: "",
 	price: 0,

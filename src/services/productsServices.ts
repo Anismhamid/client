@@ -128,3 +128,13 @@ export const getProductsByCategory = async (category: string) => {
 		return [];
 	}
 };
+
+export const getCustomerProfileProductsBySlug = async (slug: string) => {
+	try {
+		const res = await axios.get(`${api}/products/customer/${slug}`);
+		return res.data;
+	} catch (err) {
+		console.error("Error fetching customer products by slug:", err);
+		throw err;
+	}
+};

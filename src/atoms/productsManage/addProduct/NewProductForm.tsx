@@ -4,7 +4,7 @@ import {FunctionComponent} from "react";
 import {useTranslation} from "react-i18next";
 import {productCategories} from "../../../interfaces/productsCategoeis";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
-import {CarColor, colors} from "../../colorsSettingr/carsColors";
+import {CarColor, colors} from "../../colorsSettings/carsColors";
 import {Products} from "../../../interfaces/Products";
 
 interface NewProductFormProps {

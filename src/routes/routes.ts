@@ -39,7 +39,7 @@ export enum path {
 	Login = "/login",
 	Register = "/register",
 	Profile = "/profile",
-	CustomerProfile = "/customer/profile",
+	CustomerProfile = "/users/customer/:slug",
 	UsersManagement = "/usersManagement",
 	WebSiteAdmins = "/admins",
 	Messages = "/messages",

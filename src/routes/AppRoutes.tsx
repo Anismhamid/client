@@ -26,6 +26,7 @@ import Messages from "../components/pages/Messages";
 import DeliveryPage from "../components/pages/DeliveryPage";
 import CompleteOrdersPage from "../components/pages/orders/CompleteOrdersPage";
 import WebSiteAdmins from "../components/settings/WebSiteAdmins";
+import CustomerProfile from "../components/pages/CustomerProfile";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -37,6 +38,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Home} element={<Home />} />
 			<Route path={path.Login} element={<Login />} />
 			<Route path={path.Profile} element={<Profile />} />
+			<Route path={path.CustomerProfile} element={<CustomerProfile />} />
 			<Route path={`${path.Profile}/:id`} element={<Profile />} />
 
 			<Route path={path.Register} element={<Register />} />

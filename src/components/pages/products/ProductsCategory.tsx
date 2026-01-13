@@ -27,7 +27,7 @@ import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import { Helmet } from "react-helmet";
+import {Helmet} from "react-helmet";
 
 interface ProductCategoryProps {
 	category: string;
@@ -56,9 +56,31 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 	const observerRef = useRef<IntersectionObserver | null>(null);
 
+	const {t} = useTranslation();
+
+	// Update product
+	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
+	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
+
+	const refreshAfterCange = () => setRefresh(!refresh);
+	const navigate = useNavigate();
+
+	// DeleteModal
+	const openDeleteModal = (name: string) => {
+		setProductToDelete(name);
+		setShowDeleteModal(true);
+	};
+	const closeDeleteModal = () => setShowDeleteModal(false);
+
+	// load products automatic
+	const handleShowMore = () => {
+		const nextVisibleCount = visibleProducts.length + 16;
+		const newVisibleProducts = products.slice(0, nextVisibleCount);
+		setVisibleProducts(newVisibleProducts);
+	};
 	const lastProductRef = useCallback(
 		(node: HTMLDivElement | null) => {
-			if (loading) return; // ما نراقب إذا في تحميل
+			if (loading) return;
 
 			if (observerRef.current) observerRef.current.disconnect();
 
@@ -74,21 +96,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	);
 
 	const {setQuantity} = useCartItems();
-	const navigate = useNavigate();
-
-	const openDeleteModal = (name: string) => {
-		setProductToDelete(name);
-		setShowDeleteModal(true);
-	};
-	const closeDeleteModal = () => setShowDeleteModal(false);
-
-	const {t} = useTranslation();
-
-	// Update product
-	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
-	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
-
-	const refreshAfterCange = () => setRefresh(!refresh);
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -104,6 +111,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		});
 	}, [products, searchQuery]);
 
+	// add product to cart
 	const handleAdd = useCallback(
 		(
 			product_name: string,
@@ -136,6 +144,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		[isLoggedIn, navigate, setQuantities, setQuantity],
 	);
 
+	// Delete product
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
 			.then(() => {
@@ -150,6 +159,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			});
 	};
 
+	// get the products by category
 	useEffect(() => {
 		getProductsByCategory(category)
 			.then((res) => {
@@ -206,12 +216,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			socket.off("product:quantity_in_stock");
 		};
 	}, []);
-
-	const handleShowMore = () => {
-		const nextVisibleCount = visibleProducts.length + 16;
-		const newVisibleProducts = products.slice(0, nextVisibleCount);
-		setVisibleProducts(newVisibleProducts);
-	};
 
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;

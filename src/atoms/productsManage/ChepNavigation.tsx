@@ -96,9 +96,9 @@ const ChipNavigation = () => {
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-around",
-					gap: 1,
+					gap: 2,
 					py: 1.5,
-					px: 1,
+					px: 5,
 					overflowX: "auto",
 					scrollBehavior: "smooth",
 					scrollbarWidth: "none",
@@ -148,19 +148,19 @@ const ChipNavigation = () => {
 								sx={{
 									px: 2,
 									backgroundColor: isActive
-										? "primary.main"
+										? "green"
 										: "primary.main",
-									color: isActive ? "white" : "white",
+									boxShadow: 7,
+									color: "white",
+
 									"&:hover": {
-										backgroundColor: isActive
-											? "#D52941"
-											: "deafult.main",
-										boxShadow: 7,
-										color: "primary.main",
+										backgroundColor: "red",
+										boxShadow: 100,
+										transform: "scale(1.1)",
 									},
-									boxShadow: 5,
+
 									transition: "all 0.2s ease",
-									transform: isActive ? "scale(1.05)" : "scale(1)",
+									transform: isActive ? "scale(1.1)" : "scale(1)",
 								}}
 							/>
 						)}
