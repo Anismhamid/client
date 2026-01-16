@@ -7,26 +7,18 @@ export const productsPathes = {
 	electricVehicles: "/category/electric-vehicles",
 
 	// Other products (optional)
-	fruits: "/category/fruit",
-	vegetable: "/category/vegetable",
-	fish: "/category/fish",
-	dairy: "/category/dairy",
-	meat: "/category/meat",
-	spices: "/category/spices",
-	bakery: "/category/bakery",
-	beverages: "/category/beverages",
-	frozen: "/category/frozen",
-	snacks: "/category/snacks",
-	baby: "/category/baby",
-	alcohol: "/category/alcohol",
-	cleaning: "/category/cleaning",
-	pastaRice: "/category/pasta-and-Rice",
 	house: "/category/house",
+	garden: "/category/garden",
+	baby: "/category/baby",
+	electronics: "/category/electronics",
+	kids: "/category/kids",
+	beauty: "/category/beauty",
+	cleaning: "/category/cleaning",
 	health: "/category/health",
 	watches: "/category/watches",
 	womenClothes: "/category/women-clothes",
+	menClothes: "/category/men-clothes",
 	womenBags: "/category/women-bags",
-	cigarettes: "/category/cigarettes",
 
 	// Product details
 	productDetails: "/product-details",
@@ -39,6 +31,8 @@ export enum path {
 	Login = "/login",
 	Register = "/register",
 	Profile = "/profile",
+	Favorite = "/favorites",
+	DicountAndOfers = "/dicount-and-ofers",
 	CustomerProfile = "/users/customer/:slug",
 	UsersManagement = "/usersManagement",
 	WebSiteAdmins = "/admins",
@@ -76,4 +70,3 @@ export enum path {
 	// Catch-all
 	Png = "*",
 }
-

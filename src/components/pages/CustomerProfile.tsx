@@ -441,7 +441,7 @@ const CustomerProfile: FunctionComponent = () => {
 
 									{/* ACTION BUTTONS */}
 									<Stack direction='row' spacing={1}>
-										<Button
+										{/* <Button
 											variant='contained'
 											fullWidth
 											startIcon={<ShoppingCart />}
@@ -453,7 +453,7 @@ const CustomerProfile: FunctionComponent = () => {
 											}}
 										>
 											أضف إلى السلة
-										</Button>
+										</Button> */}
 										<Button
 											variant='outlined'
 											size='medium'

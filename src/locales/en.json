@@ -152,55 +152,192 @@
 			}
 		}
 	},
+
 	"loader": {
 		"welcome": "Welcome to Souk Al-Sakhnini Store",
 		"message": "The first load may take up to 50 seconds because the server is free. Please be patient."
 	},
+
 	"categories": {
-		"fruit": {
-			"label": "Fruits",
-			"heading": "Our Fruits – Fresh, High-Quality, and Varied!",
-			"description": "Here you can find a wide range of freshly picked fruits from our local farms. We promise high quality and excellent service so you can enjoy every fruit with ease."
+		"house": {
+			"label": "Home Supplies",
+			"heading": "Home Supplies",
+			"description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
+			"subCategories": {
+				"kitchen": "Kitchen Tools",
+				"storage": "Storage & Organization",
+				"decor": "Home Decor",
+				"maintenance": "Tools & Maintenance"
+			}
 		},
-		"vegetable": {
-			"label": "Vegetables",
-			"heading": "Our Vegetables – Fresh and Healthy for the Whole Family!",
-			"description": "Our vegetables are grown in fertile fields with great care for freshness and health. You will find seasonal vegetables selected especially for you."
+		"garden": {
+			"label": "Garden",
+			"heading": "Garden Supplies",
+			"description": "Includes products related to gardening such as care tools, watering, and plants.",
+			"subCategories": {
+				"plants": "Plants",
+				"watering": "Watering Supplies",
+				"tools": "Garden Tools",
+				"outdoorDecor": "Outdoor Decor"
+			}
 		},
-		"meat": {
-			"label": "Meat",
-			"heading": "Our Meats – Fresh, High-Quality, and Varied!",
-			"description": "Here you can find a wide range of carefully selected fresh meats from our local suppliers. We guarantee high quality and excellent service for you to enjoy every piece of meat with ease."
+		"electronics": {
+			"label": "Electronics",
+			"heading": "Electronics",
+			"description": "Various electronic devices and products such as phones, accessories, and tech gadgets.",
+			"subCategories": {
+				"phones": "Phones",
+				"laptops": "Computers & Laptops",
+				"accessories": "Accessories",
+				"gaming": "Gaming"
+			}
 		},
-		"fish": {
-			"label": "Fish",
-			"heading": "Our Fish – Fresh, High-Quality, and Varied!",
-			"description": "Here you can find a wide range of freshly caught fish by our local fishermen. We promise high quality and excellent service so you can enjoy every fish easily."
+		"baby": {
+			"label": "Baby Supplies",
+			"heading": "Baby Supplies",
+			"description": "Products for children such as clothing, care items, and daily essentials.",
+			"subCategories": {
+				"clothes": "Baby Clothing",
+				"care": "Daily Care",
+				"feeding": "Feeding Supplies"
+			}
+		},
+		"kids": {
+			"label": "Kids Toys",
+			"heading": "Kids Toys",
+			"description": "Toys and products dedicated to children of different ages.",
+			"subCategories": {
+				"educational": "Educational Toys",
+				"toys": "Entertainment Toys",
+				"outdoor": "Outdoor Toys"
+			}
+		},
+		"cleaning": {
+			"label": "Cleaning Supplies",
+			"heading": "Cleaning Supplies",
+			"description": "Products and tools for home cleaning.",
+			"subCategories": {
+				"detergents": "Detergents",
+				"tools": "Cleaning Tools",
+				"disinfection": "Disinfection"
+			}
+		},
+		"health": {
+			"label": "Health & Care",
+			"heading": "Health & Care",
+			"description": "Products related to personal health and care.",
+			"subCategories": {
+				"personalCare": "Personal Care",
+				"medical": "Medical Supplies",
+				"fitness": "Fitness Equipment"
+			}
+		},
+		"watches": {
+			"label": "Watches",
+			"heading": "Watches",
+			"description": "Watches of various types and designs.",
+			"subCategories": {
+				"classic": "Classic Watches",
+				"smart": "Smart Watches",
+				"hand": "hand Watches"
+			}
+		},
+		"beauty": {
+			"label": "Beauty",
+			"heading": "Beauty Products",
+			"description": "Cosmetics and personal care products offered by users.",
+			"subCategories": {
+				"makeup": "Makeup",
+				"skincare": "Skincare",
+				"hair": "Hair Care"
+			}
+		},
+
+		"women-clothes": {
+			"label": "Women's Clothing",
+			"heading": "Women's Clothing",
+			"description": "Clothing for women of various styles.",
+			"subCategories": {
+				"casual": "Casual Wear",
+				"dresses": "Dresses",
+				"shoes": "Shoes"
+			}
+		},
+		"women-bags": {
+			"label": "Women's Bags",
+			"heading": "Women's Bags",
+			"description": "Bags for women of different sizes and uses.",
+			"subCategories": {
+				"handbags": "Handbags",
+				"backpacks": "Backpacks",
+				"travel": "Travel Bags"
+			}
+		},
+		"men-clothes": {
+			"label": "Men's Clothing",
+			"heading": "Men's Clothing",
+			"description": "Clothing for men for various uses.",
+			"subCategories": {
+				"casual": "Casual Wear",
+				"formal": "Formal Wear",
+				"shoes": "Shoes"
+			}
 		},
 		"cars": {
 			"label": "Cars",
-			"heading": "Cars – New & Used Cars",
-			"description": "Discover a wide range of premium cars. Whether you prefer classic or other options, find them here."
+			"heading": "Cars",
+			"description": "Cars for sale by users, new or used.",
+			"subCategories": {
+				"private": "Private Cars",
+				"electric": "Electric Cars",
+				"parts": "Spare Parts",
+				"accessories": "Car Accessories"
+			}
 		},
 		"motorcycles": {
 			"label": "Motorcycles",
-			"heading": "Motorcycles – New & Used",
-			"description": "Browse the best motorcycles, whether new or used, with detailed info for each model."
+			"heading": "Motorcycles",
+			"description": "Motorcycles of different models.",
+			"subCategories": {
+				"sport": "Sport Bikes",
+				"scooters": "Scooters",
+				"parts": "Spare Parts"
+			}
 		},
 		"trucks": {
 			"label": "Trucks",
-			"heading": "Trucks – Large & Small",
-			"description": "Explore a variety of trucks for commercial or personal use, with multiple options."
+			"heading": "Trucks",
+			"description": "Trucks for personal or commercial use.",
+			"subCategories": {
+				"light": "Light Trucks",
+				"heavy": "Heavy Trucks"
+			}
 		},
 		"bikes": {
 			"label": "Bicycles",
-			"heading": "Bicycles – For All Ages",
-			"description": "Discover the perfect bicycles for outings or sports, in all sizes and brands."
+			"heading": "Bicycles",
+			"description": "Bicycles of various sizes.",
+			"subCategories": {
+				"kids": "Kids Bikes",
+				"mountain": "Mountain Bikes",
+				"road": "Road Bikes"
+			}
 		},
-		"electricVehicles": {
+		"electric-vehicles": {
 			"label": "Electric Vehicles",
-			"heading": "Electric Vehicles – Eco-Friendly Cars",
-			"description": "Learn about the latest electric vehicles with details on battery, range, and performance."
+			"heading": "Electric Vehicles",
+			"description": "Vehicles powered by electricity.",
+			"subCategories": {
+				"cars": "Electric Cars",
+				"scooters": "Electric Scooters"
+			}
+		},
+		"discountsAndOffers": {
+			"label": "Discounts",
+			"heading": "Discounts",
+			"description": "Listings containing discounts or special prices set by the seller.",
+			"text1": "Take advantage of the best deals in safqa ",
+			"text2": "Every day we offer a special selection of discounts on the finest products. Shop now and save more with quality guaranteed on every item."
 		}
 	},
 	"seo": {

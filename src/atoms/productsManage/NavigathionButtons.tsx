@@ -1,7 +1,7 @@
 import {FunctionComponent} from "react";
 import {Link, NavLink, useNavigate} from "react-router-dom";
 import {Box, Button, Chip, Typography} from "@mui/material";
-import {navbarCategoryLinks} from "../../helpers/navCategoryies";
+import {navbarCategoryLinks} from "../../components/settings/navbar/navCategoryies";
 import {useTranslation} from "react-i18next";
 import {path} from "../../routes/routes";
 

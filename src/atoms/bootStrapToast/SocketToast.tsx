@@ -1,19 +1,19 @@
 import {toast} from "react-toastify";
 
-export const showNewOrderToast = ({
+export const showNewProductToast = ({
 	navigate,
 	navigateTo,
-	orderNum,
+	productId,
 }: {
 	navigate: (path: string) => void;
 	navigateTo: string;
-	orderNum: string;
+	productId: string;
 }) => {
 	toast.info(
 		({closeToast}) => (
 			<div>
 				<p>
-					<strong>בוצעה הזמנה חדשה:</strong> {orderNum}
+					<strong>בוצעה הזמנה חדשה:</strong> {productId}
 				</p>
 				<button
 					onClick={() => {
@@ -22,7 +22,7 @@ export const showNewOrderToast = ({
 					}}
 					className='btn btn-sm btn-primary me-2'
 				>
-					לפרטי ההזמנה
+					לפרטי המוצר
 				</button>
 				<button onClick={closeToast} className='btn btn-sm btn-secondary'>
 					סגור

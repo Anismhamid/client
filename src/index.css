@@ -10,7 +10,7 @@
 }
 
 #root {
-  background: url('./assets/bbblurry.svg');
+  /* background: url('./assets/bbblurry.svg'); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;

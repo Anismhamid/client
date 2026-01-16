@@ -29,10 +29,6 @@ import DeleteAccountBox from "../../atoms/userManage/DeleteAccountBox";
 import UserDetailTable from "../../atoms/userManage/UesrDetailsTable";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import HistoryIcon from "@mui/icons-material/History";
-import {getAllOrders, getUserOrders} from "../../services/orders";
-import {formatPrice} from "../../helpers/dateAndPriceFormat";
-import {Order} from "../../interfaces/Order";
-import RoleType from "../../interfaces/UserType";
 
 interface ProfileProps {}
 /**
@@ -47,8 +43,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const {setAuth, setIsLoggedIn, auth} = useUser();
 	const detailsRef = useRef<HTMLDivElement>(null);
 	const [userOdredsLength, setUserOrdersLength] = useState<number>(0);
-	const [userOdredsPrice, setUserOrdersPrice] = useState<number>(0);
-	const [allOrders, setAllOrders] = useState<Order[]>([]);
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -95,35 +89,14 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	useEffect(() => {
 		const targetId = id || decodedToken?._id;
 		if (targetId) {
-			Promise.all([getUserById(targetId), getUserOrders(targetId)])
-				.then(([userRes, ordersRes]) => {
+			getUserById(targetId)
+				.then((userRes) => {
 					setUser(userRes);
-					setUserOrdersLength(ordersRes.length);
-					setUserOrdersPrice(
-						ordersRes.reduce((totalOrders, order) => {
-							// مجموع أسعار منتجات الطلب الحالي
-							const orderTotal = order.products.reduce(
-								(sum, product) => sum + product.product_price,
-								0,
-							);
-							return totalOrders + orderTotal;
-						}, 0),
-					);
 				})
 				.catch((err) => console.error("Error fetching user data:", err))
 				.finally(() => setLoading(false));
 		}
 	}, [id, decodedToken]);
-
-	useEffect(() => {
-		if (auth.role === RoleType.Admin || auth.role === RoleType.Moderator) {
-			getAllOrders().then((ord) => setAllOrders(ord));
-		}
-	}, [auth.role]);
-
-	const totalCommission = allOrders.reduce((sum, order) => {
-		return sum + (order.commission || 0);
-	}, 0);
 
 	if (loading) {
 		return <Loader />;
@@ -257,20 +230,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									>
 										مزيد من التفاصيل
 									</Button>
-								</CardContent>
-							</Card>
-
-							<Card
-								className='shadow-sm rounded-4'
-								sx={{minWidth: 250, flex: 1, textAlign: "center"}}
-							>
-								<CardContent>
-									<Typography variant='h6' color='text.secondary'>
-										إجمالي المشتريات على الموقع
-									</Typography>
-									<Typography variant='h4' color='success.main'>
-										{formatPrice(userOdredsPrice)}
-									</Typography>
 								</CardContent>
 							</Card>
 						</Box>

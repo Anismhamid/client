@@ -1,22 +1,45 @@
 import {FunctionComponent} from "react";
-import {
-	FormControlLabel,
-	PaletteMode,
-	FormGroup,
-	Box,
-	Typography,
-} from "@mui/material";
-import {styled} from "@mui/material/styles";
+import {FormControlLabel, PaletteMode, FormGroup, Box, Typography} from "@mui/material";
+import {alpha, styled} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
 import {Link} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
-
+import {LocalOffer, Favorite} from "@mui/icons-material";
+import {path} from "../../routes/routes";
 
 interface ThemeProps {
 	mode: PaletteMode;
 	setMode: (mode: PaletteMode) => void;
 }
+
+const quickLinks = [
+	{
+		icon: <LocalOffer color='error' />,
+		link: path.DicountAndOfers,
+		label: "عروض",
+		color: "#F4A261",
+	},
+	{
+		icon: <Favorite color='error' />,
+		link: "/favorites",
+		label: "المفضلة",
+		color: "#F4A261",
+	},
+];
+
+// <Box>
+// 	{/* الشريط العلوي */}
+// 	<AppBar
+// 		position='sticky'
+// 		sx={{
+// 			background:
+// 				mode === "dark"
+// 					? "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)"
+// 					: "linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%)",
+// 			boxShadow: 3,
+// 		}}
+// 	></AppBar>
 
 const MaterialUISwitch = styled(Switch)(({theme}) => ({
 	width: 62,
@@ -75,7 +98,6 @@ const MaterialUISwitch = styled(Switch)(({theme}) => ({
 }));
 
 const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
-
 	const handleThemeChange = (
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
@@ -104,11 +126,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						checked={mode === "dark"}
 						onChange={handleThemeChange}
 						control={<MaterialUISwitch sx={{m: 1}} />}
-						label=''
+						label={mode}
+						color={"primary.main"}
 					/>
 				</FormGroup>
 				<LanguageSwitcher />
-				<img style={{width: 150, padding: 0}} src='/myLogo2.png' alt='' />
+				{/* <img style={{width: 150, padding: 0}} src='/myLogo2.png' alt='' /> */}
 				<Link
 					to='/'
 					style={{
@@ -125,7 +148,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							fontFamily: "Hebbo",
 						}}
 					>
-						بيـع وشــراء
+						صـفـقـه
 					</Typography>
 				</Link>
 			</Box>
@@ -136,31 +159,52 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					borderTop: "2px solid #7E9810",
 				}}
 			>
-				<Typography
-					component='h2'
-					variant='h5'
-					color='white'
-					textAlign='center'
-					p={1}
+				{/* <Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						gap: 1,
+						px: 2,
+						py: 0.5,
+						my: 1,
+						bgcolor:
+							mode === "dark"
+								? alpha("#FF6B35", 0.1)
+								: alpha("#FF6B35", 0.08),
+					}}
 				>
-					بيـع وشــراء | منصة بيع وشراء بين المستخدمين
-				</Typography>
-				<Typography component='h3' variant='h6' color='#0C6EFD'>
-					اشترِ وبِع منتجات مباشرة مع مستخدمين آخرين بكل سهولة وأمان
-				</Typography>
-				<Box
-					display={"flex"}
-					justifyContent={"center"}
-					gap={1}
-					textAlign={"center"}
-				>
-					<Typography component={"p"} variant='h6' color='#e4e4e4'>
-						التوصيل برعاية
-					</Typography>
-					_
-					<Typography component={"p"} variant='h6' color='#F08623'>
-						One minute delivery
-					</Typography>
+					<DeliveryDining sx={{color: "#FF6B35", fontSize: 20}} />
+					<Box>
+						<Typography
+							variant='caption'
+							sx={{color: mode === "dark" ? "#cbd5e0" : "#ffffff"}}
+						>
+							التوصيل برعاية
+						</Typography>
+						<Typography
+							variant='body2'
+							sx={{
+								color: "#FF6B35",
+								fontWeight: "bold",
+								lineHeight: 1,
+							}}
+						>
+							One Minute Delivery
+						</Typography>
+					</Box>
+				</Box> */}
+				<Box sx={{display: "flex", gap: 2, px: 2, py: 1}}>
+					{quickLinks.map((link, idx) => (
+						<Link to={link.link} key={idx}>
+							<Box sx={{display: "flex", alignItems: "center", gap: 0.5}}>
+								{link.icon}
+								<Typography sx={{color: link.color, fontWeight: "bold"}}>
+									{link.label}
+								</Typography>
+							</Box>
+						</Link>
+					))}
+					<Box>{}</Box>
 				</Box>
 			</Box>
 		</>

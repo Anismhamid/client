@@ -2,9 +2,10 @@
  * Products interface
  */
 export interface Products {
-  isNew?: boolean;
+	likes: string[];
+	isNew?: boolean;
 	_id?: string;
-	seller?: {name?: string; slug?:string };
+	seller: {name?: string; slug?: string; sellerId: string};
 	product_name: string;
 	category: string;
 	brand?: string;
@@ -23,7 +24,7 @@ export interface Products {
 }
 
 export const initialProductValue = {
-	seller: {name: "", slug: ""},
+	seller: {name: "", slug: "", sellerId: ""},
 	product_name: "",
 	category: "",
 	price: 0,
@@ -33,5 +34,6 @@ export const initialProductValue = {
 	sale: false,
 	discount: 0,
 	rating: 0,
+	likes: [],
 	reviewCount: 0,
 };

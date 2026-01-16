@@ -63,7 +63,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 						fontSize: {xs: "1.8rem", md: "2.5rem"},
 					}}
 				>
-					{t("categories.discountsAndOffers.discountsAndOffersHeading")}
+					{t("categories.discountsAndOffers.heading")}
 				</Typography>
 				<Typography
 					variant='h5'
@@ -75,10 +75,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 						margin: "0 auto",
 					}}
 				>
-					<Box component='span' display='block' mb={1}>
-						{t("categories.discountsAndOffers.discountsAndOffersSpan")}
-					</Box>
-					{t("categories.discountsAndOffers.discountsAndOffersDescription")}
+					{t("categories.discountsAndOffers.description")}
 				</Typography>
 			</Box>
 
@@ -267,11 +264,10 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					gutterBottom
 					sx={{fontWeight: "bold"}}
 				>
-					استفد من أفضل العروض في بيع وشراء
+					{t("categories.discountsAndOffers.text1")}
 				</Typography>
 				<Typography variant='body1' color='text.secondary'>
-					نقدم لكم يومياً مجموعة مميزة من العروض والتخفيضات على أجود أنواع
-					المنتجات. تسوق الآن ووفر أكثر مع ضمان الجودة في كل منتج.
+					{t("categories.discountsAndOffers.text2")}
 				</Typography>
 			</Box>
 		</Box>

@@ -35,36 +35,27 @@ export const handleQuantity = (
  * @param {boolean} sale If the product is on sale, set to `true`; otherwise, `false` by default.
  * @param {string} product_image The URL of the product image.
  * @param {number} discount The discount percentage of the product (e.g., `10` for 10% off).
+ * @param {string} sellerId The seller Id .
  */
 export const handleAddToCart = async (
-	setQuantities: React.Dispatch<React.SetStateAction<Quantities>>,
+	userId: string,
 	product_name: string,
 	quantity: number,
 	product_price: number,
 	product_image: string,
 	sale: boolean,
 	discount: number,
+	sellerId: string,
 ) => {
-	try {
-		const response = await addToCart(
-			product_name,
-			quantity,
-			product_price,
-			product_image,
-			sale,
-			discount,
-		);
 
-		if (response) {
-			showSuccess(`${quantity} ${product_name} נוסף לעגלת הקניות בהצלחה`);
-
-			// Reset quantity for this specific product after adding it to the cart
-			setQuantities((prevQuantities) => ({
-				...prevQuantities,
-				[product_name]:1,
-			}));
-		}
-	} catch (error) {
-		console.log("Error adding to cart:", error);
-	}
+	await addToCart(
+		userId,
+		product_name,
+		quantity,
+		product_price,
+		product_image,
+		sale,
+		discount,
+		sellerId,
+	);
 };

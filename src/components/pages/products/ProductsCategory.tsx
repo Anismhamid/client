@@ -8,19 +8,15 @@ import {
 } from "react";
 import {deleteProduct, getProductsByCategory} from "../../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
 import {Products} from "../../../interfaces/Products";
-import {handleAddToCart} from "../../../helpers/fruitesFunctions";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {useCartItems} from "../../../context/useCart";
 import {Box, Chip, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
-import {useNavigate} from "react-router-dom";
-import {path} from "../../../routes/routes";
 import {Col, Row} from "react-bootstrap";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
 import socket from "../../../socket/globalSocket";
@@ -43,14 +39,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
 	const [products, setProducts] = useState<Products[]>([]);
-	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [loading, setLoading] = useState<boolean>(true);
-	const {auth, isLoggedIn} = useUser();
+	const {auth} = useUser();
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
+	const [loadingAddToCart] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
@@ -63,7 +58,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const refreshAfterCange = () => setRefresh(!refresh);
-	const navigate = useNavigate();
 
 	// DeleteModal
 	const openDeleteModal = (name: string) => {
@@ -95,8 +89,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		[loading, products, visibleProducts],
 	);
 
-	const {setQuantity} = useCartItems();
-
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
@@ -110,39 +102,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			);
 		});
 	}, [products, searchQuery]);
-
-	// add product to cart
-	const handleAdd = useCallback(
-		(
-			product_name: string,
-			quantity: {[key: string]: number},
-			price: number,
-			product_image: string,
-			sale: boolean,
-			discount: number,
-		) => {
-			const productQuantity = quantity[product_name];
-
-			if (!isLoggedIn) {
-				navigate(path.Login);
-			} else {
-				setLoadingAddToCart(product_name);
-				handleAddToCart(
-					setQuantities,
-					product_name,
-					productQuantity || 1,
-					price - (price * discount) / 100,
-					product_image,
-					sale,
-					discount,
-				).then(() => {
-					setQuantity((prev) => prev + (productQuantity ?? 1));
-					setLoadingAddToCart(null);
-				});
-			}
-		},
-		[isLoggedIn, navigate, setQuantities, setQuantity],
-	);
 
 	// Delete product
 	const handleDelete = (product_name: string) => {
@@ -166,15 +125,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				setProducts(res);
 				setVisibleProducts(res.slice(0, 16));
 
-				const initialQuantities = res.reduce(
-					(acc: any, product: {product_name: string}) => {
-						acc[product.product_name] = 1;
-						return acc;
-					},
-					{},
-				);
-
-				setQuantities(initialQuantities);
 				setLoading(false);
 			})
 			.catch((err) => {
@@ -259,6 +209,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						setSearchQuery={setSearchQuery}
 					/>
 				</Box>
+				{}
 				<Box className='container pb-5'>
 					<Row className='mt-3 g-3'>
 						{filteredProducts.length ? (
@@ -266,19 +217,12 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 								.slice(0, visibleProducts.length)
 								.map((product: Products, index) => {
 									const isOutOfStock = product.quantity_in_stock <= 0;
-									const productQuantity =
-										quantities[product.product_name] ?? 1;
+
 									const discountedPrice = product.sale
 										? product.price -
 											(product.price * (product.discount || 0)) /
 												100
 										: product.price;
-
-									const unitText =
-										{
-											fruit: "للكيلو",
-											vegetable: "للكيلو",
-										}[product.category?.toLowerCase()] || "للوحدة";
 
 									const isLast = index === visibleProducts.length - 1;
 
@@ -294,12 +238,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											<ProductCard
 												key={product._id}
 												product={product}
-												productQuantity={productQuantity}
 												discountedPrice={discountedPrice}
-												unitText={unitText}
 												isOutOfStock={isOutOfStock}
-												quantities={quantities}
-												setQuantities={setQuantities}
 												loadingAddToCart={loadingAddToCart}
 												canEdit={canEdit}
 												setProductNameToUpdate={
@@ -311,7 +251,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												openDeleteModal={openDeleteModal}
 												setLoadedImages={setLoadedImages}
 												loadedImages={loadedImages}
-												handleAdd={handleAdd}
 												category={category}
 											/>
 										</Col>

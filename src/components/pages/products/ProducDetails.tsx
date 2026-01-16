@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {getProductByspicificName} from "../../../services/productsServices";
+import {getProductByspicificName, toggleLike} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {
 	Box,
@@ -29,24 +29,25 @@ import {
 	Store as StoreIcon,
 	AddSharp as AddSharpIcon,
 	RemoveSharp as RemoveSharpIcon,
+	PhoneAndroid,
+	Phone,
 } from "@mui/icons-material";
 import {path, productsPathes} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {useTranslation} from "react-i18next";
 import {useUser} from "../../../context/useUSer";
-import {handleAddToCart, handleQuantity} from "../../../helpers/fruitesFunctions";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
 import {generateSingleVehicleJsonLd} from "../../../../utils/vehiclesJsonLd";
+import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
 
 interface ProductDetailsProps {}
 
 const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {t} = useTranslation();
-	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -56,103 +57,37 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
-	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
-	const [liked, setLiked] = useState(false);
+	const {auth} = useUser();
 
-	// ----- Category Labels -----
-	const categoryLabels: Record<string, string> = {
-		Fruit: "فواكه",
-		Vegetable: "خضار",
-		Fish: "أسماك",
-		Dairy: "ألبان",
-		Meat: "لحوم",
-		Spices: "بهارات",
-		Bakery: "مخبوزات",
-		Beverages: "مشروبات",
-		Frozen: "مجمدات",
-		Snacks: "وجبات خفيفة",
-		Baby: "أطفال",
-		Alcohol: "كحول",
-		Cleaning: "تنظيف",
-		PastaRice: "مكرونة وأرز",
-		House: "منزل",
-		Health: "صحة",
-		Watches: "ساعات",
-		WomenClothes: "ملابس نسائية",
-		WomenBags: "حقائب نسائية",
-		Cigarettes: "سجائر",
-		Car: "سيارات",
-		Motorcycle: "دراجات نارية",
-		Truck: "شاحنات",
-		Bike: "دراجات هوائية",
-		ElectricVehicle: "مركبات كهربائية",
-	};
-
-	const categoryPathMap: Record<string, string> = {
-		Fruit: productsPathes.fruits,
-		Vegetable: productsPathes.vegetable,
-		Car: productsPathes.cars,
-		Motorcycle: productsPathes.motorcycles,
-		Truck: productsPathes.trucks,
-		Bike: productsPathes.bikes,
-		ElectricVehicle: productsPathes.electricVehicles,
-	};
-
-	// ----- Handle Add to Cart -----
-	const handleAdd = async (
-		product_name: string,
-		quantity: {[key: string]: number},
-		price: number,
-		product_image: string,
-		sale: boolean,
-		discount: number,
-	) => {
-		const productQuantity = quantity[product_name] || 1;
+	// ----- Handle Like -----
+	const handleLike = async () => {
 		if (!isLoggedIn) {
 			navigate(path.Login);
 			return;
 		}
 
-		setLoadingAddToCart(product_name);
 		try {
-			await handleAddToCart(
-				setQuantities,
-				product_name,
-				productQuantity,
-				price - (price * discount) / 100,
-				product_image,
-				sale,
-				discount,
+			// Call the backend route
+			const res = await toggleLike(product._id ?? "");
+
+			// Optional: update product.likes array if you want to reflect immediately
+			setProduct((prev) => ({
+				...prev,
+				likes: res.liked
+					? [...(prev.likes || []), auth?._id ?? ""]
+					: (prev.likes || []).filter((id) => id !== auth?._id),
+			}));
+
+			showSuccess(
+				res.liked ? "تمت إضافة المنتج للمفضلة" : "تمت إزالة المنتج من المفضلة",
 			);
-			setQuantities((prev) => ({...prev, [product_name]: 1}));
-			showSuccess("تمت إضافة المنتج إلى السلة بنجاح");
-		} catch (error) {
-			showError("حدث خطأ أثناء إضافة المنتج إلى السلة");
-		} finally {
-			setLoadingAddToCart(null);
+		} catch (err) {
+			console.error(err);
+			showError("حدث خطأ أثناء تحديث المفضلة");
 		}
 	};
 
-	// ----- Handle Like -----
-	const handleLike = () => {
-		const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-		if (liked) {
-			const newFavorites = favorites.filter((p: string) => p !== productName);
-			localStorage.setItem("favorites", JSON.stringify(newFavorites));
-			setLiked(false);
-		} else {
-			favorites.push(productName as string);
-			localStorage.setItem("favorites", JSON.stringify(favorites));
-			setLiked(true);
-		}
-	};
-
-	useEffect(() => {
-		const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
-		if (favorites.includes(productName as string)) {
-			setLiked(true);
-		}
-	}, [productName]);
+	const userLiked = product.likes?.includes(auth?._id ?? "");
 
 	// ----- Fetch Product -----
 	useEffect(() => {
@@ -209,9 +144,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 		);
 
 	const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
-	const isOutOfStock = product.quantity_in_stock === 0;
-	const productQuantity = quantities[product.product_name] || 1;
-
 	// ----- JSON-LD Vehicles -----
 	const vehicleTypes = ["Car", "Motorcycle", "Truck", "Bike", "ElectricVehicle"];
 	const vehicleType = vehicleTypes.includes(product.category)
@@ -224,9 +156,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			{vehicleType && (
 				<Helmet>
 					<script type='application/ld+json'>
-						{JSON.stringify(
-							generateSingleVehicleJsonLd(product,"Bike"),
-						)}
+						{JSON.stringify(generateSingleVehicleJsonLd(product, "Bike"))}
 					</script>
 				</Helmet>
 			)}
@@ -251,14 +181,13 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								color='inherit'
 								onClick={() => {
 									const catPath =
-										categoryPathMap[product.category] ||
-										productsPathes.fruits;
+										categoryPathMap[product.category] || "";
 									navigate(catPath);
 								}}
 								sx={{display: "flex", alignItems: "center"}}
 							>
 								<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-								{categoryLabels[product.category] || "منتجات"}
+								{categoryLabels[product.category] || "الفئات"}
 							</Button>
 
 							<Typography p={3} color='info'>
@@ -306,10 +235,20 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										aria-label='add to favorites'
 										onClick={handleLike}
 									>
-										{liked ? (
-											<FavoriteIcon color='error' />
+										{userLiked ? (
+											<>
+												<FavoriteIcon color='error' />
+												<Typography sx={{ml: 0.5}}>
+													{product.likes.length}
+												</Typography>
+											</>
 										) : (
-											<FavoriteBorderIcon />
+											<>
+												<FavoriteBorderIcon />
+												<Typography sx={{ml: 0.5}}>
+													{product.likes.length}
+												</Typography>
+											</>
 										)}
 									</IconButton>
 
@@ -375,7 +314,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										sx={{mr: 1}}
 									/>
 									<Typography variant='body2' color='text.secondary'>
-										( חוות דעת - {product.reviewCount || 0} )
+										( חוות דעת - {product.reviewCount || 132} )
 									</Typography>
 								</Box>
 
@@ -412,7 +351,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								)}
 
 								{/* Quantity Controls */}
-								<Box role='group' aria-label='إدارة الكمية'>
+								{/* <Box role='group' aria-label='إدارة الكمية'>
 									<Box
 										sx={{
 											display: "flex",
@@ -462,7 +401,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 											aria-label='زيادة الكمية'
 										/>
 									</Box>
-								</Box>
+								</Box> */}
 
 								<Box sx={{mt: "auto", pt: 3}}>
 									<Grid container spacing={2}>
@@ -479,7 +418,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 													borderRadius: 1,
 												}}
 											>
-												العودة إلى السوق
+												العودة إلى صفقه
 											</Button>
 										</Grid>
 										<Grid size={{xs: 12, md: 6}}>
@@ -487,35 +426,15 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 												fullWidth
 												variant='contained'
 												size='large'
-												startIcon={<ShoppingCartIcon />}
-												onClick={() =>
-													handleAdd(
-														product.product_name,
-														quantities,
-														product.price,
-														product.image_url,
-														product.sale,
-														product.discount || 0,
-													)
-												}
-												disabled={
-													loadingAddToCart ===
-													product.product_name
-												}
+												startIcon={<Phone color='success' />}
+												href='tel:0538346915'
 												sx={{
 													py: 2.2,
 													fontWeight: 700,
 													fontSize: "1rem",
 													borderRadius: 1,
 												}}
-											>
-												{loadingAddToCart ===
-												product.product_name ? (
-													<CircularProgress size={24} />
-												) : (
-													""
-												)}
-											</Button>
+											></Button>
 										</Grid>
 									</Grid>
 								</Box>
@@ -534,10 +453,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						</Typography>
 						<Grid container spacing={4}>
 							{[
-								{
-									title: "توصيل",
-									text: "توصيل الطلبات لجميع مناطق المثلث خلال اقل من ساعه, إمكانية الإرجاع خلال 24 ساعة",
-								},
 								{
 									title: "دعم",
 									text: "فريق الدعم لدينا متاح على مدار الساعة طوال أيام الأسبوع للمساعدة في أي أسئلة أو مشكلات",

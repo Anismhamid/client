@@ -1,8 +1,5 @@
-import LoadingButton from "@mui/lab/LoadingButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import RemoveSharpIcon from "@mui/icons-material/RemoveSharp";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
 import {
 	Box,
 	Button,
@@ -18,20 +15,14 @@ import {Dispatch, FunctionComponent, memo, SetStateAction} from "react";
 import {Link} from "react-router-dom";
 import {Products} from "../../../interfaces/Products";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import {handleQuantity} from "../../../helpers/fruitesFunctions";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 
 interface ProductCardProps {
 	product: Products;
-	productQuantity: number;
 	discountedPrice: number;
-	unitText: string;
 	isOutOfStock: boolean;
-	quantities: {[key: string]: number};
-	setQuantities: React.Dispatch<React.SetStateAction<{[key: string]: number}>>;
 	loadingAddToCart: string | null;
 	canEdit?: boolean;
 	setProductNameToUpdate: Dispatch<SetStateAction<string>>;
@@ -39,27 +30,20 @@ interface ProductCardProps {
 	openDeleteModal: (name: string) => void;
 	setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadedImages: Record<string, boolean>;
-	handleAdd: Function;
 	category: string;
 }
 
 const ProductCard: FunctionComponent<ProductCardProps> = memo(
 	({
 		product,
-		productQuantity,
 		discountedPrice,
-		unitText,
 		isOutOfStock,
-		quantities,
-		setQuantities,
-		loadingAddToCart,
 		canEdit,
 		setProductNameToUpdate,
 		onShowUpdateProductModal,
 		openDeleteModal,
 		setLoadedImages,
 		loadedImages,
-		handleAdd,
 		category,
 	}) => {
 		// descriptive alt text for the image
@@ -253,14 +237,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						</Typography>
 					)}
 
-					<Typography
-						variant='body2'
-						align='center'
-						color='text.secondary'
-						itemProp='description'
-					>
-						{unitText}
-					</Typography>
 					<Box
 						sx={{
 							textAlign: "center",
@@ -269,68 +245,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						<ColorsAndSizes category={category} />
 					</Box>
 				</CardContent>
-				<Box role='group' aria-label='إدارة الكمية'>
-					<Box
-						sx={{
-							display: "flex",
-							alignItems: "center",
-							justifyContent: "space-between",
-						}}
-					>
-						<Button
-							size='small'
-							color='error'
-							disabled={isOutOfStock}
-							onClick={() =>
-								handleQuantity(setQuantities, "-", product.product_name)
-							}
-							startIcon={<RemoveSharpIcon />}
-							aria-label='تقليل الكمية'
-						/>
 
-						<Typography aria-live='polite' fontSize={25}>
-							{productQuantity}
-						</Typography>
-
-						<Button
-							size='small'
-							color='error'
-							disabled={isOutOfStock}
-							onClick={() =>
-								handleQuantity(setQuantities, "+", product.product_name)
-							}
-							startIcon={<AddSharpIcon />}
-							aria-label='زيادة الكمية'
-						/>
-					</Box>
-				</Box>
-
-				<LoadingButton
-					fullWidth
-					onClick={() => {
-						handleAdd(
-							product.product_name,
-							quantities,
-							product.price,
-							product.image_url,
-							product.sale || false,
-							product.discount || 0,
-						);
-					}}
-					loading={loadingAddToCart === product.product_name}
-					loadingPosition='center'
-					startIcon={<AddShoppingCartIcon />}
-					disabled={isOutOfStock || loadingAddToCart === product.product_name}
-					variant='outlined'
-					color={
-						isOutOfStock || loadingAddToCart === product.product_name
-							? "error"
-							: "success"
-					}
-					aria-label={`إضافة ${product.product_name} إلى السلة`}
-				>
-					{isOutOfStock ? "غير متوفر" : ""}
-				</LoadingButton>
 				<Stack
 					sx={{
 						my: 1,

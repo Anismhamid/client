@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from "react"; // Add useCallba
 import {Box, Chip, IconButton, Typography} from "@mui/material";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import {Link, NavLink} from "react-router-dom";
-import {navbarCategoryLinks} from "../../helpers/navCategoryies";
+import {navbarCategoryLinks} from "../../components/settings/navbar/navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
@@ -147,9 +147,7 @@ const ChipNavigation = () => {
 								clickable
 								sx={{
 									px: 2,
-									backgroundColor: isActive
-										? "green"
-										: "primary.main",
+									backgroundColor: isActive ? "green" : "primary.main",
 									boxShadow: 7,
 									color: "white",
 

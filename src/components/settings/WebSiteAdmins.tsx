@@ -28,9 +28,7 @@ import {
 } from "@mui/icons-material";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
 import {useUser} from "../../context/useUSer";
-import {Order} from "../../interfaces/Order";
 import {Products} from "../../interfaces/Products";
-import {getAllOrders} from "../../services/orders";
 import {getAllUsers} from "../../services/usersServices";
 import {getAllProducts} from "../../services/productsServices";
 import {User} from "../../interfaces/usersMessages";
@@ -39,7 +37,6 @@ interface WebSiteAdminsProps {}
 
 const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 	const {auth} = useUser();
-	const [orders, setOrders] = useState<Order[]>([]);
 	const [users, setUsers] = useState<User[]>([]);
 	const [products, setProducts] = useState<Products[]>([]);
 	const [timeFrame, setTimeFrame] = useState<string>("today");
@@ -47,42 +44,19 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 	useEffect(() => {
 		if (auth.role !== "Admin" && auth.role !== "Moderator") return;
 		// جلب جميع البيانات
-		Promise.all([getAllOrders(), getAllUsers(), getAllProducts()])
-			.then(([ordersRes, usersRes, productsRes]) => {
-				setOrders(ordersRes);
+		Promise.all([getAllUsers(), getAllProducts()])
+			.then(([ordersRes, usersRes]) => {
 				setUsers(usersRes);
-				setProducts(productsRes);
 			})
 			.catch((err) => console.log(err));
 	}, [auth]);
 
-	// حساب الإحصائيات الأساسية
-	const totalSales = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-	const totalCommission = orders.reduce(
-		(sum, order) => sum + (order.commission || 0),
-		0,
-	);
 
 	// حساب مبيعات اليوم/الشهر حسب الفترة المحددة
 	const now = new Date();
 	const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 	const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
-	const todaySales = orders
-		.filter((order) => new Date(order.createdAt || now) >= todayStart)
-		.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-
-	const todayCommission = orders
-		.filter((order) => new Date(order.createdAt || now) >= todayStart)
-		.reduce((sum, order) => sum + (order.commission || 0), 0);
-
-	const monthSales = orders
-		.filter((order) => new Date(order.createdAt || now) >= monthStart)
-		.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-
-	const monthCommission = orders
-		.filter((order) => new Date(order.createdAt || now) >= monthStart)
-		.reduce((sum, order) => sum + (order.commission || 0), 0);
 
 	// حساب المستخدمين الجدد
 	const newUsersToday = users.filter(
@@ -93,28 +67,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 		(user) => new Date(user.createdAt || now) >= monthStart,
 	).length;
 
-	// تحديد أكثر المنتجات مبيعاً
-	const productSales: {[key: string]: number} = {};
-	orders.forEach((order) => {
-		order.products?.forEach((item) => {
-			if (item.product_name) {
-				productSales[item.product_name] =
-					(productSales[item.product_name] || 0) + item.quantity;
-			}
-		});
-	});
 
-	const topSellingProducts = Object.entries(productSales)
-		.sort((a, b) => b[1] - a[1])
-		.slice(0, 5)
-		.map(([productId, quantity]) => {
-			const product = products.find((p) => p.product_name === productId);
-			return {
-				name: product?.product_name || "منتج غير معروف",
-				quantity,
-				image: product?.product_name || "",
-			};
-		});
 
 	if (auth.role !== "Admin" && auth.role !== "Moderator") {
 		return (
@@ -177,11 +130,12 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 										fontWeight='bold'
 										sx={{color: "black"}}
 									>
-										{formatPrice(
+										{/* {formatPrice(
 											timeFrame === "today"
 												? todaySales
 												: monthSales,
-										)}
+										)} */}
+										todaySales,monthSales
 									</Typography>
 									<Typography variant='body2' color='gray'>
 										{timeFrame === "today"
@@ -216,11 +170,12 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 										fontWeight='bold'
 										sx={{color: "black"}}
 									>
-										{formatPrice(
+										{/* {formatPrice(
 											timeFrame === "today"
 												? todayCommission
 												: monthCommission,
-										)}
+										)} */}
+										todayCommission, monthCommission
 									</Typography>
 									<Typography variant='body2' color='gray'>
 										{timeFrame === "today"
@@ -284,7 +239,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 										component='p'
 										color='primary'
 									>
-										إجمالي الطلبات على الموقع
+										إجمالي المنتجات على الموقع
 									</Typography>
 									<Typography
 										variant='h5'
@@ -292,7 +247,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 										fontWeight='bold'
 										sx={{color: "black"}}
 									>
-										{orders.length}
+										{products.length}
 									</Typography>
 									<Typography variant='body2' color='gray'>
 										عدد الطلبات الكلي
@@ -313,7 +268,8 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 								إجمالي المبيعات
 							</Typography>
 							<Typography variant='h4' color='primary' fontWeight='bold'>
-								{formatPrice(totalSales)}
+								{/* {formatPrice(totalSales)} */}
+								totalSales
 							</Typography>
 							<Typography variant='body2' color='text.secondary'>
 								القيمة الإجمالية للمنتجات المباعة
@@ -329,7 +285,8 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 								إجمالي العمولة
 							</Typography>
 							<Typography variant='h4' color='secondary' fontWeight='bold'>
-								{formatPrice(totalCommission)}
+								{/* {formatPrice(totalCommission)} */}
+								totalCommission
 							</Typography>
 							<Typography variant='body2' color='text.secondary'>
 								إجمالي عمولة الموقع
@@ -345,7 +302,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 					<Typography variant='h5' gutterBottom>
 						أكثر المنتجات مبيعاً
 					</Typography>
-					<TableContainer component={Paper} elevation={0}>
+					{/* <TableContainer component={Paper} elevation={0}>
 						<Table>
 							<TableHead>
 								<TableRow>
@@ -399,7 +356,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 								))}
 							</TableBody>
 						</Table>
-					</TableContainer>
+					</TableContainer> */}
 				</CardContent>
 			</Card>
 		</main>

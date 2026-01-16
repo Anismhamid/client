@@ -1,20 +1,19 @@
 import {useEffect} from "react";
-import {useTranslation} from "react-i18next";
+// import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
-import {showNewOrderToast} from "../atoms/bootStrapToast/SocketToast";
-import {getStatusText} from "../atoms/OrderStatusButtons/orderStatus";
+import {showNewProductToast} from "../atoms/bootStrapToast/SocketToast";
 import {showInfo} from "../atoms/toasts/ReactToast";
 import {useUser} from "../context/useUSer";
-import {Order} from "../interfaces/Order";
 import {UserRegister} from "../interfaces/User";
 import RoleType from "../interfaces/UserType";
 import socket from "../socket/globalSocket";
 import useNotificationSound from "./useNotificationSound";
+import {Products} from "../interfaces/Products";
 
 const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
-	const {t} = useTranslation();
+	// const {t} = useTranslation();
 	const {playNotificationSound, showNotification} = useNotificationSound();
 
 	useEffect(() => {
@@ -65,56 +64,56 @@ const useSocketEvents = () => {
 		};
 
 		// הזמנה חדשה
-		const handleNewOrder = (newOrder: Order) => {
+		const handleNewOrder = (newProduct: Products) => {
 			if (isAdminOrModerator) {
 				playNotificationSound();
-				showNewOrderToast({
+				showNewProductToast({
 					navigate,
-					navigateTo: `/orderDetails/${newOrder.orderNumber}`,
-					orderNum: newOrder.orderNumber,
+					navigateTo: `/product-details/${newProduct.product_name}`,
+					productId: newProduct._id ?? "",
 				});
-				showNotification(`تم إصدار أمر جديد بواسطة ${newOrder.user}`);
+				showNotification(`تم إصدار أمر جديد بواسطة ${newProduct.category}`);
 			}
 		};
 
 		// עדכון סטטוס ללקוח
-		const handleClientOrderStatus = ({
-			orderNumber,
-			status,
-		}: {
-			orderNumber: string;
-			status: string;
-		}) => {
-			playNotificationSound();
-			showInfo(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
-			showNotification(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
-		};
+		// const handleClientOrderStatus = ({
+		// 	orderNumber,
+		// 	status,
+		// }: {
+		// 	orderNumber: string;
+		// 	status: string;
+		// }) => {
+		// 	playNotificationSound();
+		// 	showInfo(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
+		// 	showNotification(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
+		// };
 
 		// עדכון סטטוס כללי
-		const handleOrderStatusUpdated = ({
-			orderNumber,
-			status,
-			userId,
-			updatedBy,
-		}: {
-			orderNumber: string;
-			status: string;
-			userId: string;
-			updatedBy: string;
-		}) => {
-			playNotificationSound();
-			const msg =
-				auth._id === userId
-					? `ההזמנה שלך (${orderNumber}) עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
-					: isAdminOrModerator
-						? `הזמנה מספר ${orderNumber} עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
-						: null;
+		// const handleOrderStatusUpdated = ({
+		// 	orderNumber,
+		// 	status,
+		// 	userId,
+		// 	updatedBy,
+		// }: {
+		// 	orderNumber: string;
+		// 	status: string;
+		// 	userId: string;
+		// 	updatedBy: string;
+		// }) => {
+		// 	playNotificationSound();
+		// 	const msg =
+		// 		auth._id === userId
+		// 			? `ההזמנה שלך (${orderNumber}) עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
+		// 			: isAdminOrModerator
+		// 				? `הזמנה מספר ${orderNumber} עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
+		// 				: null;
 
-			if (msg) {
-				showInfo(msg);
-				showNotification(msg);
-			}
-		};
+		// 	if (msg) {
+		// 		showInfo(msg);
+		// 		showNotification(msg);
+		// 	}
+		// };
 
 		// משתמש חדש נרשם
 		const handleUserRegistered = (user: UserRegister) => {
@@ -141,15 +140,28 @@ const useSocketEvents = () => {
 			}
 		};
 
+		const handleNewProduct = (newProduct: Products) => {
+			playNotificationSound();
+
+			showNewProductToast({
+				navigate,
+				navigateTo: `/product-details/${newProduct.product_name}`,
+				productId: newProduct._id ?? "",
+			});
+
+			showNotification(`تم إضافة منتج جديد: ${newProduct.product_name}`);
+		};
+
 		// חיבור מאזינים
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
 		socket.on("new order", handleNewOrder);
-		socket.on("order:status:client", handleClientOrderStatus);
-		socket.on("order:status:updated", handleOrderStatusUpdated);
+		// socket.on("order:status:client", handleClientOrderStatus);
+		// socket.on("order:status:updated", handleOrderStatusUpdated);
 		socket.on("user:registered", handleUserRegistered);
 		socket.on("user:newUserLoggedIn", handleUserLoggedIn);
+		socket.on("product:new", handleNewProduct);
 
 		// ניקוי מאזינים
 		return () => {
@@ -157,10 +169,11 @@ const useSocketEvents = () => {
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
 			socket.off("new order", handleNewOrder);
-			socket.off("order:status:client", handleClientOrderStatus);
-			socket.off("order:status:updated", handleOrderStatusUpdated);
+			// socket.off("order:status:client", handleClientOrderStatus);
+			// socket.off("order:status:updated", handleOrderStatusUpdated);
 			socket.off("user:registered", handleUserRegistered);
 			socket.off("user:newUserLoggedIn", handleUserLoggedIn);
+			socket.off("product:new", handleNewProduct);
 		};
 	}, [auth?._id, auth?.role, auth?.name?.first]);
 };

@@ -173,21 +173,11 @@ export const getUserById = async (userId: string) => {
 	try {
 		const token = localStorage.getItem("token");
 
-		// If there is no token, c.log an error and return null
-		if (!token) {
-			console.error("No token found");
-			return null;
-		}
-
 		const response = await axios.get(`${api}/${userId}`, {
 			headers: {Authorization: token},
 		});
-		if (response.status === 200) {
-			return response.data;
-		} else {
-			console.error("Failed to fetch user: " + response.status);
-			return null;
-		}
+
+		return response.data;
 	} catch (error) {
 		// Log any errors that occurred during the API request
 		console.error("Error getting user:", error);
