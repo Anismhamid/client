@@ -1,29 +1,31 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {FormikValues, useFormik} from "formik";
+import {useFormik} from "formik";
 import {Products} from "../../interfaces/Products";
 import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
-import {getProductByspicificName, updateProduct} from "../../services/productsServices";
+import {getProductById, updateProduct} from "../../services/productsServices";
 import {productCategories} from "../../interfaces/productsCategoeis";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
+import {CarColor, colors} from "../colorsSettings/carsColors";
+import {Box} from "@mui/material";
 
 interface UpdateProductModalProps {
 	show: boolean;
 	onHide: Function;
-	product_name: string;
+	productId: string;
 	refresh: () => void;
 }
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	show,
 	onHide,
-	product_name,
+	productId,
 	refresh,
 }) => {
 	const {t} = useTranslation();
-
+	// const formik = useAddProductFormik();
 	const [product, setProduct] = useState<{
 		product_name: string;
 		category: string;
@@ -33,6 +35,11 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		image_url: string;
 		sale: boolean;
 		discount: number;
+		brand: string;
+		year: string;
+		fuel: string;
+		mileage: number;
+		color: string;
 	}>({
 		product_name: "",
 		category: "",
@@ -42,29 +49,39 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		image_url: "",
 		sale: false,
 		discount: 0,
+		brand: "",
+		year: "",
+		fuel: "",
+		mileage: 0,
+		color: "",
 	});
 
 	useEffect(() => {
-		if (product_name) {
-			getProductByspicificName(product_name)
+		if (productId) {
+			getProductById(productId)
 				.then((res) => {
 					setProduct(res);
 				})
 				.catch((err) => console.log(err));
 		}
-	}, [product_name]);
+	}, [productId]);
 
-	const formik: FormikValues = useFormik<Products>({
+	const formik = useFormik<Products>({
 		enableReinitialize: true,
 		initialValues: {
 			product_name: product.product_name,
 			category: product.category,
 			price: product.price,
-			quantity_in_stock: product.quantity_in_stock,
 			description: product.description,
 			image_url: product.image_url,
 			sale: product.sale,
 			discount: product.discount,
+			brand: product.brand,
+			year: product.year,
+			fuel: product.fuel,
+			mileage: product.mileage,
+			color: product.color,
+			likes: [],
 		},
 		validationSchema: yup.object({
 			product_name: yup
@@ -77,10 +94,6 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			price: yup
 				.number()
 				.required(t("modals.updateProductModal.validation.priceRequired")),
-			quantity_in_stock: yup
-				.number()
-				.min(0, t("modals.updateProductModal.validation.quantityMin"))
-				.required(t("modals.updateProductModal.validation.quantityRequired")),
 			description: yup
 				.string()
 				.min(2, t("modals.updateProductModal.validation.descriptionMin"))
@@ -93,7 +106,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			discount: yup.number(),
 		}),
 		onSubmit(values, {resetForm}) {
-			updateProduct(product_name as string, values as Products)
+			updateProduct(productId as string, values as Products)
 				.then(() => {
 					onHide();
 					resetForm();
@@ -157,6 +170,192 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 							)}
 						</div>
 
+						{/* if the category is cars show car settings */}
+						{formik.values.category === "Cars" && (
+							<Box>
+								<div className='input-group mb-3'>
+									<span
+										className='input-group-text'
+										dir='ltr'
+										id='brand'
+									>
+										{fontAwesomeIcon.brand}
+									</span>
+									<input
+										type='text'
+										name='brand'
+										className={`form-control ${
+											formik.touched.brand && formik.errors.brand
+												? "is-invalid"
+												: ""
+										}`}
+										placeholder={t("modals.addProductModal.brand")}
+										aria-label={t("modals.addProductModal.brand")}
+										aria-describedby={t(
+											"modals.addProductModal.brand",
+										)}
+										value={formik.values.brand}
+										onChange={formik.handleChange}
+										title={t("modals.addProductModal.brand")}
+									/>
+								</div>
+								{(formik.touched.brand ||
+									formik.errors.brand ||
+									formik.values.brand == "") && (
+									<div className='invalid-feedback'>
+										{formik.errors.brand}
+									</div>
+								)}
+								{/* year */}
+								{t("modals.addProductModal.year")}
+								<div className='input-group mb-3'>
+									<span
+										className='input-group-text'
+										dir='ltr'
+										id='year'
+									>
+										{fontAwesomeIcon.year}
+									</span>
+
+									<input
+										type='date'
+										name='year'
+										className={`form-control ${
+											formik.touched.year && formik.errors.year
+												? "is-invalid"
+												: "is-valid"
+										}`}
+										placeholder={t("modals.addProductModal.year")}
+										aria-label={t("modals.addProductModal.year")}
+										aria-describedby={t(
+											"modals.addProductModal.year",
+										)}
+										value={formik.values.year}
+										onChange={formik.handleChange}
+										title={t("modals.addProductModal.year")}
+									/>
+								</div>
+								{(formik.touched.year ||
+									formik.errors.year ||
+									formik.values.year == "") && (
+									<div className='invalid-feedback'>
+										{formik.errors.year}
+									</div>
+								)}
+								{/* fuel */}
+								{t("modals.addProductModal.fuel.label")}
+								<select
+									name='fuel'
+									value={formik.values.fuel}
+									onChange={formik.handleChange}
+									className={`form-control ${
+										formik.touched.fuel && formik.errors.fuel
+											? "is-invalid"
+											: ""
+									}`}
+									id='fuel'
+									aria-label={t("modals.addProductModal.fuel")}
+									title={t("modals.addProductModal.fuel")}
+								>
+									<option
+										disabled
+										aria-label={t("modals.addProductModal.fuel")}
+									>
+										{t("modals.addProductModal.fuel.label")}
+									</option>
+									{[
+										"modals.addProductModal.fuel.setttings.diesel",
+										"modals.addProductModal.fuel.setttings.gasoline",
+										"modals.addProductModal.fuel.setttings.electric",
+									].map((fuel: string, index) => (
+										<option value={fuel} key={index}>
+											{t(fuel)}
+										</option>
+									))}
+								</select>
+								{(formik.touched.fuel || formik.errors.fuel) && (
+									<div className='invalid-feedback'>
+										{formik.errors.fuel}
+									</div>
+								)}
+								{/* mileage */}
+								<div className='input-group my-3'>
+									<span className='input-group-text' id='mileage'>
+										{t("modals.addProductModal.mileage")}
+										{fontAwesomeIcon.mileage}
+									</span>
+									<input
+										type='text'
+										name='mileage'
+										className={`form-control ${
+											formik.touched.mileage &&
+											formik.errors.mileage
+												? "is-invalid"
+												: ""
+										}`}
+										placeholder={t("modals.addProductModal.mileage")}
+										aria-label={t("modals.addProductModal.mileage")}
+										aria-describedby={t(
+											"modals.addProductModal.mileage",
+										)}
+										value={formik.values.mileage}
+										onChange={formik.handleChange}
+										title={t("modals.addProductModal.mileage")}
+									/>
+								</div>
+								{(formik.touched.mileage ||
+									formik.errors.mileage ||
+									formik.values.mileage == 0) && (
+									<div className='invalid-feedback'>
+										{formik.errors.mileage}
+									</div>
+								)}
+								{t("color")}
+								{/* color */}
+								<select
+									name='color'
+									value={formik.values.color}
+									onChange={formik.handleChange}
+									className={`form-control ${
+										formik.touched.color && formik.errors.color
+											? "is-invalid"
+											: ""
+									}`}
+									id='color'
+									aria-label={t("modals.addProductModal.color")}
+									title={t("modals.addProductModal.color")}
+								>
+									<option value='' disabled>
+										{t("modals.addProductModal.color")}
+									</option>
+
+									{colors.map((color: CarColor) => (
+										<option value={color.hex} key={color.hex}>
+											{color.key} ({color.hex})
+										</option>
+									))}
+								</select>
+								{formik.values.color && (
+									<Box className='d-flex align-items-center gap-2 mt-2'>
+										<Box
+											sx={{
+												width: 20,
+												height: 20,
+												backgroundColor: formik.values.color,
+												border: "1px solid #ccc",
+											}}
+										/>
+										<span>{formik.values.color}</span>
+									</Box>
+								)}
+								{formik.touched.color && formik.errors.color && (
+									<div className='invalid-feedback'>
+										{formik.errors.color}
+									</div>
+								)}
+							</Box>
+						)}
+
 						{/* category */}
 						<div className='input-group-sm mb-3 form-select'>
 							<select
@@ -216,28 +415,6 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								{formik.errors.price}
 							</div>
 						)}
-
-						{/* quantity_in_stock */}
-						<div className='form-floating my-3'>
-							<input
-								type='number'
-								name='quantity_in_stock'
-								value={formik.values.quantity_in_stock}
-								onChange={formik.handleChange}
-								className='form-control'
-								id='quantity_in_stock'
-								placeholder={t("modals.updateProductModal.quantity")}
-							/>
-							<label htmlFor='quantity_in_stock'>
-								{t("modals.updateProductModal.quantity")}
-							</label>
-							{(formik.touched.quantity_in_stock ||
-								formik.errors.quantity_in_stock) && (
-								<div className='text-danger fw-bold'>
-									{formik.errors.quantity_in_stock}
-								</div>
-							)}
-						</div>
 
 						{/* description */}
 						<div className='form-floating mb-3'>

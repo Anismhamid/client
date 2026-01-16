@@ -11,6 +11,7 @@ import "swiper/css";
 import "swiper/css/scrollbar";
 import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
+import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 
 interface DiscountsAndOffersProps {}
 
@@ -45,26 +46,25 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	}
 
 	return (
-		<Box
-			component='section'
-			className='border-bottom border-5 border-danger mt-5'
-			aria-labelledby='discounts-heading'
-		>
+		<Box component='section' aria-labelledby='discounts'>
 			<JsonLd data={generateDiscountsJsonLd(productsInDiscount)} />
 
 			<Box textAlign='center' mb={4}>
-				<Typography
-					variant='h2'
-					component='h2'
-					id='discounts-heading'
-					gutterBottom
-					sx={{
-						fontWeight: "bold",
-						fontSize: {xs: "1.8rem", md: "2.5rem"},
-					}}
-				>
-					{t("categories.discountsAndOffers.heading")}
-				</Typography>
+				{/* نص ترويجي إضافي للسيو */}
+				<Box sx={{textAlign: "center", marginTop: "40px", padding: "20px"}}>
+					<Typography
+						variant='h5'
+						component='h3'
+						gutterBottom
+						sx={{fontWeight: "bold"}}
+					>
+						{t("categories.discountsAndOffers.text1")}
+					</Typography>
+					<Typography variant='body1' color='text.secondary'>
+						{t("categories.discountsAndOffers.text2")}
+					</Typography>
+				</Box>
+
 				<Typography
 					variant='h5'
 					component='p'
@@ -93,15 +93,15 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					// slidesPerView={3}
 					breakpoints={{
 						640: {
-							slidesPerView: 2,
+							slidesPerView: 1,
 							spaceBetween: 20,
 						},
 						768: {
-							slidesPerView: 3,
+							slidesPerView: 1,
 							spaceBetween: 30,
 						},
 						1024: {
-							slidesPerView: 4,
+							slidesPerView: 1,
 							spaceBetween: 40,
 						},
 					}}
@@ -127,7 +127,8 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 									component='article'
 									className='position-relative text-center'
 									sx={{
-										margin: "10px",
+										width: "80%",
+										margin: "auto",
 										padding: "10px",
 										// border: "1px solid #e0e0e0",
 										borderRadius: "8px",
@@ -165,7 +166,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 												style={{
 													display: isLoaded ? "block" : "none",
 													objectFit: "cover",
-													height: "250px",
+													maxHeight: "500px",
 													width: "100%",
 													margin: "auto",
 													borderRadius: "8px",
@@ -211,7 +212,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 														fontSize: "0.9rem",
 													}}
 												>
-													{product.price} ₪
+													{formatPrice(product.price)}
 												</Box>
 												<Box
 													component='span'
@@ -220,7 +221,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 														fontSize: "1.1rem",
 													}}
 												>
-													{discountedPrice.toFixed(2)} ₪
+													{discountedPrice}
 												</Box>
 											</Box>
 										</Box>
@@ -244,9 +245,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 											color='primary.secondary'
 											sx={{marginBottom: "10px"}}
 										>
-											{product.category === "Fruit"
-												? "فواكه"
-												: "خضروات"}
+											{product.category}
 										</Typography>
 									</Link>
 								</Box>
@@ -254,21 +253,6 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 						);
 					})}
 				</Swiper>
-			</Box>
-
-			{/* نص ترويجي إضافي للسيو */}
-			<Box sx={{textAlign: "center", marginTop: "40px", padding: "20px"}}>
-				<Typography
-					variant='h5'
-					component='h3'
-					gutterBottom
-					sx={{fontWeight: "bold"}}
-				>
-					{t("categories.discountsAndOffers.text1")}
-				</Typography>
-				<Typography variant='body1' color='text.secondary'>
-					{t("categories.discountsAndOffers.text2")}
-				</Typography>
 			</Box>
 		</Box>
 	);

@@ -36,7 +36,7 @@ interface ProductCategoryProps {
 const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	category,
 }: ProductCategoryProps) => {
-	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
+	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
 	const [products, setProducts] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -87,6 +87,21 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		},
 		[loading, products, visibleProducts],
 	);
+
+	const handleToggleLike = (productId: string, liked: boolean, userId: string) => {
+		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId]
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+	};
 
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
@@ -215,8 +230,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 							filteredProducts
 								.slice(0, visibleProducts.length)
 								.map((product: Products, index) => {
-									const isOutOfStock = product.quantity_in_stock <= 0;
-
 									const discountedPrice = product.sale
 										? product.price -
 											(product.price * (product.discount || 0)) /
@@ -235,13 +248,19 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											ref={isLast ? lastProductRef : null}
 										>
 											<ProductCard
+												onToggleLike={(productId, liked) =>
+													handleToggleLike(
+														productId,
+														liked,
+														auth?._id!,
+													)
+												}
 												key={product._id}
 												product={product}
 												discountedPrice={discountedPrice}
-												isOutOfStock={isOutOfStock}
 												canEdit={canEdit}
-												setProductNameToUpdate={
-													setProductNameToUpdate
+												setProductIdToUpdate={
+													setProductIdToUpdate
 												}
 												onShowUpdateProductModal={
 													onShowUpdateProductModal
@@ -304,7 +323,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 				<UpdateProductModal
 					refresh={refreshAfterCange}
-					product_name={productNameToUpdate}
+					productId={productIdToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}
 				/>

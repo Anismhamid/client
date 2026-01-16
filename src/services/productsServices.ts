@@ -8,9 +8,9 @@ const api = `${import.meta.env.VITE_API_URL}`;
  * @param productName - The name of the product to fetch
  * @returns The product data if found, or null if there's an error or product not found
  */
-export const getProductByspicificName = async (product_name: string) => {
+export const getProductById = async (product_id: string) => {
 	try {
-		const product = await axios.get(`${api}/products/spicific/${product_name}`, {
+		const product = await axios.get(`${api}/products/spicific/${product_id}`, {
 			headers: {Authorization: localStorage.getItem("token")},
 		});
 		return product.data;
@@ -21,23 +21,19 @@ export const getProductByspicificName = async (product_name: string) => {
 };
 
 /**
- * Update product by name
- * @param productName - The name of the product to update
+ * Update product by id
+ * @param productId - The id of the product to update
  * @param updatedProduct - The updated product data
  * @returns The updated product if successful, or null if there's an error
  */
-export const updateProduct = async (productName: string, updatedProduct: Products) => {
+export const updateProduct = async (productId: string, updatedProduct: Products) => {
 	try {
-		const product = await axios.put(
-			`${api}/products/${productName}`,
-			updatedProduct,
-			{
-				headers: {
-					Authorization: localStorage.getItem("token"),
-					"Content-Type": "application/json",
-				},
+		const product = await axios.put(`${api}/products/${productId}`, updatedProduct, {
+			headers: {
+				Authorization: localStorage.getItem("token"),
+				"Content-Type": "application/json",
 			},
-		);
+		});
 		return product.data;
 	} catch (error) {
 		console.log(error);

@@ -100,7 +100,18 @@
 	"modals": {
 		"addProductModal": {
 			"title": "إضافة منتج جديد",
-			"productName": "اسم المنتج (فريد)",
+			"productName": "اسم المنتج",
+			"fuel": {
+				"label": "دعم",
+				"settings": {
+					"gasoline": "بنزين",
+					"diesel": "ديزل",
+					"electric": "كهربائيه"
+				}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات",
 			"productNamePlaceholder": "اسم المنتج",
 			"category": "الفئة",
 			"selectCategory": "اختر الفئة",

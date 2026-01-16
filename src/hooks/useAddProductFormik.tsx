@@ -16,7 +16,6 @@ const useAddProductFormik = () => {
 			color: "",
 			category: "",
 			price: 0,
-			quantity_in_stock: 1,
 			description: "",
 			image_url: "",
 			sale: false,
@@ -38,10 +37,6 @@ const useAddProductFormik = () => {
 			fuel: yup.string(),
 			mileage: yup.number(),
 			color: yup.string(),
-			quantity_in_stock: yup
-				.number()
-				.min(1, t("modals.addProductModal.validation.quantityMin"))
-				.required(t("modals.addProductModal.validation.quantityRequired")),
 			description: yup
 				.string()
 				.min(2, t("modals.addProductModal.validation.descriptionMin"))

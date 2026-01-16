@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {getProductByspicificName, toggleLike} from "../../../services/productsServices";
+import {getProductById, toggleLike} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {
 	Box,
@@ -21,18 +21,14 @@ import {
 } from "@mui/material";
 import {
 	ArrowBack as ArrowBackIcon,
-	ShoppingCart as ShoppingCartIcon,
 	Share as ShareIcon,
 	Favorite as FavoriteIcon,
 	FavoriteBorder as FavoriteBorderIcon,
 	Home as HomeIcon,
 	Store as StoreIcon,
-	AddSharp as AddSharpIcon,
-	RemoveSharp as RemoveSharpIcon,
-	PhoneAndroid,
 	Phone,
 } from "@mui/icons-material";
-import {path, productsPathes} from "../../../routes/routes";
+import {path} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {useTranslation} from "react-i18next";
@@ -48,10 +44,10 @@ interface ProductDetailsProps {}
 
 const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {t} = useTranslation();
-	const {productName} = useParams<{productName: string}>();
 	const [product, setProduct] = useState<Products>(initialProductValue);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
+	const {productId} = useParams();
 	const navigate = useNavigate();
 	const {isLoggedIn} = useUser();
 	const theme = useTheme();
@@ -91,10 +87,9 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 	// ----- Fetch Product -----
 	useEffect(() => {
-		if (productName) {
-			const decodedName = decodeURIComponent(productName);
+		if (productId) {
 			setLoading(true);
-			getProductByspicificName(decodedName)
+			getProductById(productId)
 				.then((res) => {
 					if (!res) {
 						setError("لم يتم العثور على المنتج");
@@ -110,7 +105,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 				})
 				.finally(() => setLoading(false));
 		}
-	}, [productName]);
+	}, [productId]);
 
 	if (loading)
 		return (
@@ -124,7 +119,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			</Box>
 		);
 
-	if (!productName) navigate(-1);
+	if (!productId) navigate(-1);
 
 	if (error)
 		return (
@@ -239,14 +234,14 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 											<>
 												<FavoriteIcon color='error' />
 												<Typography sx={{ml: 0.5}}>
-													{product.likes.length}
+													{product.likes?.length ?? 0}
 												</Typography>
 											</>
 										) : (
 											<>
 												<FavoriteBorderIcon />
 												<Typography sx={{ml: 0.5}}>
-													{product.likes.length}
+													{product.likes?.length ?? 0}
 												</Typography>
 											</>
 										)}

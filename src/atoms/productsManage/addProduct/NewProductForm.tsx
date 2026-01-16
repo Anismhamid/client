@@ -24,7 +24,11 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					name='product_name'
 					value={formik.values.product_name}
 					onChange={formik.handleChange}
-					className='form-control'
+					className={`form-control ${
+						formik.touched.product_name && formik.errors.product_name
+							? "is-invalid"
+							: ""
+					}`}
 					id='product_name'
 					placeholder={t("modals.addProductModal.productNamePlaceholder")}
 					title={t("modals.addProductModal.productNamePlaceholderdefrent")}
@@ -33,7 +37,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					{t("modals.addProductModal.productName")}
 				</label>
 				{(formik.touched.product_name || formik.errors.product_name) && (
-					<p className='text-danger fw-bold'>{formik.errors.product_name}</p>
+					<p className='invalid-feedback'>{formik.errors.product_name}</p>
 				)}
 			</Box>
 
@@ -43,7 +47,11 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					name='category'
 					value={formik.values.category}
 					onChange={formik.handleChange}
-					className='form-control'
+					className={`form-control ${
+						formik.touched.category && formik.errors.category
+							? "is-invalid"
+							: ""
+					}`}
 					id='category'
 					aria-label={t("modals.addProductModal.selectCategory")}
 					title={t("modals.addProductModal.selectCategory")}
@@ -54,14 +62,14 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					>
 						{t("modals.addProductModal.selectCategory")}
 					</option>
-					{productCategories.map((category: {id: string; label: string}) => (
+					{productCategories.map((category) => (
 						<option value={category.id} key={category.id}>
 							{category.label}
 						</option>
 					))}
 				</select>
 				{(formik.touched.category || formik.errors.category) && (
-					<div className='text-danger fw-bold'>{formik.errors.category}</div>
+					<div className='invalid-feedback'>{formik.errors.category}</div>
 				)}
 			</div>
 
@@ -73,23 +81,28 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 				<input
 					type='number'
 					name='price'
-					className='form-control'
+					className={`form-control ${
+						formik.touched.price && formik.errors.price ? "is-invalid" : ""
+					}`}
 					placeholder={t("modals.addProductModal.price")}
 					aria-label={t("modals.addProductModal.price")}
-					aria-describedby={t("modals.addProductModal.price")}
-					value={formik.values.price}
-					onChange={formik.handleChange}
-					title={t("modals.addProductModal.price")}
+					value={formik.values.price || ""}
+					min={1}
+					step='0.01'
+					onChange={(e) => {
+						const value = e.target.value;
+						formik.setFieldValue("price", value === "" ? "" : Number(value));
+					}}
+					onBlur={formik.handleBlur}
 				/>
 			</div>
 			{(formik.touched.price || formik.errors.price || formik.values.price > 0) && (
-				<div className='text-danger fw-bold'>{formik.errors.price}</div>
+				<div className='invalid-feedback'>{formik.errors.price}</div>
 			)}
 
 			{/* if the category is cars show car settings */}
 			{formik.values.category === "Cars" && (
 				<Box>
-					brand
 					<div className='input-group mb-3'>
 						<span className='input-group-text' dir='ltr' id='brand'>
 							{fontAwesomeIcon.brand}
@@ -97,7 +110,11 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 						<input
 							type='text'
 							name='brand'
-							className='form-control'
+							className={`form-control ${
+								formik.touched.brand && formik.errors.brand
+									? "is-invalid"
+									: ""
+							}`}
 							placeholder={t("modals.addProductModal.brand")}
 							aria-label={t("modals.addProductModal.brand")}
 							aria-describedby={t("modals.addProductModal.brand")}
@@ -109,10 +126,10 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					{(formik.touched.brand ||
 						formik.errors.brand ||
 						formik.values.brand == "") && (
-						<div className='text-danger fw-bold'>{formik.errors.brand}</div>
+						<div className='invalid-feedback'>{formik.errors.brand}</div>
 					)}
 					{/* year */}
-					year
+					{t("modals.addProductModal.year")}
 					<div className='input-group mb-3'>
 						<span className='input-group-text' dir='ltr' id='year'>
 							{fontAwesomeIcon.year}
@@ -121,7 +138,11 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 						<input
 							type='date'
 							name='year'
-							className='form-control'
+							className={`form-control ${
+								formik.touched.year && formik.errors.year
+									? "is-invalid"
+									: "is-valid"
+							}`}
 							placeholder={t("modals.addProductModal.year")}
 							aria-label={t("modals.addProductModal.year")}
 							aria-describedby={t("modals.addProductModal.year")}
@@ -133,41 +154,64 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					{(formik.touched.year ||
 						formik.errors.year ||
 						formik.values.year == "") && (
-						<div className='text-danger fw-bold'>{formik.errors.year}</div>
+						<div className='invalid-feedback'>{formik.errors.year}</div>
 					)}
 					{/* fuel */}
-					fuel
+					{t("modals.addProductModal.fuel.label")}
 					<select
 						name='fuel'
 						value={formik.values.fuel}
 						onChange={formik.handleChange}
-						className='form-control'
+						className={`form-control ${
+							formik.touched.fuel && formik.errors.fuel ? "is-invalid" : ""
+						}`}
 						id='fuel'
 						aria-label={t("modals.addProductModal.fuel")}
 						title={t("modals.addProductModal.fuel")}
 					>
 						<option disabled aria-label={t("modals.addProductModal.fuel")}>
-							{t("modals.addProductModal.fuel")}
+							{t("modals.addProductModal.fuel.label")}
 						</option>
-						{["diesel", "banzen", "Electric"].map((fuel: string, index) => (
-							<option value={fuel} key={index}>
-								{fuel}
+						{[
+							{
+								value: "diesel",
+								label: t("modals.addProductModal.fuel.settings.diesel"),
+							},
+							{
+								value: "gasoline",
+								label: t("modals.addProductModal.fuel.settings.gasoline"),
+							},
+							{
+								value: "electric",
+								label: t("modals.addProductModal.fuel.settings.electric"),
+							},
+							{
+								value: "hybrid",
+								label: t("modals.addProductModal.fuel.settings.hybrid"),
+							},
+						].map((fuelOption) => (
+							<option value={fuelOption.value} key={fuelOption.value}>
+								{fuelOption.label}
 							</option>
 						))}
 					</select>
 					{(formik.touched.fuel || formik.errors.fuel) && (
-						<div className='text-danger fw-bold'>{formik.errors.fuel}</div>
+						<div className='invalid-feedback'>{formik.errors.fuel}</div>
 					)}
 					{/* mileage */}
 					<div className='input-group my-3'>
-						<span className='input-group-text' dir='ltr' id='fuel'>
-							mileage
+						<span className='input-group-text' id='mileage'>
+							{t("modals.addProductModal.mileage")}
 							{fontAwesomeIcon.mileage}
 						</span>
 						<input
 							type='text'
 							name='mileage'
-							className='form-control'
+							className={`form-control ${
+								formik.touched.mileage && formik.errors.mileage
+									? "is-invalid"
+									: ""
+							}`}
 							placeholder={t("modals.addProductModal.mileage")}
 							aria-label={t("modals.addProductModal.mileage")}
 							aria-describedby={t("modals.addProductModal.mileage")}
@@ -179,15 +223,19 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					{(formik.touched.mileage ||
 						formik.errors.mileage ||
 						formik.values.mileage == 0) && (
-						<div className='text-danger fw-bold'>{formik.errors.mileage}</div>
+						<div className='invalid-feedback'>{formik.errors.mileage}</div>
 					)}
-					color
+					{t("color")}
 					{/* color */}
 					<select
 						name='color'
 						value={formik.values.color}
 						onChange={formik.handleChange}
-						className='form-control'
+						className={`form-control ${
+							formik.touched.color && formik.errors.color
+								? "is-invalid"
+								: ""
+						}`}
 						id='color'
 						aria-label={t("modals.addProductModal.color")}
 						title={t("modals.addProductModal.color")}
@@ -216,33 +264,10 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 						</Box>
 					)}
 					{formik.touched.color && formik.errors.color && (
-						<div className='text-danger fw-bold'>{formik.errors.color}</div>
+						<div className='invalid-feedback'>{formik.errors.color}</div>
 					)}
 				</Box>
 			)}
-			{/* quantity_in_stock */}
-			<div className='form-floating my-3'>
-				<input
-					type='number'
-					name='quantity_in_stock'
-					value={formik.values.quantity_in_stock}
-					onChange={formik.handleChange}
-					className='form-control'
-					id='quantity_in_stock'
-					placeholder={t("modals.addProductModal.quantity")}
-					title={t("modals.addProductModal.quantity")}
-					aria-label={t("modals.addProductModal.quantity")}
-				/>
-				<label htmlFor='quantity_in_stock'>
-					{t("modals.addProductModal.quantity")}
-				</label>
-				{(formik.touched.quantity_in_stock ||
-					formik.errors.quantity_in_stock) && (
-					<div className='text-danger fw-bold'>
-						{formik.errors.quantity_in_stock}
-					</div>
-				)}
-			</div>
 
 			{/* description */}
 			<div className='form-floating mb-3'>
@@ -250,7 +275,11 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					name='description'
 					value={formik.values.description}
 					onChange={formik.handleChange}
-					className='form-control'
+					className={`form-control ${
+						formik.touched.description && formik.errors.description
+							? "is-invalid"
+							: ""
+					}`}
 					id='description'
 					placeholder={t("modals.addProductModal.descriptionPlaceholder")}
 					aria-label={t("modals.addProductModal.descriptionPlaceholder")}
@@ -264,7 +293,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					<hr />
 				</label>
 				{formik.touched.description && formik.errors.description && (
-					<div className='text-danger fw-bold'>{formik.errors.description}</div>
+					<div className='invalid-feedback'>{formik.errors.description}</div>
 				)}
 			</div>
 
@@ -275,14 +304,18 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					name='image_url'
 					value={formik.values.image_url}
 					onChange={formik.handleChange}
-					className='form-control'
+					className={`form-control ${
+						formik.touched.image_url && formik.errors.image_url
+							? "is-invalid"
+							: ""
+					}`}
 					id='image_url'
 					placeholder={t("modals.addProductModal.imageUrl")}
 					aria-label={t("modals.addProductModal.imageUrl")}
 				/>
 				<label htmlFor='image_url'>{t("modals.addProductModal.imageUrl")}</label>
 				{formik.touched.image_url && formik.errors.image_url && (
-					<div className='text-danger fw-bold'>{formik.errors.image_url}</div>
+					<div className='invalid-feedback'>{formik.errors.image_url}</div>
 				)}
 			</div>
 

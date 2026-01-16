@@ -2,10 +2,10 @@
  * Products interface
  */
 export interface Products {
-	likes: string[];
+	likes?: string[];
 	isNew?: boolean;
 	_id?: string;
-	seller: {name?: string; slug?: string; sellerId: string};
+	seller?: {name?: string; slug?: string; sellerId: string};
 	product_name: string;
 	category: string;
 	brand?: string;
@@ -14,7 +14,6 @@ export interface Products {
 	mileage?: number;
 	color?: string;
 	price: number;
-	quantity_in_stock: number;
 	description: string;
 	image_url: string;
 	sale: boolean;

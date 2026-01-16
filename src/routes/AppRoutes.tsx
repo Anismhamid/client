@@ -59,7 +59,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path='/category/:category/:subcategory' element={<Products />} />
 
 			<Route
-				path={`${productsPathes.productDetails}/:productName`}
+				path={`${productsPathes.productDetails}/:category/:brand/:productId`}
 				element={<ProducDetails />}
 			/>
 			<Route path={`${path.DicountAndOfers}`} element={<DiscountsAndOffers />} />

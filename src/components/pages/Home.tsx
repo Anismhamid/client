@@ -19,7 +19,7 @@ import {io} from "socket.io-client";
 import ProductCard from "./products/ProductCard";
 import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
-import { productCategories } from "../navbar/navCategoryies";
+import {productCategories} from "../navbar/navCategoryies";
 
 interface HomeProps {}
 
@@ -35,7 +35,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const {auth} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [visibleCount, setVisibleCount] = useState(6);
-	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
+	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const observerRef = useRef<HTMLDivElement | null>(null);
@@ -56,6 +56,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const refreshAfterCange = () => setRefresh(!refresh);
+
+	const handleToggleLike = (productId: string, liked: boolean, userId: string) => {
+		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId]
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+	};
 
 	useEffect(() => {
 		getAllProducts()
@@ -192,18 +207,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 			</Helmet>
 
 			<Box dir={diriction} component='main'>
-				{" "}
-				<div className=' text-center  p-5'>
-					<h1>الصفحة الرئيسية</h1>
-					<h2 className=' lead mt-4'>
-						اكتشف أفضل المنتجات من جميع الفئات مع تجربة تسوق ممتعة وسهلة
-					</h2>
-				</div>
-				<hr className=' w-75 m-auto border border-3 rounded-5 border-5 border-dark-subtle mt-5' />
-				<Box className='logo-img' />
-				{/* <Typography variant='h5' my={10} textAlign={"center"}>
-					משלוח חינם לכל הרכישות מעל 200 ש"ח. החזרות בתוך 14 יום.
-				</Typography> */}
 				{!searchQuery && <DiscountsAndOffers />}
 				{/* Search and filter products */}
 				<Box className='container'>
@@ -274,7 +277,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (
 								visibleProducts.map((product) => {
-									const isOutOfStock = product.quantity_in_stock <= 0;
 									const discountedPrice = product.sale
 										? product.price -
 											(product.price * (product.discount || 0)) /
@@ -290,13 +292,19 @@ const Home: FunctionComponent<HomeProps> = () => {
 											xl={2}
 										>
 											<ProductCard
+												onToggleLike={(productId, liked) =>
+													handleToggleLike(
+														productId,
+														liked,
+														auth?._id!,
+													)
+												}
 												key={product._id}
 												product={product}
 												discountedPrice={discountedPrice}
-												isOutOfStock={isOutOfStock}
 												canEdit={canEdit}
-												setProductNameToUpdate={
-													setProductNameToUpdate
+												setProductIdToUpdate={
+													setProductIdToUpdate
 												}
 												onShowUpdateProductModal={
 													onShowUpdateProductModal
@@ -304,7 +312,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												openDeleteModal={openDeleteModal}
 												setLoadedImages={setLoadedImages}
 												loadedImages={loadedImages}
-												category={""}
+												category={product.category}
 											/>
 										</Col>
 									);
@@ -419,7 +427,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				</Box>
 				<UpdateProductModal
 					refresh={refreshAfterCange}
-					product_name={productNameToUpdate}
+					productId={productIdToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}
 				/>

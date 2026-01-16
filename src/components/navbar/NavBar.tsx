@@ -15,7 +15,7 @@ import {patchUserStatus} from "../../services/usersServices";
 import ChipNavigation from "../ChepNavigation";
 import {useTheme, useMediaQuery} from "@mui/material";
 import MegaMenu from "./NavItem";
-import { productCategories } from "./navCategoryies";
+import {productCategories} from "./navCategoryies";
 
 interface NavBarProps {}
 /**

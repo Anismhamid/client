@@ -15,6 +15,60 @@ export interface CategoryEnum {
 
 export const productCategories: CategoryEnum[] = [
 	{
+		labelKey: "categories.house.label",
+		value: "house",
+		path: productsPathes.house,
+		subCategories: [
+			{
+				labelKey: "categories.house.subCategories.kitchen",
+				path: `${productsPathes.house}/kitchen`,
+				value: "kitchen",
+			},
+			{
+				labelKey: "categories.house.subCategories.storage",
+				path: `${productsPathes.house}/storage`,
+				value: "storage",
+			},
+			{
+				labelKey: "categories.house.subCategories.decor",
+				path: `${productsPathes.house}/decor`,
+				value: "decor",
+			},
+			{
+				labelKey: "categories.house.subCategories.maintenance",
+				path: `${productsPathes.house}/maintenance`,
+				value: "maintenance",
+			},
+		],
+	},
+	{
+		labelKey: "categories.garden.label",
+		value: "garden",
+		path: productsPathes.garden,
+		subCategories: [
+			{
+				labelKey: "categories.garden.subCategories.plants",
+				path: `${productsPathes.garden}/plants`,
+				value: "plants",
+			},
+			{
+				labelKey: "categories.garden.subCategories.watering",
+				path: `${productsPathes.garden}/watering`,
+				value: "watering",
+			},
+			{
+				labelKey: "categories.garden.subCategories.tools",
+				path: `${productsPathes.garden}/tools`,
+				value: "tools",
+			},
+			{
+				labelKey: "categories.garden.subCategories.outdoorDecor",
+				path: `${productsPathes.garden}/outdoorDecor`,
+				value: "outdoorDecor",
+			},
+		],
+	},
+	{
 		labelKey: "categories.baby.label",
 		value: "baby",
 		path: productsPathes.baby,
