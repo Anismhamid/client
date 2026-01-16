@@ -345,6 +345,7 @@
 	"links": {
 		"home": "בית",
 		"products": "מוצרים",
+		"noProducts": "לא נמצאו מוצרים בחנות",
 		"cart": "עגלת קניות",
 		"about": "אודות",
 		"contact": "צור קשר",
@@ -484,6 +485,20 @@
 	"about": {
 		"about": "אודות"
 	},
+
+	"footer": {
+		"siteName": "אתר صفקה",
+		"quickLinks": "קישורים מהירים",
+		"myAccount": "החשבון שלי",
+		"myListings": "המודעות שלי",
+		"postListing": "הוסף מודעה חדשה",
+		"marketplace": "השוק",
+		"descriptionC2C": "קנה ומכור ישירות עם משתמשים אחרים בקלות ובבטחה.",
+		"contact": "צור קשר",
+		"phone": "טלפון",
+		"followUs": "עקוב אחרינו"
+	},
+	"color": "צבע",
 	"removeAccount": {
 		"heading": "מחיקת חשבון",
 		"description": "אם תמחוק את החשבון, לא ניתן יהיה לבטל פעולה זו",

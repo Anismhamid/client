@@ -347,6 +347,7 @@
 	"links": {
 		"home": "Home",
 		"products": "Products",
+		"noProducts": "No products are avalible, please try again later",
 		"cart": "Cart",
 		"about": "About",
 		"contact": "Contact",
@@ -486,6 +487,20 @@
 	"about": {
 		"about": "About"
 	},
+
+	"footer": {
+		"siteName": "Sfqa Site",
+		"quickLinks": "Quick Links",
+		"myAccount": "My Account",
+		"myListings": "My Listings",
+		"postListing": "Post a Listing",
+		"marketplace": "Marketplace",
+		"descriptionC2C": "Buy and sell directly with other users easily and safely.",
+		"contact": "Contact Us",
+		"phone": "Phone",
+		"followUs": "Follow Us"
+	},
+	"color": "Color",
 	"removeAccount": {
 		"heading": "Delete Account",
 		"description": "If you delete your account, this action cannot be undone",

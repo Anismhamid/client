@@ -12,14 +12,14 @@ import {
 	ButtonBase,
 } from "@mui/material";
 import {alpha, useTheme} from "@mui/material/styles";
-import {NavbarCategory} from "./navCategoryies";
 import {NavLink, useLocation} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import { CategoryEnum } from "./navCategoryies";
 
 interface MegaMenuProps {
 	anchorEl: HTMLElement | null;
 	open: boolean;
-	categories: NavbarCategory[];
+	categories: CategoryEnum[];
 	onClose: () => void;
 }
 

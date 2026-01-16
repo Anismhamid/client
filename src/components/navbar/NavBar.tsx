@@ -1,21 +1,21 @@
 import {FunctionComponent, memo, useCallback, useEffect, useState} from "react";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
-import {path} from "../../../routes/routes";
-import {useUser} from "../../../context/useUSer";
-import useToken from "../../../hooks/useToken";
-import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
-import AccountMenu from "../../../atoms/userManage/AccountMenu";
+import {path} from "../../routes/routes";
+import {useUser} from "../../context/useUSer";
+import useToken from "../../hooks/useToken";
+import {fontAwesomeIcon} from "../../FontAwesome/Icons";
+import AccountMenu from "../../atoms/userManage/AccountMenu";
 import {AppBar, Box, Button, Toolbar, Tooltip, Typography} from "@mui/material";
-import RoleType from "../../../interfaces/UserType";
-import {navbarCategoryLinks} from "./navCategoryies";
-import {emptyAuthValues} from "../../../interfaces/authValues";
+import RoleType from "../../interfaces/UserType";
+import {emptyAuthValues} from "../../interfaces/authValues";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {useTranslation} from "react-i18next";
-import socket from "../../../socket/globalSocket";
-import {patchUserStatus} from "../../../services/usersServices";
-import ChipNavigation from "../../../atoms/productsManage/ChepNavigation";
+import socket from "../../socket/globalSocket";
+import {patchUserStatus} from "../../services/usersServices";
+import ChipNavigation from "../ChepNavigation";
 import {useTheme, useMediaQuery} from "@mui/material";
 import MegaMenu from "./NavItem";
+import { productCategories } from "./navCategoryies";
 
 interface NavBarProps {}
 /**
@@ -79,7 +79,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 				role='navigation'
 				sx={{
 					width: "95%",
-					background: "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)",
+					background: "#335B83",
 				}}
 			>
 				<Toolbar
@@ -155,7 +155,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							anchorEl={megaAnchor}
 							open={openMega}
 							onClose={() => setMegaAnchor(null)}
-							categories={navbarCategoryLinks}
+							categories={productCategories}
 						/>
 					</Box>
 
@@ -166,7 +166,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							} nav-link`}
 							aria-current={isActive(path.About) ? "page" : undefined}
 							to={path.About}
-							aria-label='من نحن - معلومات عن سوق السخنيني'
+							aria-label='من نحن - معلومات عن موقع صفقه'
 						>
 							{t("links.about")}
 						</NavLink>
@@ -178,7 +178,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							} nav-link`}
 							aria-current={isActive(path.Contact) ? "page" : undefined}
 							to={path.Contact}
-							aria-label='اتصل بنا - خدمة عملاء سوق السخنيني'
+							aria-label='اتصل بنا - خدمة عملاء موقع صفقه'
 						>
 							{t("links.contact")}
 						</NavLink>
@@ -212,7 +212,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 										backgroundColor: "#81D4FA",
 									},
 								}}
-								aria-label='تسجيل الدخول إلى حسابك في سوق السخنيني'
+								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
 							>
 								تسجيل الدخول
 							</Button>

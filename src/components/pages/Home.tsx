@@ -3,7 +3,6 @@ import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import {useUser} from "../../context/useUSer";
 import {deleteProduct, getAllProducts} from "../../services/productsServices";
 import {Products} from "../../interfaces/Products";
-import {handleAddToCart} from "../../helpers/fruitesFunctions";
 import Loader from "../../atoms/loader/Loader";
 import {Button, CircularProgress, Chip, Box, Typography} from "@mui/material";
 import RoleType from "../../interfaces/UserType";
@@ -19,6 +18,8 @@ import handleRTL from "../../locales/handleRTL";
 import {io} from "socket.io-client";
 import ProductCard from "./products/ProductCard";
 import {Helmet} from "react-helmet";
+import {useTranslation} from "react-i18next";
+import { productCategories } from "../navbar/navCategoryies";
 
 interface HomeProps {}
 
@@ -28,12 +29,10 @@ interface HomeProps {}
  */
 
 const Home: FunctionComponent<HomeProps> = () => {
-	const [quantities, setQuantities] = useState<{[key: string]: number}>({});
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
-	const [loadingAddToCart, setLoadingAddToCart] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
-	const {auth, isLoggedIn} = useUser();
+	const {auth} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [visibleCount, setVisibleCount] = useState(6);
 	const [productNameToUpdate, setProductNameToUpdate] = useState<string>("");
@@ -45,6 +44,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
+	const {t} = useTranslation();
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -78,10 +78,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || 0;
 			const productInDiscount = product.sale ? "عروض" : "";
+			const cartegory = product.category;
 			return (
 				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
 				(searchQuery && productPrice.toString().includes(searchQuery)) ||
-				(searchQuery && productInDiscount.toString().includes(searchQuery))
+				(searchQuery && productInDiscount.toString().includes(searchQuery)) ||
+				(searchQuery && cartegory.includes(searchQuery))
 			);
 		});
 	}, [products, searchQuery]);
@@ -146,39 +148,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 		};
 	}, []);
 
-	const handleAdd = async (
-		product_name: string,
-		quantity: {[key: string]: number},
-		price: number,
-		product_image: string,
-		sale: boolean,
-		discount: number,
-	) => {
-		const productQuantity = quantity[product_name] || 1; // Access the quantity of the specific product
-		if (!isLoggedIn) {
-			navigate(path.Login);
-			return;
-		} else {
-			setLoadingAddToCart(product_name);
-			try {
-				await handleAddToCart(
-					setQuantities,
-					product_name,
-					productQuantity || 1,
-					price - (price * discount) / 100,
-					product_image,
-					sale,
-					discount,
-				);
-				setQuantities((prev) => ({...prev, [product_name]: 1}));
-			} catch (error) {
-				showError("حدث خطأ أثناء إضافة منتج إلى سلة التسوق");
-			} finally {
-				setLoadingAddToCart(null);
-			}
-		}
-	};
-
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
 			.then(() => {
@@ -204,7 +173,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		return (
 			<Box component={"main"} textAlign={"center"}>
 				<Typography textAlign={"center"} variant='h6' color='error'>
-					لم يتم العثور على أي منتجات في المتجر
+					{t("noProducts")}
 				</Typography>
 				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
 					حاول ثانية
@@ -251,103 +220,66 @@ const Home: FunctionComponent<HomeProps> = () => {
 							setSearchQuery={setSearchQuery}
 						/>
 					</Box>
-					{/* Discounts Section */}
-					<Box
-						sx={{
-							backdropFilter: "blur(10px)",
-							width: "100%",
-							p: 1,
-							border: "1px solid red",
-							borderRadius: 3,
-							my: 5,
-						}}
-					>
-						<Typography
-							sx={{
-								textAlign: "center",
-								my: 4,
-								fontWeight: "bold",
-							}}
-							component='h1'
-							variant='h5'
-							gutterBottom
-						>
-							جميع المنتجات لتلبية جميع احتياجاتكم. ستجدون هنا تشكيلة واسعة
-							من المنتجات الجديدة والمستعملة، من الإلكترونيات إلى الملابس،
-							ومن الأدوات المنزلية إلى الألعاب. لأي استفسارات حول المنتجات
-							أو العروض أو كيفية الطلب، تواصلوا معنا واستمتعوا بتجربة تسوق
-							مميزة!
-						</Typography>
-					</Box>
+
 					{/* ازرار التصفيه */}
-					<Button
-						variant={"contained"}
-						color={searchQuery === "سيارات" ? "error" : "primary"}
+					{productCategories.map(({labelKey}) => (
+						<Box
+							key={labelKey}
+							sx={{
+								borderRadius: 5,
+								m: 1,
+								fontSize: "1rem",
+								fontWeight: "bold",
+								color:
+									searchQuery === t(labelKey)
+										? "error.main"
+										: "primary.main",
+								textDecoration: "none",
+								padding: "4px 8px",
+								display: "inline-block",
+								cursor: "pointer",
+
+								"&.active": {
+									color: "error.main",
+								},
+							}}
+							onClick={() => setSearchQuery(t(labelKey))}
+						>
+							{t(labelKey)}
+						</Box>
+					))}
+					<Box
+						key={"عروض"}
 						sx={{
 							borderRadius: 5,
 							m: 1,
 							fontSize: "1rem",
 							fontWeight: "bold",
+							color: searchQuery === "عروض" ? "error.main" : "primary.main",
+							textDecoration: "none",
+							padding: "4px 8px",
+							display: "inline-block",
+							cursor: "pointer",
+
+							"&.active": {
+								color: "error.main",
+							},
 						}}
-						onClick={() => {
-							setSearchQuery("سيارات");
-							navigate(path.Cars)
-						}}
-					>
-						سيارات
-					</Button>
-					<Button
-						variant={"contained"}
-						color={searchQuery === "اعمال يدويه" ? "error" : "primary"}
-						sx={{
-							borderRadius: 5,
-							m: 1,
-							fontSize: "1rem",
-							fontWeight: "bold",
-						}}
-						onClick={() => {
-							setSearchQuery("اعمال يدويه");
-						}}
-					>
-						اعمال يدويه
-					</Button>
-					<Button
-						variant={"contained"}
-						color={searchQuery === "عروض" ? "error" : "primary"}
-						sx={{
-							borderRadius: 5,
-							m: 1,
-							fontSize: "1rem",
-							fontWeight: "bold",
-						}}
-						onClick={() => {
-							setSearchQuery("عروض");
-						}}
+						onClick={() => setSearchQuery("عروض")}
 					>
 						عروض اليوم
-					</Button>
+					</Box>
 
 					<Box className='container pb-5 home-row'>
 						<Row className='mt-3' spacing={5}>
 							{visibleProducts.length > 0 ? (
 								visibleProducts.map((product) => {
-									const productQuantity =
-										quantities[product.product_name] ?? 1;
 									const isOutOfStock = product.quantity_in_stock <= 0;
 									const discountedPrice = product.sale
 										? product.price -
 											(product.price * (product.discount || 0)) /
 												100
 										: product.price;
-
-									const unitText =
-										{
-											// spices: "ל/100 גרם",
-											fruit: "الكيلو-1",
-											vegetable: "الكيلو-1",
-											// meat: 'ל/ק"ג',
-											// fish: 'ל/ק"ג',
-										}[product.category?.toLowerCase()] || "ליחידה";
 
 									return (
 										<Col
@@ -360,13 +292,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 											<ProductCard
 												key={product._id}
 												product={product}
-												productQuantity={productQuantity}
 												discountedPrice={discountedPrice}
-												unitText={unitText}
 												isOutOfStock={isOutOfStock}
-												quantities={quantities}
-												setQuantities={setQuantities}
-												loadingAddToCart={loadingAddToCart}
 												canEdit={canEdit}
 												setProductNameToUpdate={
 													setProductNameToUpdate
@@ -377,7 +304,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 												openDeleteModal={openDeleteModal}
 												setLoadedImages={setLoadedImages}
 												loadedImages={loadedImages}
-												handleAdd={handleAdd}
 												category={""}
 											/>
 										</Col>

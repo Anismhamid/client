@@ -45,7 +45,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-	const [loadingAddToCart] = useState<string | null>(null);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
@@ -240,7 +239,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												product={product}
 												discountedPrice={discountedPrice}
 												isOutOfStock={isOutOfStock}
-												loadingAddToCart={loadingAddToCart}
 												canEdit={canEdit}
 												setProductNameToUpdate={
 													setProductNameToUpdate

@@ -69,6 +69,7 @@
 	"home": "الرئيسيه",
 	"backOneStep": "العودة إلى الصفحة السابقة",
 	"products": "منتجات",
+	"noProducts": "لم يتم العثور على أي منتجات في المتجر",
 	"price": "السعر",
 	"quantity": "العدد",
 	"currentStatus": "الحالة",
@@ -487,6 +488,20 @@
 	"about": {
 		"about": "من نحن"
 	},
+
+	"footer": {
+		"siteName": "موقع صفقه",
+		"quickLinks": "روابط سريعة",
+		"myAccount": "حسابي",
+		"myListings": "إعلاناتي",
+		"postListing": "إضافة إعلان جديد",
+		"marketplace": "السوق العام",
+		"descriptionC2C": "اشترِ وبِع مباشرة مع مستخدمين آخرين بكل سهولة وأمان.",
+		"contact": "اتصل بنا",
+		"phone": "هاتف",
+		"followUs": "تابعنا"
+	},
+	"color": "اللون",
 	"removeAccount": {
 		"heading": "حذف الحساب",
 		"description": "اذا قمت بحذف الحساب لا يمكن التراجع عن هذا الإجراء",

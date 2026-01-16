@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from "react"; // Add useCallba
 import {Box, Chip, IconButton, Typography} from "@mui/material";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
 import {Link, NavLink} from "react-router-dom";
-import {navbarCategoryLinks} from "../../components/settings/navbar/navCategoryies";
+import {productCategories} from "./navbar/navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
@@ -139,7 +139,7 @@ const ChipNavigation = () => {
 						الرئيسـيه
 					</Typography>
 				</Link>
-				{navbarCategoryLinks.map((link) => (
+				{productCategories.map((link) => (
 					<NavLink to={link.path} key={link.path}>
 						{({isActive}) => (
 							<Chip

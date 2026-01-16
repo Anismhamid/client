@@ -53,15 +53,16 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 
 			<Route path={path.PrivacyAndPolicy} element={<PrivacyAdnPolicy />} />
 			<Route path={path.TermOfUse} element={<TermOfUse />} />
+
 			<Route path='/category/:category' element={<Products />} />
+
+			<Route path='/category/:category/:subcategory' element={<Products />} />
+
 			<Route
 				path={`${productsPathes.productDetails}/:productName`}
 				element={<ProducDetails />}
 			/>
-			<Route
-				path={`${path.DicountAndOfers}`}
-				element={<DiscountsAndOffers />}
-			/>
+			<Route path={`${path.DicountAndOfers}`} element={<DiscountsAndOffers />} />
 
 			<Route path={path.Png} element={<PageNotFound />} />
 		</Routes>

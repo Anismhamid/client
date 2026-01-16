@@ -18,12 +18,13 @@ import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../../locales/handleRTL";
 
 interface ProductCardProps {
 	product: Products;
 	discountedPrice: number;
 	isOutOfStock: boolean;
-	loadingAddToCart: string | null;
 	canEdit?: boolean;
 	setProductNameToUpdate: Dispatch<SetStateAction<string>>;
 	onShowUpdateProductModal: () => void;
@@ -52,9 +53,13 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		};
 
 		const jsonLdData = generateSingleProductJsonLd(product);
+		const {t} = useTranslation();
+
+		const dir = handleRTL();
 
 		return (
 			<Card
+				dir={dir}
 				style={{
 					height: "100%",
 					borderRadius: 20,
@@ -147,6 +152,18 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							}}
 						/>
 					)}
+				</Box>
+				<Box sx={{display: "flex", gap: 1}}>
+					<Typography>{t("color")}</Typography>
+					<Typography
+						sx={{
+							width: 20,
+							height: 20,
+							// backgroundColor: product.color,
+							border: `5px solid ${product?.color}`,
+							borderRadius: 3,
+						}}
+					/>
 				</Box>
 				{product.seller && (
 					<Box textAlign={"center"} m={1}>
