@@ -224,7 +224,7 @@ const CustomerProfile: FunctionComponent = () => {
 						fontWeight='bold'
 						sx={{position: "relative"}}
 					>
-						المنتجات المميزة
+						المنتجات الخاصه بهذه المستخدم
 						<Box
 							sx={{
 								position: "absolute",
@@ -363,7 +363,7 @@ const CustomerProfile: FunctionComponent = () => {
 											}}
 											onClick={() =>
 												navigat(
-													`/product-details/${encodeURIComponent(product.product_name)}`,
+													`/product-details/${product.category || product.type}/${product.brand}/${product._id}`,
 												)
 											}
 										>

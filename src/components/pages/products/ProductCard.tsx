@@ -305,6 +305,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						<Box
 							sx={{
 								display: "flex",
+								gap: 5,
 								alignSelf: "center",
 								justifyContent: "space-around",
 							}}
@@ -324,60 +325,10 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 								sx={{
 									borderRadius: 3,
 									minWidth: 50,
+									mb: 1,
 								}}
 							/>
-							<Box
-								sx={{
-									display: "flex",
-									justifyContent: "space-between",
-									p: 2,
-									borderTop: `1px solid ${theme.palette.divider}`,
-								}}
-							>
-								<IconButton
-									aria-label='add to favorites'
-									onClick={handleLike}
-								>
-									{userLiked ? (
-										<>
-											<FavoriteIcon color='error' />
-											<Typography sx={{ml: 0.5}}>
-												{product.likes?.length ?? 0}
-											</Typography>
-										</>
-									) : (
-										<>
-											<FavoriteBorderIcon />
-											<Typography sx={{ml: 0.5}}>
-												{product.likes?.length ?? 0}
-											</Typography>
-										</>
-									)}
-								</IconButton>
 
-								<IconButton
-									aria-label='share'
-									onClick={() => {
-										if (navigator.share) {
-											navigator
-												.share({
-													title: `منتج ${product.product_name} رائع`,
-													text: `شوف ${product.product_name} المميز!`,
-													url: window.location.href,
-												})
-												.then(() =>
-													showSuccess("تمت المشاركة بنجاح"),
-												)
-												.catch(() => showError("فشل المشاركة"));
-										} else
-											showError(
-												"المشاركة غير مدعومة في هذا المتصفح",
-											);
-									}}
-								>
-									<ShareIcon />
-								</IconButton>
-							</Box>
 							<Button
 								size='small'
 								color='error'
@@ -385,10 +336,54 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 								onClick={() => openDeleteModal(product.product_name)}
 								startIcon={<DeleteIcon />}
 								variant='outlined'
-								sx={{borderRadius: 3, minWidth: 50}}
+								sx={{borderRadius: 3, minWidth: 50, mb: 1}}
 							/>
 						</Box>
 					)}
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "space-between",
+							p: 2,
+							borderTop: `1px solid ${theme.palette.divider}`,
+						}}
+					>
+						<IconButton aria-label='add to favorites' onClick={handleLike}>
+							{userLiked ? (
+								<>
+									<FavoriteIcon color='error' />
+									<Typography sx={{ml: 0.5}}>
+										{product.likes?.length ?? 0}
+									</Typography>
+								</>
+							) : (
+								<>
+									<FavoriteBorderIcon />
+									<Typography sx={{ml: 0.5}}>
+										{product.likes?.length ?? 0}
+									</Typography>
+								</>
+							)}
+						</IconButton>
+
+						<IconButton
+							aria-label='share'
+							onClick={() => {
+								if (navigator.share) {
+									navigator
+										.share({
+											title: `منتج ${product.product_name} رائع`,
+											text: `شوف ${product.product_name} المميز!`,
+											url: window.location.href,
+										})
+										.then(() => showSuccess("تمت المشاركة بنجاح"))
+										.catch(() => showError("فشل المشاركة"));
+								} else showError("المشاركة غير مدعومة في هذا المتصفح");
+							}}
+						>
+							<ShareIcon />
+						</IconButton>
+					</Box>
 				</Stack>
 			</Card>
 		);

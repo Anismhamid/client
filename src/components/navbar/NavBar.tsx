@@ -1,11 +1,11 @@
 import {FunctionComponent, memo, useCallback, useEffect, useState} from "react";
-import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import AccountMenu from "../../atoms/userManage/AccountMenu";
-import {AppBar, Box, Button, Toolbar, Tooltip, Typography} from "@mui/material";
+import {AppBar, Box, Button, Chip, Toolbar, Tooltip, Typography} from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -18,6 +18,7 @@ import MegaMenu from "./NavItem";
 import {productCategories} from "./navCategoryies";
 
 interface NavBarProps {}
+
 /**
  *  nav bar
  * @returns nav bar
@@ -79,7 +80,8 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 				role='navigation'
 				sx={{
 					width: "95%",
-					background: "#335B83",
+					background: "white",
+					color: "primary.main",
 				}}
 			>
 				<Toolbar
@@ -96,7 +98,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 						<Tooltip title='الصفحة الرئيسية - صفقه' arrow>
 							<li className='nav-item mx-3'>
 								<NavLink
-									className={` ${isActive(path.Home) ? "text-danger" : "text-light"}`}
+									className={` ${isActive(path.Home) ? "text-danger" : "text-dark"}`}
 									aria-current='page'
 									to={path.Home}
 									aria-label='الصفحة الرئيسية - صفقه'
@@ -116,7 +118,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 									className={`${
 										isActive(path.UsersManagement)
 											? "text-danger "
-											: ""
+											: "text-dark"
 									} nav-link`}
 									aria-current='page'
 									to={path.UsersManagement}
@@ -162,7 +164,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					<li className='nav-item' role='none'>
 						<NavLink
 							className={`${
-								isActive(path.About) ? "text-danger fw-bold" : ""
+								isActive(path.About) ? "text-danger fw-bold" : "text-dark"
 							} nav-link`}
 							aria-current={isActive(path.About) ? "page" : undefined}
 							to={path.About}
@@ -174,7 +176,7 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 					<li className='nav-item' role='none'>
 						<NavLink
 							className={`${
-								isActive(path.Contact) ? "text-danger " : ""
+								isActive(path.Contact) ? "text-danger " : "text-dark"
 							} nav-link`}
 							aria-current={isActive(path.Contact) ? "page" : undefined}
 							to={path.Contact}
@@ -183,11 +185,11 @@ const NavBar: FunctionComponent<NavBarProps> = () => {
 							{t("links.contact")}
 						</NavLink>
 					</li>
-					{isLoggedIn && auth?.role !== "delivery" && (
+					{isLoggedIn && (
 						<li className='nav-item' role='none'>
 							<NavLink
 								className={`${
-									isActive(path.Receipt) ? "text-danger" : ""
+									isActive(path.Receipt) ? "text-danger" : "text-dark"
 								} nav-link`}
 								aria-current='page'
 								to={path.Receipt}

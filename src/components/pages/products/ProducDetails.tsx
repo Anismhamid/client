@@ -452,10 +452,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									title: "دعم",
 									text: "فريق الدعم لدينا متاح على مدار الساعة طوال أيام الأسبوع للمساعدة في أي أسئلة أو مشكلات",
 								},
-								{
-									title: "جودة وانتقاء",
-									text: "جميع منتجاتنا طازجة وتُنتقى بعناية من أفضل المزارع المحلية يومياً",
-								},
 							].map((item, idx) => (
 								<Grid key={idx} size={{xs: 12, md: 4}}>
 									<Card

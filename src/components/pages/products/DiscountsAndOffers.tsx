@@ -51,7 +51,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 
 			<Box textAlign='center' mb={4}>
 				{/* نص ترويجي إضافي للسيو */}
-				<Box sx={{textAlign: "center", marginTop: "40px", padding: "20px"}}>
+				<Box sx={{textAlign: "center", padding: "10px"}}>
 					<Typography
 						variant='h5'
 						component='h3'
@@ -130,16 +130,9 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 										width: "80%",
 										margin: "auto",
 										padding: "10px",
-										// border: "1px solid #e0e0e0",
 										borderRadius: "8px",
-										backgroundColor: "white",
 										color: "ThreeDLightShadow",
-
 										transition: "transform 0.3s ease",
-										"&:hover": {
-											transform: "scale(1.02)",
-											boxShadow: "0 4px 20px rgb(0, 0, 0) inset",
-										},
 									}}
 								>
 									{!isLoaded && (

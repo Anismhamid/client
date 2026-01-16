@@ -20,6 +20,7 @@ export interface Products {
 	discount: number;
 	rating?: number;
 	reviewCount?: number;
+	type?:string
 }
 
 export const initialProductValue = {
