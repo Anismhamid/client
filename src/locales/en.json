@@ -333,11 +333,24 @@
 			}
 		},
 		"discountsAndOffers": {
-			"label": "Discounts",
-			"heading": "Discounts",
-			"description": "Listings containing discounts or special prices set by the seller.",
-			"text1": "Take advantage of the best deals in safqa ",
-			"text2": "Every day we offer a special selection of discounts on the finest products. Shop now and save more with quality guaranteed on every item."
+			"common": {
+				"discount": "OFF",
+				"save": "Save",
+				"errors": {
+					"fetchFailed": "Failed to load discounted products. Please try again later."
+				}
+			},
+			"categories": {
+					"title": "Hot Deals & Discounts",
+					"description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
+					"subtitle": "Shop now and save big on selected items",
+					"text1": "Exclusive Offers",
+					"text2": "Limited time discounts on best-selling products",
+					"noProducts": "No discounted products available at the moment. Check back soon for new offers!",
+					"viewAll": "View All Offers",
+					"ariaLabel": "Discounted products carousel"
+				
+			}
 		}
 	},
 	"seo": {

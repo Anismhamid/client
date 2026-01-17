@@ -1,245 +1,379 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useEffect, useState, useCallback} from "react";
 import {Products} from "../../../interfaces/Products";
 import {getProductsInDiscount} from "../../../services/productsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
-import {Skeleton, Box, Typography} from "@mui/material";
+import {Skeleton, Box, Typography, useTheme, useMediaQuery} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {Swiper, SwiperSlide} from "swiper/react";
-import {Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow} from "swiper/modules";
+
 import "swiper/css";
-import "swiper/css/scrollbar";
-import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
+import {Swiper, SwiperSlide} from "swiper/react";
+import {Autoplay, Navigation, EffectCoverflow} from "swiper/modules";
+import "swiper/css";
 import JsonLd from "../../../../utils/JsonLd";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
+import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
+import {path} from "../../../routes/routes";
 
 interface DiscountsAndOffersProps {}
 
 /**
- * Products in discount
- * @returns Products in discount
+ * Products in discount component
+ * @returns Products in discount section with swiper carousel
  */
 const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	const {t} = useTranslation();
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+	const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
 	const [productsInDiscount, setProductsInDiscount] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+	const [error, setError] = useState<string | null>(null);
+	const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
-		getProductsInDiscount()
-			.then((res) => {
-				setProductsInDiscount(res);
+		const fetchProducts = async () => {
+			try {
+				setLoading(true);
+				setError(null);
+				const data = await getProductsInDiscount();
+				setProductsInDiscount(data);
+			} catch (err) {
+				console.error("Failed to fetch discounted products:", err);
+				setError(t("common.errors.fetchFailed") || "Failed to load products");
+			} finally {
 				setLoading(false);
-			})
-			.catch((error) => {
-				console.error(error);
-				setLoading(false);
-			});
+			}
+		};
+
+		fetchProducts();
+	}, [t]);
+
+	const setImageLoaded = useCallback((id: string) => {
+		setLoadedImages((prev) => new Set(prev).add(id));
 	}, []);
 
-	const setImageLoaded = (id: string) => {
-		setLoadedImages((prev) => ({...prev, [id]: true}));
+	const calculateDiscountedPrice = (price: number, discount: number): number => {
+		return price - (price * discount) / 100;
 	};
+
+	// Determine swiper parameters based on screen size
+	const getSwiperParams = () => {
+		if (isMobile) {
+			return {
+				slidesPerView: 1,
+				spaceBetween: 16,
+				effect: "slide" as const,
+			};
+		}
+
+		if (isTablet) {
+			return {
+				slidesPerView: 2,
+				spaceBetween: 24,
+				effect: "coverflow" as const,
+			};
+		}
+
+		return {
+			slidesPerView: 3,
+			spaceBetween: 32,
+			effect: "coverflow" as const,
+		};
+	};
+
+	const swiperParams = getSwiperParams();
 
 	if (loading) {
 		return <Loader />;
 	}
 
-	return (
-		<Box component='section' aria-labelledby='discounts'>
-			<JsonLd data={generateDiscountsJsonLd(productsInDiscount)} />
-
-			<Box textAlign='center' mb={4}>
-				{/* نص ترويجي إضافي للسيو */}
-				<Box sx={{textAlign: "center", padding: "10px"}}>
-					<Typography
-						variant='h5'
-						component='h3'
-						gutterBottom
-						sx={{fontWeight: "bold"}}
-					>
-						{t("categories.discountsAndOffers.text1")}
-					</Typography>
-					<Typography variant='body1' color='text.secondary'>
-						{t("categories.discountsAndOffers.text2")}
-					</Typography>
-				</Box>
-
-				<Typography
-					variant='h5'
-					component='p'
-					color='text.secondary'
-					sx={{
-						fontSize: {xs: "1rem", md: "1.25rem"},
-						maxWidth: "800px",
-						margin: "0 auto",
-					}}
-				>
-					{t("categories.discountsAndOffers.description")}
+	if (error) {
+		return (
+			<Box
+				component='section'
+				aria-labelledby='discounts'
+				textAlign='center'
+				py={4}
+			>
+				<Typography color='error' variant='body1'>
+					{error}
 				</Typography>
 			</Box>
+		);
+	}
 
-			<Box>
-				<Swiper
-					modules={[Autoplay, Scrollbar, Navigation, FreeMode, EffectCoverflow]}
-					pagination={{clickable: true}}
-					autoplay={{
-						delay: 3000,
-						pauseOnMouseEnter: true,
-						disableOnInteraction: false,
+	if (productsInDiscount.length === 0 && !loading) {
+		return (
+			<Box
+				component='section'
+				aria-labelledby='discounts'
+				textAlign='center'
+				py={4}
+			>
+				<Typography variant='body1' color='text.secondary'>
+					{t("categories.discountsAndOffers.noProducts") ||
+						"No discounted products available"}
+				</Typography>
+			</Box>
+		);
+	}
+
+	return (
+		<Box
+			component='section'
+			aria-labelledby='discounts-heading'
+			sx={{
+				py: {xs: 3, md: 5},
+				px: {xs: 2, sm: 3, md: 4},
+			}}
+		>
+			<JsonLd data={generateProductsItemListJsonLd(productsInDiscount)} />
+
+			{/* Header Section */}
+			<Box textAlign='center' mb={{xs: 3, md: 5}}>
+				<Typography
+					variant='h4'
+					component='h2'
+					id='discounts-heading'
+					gutterBottom
+					sx={{
+						fontWeight: "bold",
+						color: "primary",
+						mb: 2,
 					}}
-					loop={true}
-					spaceBetween={20}
-					// slidesPerView={3}
-					breakpoints={{
-						640: {
-							slidesPerView: 1,
-							spaceBetween: 20,
-						},
-						768: {
-							slidesPerView: 1,
-							spaceBetween: 30,
-						},
-						1024: {
-							slidesPerView: 1,
-							spaceBetween: 40,
-						},
-					}}
-					freeMode={true}
-					coverflowEffect={{
-						rotate: 20,
-						stretch: 0,
-						depth: 35,
-						modifier: 3,
-						slideShadows: true,
-					}}
-					effect='coverflow'
-					aria-label='قائمة المنتجات المعروضة'
 				>
-					{productsInDiscount.map((product: Products) => {
-						const isLoaded = loadedImages[product.product_name];
-						const discountedPrice =
-							product.price - (product.price * product.discount) / 100;
+					{t(
+						"categories.discountsAndOffers.categories.discountsAndOffers.title",
+					)}
+				</Typography>
+
+				<Box sx={{maxWidth: "800px", margin: "0 auto", px: 2}}>
+					<Typography
+						variant='h6'
+						component='p'
+						color='text.secondary'
+						sx={{
+							fontSize: {xs: "1rem", md: "1.25rem"},
+							lineHeight: 1.6,
+							mb: 2,
+						}}
+					>
+						{t(
+							"categories.discountsAndOffers.categories.discountsAndOffers.description",
+						)}
+					</Typography>
+
+					<Typography
+						variant='body1'
+						color='text.secondary'
+						sx={{opacity: 0.8}}
+					>
+						{t(
+							"categories.discountsAndOffers.categories.discountsAndOffers.subtitle",
+						)}
+					</Typography>
+				</Box>
+			</Box>
+
+			{/* Products Slider */}
+			<Box sx={{position: "relative"}}>
+				<Swiper
+					modules={[Autoplay, Navigation, EffectCoverflow]}
+					autoplay={{
+						delay: 4000,
+						disableOnInteraction: false,
+						pauseOnMouseEnter: true,
+					}}
+					loop={productsInDiscount.length > 1}
+					navigation={!isMobile}
+					centeredSlides={true}
+					grabCursor={true}
+					{...swiperParams}
+					coverflowEffect={
+						swiperParams.effect === "coverflow"
+							? {
+									rotate: 20,
+									stretch: 0,
+									depth: 100,
+									modifier: 1,
+									slideShadows: true,
+								}
+							: undefined
+					}
+					className='discounts-swiper'
+					aria-label={
+						t("categories.discountsAndOffers.ariaLabel") ||
+						"Discounted products carousel"
+					}
+				>
+					{productsInDiscount.map((product) => {
+						const isLoaded = loadedImages.has(product._id as string);
+						const discountedPrice = calculateDiscountedPrice(
+							product.price,
+							product.discount,
+						);
+						const productUrl = `/category/${product.category}/${product._id}`;
 
 						return (
 							<SwiperSlide key={product._id}>
 								<Box
 									component='article'
-									className='position-relative text-center'
 									sx={{
-										width: "80%",
-										margin: "auto",
-										padding: "10px",
-										borderRadius: "8px",
-										color: "ThreeDLightShadow",
-										transition: "transform 0.3s ease",
+										height: "100%",
+										bgcolor: "background.paper",
+										borderRadius: 2,
+										overflow: "hidden",
+										boxShadow: theme.shadows[2],
+										transition:
+											"transform 0.3s ease, box-shadow 0.3s ease",
+										"&:hover": {
+											transform: "translateY(-4px)",
+											boxShadow: theme.shadows[8],
+										},
 									}}
 								>
-									{!isLoaded && (
-										<Skeleton
-											variant='rectangular'
-											width='100%'
-											height='250px'
-											sx={{
-												bgcolor: "grey.300",
-												borderRadius: "8px",
-											}}
-										/>
-									)}
 									<Link
-										to={`/category/${product.category.toLocaleLowerCase()}`}
-										aria-label={`عرض تفاصيل ${product.product_name} خصم ${product.discount}%`}
-										style={{textDecoration: "none"}}
+										to={productUrl}
+										aria-label={`${product.product_name} - ${product.discount}% ${t("categories.discountsAndOffers.common.discount")} - ${formatPrice(discountedPrice)}`}
+										style={{textDecoration: "none", color: "inherit"}}
 									>
-										<Box sx={{position: "relative"}}>
+										{/* Image Container */}
+										<Box
+											sx={{
+												position: "relative",
+												overflow: "hidden",
+												aspectRatio: "4/3",
+											}}
+										>
+											{!isLoaded && (
+												<Skeleton
+													variant='rectangular'
+													width='100%'
+													height='100%'
+													sx={{bgcolor: "grey.200"}}
+												/>
+											)}
+
 											<img
 												src={product.image_url}
-												alt={`${product.product_name} - خصم ${product.discount}% - بيع وشراء`}
-												className='img-fluid'
+												alt={`${product.product_name} - ${product.discount}% ${t("categories.discountsAndOffers.common.discount")}`}
 												style={{
 													display: isLoaded ? "block" : "none",
-													objectFit: "cover",
-													maxHeight: "500px",
 													width: "100%",
-													margin: "auto",
-													borderRadius: "8px",
+													height: "100%",
+													objectFit: "cover",
+													transition: "transform 0.5s ease",
 												}}
 												onLoad={() =>
-													setImageLoaded(product.product_name)
+													setImageLoaded(product._id as string)
 												}
+												loading='lazy'
 											/>
 
-											{/* الخصم */}
+											{/* Discount Badge */}
 											<Box
 												sx={{
 													position: "absolute",
-													top: "10px",
-													right: "10px",
-													backgroundColor: "error.main",
+													top: 12,
+													right: 12,
+													bgcolor: "error.main",
 													color: "white",
-													padding: "5px 10px",
-													borderRadius: "4px",
+													px: 1.5,
+													py: 0.5,
+													borderRadius: 1,
 													fontWeight: "bold",
+													fontSize: "0.875rem",
+													zIndex: 2,
 												}}
 											>
-												{product.discount}% خصم
-											</Box>
-
-											{/* السعر */}
-											<Box
-												sx={{
-													position: "absolute",
-													bottom: "10px",
-													left: "10px",
-													backgroundColor: "rgba(0,0,0,0.7)",
-													color: "white",
-													padding: "5px 10px",
-													borderRadius: "4px",
-												}}
-											>
-												<Box
-													component='span'
-													sx={{
-														textDecoration: "line-through",
-														marginRight: "8px",
-														fontSize: "0.9rem",
-													}}
-												>
-													{formatPrice(product.price)}
-												</Box>
-												<Box
-													component='span'
-													sx={{
-														fontWeight: "bold",
-														fontSize: "1.1rem",
-													}}
-												>
-													{discountedPrice}
-												</Box>
+												{product.discount}%{" "}
+												{t(
+													"categories.discountsAndOffers.common.discount",
+												)}
 											</Box>
 										</Box>
 
-										{/* اسم المنتج */}
-										<Typography
-											variant='h6'
-											component='h3'
-											sx={{
-												marginTop: "10px",
-												fontWeight: "bold",
-												color: "primary.main",
-											}}
-										>
-											{product.product_name}
-										</Typography>
+										{/* Product Info */}
+										<Box sx={{p: 3}}>
+											{/* Product Name */}
+											<Typography
+												variant='h6'
+												component='h3'
+												sx={{
+													fontWeight: 600,
+													mb: 1,
+													color: "text.primary",
+													height: "3em",
+													overflow: "hidden",
+													display: "-webkit-box",
+													WebkitLineClamp: 2,
+													WebkitBoxOrient: "vertical",
+												}}
+											>
+												{product.product_name}
+											</Typography>
 
-										{/* الفئة */}
-										<Typography
-											variant='body2'
-											color='primary.secondary'
-											sx={{marginBottom: "10px"}}
-										>
-											{product.category}
-										</Typography>
+											{/* Category */}
+											<Typography
+												variant='body2'
+												color='text.secondary'
+												sx={{mb: 2, fontSize: "0.875rem"}}
+											>
+												{product.category}
+											</Typography>
+
+											{/* Price */}
+											<Box
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													gap: 1.5,
+												}}
+											>
+												<Typography
+													variant='h6'
+													component='span'
+													sx={{
+														color: "primary.main",
+														fontWeight: "bold",
+														fontSize: "1.25rem",
+													}}
+												>
+													{formatPrice(discountedPrice)}
+												</Typography>
+
+												<Typography
+													variant='body2'
+													component='span'
+													sx={{
+														color: "text.disabled",
+														textDecoration: "line-through",
+														fontSize: "0.875rem",
+													}}
+												>
+													{formatPrice(product.price)}
+												</Typography>
+
+												<Box
+													component='span'
+													sx={{
+														ml: "auto",
+														color: "success.main",
+														fontWeight: "medium",
+														fontSize: "0.875rem",
+													}}
+												>
+													{t(
+														"categories.discountsAndOffers.common.save",
+													)}{" "}
+													{formatPrice(
+														product.price - discountedPrice,
+													)}
+												</Box>
+											</Box>
+										</Box>
 									</Link>
 								</Box>
 							</SwiperSlide>
@@ -247,6 +381,28 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 					})}
 				</Swiper>
 			</Box>
+
+			{/* View All Link (optional) */}
+			{productsInDiscount.length > 3 && (
+				<Box textAlign='center' mt={4}>
+					<Link
+						to={path.DicountAndOfers}
+						style={{
+							textDecoration: "none",
+							color: theme.palette.primary.main,
+							fontWeight: 500,
+							fontSize: "1rem",
+							display: "inline-flex",
+							alignItems: "center",
+							gap: 8,
+						}}
+					>
+						{t("categories.discountsAndOffers.categories.viewAll") ||
+							"View All Offers"}
+						<span aria-hidden='true'>→</span>
+					</Link>
+				</Box>
+			)}
 		</Box>
 	);
 };

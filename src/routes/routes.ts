@@ -32,7 +32,7 @@ export enum path {
 	Register = "/register",
 	Profile = "/profile",
 	Favorite = "/favorites",
-	DicountAndOfers = "/dicount-and-ofers",
+	DicountAndOfers = "/dicounts-and-offers",
 	CustomerProfile = "/users/customer/:slug",
 	UsersManagement = "/usersManagement",
 	WebSiteAdmins = "/admins",

@@ -223,7 +223,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						setSearchQuery={setSearchQuery}
 					/>
 				</Box>
-				{}
 				<Box className='container pb-5'>
 					<Row className='mt-3 g-3'>
 						{filteredProducts.length ? (
