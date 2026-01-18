@@ -32,8 +32,9 @@ const ChipNavigation = () => {
 				zIndex: 200,
 				backgroundColor: "white",
 				// boxShadow: 9,
-				borderRadius: "0 0 30px 30px",
-				p: 5,
+				borderRadius: "0 0 20px 20px",
+				py: 1,
+				boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
 			}}
 		>
 			{/* Left Scroll Button */}

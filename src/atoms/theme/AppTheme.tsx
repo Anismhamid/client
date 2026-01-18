@@ -16,7 +16,7 @@ import LanguageSwitcher from "../../locales/languageSwich";
 import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
 import {Brightness4, Brightness7} from "@mui/icons-material";
-import {motion, AnimatePresence} from "framer-motion";
+import {motion} from "framer-motion";
 import {path} from "../../routes/routes";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import socket from "../../socket/globalSocket";
@@ -368,21 +368,19 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						</motion.div>
 					</Tooltip>
 
-					<AnimatePresence mode='wait'>
-						<motion.div
-							key={mode}
-							initial={{opacity: 0, scale: 0.8}}
-							animate={{opacity: 1, scale: 1}}
-							exit={{opacity: 0, scale: 0.8}}
-							transition={{duration: 0.3}}
-						>
-							{mode === "dark" ? (
-								<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
-							) : (
-								<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
-							)}
-						</motion.div>
-					</AnimatePresence>
+					<motion.div
+						key={mode}
+						initial={{opacity: 0, scale: 0.8}}
+						animate={{opacity: 1, scale: 1}}
+						exit={{opacity: 0, scale: 0.8}}
+						transition={{duration: 0.3}}
+					>
+						{mode === "dark" ? (
+							<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
+						) : (
+							<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
+						)}
+					</motion.div>
 				</Box>
 
 				{/* Right Side: Language Switcher */}
