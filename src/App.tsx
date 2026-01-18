@@ -3,7 +3,6 @@ import {ToastContainer} from "react-toastify";
 import {useUser} from "./context/useUSer.tsx";
 import {CssBaseline, ThemeProvider, createTheme, PaletteMode} from "@mui/material";
 import "./locales/i18n.tsx";
-import NavBar from "./components/navbar/NavBar.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
 import Theme from "./atoms/theme/AppTheme.tsx";
 import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
@@ -47,7 +46,6 @@ function App() {
 			<CssBaseline />
 			<ToastContainer />
 			<Theme mode={mode} setMode={setMode} />
-			<NavBar />
 			<SpeedDialComponent />
 			<AppRoutes auth={auth} />
 			<Footer />

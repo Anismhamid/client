@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from "react"; // Add useCallback
 import {Box, Chip, IconButton, Typography} from "@mui/material";
 import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import {Link, NavLink} from "react-router-dom";
-import {productCategories} from "./navbar/navCategoryies";
+import { NavLink} from "react-router-dom";
+import {productsAndCategories} from "./navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
@@ -54,11 +54,11 @@ const ChipNavigation = () => {
 			sx={{
 				position: "sticky",
 				top: 0,
-				zIndex: 10,
+				zIndex: 200,
 				backgroundColor: "white",
-				boxShadow: 9,
-				m: 1,
-				borderRadius: 5,
+				// boxShadow: 9,
+				borderRadius: "0 0 30px 30px",
+				p: 5,
 			}}
 			onMouseEnter={() => setShowControls(true)}
 			onMouseLeave={() => setShowControls(false)}
@@ -110,59 +110,70 @@ const ChipNavigation = () => {
 						"linear-gradient(to right, transparent, #ff1010 30px, #ffffff calc(100% - 30px), transparent)",
 				}}
 			>
-				<Link
-					to='/'
-					style={{
-						textDecoration: "none",
-						flexShrink: 0,
-						marginLeft: "auto",
-					}}
-				>
-					<Typography
-						component='h1'
-						variant='h6'
-						color='error'
+				{productsAndCategories.map((category) => (
+					<Box
+						key={category.value}
 						sx={{
-							fontWeight: "bold",
-							ml: 1,
-							fontFamily: "'Noto Sans Arabic', 'Hebbo', sans-serif",
-							whiteSpace: "nowrap",
-							direction: "rtl",
-							textAlign: "right",
-							"&:hover": {
-								color: "warning.main",
-								textShadow: "1px 1px 5px rgba(0, 0, 0, 0.5)",
-							},
-							transition: "all 0.3s ease",
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "center",
+							gap: 1,
+							minWidth: 90,
 						}}
 					>
-						الرئيسـيه
-					</Typography>
-				</Link>
-				{productCategories.map((link) => (
-					<NavLink to={link.path} key={link.path}>
-						{({isActive}) => (
-							<Chip
-								label={t(link.labelKey)}
-								clickable
-								sx={{
-									px: 2,
-									backgroundColor: isActive ? "green" : "primary.main",
-									boxShadow: 7,
-									color: "white",
+						<NavLink to={category.path} style={{textDecoration: "none"}}>
+							{({isActive}) => (
+								<Chip
+									clickable
+									sx={{
+										width: 80,
+										height: 80,
+										borderRadius: "50%",
+										backgroundColor: isActive
+											? "primary.main"
+											: "background.paper",
+										boxShadow: isActive ? 8 : 3,
+										border: "1px solid",
+										borderColor: isActive
+											? "primary.main"
+											: "divider",
+										transition: "all 0.1s ease",
+										display: "flex",
+										justifyContent: "center",
+										alignItems: "center",
 
-									"&:hover": {
-										backgroundColor: "red",
-										boxShadow: 100,
-										transform: "scale(1.1)",
-									},
+										"&:hover": {
+											transform: "scale(1.08)",
+											boxShadow: 5,
+										},
+									}}
+									label={
+										<Box
+											component='img'
+											src={category.icon}
+											alt={category.labelKey}
+											sx={{
+												width: 50,
+												height: 50,
+												objectFit: "contain",
+											}}
+										/>
+									}
+								/>
+							)}
+						</NavLink>
 
-									transition: "all 0.2s ease",
-									transform: isActive ? "scale(1.1)" : "scale(1)",
-								}}
-							/>
-						)}
-					</NavLink>
+						<Typography
+							component={"p"}
+							variant='body1'
+							sx={{
+								color: "text.primary",
+								fontWeight: 500,
+							}}
+						>
+							{t(category.labelKey)}
+						</Typography>
+					</Box>
 				))}
 			</Box>
 

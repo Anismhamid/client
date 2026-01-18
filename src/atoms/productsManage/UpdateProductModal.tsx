@@ -5,7 +5,7 @@ import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {getProductById, updateProduct} from "../../services/productsServices";
-import {productCategories} from "../../interfaces/productsCategoeis";
+import {productsCategories} from "../../interfaces/productsCategoeis";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 import {CarColor, colors} from "../colorsSettings/carsColors";
@@ -370,7 +370,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 								<option disabled>
 									{t("modals.updateProductModal.selectCategory")}
 								</option>
-								{productCategories.map(
+								{productsCategories.map(
 									(category: {id: string; label: string}) => (
 										<option
 											aria-label={t(

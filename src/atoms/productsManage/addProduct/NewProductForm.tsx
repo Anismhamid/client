@@ -2,7 +2,7 @@ import {Box} from "@mui/material";
 import {FormikProps} from "formik";
 import {FunctionComponent} from "react";
 import {useTranslation} from "react-i18next";
-import {productCategories} from "../../../interfaces/productsCategoeis";
+import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
 import {Products} from "../../../interfaces/Products";
@@ -62,7 +62,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 					>
 						{t("modals.addProductModal.selectCategory")}
 					</option>
-					{productCategories.map((category) => (
+					{productsCategories.map((category) => (
 						<option value={category.id} key={category.id}>
 							{category.label}
 						</option>

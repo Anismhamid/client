@@ -1,23 +1,27 @@
+import {ReactElement} from "react";
+import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {productsPathes} from "../../routes/routes";
 
-interface SubCategoryEnum {
+export interface SubCategory {
 	labelKey: string;
 	value: string;
 	path: string;
 }
 
-export interface CategoryEnum {
+export interface NavCategory {
 	labelKey: string;
 	value: string;
 	path: string;
-	subCategories: SubCategoryEnum[];
+	icon?: string;
+	subCategories: SubCategory[];
 }
 
-export const productCategories: CategoryEnum[] = [
+export const productsAndCategories: NavCategory[] = [
 	{
 		labelKey: "categories.house.label",
 		value: "house",
 		path: productsPathes.house,
+		icon: "/categories/house.png",
 		subCategories: [
 			{
 				labelKey: "categories.house.subCategories.kitchen",
@@ -45,6 +49,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.garden.label",
 		value: "garden",
 		path: productsPathes.garden,
+		icon: "/categories/gardening.png",
 		subCategories: [
 			{
 				labelKey: "categories.garden.subCategories.plants",
@@ -72,6 +77,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.baby.label",
 		value: "baby",
 		path: productsPathes.baby,
+		icon: "/categories/baby.png",
 		subCategories: [
 			{
 				labelKey: "categories.baby.subCategories.clothes",
@@ -94,6 +100,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.kids.label",
 		value: "kids",
 		path: productsPathes.kids,
+		icon: "/categories/kids.png",
 		subCategories: [
 			{
 				labelKey: "categories.kids.subCategories.educational",
@@ -116,6 +123,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.health.label",
 		value: "health",
 		path: productsPathes.health,
+		icon: "/categories/health.png",
 		subCategories: [
 			{
 				labelKey: "categories.health.subCategories.personalCare",
@@ -138,6 +146,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.watches.label",
 		value: "watches",
 		path: productsPathes.watches,
+		icon: "/categories/watches.png",
 		subCategories: [
 			{
 				labelKey: "categories.watches.subCategories.classic",
@@ -160,6 +169,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.beauty.label",
 		value: "beauty",
 		path: productsPathes.beauty,
+		icon: "/categories/beauty.png",
 		subCategories: [
 			{
 				labelKey: "categories.beauty.subCategories.makeup",
@@ -182,6 +192,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.cleaning.label",
 		value: "cleaning",
 		path: productsPathes.cleaning,
+		icon: "/categories/cleaning.png",
 		subCategories: [
 			{
 				labelKey: "categories.cleaning.subCategories.detergents",
@@ -204,6 +215,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.women-clothes.label",
 		value: "women-clothes",
 		path: productsPathes.womenClothes,
+		icon: "/categories/woman-clothes.png",
 		subCategories: [
 			{
 				labelKey: "categories.women-clothes.subCategories.casual",
@@ -226,6 +238,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.men-clothes.label",
 		value: "men-clothes",
 		path: productsPathes.menClothes,
+		icon: "/categories/man-clothes.png",
 		subCategories: [
 			{
 				labelKey: "categories.men-clothes.subCategories.casual",
@@ -248,6 +261,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.cars.label",
 		value: "cars",
 		path: productsPathes.cars,
+		icon: "/categories/car.png",
 		subCategories: [
 			{
 				labelKey: "categories.cars.subCategories.private",
@@ -275,6 +289,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.motorcycles.label",
 		value: "motorcycles",
 		path: productsPathes.motorcycles,
+		icon: "/categories/motorcycle.png",
 		subCategories: [
 			{
 				labelKey: "categories.motorcycles.subCategories.sport",
@@ -297,6 +312,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.trucks.label",
 		value: "trucks",
 		path: productsPathes.trucks,
+		icon: "/categories/truck.png",
 		subCategories: [
 			{
 				labelKey: "categories.trucks.subCategories.light",
@@ -314,6 +330,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.bikes.label",
 		value: "bikes",
 		path: productsPathes.bikes,
+		icon: "/categories/bike.png",
 		subCategories: [
 			{
 				labelKey: "categories.bikes.subCategories.kids",
@@ -336,6 +353,7 @@ export const productCategories: CategoryEnum[] = [
 		labelKey: "categories.electric-vehicles.label",
 		value: "electric-vehicles",
 		path: productsPathes.electricVehicles,
+		icon: "/categories/electric-vehicle.png",
 		subCategories: [
 			{
 				labelKey: "categories.electric-vehicles.subCategories.cars",
@@ -349,4 +367,6 @@ export const productCategories: CategoryEnum[] = [
 			},
 		],
 	},
-];
+] as const;
+
+// export type NavCategory[] = (typeof productCategories)[number];

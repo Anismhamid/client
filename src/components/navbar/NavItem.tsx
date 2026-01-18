@@ -14,12 +14,12 @@ import {
 import {alpha, useTheme} from "@mui/material/styles";
 import {NavLink, useLocation} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import { CategoryEnum } from "./navCategoryies";
+import {NavCategory} from "./navCategoryies";
 
 interface MegaMenuProps {
 	anchorEl: HTMLElement | null;
 	open: boolean;
-	categories: CategoryEnum[];
+	categories: NavCategory[];
 	onClose: () => void;
 }
 
@@ -45,7 +45,7 @@ const MegaMenu = ({anchorEl, open, categories, onClose}: MegaMenuProps) => {
 			>
 				<Grid container spacing={3}>
 					{categories.map((cat) => (
-						<Grid size={{xs: 12, md: 4}} key={`cat-${cat.path}`}>
+						<Grid size={{xs: 12, md: 4}} key={`cat-${cat.value}`}>
 							{/* Category Header */}
 							<Box sx={{mb: 2}}>
 								{cat.path ? (

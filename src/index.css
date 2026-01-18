@@ -21,30 +21,28 @@
 
 main {
   min-height: 90vh;
+  width: "80%";
   background: transparent;
   backdrop-filter: blur(8px);
-  padding-top: 50px;
+}
+
+.header-image {
+  background-image: url(../public/2d.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 
 .MuiFormGroup-root {
   margin-bottom: 5px;
-  
+
 }
 
-.MuiButtonBase{
-position: absolute !important;}
-
-.navbar-glass {
-  backdrop-filter: blur(12px);
-  --a: 0 8px 30px rgba(56, 56, 56, 0.377);
-  box-shadow: var(--a) !important;
-  border-radius: 16px;
-  padding: 10px;
-  max-width: 1200px;
-  margin-bottom: 5px !important;
-  margin-top: 30px !important;
+.MuiButtonBase {
+  position: absolute !important;
 }
+
 
 .nav-item {
   display: flex;

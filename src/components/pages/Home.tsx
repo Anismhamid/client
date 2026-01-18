@@ -15,13 +15,12 @@ import SearchBox from "../../atoms/productsManage/SearchBox";
 import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import handleRTL from "../../locales/handleRTL";
-import {io} from "socket.io-client";
 import ProductCard from "./products/ProductCard";
 import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
-import {productCategories} from "../navbar/navCategoryies";
-import CategoriesFiltersButtons from "../../atoms/filters/CategoriesFiltersButtons";
+import {productsAndCategories} from "../navbar/navCategoryies";
 import {motion, AnimatePresence} from "framer-motion";
+import ChepNavigation from "../navbar/ChepNavigation";
 
 interface HomeProps {}
 
@@ -98,7 +97,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 		}
 
 		// إذا كانت searchQuery تطابق إحدى الفئات
-		const categoryKeys = productCategories.map((cat) => t(cat.labelKey));
+		const categoryKeys = productsAndCategories.map((cat) => t(cat.labelKey));
 		if (categoryKeys.includes(searchQuery)) {
 			return products.filter((product) =>
 				product.category?.includes(searchQuery.toLowerCase()),
@@ -320,22 +319,24 @@ const Home: FunctionComponent<HomeProps> = () => {
 	return (
 		<>
 			<Helmet>
-				<title>بيع وشراء - موقع صفقه</title>
+				<title>موقع صفقه</title>
 				<meta
 					name='description'
 					content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة  وبأسعار مناسبة لكل عائله'
 				/>
 			</Helmet>
 
-			<Box dir={diriction} component='main' sx={{bgcolor: "#fafafa"}}>
+			<Box dir={diriction} component='main' sx={{bgcolor: "#ECF0F7"}}>
 				{/* Hero Section with Gradient */}
 				<Box
 					sx={{
-						background: "linear-gradient(135deg, #020912 100%)",
+						background: "#EFF3F9",
 						color: "white",
 						py: {xs: 4, md: 6},
 						position: "relative",
 						overflow: "hidden",
+						borderBottom: 1,
+						borderColor: "red",
 					}}
 				>
 					{/* Animated Background Elements */}
@@ -347,7 +348,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							width: 300,
 							height: 300,
 							borderRadius: "50%",
-							background: "rgba(255,255,255,0.1)",
+							background: "rgba(34, 34, 34, 0.1)",
 							animation: "float 8s ease-in-out infinite",
 						}}
 					/>
@@ -364,7 +365,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 						}}
 					/>
 
-					<Box className='container' position='relative' zIndex={1}>
+					<Box
+						sx={{height: 300}}
+						className='container header-image'
+						position='relative'
+						zIndex={1}
+					>
 						<motion.div
 							initial={{opacity: 0, y: 30}}
 							animate={{opacity: 1, y: 0}}
@@ -375,6 +381,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								sx={{
 									fontWeight: "bold",
 									textAlign: "center",
+
 									mb: 2,
 									fontSize: {xs: "2rem", md: "3rem"},
 									textShadow: "0 4px 8px rgba(0,0,0,0.2)",
@@ -386,6 +393,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 						</motion.div>
 					</Box>
 				</Box>
+
+				<ChepNavigation />
 
 				{!searchQuery && <DiscountsAndOffers />}
 
@@ -480,7 +489,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 										/>
 									</motion.div>
 
-									{productCategories.map(({labelKey}, index) => {
+									{productsAndCategories.map(({labelKey}, index) => {
 										const isActive = searchQuery === t(labelKey);
 										const colors = [
 											"linear-gradient(45deg, #FF6B6B, #FF8E53)",
@@ -812,7 +821,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 													mb: 3,
 												}}
 											>
-												{productCategories
+												{productsAndCategories
 													.slice(0, 4)
 													.map(({labelKey}) => (
 														<motion.div

@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import {useFormik} from "formik";
 import * as yup from "yup";
-import {Order} from "../../interfaces/Order";
 import WarningIcon from "@mui/icons-material/Warning";
 
 export interface CreditCardValues {
@@ -24,7 +23,6 @@ interface PymentModalProps {
 	show: boolean;
 	onHide: () => void;
 	onConfirm: (data: CreditCardValues) => void;
-	order: Order | null;
 }
 
 const PaymentModal: FunctionComponent<PymentModalProps> = ({show, onHide, onConfirm}) => {

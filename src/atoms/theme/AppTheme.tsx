@@ -1,57 +1,45 @@
-import {FunctionComponent, useState} from "react";
+import {FunctionComponent, useCallback, useEffect, useState} from "react";
 import {
 	FormControlLabel,
 	PaletteMode,
 	FormGroup,
 	Box,
 	Typography,
-	Badge,
-	Avatar,
 	Tooltip,
+	useMediaQuery,
+	Toolbar,
+	Button,
 } from "@mui/material";
-import {alpha, styled} from "@mui/material/styles";
+import {styled, useTheme} from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import LanguageSwitcher from "../../locales/languageSwich";
-import {Link} from "react-router-dom";
+import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
-import {
-	LocalOffer,
-	Favorite,
-	Brightness4,
-	Brightness7,
-	FlashOn,
-	Rocket,
-} from "@mui/icons-material";
-import {path} from "../../routes/routes";
+import {Brightness4, Brightness7} from "@mui/icons-material";
 import {motion, AnimatePresence} from "framer-motion";
+import {path} from "../../routes/routes";
+import {emptyAuthValues} from "../../interfaces/authValues";
+import socket from "../../socket/globalSocket";
+import {patchUserStatus} from "../../services/usersServices";
+import RoleType from "../../interfaces/UserType";
+import {useTranslation} from "react-i18next";
+import useToken from "../../hooks/useToken";
+import {fontAwesomeIcon} from "../../FontAwesome/Icons";
+import MegaMenu from "../../components/navbar/NavItem";
+import AccountMenu from "../userManage/AccountMenu";
+import {useUser} from "../../context/useUSer";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import {productsAndCategories} from "../../components/navbar/navCategoryies";
 
 interface ThemeProps {
 	mode: PaletteMode;
 	setMode: (mode: PaletteMode) => void;
 }
 
-const quickLinks = [
-	{
-		icon: <LocalOffer sx={{color: "#FFD700"}} />,
-		link: path.DicountAndOfers,
-		label: "عروض 🔥",
-		color: "#FFD700",
-		badge: true,
-		badgeContent: "جديد",
-	},
-	{
-		icon: <Favorite sx={{color: "#FF4081"}} />,
-		link: "/favorites",
-		label: "المفضلة ❤️",
-		color: "#FF4081",
-		badge: false,
-	},
-];
-
 // Custom Switch with gradient
 const GradientSwitch = styled(Switch)(({theme}) => ({
-	width: 70,
-	height: 38,
+	width: 60,
+	height: 30,
 	padding: 9,
 	"& .MuiSwitch-switchBase": {
 		margin: 4,
@@ -62,20 +50,20 @@ const GradientSwitch = styled(Switch)(({theme}) => ({
 			transform: "translateX(32px)",
 			"& .MuiSwitch-thumb": {
 				background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-				boxShadow: "0 3px 10px rgba(33, 150, 243, 0.5)",
+				boxShadow: "1px 1px 3px rgba(33, 150, 243, 0.5)",
 			},
 			"& + .MuiSwitch-track": {
 				opacity: 1,
 				backgroundColor: "#2d3748",
-				background: "linear-gradient(90deg, #1a202c 0%, #2d3748 100%)",
+				background: "linear-gradient(90deg, #0c2049 0%, #2d3748 100%)",
 			},
 		},
 	},
 	"& .MuiSwitch-thumb": {
-		backgroundColor: "#FF8E53",
-		width: 30,
-		height: 30,
-		boxShadow: "0 3px 10px rgba(255, 107, 53, 0.5)",
+		backgroundColor: "#2e2e2e",
+		width: 20,
+		height: 20,
+		boxShadow: "1px 3px 3px rgba(0, 0, 0, 0.137)",
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
@@ -92,8 +80,7 @@ const GradientSwitch = styled(Switch)(({theme}) => ({
 	},
 	"& .MuiSwitch-track": {
 		opacity: 1,
-		backgroundColor: "#f6f8fa",
-		background: "linear-gradient(90deg, #FF6B35 0%, #FF8E53 100%)",
+		backgroundColor: "#ffd900",
 		borderRadius: 20 / 2,
 		transition: theme.transitions.create(["background-color"], {
 			duration: 500,
@@ -102,15 +89,15 @@ const GradientSwitch = styled(Switch)(({theme}) => ({
 }));
 
 // Custom Logo with animation
-const LogoText = styled(Typography)(({theme}) => ({
+const LogoText = styled(Typography)(() => ({
 	fontWeight: "bold",
 	fontSize: "1.8rem",
 	fontFamily: "'Tajawal', 'Cairo', sans-serif",
-	background: "linear-gradient(45deg, #FF6B35 0%, #FF8E53 100%)",
+	background: "linear-gradient(45deg, #000000 0%, #000000 100%)",
 	WebkitBackgroundClip: "text",
 	WebkitTextFillColor: "transparent",
 	backgroundClip: "text",
-	textShadow: "0 2px 10px rgba(255, 107, 53, 0.3)",
+	textShadow: "0 2px 10px rgba(53, 124, 255, 0.3)",
 	position: "relative",
 	padding: "2px 15px",
 	borderRadius: "10px",
@@ -123,7 +110,7 @@ const LogoText = styled(Typography)(({theme}) => ({
 		bottom: 0,
 		borderRadius: "10px",
 		padding: "2px",
-		background: "linear-gradient(45deg, #FF6B35, #FF8E53)",
+		background: "linear-gradient(45deg, #FF6B35, #537bff)",
 		WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
 		WebkitMaskComposite: "xor",
 		maskComposite: "exclude",
@@ -132,8 +119,6 @@ const LogoText = styled(Typography)(({theme}) => ({
 }));
 
 const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
-	const [isHovered, setIsHovered] = useState(false);
-
 	const handleThemeChange = (
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
@@ -145,10 +130,57 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 	const dir = handleRTL();
 
+	const location = useLocation();
+	const {decodedToken, setAfterDecode} = useToken();
+	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
+	// const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [megaAnchor, setMegaAnchor] = useState<HTMLElement | null>(null);
+	const openMega = Boolean(megaAnchor);
+
+	const theme = useTheme();
+	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+	// const openMenu = Boolean(anchorEl);
+	const {t} = useTranslation();
+
+	const navigate = useNavigate();
+
+	const isActive = (path: string) => location.pathname === path;
+
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token && decodedToken) {
+			setAuth(decodedToken);
+			setIsLoggedIn(true);
+		}
+	}, [decodedToken]);
+
+	const isAdmin = auth?.role === RoleType.Admin;
+
+	const {pathname} = useLocation();
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [pathname]);
+
+	const logout = useCallback(() => {
+		if (socket.connected && auth._id) {
+			socket.disconnect();
+			patchUserStatus(auth._id, false).catch((error) => {
+				console.log(error);
+			});
+		}
+		localStorage.removeItem("token");
+		setAuth(emptyAuthValues);
+		setIsLoggedIn(false);
+		setAfterDecode(null);
+		navigate(path.Home);
+	}, [auth?._id]);
+
 	return (
 		<>
 			{/* Main Top Bar */}
 			<Box
+				component={"header"}
 				dir={dir}
 				sx={{
 					zIndex: 1000,
@@ -158,7 +190,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					background:
 						mode === "dark"
 							? "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)"
-							: "linear-gradient(135deg, #fff1ec 0%, #FF8E53 100%)",
+							: "#fcf3f3",
 					padding: "10px 20px",
 					boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
 					position: "relative",
@@ -176,6 +208,160 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					},
 				}}
 			>
+				<Toolbar
+					aria-label='القائمة الرئيسية'
+					sx={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						flexWrap: {xs: "wrap", md: "nowrap"},
+					}}
+				>
+					<Tooltip title='الصفحة الرئيسية - صفقه' arrow>
+						<li className='nav-item mx-3'>
+							<NavLink
+								className={` ${isActive(path.Home) ? "text-danger" : "text-dark"}`}
+								aria-current='page'
+								to={path.Home}
+								aria-label='الصفحة الرئيسية - صفقه'
+							>
+								{fontAwesomeIcon.home}
+								<span className='visually-hidden'>الصفحة الرئيسية</span>
+							</NavLink>
+						</li>
+					</Tooltip>
+
+					{auth && isAdmin && (
+						<Tooltip title='ניהול משתמשים' arrow>
+							<li className='nav-item'>
+								<NavLink
+									className={`${
+										isActive(path.UsersManagement)
+											? "text-danger "
+											: "text-dark"
+									} nav-link`}
+									aria-current='page'
+									to={path.UsersManagement}
+								>
+									{fontAwesomeIcon.userGear}
+								</NavLink>
+							</li>
+						</Tooltip>
+					)}
+					<Box
+						onMouseEnter={
+							!isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined
+						}
+						onMouseLeave={!isMobile ? () => setMegaAnchor(null) : undefined}
+						onClick={
+							isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined
+						}
+						sx={{
+							cursor: "pointer",
+							display: "flex",
+							alignItems: "center",
+							px: 1,
+						}}
+						aria-haspopup='true'
+						aria-expanded={openMega ? "true" : "false"}
+					>
+						<Typography>{t("links.products")}</Typography>
+						<KeyboardArrowDownIcon
+							sx={{
+								transition: "transform 0.3s",
+								transform: openMega ? "rotate(180deg)" : "rotate(0deg)",
+							}}
+						/>
+
+						<MegaMenu
+							anchorEl={megaAnchor}
+							open={openMega}
+							onClose={() => setMegaAnchor(null)}
+							categories={productsAndCategories}
+						/>
+					</Box>
+
+					<li className='nav-item' role='none'>
+						<NavLink
+							className={`${
+								isActive(path.About) ? "text-danger fw-bold" : "text-dark"
+							} nav-link`}
+							aria-current={isActive(path.About) ? "page" : undefined}
+							to={path.About}
+							aria-label='من نحن - معلومات عن موقع صفقه'
+						>
+							{t("links.about")}
+						</NavLink>
+					</li>
+					<li className='nav-item' role='none'>
+						<NavLink
+							className={`${
+								isActive(path.Contact) ? "text-danger " : "text-dark"
+							} nav-link`}
+							aria-current={isActive(path.Contact) ? "page" : undefined}
+							to={path.Contact}
+							aria-label='اتصل بنا - خدمة عملاء موقع صفقه'
+						>
+							{t("links.contact")}
+						</NavLink>
+					</li>
+					{isLoggedIn && (
+						<li className='nav-item' role='none'>
+							<NavLink
+								className={`${
+									isActive(path.Receipt) ? "text-danger" : "text-dark"
+								} nav-link`}
+								aria-current='page'
+								to={path.Receipt}
+							>
+								{t("links.receipts")}
+							</NavLink>
+						</li>
+					)}
+
+					<li className='nav-item' role='none'>
+						{!isLoggedIn ? (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={() => navigate(path.Login)}
+								sx={{
+									borderRadius: "30px",
+									fontWeight: "bold",
+									backgroundColor: "#4FC3F7",
+									color: "#1A1E22",
+									"&:hover": {
+										backgroundColor: "#81D4FA",
+									},
+								}}
+								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
+							>
+								تسجيل الدخول
+							</Button>
+						) : (
+							isLoggedIn && <AccountMenu logout={logout} />
+						)}
+					</li>
+					{/* <Link
+						target='_blank'
+						rel='noopener noreferrer'
+						to='https://anismhamid.github.io/shok-habena-server-documentation/'
+					>
+						<Chip
+							variant='outlined'
+							sx={{
+								fontWeight: "bold",
+								boxShadow: 10,
+								"&:hover": {
+									transform: "scale(1.04)",
+								},
+								color: "#5B9601",
+							}}
+							// color='warning'
+							label='docs'
+						/>
+					</Link> */}
+				</Toolbar>
 				{/* Left Side: Theme Toggle */}
 				<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
 					<Tooltip title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>
@@ -200,237 +386,30 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							transition={{duration: 0.3}}
 						>
 							{mode === "dark" ? (
-								<Brightness4 sx={{color: "#FFD700", fontSize: 28}} />
+								<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
 							) : (
-								<Brightness7 sx={{color: "#FFF", fontSize: 28}} />
+								<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
 							)}
 						</motion.div>
 					</AnimatePresence>
 				</Box>
 
-				{/* Center: Logo */}
-				<motion.div
-					whileHover={{scale: 1.05}}
-					onMouseEnter={() => setIsHovered(true)}
-					onMouseLeave={() => setIsHovered(false)}
-				>
-					<Link
-						to='/'
-						style={{
-							textDecoration: "none",
-						}}
-					>
-						<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-							<motion.div
-								animate={{
-									rotate: isHovered ? 360 : 0,
-									scale: isHovered ? 1.1 : 1,
-								}}
-								transition={{duration: 0.5}}
-							>
-								<Avatar
-									sx={{
-										width: 50,
-										height: 50,
-										background:
-											"linear-gradient(45deg, #FF6B35 0%, #FF8E53 100%)",
-										boxShadow: "0 4px 15px rgba(255, 107, 53, 0.4)",
-									}}
-								>
-									<Rocket sx={{color: "white", fontSize: 30}} />
-								</Avatar>
-							</motion.div>
-							<LogoText variant='h1'>صـفـقـه</LogoText>
-						</Box>
-					</Link>
-					{isHovered && (
-						<motion.div
-							initial={{opacity: 0, y: -10}}
-							animate={{opacity: 1, y: 0}}
-							transition={{delay: 0.2}}
-							
-						>
-							<Typography
-								variant='caption'
-								sx={{
-									background:
-										"linear-gradient(45deg, #FF6B35, #FF8E53)",
-									color: "white",
-									padding: "2px 8px",
-									borderRadius: "4px",
-									fontWeight: "bold",
-									fontSize: "0.7rem",
-								}}
-							>
-								تسوق بذكاء 🚀
-							</Typography>
-						</motion.div>
-					)}
-				</motion.div>
-
 				{/* Right Side: Language Switcher */}
 				<motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
 					<LanguageSwitcher />
 				</motion.div>
-			</Box>
-
-			{/* Quick Links Bar */}
-			<Box
-				sx={{
-					display: "flex",
-					background:
-						mode === "dark"
-							? "linear-gradient(135deg, #0d1117 0%, #161b22 100%)"
-							: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-					padding: "8px 20px",
-					borderBottom:
-						mode === "dark"
-							? "1px solid rgba(255,255,255,0.1)"
-							: "1px solid rgba(0,0,0,0.1)",
-					boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-					gap: 3,
-					justifyContent: "center",
-					position: "relative",
-					overflow: "hidden",
-				}}
-			>
-				<Box
-					sx={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						height: 2,
-						background: "linear-gradient(90deg, #FF6B35, #FF8E53, #FF6B35)",
-						backgroundSize: "200% 100%",
-						animation: "shimmer 3s infinite linear",
-					}}
-				/>
-
-				{quickLinks.map((link, idx) => (
-					<motion.div
-						key={idx}
-						whileHover={{scale: 1.1}}
-						whileTap={{scale: 0.95}}
+				{/* Logo */}
+				<motion.div whileHover={{scale: 1.05}}>
+					<Link
+						to={path.Home}
+						style={{
+							textDecoration: "none",
+						}}
 					>
-						<Link
-							to={link.link}
-							style={{
-								textDecoration: "none",
-								display: "flex",
-								alignItems: "center",
-								gap: "8px",
-							}}
-						>
-							{link.badge ? (
-								<Badge
-									color='error'
-									variant='dot'
-									anchorOrigin={{
-										vertical: "top",
-										horizontal: "right",
-									}}
-								>
-									<Box
-										sx={{
-											padding: "8px 15px",
-											background:
-												mode === "dark"
-													? alpha(link.color, 0.1)
-													: alpha(link.color, 0.08),
-											borderRadius: "50px",
-											border: `2px solid ${alpha(link.color, 0.3)}`,
-											display: "flex",
-											alignItems: "center",
-											gap: 1,
-											transition: "all 0.3s ease",
-											"&:hover": {
-												background:
-													mode === "dark"
-														? alpha(link.color, 0.2)
-														: alpha(link.color, 0.15),
-												border: `2px solid ${alpha(link.color, 0.6)}`,
-												transform: "translateY(-2px)",
-												boxShadow: `0 4px 12px ${alpha(link.color, 0.3)}`,
-											},
-										}}
-									>
-										<motion.div
-											whileHover={{rotate: 15}}
-											transition={{type: "spring", stiffness: 300}}
-										>
-											{link.icon}
-										</motion.div>
-										<Typography
-											sx={{
-												color: link.color,
-												fontWeight: "bold",
-												fontSize: "0.9rem",
-												display: "flex",
-												alignItems: "center",
-												gap: "4px",
-											}}
-										>
-											{link.label}
-										</Typography>
-									</Box>
-								</Badge>
-							) : (
-								<Box
-									sx={{
-										padding: "8px 15px",
-										background:
-											mode === "dark"
-												? alpha(link.color, 0.1)
-												: alpha(link.color, 0.08),
-										borderRadius: "50px",
-										border: `2px solid ${alpha(link.color, 0.3)}`,
-										display: "flex",
-										alignItems: "center",
-										gap: 1,
-										transition: "all 0.3s ease",
-										"&:hover": {
-											background:
-												mode === "dark"
-													? alpha(link.color, 0.2)
-													: alpha(link.color, 0.15),
-											border: `2px solid ${alpha(link.color, 0.6)}`,
-											transform: "translateY(-2px)",
-											boxShadow: `0 4px 12px ${alpha(link.color, 0.3)}`,
-										},
-									}}
-								>
-									<motion.div
-										whileHover={{rotate: 15}}
-										transition={{type: "spring", stiffness: 300}}
-									>
-										{link.icon}
-									</motion.div>
-									<Typography
-										sx={{
-											color: link.color,
-											fontWeight: "bold",
-											fontSize: "0.9rem",
-											display: "flex",
-											alignItems: "center",
-											gap: "4px",
-										}}
-									>
-										{link.label}
-									</Typography>
-								</Box>
-							)}
-						</Link>
-					</motion.div>
-				))}
+						<LogoText variant='h1'>صـفـقـه</LogoText>
+					</Link>
+				</motion.div>
 			</Box>
-
-			<style>{`
-				@keyframes shimmer {
-					0% { background-position: -200% 0; }
-					100% { background-position: 200% 0; }
-				}
-			`}</style>
 		</>
 	);
 };

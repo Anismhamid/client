@@ -11,10 +11,10 @@ window.Buffer = Buffer;
 createRoot(document.getElementById("root")!).render(
 	<GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API}>
 		<UserProvider>
-			<SpeedInsights/>
-				<BrowserRouter>
-					<App />
-				</BrowserRouter>
+			<SpeedInsights />
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
 		</UserProvider>
 	</GoogleOAuthProvider>,
 );

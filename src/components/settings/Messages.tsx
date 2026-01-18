@@ -163,7 +163,7 @@ const MessagingPage: React.FC = () => {
 		if (auth.role === RoleType.Client && users.length > 0 && !toUserId) {
 			const firstModerator = users.find((user) => user.role === RoleType.Moderator);
 			if (firstModerator) {
-				setToUserId(firstModerator._id);
+				setToUserId(firstModerator._id || "");
 			}
 		}
 	}, [auth.role, users, toUserId]);
@@ -199,7 +199,7 @@ const MessagingPage: React.FC = () => {
 						disabled={loading}
 					>
 						{users
-							.filter((user) => validateRecipient(user._id))
+							.filter((user) => validateRecipient(user._id as string))
 							.map((user) => (
 								<MenuItem dir={direction} key={user._id} value={user._id}>
 									{user.name.first} ({user.role})

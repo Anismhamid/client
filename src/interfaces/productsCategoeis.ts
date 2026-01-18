@@ -1,6 +1,6 @@
 import {productsPathes} from "../routes/routes";
 
-export const productCategories = [
+export const productsCategories = [
 	{id: "House", label: "مستلزمات البيت"},
 	{id: "Garden", label: "الحديقة"},
 	{id: "Electronics", label: "إلكترونيات"},
