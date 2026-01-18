@@ -185,7 +185,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				sx={{
 					zIndex: 1000,
 					display: "flex",
-					flexWrap:{xs:"wrap",md:"noWrap"},
+					flexWrap: {xs: "wrap", md: "noWrap"},
 					alignItems: "center",
 					justifyContent: "space-between",
 					background:
@@ -231,9 +231,21 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							</NavLink>
 						</li>
 					</Tooltip>
+					<Tooltip title='المفضله - صفقه' arrow>
+						<li className='nav-item mx-3'>
+							<NavLink
+								className={` ${isActive(path.Favorite) ? "text-danger" : "text-dark"}`}
+								aria-current='page'
+								to={path.Favorite}
+								aria-label='المفضله - صفقه'
+							>
+								{fontAwesomeIcon.Favorite}
+							</NavLink>
+						</li>
+					</Tooltip>
 
 					{auth && isAdmin && (
-						<Tooltip title='ניהול משתמשים' arrow>
+						<Tooltip title={t("users-management")} arrow>
 							<li className='nav-item'>
 								<NavLink
 									className={`${
@@ -242,6 +254,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 											: "text-dark"
 									} nav-link`}
 									aria-current='page'
+									aria-label={t("users-management")}
 									to={path.UsersManagement}
 								>
 									{fontAwesomeIcon.userGear}
@@ -337,7 +350,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								}}
 								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
 							>
-								تسجيل الدخول
+								{t("links.login")}
 							</Button>
 						) : (
 							isLoggedIn && <AccountMenu logout={logout} />

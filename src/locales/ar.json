@@ -1,5 +1,5 @@
 {
-	"seller":"نشر بواسطة",
+	"seller": "نشر بواسطة",
 	"login": {
 		"email": "البريد الإلكتروني",
 		"password": "كلمة المرور",
@@ -84,6 +84,7 @@
 	"cash": "نقدي",
 	"orderNumber": "رقم الطلب",
 	"UserId": "ID المستخدم",
+	"users-management": "ادارة المستخدمين",
 	"date": "تاريخ",
 	"phone": "هاتف",
 	"customerInfo": "تفاصيل العميل",

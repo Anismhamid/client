@@ -21,6 +21,7 @@ import {
 	faEdit,
 	faGamepad,
 	faGrinStars,
+	faHeart,
 	faHeartPulse,
 	faHome,
 	faInfoCircle,
@@ -41,6 +42,8 @@ import {
 
 export const fontAwesomeIcon = {
 	mileage: <FontAwesomeIcon icon={faTachometer} />,
+	Favorite: <FontAwesomeIcon color='red' icon={faHeart} />,
+
 	year: <FontAwesomeIcon icon={faCalendar} />,
 	cleaning: <FontAwesomeIcon icon={faBroom} />,
 	cars: <FontAwesomeIcon icon={faCar} />,
