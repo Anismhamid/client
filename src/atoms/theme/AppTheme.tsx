@@ -333,29 +333,6 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						</li>
 					)}
 
-					<li className='nav-item' role='none'>
-						{!isLoggedIn ? (
-							<Button
-								variant='contained'
-								color='primary'
-								onClick={() => navigate(path.Login)}
-								sx={{
-									borderRadius: "30px",
-									fontWeight: "bold",
-									backgroundColor: "#4FC3F7",
-									color: "#1A1E22",
-									"&:hover": {
-										backgroundColor: "#81D4FA",
-									},
-								}}
-								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
-							>
-								{t("links.login")}
-							</Button>
-						) : (
-							isLoggedIn && <AccountMenu logout={logout} />
-						)}
-					</li>
 					{/* <Link
 						target='_blank'
 						rel='noopener noreferrer'
@@ -423,6 +400,29 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						<LogoText variant='h1'>صـفـقـه</LogoText>
 					</Link>
 				</motion.div>
+				<li className='nav-item' role='none'>
+					{!isLoggedIn ? (
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={() => navigate(path.Login)}
+							sx={{
+								borderRadius: "30px",
+								fontWeight: "bold",
+								backgroundColor: "#4FC3F7",
+								color: "#1A1E22",
+								"&:hover": {
+									backgroundColor: "#81D4FA",
+								},
+							}}
+							aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
+						>
+							{t("links.login")}
+						</Button>
+					) : (
+						isLoggedIn && <AccountMenu logout={logout} />
+					)}
+				</li>
 			</Box>
 		</>
 	);

@@ -4,7 +4,15 @@ import {useUser} from "../../context/useUSer";
 import {deleteProduct, getAllProducts} from "../../services/productsServices";
 import {Products} from "../../interfaces/Products";
 import Loader from "../../atoms/loader/Loader";
-import {Button, CircularProgress, Chip, Box, Typography, alpha} from "@mui/material";
+import {
+	Button,
+	CircularProgress,
+	Chip,
+	Box,
+	Typography,
+	alpha,
+	useMediaQuery,
+} from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
 import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
@@ -46,6 +54,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const {t} = useTranslation();
+	const isMobile = useMediaQuery("(max-width:768px)");
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -250,7 +259,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								</Typography>
 							</Box>
 							<motion.div
-								whileHover={{scale: 1.05}}
+								whileHover={!isMobile ? {scale: 1.05} : undefined}
 								whileTap={{scale: 0.95}}
 							>
 								<Button
@@ -399,7 +408,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							}}
 						>
 							<motion.div
-								whileHover={{scale: 1.01}}
+								whileHover={!isMobile ? {scale: 1.01} : undefined}
 								transition={{type: "spring", stiffness: 400}}
 							>
 								<SearchBox
@@ -435,7 +444,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								>
 									{/* All Products Button */}
 									<motion.div
-										whileHover={{scale: 1.05}}
+										whileHover={!isMobile ? {scale: 1.05} : undefined}
 										whileTap={{scale: 0.95}}
 									>
 										<Chip
@@ -486,7 +495,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 												initial={{opacity: 0, scale: 0.8}}
 												animate={{opacity: 1, scale: 1}}
 												transition={{delay: index * 0.05}}
-												whileHover={{scale: 1.08}}
+												whileHover={
+													!isMobile ? {scale: 1.08} : undefined
+												}
 												whileTap={{scale: 0.95}}
 											>
 												<Chip
@@ -542,7 +553,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 									{/* Special Offers Button */}
 									<motion.div
-										whileHover={{scale: 1.08}}
+										whileHover={!isMobile ? {scale: 1.08} : undefined}
 										whileTap={{scale: 0.95}}
 									>
 										<Chip
@@ -585,7 +596,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 											initial={{opacity: 0, scale: 0.8}}
 											animate={{opacity: 1, scale: 1}}
 											exit={{opacity: 0, scale: 0.8}}
-											whileHover={{scale: 1.05}}
+											whileHover={
+												!isMobile ? {scale: 1.05} : undefined
+											}
 											whileTap={{scale: 0.95}}
 										>
 											<Chip
@@ -684,8 +697,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 														animate={{opacity: 1, y: 0}}
 														transition={{delay: index * 0.05}}
 														whileHover={{
-															y: -8,
-															transition: {duration: 0.2},
+															y: -3,
+															transition: {duration: 0.01},
 														}}
 													>
 														<ProductCard
@@ -804,7 +817,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 													.map(({labelKey}) => (
 														<motion.div
 															key={labelKey}
-															whileHover={{scale: 1.1}}
+															whileHover={
+																!isMobile
+																	? {scale: 1.1}
+																	: undefined
+															}
 															whileTap={{scale: 0.9}}
 														>
 															<Button
@@ -837,7 +854,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 													))}
 											</Box>
 											<motion.div
-												whileHover={{scale: 1.05}}
+												whileHover={
+													!isMobile ? {scale: 1.05} : undefined
+												}
 												whileTap={{scale: 0.95}}
 											>
 												<Button
@@ -1005,7 +1024,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								ممكنة
 							</Typography>
 							<motion.div
-								whileHover={{scale: 1.05}}
+								whileHover={!isMobile ? {scale: 1.05} : undefined}
 								whileTap={{scale: 0.95}}
 							>
 								<Button
