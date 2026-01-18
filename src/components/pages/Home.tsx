@@ -205,29 +205,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 						animate={{y: 0, opacity: 1}}
 						transition={{type: "spring", stiffness: 100}}
 					>
-						<Box
-							sx={{
-								p: 6,
-								background: "linear-gradient(145deg, #ffffff, #f0f0f0)",
-								borderRadius: 4,
-								boxShadow:
-									"20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff",
-								maxWidth: 500,
-								width: "100%",
-								position: "relative",
-								overflow: "hidden",
-								"&::before": {
-									content: '""',
-									position: "absolute",
-									top: 0,
-									left: 0,
-									right: 0,
-									height: 4,
-									background:
-										"linear-gradient(90deg, #ff6b6b, #4ecdc4)",
-								},
-							}}
-						>
+						<Box>
 							<Box sx={{mb: 3}}>
 								<Box
 									sx={{
@@ -326,7 +304,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				/>
 			</Helmet>
 
-			<Box dir={diriction} component='main' sx={{bgcolor: "#ECF0F7"}}>
+			<Box dir={diriction} component='main'>
 				{/* Hero Section with Gradient */}
 				<Box
 					sx={{
@@ -947,7 +925,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				{/* Contact CTA Section */}
 				<Box
 					sx={{
-						background: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)",
+						background: "linear-gradient(135deg, #faf8fc 0%, #ECF0F7 100%)",
 						py: 8,
 						position: "relative",
 						overflow: "hidden",
@@ -1003,7 +981,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								variant='h3'
 								gutterBottom
 								sx={{
-									color: "white",
+									color: "primary.main",
 									fontWeight: "bold",
 									textShadow: "0 2px 4px rgba(0,0,0,0.2)",
 									mb: 3,
@@ -1014,7 +992,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							<Typography
 								variant='h6'
 								sx={{
-									color: "rgba(255,255,255,0.9)",
+									color: "primary.main",
 									mb: 4,
 									maxWidth: 600,
 									mx: "auto",

@@ -2,6 +2,7 @@
  * Products interface
  */
 export interface Products {
+	location: string;
 	likes?: string[];
 	isNew?: boolean;
 	_id?: string;

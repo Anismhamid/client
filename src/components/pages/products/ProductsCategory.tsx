@@ -24,6 +24,7 @@ import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
+import ChepNavigation from "../../navbar/ChepNavigation";
 
 interface ProductCategoryProps {
 	category: string;
@@ -189,17 +190,18 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		return <Loader />;
 	}
 
-	if (!loading && products.length === 0)
-		return (
-			<Box component={"main"} textAlign={"center"}>
-				<Typography textAlign={"center"} variant='h6' color='error'>
-					لم يتم العثور على أي منتجات في المتجر
-				</Typography>
-				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
-					حاول ثانية
-				</Button>
-			</Box>
-		);
+	// if (!loading && products.length === 0)
+	// 	return (
+	// 		<Box component={"main"} textAlign={"center"}>
+	// 			<ChepNavigation />
+	// 			<Typography textAlign={"center"} variant='h6' color='error'>
+	// 				لم يتم العثور على أي منتجات في المتجر
+	// 			</Typography>
+	// 			<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
+	// 				حاول ثانية
+	// 			</Button>
+	// 		</Box>
+	// 	);
 
 	return (
 		<>
@@ -209,6 +211,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					{JSON.stringify(generateCategoryJsonLd("سيارات", products))}
 				</script>
 			</Helmet>
+			<ChepNavigation />
 			<Box component='main'>
 				<Box
 					sx={{
@@ -240,7 +243,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									return (
 										<Col
 											key={product._id}
-											style={{marginBlock: 10, border: 1}}
+											style={{marginBlock: 10, border: 1,minHeight:"max-content"}}
 											xs={6}
 											md={4}
 											xl={2}
@@ -290,31 +293,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									component='h1'
 									variant='body1'
 								>
-									لم يتم العثور على منتجات مطابقة. حاول البحث باستخدام:
+									لم يتم العثور على منتجات مطابقة لمعايير البحث
 								</Typography>
-								<Box m={1}>
-									<Button
-										variant='contained'
-										sx={{borderRadius: 5}}
-										onClick={() => setSearchQuery("عنب")}
-									>
-										<Chip label='عنب' sx={{color: "white"}} />
-									</Button>
-									<Button
-										variant='contained'
-										sx={{borderRadius: 5, m: 1}}
-										onClick={() => setSearchQuery("2")}
-									>
-										<Chip label='سعر المنتج' sx={{color: "white"}} />
-									</Button>
-									<Button
-										variant='contained'
-										sx={{borderRadius: 5}}
-										onClick={() => setSearchQuery("عروض")}
-									>
-										<Chip label='عروض' sx={{color: "white"}} />
-									</Button>
-								</Box>
 							</Box>
 						)}
 					</Row>

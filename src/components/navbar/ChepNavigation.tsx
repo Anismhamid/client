@@ -1,24 +1,13 @@
-import {useCallback, useEffect, useRef, useState} from "react"; // Add useCallback
+import {useRef} from "react"; // Add useCallback
 import {Box, Chip, IconButton, Typography} from "@mui/material";
-import {ChevronLeft, ChevronRight} from "@mui/icons-material";
-import { NavLink} from "react-router-dom";
+import {ChevronLeftTwoTone, ChevronRightTwoTone} from "@mui/icons-material";
+import {NavLink} from "react-router-dom";
 import {productsAndCategories} from "./navCategoryies";
 import {useTranslation} from "react-i18next";
 
 const ChipNavigation = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [showControls, setShowControls] = useState(false);
-	const [canScrollLeft, setCanScrollLeft] = useState(false);
-	const [canScrollRight, setCanScrollRight] = useState(true);
 	const {t} = useTranslation();
-
-	const checkScroll = useCallback(() => {
-		if (containerRef.current) {
-			const {scrollLeft, scrollWidth, clientWidth} = containerRef.current;
-			setCanScrollLeft(scrollLeft < 10);
-			setCanScrollRight(scrollLeft < scrollWidth - clientWidth);
-		}
-	}, [setCanScrollLeft, setCanScrollRight]);
 
 	const scroll = (direction: "left" | "right") => {
 		const container = containerRef.current;
@@ -33,21 +22,7 @@ const ChipNavigation = () => {
 			left: newScrollLeft,
 			behavior: "smooth",
 		});
-		setTimeout(checkScroll, 100);
 	};
-
-	useEffect(() => {
-		const container = containerRef.current;
-		if (container) {
-			container.addEventListener("scroll", checkScroll);
-			// checkScroll();
-		}
-		return () => {
-			if (container) {
-				container.removeEventListener("scroll", checkScroll);
-			}
-		};
-	}, [containerRef.current, checkScroll]);
 
 	return (
 		<Box
@@ -60,34 +35,31 @@ const ChipNavigation = () => {
 				borderRadius: "0 0 30px 30px",
 				p: 5,
 			}}
-			onMouseEnter={() => setShowControls(true)}
-			onMouseLeave={() => setShowControls(false)}
 		>
 			{/* Left Scroll Button */}
-			{showControls && canScrollLeft && (
-				<IconButton
-					className='scroll-button'
-					onClick={() => scroll("left")}
-					sx={{
-						position: "absolute",
-						left: 0,
-						transform: "translateY(-50%)",
-						top: "50%",
-						zIndex: 2,
-						backgroundColor: "background.paper",
-						color: "text.primary",
-						boxShadow: 2,
-						transition: "all 0.3s ease",
-						"&:hover": {
-							color: "white",
-							backgroundColor: "warning.main",
-							transform: "translateY(-50%) scale(1.3)",
-						},
-					}}
-				>
-					<ChevronLeft />
-				</IconButton>
-			)}
+
+			<IconButton
+				className='scroll-button'
+				onClick={() => scroll("left")}
+				sx={{
+					position: "absolute",
+					left: 0,
+					transform: "translateY(-50%)",
+					top: "50%",
+					zIndex: 2,
+					backgroundColor: "background.paper",
+					color: "text.primary",
+					boxShadow: 2,
+					transition: "all 0.1s ease",
+					"&:hover": {
+						color: "white",
+						backgroundColor: "warning.main",
+						transform: "translateY(-50%) scale(1.3)",
+					},
+				}}
+			>
+				<ChevronLeftTwoTone />
+			</IconButton>
 
 			{/* Chip Container */}
 			<Box
@@ -97,7 +69,7 @@ const ChipNavigation = () => {
 					alignItems: "center",
 					justifyContent: "space-around",
 					gap: 2,
-					py: 1.5,
+
 					px: 5,
 					overflowX: "auto",
 					scrollBehavior: "smooth",
@@ -137,6 +109,7 @@ const ChipNavigation = () => {
 										borderColor: isActive
 											? "primary.main"
 											: "divider",
+
 										transition: "all 0.1s ease",
 										display: "flex",
 										justifyContent: "center",
@@ -165,10 +138,10 @@ const ChipNavigation = () => {
 
 						<Typography
 							component={"p"}
-							variant='body1'
+							variant='body2'
 							sx={{
-								color: "text.primary",
-								fontWeight: 500,
+								fontWeight: 600,
+								color: "primary.main",
 							}}
 						>
 							{t(category.labelKey)}
@@ -178,30 +151,28 @@ const ChipNavigation = () => {
 			</Box>
 
 			{/* Right Scroll Button */}
-			{showControls && canScrollRight && (
-				<IconButton
-					className='scroll-button'
-					onClick={() => scroll("right")}
-					sx={{
-						position: "absolute",
-						right: 0,
-						top: "50%",
-						transform: "translateY(-50%)",
-						zIndex: 2,
-						backgroundColor: "background.paper",
-						color: "text.primary",
-						boxShadow: 2,
-						transition: "all 0.3s ease",
-						"&:hover": {
-							color: "white",
-							backgroundColor: "warning.main",
-							transform: "translateY(-50%) scale(1.3)",
-						},
-					}}
-				>
-					<ChevronRight />
-				</IconButton>
-			)}
+			<IconButton
+				className='scroll-button'
+				onClick={() => scroll("right")}
+				sx={{
+					position: "absolute",
+					right: 0,
+					top: "50%",
+					transform: "translateY(-50%)",
+					zIndex: 2,
+					backgroundColor: "background.paper",
+					color: "text.primary",
+					boxShadow: 2,
+					transition: "all 0.3s ease",
+					"&:hover": {
+						color: "white",
+						backgroundColor: "warning.main",
+						transform: "translateY(-50%) scale(1.3)",
+					},
+				}}
+			>
+				<ChevronRightTwoTone />
+			</IconButton>
 		</Box>
 	);
 };

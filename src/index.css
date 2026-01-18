@@ -9,19 +9,12 @@
   font-family: "Heebo";
 }
 
-#root {
-  /* background: url('./assets/bbblurry.svg'); */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-}
-
 
 
 main {
   min-height: 90vh;
-  width: "80%";
+  width: 90%;
+  margin: auto;
   background: transparent;
   backdrop-filter: blur(8px);
 }
@@ -29,8 +22,12 @@ main {
 .header-image {
   background-image: url(../public/2d.png);
   background-position: center;
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
+}
+
+.card {
+  min-height: max-content;
 }
 
 

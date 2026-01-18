@@ -97,20 +97,20 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 
 		return (
 			<Card
+				className='card'
 				dir={dir}
 				sx={{
-					height: "100%",
-					borderRadius: 2.5,
+					minHeight: "max-content",
+					borderRadius: 3,
 					display: "flex",
 					flexDirection: "column",
-					alignItems: "center",
-					justifyContent: "space-around",
-					backgroundColor: "#F5F5F5",
-					p: 1,
-					boxShadow: "3px 3px 10px #505050",
-					transition: "0.3s ease",
+					backgroundColor: "#FFFFFF",
+					boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+					transition: "all 0.3s ease",
+					position: "relative",
+					overflow: "hidden",
 					"&:hover": {
-						boxShadow: "6px 6px 20px #303030",
+						boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.15)",
 						transform: "translateY(-4px)",
 					},
 				}}
@@ -120,20 +120,47 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 				aria-label={`منتج: ${product.product_name}`}
 			>
 				<JsonLd data={jsonLdData} />
+
+				{/* Sale Badge */}
+				{product.sale && (
+					<Chip
+						label={`${product.discount}% تخفيض`}
+						color='error'
+						size='small'
+						aria-label={`خصم ${product.discount} بالمئة`}
+						sx={{
+							position: "absolute",
+							top: 10,
+							left: 10,
+							bgcolor: "#ff4444",
+							color: "#fff",
+							fontWeight: "bold",
+							zIndex: 2,
+							py: 0.5,
+							px: 1.5,
+							fontSize: "0.75rem",
+							borderRadius: 2,
+						}}
+					/>
+				)}
+
+				{/* Image Section */}
 				<Box
 					position='relative'
 					width='100%'
 					sx={{
-						maxHeight: {
-							xs: "130px",
-							md: "163px",
-							lg: "130px",
+						height: {
+							xs: "180px",
+							sm: "220px",
+							md: "200px",
 						},
+						overflow: "hidden",
 					}}
 				>
 					<Link
 						to={`/product-details/${product.category}/${product.brand}/${product._id}`}
 						aria-label={`تفاصيل عن ${product.product_name}`}
+						style={{display: "block", height: "100%"}}
 					>
 						{!loadedImages[product.product_name] && (
 							<Skeleton
@@ -159,8 +186,11 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							sx={{
 								width: "100%",
 								height: "100%",
-								borderRadius: 3,
-								overflow: "hidden",
+								objectFit: "cover",
+								transition: "transform 0.3s ease",
+								"&:hover": {
+									transform: "scale(1.05)",
+								},
 							}}
 							onLoad={() => {
 								setLoadedImages((prev) => ({
@@ -177,142 +207,216 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							itemProp='image'
 						/>
 					</Link>
-					{product.sale && (
-						<Chip
-							label={`${product.discount}% تخفيض`}
-							color='error'
-							size='small'
-							aria-label={`خصم ${product.discount} بالمئة`}
-							sx={{
-								position: "absolute",
-								top: 10,
-								right: 10,
-								bgcolor: "#d32f2f",
-								color: "#fff",
-								fontWeight: "bold",
-								zIndex: 1,
-								py: 2,
-							}}
-						/>
-					)}
 				</Box>
-				{product?.color && (
-					<Box sx={{display: "flex", gap: 1, mt: 2}}>
-						<Typography>{t("color")}</Typography>
-						<Typography
-							sx={{
-								width: 20,
-								height: 20,
-								border: `5px solid ${product.color}`,
-								borderRadius: 3,
-							}}
-						/>
-					</Box>
-				)}
-				{product.category}
-				{product.seller && (
-					<Box textAlign={"center"} m={1}>
-						<Link
-							to={`/users/customer/${product.seller.slug}`}
-							aria-label={`الانتقال إلى صفحة البائع ${product.seller.slug}`}
-						>
-							@{product.seller.slug}
-						</Link>
-					</Box>
-				)}
-				<CardContent sx={{flexGrow: 1}}>
-					<Typography
-						variant='h6'
-						align='center'
-						fontWeight='bold'
-						gutterBottom
-						itemProp='name'
+
+				<CardContent sx={{flexGrow: 1, p: 2}}>
+					{/* Product Name */}
+					<Link
+						to={`/product-details/${product.category}/${product.brand}/${product._id}`}
+						style={{textDecoration: "none", color: "inherit"}}
 					>
-						{product.product_name}
-					</Typography>
-					{product.description && (
-						<Box
-							sx={{
-								width: "100%",
-								mb: 1,
-								border: 1,
-								p: 1,
-								borderRadius: 3,
-							}}
-						>
-							<Typography
-								component='p'
-								variant='body2'
-								align='center'
-								color='text.secondary'
-								sx={{lineHeight: 1.6}}
-							>
-								{product.description}
-							</Typography>
-						</Box>
-					)}
-					{product.sale ? (
-						<Box textAlign='center' my={1}>
-							<Typography
-								variant='body2'
-								color='text.secondary'
-								sx={{textDecoration: "line-through"}}
-								itemProp='price'
-								content={product.price.toString()}
-							>
-								{formatPrice(product.price)}
-							</Typography>
-							<Typography
-								variant='h6'
-								color='error.main'
-								fontWeight={700}
-								itemProp='offers'
-								content={discountedPrice.toString()}
-							>
-								{formatPrice(discountedPrice)}
-							</Typography>
-							<meta itemProp='priceCurrency' content='ILS' />
-							<meta itemProp='price' content={discountedPrice.toString()} />
-						</Box>
-					) : (
 						<Typography
 							variant='h6'
-							align='center'
-							color={"success.main"}
-							fontWeight={700}
-							aria-live='polite'
-							itemProp='price'
-							content={formatPrice(product.price)}
+							fontWeight='600'
+							gutterBottom
+							itemProp='name'
+							sx={{
+								fontSize: "1.1rem",
+								lineHeight: 1.3,
+								color: "#333",
+								"&:hover": {
+									color: "#1976d2",
+								},
+							}}
 						>
-							<meta itemProp='priceCurrency' content='ILS' />
+							{product.product_name}
 						</Typography>
-					)}
+					</Link>
 
-					<Box
+					{/* Condition Chip - Like New */}
+					<Chip
+						label='Like New'
+						size='small'
 						sx={{
-							textAlign: "center",
+							bgcolor: "#e8f5e9",
+							color: "#2e7d32",
+							fontWeight: 500,
+							fontSize: "0.7rem",
+							mb: 1.5,
+							height: "24px",
 						}}
-					>
-						<ColorsAndSizes category={category} />
+					/>
+
+					{/* Price Section */}
+					<Box sx={{mb: 1.5}}>
+						{product.sale ? (
+							<Stack direction='row' spacing={1} alignItems='center'>
+								<Typography
+									variant='h5'
+									fontWeight={700}
+									color='#333'
+									itemProp='offers'
+									content={discountedPrice.toString()}
+									sx={{fontSize: "1.4rem"}}
+								>
+									{formatPrice(discountedPrice)}
+								</Typography>
+								<Typography
+									variant='body2'
+									color='text.secondary'
+									sx={{
+										textDecoration: "line-through",
+										fontSize: "0.9rem",
+									}}
+									itemProp='price'
+									content={product.price.toString()}
+								>
+									{formatPrice(product.price)}
+								</Typography>
+								<meta itemProp='priceCurrency' content='ILS' />
+								<meta
+									itemProp='price'
+									content={discountedPrice.toString()}
+								/>
+							</Stack>
+						) : (
+							<Typography
+								variant='h5'
+								fontWeight={700}
+								color='#333'
+								aria-live='polite'
+								itemProp='price'
+								content={formatPrice(product.price)}
+								sx={{fontSize: "1.4rem"}}
+							>
+								{formatPrice(product.price)}
+								<meta itemProp='priceCurrency' content='ILS' />
+							</Typography>
+						)}
 					</Box>
-				</CardContent>
-				<Stack
-					sx={{
-						my: 1,
-					}}
-				>
-					{canEdit && (
-						<Box
+
+					{/* Location and Category */}
+					<Stack
+						direction='row'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography
+							variant='body2'
+							color='text.secondary'
 							sx={{
 								display: "flex",
-								gap: 5,
-								alignSelf: "center",
-								justifyContent: "space-around",
+								alignItems: "center",
+								gap: 0.5,
+								fontSize: "0.85rem",
 							}}
-							role='group'
-							aria-label='خيارات إدارة المنتج'
 						>
-							<Button
+							📍 {product.location || "New York, NY"}
+						</Typography>
+
+						<Typography
+							variant='body2'
+							color='text.secondary'
+							sx={{
+								fontSize: "0.85rem",
+								fontWeight: 500,
+							}}
+						>
+							{t(category)}
+						</Typography>
+					</Stack>
+
+					{/* Description (if available) */}
+					{product.description && (
+						<Typography
+							variant='body2'
+							color='text.secondary'
+							sx={{
+								mt: 1.5,
+								fontSize: "0.85rem",
+								lineHeight: 1.5,
+								display: "-webkit-box",
+								WebkitLineClamp: 2,
+								WebkitBoxOrient: "vertical",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+							}}
+						>
+							{product.description}
+						</Typography>
+					)}
+				</CardContent>
+
+				{/* Action Buttons */}
+				<Box
+					sx={{
+						p: 2,
+						pt: 0,
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						borderTop: `1px solid ${theme.palette.divider}`,
+						mt: "auto",
+					}}
+				>
+					{/* Like Button */}
+					<IconButton
+						aria-label='add to favorites'
+						onClick={handleLike}
+						sx={{
+							color: userLiked ? "#ff4444" : "#666",
+							"&:hover": {
+								backgroundColor: "rgba(255, 68, 68, 0.08)",
+							},
+						}}
+					>
+						{userLiked ? (
+							<FavoriteIcon sx={{color: "#ff4444"}} />
+						) : (
+							<FavoriteBorderIcon />
+						)}
+						<Typography
+							variant='body2'
+							sx={{
+								ml: 0.5,
+								color: userLiked ? "#ff4444" : "#666",
+								fontWeight: 500,
+							}}
+						>
+							{product.likes?.length ?? 0}
+						</Typography>
+					</IconButton>
+
+					{/* Share Button */}
+					<IconButton
+						aria-label='share'
+						onClick={() => {
+							if (navigator.share) {
+								navigator
+									.share({
+										title: `منتج ${product.product_name} رائع`,
+										text: `شوف ${product.product_name} المميز!`,
+										url: window.location.href,
+									})
+									.then(() => showSuccess("تمت المشاركة بنجاح"))
+									.catch(() => showError("فشل المشاركة"));
+							} else showError("المشاركة غير مدعومة في هذا المتصفح");
+						}}
+						sx={{
+							color: "#666",
+							"&:hover": {
+								backgroundColor: "rgba(25, 118, 210, 0.08)",
+								color: "#1976d2",
+							},
+						}}
+					>
+						<ShareIcon />
+					</IconButton>
+
+					{/* Edit and Delete Buttons (for authorized users) */}
+					{canEdit && (
+						<Box sx={{display: "flex", gap: 1}}>
+							<IconButton
 								size='small'
 								color='warning'
 								aria-label='تعديل المنتج'
@@ -320,71 +424,62 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									setProductIdToUpdate(product._id as string);
 									onShowUpdateProductModal();
 								}}
-								startIcon={<EditIcon />}
-								variant='outlined'
 								sx={{
-									borderRadius: 3,
-									minWidth: 50,
-									mb: 1,
+									bgcolor: "warning.light",
+									"&:hover": {bgcolor: "warning.main"},
 								}}
-							/>
+							>
+								<EditIcon fontSize='small' />
+							</IconButton>
 
-							<Button
+							<IconButton
 								size='small'
 								color='error'
 								aria-label='حذف المنتج'
 								onClick={() => openDeleteModal(product.product_name)}
-								startIcon={<DeleteIcon />}
-								variant='outlined'
-								sx={{borderRadius: 3, minWidth: 50, mb: 1}}
-							/>
+								sx={{
+									bgcolor: "error.light",
+									"&:hover": {bgcolor: "error.main"},
+								}}
+							>
+								<DeleteIcon fontSize='small' />
+							</IconButton>
 						</Box>
 					)}
+				</Box>
+
+				{/* Seller info at bottom */}
+				{product.seller && (
 					<Box
 						sx={{
-							display: "flex",
-							justifyContent: "space-between",
 							p: 2,
-							borderTop: `1px solid ${theme.palette.divider}`,
+							pt: 0,
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "space-between",
 						}}
 					>
-						<IconButton aria-label='add to favorites' onClick={handleLike}>
-							{userLiked ? (
-								<>
-									<FavoriteIcon color='error' />
-									<Typography sx={{ml: 0.5}}>
-										{product.likes?.length ?? 0}
-									</Typography>
-								</>
-							) : (
-								<>
-									<FavoriteBorderIcon />
-									<Typography sx={{ml: 0.5}}>
-										{product.likes?.length ?? 0}
-									</Typography>
-								</>
-							)}
-						</IconButton>
-
-						<IconButton
-							aria-label='share'
-							onClick={() => {
-								if (navigator.share) {
-									navigator
-										.share({
-											title: `منتج ${product.product_name} رائع`,
-											text: `شوف ${product.product_name} المميز!`,
-											url: window.location.href,
-										})
-										.then(() => showSuccess("تمت المشاركة بنجاح"))
-										.catch(() => showError("فشل المشاركة"));
-								} else showError("المشاركة غير مدعومة في هذا المتصفح");
+						<Typography
+							variant='body2'
+							color='text.secondary'
+							sx={{fontSize: "0.8rem"}}
+						>
+							{t("seller")}:
+						</Typography>
+						<Link
+							to={`/users/customer/${product.seller.slug}`}
+							aria-label={`الانتقال إلى صفحة البائع ${product.seller.slug}`}
+							style={{
+								textDecoration: "none",
+								color: "#1976d2",
+								fontWeight: 500,
+								fontSize: "0.9rem",
 							}}
 						>
-							<ShareIcon />
-						</IconButton>
+							@{product.seller.slug}
+						</Link>
 					</Box>
-				</Stack>
+				)}
 			</Card>
 		);
 	},

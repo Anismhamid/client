@@ -185,6 +185,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				sx={{
 					zIndex: 1000,
 					display: "flex",
+					flexWrap:{xs:"wrap",md:"noWrap"},
 					alignItems: "center",
 					justifyContent: "space-between",
 					background:
