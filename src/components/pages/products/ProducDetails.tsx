@@ -205,10 +205,10 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									flexDirection: "column",
 								}}
 							>
-								{product.image_url && (
+								{product.image && (
 									<CardMedia
 										component='img'
-										image={product.image_url}
+										image={product.image}
 										alt={product.product_name}
 										sx={{
 											height: isMobile ? "300px" : "500px",
@@ -254,7 +254,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 												navigator
 													.share({
 														title: `منتج ${product.product_name} رائع`,
-														text: `شوف ${product.product_name} المميز!`,
+														text: `شوف ${product.product_name} المميز! عللى موقع صفقه`,
 														url: window.location.href,
 													})
 													.then(() =>

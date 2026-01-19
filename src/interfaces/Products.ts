@@ -16,7 +16,7 @@ export interface Products {
 	color?: string;
 	price: number;
 	description: string;
-	image?: string;
+	image: string;
 	sale: boolean;
 	discount: number;
 	rating?: number;
@@ -37,4 +37,5 @@ export const initialProductValue = {
 	rating: 0,
 	likes: [],
 	reviewCount: 0,
+	location: "אום אל פחם",
 };

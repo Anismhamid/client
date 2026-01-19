@@ -17,6 +17,7 @@ const useAddProductFormik = () => {
 	const formik = useFormik<Products>({
 		initialValues: {
 			product_name: "",
+			image: "",
 			brand: "",
 			year: "",
 			fuel: "",
