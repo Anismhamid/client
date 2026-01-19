@@ -133,14 +133,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	const location = useLocation();
 	const {decodedToken, setAfterDecode} = useToken();
 	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
-	// const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const [megaAnchor, setMegaAnchor] = useState<HTMLElement | null>(null);
 	const openMega = Boolean(megaAnchor);
 
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-	// const openMenu = Boolean(anchorEl);
 	const {t} = useTranslation();
 
 	const navigate = useNavigate();

@@ -12,8 +12,9 @@ interface AddProdutModalProps {
 
 const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) => {
 	const {t} = useTranslation();
-
-	const formik = useAddProductFormik();
+	
+	const {formik, imageFile, setImageFile, imageData, setImageData} =
+		useAddProductFormik();
 
 	const dir = handleRTL();
 	return (
@@ -25,7 +26,14 @@ const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) 
 			</ModalHeader>
 			<Modal.Body className='rounded d-flex justify-content-center align-items-center'>
 				<div className='container '>
-					<NewProductForm formik={formik} onHide={() => onHide()} />
+					<NewProductForm
+						formik={formik}
+						imageFile={imageFile}
+						setImageFile={setImageFile}
+						imageData={imageData}
+						setImageData={setImageData}
+						onHide={() => onHide()}
+					/>
 				</div>
 			</Modal.Body>
 		</Modal>

@@ -3,9 +3,17 @@ import * as yup from "yup";
 import {useTranslation} from "react-i18next";
 import {createNewProduct} from "../services/productsServices";
 import {Products} from "../interfaces/Products";
+import {useState} from "react";
+import {uploadImage} from "../services/uploadImage";
 
 const useAddProductFormik = () => {
 	const {t} = useTranslation();
+	const [imageFile, setImageFile] = useState<File | null>(null);
+	const [imageData, setImageData] = useState<{
+		url: string;
+		publicId: string;
+	} | null>(null);
+
 	const formik = useFormik<Products>({
 		initialValues: {
 			product_name: "",
@@ -17,9 +25,9 @@ const useAddProductFormik = () => {
 			category: "",
 			price: 0,
 			description: "",
-			image_url: "",
 			sale: false,
 			discount: 0,
+			location: "",
 		},
 		validationSchema: yup.object({
 			product_name: yup
@@ -41,19 +49,30 @@ const useAddProductFormik = () => {
 				.string()
 				.min(2, t("modals.addProductModal.validation.descriptionMin"))
 				.max(500, t("modals.addProductModal.validation.descriptionMax")),
-			image_url: yup
-				.string()
-				.required(t("modals.addProductModal.validation.imageUrlRequired"))
-				.url(t("modals.addProductModal.validation.imageUrlInvalid")),
+
 			sale: yup.boolean(),
 			discount: yup.number(),
+			location: yup.string(),
 		}),
-		onSubmit(values, {resetForm}) {
-			createNewProduct(values);
+		onSubmit: async (values, {resetForm}) => {
+			let uploadedImage = imageData;
+
+			if (imageFile && !imageData) {
+				uploadedImage = await uploadImage(imageFile);
+				setImageData(uploadedImage);
+			}
+
+			await createNewProduct({
+				...values,
+				image: uploadedImage?.url || "",
+			});
+
 			resetForm();
+			setImageFile(null);
+			setImageData(null);
 		},
 	});
-	return formik;
+	return {formik, imageFile, setImageFile, imageData, setImageData};
 };
 
 export default useAddProductFormik;

@@ -16,12 +16,12 @@ export interface Products {
 	color?: string;
 	price: number;
 	description: string;
-	image_url: string;
+	image?: string;
 	sale: boolean;
 	discount: number;
 	rating?: number;
 	reviewCount?: number;
-	type?:string
+	type?: string;
 }
 
 export const initialProductValue = {
@@ -31,7 +31,7 @@ export const initialProductValue = {
 	price: 0,
 	quantity_in_stock: 0,
 	description: "",
-	image_url: "",
+	image: "",
 	sale: false,
 	discount: 0,
 	rating: 0,

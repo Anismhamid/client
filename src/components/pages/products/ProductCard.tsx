@@ -2,7 +2,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
 	Box,
-	Button,
 	Card,
 	CardContent,
 	CardMedia,
@@ -22,7 +21,6 @@ import {Dispatch, FunctionComponent, memo, SetStateAction} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Products} from "../../../interfaces/Products";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {useTranslation} from "react-i18next";
@@ -180,7 +178,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						<CardMedia
 							component='img'
 							loading='lazy'
-							image={product.image_url}
+							image={product.image}
 							alt={generateImageAlt(product.product_name, category)}
 							title={product.product_name}
 							sx={{
@@ -233,9 +231,9 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						</Typography>
 					</Link>
 
-					{/* Condition Chip - Like New */}
+					{/* Condition Chip - New */}
 					<Chip
-						label='Like New'
+						label={t("links.new")}
 						size='small'
 						sx={{
 							bgcolor: "#e8f5e9",
@@ -295,34 +293,35 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						)}
 					</Box>
 
+					<Typography
+						variant='body2'
+						color='text.secondary'
+						sx={{
+							fontSize: "0.85rem",
+							fontWeight: 500,
+						}}
+					>
+						{t(category)}
+					</Typography>
+
 					{/* Location and Category */}
 					<Stack
 						direction='row'
 						justifyContent='space-between'
 						alignItems='center'
+						display={"block"}
 					>
 						<Typography
 							variant='body2'
 							color='text.secondary'
 							sx={{
-								display: "flex",
 								alignItems: "center",
-								gap: 0.5,
+								gap: 1,
 								fontSize: "0.85rem",
+								m: 1,
 							}}
 						>
-							📍 {product.location || "New York, NY"}
-						</Typography>
-
-						<Typography
-							variant='body2'
-							color='text.secondary'
-							sx={{
-								fontSize: "0.85rem",
-								fontWeight: 500,
-							}}
-						>
-							{t(category)}
+							📍 {product.location || "Umm al fahm"}
 						</Typography>
 					</Stack>
 
@@ -344,6 +343,49 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						>
 							{product.description}
 						</Typography>
+					)}
+
+					{/* Edit and Delete Buttons (for authorized users) */}
+					{canEdit && (
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-around",
+								gap: 1,
+								borderTop: `1px solid ${theme.palette.divider}`,
+								p: 1,
+							}}
+						>
+							<IconButton
+								size='small'
+								color='warning'
+								aria-label='تعديل المنتج'
+								onClick={() => {
+									setProductIdToUpdate(product._id as string);
+									onShowUpdateProductModal();
+								}}
+								sx={{
+									bgcolor: "warning.light",
+									"&:hover": {bgcolor: "warning.main"},
+								}}
+							>
+								<EditIcon fontSize='small' />
+							</IconButton>
+
+							<IconButton
+								size='small'
+								color='error'
+								aria-label='حذف المنتج'
+								onClick={() => openDeleteModal(product.product_name)}
+								sx={{
+									bgcolor: "error.light",
+									"&:hover": {bgcolor: "error.main"},
+								}}
+							>
+								<DeleteIcon fontSize='small' />
+							</IconButton>
+						</Box>
 					)}
 				</CardContent>
 
@@ -412,40 +454,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 					>
 						<ShareIcon />
 					</IconButton>
-
-					{/* Edit and Delete Buttons (for authorized users) */}
-					{canEdit && (
-						<Box sx={{display: "flex", gap: 1}}>
-							<IconButton
-								size='small'
-								color='warning'
-								aria-label='تعديل المنتج'
-								onClick={() => {
-									setProductIdToUpdate(product._id as string);
-									onShowUpdateProductModal();
-								}}
-								sx={{
-									bgcolor: "warning.light",
-									"&:hover": {bgcolor: "warning.main"},
-								}}
-							>
-								<EditIcon fontSize='small' />
-							</IconButton>
-
-							<IconButton
-								size='small'
-								color='error'
-								aria-label='حذف المنتج'
-								onClick={() => openDeleteModal(product.product_name)}
-								sx={{
-									bgcolor: "error.light",
-									"&:hover": {bgcolor: "error.main"},
-								}}
-							>
-								<DeleteIcon fontSize='small' />
-							</IconButton>
-						</Box>
-					)}
 				</Box>
 
 				{/* Seller info at bottom */}

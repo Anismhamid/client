@@ -51,44 +51,23 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 
 	return (
 		<>
-			{isAdminAndModerator ? (
-				<>
-					<SpeedDial
-						ariaLabel='SpeedDial basic example'
-						sx={{position: "fixed", bottom: 80, right: 10, zIndex: 1100}}
-						icon={<SettingsIcon />}
-					>
-						{actions.map((action) => (
-							<SpeedDialAction
-								key={action.name}
-								icon={action.icon}
-								// tooltipOpen
-								tooltipTitle={action.name}
-								onClick={action.addClick}
-							/>
-						))}
-					</SpeedDial>
-					<SpeedDial
-						ariaLabel='cart'
-						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
-						icon={fontAwesomeIcon.cartInoc}
-						onClick={() => {
-							navigate(path.Cart);
-						}}
-					/>
-				</>
-			) : (
-				auth?._id && (
-					<SpeedDial
-						ariaLabel={t("SpeedDial.actions.cart")}
-						sx={{position: "fixed", bottom: 16, right: 10, zIndex: 1100}}
-						icon={fontAwesomeIcon.cartInoc}
-						onClick={() => {
-							navigate(path.Cart);
-						}}
-					/>
-				)
-			)}
+			<>
+				<SpeedDial
+					ariaLabel='SpeedDial basic example'
+					sx={{position: "fixed", bottom: 10, right: 10, zIndex: 1100}}
+					icon={<SettingsIcon />}
+				>
+					{actions.map((action) => (
+						<SpeedDialAction
+							key={action.name}
+							icon={action.icon}
+							// tooltipOpen
+							tooltipTitle={action.name}
+							onClick={action.addClick}
+						/>
+					))}
+				</SpeedDial>
+			</>
 			<Zoom in={visible}>
 				<Fab
 					color='primary'

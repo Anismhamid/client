@@ -363,6 +363,7 @@
 		"home": "Home",
 		"products": "Products",
 		"noProducts": "No products are avalible, please try again later",
+		"new": "new",
 		"cart": "Cart",
 		"about": "About",
 		"contact": "Contact",
@@ -403,6 +404,7 @@
 			"pickup": "Pickup",
 			"totalAmount": "Total Amount",
 			"products": "🛒 Products",
+
 			"productName": "Product",
 			"quantity": "Quantity",
 			"pricePerUnit": "Price per Unit",
@@ -499,10 +501,40 @@
 		"settings": "Settings",
 		"logout": "Logout"
 	},
-	"about": {
-		"about": "About"
-	},
 
+	"about": {
+		"title": "About Us",
+		"subtitle": "Safqa is a digital marketplace that connects users to buy and sell directly, simply, and without intermediaries.",
+
+		"what-we-are": {
+			"title": "Buying and Selling Between People",
+			"subtitle": "Safqa enables anyone to sell items they no longer need, while helping others find exactly what they’re looking for, easily, quickly, and at a fair price."
+		},
+		"buy-and-sell": {
+			"title": "What You’ll Find Here",
+			"subtitle": "Built on a C2C model, Safqa connects people with people. We are not a store, supplier, or commercial entity, just the platform that brings you together."
+		},
+		"what-we-have": {
+			"title": "Products from Real Users",
+			"subtitle": "New and second-hand items including electronics, home goods, fashion, accessories, equipment, and more, all offered by real users."
+		},
+		"control": {
+			"title": "Full Control for Users",
+			"subtitle": "Users decide what to sell, at what price, and how to communicate with buyers. No commitments and no fine print."
+		},
+		"trust": {
+			"title": "Trust and Transparency",
+			"subtitle": "We work to create a safe and transparent environment, with reporting tools, content management, and clear communication between all parties."
+		},
+		"why-register": {
+			"title": "Why Join?",
+			"subtitle": "If you have something to sell, Safqa is your stage. If you’re looking for a great deal, you’ll find it here. Signing up is easy and using the platform is effortless."
+		},
+		"locations": {
+			"title": "Local Community",
+			"subtitle": "Safqa allows you to search by location, making transactions faster, easier, and closer to home."
+		}
+	},
 	"footer": {
 		"siteName": "Sfqa Site",
 		"quickLinks": "Quick Links",

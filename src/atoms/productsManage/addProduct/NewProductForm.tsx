@@ -6,13 +6,23 @@ import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
 import {Products} from "../../../interfaces/Products";
+import {uploadImage} from "../../../services/uploadImage";
 
 interface NewProductFormProps {
 	formik: FormikProps<Products>;
+	imageFile: File | null;
+	setImageFile: (file: File | null) => void;
+	imageData: {url: string; publicId: string} | null;
+	setImageData: (data: {url: string; publicId: string} | null) => void;
 	onHide: () => void;
 }
 
-const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}) => {
+const NewProductForm: FunctionComponent<NewProductFormProps> = ({
+	formik,
+	setImageData,
+	setImageFile,
+	onHide,
+}) => {
 	const {t} = useTranslation();
 
 	return (
@@ -297,26 +307,45 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({formik, onHide}
 				)}
 			</div>
 
-			{/* image_url */}
-			<div className='form-floating mb-3'>
-				<input
-					type='text'
-					name='image_url'
-					value={formik.values.image_url}
+			{/* upload image */}
+
+			{/* <input
+					type='file'
+					name='image'
+					value={formik.values.image}
 					onChange={formik.handleChange}
 					className={`form-control ${
-						formik.touched.image_url && formik.errors.image_url
+						formik.touched.image && formik.errors.image
 							? "is-invalid"
 							: ""
 					}`}
-					id='image_url'
+					id='image'
 					placeholder={t("modals.addProductModal.imageUrl")}
 					aria-label={t("modals.addProductModal.imageUrl")}
 				/>
-				<label htmlFor='image_url'>{t("modals.addProductModal.imageUrl")}</label>
-				{formik.touched.image_url && formik.errors.image_url && (
-					<div className='invalid-feedback'>{formik.errors.image_url}</div>
-				)}
+				<label htmlFor='image'>{t("modals.addProductModal.imageUrl")}</label>
+				{formik.touched.image && formik.errors.image && (
+					<div className='invalid-feedback'>{formik.errors.image}</div>
+				)} */}
+
+			<div className='form-floating mb-3'>
+				<input
+					type='file'
+					accept='image/*'
+					onChange={async (e) => {
+						try {
+							if (!e.target.files) return;
+
+							const file = e.target.files[0];
+							setImageFile(file);
+
+							const uploaded = await uploadImage(file);
+							setImageData(uploaded);
+						} catch (error) {
+							console.log(error);
+						}
+					}}
+				/>
 			</div>
 
 			{/* sale */}

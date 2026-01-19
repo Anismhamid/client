@@ -1,6 +1,7 @@
 import {FunctionComponent} from "react";
 import {Box, Grid, Typography, Link as MuiLink} from "@mui/material";
 import {useTranslation} from "react-i18next";
+import {Link} from "react-router-dom";
 
 interface FooterProps {
 	isSeller?: boolean; // true إذا المستخدم بائع، false/undefined للمشتري أو زائر
@@ -36,7 +37,7 @@ const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 				<Grid container spacing={4}>
 					{/* Quick Links */}
 					<Grid size={{xs: 12, md: 4}}>
-						<Typography variant='h6' gutterBottom>
+						<Typography sx={{color: "error"}} variant='h6' gutterBottom>
 							{t("footer.quickLinks")}
 						</Typography>
 						<Box display='flex' flexDirection='column' gap={1}>
@@ -47,7 +48,7 @@ const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 										key={idx}
 										href={link.href}
 										underline='none'
-										color='primary'
+										color='text.main'
 									>
 										{link.label}
 									</MuiLink>
@@ -58,53 +59,53 @@ const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 
 					{/* About / Info */}
 					<Grid size={{xs: 12, md: 5}}>
-						<Typography variant='h6' gutterBottom>
+						<Typography color='text.main' variant='h6' gutterBottom>
 							{t("footer.siteName")}
 						</Typography>
-						<Typography variant='body2' gutterBottom>
+						<Typography color='text.main' variant='body2' gutterBottom>
 							{t("footer.descriptionC2C")}
 						</Typography>
-						<Box mt={2}>
-							<Typography variant='body2'>
+						<Box component={"div"} mt={2}>
+							<Typography color='text.main' variant='body2'>
 								{t("footer.contact")}:
-								<MuiLink
-									href='mailto:support@sfqa.com'
-									color='primary'
-									sx={{ml: 1}}
+								<Link
+									to='mailto:support@sfqa.com'
+									color='primary.main'
+									style={{marginLeft: 1}}
 								>
 									support@sfqa.com
-								</MuiLink>
+								</Link>
 							</Typography>
 							<Typography variant='body2'>
 								{t("footer.phone")}:
-								<MuiLink
-									href='tel:+9746310374'
-									color='primary'
-									sx={{ml: 1}}
+								<Link
+									to='tel:+9746310374'
+									color='primary.main'
+									style={{marginLeft: 1}}
 								>
 									046310374
-								</MuiLink>
+								</Link>
 							</Typography>
 						</Box>
 					</Grid>
 
 					{/* Social Media */}
 					<Grid size={{xs: 12, md: 3}}>
-						<Typography variant='h6' gutterBottom>
+						<Typography color='text.main' variant='h6' gutterBottom>
 							{t("footer.followUs")}
 						</Typography>
 						<Box display='flex' flexDirection='column' gap={1}>
 							{socialLinks.map((social, idx) => (
-								<MuiLink
+								<Link
 									key={idx}
-									href={social.href}
+									to={social.href}
 									target='_blank'
 									rel='noopener noreferrer'
 									color='primary'
-									underline='none'
+									style={{textDecoration: "none"}}
 								>
 									{social.label}
-								</MuiLink>
+								</Link>
 							))}
 						</Box>
 					</Grid>
