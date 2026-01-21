@@ -345,7 +345,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 							}}
 							className={`${
-								isActive(path.Contact) ? "text-danger " : ""
+								isActive(path.Contact) && "text-danger "
 							} nav-link`}
 							aria-current={isActive(path.Contact) ? "page" : undefined}
 							to={path.Contact}
@@ -356,74 +356,88 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					</li>
 				</Toolbar>
 
-				{/* Left Side: Theme Toggle */}
-				<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-					<Tooltip title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>
-						<motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.95}}>
-							<FormGroup>
-								<FormControlLabel
-									checked={mode === "dark"}
-									onChange={handleThemeChange}
-									control={<GradientSwitch sx={{m: 0}} />}
-									label=''
-								/>
-							</FormGroup>
-						</motion.div>
-					</Tooltip>
-
-					<motion.div
-						key={mode}
-						initial={{opacity: 0, scale: 0.8}}
-						animate={{opacity: 1, scale: 1}}
-						exit={{opacity: 0, scale: 0.8}}
-						transition={{duration: 0.3}}
-					>
-						{mode === "dark" ? (
-							<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
-						) : (
-							<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
-						)}
-					</motion.div>
-				</Box>
-
-				{/* Right Side: Language Switcher */}
-				<motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
-					<LanguageSwitcher />
-				</motion.div>
-				{/* Logo */}
-				<motion.div whileHover={{scale: 1.05}}>
-					<Link
-						to={path.Home}
-						style={{
-							textDecoration: "none",
-						}}
-					>
-						<LogoText variant='h1'>صـفـقـه</LogoText>
-					</Link>
-				</motion.div>
-				<li className='nav-item' role='none'>
-					{!isLoggedIn ? (
-						<Button
-							variant='contained'
-							color='primary'
-							onClick={() => navigate(path.Login)}
-							sx={{
-								borderRadius: "30px",
-								fontWeight: "bold",
-								backgroundColor: "#4FC3F7",
-								color: "#1A1E22",
-								"&:hover": {
-									backgroundColor: "#81D4FA",
-								},
-							}}
-							aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
+				<Box
+					sx={{
+						alignItems: "center",
+						display: "flex",
+						justifyContent: "space-around",
+						flexWrap: isMobile ? "wrap" : "nowrap",
+						gap: 3,
+					}}
+				>
+					{/* Left Side: Theme Toggle */}
+					<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+						<Tooltip
+							title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
 						>
-							{t("links.login")}
-						</Button>
-					) : (
-						isLoggedIn && <AccountMenu logout={logout} />
-					)}
-				</li>
+							<motion.div
+								whileHover={{scale: 1.1}}
+								whileTap={{scale: 0.95}}
+							>
+								<FormGroup>
+									<FormControlLabel
+										checked={mode === "dark"}
+										onChange={handleThemeChange}
+										control={<GradientSwitch sx={{m: 0}} />}
+										label=''
+									/>
+								</FormGroup>
+							</motion.div>
+						</Tooltip>
+
+						<motion.div
+							key={mode}
+							initial={{opacity: 0, scale: 0.8}}
+							animate={{opacity: 1, scale: 1}}
+							exit={{opacity: 0, scale: 0.8}}
+							transition={{duration: 0.3}}
+						>
+							{mode === "dark" ? (
+								<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
+							) : (
+								<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
+							)}
+						</motion.div>
+					</Box>
+					{/* Right Side: Language Switcher */}
+					<motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
+						<LanguageSwitcher />
+					</motion.div>
+					{/* Logo */}
+					<motion.div whileHover={{scale: 1.05}}>
+						<Link
+							to={path.Home}
+							style={{
+								textDecoration: "none",
+							}}
+						>
+							<LogoText variant='h1'>صـفـقـه</LogoText>
+						</Link>
+					</motion.div>
+					<li className='nav-item' role='none'>
+						{!isLoggedIn ? (
+							<Button
+								variant='contained'
+								color='primary'
+								onClick={() => navigate(path.Login)}
+								sx={{
+									borderRadius: "30px",
+									fontWeight: "bold",
+									backgroundColor: "#4FC3F7",
+									color: "#1A1E22",
+									"&:hover": {
+										backgroundColor: "#81D4FA",
+									},
+								}}
+								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
+							>
+								{t("links.login")}
+							</Button>
+						) : (
+							isLoggedIn && <AccountMenu logout={logout} />
+						)}
+					</li>
+				</Box>
 			</Box>
 			{/* <Link
 						target='_blank'
