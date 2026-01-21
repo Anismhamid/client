@@ -42,7 +42,7 @@ import {
 
 export const fontAwesomeIcon = {
 	mileage: <FontAwesomeIcon icon={faTachometer} />,
-	Favorite: <FontAwesomeIcon color='red' icon={faHeart} />,
+	Favorite: <FontAwesomeIcon icon={faHeart} />,
 
 	year: <FontAwesomeIcon icon={faCalendar} />,
 	cleaning: <FontAwesomeIcon icon={faBroom} />,

@@ -14,19 +14,30 @@ import useToken from "../../hooks/useToken";
 import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
 import {emptyAuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
-import {Box, Button, CircularProgress, TextField} from "@mui/material";
+import {
+	Alert,
+	Box,
+	Button,
+	CircularProgress,
+	Divider,
+	PaletteMode,
+	Paper,
+	TextField,
+} from "@mui/material";
 import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
 
-interface LoginProps {}
+interface LoginProps {
+	mode: PaletteMode;
+}
 /**
  * Sets auth
  * @returns
  */
-const Login: FunctionComponent<LoginProps> = () => {
+const Login: FunctionComponent<LoginProps> = ({mode}) => {
 	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
@@ -121,14 +132,34 @@ const Login: FunctionComponent<LoginProps> = () => {
 	}, [navigate]);
 
 	return (
-		<main className='login'>
-			<Box className='container d-flex align-items-center justify-content-center'>
-				<form
-					style={{maxWidth: "350px", margin: "100px auto"}}
-					autoComplete='off'
-					noValidate
-					onSubmit={formik.handleSubmit}
-				>
+		<Box component={"main"} className='login'>
+			<Paper
+				elevation={mode === "dark" ? 2 : 1}
+				sx={{
+					p: {xs: 3, md: 5},
+					borderRadius: 3,
+					background:
+						mode === "dark"
+							? "linear-gradient(145deg, rgba(26, 32, 44, 0.274) 0%, rgba(45, 55, 72, 0.144) 100%)"
+							: "linear-gradient(145deg, rgba(255, 255, 255, 0.096) 0%, rgba(248, 250, 252, 0.13) 100%)",
+					backdropFilter: "blur(10px)",
+					border: `1px solid ${mode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}`,
+					position: "relative",
+					overflow: "hidden",
+					"&::before": {
+						content: '""',
+						position: "absolute",
+						top: 0,
+						left: 0,
+						right: 0,
+						height: "4px",
+						background:
+							"linear-gradient(90deg, #4FC3F7 0%, #29B6F6 50%, #0288D1 100%)",
+						borderRadius: "3px 3px 0 0",
+					},
+				}}
+			>
+				<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
 					<TextField
 						label={t("login.email")}
 						type='email'
@@ -139,7 +170,19 @@ const Login: FunctionComponent<LoginProps> = () => {
 						helperText={formik.touched.email && formik.errors.email}
 						fullWidth
 						className='my-2'
-						variant='outlined'
+						variant='standard'
+						color='primary'
+						sx={{
+							"& .MuiOutlinedInput-root": {
+								borderRadius: 2,
+								"&:hover": {
+									"& fieldset": {
+										borderColor: "primary.main",
+									},
+								},
+							},
+						}}
+						autoComplete='email'
 					/>
 
 					<TextField
@@ -152,7 +195,19 @@ const Login: FunctionComponent<LoginProps> = () => {
 						helperText={formik.touched.password && formik.errors.password}
 						fullWidth
 						className='my-2'
-						variant='outlined'
+						variant='standard'
+						color='primary'
+						sx={{
+							"& .MuiOutlinedInput-root": {
+								borderRadius: 2,
+								"&:hover": {
+									"& fieldset": {
+										borderColor: "primary.main",
+									},
+								},
+							},
+						}}
+						autoComplete='current-password'
 					/>
 
 					<Box>
@@ -190,12 +245,17 @@ const Login: FunctionComponent<LoginProps> = () => {
 							{t("login.register")}
 						</Button>
 					</Box>
+					<Divider color='#20AAEC' style={{height: 5}} />
 					<div className=' my-3 d-flex justify-content-center gap-3'>
-						<Link to={path.PrivacyAndPolicy}>{t("login.privacyPolicy")}</Link>
-						<Link to={path.TermOfUse}>{t("login.termsOfUse")}</Link>
+						<Link style={{textDecoration: "none"}} to={path.PrivacyAndPolicy}>
+							{t("login.privacyPolicy")}
+						</Link>
+						<Link style={{textDecoration: "none"}} to={path.TermOfUse}>
+							{t("login.termsOfUse")}
+						</Link>
 					</div>
 				</form>
-			</Box>
+			</Paper>
 			<UserInfoModal
 				isOpen={showModal}
 				onClose={() => {
@@ -204,7 +264,19 @@ const Login: FunctionComponent<LoginProps> = () => {
 				}}
 				onSubmit={handleUserInfoSubmit}
 			/>
-		</main>
+			{/* Accessibility Note */}
+			<Alert
+				severity='info'
+				sx={{
+					mt: 3,
+					borderRadius: 2,
+					display: "none", // Hidden by default, can be shown for accessibility testing
+				}}
+				role='note'
+			>
+				{t("login.accessibilityNote")}
+			</Alert>
+		</Box>
 	);
 };
 

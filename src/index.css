@@ -87,12 +87,13 @@ main {
 
 
 .login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   & form {
     max-width: 350px;
     padding: 2rem;
-    border: 1px solid rgb(9, 102, 255);
-    backdrop-filter: blur(28px);
     border-radius: 10px;
   }
 }

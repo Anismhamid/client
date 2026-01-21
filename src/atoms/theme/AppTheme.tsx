@@ -89,18 +89,21 @@ const GradientSwitch = styled(Switch)(({theme}) => ({
 }));
 
 // Custom Logo with animation
-const LogoText = styled(Typography)(() => ({
-	fontWeight: "bold",
+const LogoText = styled(Typography)(({theme}) => ({
+	fontWeight: 800,
 	fontSize: "1.8rem",
 	fontFamily: "'Tajawal', 'Cairo', sans-serif",
-	background: "linear-gradient(45deg, #000000 0%, #000000 100%)",
+	background:
+		theme.palette.mode === "dark"
+			? "linear-gradient(45deg, #ffffff 0%, #90caf9 100%)"
+			: "linear-gradient(45deg, #1a237e 0%, #283593 100%)",
 	WebkitBackgroundClip: "text",
 	WebkitTextFillColor: "transparent",
 	backgroundClip: "text",
 	textShadow: "0 2px 10px rgba(53, 124, 255, 0.3)",
 	position: "relative",
-	padding: "2px 15px",
-	borderRadius: "10px",
+	padding: "4px 20px",
+	borderRadius: "12px",
 	"&::after": {
 		content: '""',
 		position: "absolute",
@@ -108,9 +111,12 @@ const LogoText = styled(Typography)(() => ({
 		left: 0,
 		right: 0,
 		bottom: 0,
-		borderRadius: "10px",
+		borderRadius: "12px",
 		padding: "2px",
-		background: "linear-gradient(45deg, #FF6B35, #537bff)",
+		background:
+			theme.palette.mode === "dark"
+				? "linear-gradient(45deg, #FF6B35, #537bff)"
+				: "linear-gradient(45deg, #FF6B35, #1a237e)",
 		WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
 		WebkitMaskComposite: "xor",
 		maskComposite: "exclude",
@@ -208,18 +214,31 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				}}
 			>
 				<Toolbar
-					aria-label='القائمة الرئيسية'
+					aria-label='الصفحه الرئيسية'
 					sx={{
 						display: "flex",
 						justifyContent: "space-between",
 						alignItems: "center",
 						flexWrap: {xs: "wrap", md: "nowrap"},
+						color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 					}}
 				>
 					<Tooltip title='الصفحة الرئيسية - صفقه' arrow>
-						<li className='nav-item mx-3'>
+						<li
+							style={{
+								color:
+									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+							}}
+							className='nav-item mx-3'
+						>
 							<NavLink
-								className={` ${isActive(path.Home) ? "text-danger" : "text-dark"}`}
+								style={{
+									color:
+										theme.palette.mode === "dark"
+											? "#e2e8f0"
+											: "#4a5568",
+								}}
+								className={` ${isActive(path.Home) && "text-danger"}`}
 								aria-current='page'
 								to={path.Home}
 								aria-label='الصفحة الرئيسية - صفقه'
@@ -232,7 +251,13 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					<Tooltip title='المفضله - صفقه' arrow>
 						<li className='nav-item mx-3'>
 							<NavLink
-								className={` ${isActive(path.Favorite) ? "text-danger" : "text-dark"}`}
+								style={{
+									color:
+										theme.palette.mode === "dark"
+											? "#e2e8f0"
+											: "#4a5568",
+								}}
+								className={` ${isActive(path.Favorite) && "text-danger"}`}
 								aria-current='page'
 								to={path.Favorite}
 								aria-label='المفضله - صفقه'
@@ -246,10 +271,14 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						<Tooltip title={t("users-management")} arrow>
 							<li className='nav-item'>
 								<NavLink
+									style={{
+										color:
+											theme.palette.mode === "dark"
+												? "#e2e8f0"
+												: "#4a5568",
+									}}
 									className={`${
-										isActive(path.UsersManagement)
-											? "text-danger "
-											: "text-dark"
+										isActive(path.UsersManagement) && "text-danger "
 									} nav-link`}
 									aria-current='page'
 									aria-label={t("users-management")}
@@ -295,8 +324,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 					<li className='nav-item' role='none'>
 						<NavLink
+							style={{
+								color:
+									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+							}}
 							className={`${
-								isActive(path.About) ? "text-danger fw-bold" : "text-dark"
+								isActive(path.About) && "text-danger fw-bold"
 							} nav-link`}
 							aria-current={isActive(path.About) ? "page" : undefined}
 							to={path.About}
@@ -307,8 +340,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					</li>
 					<li className='nav-item' role='none'>
 						<NavLink
+							style={{
+								color:
+									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+							}}
 							className={`${
-								isActive(path.Contact) ? "text-danger " : "text-dark"
+								isActive(path.Contact) ? "text-danger " : ""
 							} nav-link`}
 							aria-current={isActive(path.Contact) ? "page" : undefined}
 							to={path.Contact}
@@ -317,40 +354,8 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							{t("links.contact")}
 						</NavLink>
 					</li>
-					{isLoggedIn && (
-						<li className='nav-item' role='none'>
-							<NavLink
-								className={`${
-									isActive(path.Receipt) ? "text-danger" : "text-dark"
-								} nav-link`}
-								aria-current='page'
-								to={path.Receipt}
-							>
-								{t("links.receipts")}
-							</NavLink>
-						</li>
-					)}
-
-					{/* <Link
-						target='_blank'
-						rel='noopener noreferrer'
-						to='https://anismhamid.github.io/shok-habena-server-documentation/'
-					>
-						<Chip
-							variant='outlined'
-							sx={{
-								fontWeight: "bold",
-								boxShadow: 10,
-								"&:hover": {
-									transform: "scale(1.04)",
-								},
-								color: "#5B9601",
-							}}
-							// color='warning'
-							label='docs'
-						/>
-					</Link> */}
 				</Toolbar>
+
 				{/* Left Side: Theme Toggle */}
 				<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
 					<Tooltip title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>
@@ -420,6 +425,25 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					)}
 				</li>
 			</Box>
+			{/* <Link
+						target='_blank'
+						rel='noopener noreferrer'
+						to='https://anismhamid.github.io/shok-habena-server-documentation/'
+					>
+						<Chip
+							variant='outlined'
+							sx={{
+								fontWeight: "bold",
+								boxShadow: 10,
+								"&:hover": {
+									transform: "scale(1.04)",
+								},
+								color: "#5B9601",
+							}}
+							// color='warning'
+							label='docs'
+						/>
+					</Link> */}
 		</Box>
 	);
 };

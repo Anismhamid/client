@@ -1,5 +1,6 @@
 import axios from "axios";
 import {Products} from "../interfaces/Products";
+import {AuthValues, emptyAuthValues} from "../interfaces/authValues";
 
 const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -120,18 +121,18 @@ export const getProductsByCategory = async (category: string) => {
 		const response = await axios.get(`${api}/products/${category}`);
 		return response.data;
 	} catch (error) {
-		console.error("Error fetching products by category:", error);
 		return [];
 	}
 };
 
-export const getCustomerProfileProductsBySlug = async (slug: string) => {
+export const getCustomerProfileProductsBySlug = async (
+	slug: string,
+): Promise<AuthValues> => {
 	try {
 		const res = await axios.get(`${api}/products/customer/${slug}`);
 		return res.data;
 	} catch (err) {
-		console.error("Error fetching customer products by slug:", err);
-		throw err;
+		return emptyAuthValues;
 	}
 };
 
