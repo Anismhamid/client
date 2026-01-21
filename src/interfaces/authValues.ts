@@ -19,6 +19,7 @@ export const emptyAuthValues = {
 	},
 	role: "Client",
 	iat: 0,
+	slug: "",
 };
 
 export interface AuthValues {
@@ -27,7 +28,7 @@ export interface AuthValues {
 		first: string;
 		last: string;
 	};
-	email?:string,
+	email?: string;
 	phone: {
 		phone_1: string;
 		phone_2: string;
@@ -43,4 +44,5 @@ export interface AuthValues {
 	};
 	role?: string;
 	iat?: number;
+	slug?: string;
 }

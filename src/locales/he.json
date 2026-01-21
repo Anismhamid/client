@@ -1,4 +1,7 @@
 {
+	"home": "בית",
+	"webPageName": "אתר ספקה",
+	"bestOffers": "העסקות הטובים ביותר במקום אחד",
 	"seller": "פורסם ע'י",
 	"login": {
 		"email": "דואר אלקטרוני",
@@ -535,7 +538,7 @@
 	},
 
 	"footer": {
-		"siteName": "אתר صفקה",
+		"siteName": "אתר ספקה",
 		"quickLinks": "קישורים מהירים",
 		"myAccount": "החשבון שלי",
 		"myListings": "המודעות שלי",

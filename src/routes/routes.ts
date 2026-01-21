@@ -34,6 +34,7 @@ export enum path {
 	Favorite = "/favorites",
 	DicountAndOfers = "/dicounts-and-offers",
 	CustomerProfile = "/users/customer/:slug",
+	myCustomerProfile = "/users/customer",
 	UsersManagement = "/usersManagement",
 	WebSiteAdmins = "/admins",
 	Messages = "/messages",
@@ -46,18 +47,8 @@ export enum path {
 	Trucks = "/category/trucks",
 	ElectricVehicles = "/category/electric-vehicles",
 
-	// Other products (optional)
-	Fruits = "/fruits",
-	Vegetable = "/vegetable",
+	// Other products
 	AdminSettings = "/adminSettings",
-
-	// Orders & Checkout
-	MyOrders = "/all-orders",
-	OrderDetails = "/orderDetails/:orderNumber",
-	Checkout = "/checkout",
-	Receipt = "/receipt",
-	CompleteOrders = "/complete-orders",
-	AllTheOrders = "/all-orders",
 
 	// Other Pages
 	PrivacyAndPolicy = "/Privacy-and-policy",

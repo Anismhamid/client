@@ -29,6 +29,7 @@ import {useTranslation} from "react-i18next";
 import {productsAndCategories} from "../navbar/navCategoryies";
 import {motion, AnimatePresence} from "framer-motion";
 import ChepNavigation from "../navbar/ChepNavigation";
+import AddProductModal from "../../atoms/productsManage/addProduct/AddProdutModal";
 
 interface HomeProps {}
 
@@ -55,6 +56,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const navigate = useNavigate();
 	const {t} = useTranslation();
 	const isMobile = useMediaQuery("(max-width:768px)");
+	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
+
+	const showAddProductModal = () => setOnShowAddModal(true);
+	const hideAddProductModal = () => setOnShowAddModal(false);
 
 	const openDeleteModal = (name: string) => {
 		setProductToDelete(name);
@@ -309,7 +314,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<title>موقع صفقه</title>
 				<meta
 					name='description'
-					content='تسوق فواكه وخضار طازجة وعروض خاصة مع سوق السخنيني تجربة تسوق مريحة  وبأسعار مناسبة لكل عائله'
+					content='تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة'
 				/>
 			</Helmet>
 
@@ -317,13 +322,17 @@ const Home: FunctionComponent<HomeProps> = () => {
 				{/* Hero Section with Gradient */}
 				<Box
 					sx={{
-						background: "#EFF3F9",
-						color: "white",
+						// background: "#EFF3F9",
 						py: {xs: 4, md: 6},
 						position: "relative",
 						overflow: "hidden",
 						borderBottom: 1,
-						borderColor: "red",
+						borderColor: "divider",
+						display: "flex",
+						flexDirection: "column",
+						alignItems: "center",
+						minHeight: "60vh",
+						justifyContent: "center",
 					}}
 				>
 					{/* Animated Background Elements */}
@@ -335,8 +344,12 @@ const Home: FunctionComponent<HomeProps> = () => {
 							width: 300,
 							height: 300,
 							borderRadius: "50%",
-							background: "rgba(34, 34, 34, 0.1)",
+							background:
+								"linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
 							animation: "float 8s ease-in-out infinite",
+							border: 1,
+							borderColor: "rgba(0,0,0,0.05)",
+							opacity: 0.8,
 						}}
 					/>
 					<Box
@@ -347,16 +360,23 @@ const Home: FunctionComponent<HomeProps> = () => {
 							width: 250,
 							height: 250,
 							borderRadius: "50%",
-							background: "rgba(255,255,255,0.05)",
-							animation: "float 10s ease-in-out infinite",
+							background:
+								"linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
+							animation: "float 10s ease-in-out infinite 1s",
+							opacity: 0.8,
 						}}
 					/>
 
 					<Box
-						sx={{height: 300}}
-						className='container header-image'
-						position='relative'
-						zIndex={1}
+						sx={{
+							position: "relative",
+							zIndex: 1,
+							textAlign: "center",
+							px: 2,
+							width: "100%",
+							maxWidth: "1200px",
+							margin: "0 auto",
+						}}
 					>
 						<motion.div
 							initial={{opacity: 0, y: 30}}
@@ -364,20 +384,84 @@ const Home: FunctionComponent<HomeProps> = () => {
 							transition={{duration: 0.8}}
 						>
 							<Typography
-								variant='h2'
+								variant='h1'
 								sx={{
-									fontWeight: "bold",
-									textAlign: "center",
-
-									mb: 2,
-									fontSize: {xs: "2rem", md: "3rem"},
-									textShadow: "0 4px 8px rgba(0,0,0,0.2)",
-									animation: "float 8s ease-in-out infinite",
+									fontWeight: 800,
+									mb: 3,
+									fontSize: {xs: "2.5rem", sm: "3rem", md: "3.75rem"},
+									textShadow: "0 4px 8px rgba(0,0,0,0.1)",
+									animation: "float 8s ease-in-out infinite 0.5s",
+									color: "#1a237e",
+									direction: {diriction},
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									gap: 1,
 								}}
 							>
-								🛒 موقع صـفـقه
+								<span style={{fontSize: "1.2em"}}>🛒</span>
+								<span>{t("webPageName")}</span>
+							</Typography>
+
+							<Typography
+								variant='h5'
+								sx={{
+									mb: 4,
+									color: "text.secondary",
+									maxWidth: "600px",
+									margin: "0 auto",
+									fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
+								}}
+							>
+								{t("bestOffers")}
 							</Typography>
 						</motion.div>
+
+						{/* Buttons Section - Improved */}
+						<Box
+							sx={{
+								display: "flex",
+								gap: 2,
+								justifyContent: "center",
+								flexWrap: "wrap",
+								mt: 4,
+							}}
+						>
+							<Button
+								variant='contained'
+								size='large'
+								sx={{
+									px: 4,
+									py: 1.5,
+									borderRadius: 2,
+									fontSize: "1.1rem",
+									background:
+										"linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+									boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+									minWidth: "150px",
+								}}
+							>
+								تصفح العروض
+							</Button>
+							<Button
+								onClick={showAddProductModal}
+								variant='outlined'
+								size='large'
+								sx={{
+									px: 4,
+									py: 1.5,
+									borderRadius: 2,
+									fontSize: "1.1rem",
+									borderWidth: 2,
+									"&:hover": {
+										borderWidth: 2,
+									},
+									minWidth: "150px",
+								}}
+							>
+								أضف إعلان
+							</Button>
+						</Box>
 					</Box>
 				</Box>
 
@@ -1082,6 +1166,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					}
 				`}</style>
 			</Box>
+			<AddProductModal show={onShowAddModal} onHide={hideAddProductModal} />
 		</>
 	);
 };

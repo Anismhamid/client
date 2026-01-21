@@ -1,20 +1,24 @@
 import {FunctionComponent} from "react";
-import {Box, Grid, Typography, Link as MuiLink} from "@mui/material";
+import {Box, Grid, Typography, Link as MuiLink, Container} from "@mui/material";
 import {useTranslation} from "react-i18next";
-import {Link} from "react-router-dom";
+import {Link as RouterLink} from "react-router-dom";
+import {useUser} from "../../context/useUSer";
+import {path} from "../../routes/routes";
 
-interface FooterProps {
-	isSeller?: boolean; // true إذا المستخدم بائع، false/undefined للمشتري أو زائر
-}
+interface FooterProps {}
 
-const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
+const Footer: FunctionComponent<FooterProps> = () => {
 	const {t} = useTranslation();
+	const {auth} = useUser();
 
 	const quickLinks = [
-		{label: t("footer.myAccount"), href: "/account"},
-		{label: t("footer.myListings"), href: "/my-listings"},
+		{label: t("footer.myAccount"), href: "/profile"},
+		{
+			label: t("footer.myListings"),
+			href: `${path.myCustomerProfile}/${auth.slug}`,
+		},
 		{label: t("footer.postListing"), href: "/post-listing"},
-		{label: t("footer.marketplace"), href: "/marketplace"},
+		{label: t("footer.marketplace"), href: "/"},
 	];
 
 	const socialLinks = [
@@ -27,98 +31,152 @@ const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 		<Box
 			component='footer'
 			sx={{
-				borderTop: "2px solid #0966FF",
-				// bgcolor: "#f9f9f9",
-				mt: 5,
+				borderTop: 2,
+				borderColor: "primary.main",
+				backgroundColor: "background.paper",
+				mt: "auto",
 				pt: 5,
+				pb: 2,
 			}}
 		>
-			<Box className='container'>
+			<Container maxWidth='lg'>
 				<Grid container spacing={4}>
 					{/* Quick Links */}
 					<Grid size={{xs: 12, md: 4}}>
-						<Typography sx={{color: "error"}} variant='h6' gutterBottom>
+						<Typography
+							variant='h6'
+							gutterBottom
+							color='primary.main'
+							fontWeight={600}
+						>
 							{t("footer.quickLinks")}
 						</Typography>
-						<Box display='flex' flexDirection='column' gap={1}>
-							{quickLinks.map((link, idx) =>
-								!isSeller &&
-								link.label === t("footer.postListing") ? null : (
+						<Box display='flex' flexDirection='column' gap={1.5}>
+							{quickLinks
+								.filter((link) => {
+									// Hide postListing link for non-sellers
+									if (auth && link.label === t("footer.postListing")) {
+										return false;
+									}
+									return true;
+								})
+								.map((link, idx) => (
 									<MuiLink
 										key={idx}
-										href={link.href}
-										underline='none'
-										color='text.main'
+										component={RouterLink}
+										to={link.href}
+										underline='hover'
+										color='text.secondary'
+										sx={{
+											fontSize: "0.95rem",
+											transition: "color 0.2s",
+											"&:hover": {
+												color: "primary.main",
+											},
+										}}
 									>
 										{link.label}
 									</MuiLink>
-								),
-							)}
+								))}
 						</Box>
 					</Grid>
 
 					{/* About / Info */}
 					<Grid size={{xs: 12, md: 5}}>
-						<Typography color='text.main' variant='h6' gutterBottom>
+						<Typography
+							variant='h6'
+							gutterBottom
+							color='primary.main'
+							fontWeight={600}
+						>
 							{t("footer.siteName")}
 						</Typography>
-						<Typography color='text.main' variant='body2' gutterBottom>
+						<Typography
+							variant='body2'
+							color='text.secondary'
+							paragraph
+							sx={{lineHeight: 1.7}}
+						>
 							{t("footer.descriptionC2C")}
 						</Typography>
-						<Box component={"div"} mt={2}>
-							<Typography color='text.main' variant='body2'>
+						<Box mt={2}>
+							<Typography
+								variant='body2'
+								color='text.secondary'
+								gutterBottom
+							>
 								{t("footer.contact")}:
-								<Link
-									to='mailto:support@sfqa.com'
+								<MuiLink
+									href='mailto:support@sfqa.com'
 									color='primary.main'
-									style={{marginLeft: 1}}
+									sx={{ml: 1, textDecoration: "none"}}
 								>
 									support@sfqa.com
-								</Link>
+								</MuiLink>
 							</Typography>
-							<Typography variant='body2'>
+							<Typography variant='body2' color='text.secondary'>
 								{t("footer.phone")}:
-								<Link
-									to='tel:+9746310374'
+								<MuiLink
+									href='tel:+9746310374'
 									color='primary.main'
-									style={{marginLeft: 1}}
+									sx={{ml: 1, textDecoration: "none"}}
 								>
 									046310374
-								</Link>
+								</MuiLink>
 							</Typography>
 						</Box>
 					</Grid>
 
 					{/* Social Media */}
 					<Grid size={{xs: 12, md: 3}}>
-						<Typography color='text.main' variant='h6' gutterBottom>
+						<Typography
+							variant='h6'
+							gutterBottom
+							color='primary.main'
+							fontWeight={600}
+						>
 							{t("footer.followUs")}
 						</Typography>
-						<Box display='flex' flexDirection='column' gap={1}>
+						<Box display='flex' flexDirection='column' gap={1.5}>
 							{socialLinks.map((social, idx) => (
-								<Link
+								<MuiLink
 									key={idx}
-									to={social.href}
+									href={social.href}
 									target='_blank'
 									rel='noopener noreferrer'
-									color='primary'
-									style={{textDecoration: "none"}}
+									color='text.secondary'
+									underline='hover'
+									sx={{
+										fontSize: "0.95rem",
+										transition: "color 0.2s",
+										"&:hover": {
+											color: "primary.main",
+										},
+									}}
 								>
 									{social.label}
-								</Link>
+								</MuiLink>
 							))}
 						</Box>
 					</Grid>
 				</Grid>
 
 				{/* Footer Bottom */}
-				<Box mt={5} py={2} textAlign='center' borderTop='1px solid #0966FF'>
-					<Typography variant='body2'>
-						&copy; {new Date().getFullYear()} {t("footer.siteName")} - جميع
-						الحقوق محفوظة
+				<Box mt={5} pt={3} borderTop={1} borderColor='divider' textAlign='center'>
+					<Typography variant='body2' color='text.secondary'>
+						© {new Date().getFullYear()} {t("footer.siteName")} - جميع الحقوق
+						محفوظة
+					</Typography>
+					<Typography
+						variant='caption'
+						color='text.disabled'
+						display='block'
+						mt={1}
+					>
+						{t("footer.version") || "الإصدار 1.0.0"}
 					</Typography>
 				</Box>
-			</Box>
+			</Container>
 		</Box>
 	);
 };

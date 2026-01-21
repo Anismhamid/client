@@ -6,7 +6,7 @@ import {Products} from "../interfaces/Products";
 import {useState} from "react";
 import {uploadImage} from "../services/uploadImage";
 
-const useAddProductFormik = (onHide: () => boolean) => {
+const useAddProductFormik = (onHide: () => void) => {
 	const {t} = useTranslation();
 	const [imageFile, setImageFile] = useState<File | null>(null);
 

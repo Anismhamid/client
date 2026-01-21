@@ -1,4 +1,4 @@
-import {Box} from "@mui/material";
+import {Box, Button} from "@mui/material";
 import {FormikProps} from "formik";
 import {FunctionComponent, useState, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
@@ -8,6 +8,7 @@ import {Products} from "../../../interfaces/Products";
 import {uploadImage} from "../../../services/uploadImage";
 import {categoriesLogic, CategoryValue} from "../productLogicMap";
 import {productsCategories} from "../../../interfaces/productsCategoeis";
+import {LoadingButton} from "@mui/lab";
 
 interface NewProductFormProps {
 	formik: FormikProps<Products>;
@@ -566,19 +567,68 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 				</div>
 			)}
 
-			{/* Buttons */}
-			<div className='d-flex gap-3 mt-4'>
-				<button
-					type='button'
+			{/* Buttons with Loading State */}
+			<Box
+				sx={{
+					display: "flex",
+					gap: 2,
+					mt: 4,
+					width: "100%",
+				}}
+			>
+				<Button
+					variant='outlined'
 					onClick={onHide}
-					className='btn btn-outline-secondary flex-grow-1'
+					disabled={formik.isSubmitting}
+					sx={{
+						flex: 1,
+						py: 1.5,
+						borderRadius: "12px",
+						fontSize: "1rem",
+						fontWeight: 600,
+						border: "2px solid",
+						borderColor: "error.main",
+						color: "error.main",
+						"&:hover": {
+							border: "2px solid",
+							borderColor: "error.dark",
+							backgroundColor: "error.lighter",
+							boxShadow: "0 4px 12px rgba(244, 67, 54, 0.15)",
+						},
+					}}
 				>
 					{t("modals.addProductModal.cancel")}
-				</button>
-				<button type='submit' className='btn btn-primary flex-grow-1'>
-					{t("modals.addProductModal.addProduct")}
-				</button>
-			</div>
+				</Button>
+
+				<LoadingButton
+					variant='contained'
+					type='submit'
+					loading={formik.isSubmitting}
+					sx={{
+						flex: 1,
+						py: 1.5,
+						borderRadius: "12px",
+						fontSize: "1rem",
+						fontWeight: 600,
+						background: (theme: {
+							palette: {primary: {main: any; light: any}};
+						}) =>
+							`linear-gradient(45deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+						boxShadow: (theme: {palette: {primary: {main: any}}}) =>
+							`0 4px 15px ${theme.palette.primary.main}40`,
+						"&:hover": {
+							background: (theme: {
+								palette: {primary: {dark: any; main: any}};
+							}) =>
+								`linear-gradient(45deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+							boxShadow: (theme: {palette: {primary: {main: any}}}) =>
+								`0 6px 20px ${theme.palette.primary.main}60`,
+						},
+					}}
+				>
+					{!formik.isSubmitting && t("modals.addProductModal.addProduct")}
+				</LoadingButton>
+			</Box>
 		</form>
 	);
 };

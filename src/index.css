@@ -17,7 +17,6 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-
 }
 
 
@@ -26,7 +25,6 @@ main {
   min-height: 90vh;
   width: 90%;
   margin: auto;
-  /* backdrop-filter: blur(8px); */
 }
 
 .header-image {
@@ -34,10 +32,7 @@ main {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
-}
 
-.card {
-  min-height: max-content;
 }
 
 

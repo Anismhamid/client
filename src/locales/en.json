@@ -1,4 +1,7 @@
 {
+	"home": "Home",
+	"webPageName": "safqa website",
+	"bestOffers": "The best deals in one place",
 	"seller": "Published by",
 	"login": {
 		"email": "Email",
@@ -345,14 +348,16 @@
 				}
 			},
 			"categories": {
-				"title": "Hot Deals & Discounts",
-				"description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
-				"subtitle": "Shop now and save big on selected items",
-				"text1": "Exclusive Offers",
-				"text2": "Limited time discounts on best-selling products",
-				"noProducts": "No discounted products available at the moment. Check back soon for new offers!",
-				"viewAll": "View All Offers",
-				"ariaLabel": "Discounted products carousel"
+				"discountsAndOffers": {
+					"title": "Hot Deals & Discounts",
+					"description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
+					"subtitle": "Shop now and save big on selected items",
+					"text1": "Exclusive Offers",
+					"text2": "Limited time discounts on best-selling products",
+					"noProducts": "No discounted products available at the moment. Check back soon for new offers!",
+					"viewAll": "View All Offers",
+					"ariaLabel": "Discounted products carousel"
+				}
 			}
 		}
 	},
@@ -537,7 +542,7 @@
 		}
 	},
 	"footer": {
-		"siteName": "Sfqa Site",
+		"siteName": "Sfqa Website",
 		"quickLinks": "Quick Links",
 		"myAccount": "My Account",
 		"myListings": "My Listings",

@@ -1,13 +1,9 @@
 import {Fab, SpeedDial, SpeedDialAction, Zoom} from "@mui/material";
 import {FunctionComponent, useEffect, useState} from "react";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
-import AddProdutModal from "./addProduct/AddProdutModal";
+import AddProductModal from "./addProduct/AddProdutModal";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {useUser} from "../../context/useUSer";
-import RoleType from "../../interfaces/UserType";
-import {fontAwesomeIcon} from "../../FontAwesome/Icons";
-import {useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import {useTranslation} from "react-i18next";
 
@@ -15,8 +11,7 @@ interface SpeedDialComponentProps {}
 
 const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
-	const {auth} = useUser();
-	const navigate = useNavigate();
+	const {auth, isLoggedIn} = useUser();
 	const [visible, setVisible] = useState(false);
 	const {t} = useTranslation();
 
@@ -28,9 +23,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 		window.scrollTo({top: 0, behavior: "smooth"});
 	};
 
-	const isAdminAndModerator =
-		(auth && auth.role === RoleType.Admin) ||
-		(auth && auth.role === RoleType.Moderator);
+	// const isAdminAndModerator = auth && auth._id
 
 	const showAddProductModal = () => setOnShowAddModal(true);
 	const hideAddProductModal = () => setOnShowAddModal(false);
@@ -51,7 +44,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 
 	return (
 		<>
-			<>
+			{auth && isLoggedIn && (
 				<SpeedDial
 					ariaLabel='SpeedDial basic example'
 					sx={{position: "fixed", bottom: 10, right: 10, zIndex: 1100}}
@@ -67,7 +60,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 						/>
 					))}
 				</SpeedDial>
-			</>
+			)}
 			<Zoom in={visible}>
 				<Fab
 					color='primary'
@@ -85,13 +78,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 				</Fab>
 			</Zoom>
 			{/* Add product modal */}
-			<AddProdutModal
-				show={onShowAddModal}
-				onHide={hideAddProductModal}
-				// refrehs={function (): void {
-				// 	throw new Error("Function not implemented.");
-				// }}
-			/>
+			<AddProductModal show={onShowAddModal} onHide={() => hideAddProductModal()} />
 		</>
 	);
 };
