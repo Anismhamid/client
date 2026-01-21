@@ -9,6 +9,7 @@ import {uploadImage} from "../services/uploadImage";
 const useAddProductFormik = () => {
 	const {t} = useTranslation();
 	const [imageFile, setImageFile] = useState<File | null>(null);
+
 	const [imageData, setImageData] = useState<{
 		url: string;
 		publicId: string;
@@ -57,27 +58,33 @@ const useAddProductFormik = () => {
 			location: yup.string(),
 		}),
 		onSubmit: async (values, {resetForm}) => {
-			let uploadedImage = imageData;
+			try {
+				let uploadedImage = imageData;
 
-			if (imageFile && !imageData) {
-				uploadedImage = await uploadImage(imageFile);
-				setImageData(uploadedImage);
+				if (imageFile && !imageData) {
+					uploadedImage = await uploadImage(imageFile);
+					setImageData(uploadedImage);
+				}
+
+				await createNewProduct({
+					...values,
+					image: uploadedImage?.url || "",
+				});
+
+				console.log({
+					...values,
+					image: uploadedImage?.url,
+					publicId: uploadedImage?.publicId,
+				});
+
+				resetForm();
+				setImageFile(null);
+				setImageData(null);
+			} catch (error) {
+				resetForm();
+				setImageFile(null);
+				setImageData(null);
 			}
-
-			await createNewProduct({
-				...values,
-				image: uploadedImage?.url || "",
-			});
-
-			console.log({
-				...values,
-				image: uploadedImage?.url,
-				publicId: uploadedImage?.publicId,
-			});
-
-			resetForm();
-			setImageFile(null);
-			setImageData(null);
 		},
 	});
 	return {formik, imageFile, setImageFile, imageData, setImageData};

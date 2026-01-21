@@ -1,5 +1,5 @@
 import {Box} from "@mui/material";
-import {FormikProps, FormikValues} from "formik";
+import {FormikProps} from "formik";
 import {FunctionComponent, useState, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
@@ -34,6 +34,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 	onHide,
 }) => {
 	const {t} = useTranslation();
+	const [imageKey, setImageKey] = useState(0);
 	const [selectedSubcategory, setSelectedSubcategory] = useState<string>(
 		formik.values.subcategory || "",
 	);
@@ -43,27 +44,55 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 
 		const category = formik.values.category as keyof typeof categoriesLogic;
 
-		const subcat =
-			selectedSubcategory ||
-			Object.keys(categoriesLogic[formik.values.category])[0];
-	
-			const fields:FormikValues[] =
+		const subcat = selectedSubcategory || Object.keys(categoriesLogic[category])[0];
+
+		const fields: DynamicField[] =
 			categoriesLogic[category][
 				subcat as keyof (typeof categoriesLogic)[typeof category]
 			] || [];
 
+		// allowed fields
+		const allowedFields = new Set<string>(fields.map((f) => f.name));
+
+		// product base fields
+		[
+			"product_name",
+			"category",
+			"subcategory",
+			"type",
+			"price",
+			"description",
+			"image",
+			"sale",
+			"discount",
+			"in_stock",
+			"location",
+		].forEach((f) => allowedFields.add(f));
+
+		// delete the unallowed fields
+		Object.keys(formik.values).forEach((key) => {
+			if (!allowedFields.has(key)) {
+				formik.setFieldValue(key, undefined);
+			}
+		});
+
+		// setting the default values for new fields
 		fields.forEach((field) => {
 			if (formik.values[field.name] === undefined) {
-				if (field.type === "boolean") formik.setFieldValue(field.name, false);
-				if (field.type === "number") formik.setFieldValue(field.name, 0);
-				if (field.type === "text") formik.setFieldValue(field.name, "");
-				if (field.type === "select") formik.setFieldValue(field.name, "");
-				if (field.type === "date") formik.setFieldValue(field.name, "");
+				switch (field.type) {
+					case "boolean":
+						formik.setFieldValue(field.name, false);
+						break;
+					case "number":
+						formik.setFieldValue(field.name, 0);
+						break;
+					default:
+						formik.setFieldValue(field.name, "");
+				}
 			}
 		});
 	}, [formik.values.category, selectedSubcategory]);
 
-	// نفس useEffect السابق
 	useEffect(() => {
 		if (formik.values.subcategory !== selectedSubcategory) {
 			setSelectedSubcategory(formik.values.subcategory || "");
@@ -92,7 +121,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 		);
 	};
 
-	// معالجة تغيير التصنيف
+	// handling category change
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newCategory = e.target.value as CategoryValue;
 		formik.setFieldValue("category", newCategory);
@@ -100,7 +129,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 		const firstSubcat = Object.keys(categoriesLogic[newCategory] || {})[0] || "";
 		formik.setFieldValue("subcategory", firstSubcat);
 
-		// مهم: type = الفئة الفرعية الحالية
+		// type = current subcategory
 		formik.setFieldValue("type", firstSubcat);
 
 		setSelectedSubcategory(firstSubcat);
@@ -111,7 +140,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 		setSelectedSubcategory(newSubcategory);
 		formik.setFieldValue("subcategory", newSubcategory);
 
-		// type لازم يتغير مع subcategory
+		// the type needs to change with the subcategory.
 		formik.setFieldValue("type", newSubcategory);
 	};
 
@@ -125,7 +154,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 		[formik.values.category, selectedSubcategory],
 	);
 
-	// عرض الحقل الديناميكي
+	// dynamic field display
 	const renderDynamicField = (field: DynamicField) => {
 		const fieldValue = formik.values[field.name] || "";
 		const isRequired = field.required;
@@ -142,7 +171,6 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 			required: isRequired,
 		};
 
-		// الحل: استخدام متغير مؤقت للنص بدلاً من وضع t() مباشرة في children
 		const fieldLabel = getFieldLabel(field.name, isRequired);
 		const placeholderText = t(`fields.placeholder.${field.name}`, {
 			defaultValue: field.name,
@@ -461,6 +489,7 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 					{t("modals.addProductModal.image")}
 				</label>
 				<input
+					key={imageKey}
 					type='file'
 					accept='image/*'
 					onChange={async (e) => {
@@ -472,7 +501,9 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 							setImageData(uploaded);
 							formik.setFieldValue("image", uploaded.url);
 						} catch (error) {
-							console.error("Upload error:", error);
+							console.error("Image upload error:", error);
+						} finally {
+							setImageKey((prev) => prev + 1);
 						}
 					}}
 					className='form-control'
@@ -492,7 +523,9 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 					onChange={(e) => formik.setFieldValue("in_stock", e.target.checked)}
 				/>
 				<label className='form-check-label' htmlFor='in_stock'>
-					{t("modals.addProductModal.in_stock")}
+					{formik.values.in_stock
+						? t("modals.addProductModal.in_stock")
+						: t("modals.addProductModal.not_in_stock")}
 				</label>
 			</div>
 

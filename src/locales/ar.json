@@ -104,6 +104,14 @@
 		"addProductModal": {
 			"title": "إضافة منتج جديد",
 			"productName": "اسم المنتج",
+			"specifications": "مواصفات",
+			"selectSubcategory": "اختر فئة فرعية",
+			"subcategory": "فئة فرعية",
+			"selectColor": "اختر اللون",
+			"color": "اللون",
+			"image": "صورة",
+			"in_stock": "المنتج متوفر حاليا",
+			"not_in_stock": "المنتج غير متوفر حاليا",
 			"fuel": {
 				"label": "دعم",
 				"settings": {
