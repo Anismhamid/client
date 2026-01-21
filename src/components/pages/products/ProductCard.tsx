@@ -9,6 +9,7 @@ import {
 	IconButton,
 	Skeleton,
 	Stack,
+	Tooltip,
 	Typography,
 	useTheme,
 } from "@mui/material";
@@ -29,6 +30,8 @@ import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {toggleLike} from "../../../services/productsServices";
 import {useUser} from "../../../context/useUSer";
 import {path} from "../../../routes/routes";
+import Avatar from "@mui/material/Avatar";
+import AvatarGroup from "@mui/material/AvatarGroup";
 
 interface ProductCardProps {
 	product: Products;
@@ -402,32 +405,55 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 					}}
 				>
 					{/* Like Button */}
-					<IconButton
-						aria-label='add to favorites'
-						onClick={handleLike}
-						sx={{
-							color: userLiked ? "#ff4444" : "#666",
-							"&:hover": {
-								backgroundColor: "rgba(255, 68, 68, 0.08)",
-							},
-						}}
-					>
-						{userLiked ? (
-							<FavoriteIcon sx={{color: "#ff4444"}} />
-						) : (
-							<FavoriteBorderIcon />
-						)}
-						<Typography
-							variant='body2'
+					<Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+						<IconButton
+							aria-label={userLiked ? "إزالة الإعجاب" : "إضافة إعجاب"}
+							onClick={handleLike}
 							sx={{
-								ml: 0.5,
-								color: userLiked ? "#ff4444" : "#666",
-								fontWeight: 500,
+								color: userLiked ? "#ff4444" : "red",
+								"&:hover": {
+									backgroundColor: userLiked
+										? "rgba(255, 68, 68, 0.08)"
+										: "action.hover",
+								},
 							}}
 						>
-							{product.likes?.length ?? 0}
-						</Typography>
-					</IconButton>
+							{userLiked ? (
+								<FavoriteIcon sx={{color: "#ff4444"}} />
+							) : (
+								<FavoriteBorderIcon />
+							)}
+							<Typography
+								variant='body2'
+								sx={{
+									ml: 0.5,
+									color: userLiked ? "#ff4444" : "text.secondary",
+									fontWeight: 500,
+								}}
+							>
+								{product.likes?.length ?? 0}
+							</Typography>
+						</IconButton>
+
+						{/* Simple like count display */}
+						{product.likes && product.likes.length > 0 && (
+							<Tooltip
+								title={`${product.likes.length} شخص أعجب بهذا المنتج`}
+								arrow
+							>
+								<Typography
+									variant='caption'
+									sx={{
+										color: "text.secondary",
+										ml: 1,
+										cursor: "default",
+									}}
+								>
+									{product.likes.length} إعجاب
+								</Typography>
+							</Tooltip>
+						)}
+					</Box>
 
 					{/* Share Button */}
 					<IconButton
