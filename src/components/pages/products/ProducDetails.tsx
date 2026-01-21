@@ -44,7 +44,7 @@ interface ProductDetailsProps {}
 
 const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {t} = useTranslation();
-	const [product, setProduct] = useState<Products>(initialProductValue);
+	const [product, setProduct] = useState<Products>(initialProductValue as Products);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const {productId} = useParams();
@@ -93,7 +93,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 				.then((res) => {
 					if (!res) {
 						setError("لم يتم العثور على المنتج");
-						setProduct(initialProductValue);
+						setProduct(initialProductValue as Products);
 					} else {
 						setProduct(res);
 						setError("");
@@ -101,7 +101,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 				})
 				.catch(() => {
 					setError("حدث خطأ أثناء تحميل المنتج");
-					setProduct(initialProductValue);
+					setProduct(initialProductValue as Products);
 				})
 				.finally(() => setLoading(false));
 		}

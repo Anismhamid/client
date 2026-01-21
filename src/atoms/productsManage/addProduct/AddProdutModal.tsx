@@ -7,7 +7,7 @@ import useAddProductFormik from "../../../hooks/useAddProductFormik";
 
 interface AddProdutModalProps {
 	show: boolean;
-	onHide: () => void;
+	onHide: () => boolean;
 }
 
 const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) => {

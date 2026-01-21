@@ -13,8 +13,7 @@ import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {Box, Chip, Typography} from "@mui/material";
-import Button from "@mui/material/Button";
+import {Box,Button,Typography} from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
 import {Col, Row} from "react-bootstrap";
@@ -153,11 +152,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		socket.on("product:quantity_in_stock", (newProduct: Products) => {
 			setProducts((prev) => {
 				const exists = prev.some(
-					(p) => p.product_name === newProduct.product_name,
+					(p) => p._id === newProduct._id,
 				);
 				if (exists) {
 					return prev.map((p) =>
-						p.product_name === newProduct.product_name ? newProduct : p,
+						p._id === newProduct._id ? newProduct : p,
 					);
 				}
 				return [newProduct, ...prev];
@@ -165,11 +164,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 			setVisibleProducts((prev) => {
 				const exists = prev.some(
-					(p) => p.product_name === newProduct.product_name,
+					(p) => p._id === newProduct._id,
 				);
 				if (exists) {
 					return prev.map((p) =>
-						p.product_name === newProduct.product_name ? newProduct : p,
+						p._id === newProduct._id ? newProduct : p,
 					);
 				}
 				return [newProduct, ...prev];
@@ -190,18 +189,18 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		return <Loader />;
 	}
 
-	// if (!loading && products.length === 0)
-	// 	return (
-	// 		<Box component={"main"} textAlign={"center"}>
-	// 			<ChepNavigation />
-	// 			<Typography textAlign={"center"} variant='h6' color='error'>
-	// 				لم يتم العثور على أي منتجات في المتجر
-	// 			</Typography>
-	// 			<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
-	// 				حاول ثانية
-	// 			</Button>
-	// 		</Box>
-	// 	);
+	if (!loading && products.length === 0)
+		return (
+			<Box component={"main"} textAlign={"center"}>
+				<ChepNavigation />
+				<Typography textAlign={"center"} variant='h6' color='error'>
+					لم يتم العثور على أي منتجات في المتجر
+				</Typography>
+				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
+					حاول ثانية
+				</Button>
+			</Box>
+		);
 
 	return (
 		<>

@@ -175,7 +175,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	}, [auth?._id]);
 
 	return (
-		<>
+		<Box>
 			{/* Main Top Bar */}
 			<Box
 				component={"header"}
@@ -420,7 +420,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					)}
 				</li>
 			</Box>
-		</>
+		</Box>
 	);
 };
 

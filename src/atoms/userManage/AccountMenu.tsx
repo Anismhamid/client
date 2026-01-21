@@ -11,7 +11,7 @@ import {FunctionComponent, useState} from "react";
 import {useUser} from "../../context/useUSer";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import {Button, Typography} from "@mui/material";
+import {Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import RoleType from "../../interfaces/UserType";
 import MarkunreadIcon from "@mui/icons-material/Markunread";
@@ -39,6 +39,8 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 	};
 
 	const direction = handleRTL();
+
+	const isAdmin = auth && auth.role === RoleType.Admin;
 
 	return (
 		<>
@@ -135,29 +137,30 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 
 				<Divider />
 
-				{auth && auth.role === RoleType.Admin && (
-					<>
-						<Link className=' text-decoration-none' to={path.AdminSettings}>
-							<MenuItem onClick={handleClose}>
-								<ListItemIcon sx={{color: "azure"}}>
-									{fontAwesomeIcon.setting}
-								</ListItemIcon>
-								<Typography color='warning'>
-									{t("accountMenu.settings")}
-								</Typography>
-							</MenuItem>
-						</Link>
-						<Link className=' text-decoration-none' to={path.WebSiteAdmins}>
-							<MenuItem onClick={handleClose}>
-								<ListItemIcon>
-									<Dashboard color='error' />
-								</ListItemIcon>
-								<Typography color='warning'>
-									{t("إحصائيات المتجر")}
-								</Typography>
-							</MenuItem>
-						</Link>
-					</>
+				{isAdmin && (
+					<Link className=' text-decoration-none' to={path.AdminSettings}>
+						<MenuItem onClick={handleClose}>
+							<ListItemIcon sx={{color: "azure"}}>
+								{fontAwesomeIcon.setting}
+							</ListItemIcon>
+							<Typography color='warning'>
+								{t("accountMenu.settings")}
+							</Typography>
+						</MenuItem>
+					</Link>
+				)}
+				
+				{isAdmin && (
+					<Link className=' text-decoration-none' to={path.WebSiteAdmins}>
+						<MenuItem onClick={handleClose}>
+							<ListItemIcon>
+								<Dashboard color='error' />
+							</ListItemIcon>
+							<Typography color='warning'>
+								{t("إحصائيات المتجر")}
+							</Typography>
+						</MenuItem>
+					</Link>
 				)}
 
 				<Divider sx={{borderColor: "#4FC3F7", my: 0.5}} />

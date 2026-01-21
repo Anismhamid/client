@@ -6,14 +6,6 @@ import {
 	CardContent,
 	Typography,
 	Grid,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Chip,
 	Select,
 	MenuItem,
 	FormControl,
@@ -26,7 +18,6 @@ import {
 	MonetizationOn,
 	// CalendarToday,
 } from "@mui/icons-material";
-import {formatPrice} from "../../helpers/dateAndPriceFormat";
 import {useUser} from "../../context/useUSer";
 import {Products} from "../../interfaces/Products";
 import {getAllUsers} from "../../services/usersServices";
@@ -45,8 +36,9 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 		if (auth.role !== "Admin" && auth.role !== "Moderator") return;
 		// جلب جميع البيانات
 		Promise.all([getAllUsers(), getAllProducts()])
-			.then(([ordersRes, usersRes]) => {
+			.then(([usersRes,productsRes ]) => {
 				setUsers(usersRes);
+				setProducts(productsRes);
 			})
 			.catch((err) => console.log(err));
 	}, [auth]);
