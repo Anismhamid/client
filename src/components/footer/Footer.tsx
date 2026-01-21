@@ -5,9 +5,11 @@ import {Link as RouterLink} from "react-router-dom";
 import {useUser} from "../../context/useUSer";
 import {path} from "../../routes/routes";
 
-interface FooterProps {}
+interface FooterProps {
+	isSeller: boolean;
+}
 
-const Footer: FunctionComponent<FooterProps> = () => {
+const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 	const {t} = useTranslation();
 	const {auth} = useUser();
 
@@ -17,8 +19,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 			label: t("footer.myListings"),
 			href: `${path.myCustomerProfile}/${auth.slug}`,
 		},
-		{label: t("footer.postListing"), href: "/post-listing"},
-		{label: t("footer.marketplace"), href: "/"},
+		{label: t("footer.postListing"), href: "/"},
 	];
 
 	const socialLinks = [
@@ -52,15 +53,24 @@ const Footer: FunctionComponent<FooterProps> = () => {
 							{t("footer.quickLinks")}
 						</Typography>
 						<Box display='flex' flexDirection='column' gap={1.5}>
-							{quickLinks
-								.filter((link) => {
-									// Hide postListing link for non-sellers
-									if (auth && link.label === t("footer.postListing")) {
-										return false;
-									}
-									return true;
-								})
-								.map((link, idx) => (
+							<MuiLink
+								key={t("footer.marketplace")}
+								component={RouterLink}
+								to={"/"}
+								underline='hover'
+								color='text.secondary'
+								sx={{
+									fontSize: "0.95rem",
+									transition: "color 0.2s",
+									"&:hover": {
+										color: "primary.main",
+									},
+								}}
+							>
+								{t("footer.marketplace")}
+							</MuiLink>
+							{auth.slug &&
+								quickLinks.map((link, idx) => (
 									<MuiLink
 										key={idx}
 										component={RouterLink}
@@ -80,6 +90,8 @@ const Footer: FunctionComponent<FooterProps> = () => {
 								))}
 						</Box>
 					</Grid>
+
+					{/* {label: t("footer.marketplace"), href: "/"}, */}
 
 					{/* About / Info */}
 					<Grid size={{xs: 12, md: 5}}>
@@ -164,8 +176,8 @@ const Footer: FunctionComponent<FooterProps> = () => {
 				{/* Footer Bottom */}
 				<Box mt={5} pt={3} borderTop={1} borderColor='divider' textAlign='center'>
 					<Typography variant='body2' color='text.secondary'>
-						© {new Date().getFullYear()} {t("footer.siteName")} - جميع الحقوق
-						محفوظة
+						© {new Date().getFullYear()} {t("footer.siteName")} -{" "}
+						{t("allRightsReserved")}
 					</Typography>
 					<Typography
 						variant='caption'

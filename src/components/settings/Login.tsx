@@ -69,7 +69,7 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 					// Save token to localStorage
 					localStorage.setItem("token", token);
 					setAfterDecode(token);
-					setAuth(decodedToken);
+					setAuth({...decodedToken, slug: decodedToken?.slug || ""});
 					setIsLoggedIn(true);
 					showSuccess("התחברת בהצלחה!");
 					navigate(path.Home);

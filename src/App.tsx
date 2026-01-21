@@ -114,7 +114,7 @@ function App() {
 			<Theme mode={mode} setMode={setMode} />
 			<SpeedDialComponent />
 			<AppRoutes auth={auth} />
-			<Footer />
+			<Footer isSeller={auth && true} />
 		</ThemeProvider>
 	);
 }

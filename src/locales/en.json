@@ -2,6 +2,7 @@
 	"home": "Home",
 	"webPageName": "safqa website",
 	"bestOffers": "The best deals in one place",
+	"allRightsReserved":"All rights reserved.",
 	"seller": "Published by",
 	"login": {
 		"email": "Email",
@@ -551,7 +552,8 @@
 		"descriptionC2C": "Buy and sell directly with other users easily and safely.",
 		"contact": "Contact Us",
 		"phone": "Phone",
-		"followUs": "Follow Us"
+		"followUs": "Follow Us",
+		"version": "Version 1.0.0"
 	},
 	"color": "Color",
 	"removeAccount": {

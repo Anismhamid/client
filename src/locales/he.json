@@ -2,6 +2,8 @@
 	"home": "בית",
 	"webPageName": "אתר ספקה",
 	"bestOffers": "העסקות הטובים ביותר במקום אחד",
+	"allRightsReserved": "כל הזכויות שמורות.",
+
 	"seller": "פורסם ע'י",
 	"login": {
 		"email": "דואר אלקטרוני",
@@ -547,7 +549,8 @@
 		"descriptionC2C": "קנה ומכור ישירות עם משתמשים אחרים בקלות ובבטחה.",
 		"contact": "צור קשר",
 		"phone": "טלפון",
-		"followUs": "עקוב אחרינו"
+		"followUs": "עקוב אחרינו",
+		"version": "גרסה 1.0.0"
 	},
 	"color": "צבע",
 	"removeAccount": {

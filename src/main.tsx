@@ -6,6 +6,7 @@ import {BrowserRouter} from "react-router-dom";
 import {UserProvider} from "./context/useUSer.tsx";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {Buffer} from "buffer";
+import ErrorBoundary from "./components/pages/ErrorBoundary.tsx";
 window.Buffer = Buffer;
 
 createRoot(document.getElementById("root")!).render(
@@ -13,7 +14,9 @@ createRoot(document.getElementById("root")!).render(
 		<UserProvider>
 			<SpeedInsights />
 			<BrowserRouter>
-				<App />
+				<ErrorBoundary>
+					<App />
+				</ErrorBoundary>
 			</BrowserRouter>
 		</UserProvider>
 	</GoogleOAuthProvider>,

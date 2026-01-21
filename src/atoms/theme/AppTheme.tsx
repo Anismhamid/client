@@ -362,7 +362,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						display: "flex",
 						justifyContent: "space-around",
 						flexWrap: isMobile ? "wrap" : "nowrap",
-						gap: 3,
+						gap: 1,
 					}}
 				>
 					{/* Left Side: Theme Toggle */}
