@@ -9,6 +9,7 @@ import RoleType from "../interfaces/UserType";
 import socket from "../socket/globalSocket";
 import useNotificationSound from "./useNotificationSound";
 import {Products} from "../interfaces/Products";
+import { productsPathes } from "../routes/routes";
 
 const useSocketEvents = () => {
 	const {auth} = useUser();
@@ -64,17 +65,17 @@ const useSocketEvents = () => {
 		};
 
 		// הזמנה חדשה
-		const handleNewOrder = (newProduct: Products) => {
-			if (isAdminOrModerator) {
-				playNotificationSound();
-				showNewProductToast({
-					navigate,
-					navigateTo: `/product-details/${newProduct.product_name}`,
-					productId: newProduct._id ?? "",
-				});
-				showNotification(`تم إصدار أمر جديد بواسطة ${newProduct.category}`);
-			}
-		};
+		// const handleNewOrder = (newProduct: Products) => {
+		// 	if (isAdminOrModerator) {
+		// 		playNotificationSound();
+		// 		showNewProductToast({
+		// 			navigate,
+		// 			navigateTo: `/product-details/${newProduct._id}`,
+		// 			product: newProduct,
+		// 		});
+		// 		showNotification(`تم إصدار أمر جديد بواسطة ${newProduct.category}`);
+		// 	}
+		// };
 
 		// עדכון סטטוס ללקוח
 		// const handleClientOrderStatus = ({
@@ -145,8 +146,8 @@ const useSocketEvents = () => {
 
 			showNewProductToast({
 				navigate,
-				navigateTo: `/product-details/${newProduct.product_name}`,
-				productId: newProduct._id ?? "",
+				navigateTo: `${productsPathes.productDetails}/${newProduct.category}/${newProduct.brand}/${newProduct._id}`,
+				product: newProduct,
 			});
 
 			showNotification(`تم إضافة منتج جديد: ${newProduct.product_name}`);
@@ -156,7 +157,7 @@ const useSocketEvents = () => {
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
-		socket.on("new order", handleNewOrder);
+		// socket.on("new order", handleNewOrder);
 		// socket.on("order:status:client", handleClientOrderStatus);
 		// socket.on("order:status:updated", handleOrderStatusUpdated);
 		socket.on("user:registered", handleUserRegistered);
@@ -168,7 +169,7 @@ const useSocketEvents = () => {
 			socket.off("connect", handleConnect);
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
-			socket.off("new order", handleNewOrder);
+			// socket.off("new order", handleNewOrder);
 			// socket.off("order:status:client", handleClientOrderStatus);
 			// socket.off("order:status:updated", handleOrderStatusUpdated);
 			socket.off("user:registered", handleUserRegistered);

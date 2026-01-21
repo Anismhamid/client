@@ -6,7 +6,7 @@ import {Products} from "../interfaces/Products";
 import {useState} from "react";
 import {uploadImage} from "../services/uploadImage";
 
-const useAddProductFormik = () => {
+const useAddProductFormik = (onHide: () => boolean) => {
 	const {t} = useTranslation();
 	const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -19,12 +19,9 @@ const useAddProductFormik = () => {
 		initialValues: {
 			product_name: "",
 			image: "",
-			brand: "",
-			year: "",
-			fuel: "",
-			mileage: 0,
-			color: "",
-			category: "Cars",
+			category: "House",
+			subcategory: "",
+			type: "",
 			price: 0,
 			description: "",
 			sale: false,
@@ -43,11 +40,7 @@ const useAddProductFormik = () => {
 			price: yup
 				.number()
 				.required(t("modals.addProductModal.validation.priceRequired")),
-			brand: yup.string(),
-			year: yup.string(),
-			fuel: yup.string(),
-			mileage: yup.number(),
-			color: yup.string(),
+			type: yup.string(),
 			description: yup
 				.string()
 				.min(2, t("modals.addProductModal.validation.descriptionMin"))
@@ -80,6 +73,7 @@ const useAddProductFormik = () => {
 				resetForm();
 				setImageFile(null);
 				setImageData(null);
+				onHide?.();
 			} catch (error) {
 				resetForm();
 				setImageFile(null);

@@ -62,6 +62,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 				path={`${productsPathes.productDetails}/:category/:brand/:productId`}
 				element={<ProducDetails />}
 			/>
+			<Route
+				path={`${productsPathes.productDetails}/:productId`}
+				element={<ProducDetails />}
+			/>
 			<Route path={`${path.DicountAndOfers}`} element={<DiscountsAndOffers />} />
 
 			<Route path={path.Png} element={<PageNotFound />} />

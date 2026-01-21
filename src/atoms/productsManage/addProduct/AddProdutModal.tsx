@@ -7,17 +7,23 @@ import useAddProductFormik from "../../../hooks/useAddProductFormik";
 
 interface AddProdutModalProps {
 	show: boolean;
-	onHide: Function;
+	onHide: () => void;
 }
 
 const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) => {
 	const {t} = useTranslation();
 	const {formik, imageFile, setImageFile, imageData, setImageData} =
-		useAddProductFormik();
+		useAddProductFormik(onHide);
 
 	const dir = handleRTL();
 	return (
-		<Modal style={{zIndex:2000}} dir={dir} show={show} onHide={() => onHide()} centered>
+		<Modal
+			style={{zIndex: 2000}}
+			dir={dir}
+			show={show}
+			onHide={() => onHide()}
+			centered
+		>
 			<ModalHeader closeButton>
 				<h1 className='display-6 fw-bold text-center'>
 					{t("modals.addProductModal.title")}

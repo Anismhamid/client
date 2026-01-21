@@ -1,19 +1,20 @@
 import {toast} from "react-toastify";
+import { Products } from "../../interfaces/Products";
 
 export const showNewProductToast = ({
 	navigate,
 	navigateTo,
-	productId,
+	product,
 }: {
 	navigate: (path: string) => void;
 	navigateTo: string;
-	productId: string;
+	product: Products;
 }) => {
 	toast.info(
 		({closeToast}) => (
 			<div>
 				<p>
-					<strong>בוצעה הזמנה חדשה:</strong> {productId}
+					<strong>נוסף מוצר חדש:</strong> {`${product.category}, ${product.product_name}`}
 				</p>
 				<button
 					onClick={() => {
@@ -22,10 +23,10 @@ export const showNewProductToast = ({
 					}}
 					className='btn btn-sm btn-primary me-2'
 				>
-					לפרטי המוצר
+					לצפיה במוצר
 				</button>
 				<button onClick={closeToast} className='btn btn-sm btn-secondary'>
-					סגור
+					דילוג
 				</button>
 			</div>
 		),
