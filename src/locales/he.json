@@ -140,6 +140,7 @@
 			"discount": "אחוז הנחה",
 			"updateButton": "עדכן",
 			"closeButton": "סגור",
+			"location": "עיר מוצא",
 			"validation": {
 				"productNameRequired": "שם מוצר נדרש",
 				"productNameMin": "שם מוצר חייב להכיל לפחות 2 תווים",

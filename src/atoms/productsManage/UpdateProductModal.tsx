@@ -9,7 +9,8 @@ import {productsCategories} from "../../interfaces/productsCategoeis";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 import {CarColor, colors} from "../colorsSettings/carsColors";
-import {Box} from "@mui/material";
+import {Autocomplete, Box, TextField} from "@mui/material";
+import useCountries from "../../hooks/useCountries";
 
 interface UpdateProductModalProps {
 	show: boolean;
@@ -32,7 +33,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		price: number;
 		quantity_in_stock: number;
 		description: string;
-		image_url: string;
+		image: string;
 		sale: boolean;
 		discount: number;
 		brand: string;
@@ -46,7 +47,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 		price: 0,
 		quantity_in_stock: 1,
 		description: "",
-		image_url: "",
+		image: "",
 		sale: false,
 		discount: 0,
 		brand: "",
@@ -73,7 +74,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			category: product.category,
 			price: product.price,
 			description: product.description,
-			image_url: product.image_url,
+			image: product.image,
 			sale: product.sale,
 			discount: product.discount,
 			brand: product.brand,
@@ -82,6 +83,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			mileage: product.mileage,
 			color: product.color,
 			likes: [],
+			location: "",
 		},
 		validationSchema: yup.object({
 			product_name: yup
@@ -98,12 +100,13 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				.string()
 				.min(2, t("modals.updateProductModal.validation.descriptionMin"))
 				.max(500, t("modals.updateProductModal.validation.descriptionMax")),
-			image_url: yup
+			image: yup
 				.string()
 				.required(t("modals.updateProductModal.validation.imageUrlRequired"))
 				.url(t("modals.updateProductModal.validation.imageUrlInvalid")),
 			sale: yup.boolean(),
 			discount: yup.number(),
+			location: yup.string(),
 		}),
 		onSubmit(values, {resetForm}) {
 			updateProduct(productId as string, values as Products)
@@ -117,6 +120,8 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				});
 		},
 	});
+
+	const {countries, loading} = useCountries();
 
 	const dir = handleRTL();
 
@@ -442,26 +447,87 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 							)}
 						</div>
 
-						{/* image_url */}
+						{/* image */}
+
 						<div className='form-floating mb-3'>
-							<input
+							{/* <input
 								aria-label={t("modals.updateProductModal.imageUrl")}
 								type='text'
-								name='image_url'
-								value={formik.values.image_url}
+								name='image'
+								value={formik.values.image}
 								onChange={formik.handleChange}
 								className='form-control'
-								id='image_url'
+								id='image'
 								placeholder={t("modals.updateProductModal.imageUrl")}
 							/>
-							<label htmlFor='image_url'>
+							<label htmlFor='image'>
 								{t("modals.updateProductModal.imageUrl")}
 							</label>
-							{formik.touched.image_url && formik.errors.image_url && (
+							{formik.touched.image && formik.errors.image && (
 								<div className='text-danger fw-bold'>
-									{formik.errors.image_url}
+									{formik.errors.image}
 								</div>
-							)}
+							)} */}
+						</div>
+
+						{/* location */}
+						<div className='form-floating mb-3'>
+							<Autocomplete
+								options={countries}
+								value={formik.values.location || null}
+								onChange={(_event, value) =>
+									formik.setFieldValue("location", value)
+								}
+								onBlur={() => formik.setFieldTouched("location", true)}
+								loading={loading}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label={t("register.address")}
+										variant='filled'
+										error={
+											formik.touched.location &&
+											Boolean(formik.errors.location)
+										}
+										helperText={
+											formik.touched.location &&
+											formik.errors.location
+										}
+										className='my-2'
+										fullWidth
+									/>
+								)}
+							/>
+
+							{/* <input
+								aria-label={t("modals.updateProductModal.location")}
+								type='text'
+								name='location'
+								value={formik.values.location}
+								onChange={formik.handleChange}
+								className='form-control'
+								id='location'
+								placeholder={t("modals.updateProductModal.location")}
+							/>
+							<label htmlFor='location'>
+								{t("modals.updateProductModal.location")}
+							</label>
+							{formik.touched.location && formik.errors.location && (
+								<div className='text-danger fw-bold'>
+									{formik.errors.location}
+								</div>
+							)} */}
+							{/* <Select
+							name='city'
+							value={formik.values.location}
+							onChange={formik.handleChange}
+						>
+							{cities.map((city) => (
+								<MenuItem sx={{zIndex:100}} key={city} value={city}>
+									{city}
+								</MenuItem>
+							))}
+						</Select> */}
 						</div>
 
 						{/* sale */}

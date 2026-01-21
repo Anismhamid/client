@@ -23,11 +23,12 @@ const useAddProductFormik = () => {
 			fuel: "",
 			mileage: 0,
 			color: "",
-			category: "",
+			category: "Cars",
 			price: 0,
 			description: "",
 			sale: false,
 			discount: 0,
+			in_stock: true,
 			location: "",
 		},
 		validationSchema: yup.object({
@@ -66,6 +67,12 @@ const useAddProductFormik = () => {
 			await createNewProduct({
 				...values,
 				image: uploadedImage?.url || "",
+			});
+
+			console.log({
+				...values,
+				image: uploadedImage?.url,
+				publicId: uploadedImage?.publicId,
 			});
 
 			resetForm();

@@ -1,3 +1,5 @@
+import {CategoryValue} from "../atoms/productsManage/productLogicMap";
+
 /**
  * Products interface
  */
@@ -6,9 +8,10 @@ export interface Products {
 	likes?: string[];
 	isNew?: boolean;
 	_id?: string;
-	seller?: {name?: string; slug?: string; sellerId: string};
+	seller?: {name: string; slug?: string; sellerId: string};
 	product_name: string;
-	category: string;
+	category: CategoryValue;
+	subcategory?: string;
 	brand?: string;
 	year?: string;
 	fuel?: string;
@@ -21,21 +24,23 @@ export interface Products {
 	discount: number;
 	rating?: number;
 	reviewCount?: number;
-	type?: string;
+	in_stock: boolean;
+	[key: string]: any;
 }
 
-export const initialProductValue = {
+export const initialProductValue: Partial<Products> = {
 	seller: {name: "", slug: "", sellerId: ""},
 	product_name: "",
-	category: "",
+	category: "" as CategoryValue,
+	subcategory: "",
 	price: 0,
-	quantity_in_stock: 0,
 	description: "",
 	image: "",
 	sale: false,
 	discount: 0,
 	rating: 0,
 	likes: [],
+	in_stock: true,
 	reviewCount: 0,
 	location: "אום אל פחם",
 };

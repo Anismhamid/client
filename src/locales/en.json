@@ -141,6 +141,7 @@
 			"discount": "Discount Percentage",
 			"updateButton": "Update",
 			"closeButton": "Close",
+			"location": "Location",
 			"validation": {
 				"productNameRequired": "Product name is required",
 				"productNameMin": "Product name must be at least 2 characters",

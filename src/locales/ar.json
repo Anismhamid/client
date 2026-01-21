@@ -154,6 +154,7 @@
 			"imageUrl": "رابط الصورة",
 			"sale": "في العرض",
 			"discount": "نسبة الخصم",
+			"location": "البلد",
 			"updateButton": "تحديث",
 			"closeButton": "إغلاق",
 			"validation": {

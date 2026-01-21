@@ -12,13 +12,12 @@ interface AddProdutModalProps {
 
 const AddProdutModal: FunctionComponent<AddProdutModalProps> = ({show, onHide}) => {
 	const {t} = useTranslation();
-	
 	const {formik, imageFile, setImageFile, imageData, setImageData} =
 		useAddProductFormik();
 
 	const dir = handleRTL();
 	return (
-		<Modal dir={dir} show={show} onHide={() => onHide()} centered>
+		<Modal style={{zIndex:2000}} dir={dir} show={show} onHide={() => onHide()} centered>
 			<ModalHeader closeButton>
 				<h1 className='display-6 fw-bold text-center'>
 					{t("modals.addProductModal.title")}
