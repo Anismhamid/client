@@ -73,3 +73,28 @@ export const colors: CarColor[] = [
 	{key: "NardoGray", hex: "#7F7F7F"},
 	{key: "DarkSlate", hex: "#2F4F4F"},
 ];
+
+const arabicToKeyMap: Record<string, string> = {
+	أسود: "Black",
+	ابيض: "White",
+	أبيض: "White",
+	أحمر: "Red",
+	احمر: "Red",
+	أزرق: "Blue",
+	ازرق: "Blue",
+	أخضر: "Green",
+	اخضر: "Green",
+	أصفر: "Yellow",
+	اصفر: "Yellow",
+	رمادي: "Gray",
+};
+
+export const getColorHex = (value?: string): string | undefined => {
+	if (!value) return undefined;
+
+	// 1. لو القيمة عربية نحولها لـ key
+	const normalizedKey = arabicToKeyMap[value] || value;
+
+	// 2. نبحث عنها في colors
+	return colors.find((c) => c.key === normalizedKey)?.hex;
+};

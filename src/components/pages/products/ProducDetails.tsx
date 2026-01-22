@@ -39,6 +39,7 @@ import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
 import {generateSingleVehicleJsonLd} from "../../../../utils/vehiclesJsonLd";
 import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
+import ProductDetailsTable from "./ProductDetailsTable";
 
 interface ProductDetailsProps {}
 
@@ -205,7 +206,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									flexDirection: "column",
 								}}
 							>
-								{product.image && (
+								{!loading && product.image && (
 									<CardMedia
 										component='img'
 										image={product.image.url}
@@ -446,6 +447,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						>
 							مزيد من التفاصيل
 						</Typography>
+						<ProductDetailsTable product={product} />
 						<Grid container spacing={4}>
 							{[
 								{
