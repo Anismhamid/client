@@ -31,13 +31,13 @@ import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
 
 interface LoginProps {
-	mode: PaletteMode;
+	mode?: PaletteMode;
 }
 /**
  * Sets auth
  * @returns
  */
-const Login: FunctionComponent<LoginProps> = ({mode}) => {
+const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();

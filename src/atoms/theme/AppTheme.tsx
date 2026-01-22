@@ -162,6 +162,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	const isAdmin = auth?.role === RoleType.Admin;
 
 	const {pathname} = useLocation();
+
 	useEffect(() => {
 		window.scrollTo(0, 0);
 	}, [pathname]);
@@ -181,283 +182,276 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	}, [auth?._id]);
 
 	return (
-		<Box>
-			{/* Main Top Bar */}
-			<Box
-				component={"header"}
-				dir={dir}
-				sx={{
-					zIndex: 1000,
-					display: "flex",
-					flexWrap: {xs: "wrap", md: "noWrap"},
-					alignItems: "center",
-					justifyContent: "space-between",
+		<Box
+			component={"header"}
+			dir={dir}
+			sx={{
+				zIndex: 1000,
+				display: "flex",
+				flexWrap: {xs: "wrap", md: "noWrap"},
+				alignItems: "center",
+				justifyContent: "space-between",
+				background:
+					mode === "dark"
+						? "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)"
+						: "primary.paper",
+				padding: "10px 20px",
+				boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+				position: "relative",
+				overflow: "hidden",
+				"&::before": {
+					content: '""',
+					position: "absolute",
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
 					background:
-						mode === "dark"
-							? "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)"
-							: "#fcf3f3",
-					padding: "10px 20px",
-					boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-					position: "relative",
-					overflow: "hidden",
-					"&::before": {
-						content: '""',
-						position: "absolute",
-						top: 0,
-						left: 0,
-						right: 0,
-						bottom: 0,
-						background:
-							'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
-						opacity: 0.1,
-					},
+						'url("data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="%23ffffff" fill-opacity="0.05" fill-rule="evenodd"/%3E%3C/svg%3E")',
+					opacity: 0.1,
+				},
+			}}
+		>
+			<Toolbar
+				aria-label='الصفحه الرئيسية'
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+					alignItems: "center",
+					flexWrap: {xs: "wrap", md: "nowrap"},
+					color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 				}}
 			>
-				<Toolbar
-					aria-label='الصفحه الرئيسية'
-					sx={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						flexWrap: {xs: "wrap", md: "nowrap"},
-						color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
-					}}
-				>
-					<Tooltip title='الصفحة الرئيسية - صفقه' arrow>
-						<li
-							style={{
-								color:
-									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
-							}}
-							className='nav-item mx-3'
-						>
-							<NavLink
-								style={{
-									color:
-										theme.palette.mode === "dark"
-											? "#e2e8f0"
-											: "#4a5568",
-								}}
-								className={` ${isActive(path.Home) && "text-danger"}`}
-								aria-current='page'
-								to={path.Home}
-								aria-label='الصفحة الرئيسية - صفقه'
-							>
-								{fontAwesomeIcon.home}
-								<span className='visually-hidden'>الصفحة الرئيسية</span>
-							</NavLink>
-						</li>
-					</Tooltip>
-					<Tooltip title='المفضله - صفقه' arrow>
-						<li className='nav-item mx-3'>
-							<NavLink
-								style={{
-									color:
-										theme.palette.mode === "dark"
-											? "#e2e8f0"
-											: "#4a5568",
-								}}
-								className={` ${isActive(path.Favorite) && "text-danger"}`}
-								aria-current='page'
-								to={path.Favorite}
-								aria-label='المفضله - صفقه'
-							>
-								{fontAwesomeIcon.Favorite}
-							</NavLink>
-						</li>
-					</Tooltip>
-
-					{auth && isAdmin && (
-						<Tooltip title={t("users-management")} arrow>
-							<li className='nav-item'>
-								<NavLink
-									style={{
-										color:
-											theme.palette.mode === "dark"
-												? "#e2e8f0"
-												: "#4a5568",
-									}}
-									className={`${
-										isActive(path.UsersManagement) && "text-danger "
-									} nav-link`}
-									aria-current='page'
-									aria-label={t("users-management")}
-									to={path.UsersManagement}
-								>
-									{fontAwesomeIcon.userGear}
-								</NavLink>
-							</li>
-						</Tooltip>
-					)}
-					<Box
-						onMouseEnter={
-							!isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined
-						}
-						onMouseLeave={!isMobile ? () => setMegaAnchor(null) : undefined}
-						onClick={
-							isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined
-						}
-						sx={{
-							cursor: "pointer",
-							display: "flex",
-							alignItems: "center",
-							px: 1,
+				<Tooltip title='الصفحة الرئيسية - صفقه' arrow>
+					<li
+						style={{
+							color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 						}}
-						aria-haspopup='true'
-						aria-expanded={openMega ? "true" : "false"}
+						className='nav-item mx-3'
 					>
-						<Typography>{t("links.products")}</Typography>
-						<KeyboardArrowDownIcon
-							sx={{
-								transition: "transform 0.3s",
-								transform: openMega ? "rotate(180deg)" : "rotate(0deg)",
-							}}
-						/>
-
-						<MegaMenu
-							anchorEl={megaAnchor}
-							open={openMega}
-							onClose={() => setMegaAnchor(null)}
-							categories={productsAndCategories}
-						/>
-					</Box>
-
-					<li className='nav-item' role='none'>
 						<NavLink
 							style={{
 								color:
 									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 							}}
-							className={`${
-								isActive(path.About) && "text-danger fw-bold"
-							} nav-link`}
-							aria-current={isActive(path.About) ? "page" : undefined}
-							to={path.About}
-							aria-label='من نحن - معلومات عن موقع صفقه'
-						>
-							{t("links.about")}
-						</NavLink>
-					</li>
-					<li className='nav-item' role='none'>
-						<NavLink
-							style={{
-								color:
-									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
-							}}
-							className={`${
-								isActive(path.Contact) && "text-danger "
-							} nav-link`}
-							aria-current={isActive(path.Contact) ? "page" : undefined}
-							to={path.Contact}
-							aria-label='اتصل بنا - خدمة عملاء موقع صفقه'
-						>
-							{t("links.contact")}
-						</NavLink>
-					</li>
-				</Toolbar>
-
-				<Box
-					sx={{
-						alignItems: "center",
-						display: "flex",
-						justifyContent: "space-around",
-						flexWrap: isMobile ? "wrap" : "nowrap",
-						gap: 1,
-					}}
-				>
-					{/* Left Side: Theme Toggle */}
-					<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-						<Tooltip
-							title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
-						>
-							<motion.div
-								whileHover={{scale: 1.1}}
-								whileTap={{scale: 0.95}}
-							>
-								<FormGroup>
-									<FormControlLabel
-										checked={mode === "dark"}
-										onChange={handleThemeChange}
-										control={<GradientSwitch sx={{m: 0}} />}
-										label=''
-									/>
-								</FormGroup>
-							</motion.div>
-						</Tooltip>
-
-						<motion.div
-							key={mode}
-							initial={{opacity: 0, scale: 0.8}}
-							animate={{opacity: 1, scale: 1}}
-							exit={{opacity: 0, scale: 0.8}}
-							transition={{duration: 0.3}}
-						>
-							{mode === "dark" ? (
-								<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
-							) : (
-								<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
-							)}
-						</motion.div>
-					</Box>
-					{/* Right Side: Language Switcher */}
-					<motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
-						<LanguageSwitcher />
-					</motion.div>
-					{/* Logo */}
-					<motion.div whileHover={{scale: 1.05}}>
-						<Link
+							className={` ${isActive(path.Home) && "text-danger"}`}
+							aria-current='page'
 							to={path.Home}
-							style={{
-								textDecoration: "none",
-							}}
+							aria-label='الصفحة الرئيسية - صفقه'
 						>
-							<LogoText variant='h1'>صـفـقـه</LogoText>
-						</Link>
-					</motion.div>
-					<li className='nav-item' role='none'>
-						{!isLoggedIn ? (
-							<Button
-								variant='contained'
-								color='primary'
-								onClick={() => navigate(path.Login)}
-								sx={{
-									borderRadius: "30px",
-									fontWeight: "bold",
-									backgroundColor: "#4FC3F7",
-									color: "#1A1E22",
-									"&:hover": {
-										backgroundColor: "#81D4FA",
-									},
-								}}
-								aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
-							>
-								{t("links.login")}
-							</Button>
-						) : (
-							isLoggedIn && <AccountMenu logout={logout} />
-						)}
+							{fontAwesomeIcon.home}
+							<span className='visually-hidden'>الصفحة الرئيسية</span>
+						</NavLink>
 					</li>
-				</Box>
-			</Box>
-			{/* <Link
-						target='_blank'
-						rel='noopener noreferrer'
-						to='https://anismhamid.github.io/shok-habena-server-documentation/'
-					>
-						<Chip
-							variant='outlined'
-							sx={{
-								fontWeight: "bold",
-								boxShadow: 10,
-								"&:hover": {
-									transform: "scale(1.04)",
-								},
-								color: "#5B9601",
+				</Tooltip>
+				<Tooltip title='المفضله - صفقه' arrow>
+					<li className='nav-item mx-3'>
+						<NavLink
+							style={{
+								color:
+									theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 							}}
-							// color='warning'
-							label='docs'
-						/>
-					</Link> */}
+							className={` ${isActive(path.Favorite) && "text-danger"}`}
+							aria-current='page'
+							to={path.Favorite}
+							aria-label='المفضله - صفقه'
+						>
+							{fontAwesomeIcon.Favorite}
+						</NavLink>
+					</li>
+				</Tooltip>
+
+				{auth && isAdmin && (
+					<Tooltip title={t("users-management")} arrow>
+						<li className='nav-item'>
+							<NavLink
+								style={{
+									color:
+										theme.palette.mode === "dark"
+											? "#e2e8f0"
+											: "#4a5568",
+								}}
+								className={`${
+									isActive(path.UsersManagement) && "text-danger "
+								} nav-link`}
+								aria-current='page'
+								aria-label={t("users-management")}
+								to={path.UsersManagement}
+							>
+								{fontAwesomeIcon.userGear}
+							</NavLink>
+						</li>
+					</Tooltip>
+				)}
+				<Box
+					onMouseEnter={
+						!isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined
+					}
+					onMouseLeave={!isMobile ? () => setMegaAnchor(null) : undefined}
+					onClick={isMobile ? (e) => setMegaAnchor(e.currentTarget) : undefined}
+					sx={{
+						cursor: "pointer",
+						display: "flex",
+						alignItems: "center",
+						px: 1,
+					}}
+					aria-haspopup='true'
+					aria-expanded={openMega ? "true" : "false"}
+				>
+					<Typography>{t("links.products")}</Typography>
+					<KeyboardArrowDownIcon
+						sx={{
+							transition: "transform 0.3s",
+							transform: openMega ? "rotate(180deg)" : "rotate(0deg)",
+						}}
+					/>
+
+					<MegaMenu
+						anchorEl={megaAnchor}
+						open={openMega}
+						onClose={() => setMegaAnchor(null)}
+						categories={productsAndCategories}
+					/>
+				</Box>
+
+				<li className='nav-item' role='none'>
+					<NavLink
+						style={{
+							color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+						}}
+						className={`${
+							isActive(path.About) && "text-danger fw-bold"
+						} nav-link`}
+						aria-current={isActive(path.About) ? "page" : undefined}
+						to={path.About}
+						aria-label='من نحن - معلومات عن موقع صفقه'
+					>
+						{t("links.about")}
+					</NavLink>
+				</li>
+				<li className='nav-item' role='none'>
+					<NavLink
+						style={{
+							color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+						}}
+						className={`${isActive(path.Contact) && "text-danger "} nav-link`}
+						aria-current={isActive(path.Contact) ? "page" : undefined}
+						to={path.Contact}
+						aria-label='اتصل بنا - خدمة عملاء موقع صفقه'
+					>
+						{t("links.contact")}
+					</NavLink>
+				</li>
+				<li className='nav-item' role='none'>
+					<NavLink
+						style={{
+							color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+						}}
+						className={`${
+							isActive(`${path.myCustomerProfile}/${auth.slug}`) &&
+							"text-danger "
+						} nav-link`}
+						aria-current={isActive(path.Contact) ? "page" : undefined}
+						to={`${path.myCustomerProfile}/${auth.slug}`}
+						aria-label='صفحة اعلاناتي - اعلاناتي موقع صفقه'
+					>
+						{t("footer.myListings")}
+					</NavLink>
+				</li>
+				<li className='nav-item' role='none'>
+					<NavLink
+						style={{
+							color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
+						}}
+						className={`${
+							isActive(path.SellingHelp) && "text-danger "
+						} nav-link`}
+						aria-current={isActive(path.SellingHelp) ? "page" : undefined}
+						to={path.SellingHelp}
+						aria-label='صفحة مساعده - مساعده موقع صفقه'
+					>
+						{t("help")}
+					</NavLink>
+				</li>
+			</Toolbar>
+
+			<Box
+				sx={{
+					alignItems: "center",
+					display: "flex",
+					justifyContent: "space-around",
+					flexWrap: isMobile ? "wrap" : "nowrap",
+					gap: 1,
+				}}
+			>
+				{/* Left Side: Theme Toggle */}
+				<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+					<Tooltip title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}>
+						<motion.div whileHover={{scale: 1.1}} whileTap={{scale: 0.95}}>
+							<FormGroup>
+								<FormControlLabel
+									checked={mode === "dark"}
+									onChange={handleThemeChange}
+									control={<GradientSwitch sx={{m: 0}} />}
+									label=''
+								/>
+							</FormGroup>
+						</motion.div>
+					</Tooltip>
+
+					<motion.div
+						key={mode}
+						initial={{opacity: 0, scale: 0.8}}
+						animate={{opacity: 1, scale: 1}}
+						exit={{opacity: 0, scale: 0.8}}
+						transition={{duration: 0.3}}
+					>
+						{mode === "dark" ? (
+							<Brightness4 sx={{color: "#ffffff", fontSize: 28}} />
+						) : (
+							<Brightness7 sx={{color: "#ffd000", fontSize: 28}} />
+						)}
+					</motion.div>
+				</Box>
+				{/* Right Side: Language Switcher */}
+				<motion.div whileHover={{scale: 1.05}} whileTap={{scale: 0.95}}>
+					<LanguageSwitcher />
+				</motion.div>
+				{/* Logo */}
+				<motion.div whileHover={{scale: 1.05}}>
+					<Link
+						to={path.Home}
+						style={{
+							textDecoration: "none",
+						}}
+					>
+						<LogoText variant='h1'>صـفـقـه</LogoText>
+					</Link>
+				</motion.div>
+				<li className='nav-item' role='none'>
+					{!isLoggedIn ? (
+						<Button
+							variant='contained'
+							color='primary'
+							onClick={() => navigate(path.Login)}
+							sx={{
+								borderRadius: "30px",
+								fontWeight: "bold",
+								backgroundColor: "#4FC3F7",
+								color: "#1A1E22",
+								"&:hover": {
+									backgroundColor: "#81D4FA",
+								},
+							}}
+							aria-label='تسجيل الدخول إلى حسابك في موقع صفقه'
+						>
+							{t("links.login")}
+						</Button>
+					) : (
+						isLoggedIn && <AccountMenu logout={logout} />
+					)}
+				</li>
+			</Box>
 		</Box>
 	);
 };

@@ -6,10 +6,9 @@ import {useUser} from "../../context/useUSer";
 import {path} from "../../routes/routes";
 
 interface FooterProps {
-	isSeller: boolean;
 }
 
-const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
+const Footer: FunctionComponent<FooterProps> = () => {
 	const {t} = useTranslation();
 	const {auth} = useUser();
 
@@ -23,7 +22,7 @@ const Footer: FunctionComponent<FooterProps> = ({isSeller}) => {
 	];
 
 	const socialLinks = [
-		{label: "Facebook", href: "https://www.facebook.com/shokshknini/?locale=ar_AR"},
+		{label: "Facebook", href: "https://www.facebook.com/anis.mhamid.2025/"},
 		{label: "Instagram", href: "https://instagram.com"},
 		{label: "TikTok", href: "https://www.tiktok.com"},
 	];

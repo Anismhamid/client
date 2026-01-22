@@ -31,6 +31,9 @@ export enum path {
 	Login = "/login",
 	Register = "/register",
 	Profile = "/profile",
+	SellingHelp = "/help/selling",
+	SafetyHelp = "/help/safety",
+	DisputesHelp = "/help/disputes",
 	Favorite = "/favorites",
 	DicountAndOfers = "/dicounts-and-offers",
 	CustomerProfile = "/users/customer/:slug",
@@ -38,7 +41,6 @@ export enum path {
 	UsersManagement = "/usersManagement",
 	WebSiteAdmins = "/admins",
 	Messages = "/messages",
-	DeliveryPage = "/delivery",
 
 	// Vehicles Pages
 	Cars = "/category/cars",

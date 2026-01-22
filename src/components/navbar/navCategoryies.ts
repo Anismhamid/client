@@ -1,5 +1,3 @@
-import {ReactElement} from "react";
-import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {productsPathes} from "../../routes/routes";
 
 export interface SubCategory {

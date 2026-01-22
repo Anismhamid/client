@@ -33,19 +33,15 @@ import {
 } from "@mui/icons-material";
 import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
+import {path} from "../../routes/routes";
 
 interface ContactProps {}
 
-/**
- * صفحة الاتصال بموقع صفقة للبيع والشراء بين المستخدمين
- * @returns معلومات الاتصال
- */
 const Contact: FunctionComponent<ContactProps> = () => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 	const direction = handleRTL();
 
-	// تصنيفات المنتجات الرئيسية للعرض
 	const mainCategories = [
 		{name: t("categories.electronics.label"), icon: "📱", color: "primary"},
 		{name: t("categories.cars.label"), icon: "🚗", color: "secondary"},
@@ -57,7 +53,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 
 	return (
 		<Container maxWidth='lg' sx={{py: 6, direction}}>
-			{/* رأس الصفحة */}
+			{/* Header */}
 			<Box textAlign='center' mb={6}>
 				<Typography
 					variant='h2'
@@ -77,15 +73,15 @@ const Contact: FunctionComponent<ContactProps> = () => {
 					variant='h5'
 					color='text.secondary'
 					paragraph
-					sx={{maxWidth: 800, mx: "auto"}}
+					sx={{maxWidth: 700, mx: "auto"}}
 				>
 					{t(
 						"pages.contact.subtitle",
-						"منصة آمنة للبيع والشراء بين المستخدمين في مختلف التصنيفات",
+						"بيع وشراء بثقة وسرعة — كل صفقة فرصة جديدة لك!",
 					)}
 				</Typography>
 
-				{/* شعار التصنيفات */}
+				{/* Categories */}
 				<Box
 					display='flex'
 					justifyContent='center'
@@ -108,22 +104,21 @@ const Contact: FunctionComponent<ContactProps> = () => {
 
 			<Divider sx={{mb: 6}} />
 
-			{/* محتوى الصفحة */}
 			<Grid container spacing={4}>
-				{/* معلومات الدعم */}
+				{/* Support Section */}
 				<Grid size={{xs: 12, md: 6}}>
 					<Paper elevation={3} sx={{p: 4, height: "100%", borderRadius: 3}}>
 						<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
 							<SupportAgent color='primary' sx={{fontSize: 40, mr: 2}} />
 							<Typography variant='h4' fontWeight='bold'>
-								{t("pages.contact.supportTitle", "دعم صفقة")}
+								{t("pages.contact.supportTitle", "فريق الدعم")}
 							</Typography>
 						</Box>
 
 						<Typography variant='body1' paragraph color='text.secondary'>
 							{t(
 								"pages.contact.intro",
-								"نحن في منصة صفقة نؤمن بأن كل عملية بيع وشراء هي قصة نجاح. فريقنا متخصص في تقديم الدعم اللازم لضمان تجربة آمنة وسلسة لجميع المستخدمين.",
+								"نحن هنا لجعل تجربتك سلسة، آمنة، ومربحة. كل صفقة معنا تجربة نجاح!",
 							)}
 						</Typography>
 
@@ -135,14 +130,14 @@ const Contact: FunctionComponent<ContactProps> = () => {
 										<Typography variant='h6' fontWeight='bold'>
 											{t(
 												"pages.contact.securityTitle",
-												"الأمان أولاً",
+												"أمان مضمون",
 											)}
 										</Typography>
 									</Box>
 									<Typography variant='body2' color='text.secondary'>
 										{t(
 											"pages.contact.securityDesc",
-											"نضمن حماية بياناتك وتأمين معاملاتك من خلال أنظمة متطورة وفرق مراقبة متخصصة.",
+											"حماية بياناتك ومعاملاتك أولويتنا. أنظمة مراقبة حديثة وفريق متخصص دائمًا معك.",
 										)}
 									</Typography>
 								</CardContent>
@@ -159,7 +154,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 									<Typography variant='body2' color='text.secondary'>
 										{t(
 											"pages.contact.dealsDesc",
-											"نساعدك في إتمام صفقاتك بنجاح من خلال وساطة آمنة ومتابعة مستمرة حتى التسليم.",
+											"نوفر أدوات واتصالات تساعدك على إتمام صفقاتك بسرعة وثقة.",
 										)}
 									</Typography>
 								</CardContent>
@@ -168,11 +163,11 @@ const Contact: FunctionComponent<ContactProps> = () => {
 					</Paper>
 				</Grid>
 
-				{/* قنوات الاتصال */}
+				{/* Contact Channels */}
 				<Grid size={{xs: 12, md: 6}}>
 					<Paper elevation={3} sx={{p: 4, height: "100%", borderRadius: 3}}>
 						<Typography variant='h4' gutterBottom fontWeight='bold'>
-							{t("pages.contact.contactChannels", "قنوات الاتصال")}
+							{t("pages.contact.contactChannels", "تواصل معنا")}
 						</Typography>
 
 						<List sx={{mt: 3}}>
@@ -196,43 +191,12 @@ const Contact: FunctionComponent<ContactProps> = () => {
 									}
 									secondary={
 										<MuiLink
-											href='mailto:support@صفقة.com'
+											href='mailto:anesmhamed100@gmail.com'
 											color='primary'
 											underline='hover'
 											sx={{fontWeight: 500}}
 										>
-											support@صفقة.com
-										</MuiLink>
-									}
-								/>
-							</ListItem>
-
-							<ListItem
-								sx={{
-									py: 2,
-									borderBottom: `1px solid ${theme.palette.divider}`,
-								}}
-							>
-								<ListItemIcon>
-									<Email color='secondary' />
-								</ListItemIcon>
-								<ListItemText
-									primary={
-										<Typography variant='h6' fontWeight='medium'>
-											{t(
-												"pages.contact.salesEmail",
-												"المبيعات والتعاون",
-											)}
-										</Typography>
-									}
-									secondary={
-										<MuiLink
-											href='mailto:partners@صفقة.com'
-											color='secondary'
-											underline='hover'
-											sx={{fontWeight: 500}}
-										>
-											partners@صفقة.com
+											anesmhamed100@gmail.com
 										</MuiLink>
 									}
 								/>
@@ -250,18 +214,18 @@ const Contact: FunctionComponent<ContactProps> = () => {
 								<ListItemText
 									primary={
 										<Typography variant='h6' fontWeight='medium'>
-											{t("pages.contact.phone", "مركز الاتصال")}
+											{t("pages.contact.phone", "رقم الاتصال")}
 										</Typography>
 									}
 									secondary={
 										<Box>
 											<MuiLink
-												href='tel:+920000000'
+												href='tel:+972538346915'
 												color='primary'
 												underline='hover'
 												sx={{fontWeight: 500, display: "block"}}
 											>
-												920000000
+												0538346915
 											</MuiLink>
 											<Typography
 												variant='caption'
@@ -269,7 +233,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 											>
 												{t(
 													"pages.contact.phoneHours",
-													"متاح من 8 صباحاً إلى 12 منتصف الليل",
+													"8ص - 12م",
 												)}
 											</Typography>
 										</Box>
@@ -277,24 +241,21 @@ const Contact: FunctionComponent<ContactProps> = () => {
 								/>
 							</ListItem>
 
-							<ListItem sx={{py: 2}}>
+							<ListItem>
 								<ListItemIcon>
 									<LocationOn color='primary' />
 								</ListItemIcon>
 								<ListItemText
 									primary={
 										<Typography variant='h6' fontWeight='medium'>
-											{t(
-												"pages.contact.addressTitle",
-												"المقر الرئيسي",
-											)}
+											{t("pages.contact.addressTitle", "مقرنا")}
 										</Typography>
 									}
 									secondary={
 										<Typography sx={{fontWeight: 500}}>
 											{t(
 												"pages.contact.address",
-												"المملكة العربية السعودية - الرياض - حي العليا",
+												"صفقة منصة رقمية لبيع وشراء آمن بين المستخدمين",
 											)}
 										</Typography>
 									}
@@ -302,14 +263,23 @@ const Contact: FunctionComponent<ContactProps> = () => {
 							</ListItem>
 						</List>
 
-						<Box mt={4} textAlign='center'>
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "space-around",
+								gap: 1,
+							}}
+							mt={4}
+							textAlign='center'
+						>
 							<Button
 								variant='contained'
 								size='large'
 								startIcon={<ShoppingBag />}
 								component={RouterLink}
-								to='/sell'
-								sx={{mr: 2}}
+								to={path.Home}
+								sx={{height: 50}}
 							>
 								{t("pages.contact.startSelling", "ابدأ البيع")}
 							</Button>
@@ -318,7 +288,8 @@ const Contact: FunctionComponent<ContactProps> = () => {
 								size='large'
 								startIcon={<Category />}
 								component={RouterLink}
-								to='/categories'
+								to={path.Home}
+								sx={{height: 50}}
 							>
 								{t("pages.contact.browseCategories", "تصفح التصنيفات")}
 							</Button>
@@ -326,136 +297,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 					</Paper>
 				</Grid>
 
-				{/* ساعات العمل والمعلومات */}
-				<Grid size={{xs: 12, md: 6}}>
-					<Paper elevation={2} sx={{p: 4, borderRadius: 3}}>
-						<Box display='flex' alignItems='center' mb={3}>
-							<AccessTime color='primary' sx={{fontSize: 30, mr: 2}} />
-							<Typography variant='h5' fontWeight='bold'>
-								{t("pages.contact.workingHours", "ساعات العمل")}
-							</Typography>
-						</Box>
-
-						<Grid container spacing={2}>
-							<Grid size={{xs: 12, sm: 6}}>
-								<Typography
-									variant='body1'
-									fontWeight='bold'
-									color='primary'
-								>
-									{t("pages.contact.customerSupport", "دعم العملاء")}
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									{t(
-										"pages.contact.supportHours",
-										"24/7 على مدار الساعة",
-									)}
-								</Typography>
-							</Grid>
-							<Grid size={{xs: 12, sm: 6}}>
-								<Typography
-									variant='body1'
-									fontWeight='bold'
-									color='primary'
-								>
-									{t("pages.contact.salesTeam", "فريق المبيعات")}
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									{t(
-										"pages.contact.salesHours",
-										"8 ص - 8 م (توقيت الرياض)",
-									)}
-								</Typography>
-							</Grid>
-							<Grid size={{xs: 12, sm: 6}}>
-								<Typography
-									variant='body1'
-									fontWeight='bold'
-									color='primary'
-								>
-									{t("pages.contact.disputeResolution", "حل النزاعات")}
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									{t(
-										"pages.contact.disputeHours",
-										"9 ص - 6 م (أيام العمل)",
-									)}
-								</Typography>
-							</Grid>
-							<Grid size={{xs: 12, sm: 6}}>
-								<Typography
-									variant='body1'
-									fontWeight='bold'
-									color='primary'
-								>
-									{t("pages.contact.technicalSupport", "الدعم الفني")}
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									{t(
-										"pages.contact.techHours",
-										"10 ص - 10 م (كل الأيام)",
-									)}
-								</Typography>
-							</Grid>
-						</Grid>
-					</Paper>
-				</Grid>
-
-				{/* وسائل التواصل الاجتماعي */}
-				<Grid size={{xs: 12, md: 6}}>
-					<Paper
-						elevation={2}
-						sx={{p: 4, textAlign: "center", borderRadius: 3}}
-					>
-						<Typography variant='h5' gutterBottom fontWeight='bold'>
-							{t("pages.contact.followUs", "تابع أحدث الصفقات")}
-						</Typography>
-						<Typography variant='body2' color='text.secondary' paragraph>
-							{t(
-								"pages.contact.socialDesc",
-								"كن أول من يعرف عن الصفقات الحصرية والعروض الخاصة",
-							)}
-						</Typography>
-
-						<Stack
-							direction='row'
-							spacing={2}
-							justifyContent='center'
-							mt={3}
-							flexWrap='wrap'
-						>
-							{[
-								{name: "تويتر", color: "#1DA1F2", icon: "𝕏"},
-								{name: "سناب شات", color: "#FFFC00", icon: "👻"},
-								{name: "انستقرام", color: "#E4405F", icon: "📷"},
-								{name: "تيليجرام", color: "#26A5E4", icon: "✈️"},
-							].map((platform) => (
-								<Button
-									key={platform.name}
-									variant='contained'
-									sx={{
-										m: 1,
-										backgroundColor: platform.color,
-										"&:hover": {
-											backgroundColor: platform.color,
-											opacity: 0.9,
-										},
-										minWidth: 120,
-									}}
-									startIcon={
-										<span style={{fontSize: "1.2rem"}}>
-											{platform.icon}
-										</span>
-									}
-								>
-									{platform.name}
-								</Button>
-							))}
-						</Stack>
-					</Paper>
-				</Grid>
-
-				{/* قسم المساعدة السريعة */}
+				{/* Quick Help */}
 				<Grid size={{xs: 12}}>
 					<Paper elevation={3} sx={{p: 4, mt: 2, borderRadius: 3}}>
 						<Typography
@@ -464,7 +306,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 							fontWeight='bold'
 							textAlign='center'
 						>
-							{t("pages.contact.quickHelp", "مساعدتك السريعة مع صفقة")}
+							{t("pages.contact.quickHelp", "مساعدتك السريعة")}
 						</Typography>
 
 						<Grid container spacing={3} mt={2}>
@@ -477,7 +319,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 									startIcon={<span>💰</span>}
 									sx={{py: 2}}
 								>
-									{t("pages.contact.howToSell", "كيفة البيع على صفقة")}
+									{t("pages.contact.howToSell", "كيفية البيع")}
 								</Button>
 							</Grid>
 							<Grid size={{xs: 12, md: 4}}>
@@ -485,7 +327,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 									fullWidth
 									variant='outlined'
 									component={RouterLink}
-									to='/help/safety'
+									to={path.SafetyHelp}
 									startIcon={<span>🛡️</span>}
 									sx={{py: 2}}
 								>
@@ -497,7 +339,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 									fullWidth
 									variant='outlined'
 									component={RouterLink}
-									to='/help/disputes'
+									to={path.DisputesHelp}
 									startIcon={<span>⚖️</span>}
 									sx={{py: 2}}
 								>
@@ -508,7 +350,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 					</Paper>
 				</Grid>
 
-				{/* رسالة الشكر */}
+				{/* Thank You Note */}
 				<Grid size={{xs: 12}}>
 					<Box
 						textAlign='center'
@@ -520,13 +362,13 @@ const Contact: FunctionComponent<ContactProps> = () => {
 						<Typography variant='h6' color='white' paragraph>
 							{t(
 								"pages.contact.note",
-								"نتعهد بالرد على جميع استفساراتك خلال 4 ساعات عمل كحد أقصى",
+								"نرد على استفساراتك خلال 4 ساعات فقط!",
 							)}
 						</Typography>
 						<Typography variant='h5' color='white' fontWeight='bold'>
 							{t(
 								"pages.contact.thanks",
-								"شكراً لكونك جزءاً من مجتمع صفقة - حيث تتحول المنتجات المستعملة إلى فرص جديدة",
+								"شكراً لكونك جزءاً من مجتمع صفقة - حيث تتحول الصفقات إلى فرص!",
 							)}
 						</Typography>
 

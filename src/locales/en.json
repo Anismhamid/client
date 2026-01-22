@@ -2,7 +2,8 @@
 	"home": "Home",
 	"webPageName": "safqa website",
 	"bestOffers": "The best deals in one place",
-	"allRightsReserved":"All rights reserved.",
+	"allRightsReserved": "All rights reserved.",
+	"help": "Help",
 	"seller": "Published by",
 	"login": {
 		"email": "Email",
@@ -423,19 +424,59 @@
 			"download": "Download"
 		},
 		"contact": {
-			"title": "Contact Us",
-			"heading": "Sakhnini Market - Fruits & Vegetables",
-			"intro": "At 'Sakhnini Market', we pride ourselves on offering organic and fresh fruits and vegetables delivered directly to your doorstep, with a focus on quality and excellent service.",
-			"goal": "Our goal is to provide our customers with the healthiest fruits and vegetables while adhering to organic and sustainable farming principles. Join us for a healthy and delicious lifestyle.",
-			"team": "Get in Touch with the Sakhnini Market Team",
-			"teamDesc": "Our team is skilled and dedicated, always ready to help and answer any inquiries. Whether you want to learn more about our products, place an order, or discuss anything else – we are here for you.",
-			"contactInfo": "Contact Information:",
-			"email": "Email: support@fruitsandveg.com",
-			"phone": "Phone: 046310374",
-			"note": "We always welcome your inquiries. Our team works hard to ensure you receive the best service. Feel free to contact us anytime.",
-			"addressTitle": "Address",
-			"address": "If you wish to visit us in person, we are located at: Umm al-Fahm, Market Street",
-			"thanks": "Thank you for choosing us – we are happy to help you enjoy healthy, quality food!"
+			"title": "Safqa – Contact Us",
+			"subtitle": "Safe, fast, and reliable platform to buy and sell with confidence across all categories",
+
+			"supportTitle": "Safqa Support 24/7",
+			"intro": "At Safqa, every buy and sell is a new opportunity. Our team is always ready to ensure a smooth, secure, and seamless experience for every user.",
+
+			"securityTitle": "Top-Level Security",
+			"securityDesc": "Your data is our priority! We use advanced tech and monitoring systems to keep every transaction fully secure.",
+
+			"dealsTitle": "Successful Deals Every Time",
+			"dealsDesc": "Smart tools and expert guidance to help you close deals quickly, confidently, and stress-free.",
+
+			"contactChannels": "Contact Channels",
+
+			"supportEmail": "Customer Support",
+			"salesEmail": "Partnerships & Business Inquiries",
+
+			"phone": "Call Center",
+			"phoneHours": "Available 8 AM – 12 Midnight",
+
+			"addressTitle": "Platform Info",
+			"address": "Safqa is a fully digital marketplace—no physical office required",
+
+			"startSelling": "Start Selling Now",
+			"browseCategories": "Explore Top Categories",
+
+			"workingHours": "Operating Hours",
+
+			"customerSupport": "Customer Support",
+			"supportHours": "24/7 All Week",
+
+			"salesTeam": "Professional Sales Team",
+			"salesHours": "8 AM – 8 PM",
+
+			"disputeResolution": "Fast Dispute Resolution",
+			"disputeHours": "9 AM – 6 PM (Working Days)",
+
+			"technicalSupport": "Smart Technical Support",
+			"techHours": "10 AM – 10 PM (Daily)",
+
+			"followUs": "Follow the Latest Deals & Offers",
+			"socialDesc": "Be the first to know about exclusive offers and hot deals on Safqa",
+
+			"quickHelp": "Quick Help with Safqa",
+
+			"howToSell": "How to Sell Quickly & Easily",
+			"safetyTips": "Tips for Safe & Secure Transactions",
+			"resolveDisputes": "Resolve Disputes Smartly",
+
+			"note": "We commit to responding to every inquiry within 4 working hours",
+			"thanks": "Thanks for being part of the Safqa community! Here, used products turn into new opportunities for success",
+
+			"backToHome": "Back to Home"
 		},
 		"privacy": {
 			"title": "Privacy Policy",

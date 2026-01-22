@@ -22,6 +22,9 @@ import WebSiteAdmins from "../components/settings/WebSiteAdmins";
 import CustomerProfile from "../components/settings/CustomerProfile";
 import Favorite from "../components/pages/products/Favorite";
 import DiscountsAndOffers from "../components/pages/products/DiscountsAndOffers";
+import SellingHelp from "../components/pages/SellingHelp";
+import SafetyHelp from "../components/pages/SafetyHelp";
+import DisputesHelp from "../components/pages/DisputesHelp";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -33,6 +36,9 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Home} element={<Home />} />
 			<Route path={path.Login} element={<Login />} />
 			<Route path={path.Profile} element={<Profile />} />
+			<Route path={path.SellingHelp} element={<SellingHelp />} />
+			<Route path={path.SafetyHelp} element={<SafetyHelp />} />
+			<Route path={path.DisputesHelp} element={<DisputesHelp />} />
 			<Route path={path.CustomerProfile} element={<CustomerProfile />} />
 			<Route path={`${path.Profile}/:id`} element={<Profile />} />
 			<Route path={`${path.Favorite}`} element={<Favorite />} />

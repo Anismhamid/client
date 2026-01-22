@@ -90,8 +90,7 @@ const ChipNavigation = () => {
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							gap: 1,
-							minWidth: 90,
+							minWidth: 140,
 						}}
 					>
 						<NavLink to={category.path} style={{textDecoration: "none"}}>
@@ -99,8 +98,8 @@ const ChipNavigation = () => {
 								<Chip
 									clickable
 									sx={{
-										width: 80,
-										height: 80,
+										width: 70,
+										height: 70,
 										borderRadius: "50%",
 										backgroundColor: isActive
 											? "primary.main"
@@ -111,13 +110,14 @@ const ChipNavigation = () => {
 											? "primary.main"
 											: "divider",
 
-										transition: "all 0.1s ease",
+										transition: "all 0.3s ease",
 										display: "flex",
 										justifyContent: "center",
 										alignItems: "center",
+										mt: 1,
 
 										"&:hover": {
-											transform: "scale(1.08)",
+											transform: "scale(1.1)",
 											boxShadow: 5,
 										},
 									}}
@@ -127,9 +127,8 @@ const ChipNavigation = () => {
 											src={category.icon}
 											alt={category.labelKey}
 											sx={{
-												width: 50,
-												height: 50,
-												objectFit: "contain",
+												width: 43,
+												objectFit: "cover",
 											}}
 										/>
 									}

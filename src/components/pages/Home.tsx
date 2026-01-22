@@ -468,7 +468,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 				<ChepNavigation />
 
 				{!searchQuery && <DiscountsAndOffers />}
-
+				<SearchBox
+					searchQuery={searchQuery}
+					text='🔍 ابحث عن منتج، سعر، أو تصنيف...'
+					setSearchQuery={setSearchQuery}
+				/>
 				{/* Search and Filter Section */}
 				<Box className='container'>
 					<motion.div
@@ -481,7 +485,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								position: "sticky",
 								zIndex: 100,
 								top: 64,
-								backgroundColor: alpha("#ffffff", 0.95),
+								backgroundColor: "primary.paper",
 								backdropFilter: "blur(10px)",
 								py: 3,
 								px: {xs: 2, md: 3},
@@ -494,13 +498,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							<motion.div
 								whileHover={!isMobile ? {scale: 1.01} : undefined}
 								transition={{type: "spring", stiffness: 400}}
-							>
-								<SearchBox
-									searchQuery={searchQuery}
-									text='🔍 ابحث عن منتج، سعر، أو تصنيف...'
-									setSearchQuery={setSearchQuery}
-								/>
-							</motion.div>
+							></motion.div>
 
 							{/* Categories Filter Section */}
 							<Box sx={{mt: 3}}>
@@ -546,7 +544,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 												color:
 													searchQuery === ""
 														? "white"
-														: "text.primary",
+														: "primary",
 												height: 40,
 												px: 2,
 												cursor: "pointer",
