@@ -463,7 +463,12 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 				<label htmlFor='image' className='form-label'>
 					{t("modals.addProductModal.image")}
 				</label>
-				<input type='file' accept='image/*' onChange={handleImageChange} />
+				<input
+					capture='environment'
+					type='file'
+					accept='image/*'
+					onChange={handleImageChange}
+				/>
 
 				{/* Preview الصورة */}
 				{(imageFile || !imageData?.url) && (
@@ -485,7 +490,6 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 					role='switch'
 					id='in_stock'
 					name='in_stock'
-					capture='environment'
 					checked={formik.values.in_stock}
 					onChange={(e) => formik.setFieldValue("in_stock", e.target.checked)}
 				/>
