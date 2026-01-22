@@ -460,38 +460,20 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 
 			{/* Image Upload */}
 			<div className='mb-3'>
-				{imageData?.url && (
-					<Box sx={{mb: 2}}>
-						<img
-							src={imageData.url}
-							alt='product'
-							style={{width: 150, height: 150, objectFit: "cover"}}
-						/>
-					</Box>
-				)}
 				<label htmlFor='image' className='form-label'>
 					{t("modals.addProductModal.image")}
 				</label>
 				<input type='file' accept='image/*' onChange={handleImageChange} />
 
 				{/* Preview الصورة */}
-				{(imageFile || imageData?.url) && (
-					<div className='mt-3'>
+				{(imageFile || !imageData?.url) && (
+					<Box sx={{mb: 2}}>
 						<img
-							src={
-								imageFile
-									? URL.createObjectURL(imageFile)
-									: imageData?.url
-							}
-							alt='Preview'
-							style={{
-								maxWidth: "200px",
-								maxHeight: "200px",
-								borderRadius: "8px",
-								border: "1px solid #ccc",
-							}}
+							src={imageData?.url}
+							alt='product'
+							style={{width: 65, height: 65, objectFit: "cover"}}
 						/>
-					</div>
+					</Box>
 				)}
 			</div>
 
@@ -503,6 +485,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 					role='switch'
 					id='in_stock'
 					name='in_stock'
+					capture='environment'
 					checked={formik.values.in_stock}
 					onChange={(e) => formik.setFieldValue("in_stock", e.target.checked)}
 				/>
