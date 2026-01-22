@@ -181,7 +181,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						<CardMedia
 							component='img'
 							loading='lazy'
-							image={product.image}
+							image={product.image.url}
 							alt={generateImageAlt(product.product_name, category)}
 							title={product.product_name}
 							sx={{
