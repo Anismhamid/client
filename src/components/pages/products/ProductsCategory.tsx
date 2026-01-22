@@ -10,10 +10,10 @@ import {deleteProduct, getProductsByCategory} from "../../../services/productsSe
 import {Products} from "../../../interfaces/Products";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
-import UpdateProductModal from "../../../atoms/productsManage/UpdateProductModal";
+import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {Box,Button,Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
 import {Col, Row} from "react-bootstrap";
@@ -151,25 +151,17 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	useEffect(() => {
 		socket.on("product:quantity_in_stock", (newProduct: Products) => {
 			setProducts((prev) => {
-				const exists = prev.some(
-					(p) => p._id === newProduct._id,
-				);
+				const exists = prev.some((p) => p._id === newProduct._id);
 				if (exists) {
-					return prev.map((p) =>
-						p._id === newProduct._id ? newProduct : p,
-					);
+					return prev.map((p) => (p._id === newProduct._id ? newProduct : p));
 				}
 				return [newProduct, ...prev];
 			});
 
 			setVisibleProducts((prev) => {
-				const exists = prev.some(
-					(p) => p._id === newProduct._id,
-				);
+				const exists = prev.some((p) => p._id === newProduct._id);
 				if (exists) {
-					return prev.map((p) =>
-						p._id === newProduct._id ? newProduct : p,
-					);
+					return prev.map((p) => (p._id === newProduct._id ? newProduct : p));
 				}
 				return [newProduct, ...prev];
 			});
@@ -242,7 +234,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 									return (
 										<Col
 											key={product._id}
-											style={{marginBlock: 10, border: 1,minHeight:"max-content"}}
+											style={{
+												marginBlock: 10,
+												border: 1,
+												minHeight: "max-content",
+											}}
 											xs={6}
 											md={4}
 											xl={2}

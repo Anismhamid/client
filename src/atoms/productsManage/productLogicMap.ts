@@ -21,6 +21,7 @@ export const categoriesLogic = {
 			{name: "brand", type: "text"},
 			{name: "material", type: "text"},
 			{name: "powerWatts", type: "number"},
+			{name: "location", type: "text"},
 		],
 
 		storage: [

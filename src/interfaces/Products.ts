@@ -31,7 +31,7 @@ export interface Products {
 export const initialProductValue: Partial<Products> = {
 	seller: {name: "", slug: "", sellerId: ""},
 	product_name: "",
-	category: "" as CategoryValue,
+	category: "House",
 	subcategory: "",
 	price: 0,
 	description: "",

@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
-import UpdateProductModal from "../../atoms/productsManage/UpdateProductModal";
+import UpdateProductModal from "../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
@@ -29,7 +29,7 @@ import {useTranslation} from "react-i18next";
 import {productsAndCategories} from "../navbar/navCategoryies";
 import {motion, AnimatePresence} from "framer-motion";
 import ChepNavigation from "../navbar/ChepNavigation";
-import AddProductModal from "../../atoms/productsManage/addProduct/AddProdutModal";
+import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/AddProdutModal";
 
 interface HomeProps {}
 

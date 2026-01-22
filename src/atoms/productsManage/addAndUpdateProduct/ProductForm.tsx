@@ -1,6 +1,6 @@
 import {Box, Button} from "@mui/material";
 import {FormikProps} from "formik";
-import {FunctionComponent, useState, useEffect, useMemo} from "react";
+import {FunctionComponent, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
@@ -10,16 +10,22 @@ import {categoriesLogic, CategoryValue} from "../productLogicMap";
 import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {LoadingButton} from "@mui/lab";
 
-interface NewProductFormProps {
+interface ProductFormProps {
 	formik: FormikProps<Products>;
 	imageFile: File | null;
 	setImageFile: (file: File | null) => void;
 	imageData: {url: string; publicId: string} | null;
 	setImageData: (data: {url: string; publicId: string} | null) => void;
 	onHide: () => void;
+	// imageFile: File | null;
+	// setImageFile: (f: File | null) => void;
+	// imageData: string;
+	// setImageData: (v: string) => void;
+	// onHide: () => void;
+	mode?: "add" | "update";
 }
 
-interface DynamicField {
+export interface DynamicField {
 	name: string;
 	type: "text" | "number" | "select" | "boolean" | "date";
 	required?: boolean;
@@ -28,81 +34,38 @@ interface DynamicField {
 	step?: number;
 }
 
-const NewProductForm: FunctionComponent<NewProductFormProps> = ({
+const ProductForm: FunctionComponent<ProductFormProps> = ({
 	formik,
 	setImageData,
 	setImageFile,
 	onHide,
+	imageData,
+	imageFile,
+	mode,
 }) => {
 	const {t} = useTranslation();
-	const [imageKey, setImageKey] = useState(0);
-	const [selectedSubcategory, setSelectedSubcategory] = useState<string>(
-		formik.values.subcategory || "",
-	);
+	// const [imageKey, setImageKey] = useState(0);
+	const selectedSubcategory = formik.values.subcategory;
+	// const [selectedSubcategory, setSelectedSubcategory] = useState(...)
 
 	useEffect(() => {
 		if (!formik.values.category) return;
 
 		const category = formik.values.category as keyof typeof categoriesLogic;
+		const subcategories = Object.keys(categoriesLogic[category] || []);
 
-		const subcat = selectedSubcategory || Object.keys(categoriesLogic[category])[0];
-
-		const fields: DynamicField[] =
-			categoriesLogic[category][
-				subcat as keyof (typeof categoriesLogic)[typeof category]
-			] || [];
-
-		// allowed fields
-		const allowedFields = new Set<string>(fields.map((f) => f.name));
-
-		// product base fields
-		[
-			"product_name",
-			"category",
-			"subcategory",
-			"type",
-			"price",
-			"description",
-			"image",
-			"sale",
-			"discount",
-			"in_stock",
-			"location",
-		].forEach((f) => allowedFields.add(f));
-
-		// delete the unallowed fields
-		Object.keys(formik.values).forEach((key) => {
-			if (!allowedFields.has(key)) {
-				formik.setFieldValue(key, undefined);
-			}
-		});
-
-		// setting the default values for new fields
-		fields.forEach((field) => {
-			if (formik.values[field.name] === undefined) {
-				switch (field.type) {
-					case "boolean":
-						formik.setFieldValue(field.name, false);
-						break;
-					case "number":
-						formik.setFieldValue(field.name, 0);
-						break;
-					default:
-						formik.setFieldValue(field.name, "");
-				}
-			}
-		});
-	}, [formik.values.category, selectedSubcategory]);
-
-	useEffect(() => {
-		if (formik.values.subcategory !== selectedSubcategory) {
-			setSelectedSubcategory(formik.values.subcategory || "");
+		// ADD → auto select
+		if (mode === "add" && !formik.values.subcategory) {
+			const firstSubcat = subcategories[0] || "";
+			formik.setFieldValue("subcategory", firstSubcat);
+			formik.setFieldValue("type", firstSubcat);
 		}
-	}, [formik.values.subcategory]);
+	}, [formik.values.category, mode]);
 
 	const getAvailableSubcategories = (): string[] => {
-		const category = formik.values.category;
-		if (!category || !categoriesLogic[category]) return [];
+		const category = formik.values.category as CategoryValue;
+		if (!category) return [];
+
 		return Object.keys(categoriesLogic[category]);
 	};
 
@@ -112,14 +75,15 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 	};
 
 	const getDynamicFields = (): DynamicField[] => {
-		const category = formik.values.category;
-		if (!category || !categoriesLogic[category]) return [];
+		const category = formik.values.category as CategoryValue;
+		if (!category) return [];
 
-		const subcat = selectedSubcategory || Object.keys(categoriesLogic[category])[0];
-		// نؤكد لـ TS أن subcat هو مفتاح موجود في categoriesLogic[category]
-		return (
-			(categoriesLogic[category] as Record<string, DynamicField[]>)[subcat] || []
-		);
+		const subcat = formik.values
+			.subcategory as keyof (typeof categoriesLogic)[CategoryValue];
+
+		if (!subcat) return [];
+
+		return categoriesLogic[category][subcat] || [];
 	};
 
 	// handling category change
@@ -127,22 +91,15 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 		const newCategory = e.target.value as CategoryValue;
 		formik.setFieldValue("category", newCategory);
 
-		const firstSubcat = Object.keys(categoriesLogic[newCategory] || {})[0] || "";
+		const firstSubcat = Object.keys(categoriesLogic[newCategory])[0] || "";
 		formik.setFieldValue("subcategory", firstSubcat);
-
-		// type = current subcategory
 		formik.setFieldValue("type", firstSubcat);
-
-		setSelectedSubcategory(firstSubcat);
 	};
 
 	const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const newSubcategory = e.target.value;
-		setSelectedSubcategory(newSubcategory);
-		formik.setFieldValue("subcategory", newSubcategory);
-
-		// the type needs to change with the subcategory.
-		formik.setFieldValue("type", newSubcategory);
+		const newSubcat = e.target.value;
+		formik.setFieldValue("subcategory", newSubcat);
+		formik.setFieldValue("type", newSubcat);
 	};
 
 	const availableSubcategories = useMemo(
@@ -490,29 +447,43 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 					{t("modals.addProductModal.image")}
 				</label>
 				<input
-					key={imageKey}
 					type='file'
 					accept='image/*'
 					onChange={async (e) => {
-						try {
-							if (!e.target.files?.[0]) return;
-							const file = e.target.files[0];
-							setImageFile(file);
+						if (!e.target.files?.[0]) return;
+
+						const file = e.target.files[0];
+						setImageFile(file);
+
+						if (mode === "add") {
 							const uploaded = await uploadImage(file);
 							setImageData(uploaded);
 							formik.setFieldValue("image", uploaded.url);
-						} catch (error) {
-							console.error("Image upload error:", error);
-						} finally {
-							setImageKey((prev) => prev + 1);
 						}
 					}}
-					className='form-control'
-					id='image'
 				/>
+				{/* عرض الصورة */}
+				{(imageFile || imageData) && (
+					<div className='mt-3'>
+						<img
+							src={
+								imageFile
+									? URL.createObjectURL(imageFile)
+									: imageData?.url
+							}
+							alt='Preview'
+							style={{
+								maxWidth: "200px",
+								maxHeight: "200px",
+								borderRadius: "8px",
+								border: "1px solid #ccc",
+							}}
+						/>
+					</div>
+				)}
 			</div>
 
-			{/* Quantity in Stock */}
+			{/*in Stock */}
 			<div className='form-check form-switch'>
 				<input
 					className='form-check-input'
@@ -626,11 +597,13 @@ const NewProductForm: FunctionComponent<NewProductFormProps> = ({
 						},
 					}}
 				>
-					{!formik.isSubmitting && t("modals.addProductModal.addProduct")}
+					{mode === "add" && !formik.isSubmitting
+						? t("modals.addProductModal.addProduct")
+						: t("modals.updateProductModal.updateButton")}
 				</LoadingButton>
 			</Box>
 		</form>
 	);
 };
 
-export default NewProductForm;
+export default ProductForm;

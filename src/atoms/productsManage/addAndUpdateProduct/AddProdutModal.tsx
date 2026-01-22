@@ -2,7 +2,7 @@ import {FunctionComponent} from "react";
 import {Modal, ModalHeader} from "react-bootstrap";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import NewProductForm from "./NewProductForm";
+import NewProductForm from "./ProductForm";
 import useAddProductFormik from "../../../hooks/useAddProductFormik";
 
 interface AddProdutModalProps {
@@ -32,6 +32,7 @@ const AddProductModal: FunctionComponent<AddProdutModalProps> = ({show, onHide})
 						imageData={imageData}
 						setImageData={setImageData}
 						onHide={onHide}
+						mode='add'
 					/>
 				</div>
 			</Modal.Body>
