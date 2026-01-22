@@ -18,7 +18,7 @@ const useAddProductFormik = (onHide: () => void) => {
 	const formik = useFormik<Products>({
 		initialValues: {
 			product_name: "",
-			image: "",
+			image: {url: "", publicId: ""},
 			category: "House",
 			subcategory: "",
 			type: "",
@@ -56,12 +56,18 @@ const useAddProductFormik = (onHide: () => void) => {
 
 				if (imageFile && !imageData) {
 					uploadedImage = await uploadImage(imageFile);
-					setImageData(uploadedImage);
+					setImageData({
+						url: uploadedImage.url,
+						publicId: uploadedImage.publicId,
+					});
 				}
 
 				await createNewProduct({
 					...values,
-					image: uploadedImage?.url || "",
+					image: {
+						url: uploadedImage?.url || "",
+						publicId: uploadedImage?.publicId || "",
+					},
 				});
 
 				console.log({

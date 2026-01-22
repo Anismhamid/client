@@ -12,7 +12,10 @@ export const uploadImage = async (file: File) => {
 
 	const res = await axios.post(`${API}/upload`, formData);
 
-	return {url: res.data.url, publicId: res.data.publicId};
+	return {
+		url: res.data.url,
+		publicId: res.data.public_id,
+	};
 };
 
 export const deleteImage = async (publicId: string) => {

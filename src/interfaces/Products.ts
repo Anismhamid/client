@@ -19,7 +19,7 @@ export interface Products {
 	color?: string;
 	price: number;
 	description: string;
-	image: string;
+	image: {url: string; publicId: string};
 	sale: boolean;
 	discount: number;
 	rating?: number;
@@ -35,7 +35,7 @@ export const initialProductValue: Partial<Products> = {
 	subcategory: "",
 	price: 0,
 	description: "",
-	image: "",
+	image: {url: "", publicId: ""},
 	sale: false,
 	discount: 0,
 	rating: 0,

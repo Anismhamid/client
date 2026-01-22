@@ -17,11 +17,6 @@ interface ProductFormProps {
 	imageData: {url: string; publicId: string} | null;
 	setImageData: (data: {url: string; publicId: string} | null) => void;
 	onHide: () => void;
-	// imageFile: File | null;
-	// setImageFile: (f: File | null) => void;
-	// imageData: string;
-	// setImageData: (v: string) => void;
-	// onHide: () => void;
 	mode?: "add" | "update";
 }
 
@@ -65,9 +60,9 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 		}
 
 		// ⬆️ رفع الصورة الجديدة
-		const uploaded = await uploadImage(file);
-		setImageData(uploaded);
-		formik.setFieldValue("image", uploaded.url);
+		const {url, publicId} = await uploadImage(file);
+		setImageData({url: url, publicId: publicId});
+		formik.setFieldValue("image", url);
 	};
 
 	useEffect(() => {
