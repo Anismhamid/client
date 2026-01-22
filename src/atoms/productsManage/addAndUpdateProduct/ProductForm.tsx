@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
 import {Products} from "../../../interfaces/Products";
-import {uploadImage} from "../../../services/uploadImage";
+import {deleteImage, uploadImage} from "../../../services/uploadImage";
 import {categoriesLogic, CategoryValue} from "../productLogicMap";
 import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {LoadingButton} from "@mui/lab";
@@ -47,6 +47,28 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 	// const [imageKey, setImageKey] = useState(0);
 	const selectedSubcategory = formik.values.subcategory;
 	// const [selectedSubcategory, setSelectedSubcategory] = useState(...)
+
+	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		if (!e.target.files?.[0]) return;
+
+		const file = e.target.files[0];
+		setImageFile(file);
+
+		// 🗑️ حذف الصورة القديمة إذا موجودة
+		if (mode === "update" && imageData?.publicId) {
+			try {
+				await deleteImage(imageData.publicId);
+				setImageData(null);
+			} catch (err) {
+				console.error("Failed to delete old image:", err);
+			}
+		}
+
+		// ⬆️ رفع الصورة الجديدة
+		const uploaded = await uploadImage(file);
+		setImageData(uploaded);
+		formik.setFieldValue("image", uploaded.url);
+	};
 
 	useEffect(() => {
 		if (!formik.values.category) return;
@@ -443,27 +465,22 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 
 			{/* Image Upload */}
 			<div className='mb-3'>
+				{imageData?.url && (
+					<Box sx={{mb: 2}}>
+						<img
+							src={imageData.url}
+							alt='product'
+							style={{width: 150, height: 150, objectFit: "cover"}}
+						/>
+					</Box>
+				)}
 				<label htmlFor='image' className='form-label'>
 					{t("modals.addProductModal.image")}
 				</label>
-				<input
-					type='file'
-					accept='image/*'
-					onChange={async (e) => {
-						if (!e.target.files?.[0]) return;
+				<input type='file' accept='image/*' onChange={handleImageChange} />
 
-						const file = e.target.files[0];
-						setImageFile(file);
-
-						if (mode === "add") {
-							const uploaded = await uploadImage(file);
-							setImageData(uploaded);
-							formik.setFieldValue("image", uploaded.url);
-						}
-					}}
-				/>
-				{/* عرض الصورة */}
-				{(imageFile || imageData) && (
+				{/* Preview الصورة */}
+				{(imageFile || imageData?.url) && (
 					<div className='mt-3'>
 						<img
 							src={
