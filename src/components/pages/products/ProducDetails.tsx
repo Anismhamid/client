@@ -208,7 +208,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								{product.image && (
 									<CardMedia
 										component='img'
-										image={product.image}
+										image={product.image.url}
 										alt={product.product_name}
 										sx={{
 											height: isMobile ? "300px" : "500px",

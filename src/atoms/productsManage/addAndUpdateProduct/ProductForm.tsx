@@ -459,26 +459,69 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 			</div>
 
 			{/* Image Upload */}
-			<div className='mb-3'>
+			<div className='mb-3 p-1'>
 				<label htmlFor='image' className='form-label'>
 					{t("modals.addProductModal.image")}
 				</label>
-				<input
-					capture='environment'
-					type='file'
-					accept='image/*'
-					onChange={handleImageChange}
-				/>
+				<Box
+					sx={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "space-around",
+						width: "70%",
+					}}
+				>
+					<label
+						style={{
+							display: "block",
+							marginBottom: "8px",
+							cursor: "pointer",
+							border: "1px solid black",
+							borderRadius: 50,
+							padding: 5,
+						}}
+					>
+						فتح الكاميرا
+						<input
+							type='file'
+							accept='image/*'
+							capture='environment'
+							onChange={handleImageChange}
+							style={{display: "none"}}
+						/>
+					</label>
+					<label
+						style={{
+							display: "block",
+							marginBottom: "8px",
+							cursor: "pointer",
+							border: "1px solid black",
+							borderRadius: 50,
+							padding: 5,
+						}}
+					>
+						اختيار من المعرض
+						<input
+							type='file'
+							accept='image/*'
+							onChange={handleImageChange}
+							style={{display: "none"}}
+						/>
+					</label>
+				</Box>
 
 				{/* Preview الصورة */}
-				{(imageFile || !imageData?.url) && (
-					<Box sx={{mb: 2}}>
-						<img
-							src={imageData?.url}
-							alt='product'
-							style={{width: 65, height: 65, objectFit: "cover"}}
-						/>
-					</Box>
+				{imageData?.url && (
+					<img
+						src={imageData.url}
+						alt='preview'
+						style={{
+							width: 65,
+							height: 65,
+							objectFit: "cover",
+							marginTop: "8px",
+						}}
+					/>
 				)}
 			</div>
 
