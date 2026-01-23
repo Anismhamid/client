@@ -16,7 +16,7 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 	return (
 		<>
 			<Helmet>
-				<title>سياسة الخصوصية | سوق السخنيني</title>
+				<title>سياسة الخصوصية | موقع صفقه</title>
 				<meta
 					name='description'
 					content='اطلع على سياسة الخصوصية لمتجر سوق السخنيني في أم الفحم. كيف نجمع البيانات، نستخدمها، ونحافظ على سريتها.'
@@ -27,7 +27,7 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 				/>
 				<meta
 					name='keywords'
-					content='سياسة الخصوصية, سوق السخنيني, أم الفحم, بيانات المستخدم'
+					content='سياسة الخصوصية, موقع صفقه, أم الفحم, بيانات المستخدم'
 				/>
 			</Helmet>
 
@@ -154,9 +154,9 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 				<noscript>
 					<div className='container my-5 border border-primary shadow p-5 rounded-4'>
 						<h1 className='text-center mb-4 text-primary'>سياسة الخصوصية</h1>
-						<p className='mb-5'>آخر تحديث: 13/04/2025</p>
+						<p className='mb-5'>آخر تحديث: 23/01/2026</p>
 						<p>
-							في سوق السخنيني، نحن نهتم بخصوصيتك ونلتزم بحماية بياناتك
+							في موقع صفقه نحن نهتم بخصوصيتك ونلتزم بحماية بياناتك
 							الشخصية. توضح هذه السياسة كيف نجمع المعلومات ونستخدمها ونحافظ
 							على سريتها
 						</p>

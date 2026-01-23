@@ -29,21 +29,24 @@ import DeleteAccountBox from "../../atoms/userManage/DeleteAccountBox";
 import UserDetailTable from "../../atoms/userManage/UesrDetailsTable";
 import EditUserData from "../../atoms/userManage/EditUserData";
 import HistoryIcon from "@mui/icons-material/History";
+import {Helmet} from "react-helmet";
+import {useTranslation} from "react-i18next";
 
 interface ProfileProps {}
 /**
  * profile
  * @returns auth profile
  */
+// TODO:refactor
 const Profile: FunctionComponent<ProfileProps> = () => {
 	const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
-	const {setAuth, setIsLoggedIn, auth} = useUser();
+	const {setAuth, setIsLoggedIn} = useUser();
 	const detailsRef = useRef<HTMLDivElement>(null);
-	const [userOdredsLength, setUserOrdersLength] = useState<number>(0);
-
+	// const [userOdredsLength, setUserOrdersLength] = useState<number>(0);
+	const {t} = useTranslation();
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
 		phone: {phone_1: string; phone_2: string};
@@ -113,70 +116,80 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	}
 
 	return (
-		<main className=' min-vh-100 py-5'>
-			{/* صورة البروفايل */}
-			<Box className='container d-flex flex-column align-items-center'>
-				<div
-					className='border border-3 border-primary-subtle rounded-circle shadow overflow-hidden'
-					style={{width: 200, height: 200}}
-				>
-					{!imageLoaded && (
-						<Skeleton
-							sx={{bgcolor: "grey.300"}}
-							variant='circular'
-							width={200}
-							height={200}
-						/>
-					)}
+		<>
+			<Helmet>
+				<title>
+					{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
+				</title>
+				<meta name='description' content={`${t("accountMenu.profile")} ${user.name.first} ${user.name.last}`} />
+			</Helmet>
+			<main className=' min-vh-100 py-5'>
+				{/* صورة البروفايل */}
+				<Box className='container d-flex flex-column align-items-center'>
+					<div
+						className='border border-3 border-primary-subtle rounded-circle shadow overflow-hidden'
+						style={{width: 200, height: 200}}
+					>
+						{!imageLoaded && (
+							<Skeleton
+								sx={{bgcolor: "grey.300"}}
+								variant='circular'
+								width={200}
+								height={200}
+							/>
+						)}
 
-					{user && (
-						<Avatar
-							className='w-100 h-100'
-							src={user?.image?.url || "https://i.ibb.co/5GzXkwq/user.png"}
-							alt={
-								user.image?.alt?.trim()
-									? `${user.image?.alt}'s avatar`
-									: `${user.name?.first || "משתמש"}'s avatar`
-							}
-							role='img'
-							sx={{
-								objectFit: "cover",
-								display: imageLoaded ? "block" : "none",
-							}}
-							onLoad={() => setImageLoaded(true)}
-						/>
-					)}
+						{user && (
+							<Avatar
+								className='w-100 h-100'
+								src={
+									user?.image?.url ||
+									"https://i.ibb.co/5GzXkwq/user.png"
+								}
+								alt={
+									user.image?.alt?.trim()
+										? `${user.image?.alt}'s avatar`
+										: `${user.name?.first || "משתמש"}'s avatar`
+								}
+								role='img'
+								sx={{
+									objectFit: "cover",
+									display: imageLoaded ? "block" : "none",
+								}}
+								onLoad={() => setImageLoaded(true)}
+							/>
+						)}
+					</div>
+					{/* زر تحرير */}
+					<Button
+						variant='contained'
+						color='warning'
+						startIcon={<EditIcon />}
+						onClick={() => updateProfile()}
+						className='mt-3 rounded-pill shadow-sm px-4'
+					>
+						تحرير البيانات الشخصية
+					</Button>
+				</Box>
+				{/* بيانات المستخدم */}
+				<div className='container mt-5'>
+					<Card className='shadow-lg rounded-4'>
+						<CardContent>
+							<Typography
+								variant='h4'
+								align='center'
+								gutterBottom
+								className='fw-bold text-primary'
+							>
+								البيانات الشخصية
+							</Typography>
+							<UserDetailTable user={user} />
+						</CardContent>
+					</Card>
 				</div>
-				{/* زر تحرير */}
-				<Button
-					variant='contained'
-					color='warning'
-					startIcon={<EditIcon />}
-					onClick={() => updateProfile()}
-					className='mt-3 rounded-pill shadow-sm px-4'
-				>
-					تحرير البيانات الشخصية
-				</Button>
-			</Box>
-			{/* بيانات المستخدم */}
-			<div className='container mt-5'>
-				<Card className='shadow-lg rounded-4'>
-					<CardContent>
-						<Typography
-							variant='h4'
-							align='center'
-							gutterBottom
-							className='fw-bold text-primary'
-						>
-							البيانات الشخصية
-						</Typography>
-						<UserDetailTable user={user} />
-					</CardContent>
-				</Card>
-			</div>
-			{/* الطلبات */}
-			<Box className='container mt-5'>
-				{/* {(auth.role === "Admin" || auth.role === "Moderator") && (
+				{/* الطلبات */}
+				<Box className='container mt-5'>
+					{/* {(auth.role === "Admin" || auth.role === "Moderator") && (
 					<Card className='my-5 rounded-5 shadow'>
 						<CardContent>
 							<Typography variant='body1' fontSize={20} component={"p"}>
@@ -195,17 +208,17 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</CardContent>
 					</Card>
 				)} */}
-				<Card className='shadow-sm rounded-4 border border-2 border-danger-subtle'>
-					<CardContent>
-						<Typography
-							variant='h4'
-							align='center'
-							gutterBottom
-							className='fw-bold text-danger'
-						>
-							الطلبات السابقة
-						</Typography>
-
+					<Card className='shadow-sm rounded-4 border border-2 border-danger-subtle'>
+						<CardContent>
+							<Typography
+								variant='h4'
+								align='center'
+								gutterBottom
+								className='fw-bold text-danger'
+							>
+								الطلبات السابقة
+							</Typography>
+							{/* 
 						<Box className='d-flex justify-content-around flex-wrap gap-4 mt-4'>
 							<Card
 								className='shadow-sm rounded-4'
@@ -232,79 +245,82 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Button>
 								</CardContent>
 							</Card>
-						</Box>
-					</CardContent>
-				</Card>
-			</Box>
-			{/* سجل الدخول */}
-			<Box className='container mt-5'>
-				<Accordion className='shadow-sm rounded-4'>
-					<AccordionSummary expandIcon={<ArrowDownwardIcon />}>
-						<Typography component='span' variant='h6' className='fw-bold'>
-							سِجِل تَسجيل الدُلخول
-						</Typography>
-					</AccordionSummary>
-					<AccordionDetails>
-						{user.activity?.length ? (
-							<List dense>
-								{user.activity
-									.slice(user.activity.length - 1)
-									.map((timestamp, index) => {
-										const date = new Date(timestamp);
-										return (
-											<ListItem
-												key={index}
-												className='rounded-3 shadow-sm mb-2'
-											>
-												<ListItemIcon>
-													<HistoryIcon color='primary' />
-												</ListItemIcon>
-												<ListItemText
-													primary={date.toLocaleString("he-IL")}
-													secondary='نشاط حديث'
-												/>
-											</ListItem>
-										);
-									})}
-							</List>
-						) : (
-							<Typography sx={{padding: 2}} color='text.secondary'>
-								لا يوجد نشاطات حديثة
+						</Box> */}
+						</CardContent>
+					</Card>
+				</Box>
+				{/* سجل الدخول */}
+				<Box className='container mt-5'>
+					<Accordion className='shadow-sm rounded-4'>
+						<AccordionSummary expandIcon={<ArrowDownwardIcon />}>
+							<Typography component='span' variant='h6' className='fw-bold'>
+								سِجِل تَسجيل الدُلخول
 							</Typography>
-						)}
-					</AccordionDetails>
-				</Accordion>
-			</Box>
-			{/* أزرار إضافية */}
-			<Box className='container text-center mt-5'>
-				<Stack spacing={2} direction='row' justifyContent='center'>
-					<Button
-						variant='contained'
-						color='success'
-						onClick={changePassword}
-						className='rounded-pill mx-3'
-					>
-						تغيير كلمة المرور
-					</Button>
-					<Button
-						variant='contained'
-						color='secondary'
-						onClick={contactSupport}
-						className='rounded-pill mx-5'
-					>
-						دعم فني
-					</Button>
-				</Stack>
-			</Box>
-			<Box ref={detailsRef}>
-				<EditUserData userId={id || decodedToken._id} />
-			</Box>
+						</AccordionSummary>
+						<AccordionDetails>
+							{user.activity?.length ? (
+								<List dense>
+									{user.activity
+										.slice(user.activity.length - 1)
+										.map((timestamp, index) => {
+											const date = new Date(timestamp);
+											return (
+												<ListItem
+													key={index}
+													className='rounded-3 shadow-sm mb-2'
+												>
+													<ListItemIcon>
+														<HistoryIcon color='primary' />
+													</ListItemIcon>
+													<ListItemText
+														primary={date.toLocaleString(
+															"he-IL",
+														)}
+														secondary='نشاط حديث'
+													/>
+												</ListItem>
+											);
+										})}
+								</List>
+							) : (
+								<Typography sx={{padding: 2}} color='text.secondary'>
+									لا يوجد نشاطات حديثة
+								</Typography>
+							)}
+						</AccordionDetails>
+					</Accordion>
+				</Box>
+				{/* أزرار إضافية */}
+				<Box className='container text-center mt-5'>
+					<Stack spacing={2} direction='row' justifyContent='center'>
+						<Button
+							variant='contained'
+							color='success'
+							onClick={changePassword}
+							className='rounded-pill mx-3'
+						>
+							تغيير كلمة المرور
+						</Button>
+						<Button
+							variant='contained'
+							color='secondary'
+							onClick={contactSupport}
+							className='rounded-pill mx-5'
+						>
+							دعم فني
+						</Button>
+					</Stack>
+				</Box>
+				<Box ref={detailsRef}>
+					<EditUserData userId={id || decodedToken._id} />
+				</Box>
 
-			{/* حذف الحساب */}
-			<div className='container mt-5'>
-				<DeleteAccountBox onDelete={handleDeleteAccount} />
-			</div>
-		</main>
+				{/* حذف الحساب */}
+				<div className='container mt-5'>
+					<DeleteAccountBox onDelete={handleDeleteAccount} />
+				</div>
+			</main>
+		</>
 	);
 };
 

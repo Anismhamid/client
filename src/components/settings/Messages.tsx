@@ -25,6 +25,7 @@ import RoleType from "../../interfaces/UserType";
 import {User, UserMessage} from "../../interfaces/usersMessages";
 import {useUser} from "../../context/useUSer";
 import socket from "../../socket/globalSocket";
+import {Helmet} from "react-helmet";
 
 const MessagingPage: React.FC = () => {
 	const {auth} = useUser();
@@ -169,131 +170,192 @@ const MessagingPage: React.FC = () => {
 	}, [auth.role, users, toUserId]);
 
 	return (
-		<Container dir={direction} maxWidth='md' sx={{mt: 5}}>
-			<Typography textAlign='center' variant='h4' gutterBottom>
-				מרכז הודעות
-			</Typography>
+		<>
+		{/* TODO:Translate */}
+			<Helmet>
+				<title>الرسائل | صفقة</title>
+				<meta name='description' content={"الرسائل | صفقة"} />
+			</Helmet>
+			<Container dir={direction} maxWidth='md' sx={{mt: 5}}>
+				<Typography textAlign='center' variant='h4' gutterBottom>
+					الرسائل
+				</Typography>
 
-			<Box
-				noValidate
-				component='form'
-				onSubmit={handleSubmit}
-				sx={{
-					p: 5,
-					mb: 3,
-					backdropFilter: "blur(8px)",
-					border: 1,
-					borderRadius: 5,
-				}}
-			>
-				<FormControl fullWidth margin='normal'>
-					<InputLabel id='to-user-label'>מקבל</InputLabel>
-					<Select
-						labelId='to-user-label'
-						value={toUserId}
-						label='מקבל'
-						onChange={(e) => {
-							setToUserId(e.target.value);
-						}}
+				<Box
+					noValidate
+					component='form'
+					onSubmit={handleSubmit}
+					sx={{
+						p: 5,
+						mb: 3,
+						backdropFilter: "blur(8px)",
+						border: 1,
+						borderRadius: 5,
+					}}
+				>
+					<FormControl fullWidth margin='normal'>
+						<InputLabel id='to-user-label'>מקבל</InputLabel>
+						<Select
+							labelId='to-user-label'
+							value={toUserId}
+							label='מקבל'
+							onChange={(e) => {
+								setToUserId(e.target.value);
+							}}
+							required
+							disabled={loading}
+						>
+							{users
+								.filter((user) => validateRecipient(user._id as string))
+								.map((user) => (
+									<MenuItem
+										dir={direction}
+										key={user._id}
+										value={user._id}
+									>
+										{user.name.first} ({user.role})
+									</MenuItem>
+								))}
+						</Select>
+					</FormControl>
+
+					{replyTo && (
+						<Alert
+							dir={direction}
+							severity='info'
+							action={
+								<Button
+									color='inherit'
+									size='small'
+									onClick={() => setReplyTo("")}
+									disabled={loading}
+								>
+									ביטול תגובה
+								</Button>
+							}
+							sx={{mb: 2}}
+						>
+							رد
+						</Alert>
+					)}
+
+					<TextField
+						dir={direction}
+						label='גוף הודעה'
+						multiline
+						rows={6}
+						fullWidth
+						margin='normal'
+						value={message}
+						onChange={(e) => setMessage(e.target.value)}
 						required
 						disabled={loading}
-					>
-						{users
-							.filter((user) => validateRecipient(user._id as string))
-							.map((user) => (
-								<MenuItem dir={direction} key={user._id} value={user._id}>
-									{user.name.first} ({user.role})
-								</MenuItem>
-							))}
-					</Select>
-				</FormControl>
+					/>
+					{auth.role !== RoleType.Client && (
+						<Box dir={direction} sx={{display: "flex", gap: 2, mb: 2}}>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={warning}
+										onChange={() => setWarning(!warning)}
+										disabled={loading}
+									/>
+								}
+								label='אזהרה'
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={isImportant}
+										onChange={() => setIsImportant(!isImportant)}
+										disabled={loading}
+									/>
+								}
+								label='חשוב'
+							/>
+						</Box>
+					)}
 
-				{replyTo && (
-					<Alert
-						dir={direction}
-						severity='info'
-						action={
-							<Button
-								color='inherit'
-								size='small'
-								onClick={() => setReplyTo("")}
-								disabled={loading}
-							>
-								ביטול תגובה
-							</Button>
-						}
-						sx={{mb: 2}}
+					<Button
+						disabled={loading || message.length < 5 || !toUserId}
+						variant='contained'
+						color='primary'
+						type='submit'
+						fullWidth
+						sx={{mt: 2}}
 					>
-						رد
+						{loading ? <CircularProgress size={24} /> : "שליחה"}
+					</Button>
+				</Box>
+
+				{status && (
+					<Alert severity={status.includes("הצלחה") ? "success" : "error"}>
+						{status}
 					</Alert>
 				)}
 
-				<TextField
-					dir={direction}
-					label='גוף הודעה'
-					multiline
-					rows={6}
-					fullWidth
-					margin='normal'
-					value={message}
-					onChange={(e) => setMessage(e.target.value)}
-					required
-					disabled={loading}
-				/>
-				{auth.role !== RoleType.Client && (
-					<Box dir={direction} sx={{display: "flex", gap: 2, mb: 2}}>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={warning}
-									onChange={() => setWarning(!warning)}
-									disabled={loading}
-								/>
-							}
-							label='אזהרה'
-						/>
-						<FormControlLabel
-							control={
-								<Checkbox
-									checked={isImportant}
-									onChange={() => setIsImportant(!isImportant)}
-									disabled={loading}
-								/>
-							}
-							label='חשוב'
-						/>
+				<Typography textAlign='center' variant='h6' sx={{mt: 5, mb: 2}}>
+					הודעות שנשלחו
+				</Typography>
+
+				{loading ? (
+					<Box display='flex' justifyContent='center' my={4}>
+						<CircularProgress />
 					</Box>
+				) : (
+					<List>
+						{sentMessages.map((msg) => (
+							<Box
+								key={msg._id}
+								sx={{
+									backgroundColor: "background.paper",
+									p: 3,
+									mb: 2,
+									borderRadius: 2,
+									border: "1px solid",
+									borderColor: msg.warning ? "warning.main" : "divider",
+								}}
+							>
+								<Typography
+									variant='subtitle2'
+									color='textSecondary'
+									gutterBottom
+								>
+									אל:{" "}
+									{users.find((u) => u._id === msg.to)?.email ||
+										"לא ידוע"}{" "}
+									- {new Date(msg.createdAt).toLocaleString()}
+								</Typography>
+								{msg.warning && (
+									<Typography
+										variant='subtitle2'
+										color='warning.main'
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 1,
+										}}
+									>
+										<WarningIcon fontSize='small' /> אזהרה
+									</Typography>
+								)}
+								<Typography
+									variant='body1'
+									sx={{whiteSpace: "pre-wrap", mt: 1}}
+								>
+									{msg.message}
+								</Typography>
+							</Box>
+						))}
+					</List>
 				)}
 
-				<Button
-					disabled={loading || message.length < 5 || !toUserId}
-					variant='contained'
-					color='primary'
-					type='submit'
-					fullWidth
-					sx={{mt: 2}}
-				>
-					{loading ? <CircularProgress size={24} /> : "שליחה"}
-				</Button>
-			</Box>
+				<Typography textAlign='center' variant='h6' sx={{mt: 5, mb: 2}}>
+					הודעות נכנסות
+				</Typography>
 
-			{status && (
-				<Alert severity={status.includes("הצלחה") ? "success" : "error"}>
-					{status}
-				</Alert>
-			)}
-
-			<Typography textAlign='center' variant='h6' sx={{mt: 5, mb: 2}}>
-				הודעות שנשלחו
-			</Typography>
-
-			{loading ? (
-				<Box display='flex' justifyContent='center' my={4}>
-					<CircularProgress />
-				</Box>
-			) : (
 				<List>
-					{sentMessages.map((msg) => (
+					{userMessages.map((msg) => (
 						<Box
 							key={msg._id}
 							sx={{
@@ -303,6 +365,11 @@ const MessagingPage: React.FC = () => {
 								borderRadius: 2,
 								border: "1px solid",
 								borderColor: msg.warning ? "warning.main" : "divider",
+								cursor: "pointer",
+							}}
+							onClick={() => {
+								setReplyTo(msg.from._id as string);
+								setToUserId(msg.from._id as string);
 							}}
 						>
 							<Typography
@@ -310,10 +377,18 @@ const MessagingPage: React.FC = () => {
 								color='textSecondary'
 								gutterBottom
 							>
-								אל:{" "}
-								{users.find((u) => u._id === msg.to)?.email || "לא ידוע"}{" "}
-								- {new Date(msg.createdAt).toLocaleString()}
+								מ: {msg.from.email || ""} -{" "}
+								{new Date(msg.createdAt).toLocaleString()}
 							</Typography>
+							{msg.replyTo && (
+								<Typography
+									variant='caption'
+									color='textSecondary'
+									sx={{fontStyle: "italic", mb: 1}}
+								>
+									תשובה להודעה מאת {getUserEmail(msg.replyTo)}
+								</Typography>
+							)}
 							{msg.warning && (
 								<Typography
 									variant='subtitle2'
@@ -332,70 +407,15 @@ const MessagingPage: React.FC = () => {
 						</Box>
 					))}
 				</List>
-			)}
 
-			<Typography textAlign='center' variant='h6' sx={{mt: 5, mb: 2}}>
-				הודעות נכנסות
-			</Typography>
-
-			<List>
-				{userMessages.map((msg) => (
-					<Box
-						key={msg._id}
-						sx={{
-							backgroundColor: "background.paper",
-							p: 3,
-							mb: 2,
-							borderRadius: 2,
-							border: "1px solid",
-							borderColor: msg.warning ? "warning.main" : "divider",
-							cursor: "pointer",
-						}}
-						onClick={() => {
-							setReplyTo(msg.from._id as string);
-							setToUserId(msg.from._id as string);
-						}}
-					>
-						<Typography
-							variant='subtitle2'
-							color='textSecondary'
-							gutterBottom
-						>
-							מ: {msg.from.email || ""} -{" "}
-							{new Date(msg.createdAt).toLocaleString()}
-						</Typography>
-						{msg.replyTo && (
-							<Typography
-								variant='caption'
-								color='textSecondary'
-								sx={{fontStyle: "italic", mb: 1}}
-							>
-								תשובה להודעה מאת {getUserEmail(msg.replyTo)}
-							</Typography>
-						)}
-						{msg.warning && (
-							<Typography
-								variant='subtitle2'
-								color='warning.main'
-								sx={{display: "flex", alignItems: "center", gap: 1}}
-							>
-								<WarningIcon fontSize='small' /> אזהרה
-							</Typography>
-						)}
-						<Typography variant='body1' sx={{whiteSpace: "pre-wrap", mt: 1}}>
-							{msg.message}
-						</Typography>
-					</Box>
-				))}
-			</List>
-
-			<Pagination
-				count={totalPages}
-				page={page}
-				onChange={(_e, value) => setPage(value)}
-				sx={{display: "flex", justifyContent: "center", my: 4}}
-			/>
-		</Container>
+				<Pagination
+					count={totalPages}
+					page={page}
+					onChange={(_e, value) => setPage(value)}
+					sx={{display: "flex", justifyContent: "center", my: 4}}
+				/>
+			</Container>
+		</>
 	);
 };
 

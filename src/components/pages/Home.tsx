@@ -311,6 +311,15 @@ const Home: FunctionComponent<HomeProps> = () => {
 	return (
 		<>
 			<Helmet>
+				<title>{t("home")} | صفقة</title>
+				<meta
+					name='description'
+					content={
+						"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
+					}
+				/>
+			</Helmet>
+			<Helmet>
 				<title>موقع صفقه</title>
 				<meta
 					name='description'

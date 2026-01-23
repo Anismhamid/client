@@ -20,6 +20,7 @@ import {BusinessInfoType} from "../../interfaces/businessInfoType";
 import {showSuccess} from "../../atoms/toasts/ReactToast";
 import Loader from "../../atoms/loader/Loader";
 import {useNavigate} from "react-router-dom";
+import {Helmet} from "react-helmet";
 
 interface AdminSettingsProps {}
 
@@ -77,67 +78,68 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	}
 
 	return (
-		<main style={{fontFamily: "Heebo"}}>
-			<Box
-				style={{
-					width: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					marginRight: "auto",
-					marginBlock: 50,
-				}}
-			>
-				<img
-					src='/myLogo2.png'
-					width={200}
-					alt={businessInfoState.businessName}
-				/>
-			</Box>
-			<Typography
-				color='error'
-				component={"h1"}
-				variant='h4'
-				gutterBottom
-				textAlign={"center"}
-			>
-				{businessInfoState.businessName}
-			</Typography>
-			<Box
-				maxWidth='md'
-				sx={{
-					backdropFilter: "blur(8px)",
-					p: 8,
-					border: 1,
-					borderRadius: 5,
-				}}
-				component='form'
-				onSubmit={formik.handleSubmit}
-				className='container'
-			>
-				<Typography variant='h4' gutterBottom textAlign={"center"}>
-					שינוי הגדרות אתר
-				</Typography>
-				<TableContainer
-					sx={{borderRadius: 5, p: 10, border: 1}}
-					component={Paper}
+		<>
+			<Helmet>
+				<title>اداره | {businessInfoState.businessName}</title>
+				<meta name='description' content={"تغيير اعدادات الموقع"} />
+			</Helmet>
+			<main style={{fontFamily: "Heebo"}}>
+				<Box
+					style={{
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						marginRight: "auto",
+						marginBlock: 50,
+					}}
 				>
-					<Table
-						sx={{
-							p: 5,
-							"& .MuiTableRow-root": {
-								"&:hover": {
-									backgroundColor: "#5595d5ac",
-								},
-							},
-						}}
+					<Typography
+						color='prymary.main'
+						component={"h1"}
+						variant='h4'
+						gutterBottom
+						textAlign={"center"}
 					>
-						<TableHead>
-							{/* <TableRow> */}
-							{/* <TableCell width={"40%"} align='center'>
+						{businessInfoState.businessName}
+					</Typography>
+				</Box>
+
+				<Box
+					maxWidth='md'
+					sx={{
+						backdropFilter: "blur(8px)",
+						p: 8,
+						border: 1,
+						borderRadius: 5,
+					}}
+					component='form'
+					onSubmit={formik.handleSubmit}
+					className='container'
+				>
+					<Typography variant='h4' gutterBottom textAlign={"center"}>
+						تغيير اعدادات الموقع
+					</Typography>
+					<TableContainer
+						sx={{borderRadius: 5, p: 10, border: 1}}
+						component={Paper}
+					>
+						<Table
+							sx={{
+								p: 5,
+								"& .MuiTableRow-root": {
+									"&:hover": {
+										backgroundColor: "#5595d5ac",
+									},
+								},
+							}}
+						>
+							<TableHead>
+								{/* <TableRow> */}
+								{/* <TableCell width={"40%"} align='center'>
 									מחיר משלוח
 								</TableCell> */}
-							{/* <TableCell>
+								{/* <TableCell>
 									<TextField
 										fullWidth
 										variant='outlined'
@@ -148,169 +150,171 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 										onChange={formik.handleChange}
 									/>
 								</TableCell> */}
-							{/* </TableRow> */}
-							<TableRow>
-								<TableCell align='center'>שם העסק</TableCell>
-								<TableCell>
-									<TextField
-										fullWidth
-										variant='outlined'
-										size='small'
-										name='businessName'
-										value={formik.values.businessName || ""}
-										onChange={formik.handleChange}
-										onBlur={formik.handleBlur}
-										error={
-											formik.touched.businessName &&
-											Boolean(formik.errors.businessName)
-										}
-										helperText={
-											formik.touched.businessName &&
-											formik.errors.businessName
-										}
-									/>
-								</TableCell>
-							</TableRow>
-							<TableRow>
-								<TableCell align='center'>כתובת העסק</TableCell>
-								<TableCell>
-									<TextField
-										fullWidth
-										variant='outlined'
-										size='small'
-										name='businessSAddress'
-										value={formik.values.businessSAddress || ""}
-										onChange={formik.handleChange}
-										onBlur={formik.handleBlur}
-										error={
-											formik.touched.businessSAddress &&
-											Boolean(formik.errors.businessSAddress)
-										}
-										helperText={
-											formik.touched.businessSAddress &&
-											formik.errors.businessSAddress
-										}
-									/>
-								</TableCell>
-							</TableRow>
-							<TableRow>
-								<TableCell align='center'>טלפון העסק</TableCell>
-								<TableCell>
-									<TextField
-										fullWidth
-										variant='outlined'
-										size='small'
-										name='businessPhone'
-										value={formik.values.businessPhone || ""}
-										onChange={formik.handleChange}
-										onBlur={formik.handleBlur}
-										error={
-											formik.touched.businessPhone &&
-											Boolean(formik.errors.businessPhone)
-										}
-										helperText={
-											formik.touched.businessPhone &&
-											formik.errors.businessPhone
-										}
-									/>
-								</TableCell>
-							</TableRow>
-						</TableHead>
-					</Table>
-					<Table>
-						<TableHead>
-							<TableRow>
-								<TableCell>منطقة</TableCell>
-								<TableCell>رسوم التوصيل</TableCell>
-								<TableCell>إجراءات</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{formik.values.deliveryFee.map((d, index) => (
-								<TableRow key={index}>
+								{/* </TableRow> */}
+								<TableRow>
+									<TableCell align='center'>اسم الموقع</TableCell>
 									<TableCell>
 										<TextField
-											name={`deliveryFee[${index}].area`}
-											value={d.area}
+											fullWidth
+											variant='outlined'
+											size='small'
+											name='businessName'
+											value={formik.values.businessName || ""}
 											onChange={formik.handleChange}
+											onBlur={formik.handleBlur}
+											error={
+												formik.touched.businessName &&
+												Boolean(formik.errors.businessName)
+											}
+											helperText={
+												formik.touched.businessName &&
+												formik.errors.businessName
+											}
 										/>
-									</TableCell>
-									<TableCell>
-										<TextField
-											type='number'
-											name={`deliveryFee[${index}].fee`}
-											value={d.fee}
-											onChange={formik.handleChange}
-										/>
-									</TableCell>
-									<TableCell>
-										<Button
-											onClick={() => {
-												const newFees = [
-													...(formik.values.deliveryFee as any),
-												];
-												newFees.splice(index, 1);
-												formik.setFieldValue(
-													"deliveryFee",
-													newFees,
-												);
-											}}
-										>
-											حذف
-										</Button>
 									</TableCell>
 								</TableRow>
-							))}
-						</TableBody>
-					</Table>
-				</TableContainer>
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "space-between",
-					}}
-					mt={2}
-					textAlign='center'
-				>
-					<Button
-						onClick={() => navigate(-1)}
-						variant='contained'
+								<TableRow>
+									<TableCell align='center'>عنوان الموقع</TableCell>
+									<TableCell>
+										<TextField
+											fullWidth
+											variant='outlined'
+											size='small'
+											name='businessSAddress'
+											value={formik.values.businessSAddress || ""}
+											onChange={formik.handleChange}
+											onBlur={formik.handleBlur}
+											error={
+												formik.touched.businessSAddress &&
+												Boolean(formik.errors.businessSAddress)
+											}
+											helperText={
+												formik.touched.businessSAddress &&
+												formik.errors.businessSAddress
+											}
+										/>
+									</TableCell>
+								</TableRow>
+								<TableRow>
+									<TableCell align='center'>هاتف الموقع</TableCell>
+									<TableCell>
+										<TextField
+											fullWidth
+											variant='outlined'
+											size='small'
+											name='businessPhone'
+											value={formik.values.businessPhone || ""}
+											onChange={formik.handleChange}
+											onBlur={formik.handleBlur}
+											error={
+												formik.touched.businessPhone &&
+												Boolean(formik.errors.businessPhone)
+											}
+											helperText={
+												formik.touched.businessPhone &&
+												formik.errors.businessPhone
+											}
+										/>
+									</TableCell>
+								</TableRow>
+							</TableHead>
+						</Table>
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell>منطقة</TableCell>
+									<TableCell>رسوم التوصيل</TableCell>
+									<TableCell>إجراءات</TableCell>
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{formik.values.deliveryFee.map((d, index) => (
+									<TableRow key={index}>
+										<TableCell>
+											<TextField
+												name={`deliveryFee[${index}].area`}
+												value={d.area}
+												onChange={formik.handleChange}
+											/>
+										</TableCell>
+										<TableCell>
+											<TextField
+												type='number'
+												name={`deliveryFee[${index}].fee`}
+												value={d.fee}
+												onChange={formik.handleChange}
+											/>
+										</TableCell>
+										<TableCell>
+											<Button
+												onClick={() => {
+													const newFees = [
+														...(formik.values
+															.deliveryFee as any),
+													];
+													newFees.splice(index, 1);
+													formik.setFieldValue(
+														"deliveryFee",
+														newFees,
+													);
+												}}
+											>
+												حذف
+											</Button>
+										</TableCell>
+									</TableRow>
+								))}
+							</TableBody>
+						</Table>
+					</TableContainer>
+					<Box
 						sx={{
-							fontSize: "1rem",
-							boxShadow: "0 0 5px red",
-							border: "1px dashed red",
-							"&:hover": {
-								backgroundColor: "#be4848",
-								color: "gainsboro",
-							},
-							margin: "auto",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "space-between",
 						}}
+						mt={2}
+						textAlign='center'
 					>
-						חזרה
-					</Button>
-					<Button
-						type='submit'
-						variant='contained'
-						color='primary'
-						size='large'
-						sx={{
-							fontSize: "1rem",
-							border: "1px dashed green",
-							boxShadow: "0 0 8px #76b84f",
-							"&:hover": {
-								backgroundColor: "#6cb840",
-								color: "gainsboro",
-							},
-							margin: "auto",
-						}}
-						disabled={loadingSubmit || (formik.isValid && !formik.dirty)}
-					>
-						{loadingSubmit ? <CircularProgress size={20} /> : "עדכון"}
-					</Button>
+						<Button
+							onClick={() => navigate(-1)}
+							variant='contained'
+							sx={{
+								fontSize: "1rem",
+								boxShadow: "0 0 5px red",
+								border: "1px dashed red",
+								"&:hover": {
+									backgroundColor: "#be4848",
+									color: "gainsboro",
+								},
+								margin: "auto",
+							}}
+						>
+							חזרה
+						</Button>
+						<Button
+							type='submit'
+							variant='contained'
+							color='primary'
+							size='large'
+							sx={{
+								fontSize: "1rem",
+								border: "1px dashed green",
+								boxShadow: "0 0 8px #76b84f",
+								"&:hover": {
+									backgroundColor: "#6cb840",
+									color: "gainsboro",
+								},
+								margin: "auto",
+							}}
+							disabled={loadingSubmit || (formik.isValid && !formik.dirty)}
+						>
+							{loadingSubmit ? <CircularProgress size={20} /> : "עדכון"}
+						</Button>
+					</Box>
 				</Box>
-			</Box>
-		</main>
+			</main>
+		</>
 	);
 };
 
