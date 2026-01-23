@@ -1,7 +1,10 @@
 import {Products} from "../src/interfaces/Products";
 
 //🟢 For a general product (category or type)
-export const generateCategoryJsonLd = (categoryName: string, products: Products[]=[]) => ({
+export const generateCategoryJsonLd = (
+	categoryName: string,
+	products: Products[] = [],
+) => ({
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
 	name: categoryName,
@@ -43,6 +46,8 @@ export const generateSingleProductJsonLd = (product: Products) => {
 			"@type": "Offer",
 			priceCurrency: "ILS",
 			price: Number(finalPrice.toFixed(2)),
+			priceValidUntil: "2026-12-31",
+			itemCondition: "https://schema.org/UsedCondition",
 			url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
 				product.product_name,
 			)}`,
@@ -53,7 +58,7 @@ export const generateSingleProductJsonLd = (product: Products) => {
 
 			seller: {
 				"@type": "Person",
-				name: product.seller?.name || "مستخدم مسجل",
+				name: product.seller?.sellerId || "مستخدم مسجل",
 				url: `https://client-qqq1.vercel.app/user/${product.seller?.sellerId}`,
 			},
 		},

@@ -40,10 +40,8 @@ const Favorite: FunctionComponent = () => {
 	return (
 		<>
 			<Helmet>
+				<JsonLd data={generateProductsItemListJsonLd(products)} />
 				<title>المفضله | صفقه</title>
-				<script type='application/ld+json'>
-					{JSON.stringify(generateProductsItemListJsonLd(products))}
-				</script>
 			</Helmet>
 			<Box sx={{px: {xs: 2, md: 4}, py: 4}}>
 				<Grid container spacing={3}>

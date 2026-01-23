@@ -6,7 +6,6 @@ import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
 import {
 	generateCategoryJsonLd,
-	generateSingleProductJsonLd,
 } from "../../../../utils/structuredData";
 
 interface ProductsProps {}
@@ -24,6 +23,7 @@ const Products: FunctionComponent<ProductsProps> = () => {
 
 	return (
 		<>
+			<JsonLd data={generateCategoryJsonLd(category, [])} />
 			<Helmet>
 				<title>{t(`categories.${category}.heading`)} | صفقة</title>
 				<meta
