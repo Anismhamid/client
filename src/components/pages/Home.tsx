@@ -10,7 +10,6 @@ import {
 	Chip,
 	Box,
 	Typography,
-	alpha,
 	useMediaQuery,
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
@@ -39,10 +38,11 @@ interface HomeProps {}
  */
 
 const Home: FunctionComponent<HomeProps> = () => {
+	const {auth} = useUser();
+	const {t} = useTranslation();
 	const [products, setProducts] = useState<Products[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(true);
-	const {auth} = useUser();
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [visibleCount, setVisibleCount] = useState(16);
 	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
@@ -54,7 +54,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const navigate = useNavigate();
-	const {t} = useTranslation();
 	const isMobile = useMediaQuery("(max-width:768px)");
 	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
 
@@ -72,8 +71,27 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
-	const handleToggleLike = (productId: string, liked: boolean, userId: string) => {
+
+	// بديل: دالة handleToggleLike
+	const handleToggleLike = (productId: string, liked: boolean) => {
+		if (!auth?._id) return;
+
+		const userId = auth._id;
+
 		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId]
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+
+		setVisibleProducts((prev) =>
 			prev.map((p) =>
 				p._id === productId
 					? {
@@ -793,16 +811,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 														}}
 													>
 														<ProductCard
-															onToggleLike={(
-																productId,
-																liked,
-															) =>
-																handleToggleLike(
-																	productId,
-																	liked,
-																	auth?._id!,
-																)
-															}
 															product={product}
 															discountedPrice={
 																discountedPrice
@@ -822,6 +830,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 															}
 															loadedImages={loadedImages}
 															category={product.category}
+															// اختر إحدى الطريقتين:
+															// الطريقة 1: باستخدام onLikeToggle
+															onLikeToggle={
+																handleToggleLike
+															}
+															// الطريقة 2: باستخدام updateProductInList
+															// updateProductInList={updateProductInList}
 														/>
 													</motion.div>
 												</Col>

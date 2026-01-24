@@ -4,6 +4,12 @@
 	"bestOffers": "The best deals in one place",
 	"allRightsReserved": "All rights reserved.",
 	"help": "Help",
+	"favorites": "favorites",
+	"startFree": "Start now for free",
+	"joinUs": "Join us for free",
+	"callUs": "Contact Us",
+	"team": "Safqa team",
+	"faq": "FAQ",
 	"seller": "Published by",
 	"login": {
 		"email": "Email",
@@ -26,51 +32,73 @@
 		"googleError": "Google login error: {{message}}"
 	},
 	"register": {
-		"title": "Register",
-		"firstName": "First Name",
-		"lastName": "Last Name",
-		"phone1": "Primary Phone",
-		"phone2": "Secondary Phone (optional)",
-		"email": "Email",
-		"password": "Password",
-		"confirmPassword": "Confirm Password",
-		"gender": "Gender",
-		"selectGender": "Select Gender",
-		"male": "Male",
-		"female": "Female",
-		"imageUrl": "Image URL (optional)",
-		"address": "Address",
-		"city": "Select City",
-		"street": "Select Street",
-		"houseNumber": "House Number",
-		"terms": "I agree to the terms and policy",
-		"submit": "Register",
-		"loading": "Loading...",
-		"haveAccount": "Already have an account?",
-		"loginHere": "Login here",
+		"title": "Create a New Account",
+		"subtitle": "Join the Safqa community and start your trading journey today",
+		"steps": {
+			"personalInfo": "Personal Information",
+			"contactInfo": "Contact Details",
+			"security": "Security",
+			"agreements": "Agreements"
+		},
+		"slug": "Username",
+		"slugHint": "A unique name that appears in your profile URL",
+		"slugExample": "Example: john-doe or ahmad-saleh",
+		"generateSlug": "Generate from name",
+		"checkingSlug": "Checking username availability...",
+		"slugAvailable": "This username is available ✓",
+		"slugTaken": "This username is already taken ✗",
+		"profilePreview": "Profile Preview",
+		"profileLink": "Your profile link",
+		"passwordStrength": {
+			"veryWeak": "Very weak",
+			"weak": "Weak",
+			"fair": "Fair",
+			"good": "Good",
+			"strong": "Strong",
+			"veryStrong": "Very strong"
+		},
+		"agreeTo": "I agree to the",
+		"termsOfService": "Terms of Service",
+		"and": "and",
+		"privacyPolicy": "Privacy Policy",
+		"privacyNote": "We respect your privacy and are committed to protecting your personal data in accordance with our Privacy Policy.",
+		"creatingAccount": "Creating your account...",
+		"completeRegistration": "Complete Registration",
+		"success": {
+			"title": "Registration Successful!",
+			"message": "Your account has been created successfully. You can now log in and start using Safqa.",
+			"description": "Account created successfully",
+			"redirect": "You will be redirected to the login page shortly..."
+		},
+		"errors": {
+			"serverError": "A server error occurred. Please try again.",
+			"networkError": "Network error. Please check your internet connection.",
+			"slugUnavailable": "This username is not available. Please choose another one."
+		},
 		"validation": {
-			"firstNameRequired": "First name is required",
-			"firstNameMin": "First name must be at least 2 characters",
-			"lastNameRequired": "Last name is required",
-			"lastNameMin": "Last name must be at least 2 characters",
-			"phone1Required": "Phone number is required",
-			"phone1Min": "Phone number must be at least 9 digits",
-			"phone1Max": "Phone number must not exceed 10 digits",
-			"cityRequired": "City name is required",
-			"cityMin": "City name must be at least 2 characters",
-			"streetRequired": "Street name is required",
-			"streetMin": "Street name must be at least 2 characters",
-			"emailRequired": "Email is required",
-			"emailMin": "Email must be at least 5 characters",
-			"emailInvalid": "Invalid email",
-			"passwordRequired": "Password is required",
-			"passwordMin": "Password must be at least 8 characters and up to 60 characters",
-			"passwordMax": "Password is too long",
-			"confirmPasswordRequired": "Please confirm your password",
-			"confirmPasswordMatch": "Passwords do not match",
-			"genderRequired": "Gender selection is required",
-			"termsRequired": "You must agree to the terms"
-		}
+			"nameLettersOnly": "Name must contain letters only",
+			"phone1Format": "Phone number must start with 05 and contain 9–10 digits",
+			"phone2Format": "Phone number must start with 05 and contain 9–10 digits or be empty",
+			"houseNumberDigits": "House number must contain digits only",
+			"passwordLowercase": "Must contain at least one lowercase letter",
+			"passwordUppercase": "Must contain at least one uppercase letter",
+			"passwordNumber": "Must contain at least one number",
+			"passwordSpecial": "Must contain at least one special character (!@#$%^&*(),.?\":{}|<>)",
+			"slugRequired": "Username is required",
+			"slugMin": "Username must be at least 3 characters long",
+			"slugMax": "Username must not exceed 30 characters",
+			"slugFormat": "Username may contain lowercase English letters, numbers, and hyphens only",
+			"slugNoSpaces": "Username must not contain spaces",
+			"slugNoSpecial": "Username must not contain special characters"
+		},
+		"selectGender": "Select gender"
+	},
+	"common": {
+		"back": "Back",
+		"next": "Next",
+		"faq": "FAQ",
+		"contact": "Contact Us",
+		"about": "About Us"
 	},
 	"price": "Price",
 	"quantity": "Quantity",
@@ -551,36 +579,43 @@
 	},
 
 	"about": {
-		"title": "About Us",
-		"subtitle": "Safqa is a digital marketplace that connects users to buy and sell directly, simply, and without intermediaries.",
+		"title": "Our Success Story",
+		"subtitle": "Safqa: The Revolution in E-commerce Between Individuals - Where Conscious Sellers Meet Smart Buyers",
 
 		"what-we-are": {
-			"title": "Buying and Selling Between People",
-			"subtitle": "Safqa enables anyone to sell items they no longer need, while helping others find exactly what they’re looking for, easily, quickly, and at a fair price."
+			"safqa": "Our Core Essence",
+			"title": "The Future Platform for Personal Commerce",
+			"subtitle": "We're building a future where every individual becomes a successful trader. Our mission is to empower you to transform your possessions into opportunities and your dreams into tangible reality"
 		},
+
 		"buy-and-sell": {
-			"title": "What You’ll Find Here",
-			"subtitle": "Built on a C2C model, Safqa connects people with people. We are not a store, supplier, or commercial entity, just the platform that brings you together."
+			"title": "Our Philosophy",
+			"subtitle": "Simplicity in design, power in performance. We eliminate complexities and build bridges between sellers and buyers directly, without barriers or costly intermediaries"
 		},
+
 		"what-we-have": {
-			"title": "Products from Real Users",
-			"subtitle": "New and second-hand items including electronics, home goods, fashion, accessories, equipment, and more, all offered by real users."
+			"title": "A World of Choices",
+			"subtitle": "A vibrant digital marketplace featuring a wide variety that caters to all tastes and budgets: from rare artistic pieces to essential daily commodities, everything you're looking for you'll find here"
 		},
+
 		"control": {
-			"title": "Full Control for Users",
-			"subtitle": "Users decide what to sell, at what price, and how to communicate with buyers. No commitments and no fine print."
+			"title": "Power in Your Hands",
+			"subtitle": "You're the decision-maker at every step: smart pricing, premium presentation, and direct communication. We provide the tools, and you create the success"
 		},
+
 		"trust": {
-			"title": "Trust and Transparency",
-			"subtitle": "We work to create a safe and transparent environment, with reporting tools, content management, and clear communication between all parties."
+			"title": "Your Security is Our Honor",
+			"subtitle": "We work tirelessly to build a secure commercial environment based on advanced verification systems, realistic ratings, and absolute transparency in every transaction"
 		},
+
 		"why-register": {
-			"title": "Why Join?",
-			"subtitle": "If you have something to sell, Safqa is your stage. If you’re looking for a great deal, you’ll find it here. Signing up is easy and using the platform is effortless."
+			"title": "Launch Towards Success",
+			"subtitle": "Just two minutes separate you from starting a successful business journey. Our carefully designed interface turns selling into an art and buying into a pleasure"
 		},
+
 		"locations": {
-			"title": "Local Community",
-			"subtitle": "Safqa allows you to search by location, making transactions faster, easier, and closer to home."
+			"title": "Proximity Brings Us Together",
+			"subtitle": "Local shopping, global value. Discover treasures in your area or venture into new horizons - all with smart search tools that understand your geographical needs"
 		}
 	},
 	"footer": {

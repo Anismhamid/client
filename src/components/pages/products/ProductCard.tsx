@@ -13,13 +13,9 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material";
-import {
-	Share as ShareIcon,
-	Favorite as FavoriteIcon,
-	FavoriteBorder as FavoriteBorderIcon,
-} from "@mui/icons-material";
+import {Share as ShareIcon} from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Products} from "../../../interfaces/Products";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
@@ -27,11 +23,8 @@ import JsonLd from "../../../../utils/JsonLd";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
-import {toggleLike} from "../../../services/productsServices";
-import {useUser} from "../../../context/useUSer";
-import {path} from "../../../routes/routes";
-import Avatar from "@mui/material/Avatar";
-import AvatarGroup from "@mui/material/AvatarGroup";
+
+import LikeButton from "../../../atoms/LikeButton";
 
 interface ProductCardProps {
 	product: Products;
@@ -43,7 +36,8 @@ interface ProductCardProps {
 	setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadedImages: Record<string, boolean>;
 	category: string;
-	onToggleLike: (productId: string, liked: boolean) => void;
+	onLikeToggle?: (productId: string, liked: boolean) => void;
+	updateProductInList?: (updatedProduct: Products) => void;
 }
 
 const ProductCard: FunctionComponent<ProductCardProps> = memo(
@@ -57,7 +51,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		setLoadedImages,
 		loadedImages,
 		category,
-		onToggleLike,
+		onLikeToggle,
+		updateProductInList,
 	}) => {
 		// descriptive alt text for the image
 		const generateImageAlt = (productName: string, category: string) => {
@@ -66,35 +61,22 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 
 		const jsonLdData = generateSingleProductJsonLd(product);
 		const {t} = useTranslation();
-		const {auth, isLoggedIn} = useUser();
-		const navigate = useNavigate();
+		// const navigate = useNavigate();
 		const dir = handleRTL();
 		const theme = useTheme();
 
-		const handleLike = async () => {
-			if (!isLoggedIn) {
-				navigate(path.Login);
-				return;
-			}
-
-			try {
-				// Call the backend route
-				const res = await toggleLike(product._id ?? "");
-
-				onToggleLike(product._id!, res.liked);
-
-				showSuccess(
-					res.liked
-						? "تمت إضافة المنتج للمفضلة"
-						: "تمت إزالة المنتج من المفضلة",
-				);
-			} catch (err) {
-				console.error(err);
-				showError("حدث خطأ أثناء تحديث المفضلة");
+		const handleProductUpdate = (updatedProduct: Products) => {
+			if (updateProductInList) {
+				updateProductInList(updatedProduct);
 			}
 		};
 
-		const userLiked = product.likes?.includes(auth?._id ?? "");
+		const setProduct = updateProductInList
+			? (updater: (prev: Products) => Products) => {
+					const updated = updater(product);
+					handleProductUpdate(updated);
+				}
+			: undefined;
 
 		return (
 			<Card
@@ -110,9 +92,15 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 					transition: "all 0.3s ease",
 					position: "relative",
 					overflow: "hidden",
+					cursor: product.in_stock === false ? "not-allowed" : "pointer",
+					filter: product.in_stock === false ? "grayscale(0.5)" : "none",
 					"&:hover": {
-						boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.15)",
-						transform: "translateY(-4px)",
+						boxShadow:
+							product.in_stock === false
+								? "0px 4px 12px rgba(0, 0, 0, 0.1)"
+								: "0px 8px 24px rgba(0, 0, 0, 0.15)",
+						transform:
+							product.in_stock === false ? "none" : "translateY(-4px)",
 					},
 				}}
 				itemScope
@@ -121,6 +109,40 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 				aria-label={`منتج: ${product.product_name}`}
 			>
 				<JsonLd data={jsonLdData} />
+				{product.in_stock === false && (
+					<Box
+						sx={{
+							position: "absolute",
+							top: 0,
+							left: 0,
+							right: 0,
+							bottom: 0,
+							backgroundColor: "rgba(0, 0, 0, 0.05)",
+							zIndex: 3,
+							pointerEvents: "none",
+						}}
+					/>
+				)}
+				{product.in_stock === false && (
+					<Chip
+						label='غير متوفر'
+						color='default'
+						size='small'
+						sx={{
+							position: "absolute",
+							top: 10,
+							right: 10,
+							bgcolor: "#9e9e9e",
+							color: "#fff",
+							fontWeight: "bold",
+							zIndex: 4,
+							py: 0.5,
+							px: 1.5,
+							fontSize: "0.75rem",
+							borderRadius: 2,
+						}}
+					/>
+				)}
 
 				{/* Sale Badge */}
 				{product.sale && (
@@ -159,6 +181,12 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 					}}
 				>
 					<Link
+						onClick={(e) => {
+							if (product.in_stock === false) {
+								e.preventDefault();
+								showError("هذا المنتج غير متوفر حالياً");
+							}
+						}}
 						to={`/product-details/${product.category}/${product.brand}/${product._id}`}
 						aria-label={`تفاصيل عن ${product.product_name}`}
 						style={{display: "block", height: "100%"}}
@@ -183,7 +211,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							loading='lazy'
 							image={product.image.url}
 							alt={generateImageAlt(product.product_name, category)}
-							title={product.product_name}
+							title={product.description}
 							sx={{
 								width: "100%",
 								height: "100%",
@@ -406,35 +434,12 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 				>
 					{/* Like Button */}
 					<Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-						<IconButton
-							aria-label={userLiked ? "إزالة الإعجاب" : "إضافة إعجاب"}
-							onClick={handleLike}
-							sx={{
-								color: userLiked ? "#ff4444" : "red",
-								"&:hover": {
-									backgroundColor: userLiked
-										? "rgba(255, 68, 68, 0.08)"
-										: "action.hover",
-								},
-							}}
-						>
-							{userLiked ? (
-								<FavoriteIcon sx={{color: "#ff4444"}} />
-							) : (
-								<FavoriteBorderIcon />
-							)}
-							<Typography
-								variant='body2'
-								sx={{
-									ml: 0.5,
-									color: userLiked ? "#ff4444" : "text.secondary",
-									fontWeight: 500,
-								}}
-							>
-								{product.likes?.length ?? 0}
-							</Typography>
-						</IconButton>
 
+						<LikeButton
+							product={product}
+							setProduct={setProduct}
+							onLikeToggle={onLikeToggle}
+						/>
 						{/* Simple like count display */}
 						{product.likes && product.likes.length > 0 && (
 							<Tooltip

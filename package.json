@@ -49,6 +49,7 @@
 		"@esbuild-plugins/node-globals-polyfill": "^0.2.3",
 		"@eslint/js": "^9.27.0",
 		"@types/jspdf": "^2.0.0",
+		"@types/lodash": "^4.17.23",
 		"@types/react-dom": "^19.1.5",
 		"@types/react-helmet": "^6.1.11",
 		"@vercel/node": "^5.3.17",

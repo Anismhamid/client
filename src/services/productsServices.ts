@@ -127,12 +127,12 @@ export const getProductsByCategory = async (category: string) => {
 
 export const getCustomerProfileProductsBySlug = async (
 	slug: string,
-): Promise<AuthValues> => {
+): Promise<Products[]> => {
 	try {
 		const res = await axios.get(`${api}/products/customer/${slug}`);
 		return res.data;
 	} catch (err) {
-		return emptyAuthValues;
+		return [];
 	}
 };
 

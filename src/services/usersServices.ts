@@ -266,3 +266,15 @@ export const getCustomerProfileBySlug = async (slug: string) => {
 		console.error("Error fetching customer profile by slug:", err);
 	}
 };
+
+export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
+	try {
+		const response = await axios.get(`${api}/check-slug/${slug}`);
+		return response.data.available;
+	} catch (error) {
+		console.error("Error checking slug availability:", error);
+		throw error;
+	}
+};
+
+// ... بقية الدوال ...

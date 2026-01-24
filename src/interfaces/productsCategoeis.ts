@@ -39,7 +39,7 @@ export const categoryLabels: Record<string, string> = {
 	trucks: "شاحنات",
 	bikes: "دراجات هوائية",
 	electricVehicles: "مركبات كهربائية",
-};
+} as const;
 
 export const categoryPathMap: Record<string, string> = {
 	house: productsPathes.house,
@@ -59,4 +59,4 @@ export const categoryPathMap: Record<string, string> = {
 	trucks: productsPathes.trucks,
 	bikes: productsPathes.bikes,
 	electricVehicles: productsPathes.electricVehicles,
-};
+} as const;

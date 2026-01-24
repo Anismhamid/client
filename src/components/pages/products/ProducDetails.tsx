@@ -1,6 +1,6 @@
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, memo, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {getProductById, toggleLike} from "../../../services/productsServices";
+import {getProductById} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {
 	Box,
@@ -22,8 +22,6 @@ import {
 import {
 	ArrowBack as ArrowBackIcon,
 	Share as ShareIcon,
-	Favorite as FavoriteIcon,
-	FavoriteBorder as FavoriteBorderIcon,
 	Home as HomeIcon,
 	Store as StoreIcon,
 	Phone,
@@ -37,9 +35,9 @@ import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
-import {generateSingleVehicleJsonLd} from "../../../../utils/vehiclesJsonLd";
 import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
 import ProductDetailsTable from "./ProductDetailsTable";
+import LikeButton from "../../../atoms/LikeButton";
 
 interface ProductDetailsProps {}
 
@@ -54,59 +52,25 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
-	const {auth} = useUser();
 
-	// ----- Handle Like -----
-	const handleLike = async () => {
-		if (!isLoggedIn) {
-			navigate(path.Login);
-			return;
-		}
+	const MemoizedProductDetailsTable = memo(ProductDetailsTable);
 
-		try {
-			// Call the backend route
-			const res = await toggleLike(product._id ?? "");
-
-			// Optional: update product.likes array if you want to reflect immediately
-			setProduct((prev) => ({
-				...prev,
-				likes: res.liked
-					? [...(prev.likes || []), auth?._id ?? ""]
-					: (prev.likes || []).filter((id) => id !== auth?._id),
-			}));
-
-			showSuccess(
-				res.liked ? "تمت إضافة المنتج للمفضلة" : "تمت إزالة المنتج من المفضلة",
-			);
-		} catch (err) {
-			console.error(err);
-			showError("حدث خطأ أثناء تحديث المفضلة");
-		}
-	};
-
-	const userLiked = product.likes?.includes(auth?._id ?? "");
 
 	// ----- Fetch Product -----
 	useEffect(() => {
-		if (productId) {
-			setLoading(true);
-			getProductById(productId)
-				.then((res) => {
-					if (!res) {
-						setError("لم يتم العثور على المنتج");
-						setProduct(initialProductValue as Products);
-					} else {
-						setProduct(res);
-						setError("");
-					}
-				})
-				.catch(() => {
-					setError("حدث خطأ أثناء تحميل المنتج");
-					setProduct(initialProductValue as Products);
-				})
-				.finally(() => setLoading(false));
+		if (!productId) {
+			navigate(path.Home);
+			return;
 		}
-	}, [productId]);
+		setLoading(true);
+		getProductById(productId)
+			.then((res) => setProduct(res))
+			.catch(() => {
+				setError("حدث خطأ أثناء تحميل المنتج");
+				setProduct(initialProductValue as Products);
+			})
+			.finally(() => setLoading(false));
+	}, [productId, navigate]);
 
 	if (loading)
 		return (
@@ -139,24 +103,31 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			</Container>
 		);
 
-	const capitalize = (str: string) => str.charAt(0).toLowerCase() + str.slice(1);
-	// ----- JSON-LD Vehicles -----
-	const vehicleTypes = ["Car", "Motorcycle", "Truck", "Bike", "ElectricVehicle"];
-	const vehicleType = vehicleTypes.includes(product.category)
-		? product.category
-		: undefined;
+	const productJ = generateSingleProductJsonLd(product);
 
 	return (
 		<>
-			<JsonLd data={generateSingleProductJsonLd(product)} />
-			{vehicleType && (
-				<Helmet>
-					<script type='application/ld+json'>
-						{JSON.stringify(generateSingleVehicleJsonLd(product, "Bike"))}
-					</script>
-				</Helmet>
-			)}
+			<JsonLd data={productJ} />
 
+			<Helmet>
+				<title>{product.product_name} | صفقه</title>
+				<meta
+					name='description'
+					content={product.description?.substring(0, 160)}
+				/>
+				<meta property='og:title' content={product.product_name} />
+				<meta
+					property='og:description'
+					content={product.description?.substring(0, 160)}
+				/>
+				<meta property='og:image' content={product.image?.url} />
+				<meta property='og:type' content='product' />
+				<meta
+					property='product:price:amount'
+					content={product.price.toString()}
+				/>
+				<meta property='product:price:currency' content='ILS' />
+			</Helmet>
 			<Box component={"main"}>
 				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
 					{/* Breadcrumbs */}
@@ -183,7 +154,20 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								sx={{display: "flex", alignItems: "center"}}
 							>
 								<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-								{categoryLabels[product.category] || "الفئات"}
+								{categoryLabels[product.category] || t("categories")}
+							</Button>
+							<Button
+								color='inherit'
+								onClick={() => {
+									const catPath =
+										categoryPathMap[product.category] || "";
+									navigate(catPath);
+								}}
+								sx={{display: "flex", alignItems: "center"}}
+							>
+								<Typography p={3} color='info'>
+									{t(product.category)}
+								</Typography>
 							</Button>
 
 							<Typography p={3} color='info'>
@@ -209,8 +193,10 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 								{!loading && product.image && (
 									<CardMedia
 										component='img'
-										image={product.image.url}
-										alt={product.product_name}
+										image={`${product.image.url}?w=800&q=75`}
+										alt={`صورة ${product.product_name}`}
+										aria-label={`صورة ${product.product_name}`}
+										loading='lazy'
 										sx={{
 											height: isMobile ? "300px" : "500px",
 											objectFit: "contain",
@@ -227,27 +213,72 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										borderTop: `1px solid ${theme.palette.divider}`,
 									}}
 								>
-									<IconButton
+									{/* <IconButton
 										aria-label='add to favorites'
-										onClick={handleLike}
+										onClick={() =>
+											handleLike(
+												isLoggedIn,
+												isLiking,
+												navigate,
+												setIsLiking,
+												setProduct,
+												product,
+												auth,
+											)
+										}
+										disabled={isLiking}
+										sx={{position: "relative"}}
 									>
-										{userLiked ? (
+										{isLiking ? (
+											<>
+												<FavoriteBorderIcon sx={{opacity: 0.1}} />
+												<CircularProgress
+													size={10}
+													sx={{
+														position: "absolute",
+														top: "35%",
+														left: "37%",
+													}}
+												/>
+											</>
+										) : userLiked ? (
 											<>
 												<FavoriteIcon color='error' />
-												<Typography sx={{ml: 0.5}}>
+												<Typography
+													sx={{ml: 0.5, fontSize: "0.875rem"}}
+												>
 													{product.likes?.length ?? 0}
 												</Typography>
 											</>
 										) : (
 											<>
 												<FavoriteBorderIcon />
-												<Typography sx={{ml: 0.5}}>
+												<Typography
+													sx={{ml: 0.5, fontSize: "0.875rem"}}
+												>
 													{product.likes?.length ?? 0}
 												</Typography>
 											</>
 										)}
+									</IconButton> */}
+									{/* <LikeButton
+										product={product}
+										// onLikeToggle={onLikeToggle}
+									/> */}
+									<IconButton
+										aria-label='add to favorites'
+										onClick={() => {
+											if (!isLoggedIn) {
+												navigate(path.Login);
+												return;
+											}
+										}}
+									>
+										<LikeButton
+											product={product}
+											setProduct={setProduct}
+										/>
 									</IconButton>
-
 									<IconButton
 										aria-label='share'
 										onClick={() => {
@@ -323,7 +354,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									{formatPrice(product.price)}
 								</Typography>
 
-								<ColorsAndSizes category={capitalize(product.category)} />
+								<ColorsAndSizes category={product.category} />
 
 								<Divider sx={{my: 3}} />
 
@@ -447,7 +478,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						>
 							مزيد من التفاصيل
 						</Typography>
-						<ProductDetailsTable product={product} />
+						<MemoizedProductDetailsTable product={product} />
 						<Grid container spacing={4}>
 							{[
 								{

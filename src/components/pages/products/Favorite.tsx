@@ -8,8 +8,11 @@ import {Helmet} from "react-helmet";
 // import JsonLd from "../../../../utils/JsonLd";
 import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../../locales/handleRTL";
 
 const Favorite: FunctionComponent = () => {
+	const {t} = useTranslation();
 	const [products, setProducts] = useState<Products[]>([]);
 	const {auth} = useUser();
 
@@ -37,13 +40,21 @@ const Favorite: FunctionComponent = () => {
 		);
 	}
 
+	const direction = handleRTL();
+
+	const productsList = generateProductsItemListJsonLd(products);
+
+	
+
 	return (
 		<>
+			<JsonLd data={productsList} />
 			<Helmet>
-				<JsonLd data={generateProductsItemListJsonLd(products)} />
-				<title>المفضله | صفقه</title>
+				<title>{t("favorites")} | صفقه</title>
+				<meta name='description' content={t("favorites")} />
 			</Helmet>
-			<Box sx={{px: {xs: 2, md: 4}, py: 4}}>
+			<Box dir={direction} sx={{px: {xs: 2, md: 4}, py: 4}}>
+				<h1>{t("favorites")}</h1>
 				<Grid container spacing={3}>
 					{products.map((product) => (
 						<Grid size={{xs: 12, sm: 6, md: 4, lg: 3}} key={product._id}>
@@ -56,7 +67,7 @@ const Favorite: FunctionComponent = () => {
 								setLoadedImages={() => {}}
 								loadedImages={{}}
 								category={product.category}
-								onToggleLike={() => {}}
+								// onToggleLike={() => {}}
 							/>
 						</Grid>
 					))}

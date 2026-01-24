@@ -4,9 +4,7 @@ import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
-import {
-	generateCategoryJsonLd,
-} from "../../../../utils/structuredData";
+import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 
 interface ProductsProps {}
 /**
@@ -21,18 +19,17 @@ const Products: FunctionComponent<ProductsProps> = () => {
 		return <div className='text-center mt-4'>Category not found</div>;
 	}
 
+	const categoryData = generateCategoryJsonLd(category, []);
+
 	return (
 		<>
-			<JsonLd data={generateCategoryJsonLd(category, [])} />
+			<JsonLd data={categoryData} />
 			<Helmet>
 				<title>{t(`categories.${category}.heading`)} | صفقة</title>
 				<meta
 					name='description'
 					content={t(`categories.${category}.description`)}
 				/>
-				<script type='application/ld+json'>
-					{JSON.stringify(generateCategoryJsonLd(category, []))}
-				</script>
 			</Helmet>
 
 			<main>

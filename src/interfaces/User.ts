@@ -18,6 +18,7 @@ export interface UserRegister {
 	password: string;
 	confirmPassword?: string;
 	gender: string;
+	slug: string;
 	image: {
 		url?: string;
 		alt?: string;

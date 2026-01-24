@@ -88,8 +88,29 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		[loading, products, visibleProducts],
 	);
 
-	const handleToggleLike = (productId: string, liked: boolean, userId: string) => {
+	const handleToggleLike = (productId: string, liked: boolean) => {
+		if (!auth?._id) {
+			console.warn("User ID is not available");
+			return;
+		}
+
+		const userId = auth._id;
+
 		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId] // userId مؤكد كـ string
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+
+		// تحديث visibleProducts أيضاً إذا لزم
+		setVisibleProducts((prev) =>
 			prev.map((p) =>
 				p._id === productId
 					? {
@@ -102,7 +123,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			),
 		);
 	};
-
 	const filteredProducts = useMemo(() => {
 		return products.filter((product) => {
 			const productName = product.product_name || "";
@@ -245,13 +265,6 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 											ref={isLast ? lastProductRef : null}
 										>
 											<ProductCard
-												onToggleLike={(productId, liked) =>
-													handleToggleLike(
-														productId,
-														liked,
-														auth?._id!,
-													)
-												}
 												key={product._id}
 												product={product}
 												discountedPrice={discountedPrice}
@@ -266,6 +279,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												setLoadedImages={setLoadedImages}
 												loadedImages={loadedImages}
 												category={category}
+												onLikeToggle={handleToggleLike}
 											/>
 										</Col>
 									);
