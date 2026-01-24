@@ -148,12 +148,6 @@ const CustomerProfile: FunctionComponent = () => {
 		fetchData();
 	}, [slug]);
 
-	const updateProductInList = (updatedProduct: Products) => {
-		setProducts((prev) =>
-			prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p)),
-		);
-	};
-
 	const handleShareProfile = () => {
 		if (navigator.share) {
 			navigator.share({

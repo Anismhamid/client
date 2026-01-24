@@ -71,7 +71,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
-
 	// بديل: دالة handleToggleLike
 	const handleToggleLike = (productId: string, liked: boolean) => {
 		if (!auth?._id) return;
@@ -231,98 +230,96 @@ const Home: FunctionComponent<HomeProps> = () => {
 					background: "linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%)",
 				}}
 			>
-				<AnimatePresence>
-					<motion.div
-						initial={{y: 50, opacity: 0}}
-						animate={{y: 0, opacity: 1}}
-						transition={{type: "spring", stiffness: 100}}
-					>
-						<Box>
-							<Box sx={{mb: 3}}>
-								<Box
-									sx={{
-										width: 80,
-										height: 80,
-										borderRadius: "50%",
-										background:
-											"linear-gradient(135deg, #ff6b6b, #ff8e53)",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										margin: "0 auto 20px",
-										fontSize: "2.5rem",
-										color: "white",
-										boxShadow: "0 8px 16px rgba(255,107,107,0.3)",
-									}}
-								>
-									😔
-								</Box>
-								<Typography
-									variant='h4'
-									sx={{
-										fontWeight: "bold",
-										background:
-											"linear-gradient(45deg, #ff6b6b 30%, #ff8e53 90%)",
-										WebkitBackgroundClip: "text",
-										WebkitTextFillColor: "transparent",
-										mb: 2,
-									}}
-								>
-									{t("noProducts")}
-								</Typography>
-								<Typography
-									variant='body1'
-									sx={{
-										mb: 4,
-										color: "text.secondary",
-										fontSize: "1.1rem",
-									}}
-								>
-									عذراً، لم نتمكن من تحميل المنتجات في الوقت الحالي
-								</Typography>
-							</Box>
-							<motion.div
-								whileHover={!isMobile ? {scale: 1.05} : undefined}
-								whileTap={{scale: 0.95}}
+				<motion.div
+					initial={{y: 50, opacity: 0}}
+					animate={{y: 0, opacity: 1}}
+					transition={{type: "spring", stiffness: 100}}
+				>
+					<Box>
+						<Box sx={{mb: 3}}>
+							<Box
+								sx={{
+									width: 80,
+									height: 80,
+									borderRadius: "50%",
+									background:
+										"linear-gradient(135deg, #ff6b6b, #ff8e53)",
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "center",
+									margin: "0 auto 20px",
+									fontSize: "2.5rem",
+									color: "white",
+									boxShadow: "0 8px 16px rgba(255,107,107,0.3)",
+								}}
 							>
-								<Button
-									onClick={refreshAfterCange}
-									variant='contained'
-									startIcon={
-										<motion.span
-											animate={{rotate: 360}}
-											transition={{
-												duration: 1,
-												repeat: Infinity,
-												ease: "linear",
-											}}
-										>
-											🔄
-										</motion.span>
-									}
-									sx={{
-										background:
-											"linear-gradient(45deg, #6a11cb 0%, #2575fc 100%)",
-										color: "white",
-										borderRadius: 3,
-										padding: "14px 40px",
-										fontWeight: "bold",
-										fontSize: "1.1rem",
-										textTransform: "none",
-										boxShadow: "0 8px 20px rgba(106,17,203,0.4)",
-										"&:hover": {
-											background:
-												"linear-gradient(45deg, #5a0db8 0%, #1c68f0 100%)",
-											boxShadow: "0 12px 24px rgba(106,17,203,0.5)",
-										},
-									}}
-								>
-									حاول مرة أخرى
-								</Button>
-							</motion.div>
+								😔
+							</Box>
+							<Typography
+								variant='h4'
+								sx={{
+									fontWeight: "bold",
+									background:
+										"linear-gradient(45deg, #ff6b6b 30%, #ff8e53 90%)",
+									WebkitBackgroundClip: "text",
+									WebkitTextFillColor: "transparent",
+									mb: 2,
+								}}
+							>
+								{t("noProducts")}
+							</Typography>
+							<Typography
+								variant='body1'
+								sx={{
+									mb: 4,
+									color: "text.secondary",
+									fontSize: "1.1rem",
+								}}
+							>
+								عذراً، لم نتمكن من تحميل المنتجات في الوقت الحالي
+							</Typography>
 						</Box>
-					</motion.div>
-				</AnimatePresence>
+						<motion.div
+							whileHover={!isMobile ? {scale: 1.05} : undefined}
+							whileTap={{scale: 0.95}}
+						>
+							<Button
+								onClick={refreshAfterCange}
+								variant='contained'
+								startIcon={
+									<motion.span
+										animate={{rotate: 360}}
+										transition={{
+											duration: 1,
+											repeat: Infinity,
+											ease: "linear",
+										}}
+									>
+										🔄
+									</motion.span>
+								}
+								sx={{
+									background:
+										"linear-gradient(45deg, #6a11cb 0%, #2575fc 100%)",
+									color: "white",
+									borderRadius: 3,
+									padding: "14px 40px",
+									fontWeight: "bold",
+									fontSize: "1.1rem",
+									textTransform: "none",
+									boxShadow: "0 8px 20px rgba(106,17,203,0.4)",
+									"&:hover": {
+										background:
+											"linear-gradient(45deg, #5a0db8 0%, #1c68f0 100%)",
+										boxShadow: "0 12px 24px rgba(106,17,203,0.5)",
+									},
+								}}
+							>
+								حاول مرة أخرى
+							</Button>
+						</motion.div>
+					</Box>
+				</motion.div>
 			</Box>
 		);
 

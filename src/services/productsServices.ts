@@ -1,6 +1,5 @@
 import axios from "axios";
 import {Products} from "../interfaces/Products";
-import {AuthValues, emptyAuthValues} from "../interfaces/authValues";
 
 const api = `${import.meta.env.VITE_API_URL}`;
 

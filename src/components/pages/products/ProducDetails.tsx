@@ -55,7 +55,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 	const MemoizedProductDetailsTable = memo(ProductDetailsTable);
 
-
 	// ----- Fetch Product -----
 	useEffect(() => {
 		if (!productId) {
@@ -110,17 +109,17 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			<JsonLd data={productJ} />
 
 			<Helmet>
-				<title>{product.product_name} | صفقه</title>
+				<title>{product.product_name} | صفقة</title>
 				<meta
 					name='description'
-					content={product.description?.substring(0, 160)}
+					content={`اشتري ${product.product_name} بأفضل سعر على صفقة. ${product.description?.substring(0, 120)}`}
 				/>
 				<meta property='og:title' content={product.product_name} />
 				<meta
 					property='og:description'
 					content={product.description?.substring(0, 160)}
 				/>
-				<meta property='og:image' content={product.image?.url} />
+				<meta property='og:image' content={product.image.url} />
 				<meta property='og:type' content='product' />
 				<meta
 					property='product:price:amount'

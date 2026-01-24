@@ -16,9 +16,7 @@ export const generateCategoryJsonLd = (
 		itemListElement: products.map((product, index) => ({
 			"@type": "ListItem",
 			position: index + 1,
-			url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
-				product.product_name,
-			)}`,
+			url: `https://client-qqq1.vercel.app/product-details/${product.category}/${product.brand}/${product._id}`,
 		})),
 	},
 });
@@ -33,6 +31,7 @@ export const generateSingleProductJsonLd = (product: Products) => {
 	return {
 		"@context": "https://schema.org",
 		"@type": "Product",
+		"@id": `https://client-qqq1.vercel.app/product-details/${product._id}#product`,
 		sku: product._id,
 		name: product.product_name,
 		description: product.description || "منتج معروض للبيع من قبل أحد المستخدمين",
@@ -64,7 +63,7 @@ export const generateSingleProductJsonLd = (product: Products) => {
 				product.product_name,
 			)}`,
 			availability:
-				product.in_stock && product.in_stock == true
+				product.in_stock && product.in_stock === true
 					? "https://schema.org/InStock"
 					: "https://schema.org/OutOfStock",
 
@@ -137,7 +136,7 @@ export const generateDiscountsJsonLd = (products: Products[]) => ({
 					product.product_name,
 				)}`,
 				availability:
-					product.quantity_in_stock && product.quantity_in_stock > 0
+					product.in_stock && product.in_stock === true
 						? "https://schema.org/InStock"
 						: "https://schema.org/OutOfStock",
 				seller: {

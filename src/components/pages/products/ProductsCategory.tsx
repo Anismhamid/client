@@ -218,9 +218,11 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 		<>
 			<JsonLd data={generateCategoryJsonLd(category, products)} />
 			<Helmet>
-				<script type='application/ld+json'>
-					{JSON.stringify(generateCategoryJsonLd("سيارات", products))}
-				</script>
+				<title>{t(`categories.${category}.heading`)} | صفقة</title>
+				<meta
+					name='description'
+					content={t(`categories.${category}.description`)}
+				/>
 			</Helmet>
 			<ChepNavigation />
 			<Box component='main'>
