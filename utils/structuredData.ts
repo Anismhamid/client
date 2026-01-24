@@ -39,11 +39,23 @@ export const generateSingleProductJsonLd = (product: Products) => {
 		image: product.image_url || "https://client-qqq1.vercel.app/myLogo.png",
 		category: product.category || "General",
 		brand: {
-			"@type": "Thing",
+			"@type": "Brand",
 			name: "بيع وشراء",
 		},
 		offers: {
 			"@type": "Offer",
+			hasMerchantReturnPolicy: {
+				"@type": "MerchantReturnPolicy",
+				returnPolicyCategory: "https://schema.org/DynamicReturnPolicy",
+			},
+			shippingDetails: {
+				"@type": "OfferShippingDetails",
+				shippingRate: {
+					"@type": "MonetaryAmount",
+					value: 0,
+					currency: "ILS",
+				},
+			},
 			priceCurrency: "ILS",
 			price: Number(finalPrice.toFixed(2)),
 			priceValidUntil: "2026-12-31",
@@ -52,14 +64,16 @@ export const generateSingleProductJsonLd = (product: Products) => {
 				product.product_name,
 			)}`,
 			availability:
-				product.quantity_in_stock && product.quantity_in_stock > 0
+				product.in_stock && product.in_stock == true
 					? "https://schema.org/InStock"
 					: "https://schema.org/OutOfStock",
 
 			seller: {
 				"@type": "Person",
 				name: product.seller?.sellerId || "مستخدم مسجل",
-				url: `https://client-qqq1.vercel.app/user/${product.seller?.sellerId}`,
+				url: product.seller?.sellerId
+					? `https://client-qqq1.vercel.app/user/customer/${product.seller.slug}`
+					: `https://client-qqq1.vercel.app/`,
 			},
 		},
 	};
@@ -105,6 +119,18 @@ export const generateDiscountsJsonLd = (products: Products[]) => ({
 			},
 			offers: {
 				"@type": "Offer",
+				hasMerchantReturnPolicy: {
+					"@type": "MerchantReturnPolicy",
+					returnPolicyCategory: "https://schema.org/DynamicReturnPolicy",
+				},
+				shippingDetails: {
+					"@type": "OfferShippingDetails",
+					shippingRate: {
+						"@type": "MonetaryAmount",
+						value: 0,
+						currency: "ILS",
+					},
+				},
 				priceCurrency: "ILS",
 				price: Number(discountedPrice.toFixed(2)),
 				url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
@@ -117,7 +143,9 @@ export const generateDiscountsJsonLd = (products: Products[]) => ({
 				seller: {
 					"@type": "Person",
 					name: product.seller?.name || "مستخدم مسجل",
-					url: `https://client-qqq1.vercel.app/user/${product.seller?.sellerId}`,
+					url: product.seller?.sellerId
+						? `https://client-qqq1.vercel.app/user/customer/${product.seller.slug}`
+						: `https://client-qqq1.vercel.app/`,
 				},
 			},
 		};
