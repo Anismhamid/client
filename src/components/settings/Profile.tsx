@@ -225,7 +225,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	return (
 		<>
 			<Helmet>
-				{" "}
 				<link rel='canonical' href={currentUrl} />
 				<title>
 					{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
@@ -460,6 +459,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												onClick={updateProfile}
 												sx={{
 													background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+													gap: 2,
 												}}
 											>
 												تعديل الملف
@@ -468,6 +468,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												variant='outlined'
 												size='large'
 												fullWidth
+												sx={{gap: 2}}
 												startIcon={<Share />}
 												onClick={handleShareProfile}
 											>
@@ -477,11 +478,12 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												variant='outlined'
 												color='error'
 												size='large'
+												sx={{gap: 2}}
 												fullWidth
 												startIcon={<Logout />}
 												onClick={handleLogout}
 											>
-												تسجيل خروج
+												{t("logout")}
 											</Button>
 										</Stack>
 									</Grid>
@@ -526,7 +528,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 										{stats.totalFavorites}
 									</Typography>
 									<Typography variant='body2' color='text.secondary'>
-										مفضلة
+										{t("favorites")}
 									</Typography>
 								</Paper>
 							</Grid>

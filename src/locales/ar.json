@@ -42,6 +42,19 @@
 			"security": "الأمان",
 			"agreements": "الاتفاقيات"
 		},
+		"firstName": "الاسم الاول",
+		"lastName": "اسم العائلة",
+		"email": "الايميل",
+		"phone1": "هاتف",
+		"phone2": "هاتف اضافي (اختياري)",
+		"city": "البلد",
+		"street": "الشارع",
+		"houseNumber": "رقم البيت (اختياري)",
+		"imageUrl": "صوره",
+		"password": "كلمه السر",
+		"confirmPassword": "تأكيد كلمه السر",
+		"haveAccount": "لديك حساب ؟",
+		"loginHere": "سجل دخولك الان",
 		"slug": "اسم المستخدم",
 		"slugHint": "اسم فريد يظهر في رابط ملفك الشخصي",
 		"slugExample": "مثال: john-doe أو ahmad-saleh",
@@ -78,6 +91,20 @@
 			"slugUnavailable": "اسم المستخدم غير متاح. يرجى اختيار اسم آخر."
 		},
 		"validation": {
+			"firstNameRequired": "",
+			"firstNameMin": "",
+			"lastNameRequired": "",
+			"lastNameMin": "",
+			"emailRequired": "",
+			"emailMin": "",
+			"emailInvalid": "",
+			"genderRequired": "",
+			"cityRequired": "",
+			"streetRequired": "",
+			"passwordRequired": "",
+			"confirmPasswordRequired": "",
+			"passwordMin": "",
+			"confirmPasswordMatch": "",
 			"nameLettersOnly": "يجب أن يحتوي الاسم على أحرف فقط",
 			"phone1Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام",
 			"phone2Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام أو يكون فارغاً",
@@ -93,7 +120,10 @@
 			"slugNoSpaces": "يجب ألا يحتوي اسم المستخدم على مسافات",
 			"slugNoSpecial": "يجب ألا يحتوي اسم المستخدم على رموز خاصة"
 		},
-		"selectGender": "اختر الجنس"
+		"gender": "الجنس",
+		"selectGender": "اختر الجنس",
+		"male": "ذكر",
+		"female": "انثى"
 	},
 	"common": {
 		"back": "رجوع",
@@ -422,7 +452,7 @@
 		"cart": "السلة",
 		"about": "من نحن",
 		"contact": "اتصل بنا",
-		"login": "تسجيل الدخول",
+		"login": "دخول",
 		"logout": "تسجيل الخروج"
 	},
 	"pages": {

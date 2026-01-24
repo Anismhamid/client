@@ -121,7 +121,13 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 
 	return (
 		<Box
-			style={{minHeight: "fit-content"}}
+			style={{
+				minHeight: "fit-content",
+				backgroundColor: "white",
+				borderRadius: 25,
+				boxShadow: "0px 0.3px 1px 0px black",
+				padding: 20
+			}}
 			className=' d-flex align-items-center justify-content-center'
 			aria-label='شاشه منبثقه لتحديث الملف الشخصي'
 		>

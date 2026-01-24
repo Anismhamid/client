@@ -240,7 +240,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 								product.price,
 								product.discount,
 							);
-							const productUrl = `/category/${product.category}/${product._id}`;
+							const productUrl = `/category/${product.category.toLocaleLowerCase()}/${product._id}`;
 
 							return (
 								<SwiperSlide key={product._id}>

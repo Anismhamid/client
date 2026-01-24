@@ -1,5 +1,5 @@
 import {FunctionComponent, memo, useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getProductById} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {
@@ -18,6 +18,8 @@ import {
 	Rating,
 	useTheme,
 	useMediaQuery,
+	Tooltip,
+	TextField,
 } from "@mui/material";
 import {
 	ArrowBack as ArrowBackIcon,
@@ -25,6 +27,7 @@ import {
 	Home as HomeIcon,
 	Store as StoreIcon,
 	Phone,
+	ChevronRight,
 } from "@mui/icons-material";
 import {path} from "../../../routes/routes";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
@@ -52,6 +55,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [rating, setRating] = useState<number | null>(product.rating || null);
+	const [value, setValue] = useState("");
 
 	const MemoizedProductDetailsTable = memo(ProductDetailsTable);
 
@@ -133,49 +137,239 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			<Box component={"main"}>
 				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
 					{/* Breadcrumbs */}
-					<Box sx={{mb: 4}}>
-						<Breadcrumbs aria-label='breadcrumb' separator='›'>
-							<Button
-								color='inherit'
-								href={path.Home}
-								sx={{display: "flex", alignItems: "center"}}
-								startIcon={
-									<HomeIcon sx={{mr: 0.5, ml: 1}} fontSize='inherit' />
-								}
-							>
-								{t("home")}
-							</Button>
+					<Box
+						sx={{
+							mb: 4,
+							px: {xs: 1, sm: 0},
+							py: 1,
+							// backgroundColor:
+							// 	mode === "dark"
+							// 		? "rgba(255, 255, 255, 0.03)"
+							// 		: "rgba(0, 0, 0, 0.02)",
+							borderRadius: 2,
+							// border: `1px solid ${mode === "dark" ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)"}`,
+						}}
+					>
+						<Breadcrumbs
+							aria-label={
+								t("product.breadcrumbNavigation") || "مسار التنقل"
+							}
+							separator={
+								<ChevronRight
+									sx={{
+										fontSize: 20,
+										// color:
+										// 	mode === "dark"
+										// 		? "text.secondary"
+										// 		: "text.disabled",
+										mx: 0.5,
+									}}
+								/>
+							}
+							sx={{
+								"& .MuiBreadcrumbs-ol": {
+									flexWrap: "nowrap",
+									overflow: "hidden",
+								},
+								"& .MuiBreadcrumbs-li": {
+									display: "flex",
+									alignItems: "center",
+									maxWidth: {xs: "120px", sm: "200px", md: "none"},
+									overflow: "hidden",
+									textOverflow: "ellipsis",
+									whiteSpace: "nowrap",
+								},
+							}}
+						>
+							{/* Home Link */}
+							<Tooltip title={t("home") || "الصفحة الرئيسية"} arrow>
+								<Button
+									component={Link}
+									to={path.Home}
+									startIcon={
+										<HomeIcon
+											sx={{
+												fontSize: {xs: 16, sm: 18},
+												// color:
+												// mode === "dark"
+												// 	? "primary.light"
+												// 	: "primary.main",
+											}}
+										/>
+									}
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										gap: 0.5,
+										// color:
+										// 	mode === "dark"
+										// 		? "text.secondary"
+										// 		: "text.primary",
+										textTransform: "none",
+										fontSize: {xs: "0.8rem", sm: "0.875rem"},
+										fontWeight: 400,
+										px: 1,
+										py: 0.5,
+										minHeight: 32,
+										borderRadius: 1,
+										// "&:hover": {
+										// 	backgroundColor:
+										// 		mode === "dark"
+										// 			? "rgba(144, 202, 249, 0.08)"
+										// 			: "rgba(25, 118, 210, 0.04)",
+										// 	color:
+										// 		mode === "dark"
+										// 			? "primary.light"
+										// 			: "primary.main",
+										// },
+									}}
+								>
+									<Typography
+										variant='body2'
+										sx={{
+											fontWeight: 500,
+											display: {xs: "none", sm: "block"},
+										}}
+									>
+										{t("home")}
+									</Typography>
+								</Button>
+							</Tooltip>
 
-							<Button
-								color='inherit'
-								onClick={() => {
-									const catPath =
-										categoryPathMap[product.category] || "";
-									navigate(catPath);
+							{/* Category Link */}
+							{product.category && (
+								<Tooltip
+									title={
+										categoryLabels[product.category] ||
+										t(product.category)
+									}
+									arrow
+								>
+									<Button
+										onClick={() => {
+											const catPath =
+												categoryPathMap[product.category] || "";
+											if (catPath) {
+												navigate(catPath);
+											}
+										}}
+										startIcon={
+											<StoreIcon
+												sx={{
+													fontSize: {xs: 16, sm: 18},
+													// color:
+													// 	mode === "dark"
+													// 		? "secondary.light"
+													// 		: "secondary.main",
+												}}
+											/>
+										}
+										disabled={!categoryPathMap[product.category]}
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 0.5,
+											// color:
+											// 	mode === "dark"
+											// 		? "text.secondary"
+											// 		: "text.primary",
+											textTransform: "none",
+											fontSize: {xs: "0.8rem", sm: "0.875rem"},
+											fontWeight: 400,
+											px: 1,
+											py: 0.5,
+											minHeight: 32,
+											borderRadius: 1,
+											// "&:hover:not(:disabled)": {
+											// 	backgroundColor:
+											// 		mode === "dark"
+											// 			? "rgba(240, 98, 146, 0.08)"
+											// 			: "rgba(240, 98, 146, 0.04)",
+											// 	color:
+											// 		mode === "dark"
+											// 			? "secondary.light"
+											// 			: "secondary.main",
+											// },
+											"&.Mui-disabled": {
+												opacity: 0.7,
+											},
+										}}
+									>
+										<Typography
+											variant='body2'
+											sx={{
+												fontWeight: 500,
+												overflow: "hidden",
+												textOverflow: "ellipsis",
+												whiteSpace: "nowrap",
+											}}
+										>
+											{categoryLabels[product.category] ||
+												t(product.category)}
+										</Typography>
+									</Button>
+								</Tooltip>
+							)}
+
+							{/* Current Product - Active Page */}
+							<Box
+								sx={{
+									display: "flex",
+									alignItems: "center",
+									gap: 1,
+									px: {xs: 1.5, sm: 2},
+									py: 0.5,
+									minHeight: 32,
+									borderRadius: 1,
+									// backgroundColor:
+									// mode === "dark"
+									// 	? "rgba(255, 255, 255, 0.05)"
+									// 	: "rgba(0, 0, 0, 0.03)",
+									// border: `1px solid ${mode === "dark" ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)"}`,
+									maxWidth: {xs: "150px", sm: "300px", md: "400px"},
+									overflow: "hidden",
 								}}
-								sx={{display: "flex", alignItems: "center"}}
 							>
-								<StoreIcon sx={{mr: 0.5}} fontSize='inherit' />
-								{categoryLabels[product.category] || t("categories")}
-							</Button>
-							<Button
-								color='inherit'
-								onClick={() => {
-									const catPath =
-										categoryPathMap[product.category] || "";
-									navigate(catPath);
-								}}
-								sx={{display: "flex", alignItems: "center"}}
-							>
-								<Typography p={3} color='info'>
-									{t(product.category)}
+								<Typography
+									variant='body2'
+									sx={{
+										fontWeight: 600,
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										whiteSpace: "nowrap",
+										fontSize: {xs: "0.8rem", sm: "0.875rem"},
+									}}
+									title={product.product_name}
+								>
+									{product.product_name}
 								</Typography>
-							</Button>
+							</Box>
+						</Breadcrumbs>
 
-							<Typography p={3} color='info'>
+						{/* Mobile View - Compact Version */}
+						<Box
+							sx={{
+								display: {xs: "flex", sm: "none"},
+								alignItems: "center",
+								gap: 1,
+								mt: 1,
+							}}
+						>
+							<IconButton size='small' onClick={() => navigate(-1)}>
+								<ArrowBackIcon fontSize='small' />
+							</IconButton>
+							<Typography
+								variant='caption'
+								sx={{
+									overflow: "hidden",
+									textOverflow: "ellipsis",
+									whiteSpace: "nowrap",
+									flex: 1,
+								}}
+							>
 								{product.product_name}
 							</Typography>
-						</Breadcrumbs>
+						</Box>
 					</Box>
 
 					{/* Main Grid */}
@@ -215,58 +409,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										borderTop: `1px solid ${theme.palette.divider}`,
 									}}
 								>
-									{/* <IconButton
-										aria-label='add to favorites'
-										onClick={() =>
-											handleLike(
-												isLoggedIn,
-												isLiking,
-												navigate,
-												setIsLiking,
-												setProduct,
-												product,
-												auth,
-											)
-										}
-										disabled={isLiking}
-										sx={{position: "relative"}}
-									>
-										{isLiking ? (
-											<>
-												<FavoriteBorderIcon sx={{opacity: 0.1}} />
-												<CircularProgress
-													size={10}
-													sx={{
-														position: "absolute",
-														top: "35%",
-														left: "37%",
-													}}
-												/>
-											</>
-										) : userLiked ? (
-											<>
-												<FavoriteIcon color='error' />
-												<Typography
-													sx={{ml: 0.5, fontSize: "0.875rem"}}
-												>
-													{product.likes?.length ?? 0}
-												</Typography>
-											</>
-										) : (
-											<>
-												<FavoriteBorderIcon />
-												<Typography
-													sx={{ml: 0.5, fontSize: "0.875rem"}}
-												>
-													{product.likes?.length ?? 0}
-												</Typography>
-											</>
-										)}
-									</IconButton> */}
-									{/* <LikeButton
-										product={product}
-										// onLikeToggle={onLikeToggle}
-									/> */}
 									<IconButton
 										aria-label='add to favorites'
 										onClick={() => {
@@ -379,59 +521,6 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									</>
 								)}
 
-								{/* Quantity Controls */}
-								{/* <Box role='group' aria-label='إدارة الكمية'>
-									<Box
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "space-between",
-											my: 1,
-											width: 200,
-											backgroundColor: "white",
-											p: 1,
-										}}
-									>
-										<Button
-											size='small'
-											color='error'
-											disabled={
-												isOutOfStock || productQuantity <= 1
-											}
-											onClick={() =>
-												handleQuantity(
-													setQuantities,
-													"-",
-													product.product_name,
-												)
-											}
-											startIcon={<RemoveSharpIcon />}
-											aria-label='تقليل الكمية'
-										/>
-										<Typography
-											aria-live='polite'
-											fontSize={30}
-											color='primary'
-										>
-											{productQuantity}
-										</Typography>
-										<Button
-											size='small'
-											color='success'
-											disabled={isOutOfStock}
-											onClick={() =>
-												handleQuantity(
-													setQuantities,
-													"+",
-													product.product_name,
-												)
-											}
-											startIcon={<AddSharpIcon />}
-											aria-label='زيادة الكمية'
-										/>
-									</Box>
-								</Box> */}
-
 								<Box sx={{mt: "auto", pt: 3}}>
 									<Grid container spacing={2}>
 										<Grid size={{xs: 12, md: 6}}>
@@ -488,7 +577,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									text: "فريق الدعم لدينا متاح على مدار الساعة طوال أيام الأسبوع للمساعدة في أي أسئلة أو مشكلات",
 								},
 							].map((item, idx) => (
-								<Grid key={idx} size={{xs: 12, md: 4}}>
+								<Grid key={idx} size={{xs: 12, md: 6}}>
 									<Card
 										sx={{
 											p: 3,
@@ -513,6 +602,50 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									</Card>
 								</Grid>
 							))}
+							{/* TODO:comments */}
+							<Grid size={{xs: 12, md: 6}}>
+								<Card
+									sx={{
+										p: 3,
+										height: "100%",
+										borderRadius: 2,
+										boxShadow: theme.shadows[2],
+									}}
+								>
+									<Typography
+										variant='h6'
+										gutterBottom
+										sx={{fontWeight: 600}}
+									>
+										{"تعليقات"}
+									</Typography>
+									<hr />
+									<Typography variant='body2' color='text.secondary'>
+										{"تعليقات 1"}
+									</Typography>
+									<Typography variant='body2' color='text.secondary'>
+										{"تعليقات 2"}
+									</Typography>
+									<Typography variant='body2' color='text.secondary'>
+										{"تعليقات 3"}
+									</Typography>
+									<Typography variant='body2' color='text.secondary'>
+										{"تعليقات 4"}
+									</Typography>
+									<hr />
+									<Typography variant='body2' color='text.secondary'>
+										{"كتابه تعليق"}
+									</Typography>
+									<TextField
+										multiline
+										onChange={(e) => setValue(e.target.value)}
+										variant='filled'
+										type='text'
+										fullWidth
+									/>
+									<div className=''>{value}</div>
+								</Card>
+							</Grid>
 						</Grid>
 					</Box>
 				</Container>
