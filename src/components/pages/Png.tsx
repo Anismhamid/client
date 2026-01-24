@@ -10,6 +10,7 @@ interface PageNotFoundProps {}
  */
 const PageNotFound: FunctionComponent<PageNotFoundProps> = () => {
 	const navigate = useNavigate();
+
 	return (
 		<div className='d-flex justify-content-center align-items-center'>
 			<Helmet>

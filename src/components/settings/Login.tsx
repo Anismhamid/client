@@ -131,10 +131,13 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 			navigate(path.Home);
 		}
 	}, [navigate]);
+	const currentUrl = `https://client-qqq1.vercel.app/login`;
 
 	return (
 		<>
 			<Helmet>
+				{" "}
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("login.loginButton")} | صفقة</title>
 				<meta name='description' content={`${t("login.loginButton")} | صفقة`} />
 			</Helmet>

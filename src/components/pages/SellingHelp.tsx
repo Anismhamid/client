@@ -120,10 +120,11 @@ const SellingHelp: FunctionComponent = () => {
 		t("help.selling.quickTip3", "وصف دقيق يقلل الأسئلة"),
 		t("help.selling.quickTip4", "سعر منافس = بيع أسرع"),
 	];
-
+	const currentUrl = `https://client-qqq1.vercel.app/help/selling`;
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("help.selling.title", "كيف تبيع على صفقة")} | صفقة</title>
 				<meta
 					name='description'

@@ -73,10 +73,12 @@ const About: FunctionComponent = () => {
 			color: "#FF5722",
 		},
 	];
+	const currentUrl = `https://client-qqq1.vercel.app/about`;
 
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("about.title")} | صفقة</title>
 				<meta name='description' content={t("about.subtitle")} />
 				<meta property='og:title' content={t("about.title")} />

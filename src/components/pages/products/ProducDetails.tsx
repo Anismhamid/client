@@ -104,12 +104,15 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 	const productJ = generateSingleProductJsonLd(product);
 
+	const currentUrl = `https://client-qqq1.vercel.app/product-details/${product.category}/${product.brand}/${product._id}`;
+
 	return (
 		<>
 			<JsonLd data={productJ} />
 
 			<Helmet>
 				<title>{product.product_name} | صفقة</title>
+				<link rel='canonical' href={currentUrl} />
 				<meta
 					name='description'
 					content={`اشتري ${product.product_name} بأفضل سعر على صفقة. ${product.description?.substring(0, 120)}`}

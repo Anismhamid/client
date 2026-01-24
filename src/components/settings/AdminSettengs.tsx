@@ -76,10 +76,13 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 	if (!businessInfoState) {
 		return <Loader />;
 	}
+	const currentUrl = `https://client-qqq1.vercel.app/help/adminSettings`;
 
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
+
 				<title>اداره | {businessInfoState.businessName}</title>
 				<meta name='description' content={"تغيير اعدادات الموقع"} />
 			</Helmet>

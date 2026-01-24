@@ -44,12 +44,13 @@ const Favorite: FunctionComponent = () => {
 
 	const productsList = generateProductsItemListJsonLd(products);
 
-	
+	const currentUrl = `https://client-qqq1.vercel.app/favorites`;
 
 	return (
 		<>
 			<JsonLd data={productsList} />
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("favorites")} | صفقه</title>
 				<meta name='description' content={t("favorites")} />
 			</Helmet>

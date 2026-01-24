@@ -12,7 +12,10 @@ import {Autoplay, Navigation, EffectCoverflow} from "swiper/modules";
 import "swiper/css";
 import JsonLd from "../../../../utils/JsonLd";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
+import {
+	generateDiscountsJsonLd,
+	generateProductsItemListJsonLd,
+} from "../../../../utils/structuredData";
 import {path} from "../../../routes/routes";
 import {Helmet} from "react-helmet";
 
@@ -60,12 +63,27 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	};
 
 	// Determine swiper parameters based on screen size
-	const getSwiperParams = () => {
+	// تحديد نوع للـ Swiper parameters
+	interface SwiperParams {
+		slidesPerView: number;
+		spaceBetween: number;
+		effect: "slide" | "coverflow";
+		coverflowEffect?: {
+			rotate: number;
+			stretch: number;
+			depth: number;
+			modifier: number;
+			slideShadows: boolean;
+		};
+	}
+
+	// ثم أصلح الدالة getSwiperParams
+	const getSwiperParams = (): SwiperParams => {
 		if (isMobile) {
 			return {
 				slidesPerView: 1,
 				spaceBetween: 16,
-				effect: "slide" as const,
+				effect: "slide",
 			};
 		}
 
@@ -73,14 +91,14 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 			return {
 				slidesPerView: 2,
 				spaceBetween: 24,
-				effect: "coverflow" as const,
+				effect: "coverflow",
 			};
 		}
 
 		return {
 			slidesPerView: 3,
 			spaceBetween: 32,
-			effect: "coverflow" as const,
+			effect: "coverflow",
 		};
 	};
 
@@ -109,12 +127,16 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		return null;
 	}
 
-	const productsList = generateProductsItemListJsonLd(productsInDiscount);
+	const productsList = generateDiscountsJsonLd(productsInDiscount);
+
+	const currentUrl = `https://client-qqq1.vercel.app/dicounts-and-offers`;
 
 	return (
 		<>
 			<JsonLd data={productsList} />
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
+
 				<title>
 					{t(
 						`categories.discountsAndOffers.categories.discountsAndOffers.title`,
@@ -265,7 +287,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 												)}
 
 												<img
-													src={product.image_url}
+													src={product.image.url}
 													alt={`${product.product_name} - ${product.discount}% ${t("categories.discountsAndOffers.common.discount")}`}
 													style={{
 														display: isLoaded

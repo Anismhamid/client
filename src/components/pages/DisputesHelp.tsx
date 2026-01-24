@@ -173,10 +173,11 @@ const DisputesHelp: FunctionComponent = () => {
 				return theme.palette.primary.main;
 		}
 	};
-
+	const currentUrl = `https://client-qqq1.vercel.app/help/disputes`;
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("pages.contact.resolveDisputes")} | صفقة</title>
 				<meta name='description' content={t("pages.contact.resolveDisputes")} />
 			</Helmet>

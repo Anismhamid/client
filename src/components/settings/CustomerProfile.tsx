@@ -225,10 +225,13 @@ const CustomerProfile: FunctionComponent = () => {
 			</Container>
 		);
 	}
+	const currentUrl = `https://client-qqq1.vercel.app/users/customer/${slug}`;
 
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
+
 				<title>
 					{user.name?.first} {user.name?.last} | بائع صفقة
 				</title>

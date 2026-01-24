@@ -12,10 +12,11 @@ interface PrivacyAdnPolicyProps {}
 const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 	const {t} = useTranslation();
 	const diriction = handleRTL();
+	const currentUrl = `https://client-qqq1.vercel.app/Privacy-and-policy`;
 
 	return (
 		<>
-			<Helmet>
+			<Helmet><link rel='canonical' href={currentUrl} />
 				<title>سياسة الخصوصية | موقع صفقه</title>
 				<meta
 					name='description'

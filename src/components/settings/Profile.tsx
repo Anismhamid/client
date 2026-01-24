@@ -220,10 +220,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		{label: "المفضلة", icon: <Favorite />},
 		{label: "الإعدادات", icon: <Settings />},
 	];
+	const currentUrl = `https://client-qqq1.vercel.app/profile`;
 
 	return (
 		<>
 			<Helmet>
+				{" "}
+				<link rel='canonical' href={currentUrl} />
 				<title>
 					{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
 				</title>

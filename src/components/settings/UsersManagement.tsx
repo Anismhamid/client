@@ -148,10 +148,13 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 			user.name.first.toLowerCase().includes(searchQuery.toLowerCase()) ||
 			user.email.toLowerCase().includes(searchQuery.toLowerCase()),
 	);
+	const currentUrl = `https://client-qqq1.vercel.app/usersManagement`;
 
 	return (
 		<>
 			<Helmet>
+				{" "}
+				<link rel='canonical' href={currentUrl} />
 				<title>اداره المستخدمين | صفقة</title>
 				<meta name='description' content={"ادارة المستخدمين | صفقة"} />
 			</Helmet>

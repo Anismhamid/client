@@ -168,11 +168,14 @@ const MessagingPage: React.FC = () => {
 			}
 		}
 	}, [auth.role, users, toUserId]);
+	const currentUrl = `https://client-qqq1.vercel.app/messages`;
 
 	return (
 		<>
-		{/* TODO:Translate */}
+			{/* TODO:Translate */}
 			<Helmet>
+				{" "}
+				<link rel='canonical' href={currentUrl} />
 				<title>الرسائل | صفقة</title>
 				<meta name='description' content={"الرسائل | صفقة"} />
 			</Helmet>

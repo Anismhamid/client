@@ -67,10 +67,12 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 			</Box>
 		);
 	}
+	const currentUrl = `https://client-qqq1.vercel.app/admins`;
 
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>لوحة تحكم الإدارة | صفقة</title>
 				<meta name='description' content={"لوحة تحكم الإدارة | صفقة"} />
 			</Helmet>

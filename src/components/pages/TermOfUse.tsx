@@ -6,9 +6,12 @@ import {Helmet} from "react-helmet";
 interface TermOfUseProps {}
 
 const TermOfUse: FunctionComponent<TermOfUseProps> = () => {
+	const currentUrl = `https://client-qqq1.vercel.app/term-of-use`;
+
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>شروط الاستخدام | صفقة</title>
 				<meta name='description' content={"شروط الاستخدام | صفقة"} />
 			</Helmet>

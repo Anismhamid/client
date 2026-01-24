@@ -142,10 +142,11 @@ const SafetyHelp: FunctionComponent = () => {
 				return theme.palette.primary.main;
 		}
 	};
-
+	const currentUrl = `https://client-qqq1.vercel.app/help/safety`;
 	return (
 		<>
 			<Helmet>
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("safety.title", "الامان")} | صفقة</title>
 				<meta
 					name='description'

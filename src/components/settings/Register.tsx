@@ -508,10 +508,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			</>
 		);
 	}
+	const currentUrl = `https://client-qqq1.vercel.app/register`;
 
 	return (
 		<>
 			<Helmet>
+				{" "}
+				<link rel='canonical' href={currentUrl} />
 				<title>{t("register.title")} | صفقة</title>
 				<meta name='description' content={`${t("register.title")} | صفقة`} />
 			</Helmet>
