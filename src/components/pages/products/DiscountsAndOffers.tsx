@@ -14,7 +14,6 @@ import JsonLd from "../../../../utils/JsonLd";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {
 	generateDiscountsJsonLd,
-	generateProductsItemListJsonLd,
 } from "../../../../utils/structuredData";
 import {path} from "../../../routes/routes";
 import {Helmet} from "react-helmet";
