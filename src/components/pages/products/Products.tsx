@@ -21,12 +21,16 @@ const Products: FunctionComponent<ProductsProps> = () => {
 
 	const categoryData = generateCategoryJsonLd(category, []);
 
+	const pageTitle = t(`categories.${category}.heading`);
+	const siteName = t("webPageName");
+
 	return (
 		<>
 			<Helmet>
 				<JsonLd data={categoryData} />
-
-				<title>{t(`categories.${category}.heading`)} | صفقة</title>
+				<title>
+					{pageTitle} | {siteName}
+				</title>
 				<meta
 					name='description'
 					content={t(`categories.${category}.description`)}
