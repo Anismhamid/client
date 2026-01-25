@@ -55,8 +55,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		updateProductInList,
 	}) => {
 		// descriptive alt text for the image
-		const generateImageAlt = (productName: string, category: string) => {
-			return `${productName} منتج من بيع وشراء - ${category} عالي الجودة`;
+		const generateImageAlt = (product: Products) => {
+			return `${product.product_name} - بيع وشراء في ${product.category}`;
 		};
 
 		const jsonLdData = generateSingleProductJsonLd(product);
@@ -77,6 +77,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 					handleProductUpdate(updated);
 				}
 			: undefined;
+
+		
 
 		return (
 			<Card
@@ -210,7 +212,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							component='img'
 							loading='lazy'
 							image={product.image.url}
-							alt={generateImageAlt(product.product_name, category)}
+							alt={generateImageAlt(product)}
 							title={product.description}
 							sx={{
 								width: "100%",
@@ -434,7 +436,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 				>
 					{/* Like Button */}
 					<Box sx={{display: "flex", alignItems: "center", gap: 1}}>
-
 						<LikeButton
 							product={product}
 							setProduct={setProduct}

@@ -22,6 +22,19 @@ export const generateCategoryJsonLd = (
 			url: getProductUrl(product),
 		})),
 	},
+	serviceArea: {
+		"@type": "GeoCircle",
+		itemOffered: {
+			"@type": "Service",
+			name: "Marketplace",
+		},
+		geoMidpoint: {
+			"@type": "GeoCoordinates",
+			latitude: "32.5186",
+			longitude: "35.1524",
+		},
+		geoRadius: "50000",
+	},
 });
 
 //🟢 On an individual product page
@@ -69,6 +82,19 @@ export const generateSingleProductJsonLd = (product: Products) => {
 					currency: "ILS",
 				},
 			},
+			serviceArea: {
+				"@type": "GeoCircle",
+				itemOffered: {
+					"@type": "Service",
+					name: "Marketplace",
+				},
+				geoMidpoint: {
+					"@type": "GeoCoordinates",
+					latitude: "32.5186", // إحداثيات منطقة أم الفحم/المثلث تقريبياً
+					longitude: "35.1524",
+				},
+				geoRadius: "50000", // قطر 50 كم ليغطي أغلب المناطق
+			},
 			seller: {
 				"@type": "Person",
 				name: product.seller?.name || "مستخدم مسجل",
@@ -90,6 +116,19 @@ export const generateProductsItemListJsonLd = (products: Products[]) => ({
 		position: index + 1,
 		name: product.product_name,
 		url: getProductUrl(product),
+		serviceArea: {
+			"@type": "GeoCircle",
+			itemOffered: {
+				"@type": "Service",
+				name: "Marketplace",
+			},
+			geoMidpoint: {
+				"@type": "GeoCoordinates",
+				latitude: "32.5186",
+				longitude: "35.1524",
+			},
+			geoRadius: "50000",
+		},
 	})),
 });
 

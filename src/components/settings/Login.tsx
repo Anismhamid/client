@@ -37,6 +37,7 @@ import {
 	Email,
 	Lock,
 	ArrowBack,
+	ArrowRight,
 } from "@mui/icons-material";
 import UserInfoModal from "../../atoms/userManage/UserInfoModal";
 import {jwtDecode} from "jwt-decode";
@@ -174,7 +175,7 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 				>
 					<Grid container spacing={4} alignItems='center'>
 						{/* Left side - Welcome message */}
-						<Grid size={{xs:12,md:6}}>
+						<Grid size={{xs: 12, md: 6}}>
 							<Fade in={true} timeout={800}>
 								<Box
 									sx={{
@@ -211,12 +212,14 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 											lineHeight: 1.6,
 										}}
 									>
-										{t("login.welcomeMessage") ||
-											"سجل دخولك للوصول إلى حسابك والاستمرار من حيث توقفت"}
+										{t(
+											"login.welcomeMessage",
+											"سجل دخولك للوصول إلى حسابك والاستمرار من حيث توقفت",
+										)}
 									</Typography>
 									<Button
 										variant='outlined'
-										startIcon={<ArrowBack />}
+										startIcon={<ArrowRight />}
 										onClick={() => navigate(path.Home)}
 										sx={{
 											borderRadius: 3,
@@ -228,14 +231,14 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 											},
 										}}
 									>
-										{t("login.backToHome") || "العودة للرئيسية"}
+										{t("login.backToHome", "العودة للرئيسية")}
 									</Button>
 								</Box>
 							</Fade>
 						</Grid>
 
 						{/* Right side - Login form */}
-						<Grid size={{xs:12,md:6}}>
+						<Grid size={{xs: 12, md: 6}}>
 							<Paper
 								elevation={mode === "dark" ? 8 : 4}
 								sx={{
@@ -394,7 +397,7 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 
 									<Box sx={{textAlign: "right", mt: 1, mb: 3}}>
 										<Link
-										// TODO
+											// TODO
 											to={path.Home}
 											style={{
 												textDecoration: "none",

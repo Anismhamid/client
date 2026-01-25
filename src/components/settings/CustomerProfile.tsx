@@ -21,7 +21,7 @@ import {
 	Paper,
 } from "@mui/material";
 import {FunctionComponent, useEffect, useState, SyntheticEvent} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {User} from "../../interfaces/usersMessages";
 import {getCustomerProfileBySlug} from "../../services/usersServices";
 import {getCustomerProfileProductsBySlug} from "../../services/productsServices";
@@ -53,7 +53,10 @@ import {motion} from "framer-motion";
 import {useUser} from "../../context/useUSer";
 import {showSuccess, showError} from "../../atoms/toasts/ReactToast";
 import LikeButton from "../../atoms/LikeButton";
-import {path} from "../../routes/routes";
+import {path, productsPathes} from "../../routes/routes";
+import JsonLd from "../../../utils/JsonLd";
+import {useTranslation} from "react-i18next";
+import handleRTL from "../../locales/handleRTL";
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -70,6 +73,7 @@ const TabPanel: FunctionComponent<TabPanelProps> = ({children, value, index}) =>
 };
 
 const CustomerProfile: FunctionComponent = () => {
+	const {t} = useTranslation();
 	const {slug} = useParams<{slug: string}>();
 	const theme = useTheme();
 	const navigate = useNavigate();
@@ -146,6 +150,7 @@ const CustomerProfile: FunctionComponent = () => {
 		};
 
 		fetchData();
+		console.log(products);
 	}, [slug]);
 
 	const handleShareProfile = () => {
@@ -161,6 +166,7 @@ const CustomerProfile: FunctionComponent = () => {
 		}
 	};
 
+	// TODO: Contact with seller with chat messages
 	const handleContactSeller = () => {
 		if (user?.phone?.phone_1) {
 			window.open(`tel:${user.phone.phone_1}`, "_blank");
@@ -226,18 +232,18 @@ const CustomerProfile: FunctionComponent = () => {
 		);
 	}
 	const currentUrl = `https://client-qqq1.vercel.app/users/customer/${slug}`;
-
+	const dir = handleRTL();
+	// TODO:Translate, Image display
 	return (
 		<>
 			<Helmet>
 				<link rel='canonical' href={currentUrl} />
-
 				<title>
 					{user.name?.first} {user.name?.last} | بائع صفقة
 				</title>
 				<meta
 					name='description'
-					content={`تصفح منتجات ${user.name?.first} ${user.name?.last} على موقع صفقه. ${products.length} منتج متوفر للبيع.`}
+					content={`تصفح منتجات ${user.name?.first} ${user.name?.last} على موقع صفقه في أم الفحم، المثلث، وكافة أنحاء البلاد. بيع وشراء بسهولة وأمان ${products.length} منتج متوفر للبيع `}
 				/>
 				<meta
 					property='og:title'
@@ -245,12 +251,28 @@ const CustomerProfile: FunctionComponent = () => {
 				/>
 				<meta
 					property='og:description'
-					content={`تصفح منتجات ${user.name?.first} على موقع صفقه`}
+					content={`تصفح منتجات ${user.name?.first} على موقع صفقه في أم الفحم، المثلث، وكافة أنحاء البلاد. بيع وشراء بسهولة وأمان.`}
 				/>
 				<meta property='og:image' content={user?.image?.url || ""} />
+				<JsonLd
+					data={{
+						"@context": "https://schema.org",
+						"@type": "Person",
+						name: `${user.name?.first} ${user.name?.last}`,
+						url: currentUrl,
+						image: user.image?.url ?? "/user.png",
+						address: {
+							"@type": "PostalAddress",
+							addressLocality: user.address?.city,
+							addressCountry: "IL",
+						},
+						description: `بائع معتمد في موقع صفقة، متخصص في ${products.length} منتجات مختلفة.`,
+					}}
+				/>
+				;
 			</Helmet>
 
-			<Container maxWidth='lg' sx={{py: 4}}>
+			<Container dir={dir} maxWidth='lg' sx={{py: 4}}>
 				{/* Back Button */}
 				<Button
 					startIcon={<ArrowBack />}
@@ -311,7 +333,7 @@ const CustomerProfile: FunctionComponent = () => {
 											}
 										>
 											<Avatar
-												src={user.image?.url}
+												src={user.image?.url ?? "/user.png"}
 												sx={{
 													width: {xs: 100, md: 120},
 													height: {xs: 100, md: 120},
@@ -321,9 +343,10 @@ const CustomerProfile: FunctionComponent = () => {
 													bgcolor: theme.palette.primary.main,
 												}}
 											>
-												{user.name?.first
-													?.charAt(0)
-													.toUpperCase()}
+												{!user.image?.url &&
+													user.name.first
+														.charAt(0)
+														.toUpperCase()}
 											</Avatar>
 										</Badge>
 									</Box>
@@ -342,11 +365,13 @@ const CustomerProfile: FunctionComponent = () => {
 										direction='row'
 										alignItems='center'
 										spacing={1}
-										mb={2}
+										m={2}
+										gap={1}
 									>
 										<Typography
 											variant='subtitle1'
 											color='text.secondary'
+											fontWeight={"bold"}
 										>
 											@{slug}
 										</Typography>
@@ -355,6 +380,7 @@ const CustomerProfile: FunctionComponent = () => {
 											label='بائع معتمد'
 											size='small'
 											color='primary'
+											sx={{p: 2}}
 											variant='outlined'
 										/>
 										{user.role === "Admin" && (
@@ -390,8 +416,9 @@ const CustomerProfile: FunctionComponent = () => {
 										<Typography
 											variant='body2'
 											color='text.secondary'
+											sx={{p: 0.4, border: 1, borderRadius: 5}}
 										>
-											{stats.totalProducts} منتج
+											{products.length} منتج
 										</Typography>
 									</Stack>
 
@@ -407,6 +434,7 @@ const CustomerProfile: FunctionComponent = () => {
 												icon={<Email />}
 												label={user.email}
 												variant='outlined'
+												sx={{p: 1}}
 												size='small'
 											/>
 										)}
@@ -415,6 +443,7 @@ const CustomerProfile: FunctionComponent = () => {
 												icon={<Phone />}
 												label={user.phone.phone_1}
 												variant='outlined'
+												sx={{p: 1}}
 												size='small'
 											/>
 										)}
@@ -423,6 +452,7 @@ const CustomerProfile: FunctionComponent = () => {
 												icon={<LocationOn />}
 												label={user.address.city}
 												variant='outlined'
+												sx={{p: 1}}
 												size='small'
 											/>
 										)}
@@ -441,14 +471,16 @@ const CustomerProfile: FunctionComponent = () => {
 											sx={{
 												background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
 												boxShadow: 3,
+												gap: 1,
 											}}
 										>
-											تواصل مع البائع
+											تواصل مع البائع عبر المنصه
 										</Button>
 										<Button
 											variant='outlined'
 											size='large'
 											fullWidth
+											sx={{gap: 1}}
 											startIcon={<WhatsApp />}
 											onClick={handleWhatsApp}
 											color='success'
@@ -459,6 +491,7 @@ const CustomerProfile: FunctionComponent = () => {
 											variant='outlined'
 											size='large'
 											fullWidth
+											sx={{gap: 1}}
 											startIcon={<Share />}
 											onClick={handleShareProfile}
 										>
@@ -555,8 +588,8 @@ const CustomerProfile: FunctionComponent = () => {
 						<Tab label='التواصل' icon={<ChatBubble />} iconPosition='start' />
 					</Tabs>
 
+					{/* Products فشح */}
 					<TabPanel value={tabValue} index={0}>
-						{/* Products Grid */}
 						<Box mb={4}>
 							<Box
 								display='flex'
@@ -569,7 +602,7 @@ const CustomerProfile: FunctionComponent = () => {
 									fontWeight='bold'
 									sx={{position: "relative"}}
 								>
-									منتجات {user.name?.first}
+									{t("shares")} {user.name?.first}
 									<Box
 										sx={{
 											position: "absolute",
@@ -659,19 +692,15 @@ const CustomerProfile: FunctionComponent = () => {
 															bgcolor: "grey.100",
 															cursor: "pointer",
 														}}
-														onClick={() =>
-															navigate(
-																`/product-details/${product.category}/${product.brand}/${product._id}`,
-															)
-														}
 													>
 														<CardMedia
 															component='img'
 															image={
 																product.image?.url ||
-																"/placeholder.jpg"
+																`${product.product_name} - بيع وشراء في ${product.category}`
 															}
-															alt={product.product_name}
+															alt={`صورة المنتج ${product.product_name} - بائع ${user.name?.first}`}
+															loading='lazy'
 															sx={{
 																height: "100%",
 																width: "100%",
@@ -683,6 +712,11 @@ const CustomerProfile: FunctionComponent = () => {
 																		"scale(1.05)",
 																},
 															}}
+															onClick={() =>
+																navigate(
+																	`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`,
+																)
+															}
 														/>
 													</Box>
 
@@ -691,22 +725,22 @@ const CustomerProfile: FunctionComponent = () => {
 														<Typography
 															variant='subtitle1'
 															fontWeight='bold'
+															component={Link}
 															gutterBottom
+															to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
 															sx={{
-																overflow: "hidden",
+																textDecoration: "none",
 																textOverflow: "ellipsis",
 																display: "-webkit-box",
 																WebkitLineClamp: 2,
 																WebkitBoxOrient:
 																	"vertical",
 																minHeight: 48,
-																cursor: "pointer",
+																color: "inherit",
+																"&:hover": {
+																	color: "primary.main",
+																},
 															}}
-															onClick={() =>
-																navigate(
-																	`/product-details/${product.category}/${product.brand}/${product._id}`,
-																)
-															}
 														>
 															{product.product_name}
 														</Typography>
@@ -859,8 +893,8 @@ const CustomerProfile: FunctionComponent = () => {
 						</Box>
 					</TabPanel>
 
-					<TabPanel value={tabValue} index={1}>
-						{/* User Information */}
+					{/* User Information */}
+					{/* <TabPanel value={tabValue} index={1}>
 						<Grid container spacing={3}>
 							<Grid size={{xs: 12, md: 6}}>
 								<Card sx={{p: 3, borderRadius: 2}}>
@@ -1003,36 +1037,128 @@ const CustomerProfile: FunctionComponent = () => {
 								</Card>
 							</Grid>
 						</Grid>
+					</TabPanel> */}
+					<TabPanel value={tabValue} index={1}>
+						<Grid container spacing={3}>
+							<Grid size={{xs: 12, md: 6}}>
+								<Card sx={{p: 3, borderRadius: 2, height: "100%"}}>
+									<Typography
+										variant='h6'
+										gutterBottom
+										color='primary'
+										sx={{fontWeight: "bold"}}
+									>
+										{t("contact_info")}
+									</Typography>
+									<Divider sx={{mb: 2}} />
+									<Stack spacing={2}>
+										<Box display='flex' alignItems='center' gap={2}>
+											<Avatar sx={{bgcolor: "primary.light"}}>
+												<Email />
+											</Avatar>
+											<Box>
+												<Typography
+													variant='caption'
+													color='text.secondary'
+												>
+													{t("email")}
+												</Typography>
+												<Typography variant='body1'>
+													{user.email}
+												</Typography>
+											</Box>
+										</Box>
+										<Box display='flex' alignItems='center' gap={2}>
+											<Avatar sx={{bgcolor: "success.light"}}>
+												<Phone />
+											</Avatar>
+											<Box>
+												<Typography
+													variant='caption'
+													color='text.secondary'
+												>
+													{t("phone")}
+												</Typography>
+												<Typography variant='body1' dir='ltr'>
+													{user.phone?.phone_1}
+												</Typography>
+											</Box>
+										</Box>
+										<Box display='flex' alignItems='center' gap={2}>
+											<Avatar sx={{bgcolor: "info.light"}}>
+												<LocationOn />
+											</Avatar>
+											<Box>
+												<Typography
+													variant='caption'
+													color='text.secondary'
+												>
+													{t("location")}
+												</Typography>
+												<Typography variant='body1'>
+													{user.address?.city},{" "}
+													{user.address?.street}
+												</Typography>
+											</Box>
+										</Box>
+									</Stack>
+								</Card>
+							</Grid>
+
+							<Grid size={{xs: 12, md: 6}}>
+								<Card sx={{p: 3, borderRadius: 2, height: "100%"}}>
+									<Typography
+										variant='h6'
+										gutterBottom
+										color='primary'
+										sx={{fontWeight: "bold"}}
+									>
+										{t("account_details")}
+									</Typography>
+									<Divider sx={{mb: 2}} />
+									<Stack spacing={2}>
+										<Box
+											display='flex'
+											justifyContent='space-between'
+										>
+											<Typography color='text.secondary'>
+												{t("member_since")}:
+											</Typography>
+											<Typography fontWeight='medium'>
+												{formatDate(user?.createdAt ?? "")}
+											</Typography>
+										</Box>
+										<Box
+											display='flex'
+											justifyContent='space-between'
+										>
+											<Typography color='text.secondary'>
+												{t("account_status")}:
+											</Typography>
+											<Chip
+												label={t("verified")}
+												size='small'
+												color='success'
+											/>
+										</Box>
+									</Stack>
+								</Card>
+							</Grid>
+						</Grid>
 					</TabPanel>
 
+					{/* Ratings Tab */}
 					<TabPanel value={tabValue} index={2}>
-						{/* Reviews */}
-						<Card sx={{p: 3, borderRadius: 2}}>
-							<Typography variant='h6' gutterBottom color='primary'>
-								تقييمات المستخدمين
+						<Box textAlign='center' py={5}>
+							<Star sx={{fontSize: 60, color: "warning.main", mb: 2}} />
+							<Typography variant='h5' gutterBottom>
+								{stats.rating} / 5
 							</Typography>
-							<Box textAlign='center' py={4}>
-								<Rating
-									value={stats.rating}
-									precision={0.1}
-									readOnly
-									size='large'
-								/>
-								<Typography variant='h3' sx={{my: 2}}>
-									{stats.rating}
-								</Typography>
-								<Typography variant='body1' color='text.secondary'>
-									من 5 نجوم بناءً على 28 تقييم
-								</Typography>
-							</Box>
-							<Typography
-								variant='body2'
-								color='text.secondary'
-								textAlign='center'
-							>
-								{user.name?.first} لديه تقييم ممتاز! ⭐
+							<Typography color='text.secondary'>
+								{t("based_on_customer_feedback")}
 							</Typography>
-						</Card>
+							{/* You can map actual reviews here if your API supports it */}
+						</Box>
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={3}>
@@ -1049,7 +1175,7 @@ const CustomerProfile: FunctionComponent = () => {
 										size='large'
 										startIcon={<ChatBubble />}
 										onClick={handleContactSeller}
-										sx={{py: 1.5}}
+										sx={{py: 1.5, gap: 1}}
 									>
 										مراسلة مباشرة
 									</Button>
@@ -1062,7 +1188,7 @@ const CustomerProfile: FunctionComponent = () => {
 										color='success'
 										startIcon={<WhatsApp />}
 										onClick={handleWhatsApp}
-										sx={{py: 1.5}}
+										sx={{py: 1.5, gap: 1}}
 									>
 										مراسلة عبر واتساب
 									</Button>
