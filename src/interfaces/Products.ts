@@ -8,7 +8,7 @@ export interface Products {
 	likes?: string[];
 	isNew?: boolean;
 	_id?: string;
-	seller?: {name: string; slug?: string; sellerId: string};
+	seller?: {name: string; slug?: string; user: string};
 	product_name: string;
 	category: CategoryValue;
 	subcategory?: string;
@@ -29,7 +29,7 @@ export interface Products {
 }
 
 export const initialProductValue: Partial<Products> = {
-	seller: {name: "", slug: "", sellerId: ""},
+	seller: {name: "", slug: "", user: ""},
 	product_name: "",
 	category: "House",
 	subcategory: "",

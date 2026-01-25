@@ -20,8 +20,8 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 		if (show) {
 			const swalWithBootstrapButtons = Swal.mixin({
 				customClass: {
-					confirmButton: "btn btn-success",
-					cancelButton: "btn btn-danger ms-5",
+					confirmButton: "btn btn-outline-success",
+					cancelButton: "btn btn-outline-danger ms-5",
 				},
 				buttonsStyling: true,
 			});
@@ -31,9 +31,9 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 					title,
 					text: description,
 					icon: "warning",
-					confirmButtonText: "نعم, حذف",
+					confirmButtonText: "نعم",
 					showCancelButton: true,
-					cancelButtonText: "الغاء الحذف",
+					cancelButtonText: "الغاء",
 					reverseButtons: false,
 				})
 				.then((result) => {

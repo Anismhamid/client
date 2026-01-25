@@ -82,7 +82,6 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 		<>
 			<Helmet>
 				<link rel='canonical' href={currentUrl} />
-
 				<title>اداره | {businessInfoState.businessName}</title>
 				<meta name='description' content={"تغيير اعدادات الموقع"} />
 			</Helmet>

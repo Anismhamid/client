@@ -51,13 +51,10 @@ const Contact: FunctionComponent<ContactProps> = () => {
 	];
 	const currentUrl = `https://client-qqq1.vercel.app/contact`;
 
-	<link rel='canonical' href={currentUrl} />;
-
 	return (
 		<>
 			<Helmet>
 				<link rel='canonical' href={currentUrl} />
-
 				<title>{t("pages.contact.title")} | صفقة</title>
 				<meta name='description' content={t("pages.contact.title")} />
 			</Helmet>

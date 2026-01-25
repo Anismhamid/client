@@ -217,8 +217,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const currentUrl = `https://client-qqq1.vercel.app/category/${category}`;
 	return (
 		<>
-			<JsonLd data={generateCategory} />
 			<Helmet>
+				<JsonLd data={generateCategory} />
 				<link rel='canonical' href={currentUrl} />
 				<title>{t(`categories.${category}.heading`)} | صفقة</title>
 				<meta

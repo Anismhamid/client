@@ -7,10 +7,10 @@ import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
 	CircularProgress,
-	Chip,
 	Box,
 	Typography,
 	useMediaQuery,
+	Alert,
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
@@ -374,56 +374,43 @@ const Home: FunctionComponent<HomeProps> = () => {
 				</Box>
 
 				<ChepNavigation />
+				<Alert
+					component='section'
+					role='region'
+					aria-labelledby='products-search-info'
+					sx={{
+						textAlign: "center",
+						mt: 3,
+						p: 3,
+						borderRadius: 3,
+					}}
+					variant='standard'
+					color='warning'
+				>
+					<Typography
+						id='products-search-info'
+						component='h2'
+						variant='h6'
+						fontWeight='bold'
+						gutterBottom
+					>
+						ابحث عن أي منتج بسهولة
+					</Typography>
 
+					<Typography component='p' variant='body2'>
+						يمكنك البحث عن أي منتج تريده، فقط اكتب ما تبحث عنه وسيظهر إن كان
+						متوفرًا على موقع صفقه
+					</Typography>
+				</Alert>
 				{!searchQuery && <DiscountsAndOffers />}
+				{/* Search and Filter Section */}
 				<SearchBox
 					searchQuery={searchQuery}
-					text='🔍 ابحث عن منتج، سعر، أو تصنيف...'
+					text={t("search")}
 					setSearchQuery={setSearchQuery}
 				/>
-				{/* Search and Filter Section */}
+
 				<Box className='container border-1'>
-					<Box
-						sx={{
-							position: "static",
-							zIndex: 100,
-							top: 64,
-							backgroundColor: "primary.paper",
-							backdropFilter: "blur(10px)",
-							py: 3,
-							px: {xs: 2, md: 3},
-							borderRadius: 3,
-							boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-							mb: 4,
-							border: 1,
-						}}
-					>
-						{/* All Products Button */}
-
-						<Chip
-							label='الكل'
-							onClick={() => setSearchQuery("")}
-							sx={{
-								borderRadius: "20px",
-								fontSize: "0.95rem",
-								fontWeight: searchQuery === "" ? "bold" : 500,
-								backgroundColor:
-									searchQuery === ""
-										? "linear-gradient(45deg, #667eea, #764ba2)"
-										: "grey.100",
-								color: searchQuery === "" ? "white" : "primary",
-								height: 40,
-								px: 2,
-								cursor: "pointer",
-								transition: "all 0.2s ease",
-								"&:hover": {
-									transform: "translateY(-2px)",
-									boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-								},
-							}}
-						/>
-					</Box>
-
 					{/* Products Grid */}
 					<Box className='container pb-5'>
 						{/* Results Count */}
@@ -483,10 +470,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 												<Col
 													key={product._id}
 													style={{marginBlock: 10}}
-													xs={6}
-													md={4}
-													lg={3}
-													xl={2}
+													xs={12}
+													md={6}
+													lg={4}
+													xl={3}
 												>
 													<motion.div
 														initial={{opacity: 0, y: 20}}

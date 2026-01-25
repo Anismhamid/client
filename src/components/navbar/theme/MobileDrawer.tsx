@@ -197,7 +197,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							{/* View all products */}
 							<ListItemButton
 								component={NavLink}
-								to='/products'
+								to={path.Home}
 								onClick={handleNavLinkClick}
 								sx={{
 									pl: 4,
@@ -215,48 +215,144 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 								/>
 							</ListItemButton>
 
-							{/* Categories from productsAndCategories */}
-							{productsAndCategories &&
-								productsAndCategories.map((category: NavCategory) => (
-									<ListItemButton
-										key={category.value}
-										component={NavLink}
-										to={`/category/${category.path}`}
-										onClick={handleNavLinkClick}
+							{/* Categories and subcategories from productsAndCategories */}
+							{productsAndCategories.map((category: NavCategory) => (
+								<ListItemButton
+									key={category.value}
+									component={NavLink}
+									to={category.path}
+									onClick={handleNavLinkClick}
+									aria-label={t(category.labelKey)}
+									sx={{
+										pl: 4,
+										borderRadius: 2,
+										mb: 0.5,
+										textDecoration: "none",
+										color: "text.primary",
+										position: "relative",
+
+										"&.active": {
+											backgroundColor:
+												mode === "dark"
+													? "rgba(220, 53, 69, 0.15)"
+													: "rgba(220, 53, 69, 0.08)",
+											color: "error.main",
+											fontWeight: 600,
+											"&::before": {
+												content: '""',
+												position: "absolute",
+												left: 12,
+												top: "50%",
+												transform: "translateY(-50%)",
+												width: 4,
+												height: "60%",
+												backgroundColor: "error.main",
+												borderRadius: 2,
+											},
+										},
+
+										"&:hover": {
+											backgroundColor:
+												mode === "dark"
+													? "rgba(255, 255, 255, 0.05)"
+													: "rgba(0, 0, 0, 0.04)",
+											transform: "translateX(4px)",
+											transition: "all 0.2s ease",
+										},
+
+										"&:focus-visible": {
+											outline: `2px solid ${theme.palette.primary.main}`,
+											outlineOffset: 2,
+										},
+									}}
+								>
+									{/* icon or short label */}
+									<Box
+										component={"img"}
 										sx={{
-											pl: 4,
-											borderRadius: "8px",
-											mb: 0.5,
-											"&.active": {
-												backgroundColor:
-													"rgba(220, 53, 69, 0.05)",
-												color: "#dc3545",
+											mr: 1.5,
+											fontSize: "1.2rem",
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											width: 24,
+											height: 24,
+										}}
+										src={category.icon}
+										aria-hidden='true'
+									/>
+
+									<ListItemText
+										primary={
+											<Typography
+												component='span'
+												sx={{
+													fontSize: "0.95rem",
+													fontWeight: 500,
+													lineHeight: 1.3,
+												}}
+											>
+												{t(category.labelKey)}
+												<Typography
+													component='span'
+													sx={{
+														display: "block",
+														fontSize: "0.75rem",
+														fontWeight: 400,
+														color: "text.secondary",
+														mt: 0.25,
+														lineHeight: 1.2,
+													}}
+													aria-hidden='true'
+												>
+													{t(category.labelKey || "")}
+												</Typography>
+											</Typography>
+										}
+										// SEO Optimization: Keep subcategories for screen readers
+										secondary={
+											<Typography
+												component='span'
+												sx={{
+													fontSize: "0.8rem",
+													color: "text.secondary",
+													display: "block",
+													mt: 0.5,
+												}}
+												aria-label={`${category.subCategories.length} تصنيفات فرعية`}
+											>
+												{category.subCategories
+													.slice(0, 3) // Limit to 3 for better UX
+													.map((sub) => t(sub.labelKey))
+													.join(" • ")}
+												{category.subCategories.length > 3 &&
+													" • ..."}
+											</Typography>
+										}
+										primaryTypographyProps={{component: "div"}}
+										secondaryTypographyProps={{
+											component: "div",
+											sx: {
+												mt: 0.5,
+												overflow: "hidden",
+												textOverflow: "ellipsis",
+												display: "-webkit-box",
+												WebkitLineClamp: 2,
+												WebkitBoxOrient: "vertical",
 											},
 										}}
-									>
-										<Box sx={{mr: 1, fontSize: "1.2rem"}}>
-											{category.labelKey}
-										</Box>
-										<ListItemText
-											primary={category.labelKey}
-											secondary={category.labelKey}
-											primaryTypographyProps={{fontSize: "0.95rem"}}
-											secondaryTypographyProps={{
-												fontSize: "0.8rem",
-												color: "text.secondary",
-											}}
+									/>
+
+									{category.subCategories.length > 0 && (
+										<Badge
+											badgeContent={category.subCategories.length}
+											color='primary'
+											sx={{ml: 1}}
+											aria-label={`${category.subCategories.length} sub categories`}
 										/>
-										{category.subCategories.length && (
-											<Badge
-												badgeContent={
-													category.subCategories.length ?? 0
-												}
-												color='primary'
-												sx={{ml: 1}}
-											/>
-										)}
-									</ListItemButton>
-								))}
+									)}
+								</ListItemButton>
+							))}
 						</List>
 					</Collapse>
 

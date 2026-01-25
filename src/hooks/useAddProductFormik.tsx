@@ -70,12 +70,6 @@ const useAddProductFormik = (onHide: () => void) => {
 					},
 				});
 
-				console.log({
-					...values,
-					image: uploadedImage?.url,
-					publicId: uploadedImage?.publicId,
-				});
-
 				resetForm();
 				setImageFile(null);
 				setImageData(null);

@@ -1,6 +1,6 @@
 import {FunctionComponent, memo, useEffect, useState} from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {getProductById} from "../../../services/productsServices";
+import {deleteProduct, getProductById} from "../../../services/productsServices";
 import {initialProductValue, Products} from "../../../interfaces/Products";
 import {
 	Box,
@@ -21,6 +21,9 @@ import {
 	Tooltip,
 	TextField,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 import {
 	ArrowBack as ArrowBackIcon,
 	Share as ShareIcon,
@@ -41,6 +44,8 @@ import {Helmet} from "react-helmet";
 import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
 import ProductDetailsTable from "./ProductDetailsTable";
 import LikeButton from "../../../atoms/LikeButton";
+import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
+import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 
 interface ProductDetailsProps {}
 
@@ -54,11 +59,17 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	const {isLoggedIn} = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-	const [rating, setRating] = useState<number | null>(product.rating || null);
+	const [rating, setRating] = useState<number>(0);
 	const [value, setValue] = useState("");
+	const [show, setShow] = useState<boolean>(false);
+	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+	const {auth} = useUser();
 
 	const MemoizedProductDetailsTable = memo(ProductDetailsTable);
-
+	const onShowUpdateProductModal = () => setShow(true);
+	const onHide = () => setShow(false);
+	const onShowDeleteModal = () => setShowDeleteModal(true);
+	const onHideDeleteModal = () => setShowDeleteModal(false);
 	// ----- Fetch Product -----
 	useEffect(() => {
 		if (!productId) {
@@ -74,6 +85,16 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 			})
 			.finally(() => setLoading(false));
 	}, [productId, navigate]);
+
+	const handleDelete = () => {
+		deleteProduct(productId as string)
+			.then((res) => {
+				setProduct(res);
+			})
+			.catch((err) => {
+				showError(err as string);
+			});
+	};
 
 	if (loading)
 		return (
@@ -112,9 +133,8 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 	return (
 		<>
-			<JsonLd data={productJ} />
-
 			<Helmet>
+				<JsonLd data={productJ} />
 				<title>{product.product_name} | صفقة</title>
 				<link rel='canonical' href={currentUrl} />
 				<meta
@@ -448,6 +468,51 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 										<ShareIcon />
 									</IconButton>
 								</Box>
+								{auth?._id &&
+									product.seller?.user &&
+									auth._id === String(product.seller.user) && (
+										<Box
+											sx={{
+												display: "flex",
+												alignItems: "center",
+												justifyContent: "space-around",
+												gap: 1,
+												borderTop: `1px solid ${theme.palette.divider}`,
+												p: 1,
+											}}
+										>
+											<IconButton
+												size='small'
+												color='warning'
+												aria-label='تعديل المنتج'
+												onClick={() => {
+													// setProductIdToUpdate(
+													// 	product._id as string,
+													// );
+													onShowUpdateProductModal();
+												}}
+												sx={{
+													bgcolor: "warning.light",
+													"&:hover": {bgcolor: "warning.main"},
+												}}
+											>
+												<EditIcon fontSize='small' />
+											</IconButton>
+
+											<IconButton
+												size='small'
+												color='error'
+												aria-label='حذف المنتج'
+												onClick={onShowDeleteModal}
+												sx={{
+													bgcolor: "error.light",
+													"&:hover": {bgcolor: "error.main"},
+												}}
+											>
+												<DeleteIcon fontSize='small' />
+											</IconButton>
+										</Box>
+									)}
 							</Card>
 						</Grid>
 
@@ -481,7 +546,9 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 									<Rating
 										value={rating}
 										precision={0.5}
-										onChange={(_, newValue) => setRating(newValue)}
+										onChange={(_, newValue) =>
+											setRating(newValue ?? 0)
+										}
 										sx={{mr: 1}}
 									/>
 									<Typography variant='body2' color='text.secondary'>
@@ -650,6 +717,19 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 					</Box>
 				</Container>
 			</Box>
+			<AlertDialogs
+				handleDelete={handleDelete}
+				onHide={onHideDeleteModal}
+				show={showDeleteModal}
+				title={`حذف ${product.product_name}`}
+				description={`هل انت متاكد انك تريد حذف - ${product.product_name} - التابع للمستخدم - ${product.seller?.slug}`}
+			/>
+			<UpdateProductModal
+				show={show}
+				onHide={onHide}
+				productId={product._id as string}
+				refresh={() => {}}
+			/>
 		</>
 	);
 };

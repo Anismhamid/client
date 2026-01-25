@@ -21,12 +21,11 @@ const Products: FunctionComponent<ProductsProps> = () => {
 
 	const categoryData = generateCategoryJsonLd(category, []);
 
-
 	return (
 		<>
-			<JsonLd data={categoryData} />
 			<Helmet>
-				
+				<JsonLd data={categoryData} />
+
 				<title>{t(`categories.${category}.heading`)} | صفقة</title>
 				<meta
 					name='description'

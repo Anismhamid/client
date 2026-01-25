@@ -71,7 +71,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			type: product.type || product.subcategory || "",
 			price: product.price || 0,
 			description: product.description || "",
-			image: product.image || "",
+			image: {url: product.image.url || "", publicId: product.image.publicId || ""},
 			sale: product.sale || false,
 			discount: product.discount || 0,
 			location: product.location || "",
@@ -83,18 +83,23 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			category: yup.string().required(),
 			price: yup.number().required(),
 			description: yup.string().min(2).max(500),
-			image: yup.string().required().url(),
+			image: yup.object({
+				url: yup.string().required().url(),
+				publicId: yup.string(),
+			}),
 		}),
 		onSubmit(values, {resetForm}) {
-			updateProduct(productId, values).then(() => {
-				onHide();
-				resetForm();
-				refresh();
-			});
+			updateProduct(product._id as string,values)
+				.then(() => {
+					resetForm();
+					refresh();
+					onHide();
+				})
+				.catch((err) => {
+					console.log(err);
+				});
 		},
 	});
-
-	// const {countries, loading} = useCountries();
 
 	const dir = handleRTL();
 

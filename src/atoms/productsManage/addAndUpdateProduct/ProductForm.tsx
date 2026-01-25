@@ -1,4 +1,4 @@
-import {Box, Button} from "@mui/material";
+import {Avatar, Box, Button, Typography} from "@mui/material";
 import {FormikProps} from "formik";
 import {FunctionComponent, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
@@ -9,6 +9,9 @@ import {deleteImage, uploadImage} from "../../../services/uploadImage";
 import {categoriesLogic, CategoryValue} from "../productLogicMap";
 import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {LoadingButton} from "@mui/lab";
+import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import { updateProduct } from "../../../services/productsServices";
 
 interface ProductFormProps {
 	formik: FormikProps<Products>;
@@ -54,15 +57,18 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 			try {
 				await deleteImage(imageData.publicId);
 				setImageData(null);
+				// await updateProduct(productId,product);
 			} catch (err) {
 				console.error("Failed to delete old image:", err);
 			}
 		}
 
-		// ⬆️ رفع الصورة الجديدة
+		// رفع الصورة الجديدة
 		const {url, publicId} = await uploadImage(file);
-		setImageData({url: url, publicId: publicId});
-		formik.setFieldValue("image", url);
+		const newImageData = {url: url, publicId: publicId};
+		setImageData(newImageData);
+
+		formik.setFieldValue("image", newImageData);
 	};
 
 	useEffect(() => {
@@ -460,25 +466,31 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 
 			{/* Image Upload */}
 			<div className='mb-3 p-1'>
-				<label htmlFor='image' className='form-label'>
+				<Typography variant='body1' sx={{mb: 1.5, fontWeight: "medium"}}>
 					{t("modals.addProductModal.image")}
-				</label>
+				</Typography>
+
 				<Box
 					sx={{
 						display: "flex",
 						alignItems: "center",
-						justifyContent: "space-around",
-						width: "70%",
+						gap: 2,
+						flexWrap: "wrap",
 					}}
 				>
-					<label
-						style={{
-							display: "block",
-							marginBottom: "8px",
-							cursor: "pointer",
-							border: "1px solid black",
-							borderRadius: 50,
-							padding: 5,
+					{/* زر الكاميرا */}
+					<Button
+						variant='outlined'
+						component='label'
+						startIcon={<PhotoCameraIcon />}
+						sx={{
+							borderRadius: "20px",
+							textTransform: "none",
+							borderColor: "rgba(0, 89, 255, 0.637)",
+							color: "#003561",
+							gap: 1,
+							m: "auto",
+							"&:hover": {borderColor: "#003561"},
 						}}
 					>
 						فتح الكاميرا
@@ -487,17 +499,23 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							accept='image/*'
 							capture='environment'
 							onChange={handleImageChange}
-							style={{display: "none"}}
+							hidden
 						/>
-					</label>
-					<label
-						style={{
-							display: "block",
-							marginBottom: "8px",
-							cursor: "pointer",
-							border: "1px solid black",
-							borderRadius: 50,
-							padding: 5,
+					</Button>
+
+					{/* زر المعرض */}
+					<Button
+						variant='outlined'
+						component='label'
+						startIcon={<CollectionsIcon />}
+						sx={{
+							borderRadius: "20px",
+							textTransform: "none",
+							borderColor: "rgba(0, 89, 255, 0.637)",
+							color: "#003561",
+							gap: 1,
+							m: "auto",
+							"&:hover": {borderColor: "#003561"},
 						}}
 					>
 						اختيار من المعرض
@@ -505,24 +523,25 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							type='file'
 							accept='image/*'
 							onChange={handleImageChange}
-							style={{display: "none"}}
+							hidden
 						/>
-					</label>
-				</Box>
+					</Button>
 
-				{/* Preview الصورة */}
-				{imageData?.url && (
-					<img
-						src={imageData.url}
-						alt='preview'
-						style={{
-							width: 65,
-							height: 65,
-							objectFit: "cover",
-							marginTop: "8px",
-						}}
-					/>
-				)}
+					{/* اختيار إضافي: معاينة الصورة إذا وجدت */}
+					{formik.values.image?.url && (
+						<Avatar
+							src={formik.values.image.url}
+							sx={{
+								width: "70%",
+								m: "auto",
+								height: "",
+								border: "2px solid #216cf8",
+								borderRadius: "50px", // شكل مربع بزوايا منحنية يعطي مظهراً عصرياً
+							}}
+							variant='rounded'
+						/>
+					)}
+				</Box>
 			</div>
 
 			{/*in Stock */}

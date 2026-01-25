@@ -94,9 +94,9 @@ export async function getProductsInDiscount() {
  * @param productName - The name of the product to delete
  * @returns The deleted product if successful, or null if there's an error
  */
-export async function deleteProduct(productName: string) {
+export async function deleteProduct(productId: string) {
 	try {
-		const response = await axios.delete(`${api}/products/${productName}`, {
+		const response = await axios.delete(`${api}/products/${productId}`, {
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: localStorage.getItem("token"),

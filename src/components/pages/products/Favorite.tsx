@@ -48,8 +48,8 @@ const Favorite: FunctionComponent = () => {
 
 	return (
 		<>
-			<JsonLd data={productsList} />
 			<Helmet>
+			<JsonLd data={productsList} />
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("favorites")} | صفقه</title>
 				<meta name='description' content={t("favorites")} />

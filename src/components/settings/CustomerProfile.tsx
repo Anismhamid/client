@@ -233,7 +233,6 @@ const CustomerProfile: FunctionComponent = () => {
 	}
 	const currentUrl = `https://client-qqq1.vercel.app/users/customer/${slug}`;
 	const dir = handleRTL();
-	// TODO:Translate, Image display
 	return (
 		<>
 			<Helmet>
