@@ -4,7 +4,7 @@ import {useUser} from "./context/useUSer.tsx";
 import {CssBaseline, ThemeProvider, createTheme, PaletteMode} from "@mui/material";
 import "./locales/i18n.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
-import Theme from "./atoms/theme/AppTheme.tsx";
+import Theme from "./components/navbar/theme/AppTheme.tsx";
 import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
 import useSocketEvents from "./hooks/useSocketEvents.ts";
 import {useEffect, useMemo, useState} from "react";

@@ -238,35 +238,53 @@ const CustomerProfile: FunctionComponent = () => {
 		<>
 			<Helmet>
 				<link rel='canonical' href={currentUrl} />
-				<title>
-					{user.name?.first} {user.name?.last} | بائع صفقة
-				</title>
+				<title>{`منتجات ${user.name?.first} ${user.name?.last} للبيع في ${user.address?.city || "كافة البلاد"} | صفقة`}</title>
 				<meta
 					name='description'
-					content={`تصفح منتجات ${user.name?.first} ${user.name?.last} على موقع صفقه في أم الفحم، المثلث، وكافة أنحاء البلاد. بيع وشراء بسهولة وأمان ${products.length} منتج متوفر للبيع `}
+					content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${products.length} منتجات تشمل ${products
+						.slice(0, 3)
+						.map((p) => p.product_name)
+						.join("، ")}. بيع وشراء آمن عبر صفقة.`}
 				/>
 				<meta
 					property='og:title'
-					content={`${user.name?.first} ${user.name?.last} | بائع صفقة`}
+					content={`متجر ${user.name?.first} على صفقة - عروض لا تفوت`}
 				/>
-				<meta
-					property='og:description'
-					content={`تصفح منتجات ${user.name?.first} على موقع صفقه في أم الفحم، المثلث، وكافة أنحاء البلاد. بيع وشراء بسهولة وأمان.`}
-				/>
-				<meta property='og:image' content={user?.image?.url || ""} />
+				<meta property='og:type' content='secondary_user.profile' />
+				<meta property='og:url' content={window.location.href} />
+				<meta property='og:image' content={user?.image?.url || "/user.png"} />
 				<JsonLd
 					data={{
 						"@context": "https://schema.org",
-						"@type": "Person",
-						name: `${user.name?.first} ${user.name?.last}`,
-						url: currentUrl,
-						image: user.image?.url ?? "/user.png",
-						address: {
-							"@type": "PostalAddress",
-							addressLocality: user.address?.city,
-							addressCountry: "IL",
-						},
-						description: `بائع معتمد في موقع صفقة، متخصص في ${products.length} منتجات مختلفة.`,
+						"@graph": [
+							{
+								"@type": "Person",
+								"@id": `${currentUrl}#person`,
+								name: `${user.name?.first} ${user.name?.last}`,
+								image: user.image?.url || "/user.png",
+								address: {
+									"@type": "PostalAddress",
+									addressLocality: user.address?.city,
+									addressCountry: "IL",
+								},
+							},
+							{
+								"@type": "CollectionPage",
+								name: `منتجات البائع ${user.name?.first}`,
+								description: `قائمة المنتجات المعروضة بواسطة ${user.name?.first} على منصة صفقة`,
+								mainEntity: {
+									"@type": "ItemList",
+									numberOfItems: products.length,
+									itemListElement: products.map((product, index) => ({
+										"@type": "ListItem",
+										position: index + 1,
+										url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
+										name: product.product_name,
+										image: product.image?.url,
+									})),
+								},
+							},
+						],
 					}}
 				/>
 				;
@@ -699,7 +717,7 @@ const CustomerProfile: FunctionComponent = () => {
 																product.image?.url ||
 																`${product.product_name} - بيع وشراء في ${product.category}`
 															}
-															alt={`صورة المنتج ${product.product_name} - بائع ${user.name?.first}`}
+															alt={`${product.product_name} للبيع في ${user.address?.city} - متجر ${user.name?.first}`}
 															loading='lazy'
 															sx={{
 																height: "100%",

@@ -34,7 +34,7 @@ interface HomeProps {}
 
 /**
  * Home page
- * @returns All products by categories
+ * @returns All products and categories
  */
 
 const Home: FunctionComponent<HomeProps> = () => {
@@ -71,7 +71,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
-	// بديل: دالة handleToggleLike
 	const handleToggleLike = (productId: string, liked: boolean) => {
 		if (!auth?._id) return;
 
@@ -215,114 +214,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	const diriction = handleRTL();
 
-	if (!loading && products.length === 0)
-		return (
-			<Box
-				component={"main"}
-				textAlign={"center"}
-				sx={{
-					minHeight: "100vh",
-					display: "flex",
-					flexDirection: "column",
-					justifyContent: "center",
-					alignItems: "center",
-					p: 3,
-					background: "linear-gradient(135deg, #f8f9ff 0%, #e8eaf6 100%)",
-				}}
-			>
-				<motion.div
-					initial={{y: 50, opacity: 0}}
-					animate={{y: 0, opacity: 1}}
-					transition={{type: "spring", stiffness: 100}}
-				>
-					<Box>
-						<Box sx={{mb: 3}}>
-							<Box
-								sx={{
-									width: 80,
-									height: 80,
-									borderRadius: "50%",
-									background:
-										"linear-gradient(135deg, #ff6b6b, #ff8e53)",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									margin: "0 auto 20px",
-									fontSize: "2.5rem",
-									color: "white",
-									boxShadow: "0 8px 16px rgba(255,107,107,0.3)",
-								}}
-							>
-								😔
-							</Box>
-							<Typography
-								variant='h4'
-								sx={{
-									fontWeight: "bold",
-									background:
-										"linear-gradient(45deg, #ff6b6b 30%, #ff8e53 90%)",
-									WebkitBackgroundClip: "text",
-									WebkitTextFillColor: "transparent",
-									mb: 2,
-								}}
-							>
-								{t("noProducts")}
-							</Typography>
-							<Typography
-								variant='body1'
-								sx={{
-									mb: 4,
-									color: "text.secondary",
-									fontSize: "1.1rem",
-								}}
-							>
-								عذراً، لم نتمكن من تحميل المنتجات في الوقت الحالي
-							</Typography>
-						</Box>
-						<motion.div
-							whileHover={!isMobile ? {scale: 1.05} : undefined}
-							whileTap={{scale: 0.95}}
-						>
-							<Button
-								onClick={refreshAfterCange}
-								variant='contained'
-								startIcon={
-									<motion.span
-										animate={{rotate: 360}}
-										transition={{
-											duration: 1,
-											repeat: Infinity,
-											ease: "linear",
-										}}
-									>
-										🔄
-									</motion.span>
-								}
-								sx={{
-									background:
-										"linear-gradient(45deg, #6a11cb 0%, #2575fc 100%)",
-									color: "white",
-									borderRadius: 3,
-									padding: "14px 40px",
-									fontWeight: "bold",
-									fontSize: "1.1rem",
-									textTransform: "none",
-									boxShadow: "0 8px 20px rgba(106,17,203,0.4)",
-									"&:hover": {
-										background:
-											"linear-gradient(45deg, #5a0db8 0%, #1c68f0 100%)",
-										boxShadow: "0 12px 24px rgba(106,17,203,0.5)",
-									},
-								}}
-							>
-								حاول مرة أخرى
-							</Button>
-						</motion.div>
-					</Box>
-				</motion.div>
-			</Box>
-		);
-
 	return (
 		<>
 			<Helmet>
@@ -332,13 +223,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 					content={
 						"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
 					}
-				/>
-			</Helmet>
-			<Helmet>
-				<title>موقع صفقه</title>
-				<meta
-					name='description'
-					content='تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة'
 				/>
 			</Helmet>
 
@@ -355,7 +239,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 						display: "flex",
 						flexDirection: "column",
 						alignItems: "center",
-						minHeight: "60vh",
+						maxHeight: "60vh",
 						justifyContent: "center",
 					}}
 				>
@@ -398,7 +282,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							textAlign: "center",
 							px: 2,
 							width: "100%",
-							maxWidth: "1200px",
+							maxWidth: "100%",
 							margin: "0 auto",
 						}}
 					>
@@ -498,283 +382,89 @@ const Home: FunctionComponent<HomeProps> = () => {
 					setSearchQuery={setSearchQuery}
 				/>
 				{/* Search and Filter Section */}
-				<Box className='container'>
-					<motion.div
-						initial={{opacity: 0, y: 20}}
-						animate={{opacity: 1, y: 0}}
-						transition={{delay: 0.3}}
+				<Box className='container border-1'>
+					<Box
+						sx={{
+							position: "static",
+							zIndex: 100,
+							top: 64,
+							backgroundColor: "primary.paper",
+							backdropFilter: "blur(10px)",
+							py: 3,
+							px: {xs: 2, md: 3},
+							borderRadius: 3,
+							boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+							mb: 4,
+							border: 1,
+						}}
 					>
-						<Box
+						{/* All Products Button */}
+
+						<Chip
+							label='الكل'
+							onClick={() => setSearchQuery("")}
 							sx={{
-								position: "sticky",
-								zIndex: 100,
-								top: 64,
-								backgroundColor: "primary.paper",
-								backdropFilter: "blur(10px)",
-								py: 3,
-								px: {xs: 2, md: 3},
-								borderRadius: 3,
-								boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-								mb: 4,
-								border: "1px solid rgba(255,255,255,0.2)",
+								borderRadius: "20px",
+								fontSize: "0.95rem",
+								fontWeight: searchQuery === "" ? "bold" : 500,
+								backgroundColor:
+									searchQuery === ""
+										? "linear-gradient(45deg, #667eea, #764ba2)"
+										: "grey.100",
+								color: searchQuery === "" ? "white" : "primary",
+								height: 40,
+								px: 2,
+								cursor: "pointer",
+								transition: "all 0.2s ease",
+								"&:hover": {
+									transform: "translateY(-2px)",
+									boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+								},
 							}}
-						>
-							<motion.div
-								whileHover={!isMobile ? {scale: 1.01} : undefined}
-								transition={{type: "spring", stiffness: 400}}
-							></motion.div>
-
-							{/* Categories Filter Section */}
-							<Box sx={{mt: 3}}>
-								<Typography
-									variant='subtitle1'
-									sx={{
-										mb: 2,
-										color: "text.secondary",
-										fontWeight: 600,
-										display: "flex",
-										alignItems: "center",
-										gap: 1,
-									}}
-								>
-									📁 التصنيفات
-								</Typography>
-
-								<Box
-									sx={{
-										display: "flex",
-										flexWrap: "wrap",
-										gap: 1.5,
-										justifyContent: "center",
-									}}
-								>
-									{/* All Products Button */}
-									<motion.div
-										whileHover={!isMobile ? {scale: 1.05} : undefined}
-										whileTap={{scale: 0.95}}
-									>
-										<Chip
-											label='الكل'
-											onClick={() => setSearchQuery("")}
-											sx={{
-												borderRadius: "20px",
-												fontSize: "0.95rem",
-												fontWeight:
-													searchQuery === "" ? "bold" : 500,
-												backgroundColor:
-													searchQuery === ""
-														? "linear-gradient(45deg, #667eea, #764ba2)"
-														: "grey.100",
-												color:
-													searchQuery === ""
-														? "white"
-														: "primary",
-												height: 40,
-												px: 2,
-												cursor: "pointer",
-												transition: "all 0.2s ease",
-												"&:hover": {
-													transform: "translateY(-2px)",
-													boxShadow:
-														"0 4px 12px rgba(0,0,0,0.1)",
-												},
-											}}
-										/>
-									</motion.div>
-
-									{productsAndCategories.map(({labelKey}, index) => {
-										const isActive = searchQuery === t(labelKey);
-										const colors = [
-											"linear-gradient(45deg, #FF6B6B, #FF8E53)",
-											"linear-gradient(45deg, #4ECDC4, #44A08D)",
-											"linear-gradient(45deg, #FFD166, #FF9E6D)",
-											"linear-gradient(45deg, #06D6A0, #0CB48A)",
-											"linear-gradient(45deg, #118AB2, #0A6A8A)",
-											"linear-gradient(45deg, #EF476F, #D43A5E)",
-											"linear-gradient(45deg, #FFD166, #FFC145)",
-											"linear-gradient(45deg, #06D6A0, #04B486)",
-										];
-
-										return (
-											<motion.div
-												key={labelKey}
-												initial={{opacity: 0, scale: 0.8}}
-												animate={{opacity: 1, scale: 1}}
-												transition={{delay: index * 0.05}}
-												whileHover={
-													!isMobile ? {scale: 1.08} : undefined
-												}
-												whileTap={{scale: 0.95}}
-											>
-												<Chip
-													label={t(labelKey)}
-													onClick={() =>
-														setSearchQuery(t(labelKey))
-													}
-													sx={{
-														borderRadius: "20px",
-														fontSize: "0.95rem",
-														fontWeight: isActive
-															? "bold"
-															: 500,
-														background: isActive
-															? colors[
-																	index % colors.length
-																]
-															: "grey.100",
-														color: isActive
-															? "white"
-															: "text.primary",
-														height: 40,
-														px: 2,
-														cursor: "pointer",
-														transition:
-															"all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-														position: "relative",
-														overflow: "hidden",
-														"&:hover": {
-															transform: "translateY(-2px)",
-															boxShadow:
-																"0 6px 16px rgba(0,0,0,0.15)",
-														},
-														"&::after": isActive
-															? {
-																	content: '""',
-																	position: "absolute",
-																	top: 0,
-																	left: 0,
-																	right: 0,
-																	height: 2,
-																	background:
-																		"rgba(255,255,255,0.8)",
-																	animation:
-																		"shimmer 2s infinite",
-																}
-															: {},
-													}}
-												/>
-											</motion.div>
-										);
-									})}
-
-									{/* Special Offers Button */}
-									<motion.div
-										whileHover={!isMobile ? {scale: 1.08} : undefined}
-										whileTap={{scale: 0.95}}
-									>
-										<Chip
-											label='🔥 عروض اليوم'
-											onClick={() => setSearchQuery("عروض")}
-											sx={{
-												borderRadius: "20px",
-												fontSize: "0.95rem",
-												fontWeight:
-													searchQuery === "عروض" ? "bold" : 600,
-												background:
-													searchQuery === "عروض"
-														? "linear-gradient(45deg, #FFD700, #FFA500)"
-														: "linear-gradient(45deg, #fff8e1, #ffe0b2)",
-												color:
-													searchQuery === "عروض"
-														? "#333"
-														: "#ff9800",
-												height: 40,
-												px: 2.5,
-												cursor: "pointer",
-												transition: "all 0.3s",
-												"&:hover": {
-													transform: "translateY(-2px)",
-													boxShadow:
-														"0 8px 20px rgba(255,165,0,0.3)",
-												},
-												border: "1px solid",
-												borderColor:
-													searchQuery === "عروض"
-														? "transparent"
-														: "warning.light",
-											}}
-										/>
-									</motion.div>
-
-									{/* Clear Filter Button */}
-									{searchQuery && (
-										<motion.div
-											initial={{opacity: 0, scale: 0.8}}
-											animate={{opacity: 1, scale: 1}}
-											exit={{opacity: 0, scale: 0.8}}
-											whileHover={
-												!isMobile ? {scale: 1.05} : undefined
-											}
-											whileTap={{scale: 0.95}}
-										>
-											<Chip
-												label='❌ مسح الفلتر'
-												onClick={() => setSearchQuery("")}
-												sx={{
-													borderRadius: "20px",
-													fontSize: "0.9rem",
-													fontWeight: 500,
-													background:
-														"linear-gradient(45deg, #36D1DC, #5B86E5)",
-													color: "white",
-													height: 40,
-													px: 2,
-													cursor: "pointer",
-													transition: "all 0.2s",
-													"&:hover": {
-														background:
-															"linear-gradient(45deg, #2bb8c3, #4a76d6)",
-														transform: "translateY(-2px)",
-														boxShadow:
-															"0 4px 12px rgba(54,209,220,0.3)",
-													},
-												}}
-											/>
-										</motion.div>
-									)}
-								</Box>
-							</Box>
-						</Box>
-					</motion.div>
+						/>
+					</Box>
 
 					{/* Products Grid */}
 					<Box className='container pb-5'>
 						{/* Results Count */}
 						<Box sx={{mb: 3, textAlign: "center"}}>
-							<AnimatePresence>
-								{searchQuery && (
-									<motion.div
-										initial={{opacity: 0, y: -20}}
-										animate={{opacity: 1, y: 0}}
-										exit={{opacity: 0, y: -20}}
+							{searchQuery && (
+								<motion.div
+									initial={{opacity: 0, y: -20}}
+									animate={{opacity: 1, y: 0}}
+									exit={{opacity: 0, y: -20}}
+								>
+									<Typography
+										variant='h6'
+										sx={{
+											color: "primary.main",
+											fontWeight: "bold",
+											display: "inline-flex",
+											alignItems: "center",
+											gap: 1,
+											p: 2,
+											background:
+												"linear-gradient(45deg, #f8f9ff, #e8eaf6)",
+											borderRadius: 2,
+											boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
+										}}
 									>
-										<Typography
-											variant='h6'
-											sx={{
-												color: "primary.main",
-												fontWeight: "bold",
-												display: "inline-flex",
-												alignItems: "center",
-												gap: 1,
-												p: 2,
-												background:
-													"linear-gradient(45deg, #f8f9ff, #e8eaf6)",
-												borderRadius: 2,
-												boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
-											}}
-										>
-											📊
-											<span>
-												تم العثور على{" "}
-												<span style={{color: "#ff6b6b"}}>
-													{filteredProducts.length}
-												</span>{" "}
-												منتج
+										📊
+										<span>
+											{t("was-found")}
+											<span
+												style={{
+													color: "#ff6b6b",
+													marginInline: 4,
+												}}
+											>
+												{filteredProducts.length}
 											</span>
-										</Typography>
-									</motion.div>
-								)}
-							</AnimatePresence>
+											{t("product")}
+										</span>
+									</Typography>
+								</motion.div>
+							)}
 						</Box>
 
 						<Box className='home-row'>
@@ -827,13 +517,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 															}
 															loadedImages={loadedImages}
 															category={product.category}
-															// اختر إحدى الطريقتين:
-															// الطريقة 1: باستخدام onLikeToggle
 															onLikeToggle={
 																handleToggleLike
 															}
-															// الطريقة 2: باستخدام updateProductInList
-															// updateProductInList={updateProductInList}
 														/>
 													</motion.div>
 												</Col>

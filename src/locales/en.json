@@ -7,6 +7,7 @@
 	"favorites": "favorites",
 	"startFree": "Start now for free",
 	"joinUs": "Join us for free",
+	"was-found": "Was Found",
 	"callUs": "Contact Us",
 	"team": "Safqa team",
 	"faq": "FAQ",
@@ -440,7 +441,8 @@
 			"delivery": "Home Delivery",
 			"pickup": "Pickup",
 			"totalAmount": "Total Amount",
-			"products": "🛒 Products",
+			"products": "Products",
+			"product": "Product",
 
 			"productName": "Product",
 			"quantity": "Quantity",

@@ -4,6 +4,7 @@ import {ChevronLeftTwoTone, ChevronRightTwoTone} from "@mui/icons-material";
 import {NavLink} from "react-router-dom";
 import {productsAndCategories} from "./navCategoryies";
 import {useTranslation} from "react-i18next";
+import JsonLd from "../../../utils/JsonLd";
 
 const ChipNavigation = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -26,19 +27,32 @@ const ChipNavigation = () => {
 
 	return (
 		<Box
+			component='nav'
+			aria-label='Main Categories'
 			sx={{
 				position: "sticky",
 				top: 0,
 				zIndex: 200,
 				backgroundColor: "white",
-				// boxShadow: 9,
 				borderRadius: "0 0 20px 20px",
 				py: 1,
 				boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
 			}}
 		>
+			<JsonLd
+				data={{
+					"@context": "https://schema.org",
+					"@type": "ItemList",
+					name: "تصنيفات المنتجات",
+					itemListElement: productsAndCategories.map((category, index) => ({
+						"@type": "SiteNavigationElement",
+						position: index + 1,
+						name: t(category.labelKey),
+						url: `${window.location.origin}${category.path}`,
+					})),
+				}}
+			/>
 			{/* Left Scroll Button */}
-
 			<IconButton
 				className='scroll-button'
 				onClick={() => scroll("left")}
@@ -61,39 +75,45 @@ const ChipNavigation = () => {
 			>
 				<ChevronLeftTwoTone />
 			</IconButton>
-
 			{/* Chip Container */}
 			<Box
 				ref={containerRef}
+				component='ul'
 				sx={{
 					display: "flex",
 					alignItems: "center",
-					justifyContent: "space-around",
 					gap: 2,
-
 					px: 5,
+					m: 0,
+					p: 1,
+					listStyle: "none",
 					overflowX: "auto",
-					scrollBehavior: "smooth",
 					scrollbarWidth: "none",
 
 					"&::-webkit-scrollbar": {display: "none"},
 					maskImage:
-						"linear-gradient(to right, transparent, #ff0101 30px, #ffffff calc(100% - 30px), transparent)",
+						"linear-gradient(to right, transparent, #fff 30px, #fff calc(100% - 30px), transparent)",
 					WebkitMaskImage:
-						"linear-gradient(to right, transparent, #ff1010 30px, #ffffff calc(100% - 30px), transparent)",
+						"linear-gradient(to right, transparent, #fff 30px, #fff calc(100% - 30px), transparent)",
 				}}
 			>
 				{productsAndCategories.map((category) => (
 					<Box
 						key={category.value}
+						component='li'
+						role='listitem'
 						sx={{
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							minWidth: 140,
+							minWidth: 120,
 						}}
 					>
-						<NavLink to={category.path} style={{textDecoration: "none"}}>
+						<NavLink
+							title={`${t("links.products")} - ${t(category.labelKey)}`}
+							to={category.path}
+							style={{textDecoration: "none"}}
+						>
 							{({isActive}) => (
 								<Chip
 									clickable
@@ -109,13 +129,11 @@ const ChipNavigation = () => {
 										borderColor: isActive
 											? "primary.main"
 											: "divider",
-
 										transition: "all 0.3s ease",
 										display: "flex",
 										justifyContent: "center",
 										alignItems: "center",
 										mt: 1,
-
 										"&:hover": {
 											transform: "scale(1.1)",
 											boxShadow: 5,
@@ -125,7 +143,7 @@ const ChipNavigation = () => {
 										<Box
 											component='img'
 											src={category.icon}
-											alt={category.labelKey}
+											alt={`${t(category.labelKey)} - تصنيف`}
 											sx={{
 												width: 43,
 												objectFit: "cover",
@@ -137,11 +155,13 @@ const ChipNavigation = () => {
 						</NavLink>
 
 						<Typography
-							component={"p"}
+							component={"h2"}
 							variant='body2'
 							sx={{
 								fontWeight: 600,
-								color: "primary.main",
+								fontSize: "0.75rem",
+								color: "text.primary",
+								mt: 0.5,
 							}}
 						>
 							{t(category.labelKey)}
@@ -149,7 +169,6 @@ const ChipNavigation = () => {
 					</Box>
 				))}
 			</Box>
-
 			{/* Right Scroll Button */}
 			<IconButton
 				className='scroll-button'
