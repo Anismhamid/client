@@ -43,12 +43,12 @@ import {
 	Close as CloseIcon,
 	Tag,
 } from "@mui/icons-material";
-import React from "react";
 import useAddressData from "../../hooks/useAddressData";
 import {useTranslation} from "react-i18next";
 import {Helmet} from "react-helmet";
 import {motion, AnimatePresence} from "framer-motion";
 import {debounce} from "lodash";
+import handleRTL from "../../locales/handleRTL";
 
 interface RegisterProps {}
 
@@ -77,6 +77,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
 	};
+
+	const dir = handleRTL();
 
 	// دالة للتحقق من توفر slug مع debounce
 	const checkSlug = useCallback(
@@ -130,7 +132,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				url: "",
 				alt: "",
 			},
-			slug: "", // أضف هذا
+			slug: "",
 			role: "Client",
 			terms: false,
 		},
@@ -377,7 +379,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		];
 
 		return (
-			<Box sx={{mt: 1, mb: 2}}>
+			<Box dir={dir} sx={{mt: 1, mb: 2}} >
 				<Typography variant='caption' color='text.secondary'>
 					{strengthLabels[strength]}
 				</Typography>
@@ -459,6 +461,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					/>
 				</Helmet>
 				<Box
+					dir={dir}
 					sx={{
 						display: "flex",
 						justifyContent: "center",
@@ -468,6 +471,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					}}
 				>
 					<Card
+						dir={dir}
 						sx={{
 							maxWidth: 500,
 							p: 4,
@@ -496,8 +500,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 							{t("register.success.message")}
 						</Typography>
 						<Typography variant='body2' color='text.secondary' paragraph>
-							رابط ملفك الشخصي:{" "}
-							<strong>safqa.com/user/{formik.values.slug}</strong>
+							رابط ملفك الشخصي:
+							<strong>safqa.com/users/customer/{formik.values.slug}</strong>
 						</Typography>
 						<Typography variant='body2' color='text.secondary' paragraph>
 							{t("register.success.redirect")}
@@ -513,13 +517,13 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	return (
 		<>
 			<Helmet>
-				{" "}
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("register.title")} | صفقة</title>
 				<meta name='description' content={`${t("register.title")} | صفقة`} />
 			</Helmet>
 
 			<Box
+				dir={dir}
 				sx={{
 					minHeight: "100vh",
 					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -719,7 +723,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 																		)}
 																		name='slug'
 																		type='text'
-																		placeholder='اسم-المستخدم'
+																		placeholder={t(
+																			"register.slug",
+																		)}
 																		value={
 																			formik.values
 																				.slug
@@ -1489,7 +1495,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 																					.values
 																					.name
 																					.first
-																			}{" "}
+																			}
 																			{
 																				formik
 																					.values
@@ -1515,7 +1521,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 																				"register.profileLink",
 																			)}
 																			:
-																			safqa.com/user/
+																			safqa.com/users/customer
 																			{formik.values
 																				.slug ||
 																				"username"}

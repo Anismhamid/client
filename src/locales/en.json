@@ -43,7 +43,19 @@
 			"security": "Security",
 			"agreements": "Agreements"
 		},
-		"slug": "Username",
+
+		"firstName": "First name",
+		"lastName": "Last name",
+		"phone1": "Phone",
+		"phone2": "Phone (optional)",
+		"slug": "User name",
+		"city": "City",
+		"street": "Street",
+		"houseNumber": "House number (optional)",
+		"imageUrl": "Image",
+		"password": "Password",
+		"confirmPassword": "Confirm password",
+
 		"slugHint": "A unique name that appears in your profile URL",
 		"slugExample": "Example: john-doe or ahmad-saleh",
 		"generateSlug": "Generate from name",
@@ -52,6 +64,11 @@
 		"slugTaken": "This username is already taken ✗",
 		"profilePreview": "Profile Preview",
 		"profileLink": "Your profile link",
+		"email": "Email",
+		"gender": "Gender",
+		"male": "Male",
+		"female": "Female",
+
 		"passwordStrength": {
 			"veryWeak": "Very weak",
 			"weak": "Weak",
