@@ -8,6 +8,7 @@ export default interface GoogleJwtPayload {
 	iss: string;
 	name: string;
 	picture: string;
+	slug?:string
 	sub: string;
 	typ: string;
 	aud: string;

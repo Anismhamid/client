@@ -120,7 +120,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		detailsRef.current?.scrollIntoView({behavior: "smooth"});
 	};
 
-	// TODO
+	// TODO:Change password
 	// const changePassword = () => {
 	// 	navigate(path.ChangePassword);
 	// };
@@ -642,7 +642,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												</Typography>
 												<Grid container spacing={2}>
 													<Grid size={{xs: 12, sm: 6}}>
-														{/* TODO */}
+														{/* TODO:change password */}
 														<Button
 															variant='outlined'
 															fullWidth

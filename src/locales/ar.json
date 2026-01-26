@@ -94,20 +94,26 @@
 			"slugUnavailable": "اسم المستخدم غير متاح. يرجى اختيار اسم آخر."
 		},
 		"validation": {
-			"firstNameRequired": "",
-			"firstNameMin": "",
-			"lastNameRequired": "",
-			"lastNameMin": "",
-			"emailRequired": "",
-			"emailMin": "",
-			"emailInvalid": "",
-			"genderRequired": "",
-			"cityRequired": "",
-			"streetRequired": "",
-			"passwordRequired": "",
-			"confirmPasswordRequired": "",
-			"passwordMin": "",
-			"confirmPasswordMatch": "",
+			"firstNameRequired": "الاسم الأول مطلوب",
+			"firstNameMin": "الاسم الأول يجب أن يكون على الأقل حرفين",
+			"lastNameRequired": "اسم العائلة مطلوب",
+			"lastNameMin": "اسم العائلة يجب أن يكون على الأقل حرفين",
+
+			"emailRequired": "البريد الإلكتروني مطلوب",
+			"emailMin": "البريد الإلكتروني قصير جداً",
+			"emailInvalid": "بريد إلكتروني غير صالح",
+
+			"genderRequired": "الجنس مطلوب",
+
+			"cityRequired": "المدينة مطلوبة",
+			"streetRequired": "الشارع مطلوب",
+
+			"passwordRequired": "كلمة المرور مطلوبة",
+			"passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+
+			"confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+			"confirmPasswordMatch": "كلمة المرور غير متطابقة",
+
 			"nameLettersOnly": "يجب أن يحتوي الاسم على أحرف فقط",
 			"phone1Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام",
 			"phone2Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام أو يكون فارغاً",

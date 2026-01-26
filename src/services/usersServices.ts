@@ -17,11 +17,8 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 		const response = await axios.post(api, newUserData, {
 			headers: {"Content-Type": "application/json"},
 		});
-		showSuccess("נחמד, נרשמת בהצלחה!. עכשיו אתה יכול להתחבר");
 		return response.data;
 	} catch (error) {
-		console.log(error);
-		showError("Invalid Data try again.");
 		return null;
 	}
 };
@@ -59,6 +56,7 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
 				city: extraData ? extraData.city : "",
 				street: extraData ? extraData.street : "",
 				houseNumber: extraData ? extraData.houseNumber : "",
+				slug: extraData ? extraData.slug : "",
 			},
 		};
 
@@ -67,13 +65,10 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
 				"Content-Type": "application/json",
 			},
 		});
-		const token = res.data;
-		localStorage.setItem("token", token);
-		showSuccess("התחברת בהצלחה עם גוגל!");
-		return token;
+		// res.data is the token
+		localStorage.setItem("token", res.data);
+		return res.data;
 	} catch (error) {
-		console.error("Error during Google login:", error);
-		showError("התחברות עם גוגל נכשלה");
 		return null;
 	}
 };
@@ -97,36 +92,38 @@ export const verifyGoogleUser = async (googleId: string) => {
 		return false;
 	}
 };
-
-export const compleateProfileData = async (
-	userId: string,
-	values: CompleteUserPayload,
-) => {
-	try {
-		const token = localStorage.getItem("token");
-		const payload = {
-			phone: {
-				phone_1: values.phone.phone_1,
-				phone_2: values.phone.phone_2 || "",
-			},
-			image: {
-				url: values.image?.url,
-			},
-			address: {
-				city: values.address.city,
-				street: values.address.street,
-				houseNumber: values.address.houseNumber,
-			},
-		};
-		await axios.patch(`${api}/compleate/${userId}`, payload, {
-			headers: {
-				Authorization: token,
-			},
-		});
-	} catch (error) {
-		console.log(error);
-	}
-};
+// /**
+//  * compleate Profile information
+//  * @param userId
+//  * @param values
+//  */
+// const compleateProfileData = async (userId: string, values: CompleteUserPayload) => {
+// 	try {
+// 		const token = localStorage.getItem("token");
+// 		const payload = {
+// 			phone: {
+// 				phone_1: values.phone.phone_1,
+// 				phone_2: values.phone.phone_2 || "",
+// 			},
+// 			image: {
+// 				url: values.image?.url,
+// 			},
+// 			address: {
+// 				city: values.address.city,
+// 				street: values.address.street,
+// 				houseNumber: values.address.houseNumber,
+// 			},
+// 			slug: values.slug,
+// 		};
+// 		await axios.patch(`${api}/compleate/${userId}`, payload, {
+// 			headers: {
+// 				Authorization: token,
+// 			},
+// 		});
+// 	} catch (error) {
+// 		console.log(error);
+// 	}
+// };
 
 /**
  * Login user and get a token

@@ -12,7 +12,7 @@ import {
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
 import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
-import {emptyAuthValues} from "../../interfaces/authValues";
+import {AuthValues, emptyAuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
 import {
 	Box,
@@ -36,7 +36,6 @@ import {
 	PersonAdd,
 	Email,
 	Lock,
-	ArrowBack,
 	ArrowRight,
 } from "@mui/icons-material";
 import UserInfoModal from "../../atoms/userManage/UserInfoModal";
@@ -45,19 +44,25 @@ import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
 import {Helmet} from "react-helmet";
+import Loader from "../../atoms/loader/Loader";
 
 interface LoginProps {
 	mode?: PaletteMode;
 }
-
+/**
+ * Modes login
+ * @param {mode = "light"}
+ * @returns Login component
+ */
 const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
-	const {setAuth, setIsLoggedIn} = useUser();
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [googleResponse, setGoogleResponse] = useState<any>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const [isHovered, setIsHovered] = useState<boolean>(false);
+	const {setAuth, setIsLoggedIn} = useUser();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const {t} = useTranslation();
 
@@ -83,7 +88,7 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 				if (token) {
 					localStorage.setItem("token", token);
 					setAfterDecode(token);
-					setAuth({...decodedToken, slug: decodedToken?.slug || ""});
+					setAuth(decodedToken);
 					setIsLoggedIn(true);
 					showSuccess("התחברת בהצלחה!");
 					navigate(path.Home);
@@ -98,22 +103,24 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 	});
 
 	const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
+		if (!response.credential) {
+			throw new Error("Missing Google credential");
+		}
 		try {
-			if (!response.credential) {
-				throw new Error("Missing Google credential");
-			}
+			const decodedGoogle = jwtDecode<DecodedGooglePayload>(response.credential);
+			const userExists = await verifyGoogleUser(decodedGoogle.sub);
 
-			const decoded = jwtDecode<DecodedGooglePayload>(response.credential);
-			const userExists = await verifyGoogleUser(decoded.sub);
-
+			setLoading(true);
 			if (userExists) {
 				const token = await handleGoogleLogin(response, null);
 				if (token) {
-					const decoded = jwtDecode(token);
+					const decodedToken = jwtDecode<AuthValues>(token);
 					setAfterDecode(token);
-					setAuth(decoded as any);
+					setAuth(decodedToken);
 					setIsLoggedIn(true);
-					navigate(path.Home);
+
+					setTimeout(() => navigate(path.Home), 2000);
+					setLoading(false);
 				}
 			} else {
 				setGoogleResponse(response);
@@ -121,21 +128,28 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 			}
 		} catch (error: any) {
 			showError("שגיאה בהתחברות עם גוגל: " + error.message);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	const handleUserInfoSubmit = async (userExtraData: any) => {
+		setLoading(true);
 		try {
 			const token = await handleGoogleLogin(googleResponse, userExtraData);
+			const decoded = jwtDecode<AuthValues>(token);
 			if (token) {
 				setAfterDecode(token);
-				setAuth(decodedToken);
+				setAuth(decoded);
 				setIsLoggedIn(true);
-				navigate(path.Home);
+				setTimeout(() => navigate(path.Home), 2000);
+				setLoading(false);
 			}
 		} catch (error: any) {
-			showError("שגיאה בהתחברות עם גוגל: " + error.message);
+			showError(error.message);
 			setShowModal(false);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -146,6 +160,8 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 	}, [navigate]);
 
 	const currentUrl = `https://client-qqq1.vercel.app/login`;
+
+	if (loading) return <Loader />;
 
 	return (
 		<>

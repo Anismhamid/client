@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from "react";
+import {useState, useEffect, useCallback} from "react";
 import {
 	Box,
 	Container,
@@ -174,7 +174,6 @@ const MessagingPage: React.FC = () => {
 		<>
 			{/* TODO:Translate */}
 			<Helmet>
-				{" "}
 				<link rel='canonical' href={currentUrl} />
 				<title>الرسائل | صفقة</title>
 				<meta name='description' content={"الرسائل | صفقة"} />

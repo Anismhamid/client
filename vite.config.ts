@@ -27,4 +27,9 @@ export default defineConfig({
 			buffer: "buffer",
 		},
 	},
+	server: {
+		headers: {
+			"Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+		},
+	},
 });

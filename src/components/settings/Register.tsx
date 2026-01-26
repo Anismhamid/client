@@ -1,10 +1,14 @@
 import {useFormik} from "formik";
 import {FunctionComponent, useState, useEffect, useCallback} from "react";
 import * as yup from "yup";
-import {UserRegister} from "../../interfaces/User";
+import {UserLogin, UserRegister} from "../../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import {registerNewUser, checkSlugAvailability} from "../../services/usersServices";
+import {
+	registerNewUser,
+	checkSlugAvailability,
+	loginUser,
+} from "../../services/usersServices";
 import {
 	Autocomplete,
 	Box,
@@ -49,6 +53,9 @@ import {Helmet} from "react-helmet";
 import {motion, AnimatePresence} from "framer-motion";
 import {debounce} from "lodash";
 import handleRTL from "../../locales/handleRTL";
+import useToken from "../../hooks/useToken";
+import {showSuccess} from "../../atoms/toasts/ReactToast";
+import { useUser } from "../../context/useUSer";
 
 interface RegisterProps {}
 
@@ -65,7 +72,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
 	const [checkingSlug, setCheckingSlug] = useState<boolean>(false);
-
+	const {setAuth, setIsLoggedIn} = useUser();
+	const {decodedToken, setAfterDecode} = useToken();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
 	const theme = useTheme();
@@ -142,18 +150,12 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					.string()
 					.required(t("register.validation.firstNameRequired"))
 					.min(2, t("register.validation.firstNameMin"))
-					.matches(
-						/^[a-zA-Z\u0590-\u05FF\s]*$/,
-						t("register.validation.nameLettersOnly"),
-					),
+					.matches(/^[\p{L}\s]+$/u, t("register.validation.nameLettersOnly")),
 				last: yup
 					.string()
 					.required(t("register.validation.lastNameRequired"))
 					.min(2, t("register.validation.lastNameMin"))
-					.matches(
-						/^[a-zA-Z\u0590-\u05FF\s]*$/,
-						t("register.validation.nameLettersOnly"),
-					),
+					.matches(/^[\p{L}\s]+$/u, t("register.validation.nameLettersOnly")),
 			}),
 			phone: yup.object({
 				phone_1: yup
@@ -207,7 +209,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				.required(t("register.validation.slugRequired"))
 				.min(3, t("register.validation.slugMin"))
 				.max(30, t("register.validation.slugMax"))
-				.matches(/^[a-z0-9-]+$/, t("register.validation.slugFormat"))
+				.matches(/^[a-z0-9-]+$/, t("register.validation.nameLettersOnly"))
 				.test(
 					"no-spaces",
 					t("register.validation.slugNoSpaces"),
@@ -225,43 +227,57 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			}),
 		}),
 		onSubmit: async (user: UserRegister) => {
-			try {
-				setIsLoading(true);
-				setSubmitError(null);
+			setIsLoading(true);
+			setSubmitError(null);
 
-				const dataToSend = {
-					name: {
-						first: user.name.first.trim(),
-						last: user.name.last.trim(),
-					},
-					phone: {
-						phone_1: user.phone.phone_1.trim(),
-						phone_2: user.phone.phone_2.trim(),
-					},
-					address: {
-						city: user.address.city.trim(),
-						street: user.address.street.trim(),
-						houseNumber: user?.address?.houseNumber?.trim(),
-					},
-					email: user.email.trim().toLowerCase(),
-					password: user.password,
-					gender: user.gender,
-					slug: user.slug.trim().toLowerCase(),
-					role: user.role,
-					image: {
-						url: user?.image?.url?.trim(),
-						alt: user.image.alt || `${user.name.first} ${user.name.last}`,
-					},
-					terms: user.terms,
+			const dataToSend = {
+				name: {
+					first: user.name.first.trim(),
+					last: user.name.last.trim(),
+				},
+				phone: {
+					phone_1: user.phone.phone_1.trim(),
+					phone_2: user.phone.phone_2.trim(),
+				},
+				address: {
+					city: user.address.city.trim(),
+					street: user.address.street.trim(),
+					houseNumber: user?.address?.houseNumber?.trim(),
+				},
+				email: user.email.trim().toLowerCase(),
+				password: user.password,
+				gender: user.gender,
+				slug: user.slug.trim().toLowerCase(),
+				role: user.role,
+				image: {
+					url: user?.image?.url?.trim(),
+					alt: user.image.alt || `${user.name.first} ${user.name.last}`,
+				},
+				terms: user.terms,
+			};
+			try {
+				await registerNewUser(dataToSend);
+
+				const login: UserLogin = {
+					email: dataToSend.email,
+					password: dataToSend.password,
 				};
 
-				await registerNewUser(dataToSend);
-				setSubmitSuccess(true);
+				const token = await loginUser(login);
+				if (token) {
+					localStorage.setItem("token", token);
+					setAfterDecode(token);
+					setAuth({...decodedToken, slug: decodedToken?.slug || ""});
+					setIsLoggedIn(true);
+					showSuccess("התחברת בהצלחה!");
 
-				// Redirect after 3 seconds
-				setTimeout(() => {
-					navigate(path.Login);
-				}, 3000);
+					setSubmitSuccess(true);
+
+					// Redirect after 3 seconds
+					setTimeout(() => {
+						navigate(path.Home);
+					}, 3000);
+				}
 			} catch (error: any) {
 				console.error("Registration error:", error);
 				setSubmitError(
@@ -379,7 +395,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		];
 
 		return (
-			<Box dir={dir} sx={{mt: 1, mb: 2}} >
+			<Box dir={dir} sx={{mt: 1, mb: 2}}>
 				<Typography variant='caption' color='text.secondary'>
 					{strengthLabels[strength]}
 				</Typography>
@@ -1495,7 +1511,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 																					.values
 																					.name
 																					.first
-																			}
+																			}{" "}
 																			{
 																				formik
 																					.values

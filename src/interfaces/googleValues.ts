@@ -1,6 +1,7 @@
 export interface DecodedGooglePayload {
 	sub: string;
 	email?: string;
-	name?: string;
+	name?: {first: string; last: string};
 	picture?: string;
+	slug?: string;
 }
