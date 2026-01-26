@@ -118,9 +118,8 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 					setAfterDecode(token);
 					setAuth(decodedToken);
 					setIsLoggedIn(true);
-
+					setLoading(true);
 					setTimeout(() => navigate(path.Home), 2000);
-					setLoading(false);
 				}
 			} else {
 				setGoogleResponse(response);
@@ -128,8 +127,6 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 			}
 		} catch (error: any) {
 			showError("שגיאה בהתחברות עם גוגל: " + error.message);
-		} finally {
-			setLoading(false);
 		}
 	};
 
@@ -143,13 +140,10 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 				setAuth(decoded);
 				setIsLoggedIn(true);
 				setTimeout(() => navigate(path.Home), 2000);
-				setLoading(false);
 			}
 		} catch (error: any) {
 			showError(error.message);
 			setShowModal(false);
-		} finally {
-			setLoading(false);
 		}
 	};
 

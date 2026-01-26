@@ -3,7 +3,7 @@ import {UserLogin, UserRegister} from "../interfaces/User";
 import {showError, showSuccess} from "../atoms/toasts/ReactToast";
 import {jwtDecode} from "jwt-decode";
 import GoogleJwtPayload from "../interfaces/google";
-import {CompleteUserPayload} from "../interfaces/completeProfile";
+// import {CompleteUserPayload} from "../interfaces/completeProfile";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
