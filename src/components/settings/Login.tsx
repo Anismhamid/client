@@ -54,7 +54,7 @@ interface LoginProps {
  * @param {mode = "light"}
  * @returns Login component
  */
-const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
+const Login: FunctionComponent<LoginProps> = ({mode}) => {
 	const navigate = useNavigate();
 	const {decodedToken, setAfterDecode} = useToken();
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -63,6 +63,27 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const {setAuth, setIsLoggedIn} = useUser();
 	const [loading, setLoading] = useState<boolean>(false);
+
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			try {
+				// Verify token is not expired before redirecting
+				const decoded = jwtDecode<AuthValues>(token);
+				const isExpired = decoded.exp ? decoded.exp * 1000 < Date.now() : false;
+
+				if (!isExpired) {
+					navigate(path.Home);
+				} else {
+					// Token expired, remove it
+					localStorage.removeItem("token");
+				}
+			} catch (error) {
+				// Invalid token, remove it
+				localStorage.removeItem("token");
+			}
+		}
+	}, [navigate]);
 
 	const {t} = useTranslation();
 
@@ -84,6 +105,7 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 		}),
 		onSubmit: async (values, {resetForm}) => {
 			try {
+				setLoading(true);
 				const token = await loginUser(values);
 				if (token) {
 					localStorage.setItem("token", token);
@@ -98,6 +120,8 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 				setIsLoggedIn(false);
 				resetForm();
 				showError("Login failed");
+			} finally {
+				setLoading(false);
 			}
 		},
 	});
@@ -106,11 +130,11 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 		if (!response.credential) {
 			throw new Error("Missing Google credential");
 		}
+		setLoading(true);
 		try {
 			const decodedGoogle = jwtDecode<DecodedGooglePayload>(response.credential);
 			const userExists = await verifyGoogleUser(decodedGoogle.sub);
 
-			setLoading(true);
 			if (userExists) {
 				const token = await handleGoogleLogin(response, null);
 				if (token) {
@@ -118,8 +142,7 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 					setAfterDecode(token);
 					setAuth(decodedToken);
 					setIsLoggedIn(true);
-					setLoading(true);
-					setTimeout(() => navigate(path.Home), 2000);
+					navigate(path.Home);
 				}
 			} else {
 				setGoogleResponse(response);
@@ -127,6 +150,8 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 			}
 		} catch (error: any) {
 			showError("שגיאה בהתחברות עם גוגל: " + error.message);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -139,11 +164,13 @@ const Login: FunctionComponent<LoginProps> = ({mode = "light"}) => {
 				setAfterDecode(token);
 				setAuth(decoded);
 				setIsLoggedIn(true);
-				setTimeout(() => navigate(path.Home), 2000);
+				navigate(path.Home);
 			}
 		} catch (error: any) {
 			showError(error.message);
 			setShowModal(false);
+		} finally {
+			setLoading(false);
 		}
 	};
 

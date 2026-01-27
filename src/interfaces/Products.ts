@@ -23,8 +23,9 @@ export interface Products {
 	sale: boolean;
 	discount: number;
 	rating?: number;
-	reviewCount?: number;
+	reviews?: {rating: number}[];
 	in_stock: boolean;
+
 	[key: string]: any;
 }
 

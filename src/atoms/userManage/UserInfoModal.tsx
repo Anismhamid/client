@@ -7,19 +7,13 @@ import {
 	DialogActions,
 	DialogContent,
 	DialogTitle,
-	Grid,
-	InputAdornment,
 	TextField,
-	Typography,
 } from "@mui/material";
-import {Tag} from "@mui/icons-material";
 import {useFormik} from "formik";
-import {FunctionComponent, useCallback, useEffect, useState} from "react";
+import {FunctionComponent} from "react";
 import * as yup from "yup";
 import useAddressData from "../../hooks/useAddressData";
 import {useTranslation} from "react-i18next";
-import {debounce} from "lodash";
-import {checkSlugAvailability} from "../../services/usersServices";
 
 interface UserInfoModalProps {
 	isOpen: boolean;
@@ -30,7 +24,7 @@ interface UserInfoModalProps {
 		city: string;
 		street: string;
 		houseNumber: string;
-		slug: string;
+		gender: string;
 	}) => Promise<void>;
 }
 /**
@@ -47,36 +41,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 	onClose,
 	onSubmit,
 }) => {
-	const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
-	const [checkingSlug, setCheckingSlug] = useState<boolean>(false);
 	const {t} = useTranslation();
-
-	const checkSlug = useCallback(
-		debounce(async (slug: string) => {
-			if (slug.length < 3) {
-				setSlugAvailable(null);
-				return;
-			}
-
-			setCheckingSlug(true);
-			try {
-				const available = await checkSlugAvailability(slug);
-				setSlugAvailable(available);
-			} catch (error) {
-				console.error("Error checking slug:", error);
-				setSlugAvailable(null);
-			} finally {
-				setCheckingSlug(false);
-			}
-		}, 500),
-		[],
-	);
-
-	useEffect(() => {
-		return () => {
-			checkSlug.cancel();
-		};
-	}, [checkSlug]);
 
 	const formik = useFormik({
 		initialValues: {
@@ -85,7 +50,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 			city: "",
 			street: "",
 			houseNumber: "",
-			slug: "",
+			gender: "",
 		},
 		validationSchema: yup.object({
 			phone_1: yup
@@ -98,17 +63,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 			city: yup.string().required("المدينة مطلوبة"),
 			street: yup.string().required("الشارع مطلوب"),
 			houseNumber: yup.string(),
-			slug: yup
-				.string()
-				.required(t("register.validation.slugRequired"))
-				.min(3, t("register.validation.slugMin"))
-				.max(30, t("register.validation.slugMax"))
-				.matches(/^[a-z0-9-]+$/, t("register.validation.slugFormat"))
-				.test(
-					"no-spaces",
-					t("register.validation.slugNoSpaces"),
-					(value) => !/\s/.test(value || ""),
-				),
+			gender: yup.string().required(),
 		}),
 		onSubmit: async (values, {setSubmitting}) => {
 			try {
@@ -119,54 +74,6 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 		},
 	});
 	const {cities, streets, loadingStreets} = useAddressData(formik.values.city);
-
-	// استدعاء checkSlug عند تغيير slug
-	useEffect(() => {
-		if (formik.values.slug.length >= 3 && !formik.errors.slug) {
-			checkSlug(formik.values.slug);
-		} else {
-			setSlugAvailable(null);
-		}
-	}, [formik.values.slug, formik.errors.slug, checkSlug]);
-
-	const SlugAvailabilityIndicator = () => {
-		if (!formik.values.slug || formik.values.slug.length < 3) {
-			return null;
-		}
-
-		if (checkingSlug) {
-			return (
-				<Box sx={{display: "flex", alignItems: "center", gap: 1, mt: 1}}>
-					<CircularProgress size={16} />
-					<Typography variant='caption' color='text.secondary'>
-						{t("register.checkingSlug")}
-					</Typography>
-				</Box>
-			);
-		}
-
-		if (slugAvailable === true) {
-			return (
-				<Box sx={{display: "flex", alignItems: "center", gap: 1, mt: 1}}>
-					<Typography variant='caption' color='success.main'>
-						{t("register.slugAvailable")}
-					</Typography>
-				</Box>
-			);
-		}
-
-		if (slugAvailable === false) {
-			return (
-				<Box sx={{display: "flex", alignItems: "center", gap: 1, mt: 1}}>
-					<Typography variant='caption' color='error.main'>
-						{t("register.slugTaken")}
-					</Typography>
-				</Box>
-			);
-		}
-
-		return null;
-	};
 
 	return (
 		<Dialog open={isOpen} onClose={onClose} maxWidth='xs' fullWidth>
@@ -255,7 +162,29 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 							formik.touched.houseNumber && formik.errors.houseNumber
 						}
 					/>
-					<Grid container spacing={2} sx={{mt: 1}}>
+					<div className='form-floating'>
+						<select
+							id='gender'
+							name='gender'
+							className='form-select'
+							value={formik.values.gender}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+						>
+							<option value=''>{t("register.selectGender")}</option>
+							<option value='male'>{t("register.male")}</option>
+							<option value='female'>{t("register.female")}</option>
+						</select>
+
+						<label htmlFor='gender'>{t("register.gender")}</label>
+
+						{formik.touched.gender && formik.errors.gender && (
+							<div className='text-danger small mt-1'>
+								{t("register.validation.genderRequired")}
+							</div>
+						)}
+					</div>
+					{/* <Grid container spacing={2} sx={{mt: 1}}>
 						<Grid size={{xs: 12}}>
 							<Box
 								sx={{
@@ -313,16 +242,13 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
 								{t("register.slugExample")}
 							</Typography>
 						</Grid>
-					</Grid>
+					</Grid> */}
 					<DialogActions className='d-flex align-items-center justify-content-between mt-3'>
 						<Button variant='contained' onClick={onClose} color='error'>
 							إلغاء التسجيل
 						</Button>
 
-						<Button
-							type='submit'
-							disabled={slugAvailable !== true || formik.isSubmitting}
-						>
+						<Button type='submit' disabled={formik.isSubmitting}>
 							{formik.isSubmitting ? (
 								<CircularProgress size={20} />
 							) : (

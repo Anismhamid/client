@@ -16,7 +16,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 		{label: t("footer.myAccount"), href: "/profile"},
 		{
 			label: t("footer.myListings"),
-			href: `${path.myCustomerProfile}/${auth.slug}`,
+			href: `${path.myCustomerProfile}/${auth?.slug}`,
 		},
 		{label: t("footer.postListing"), href: "/"},
 	];
@@ -68,7 +68,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 							>
 								{t("footer.marketplace")}
 							</MuiLink>
-							{auth.slug &&
+							{auth?.slug &&
 								quickLinks.map((link, idx) => (
 									<MuiLink
 										key={idx}

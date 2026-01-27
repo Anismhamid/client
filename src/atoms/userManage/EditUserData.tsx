@@ -10,10 +10,11 @@ import {
 	TextField,
 	Typography,
 } from "@mui/material";
-import {compleateProfileData, getUserById} from "../../services/usersServices";
+import {editUserProfile, getUserById} from "../../services/usersServices";
 import Loader from "../loader/Loader";
 import useAddressData from "../../hooks/useAddressData";
-import {UserRegister} from "../../interfaces/User";
+import {EditUserProfile} from "../../interfaces/User";
+import {useTranslation} from "react-i18next";
 
 interface EditUserDataProps {
 	userId: string;
@@ -27,7 +28,48 @@ interface EditUserDataProps {
 const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 	const [loading, setIsLoading] = useState<boolean>(true);
 	const [preview, setPreview] = useState<boolean>(false);
-	const [users, setUsers] = useState<UserRegister | null>(null);
+	const [user, setUser] = useState<EditUserProfile | null>(null);
+
+	const {t} = useTranslation();
+
+useEffect(() => {
+	const fetchUser = async () => {
+		try {
+			setIsLoading(true);
+			const userData = await getUserById(userId);
+			setUser(userData);
+
+			// Set initial values with defaults
+			formik.setValues({
+				name: {
+					first: userData.name?.first || "",
+					last: userData.name?.last || "",
+				},
+				phone: {
+					phone_1: userData.phone?.phone_1 || "",
+					phone_2: userData.phone?.phone_2 || "",
+				},
+				image: {
+					url: userData.image?.url || "",
+					alt: userData.image?.alt || userData.name?.first || "",
+				},
+				address: {
+					city: userData.address?.city || "",
+					street: userData.address?.street || "",
+					houseNumber: userData.address?.houseNumber || "",
+				},
+				gender: userData.gender || "",
+			});
+		} catch (err) {
+			console.error("Error getting user:", err);
+			showError("خطأ في تحميل الملف الشخصي");
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	fetchUser();
+}, [userId]);
 
 	const formik = useFormik({
 		initialValues: {
@@ -35,6 +77,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 			phone: {phone_1: "", phone_2: ""},
 			image: {url: "", alt: ""},
 			address: {city: "", street: "", houseNumber: ""},
+			gender: "",
 		},
 		enableReinitialize: true,
 		validationSchema: yup.object({
@@ -45,11 +88,11 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 			phone: yup.object({
 				phone_1: yup
 					.string()
-					.matches(/^0\d{1,2}-?\d{7}$/, "מספר טלפון לא תקין בפורמט ישראלי")
-					.required(),
+					.matches(/^0[2-9]\d{7,8}$/, "מספר טלפון לא תקין בפורמט ישראלי")
+					.required("נדרש מספר טלפון"),
 				phone_2: yup
 					.string()
-					.matches(/^0\d{1,2}-?\d{7}$/, "מספר טלפון לא תקין בפורמט ישראלי"),
+					.matches(/^0[2-9]\d{7,8}$/, "מספר טלפון לא תקין בפורמט ישראלי"),
 			}),
 			image: yup.object({
 				url: yup.string(),
@@ -60,15 +103,43 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 				street: yup.string().required("נדרש רחוב"),
 				houseNumber: yup.string(),
 			}),
+			gender: yup.string().required("נדרש מין"), // Fixed error message
 		}),
 		onSubmit: (values) => {
+			console.log("Form values:", values); // Add this line
+			console.log("User ID:", userId); // Add this line
+
 			if (userId) {
-				compleateProfileData(userId, values)
+				const payload = {
+					name: {
+						first: values.name.first,
+						last: values.name.last || "", // Ensure no undefined
+					},
+					phone: {
+						phone_1: values.phone.phone_1,
+						phone_2: values.phone.phone_2 || "", // Ensure no undefined
+					},
+					image: {
+						url: values.image.url || "",
+						alt: values.image.alt || values.name.first || "",
+					},
+					address: {
+						city: values.address.city,
+						street: values.address.street,
+						houseNumber: values.address.houseNumber || "",
+					},
+					gender: values.gender,
+				};
+
+				console.log("Payload to send:", payload); // Add this line
+
+				editUserProfile(userId, payload)
 					.then(() => {
 						formik.setSubmitting(false);
 						showSuccess("הפרופיל עודכן בהצלחה!");
 					})
-					.catch(() => {
+					.catch((error) => {
+						console.error("Update error:", error); // Add this line
 						formik.setSubmitting(false);
 						showError("שגיאה בעדכון הפרופיל");
 					});
@@ -80,43 +151,6 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 
 	const handleImageChange = () => setPreview(!preview);
 
-	useEffect(() => {
-		async function getUser() {
-			try {
-				const user = await getUserById(userId);
-
-				setUsers(user);
-				formik.setValues({
-					name: {
-						first: user.name.first || "",
-						last: user.name.last || "",
-					},
-					phone: {
-						phone_1: user.phone?.phone_1 || "",
-						phone_2: user.phone?.phone_2 || "",
-					},
-					image: {
-						url: user.image?.url,
-						alt: user.name?.first,
-					},
-					address: {
-						city: user.address?.city || "בחר עיר",
-						street: user.address.city
-							? user.address?.street
-							: "שם רחוב לא הוזן",
-						houseNumber: user.address?.houseNumber || "",
-					},
-				});
-			} catch (err) {
-				console.log("Error getting user:", err);
-				showError("خطأ في تحميل الملف الشخصي");
-			} finally {
-				setIsLoading(false);
-			}
-		}
-		if (userId) getUser();
-	}, [userId]);
-
 	if (loading) return <Loader />;
 
 	return (
@@ -126,7 +160,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 				backgroundColor: "white",
 				borderRadius: 25,
 				boxShadow: "0px 0.3px 1px 0px black",
-				padding: 20
+				padding: 20,
 			}}
 			className=' d-flex align-items-center justify-content-center'
 			aria-label='شاشه منبثقه لتحديث الملف الشخصي'
@@ -292,6 +326,29 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 								variant='outlined'
 							/>
 						</div>
+						<div className='form-floating'>
+							<select
+								id='gender'
+								name='gender'
+								className='form-select'
+								value={formik.values.gender}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							>
+								<option value=''>
+									{t("register.selectGender") || "בחר מין"}
+								</option>
+								<option value='male'>{t("register.male")}</option>
+								<option value='female'>{t("register.female")}</option>
+							</select>
+							<label htmlFor='gender'>{t("register.gender")}</label>
+							{formik.touched.gender && formik.errors.gender && (
+								<div className='text-danger small mt-1'>
+									{formik.errors.gender}
+								</div>
+							)}
+						</div>
+
 						<div>
 							<TextField
 								aria-label='تغيير رابط الصورة'
@@ -329,9 +386,9 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({userId}) => {
 											height={250}
 											src={
 												formik.values.image.url ||
-												users?.image.url
+												user?.image?.url
 											}
-											alt={`${users?.name.first} avatar`}
+											alt={`${user?.name.first} avatar`}
 											style={{
 												maxWidth: "300px",
 												borderRadius: "10px",

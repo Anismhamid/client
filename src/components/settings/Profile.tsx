@@ -27,7 +27,7 @@ import {
 	CircularProgress,
 } from "@mui/material";
 import {
-	Edit as EditIcon,
+	// Edit as EditIcon,
 	History as HistoryIcon,
 	Security as SecurityIcon,
 	SupportAgent as SupportIcon,
@@ -60,6 +60,9 @@ import {useTranslation} from "react-i18next";
 import {motion} from "framer-motion";
 import {formatDate} from "../../helpers/dateAndPriceFormat";
 import {showSuccess} from "../../atoms/toasts/ReactToast";
+import {getAllProducts} from "../../services/productsServices";
+import {User} from "../../interfaces/usersMessages";
+import { Products } from "../../interfaces/Products";
 
 interface ProfileProps {}
 
@@ -77,6 +80,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const [showEdit, setShowEdit] = useState<boolean>(false);
+	const [products, setProducts] = useState<Products[]>([]);
+
+	const handleShowIdit = () => setShowEdit(!showEdit);
 
 	const [user, setUser] = useState<{
 		name: {first: string; last: string};
@@ -113,11 +120,33 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		totalProducts: 0,
 		totalFavorites: 0,
 		rating: 4.5,
+		totalLikesOnMyProducts:0,
 		completionPercentage: 65,
 	});
 
-	const updateProfile = () => {
-		detailsRef.current?.scrollIntoView({behavior: "smooth"});
+	const calculateProfileCompletion = (user: User) => {
+		const fields = [
+			user.name?.first,
+			user.name?.last,
+			user.phone?.phone_1,
+			user.address?.city,
+			user.address?.street,
+			user.image?.url,
+			user.gender,
+		];
+
+		const filled = fields.filter(Boolean).length;
+		return Math.round((filled / fields.length) * 100);
+	};
+
+	const calculateRating = (products: Products[]) => {
+		const ratings = products.flatMap((p) => p.reviews?.map((r) => r.rating) || []);
+
+		if (!ratings.length) return 0;
+
+		const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+
+		return Number(avg.toFixed(1));
 	};
 
 	// TODO:Change password
@@ -158,21 +187,46 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 	useEffect(() => {
 		const targetId = id || decodedToken?._id;
-		if (targetId) {
-			getUserById(targetId)
-				.then((userRes) => {
-					setUser(userRes);
-					// Simulate stats - in real app, fetch from API
-					setStats({
-						totalProducts: Math.floor(Math.random() * 50),
-						totalFavorites: Math.floor(Math.random() * 100),
-						rating: 4.2 + Math.random() * 0.8,
-						completionPercentage: 30 + Math.floor(Math.random() * 70),
-					});
-				})
-				.catch((err) => console.error("Error fetching user data:", err))
-				.finally(() => setLoading(false));
-		}
+		if (!targetId) return;
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				const [userRes, productsRes] = await Promise.all([
+					getUserById(targetId),
+					getAllProducts(),
+				]);
+
+				setUser(userRes);
+				setProducts(productsRes);
+
+				const userProducts = productsRes.filter(
+					(p: Products) => p.userId === targetId,
+				);
+
+				const totalFavorites = products.filter((p: Products) =>
+					p.likes?.includes(targetId),
+				).length;
+
+				const totalLikesOnMyProducts = userProducts.reduce(
+					(sum, p) => sum + (p.likes?.length || 0),
+					0,
+				);
+
+				setStats({
+					totalLikesOnMyProducts:totalLikesOnMyProducts,
+					totalProducts: userProducts.length,
+					totalFavorites: totalFavorites ,
+					rating: calculateRating(userProducts),
+					completionPercentage: calculateProfileCompletion(userRes),
+				});
+			} catch (err) {
+				console.error("Error fetching profile data:", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchData();
 	}, [id, decodedToken]);
 
 	const handleDeleteAccount = () => {
@@ -216,7 +270,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 	const tabs = [
 		{label: "الملف الشخصي", icon: <Person />},
-		{label: "الطلبات", icon: <ShoppingCart />},
 		{label: "المفضلة", icon: <Favorite />},
 		{label: "الإعدادات", icon: <Settings />},
 	];
@@ -451,7 +504,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									{/* Action Buttons */}
 									<Grid size={{xs: 12, md: 4}}>
 										<Stack spacing={2}>
-											<Button
+											{/* <Button
 												variant='contained'
 												size='large'
 												startIcon={<EditIcon />}
@@ -463,7 +516,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												}}
 											>
 												تعديل الملف
-											</Button>
+											</Button> */}
 											<Button
 												variant='outlined'
 												size='large'
@@ -509,9 +562,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									<Typography variant='h4' fontWeight='bold'>
 										{stats.totalProducts}
 									</Typography>
-									<Typography variant='body2' color='text.secondary'>
-										المنشورات
-									</Typography>
+									<Typography
+										variant='body2'
+										color='text.secondary'
+									></Typography>
 								</Paper>
 							</Grid>
 							<Grid size={{xs: 6, sm: 3}}>
@@ -791,52 +845,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 										fontWeight='bold'
 										color='primary'
 									>
-										الطلبات
-									</Typography>
-									<Box textAlign='center' py={8}>
-										<ShoppingCart
-											sx={{
-												fontSize: 80,
-												color: "text.secondary",
-												mb: 2,
-											}}
-										/>
-										<Typography
-											variant='h6'
-											color='text.secondary'
-											gutterBottom
-										>
-											لا توجد طلبات حالياً
-										</Typography>
-										<Typography
-											variant='body2'
-											color='text.secondary'
-											paragraph
-										>
-											يمكنك البدء بالتسوق من خلال تصفح منتجاتنا
-											المميزة
-										</Typography>
-										<Button
-											variant='contained'
-											onClick={() => navigate(path.Home)}
-											sx={{mt: 2}}
-										>
-											بدء التسوق
-										</Button>
-									</Box>
-								</CardContent>
-							</Card>
-						)}
-
-						{activeTab === 2 && (
-							<Card sx={{borderRadius: 3}}>
-								<CardContent>
-									<Typography
-										variant='h5'
-										gutterBottom
-										fontWeight='bold'
-										color='primary'
-									>
 										قائمة المفضلة
 									</Typography>
 									<Box textAlign='center' py={8}>
@@ -874,7 +882,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</Card>
 						)}
 
-						{activeTab === 3 && (
+						{activeTab === 2 && (
 							<Card sx={{borderRadius: 3}}>
 								<CardContent>
 									<Typography
@@ -952,9 +960,33 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						)}
 
 						{/* Edit User Data Section */}
-						<Box ref={detailsRef} sx={{mt: 4}}>
-							<EditUserData userId={id || decodedToken._id} />
+
+						<Box
+							ref={detailsRef}
+							sx={{
+								my: 4,
+								display: "flex",
+								alignItem: "center",
+								justifyContent: "center",
+								flexDirection: "column",
+								p: 1,
+							}}
+						>
+							<Button
+								variant='contained'
+								sx={{
+									width: 100,
+									m: "auto",
+									background:
+										"linear-gradient(135deg, #373A3E 0%, #1B76D0 100%)",
+								}}
+								onClick={handleShowIdit}
+							>
+								{showEdit ? "Hide edit" : "Show edit"}
+							</Button>
 						</Box>
+
+						{showEdit && <EditUserData userId={decodedToken._id} />}
 
 						{/* Delete Account Section */}
 						<Box sx={{mt: 4}}>

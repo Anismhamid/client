@@ -28,6 +28,28 @@ export interface UserRegister {
 	terms: boolean;
 }
 
+// Edit interface
+export interface EditUserProfile {
+	name: {
+		first: string;
+		last: string;
+	};
+	phone: {
+		phone_1: string;
+		phone_2: string;
+	};
+	address: {
+		city: string;
+		street: string;
+		houseNumber?: string;
+	};
+	gender: string;
+	image?: {
+		url: string;
+		alt: string;
+	};
+}
+
 // Login interface
 export interface UserLogin {
 	email: string;

@@ -1,9 +1,9 @@
 import axios from "axios";
-import {UserLogin, UserRegister} from "../interfaces/User";
+import {EditUserProfile, UserLogin, UserRegister} from "../interfaces/User";
 import {showError, showSuccess} from "../atoms/toasts/ReactToast";
 import {jwtDecode} from "jwt-decode";
 import GoogleJwtPayload from "../interfaces/google";
-// import {CompleteUserPayload} from "../interfaces/completeProfile";
+import {CompleteUserPayload} from "../interfaces/completeProfile";
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -92,38 +92,77 @@ export const verifyGoogleUser = async (googleId: string) => {
 		return false;
 	}
 };
-// /**
-//  * compleate Profile information
-//  * @param userId
-//  * @param values
-//  */
-// const compleateProfileData = async (userId: string, values: CompleteUserPayload) => {
-// 	try {
-// 		const token = localStorage.getItem("token");
-// 		const payload = {
-// 			phone: {
-// 				phone_1: values.phone.phone_1,
-// 				phone_2: values.phone.phone_2 || "",
-// 			},
-// 			image: {
-// 				url: values.image?.url,
-// 			},
-// 			address: {
-// 				city: values.address.city,
-// 				street: values.address.street,
-// 				houseNumber: values.address.houseNumber,
-// 			},
-// 			slug: values.slug,
-// 		};
-// 		await axios.patch(`${api}/compleate/${userId}`, payload, {
-// 			headers: {
-// 				Authorization: token,
-// 			},
-// 		});
-// 	} catch (error) {
-// 		console.log(error);
-// 	}
-// };
+
+/**
+ * compleate Profile information
+ * @param userId
+ * @param values
+ */
+export const compleateProfileData = async (
+	userId: string,
+	values: CompleteUserPayload,
+) => {
+	try {
+		const token = localStorage.getItem("token");
+		const payload = {
+			phone: {
+				phone_1: values.phone.phone_1,
+				phone_2: values.phone.phone_2 || "",
+			},
+			image: {
+				url: values.image?.url,
+			},
+			address: {
+				city: values.address.city,
+				street: values.address.street,
+				houseNumber: values.address.houseNumber,
+			},
+		};
+		await axios.patch(`${api}/compleate/${userId}`, payload, {
+			headers: {
+				Authorization: token,
+			},
+		});
+	} catch (error) {
+		console.log(error);
+	}
+};
+/**
+ * Users id
+ * @param userId
+ * @param data
+ * @returns
+ */
+// Update the editUserProfile function:
+export const editUserProfile = async (userId: string, data: EditUserProfile) => {
+	try {
+		const response = await axios.patch(`${api}/edit-user/${userId}`, data, {
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: localStorage.getItem("token"),
+			},
+		});
+		return response.data;
+	} catch (error) {
+		if (axios.isAxiosError(error)) {
+			// Log full error details
+			console.error("Axios error response:", error.response);
+			console.error("Error status:", error.response?.status);
+			console.error("Error data:", error.response?.data);
+			console.error("Error headers:", error.response?.headers);
+
+			// Get more specific error message
+			const errorMessage =
+				error.response?.data?.message ||
+				error.response?.data?.error ||
+				error.response?.data ||
+				"Failed to update profile";
+
+			throw new Error(errorMessage);
+		}
+		throw error;
+	}
+};
 
 /**
  * Login user and get a token
@@ -273,5 +312,3 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
 		throw error;
 	}
 };
-
-// ... بقية الدوال ...
