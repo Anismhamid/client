@@ -29,6 +29,7 @@ import {
 	Sell,
 	VisibilityRounded,
 	Report,
+	Navigation,
 } from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
 import {Link} from "react-router-dom";
@@ -69,16 +70,17 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		onLikeToggle,
 		updateProductInList,
 	}) => {
+		const {t} = useTranslation();
+		const theme = useTheme();
+		const dir = handleRTL();
+
 		const generateImageAlt = (product: Products) => {
 			return `${product.product_name} - بيع وشراء في ${product.category}`;
 		};
-
-		const jsonLdData = generateSingleProductJsonLd(product);
-		const {t} = useTranslation();
-		const dir = handleRTL();
-		const theme = useTheme();
 		const [isBookmarked, setIsBookmarked] = useState(false);
 		const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+		const jsonLdData = generateSingleProductJsonLd(product);
 		const menuRef = useRef(null);
 
 		const formatTimeAgo = () => {
@@ -142,7 +144,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 			: undefined;
 
 		const imageKey = product._id;
-
+		// TODO: Translate
 		return (
 			<Card
 				className='product-card'
@@ -178,11 +180,11 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						justifyContent: "space-between",
 					}}
 				>
-					<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
-						<Link
-							to={`/users/customer/${product.seller?.slug}`}
-							style={{textDecoration: "none"}}
-						>
+					<Link
+						to={`/users/customer/${product.seller?.slug}`}
+						style={{textDecoration: "none"}}
+					>
+						<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
 							<Avatar
 								src={product.seller?.name || ""}
 								alt={product.seller?.name || "بائع"}
@@ -195,12 +197,8 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									},
 								}}
 							/>
-						</Link>
-						<Box>
-							<Link
-								to={`/users/customer/${product.seller?.slug}`}
-								style={{textDecoration: "none", color: "inherit"}}
-							>
+
+							<Box>
 								<Typography
 									variant='subtitle2'
 									fontWeight={600}
@@ -216,54 +214,55 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 										product.seller?.slug ||
 										"بائع"}
 								</Typography>
-							</Link>
-							<Stack direction='row' spacing={0.5} alignItems='center'>
-								<Typography
-									variant='caption'
-									sx={{
-										color: "#65676b",
-										fontSize: "0.8125rem",
-									}}
-								>
-									{formatTimeAgo()}
-								</Typography>
-								<Typography
-									variant='caption'
-									sx={{
-										color: "#65676b",
-										fontSize: "0.8125rem",
-									}}
-								>
-									•
-								</Typography>
-								<Tooltip title='عام للجميع'>
-									<Box sx={{display: "flex", alignItems: "center"}}>
-										<Box
-											sx={{
-												width: 12,
-												height: 12,
-												bgcolor: "#e4e6eb",
-												borderRadius: "50%",
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
-											<Typography
-												variant='caption'
+
+								<Stack direction='row' spacing={0.5} alignItems='center'>
+									<Typography
+										variant='caption'
+										sx={{
+											color: "#65676b",
+											fontSize: "0.8125rem",
+										}}
+									>
+										{formatTimeAgo()}
+									</Typography>
+									<Typography
+										variant='caption'
+										sx={{
+											color: "#65676b",
+											fontSize: "0.8125rem",
+										}}
+									>
+										•
+									</Typography>
+									<Tooltip title='عام للجميع'>
+										<Box sx={{display: "flex", alignItems: "center"}}>
+											<Box
 												sx={{
-													color: "#65676b",
-													fontSize: "0.5rem",
+													width: 12,
+													height: 12,
+													bgcolor: "#e4e6eb",
+													borderRadius: "50%",
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
 												}}
 											>
-												🌍
-											</Typography>
+												<Typography
+													variant='caption'
+													sx={{
+														color: "#65676b",
+														fontSize: "0.5rem",
+													}}
+												>
+													🌍
+												</Typography>
+											</Box>
 										</Box>
-									</Box>
-								</Tooltip>
-							</Stack>
+									</Tooltip>
+								</Stack>
+							</Box>
 						</Box>
-					</Box>
+					</Link>
 					<IconButton
 						size='small'
 						onClick={handleMenuOpen}
@@ -304,7 +303,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							</Typography>
 						</MenuItem>
 						{canEdit && (
-							<>
+							<Box>
 								<MenuItem
 									onClick={() => {
 										setProductIdToUpdate(product._id as string);
@@ -317,7 +316,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 								</MenuItem>
 								<MenuItem
 									onClick={() => {
-										openDeleteModal(product.product_name);
+										openDeleteModal(product._id as string);
 										handleMenuClose();
 									}}
 								>
@@ -326,7 +325,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									/>
 									<Typography color='error'>حذف</Typography>
 								</MenuItem>
-							</>
+							</Box>
 						)}
 					</Menu>
 				</Box>
@@ -388,10 +387,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									height: "auto",
 									maxHeight: 400,
 									objectFit: "contain",
-									display:
-										imageKey && loadedImages[imageKey]
-											? "block"
-											: "none",
 								}}
 								onLoad={() => {
 									if (!imageKey) return;
@@ -532,18 +527,35 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							spacing={1.5}
 							sx={{mb: 1.5}}
 							flexWrap='wrap'
+							gap={1}
 							rowGap={1}
 						>
-							<Chip
-								label={t(category) || category}
-								size='small'
-								sx={{
-									bgcolor: "#e8f0fe",
-									color: "#1a73e8",
-									fontWeight: 500,
-									height: 24,
-								}}
-							/>
+							<Link
+								to={`/category/${product.category}`}
+								style={{textDecoration: "none"}}
+							>
+								<Chip
+									label={`${t(`categories.${product.category.toLocaleLowerCase()}.label`)}`}
+									size='small'
+									sx={{
+										bgcolor: "#e8f0fe",
+										color: "#1a73e8",
+										fontWeight: 500,
+										height: 24,
+									}}
+								/>
+								-
+								<Chip
+									label={`${t(`categories.${product.category.toLocaleLowerCase()}.subCategories.${product.subcategory}`)}`}
+									size='small'
+									sx={{
+										bgcolor: "#e8f0fe",
+										color: "#1a73e8",
+										fontWeight: 500,
+										height: 24,
+									}}
+								/>
+							</Link>
 							<Chip
 								icon={<LocationOn sx={{fontSize: 14}} />}
 								label={product.location || "أم الفحم"}
@@ -552,11 +564,45 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									bgcolor: "#f3f4f6",
 									color: "#5f6368",
 									height: 24,
+
 									"& .MuiChip-icon": {
 										marginLeft: 0.5,
 									},
 								}}
 							/>
+							<a
+								href={`https://waze.com/ul?q=${encodeURIComponent(
+									product.location || "أم الفحم",
+								)}&navigate=yes`}
+								target='_blank'
+								rel='noopener noreferrer'
+								style={{textDecoration: "none"}}
+							>
+								<Chip
+									icon={
+										<img
+											src='/waze.png'
+											width={30}
+											style={{fontSize: 10}}
+										/>
+									}
+									label={"Waze"}
+									size='small'
+									sx={{
+										// bgcolor: "#f3f4f6",
+										// color: "#5f6368",
+										backgroundColor: "#33CCFF",
+										height: 24,
+										cursor: "pointer",
+										gap: 1,
+										display: "inline",
+										fontSize: 14,
+										"& .MuiChip-icon": {
+											marginLeft: 0.5,
+										},
+									}}
+								/>
+							</a>
 							{product.condition && (
 								<Chip
 									label={
@@ -618,7 +664,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						alignItems='center'
 					>
 						<Stack direction='row' alignItems='center' spacing={0.5}>
-							<Box
+							{/* <Box
 								sx={{
 									bgcolor: "#1a73e8",
 									borderRadius: "50%",
@@ -630,7 +676,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 								}}
 							>
 								<LikeIcon />
-							</Box>
+							</Box> */}
 							<Typography
 								variant='caption'
 								sx={{
@@ -657,14 +703,26 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 				{/* أزرار التفاعل - تم استخدام LikeButton هنا */}
 				<CardActions sx={{p: 0}}>
 					<Box sx={{width: "100%", display: "flex"}}>
-						<Box sx={{flex: 1, display: "flex", justifyContent: "center"}}>
+						<Box
+							sx={{
+								flex: 1,
+								display: "flex",
+								justifyContent: "center",
+							}}
+						>
 							<LikeButton
 								product={product}
 								setProduct={setProduct}
 								onLikeToggle={onLikeToggle}
 							/>
 						</Box>
-						<Box sx={{flex: 1, display: "flex", justifyContent: "center"}}>
+						<Box
+							sx={{
+								flex: 1,
+								display: "flex",
+								justifyContent: "center",
+							}}
+						>
 							<Button
 								fullWidth
 								startIcon={<Comment />}
@@ -678,6 +736,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									textTransform: "none",
 									fontSize: "0.9375rem",
 									fontWeight: 600,
+									gap: 1,
 									"&:hover": {
 										bgcolor: "rgba(0, 0, 0, 0.04)",
 									},
@@ -704,6 +763,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									textTransform: "none",
 									fontSize: "0.9375rem",
 									fontWeight: 600,
+									gap: 1,
 									"&:hover": {
 										bgcolor: "rgba(0, 0, 0, 0.04)",
 									},

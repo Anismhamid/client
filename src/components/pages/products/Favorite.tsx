@@ -10,12 +10,14 @@ import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
+import {useNavigate} from "react-router-dom";
+import {path} from "../../../routes/routes";
 
 const Favorite: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const [products, setProducts] = useState<Products[]>([]);
 	const {auth} = useUser();
-
+	const navigate = useNavigate();
 	useEffect(() => {
 		if (!auth?._id) return;
 
@@ -46,10 +48,45 @@ const Favorite: FunctionComponent = () => {
 
 	const currentUrl = `https://client-qqq1.vercel.app/favorites`;
 
+	const handleToggleLike = (productId: string, liked: boolean) => {
+		if (!auth?._id) {
+			navigate(path.Login);
+			return;
+		}
+
+		const userId = auth._id;
+
+		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId] // userId مؤكد كـ string
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+
+		setProducts((prev) =>
+			prev.map((p) =>
+				p._id === productId
+					? {
+							...p,
+							likes: liked
+								? [...(p.likes || []), userId]
+								: (p.likes || []).filter((id) => id !== userId),
+						}
+					: p,
+			),
+		);
+	};
+
 	return (
 		<>
 			<Helmet>
-			<JsonLd data={productsList} />
+				<JsonLd data={productsList} />
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("favorites")} | صفقه</title>
 				<meta name='description' content={t("favorites")} />
@@ -60,6 +97,7 @@ const Favorite: FunctionComponent = () => {
 					{products.map((product) => (
 						<Grid size={{xs: 12, sm: 6, md: 4, lg: 3}} key={product._id}>
 							<ProductCard
+								key={product._id}
 								product={product}
 								discountedPrice={0}
 								setProductIdToUpdate={() => {}}
@@ -68,7 +106,7 @@ const Favorite: FunctionComponent = () => {
 								setLoadedImages={() => {}}
 								loadedImages={{}}
 								category={product.category}
-								// onToggleLike={() => {}}
+								onLikeToggle={handleToggleLike}
 							/>
 						</Grid>
 					))}

@@ -98,7 +98,6 @@ export async function deleteProduct(productId: string) {
 	try {
 		const response = await axios.delete(`${api}/products/${productId}`, {
 			headers: {
-				"Content-Type": "application/json",
 				Authorization: localStorage.getItem("token"),
 			},
 		});

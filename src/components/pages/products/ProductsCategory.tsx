@@ -6,38 +6,48 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {deleteProduct, getProductsByCategory} from "../../../services/productsServices"; // פונקציה כללית שמביאה מוצרים לפי קטגוריה
+import {deleteProduct, getProductsByCategory} from "../../../services/productsServices";
 import {Products} from "../../../interfaces/Products";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {Box, Button, Typography} from "@mui/material";
+import {
+	Box,
+	Button,
+	Container,
+	Grid,
+	IconButton,
+	InputAdornment,
+	TextField,
+	Typography,
+	useTheme,
+	alpha,
+} from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
-import {Col, Row} from "react-bootstrap";
-import SearchBox from "../../../atoms/productsManage/SearchBox";
+import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from "@mui/icons-material/Clear";
 import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {Helmet} from "react-helmet";
 import ChepNavigation from "../../navbar/ChepNavigation";
+import {useNavigate} from "react-router-dom";
+import {path} from "../../../routes/routes";
+import SearchBox from "../../../atoms/productsManage/SearchBox";
 
 interface ProductCategoryProps {
 	category: string;
 }
-/**
- * Categorys product by category
- * @param {category}
- * @returns products by categoties
- */
+
 const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	category,
 }: ProductCategoryProps) => {
 	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
-	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]); // To hold the visible products
+	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [products, setProducts] = useState<Products[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth} = useUser();
@@ -48,49 +58,92 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [refresh, setRefresh] = useState<boolean>(false);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+	const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 	const observerRef = useRef<IntersectionObserver | null>(null);
+	const loadMoreRef = useRef<HTMLDivElement>(null);
 
 	const {t} = useTranslation();
+	const theme = useTheme();
 
 	// Update product
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
-	const refreshAfterCange = () => setRefresh(!refresh);
+	const refreshAfterChange = () => setRefresh(!refresh);
 
 	// DeleteModal
-	const openDeleteModal = (name: string) => {
-		setProductToDelete(name);
+	const openDeleteModal = (productId: string) => {
+		setProductToDelete(productId);
 		setShowDeleteModal(true);
 	};
+
 	const closeDeleteModal = () => setShowDeleteModal(false);
 
-	// load products automatic
-	const handleShowMore = () => {
-		const nextVisibleCount = visibleProducts.length + 16;
-		const newVisibleProducts = products.slice(0, nextVisibleCount);
-		setVisibleProducts(newVisibleProducts);
-	};
-	const lastProductRef = useCallback(
-		(node: HTMLDivElement | null) => {
-			if (loading) return;
+	const filteredProducts = useMemo(() => {
+		return products.filter((product) => {
+			const productName = product.product_name || "";
+			const productDescription = product.description || "";
+			const productBrand = product.brand || "";
+			const productPrice = product.price?.toString() || "";
 
-			if (observerRef.current) observerRef.current.disconnect();
+			const searchLower = searchQuery.toLowerCase();
 
-			observerRef.current = new IntersectionObserver((entries) => {
-				if (entries[0].isIntersecting) {
+			return (
+				productName.toLowerCase().includes(searchLower) ||
+				productDescription.toLowerCase().includes(searchLower) ||
+				productBrand.toLowerCase().includes(searchLower) ||
+				productPrice.includes(searchQuery)
+			);
+		});
+	}, [products, searchQuery]);
+
+	// Infinite scroll with better UX
+	const handleShowMore = useCallback(() => {
+		if (isLoadingMore || visibleProducts.length >= filteredProducts.length) return;
+
+		setIsLoadingMore(true);
+
+		// Simulate loading delay for better UX
+		setTimeout(() => {
+			const nextVisibleCount = Math.min(
+				visibleProducts.length + 12,
+				filteredProducts.length,
+			);
+			const newVisibleProducts = filteredProducts.slice(0, nextVisibleCount);
+			setVisibleProducts(newVisibleProducts);
+			setIsLoadingMore(false);
+		}, 300);
+	}, [isLoadingMore, visibleProducts.length, filteredProducts]);
+
+	// Setup intersection observer
+	useEffect(() => {
+		if (!loadMoreRef.current || visibleProducts.length >= filteredProducts.length)
+			return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries[0].isIntersecting && !isLoadingMore) {
 					handleShowMore();
 				}
-			});
+			},
+			{
+				rootMargin: "200px",
+				threshold: 0.1,
+			},
+		);
 
-			if (node) observerRef.current.observe(node);
-		},
-		[loading, products, visibleProducts],
-	);
+		observer.observe(loadMoreRef.current);
+
+		return () => {
+			if (observer) observer.disconnect();
+		};
+	}, [handleShowMore, isLoadingMore, visibleProducts.length, filteredProducts.length]);
+
+	const navigate = useNavigate();
 
 	const handleToggleLike = (productId: string, liked: boolean) => {
 		if (!auth?._id) {
-			console.warn("User ID is not available");
+			navigate(path.Login);
 			return;
 		}
 
@@ -102,14 +155,13 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					? {
 							...p,
 							likes: liked
-								? [...(p.likes || []), userId] // userId مؤكد كـ string
+								? [...(p.likes || []), userId]
 								: (p.likes || []).filter((id) => id !== userId),
 						}
 					: p,
 			),
 		);
 
-		// تحديث visibleProducts أيضاً إذا لزم
 		setVisibleProducts((prev) =>
 			prev.map((p) =>
 				p._id === productId
@@ -123,28 +175,16 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			),
 		);
 	};
-	const filteredProducts = useMemo(() => {
-		return products.filter((product) => {
-			const productName = product.product_name || "";
-			const productPrice = product.price || "";
-			const productInDiscount = product.sale ? "عروض" : "";
-
-			return (
-				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				(searchQuery && productPrice.toString().includes(searchQuery)) ||
-				(searchQuery && productInDiscount.toString().includes(searchQuery))
-			);
-		});
-	}, [products, searchQuery]);
 
 	// Delete product
-	const handleDelete = (product_name: string) => {
-		deleteProduct(product_name)
+	const handleDelete = (productId: string) => {
+		deleteProduct(productId)
 			.then(() => {
 				setProducts((prevProducts) =>
-					prevProducts.filter((p) => p.product_name !== product_name),
+					prevProducts.filter((p) => p._id !== productId),
 				);
-				refreshAfterCange();
+				setVisibleProducts((prev) => prev.filter((p) => p._id !== productId));
+				// refreshAfterChange();
 			})
 			.catch((err) => {
 				console.error(err);
@@ -152,69 +192,68 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 			});
 	};
 
-	// get the products by category
+	// Fetch products by category
 	useEffect(() => {
+		setLoading(true);
 		getProductsByCategory(category)
 			.then((res) => {
 				setProducts(res);
-				setVisibleProducts(res.slice(0, 16));
-
-				setLoading(false);
+				setVisibleProducts(res.slice(0, 12)); // Start with 12 products
 			})
 			.catch((err) => {
-				console.log(err);
+				console.error(err);
+				showError("حدث خطأ في تحميل المنتجات");
 			})
 			.finally(() => setLoading(false));
 	}, [category]);
-
-	// quantities in stock updates when the order is created
-	useEffect(() => {
-		socket.on("product:quantity_in_stock", (newProduct: Products) => {
-			setProducts((prev) => {
-				const exists = prev.some((p) => p._id === newProduct._id);
-				if (exists) {
-					return prev.map((p) => (p._id === newProduct._id ? newProduct : p));
-				}
-				return [newProduct, ...prev];
-			});
-
-			setVisibleProducts((prev) => {
-				const exists = prev.some((p) => p._id === newProduct._id);
-				if (exists) {
-					return prev.map((p) => (p._id === newProduct._id ? newProduct : p));
-				}
-				return [newProduct, ...prev];
-			});
-		});
-
-		// Cleaning the listenr
-		return () => {
-			socket.off("product:quantity_in_stock");
-		};
-	}, []);
 
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
 
 	if (loading) {
-		return <Loader />;
+		return (
+			<Box
+				sx={{
+					minHeight: "100vh",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<Loader />
+			</Box>
+		);
 	}
 
 	if (!loading && products.length === 0)
 		return (
-			<Box component={"main"} textAlign={"center"}>
+			<Box component={"main"} sx={{minHeight: "100vh"}}>
 				<ChepNavigation />
-				<Typography textAlign={"center"} variant='h6' color='error'>
-					لم يتم العثور على أي منتجات في المتجر
-				</Typography>
-				<Button onClick={refreshAfterCange} variant='contained' sx={{mt: 5}}>
-					حاول ثانية
-				</Button>
+				<Container maxWidth='lg' sx={{py: 8, textAlign: "center"}}>
+					<Typography variant='h5' color='text.secondary' sx={{mb: 3}}>
+						لم يتم العثور على أي منتجات في هذه الفئة
+					</Typography>
+					<Button
+						onClick={refreshAfterChange}
+						variant='contained'
+						size='large'
+						sx={{
+							bgcolor: theme.palette.primary.main,
+							"&:hover": {
+								bgcolor: theme.palette.primary.dark,
+							},
+						}}
+					>
+						تحديث الصفحة
+					</Button>
+				</Container>
 			</Box>
 		);
+
 	const generateCategory = generateCategoryJsonLd(category, products);
 	const currentUrl = `https://client-qqq1.vercel.app/category/${category}`;
+
 	return (
 		<>
 			<Helmet>
@@ -227,49 +266,119 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				/>
 			</Helmet>
 			<ChepNavigation />
-			<Box component='main'>
+
+			<Box
+				component='main'
+				sx={{
+					minHeight: "100vh",
+					bgcolor: "#f0f2f5",
+					pt: {xs: 8, md: 10},
+				}}
+			>
+				{/* Sticky Search Bar */}
 				<Box
 					sx={{
 						position: "sticky",
-						zIndex: 2,
-						top: 60,
+						top: 64,
+						zIndex: 1100,
+						bgcolor: "#f0f2f5",
+						py: 2,
+						px: {xs: 2, md: 0},
+						borderBottom: "1px solid #e4e6eb",
 					}}
 				>
-					<SearchBox
-						searchQuery={searchQuery}
-						text={t("searchin")}
-						setSearchQuery={setSearchQuery}
-					/>
+					<Container maxWidth='lg'>
+						<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+							<Box sx={{flex: 1}}>
+								<SearchBox
+									searchQuery={searchQuery}
+									setSearchQuery={setSearchQuery}
+									text={t("searchin") || "بحث عن منتج..."}
+
+								/>
+								{/* <TextField
+									fullWidth
+									placeholder=
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+									variant='outlined'
+									size='small'
+									sx={{
+										bgcolor: "#fff",
+										borderRadius: 2,
+										"& .MuiOutlinedInput-root": {
+											borderRadius: 2,
+											"&:hover fieldset": {
+												borderColor: theme.palette.primary.main,
+											},
+										},
+									}}
+									InputProps={{
+										startAdornment: (
+											<InputAdornment position='start'>
+												<SearchIcon color='action' />
+											</InputAdornment>
+										),
+										endAdornment: searchQuery && (
+											<InputAdornment position='end'>
+												<IconButton
+													size='small'
+													onClick={() => setSearchQuery("")}
+												>
+													<ClearIcon fontSize='small' />
+												</IconButton>
+											</InputAdornment>
+										),
+									}}
+								/> */}
+							</Box>
+							<Typography
+								variant='h6'
+								sx={{
+									color: theme.palette.primary.main,
+									fontWeight: 600,
+									display: {xs: "none", md: "block"},
+								}}
+							>
+								{t(`categories.${category}.heading`)}
+							</Typography>
+						</Box>
+					</Container>
 				</Box>
-				<Box className='container pb-5'>
-					<Row className='mt-3 g-1'>
-						{filteredProducts.length ? (
-							filteredProducts
-								.slice(0, visibleProducts.length)
-								.map((product: Products, index) => {
-									const discountedPrice = product.sale
-										? product.price -
-											(product.price * (product.discount || 0)) /
-												100
-										: product.price;
 
-									const isLast = index === visibleProducts.length - 1;
+				<Container maxWidth='lg' sx={{py: 3}}>
+					{/* Results Count */}
+					<Typography
+						variant='body2'
+						color='text.secondary'
+						sx={{mb: 3, px: {xs: 2, md: 0}}}
+					>
+						عرض {visibleProducts.length} من {filteredProducts.length} منتج
+					</Typography>
 
-									return (
-										<Col
-											key={product._id}
-											style={{
-												marginBlock: 10,
-												border: 1,
-												minHeight: "max-content",
-											}}
-											xs={12}
-											md={6}
-											xl={4}
-											ref={isLast ? lastProductRef : null}
+					{/* Products Grid */}
+					{filteredProducts.length > 0 ? (
+						<Grid container spacing={2}>
+							{visibleProducts.map((product: Products) => {
+								const discountedPrice = product.sale
+									? product.price -
+										(product.price * (product.discount || 0)) / 100
+									: product.price;
+
+								return (
+									<Grid
+										size={{xs: 12, sm: 6, lg: 4}}
+										key={product._id}
+										sx={{
+											display: "flex",
+											justifyContent: "center",
+										}}
+									>
+										<Box
+											ref={observerRef}
+											sx={{width: "100%", maxWidth: 500}}
 										>
 											<ProductCard
-												key={product._id}
 												product={product}
 												discountedPrice={discountedPrice}
 												canEdit={canEdit}
@@ -284,37 +393,99 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												loadedImages={loadedImages}
 												category={category}
 												onLikeToggle={handleToggleLike}
+												updateProductInList={(updatedProduct) => {
+													setProducts((prev) =>
+														prev.map((p) =>
+															p._id === updatedProduct._id
+																? updatedProduct
+																: p,
+														),
+													);
+													setVisibleProducts((prev) =>
+														prev.map((p) =>
+															p._id === updatedProduct._id
+																? updatedProduct
+																: p,
+														),
+													);
+												}}
 											/>
-										</Col>
-									);
-								})
-						) : (
-							<Box
-								sx={{
-									backgroundColor: "white",
-									p: 5,
-									width: "80%",
-									m: "auto",
-									mt: 5,
-									textAlign: "center",
-									borderRadius: 5,
-									border: "1px solid red",
-								}}
-							>
-								<Typography
-									color='primary.main'
-									component='h1'
-									variant='body1'
+										</Box>
+									</Grid>
+								);
+							})}
+						</Grid>
+					) : (
+						<Box
+							sx={{
+								bgcolor: "#fff",
+								p: 5,
+								textAlign: "center",
+								borderRadius: 3,
+								border: "1px solid #e4e6eb",
+								mt: 3,
+							}}
+						>
+							<Typography variant='h6' color='text.secondary' sx={{mb: 2}}>
+								لم يتم العثور على منتجات مطابقة لمعايير البحث
+							</Typography>
+							<Typography variant='body2' color='text.secondary'>
+								حاول البحث باستخدام كلمات أخرى
+							</Typography>
+						</Box>
+					)}
+
+					{/* Load More Area */}
+					{visibleProducts.length < filteredProducts.length && (
+						<Box
+							ref={loadMoreRef}
+							sx={{
+								py: 4,
+								textAlign: "center",
+							}}
+						>
+							{isLoadingMore ? (
+								<Box sx={{display: "flex", justifyContent: "center"}}>
+									<Loader />
+								</Box>
+							) : (
+								<Button
+									variant='outlined'
+									onClick={handleShowMore}
+									sx={{
+										px: 4,
+										py: 1.5,
+										borderRadius: 2,
+										borderColor: theme.palette.primary.main,
+										color: theme.palette.primary.main,
+										"&:hover": {
+											bgcolor: alpha(
+												theme.palette.primary.main,
+												0.04,
+											),
+											borderColor: theme.palette.primary.dark,
+										},
+									}}
 								>
-									لم يتم العثور على منتجات مطابقة لمعايير البحث
+									تحميل المزيد
+								</Button>
+							)}
+						</Box>
+					)}
+
+					{/* End of Results */}
+					{visibleProducts.length === filteredProducts.length &&
+						filteredProducts.length > 0 && (
+							<Box sx={{py: 4, textAlign: "center"}}>
+								<Typography variant='body2' color='text.secondary'>
+									🎉 لقد وصلت إلى نهاية النتائج
 								</Typography>
 							</Box>
 						)}
-					</Row>
-				</Box>
+				</Container>
 
 				<UpdateProductModal
-					refresh={refreshAfterCange}
+					refresh={refreshAfterChange}
 					productId={productIdToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}
@@ -324,8 +495,8 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					show={showDeleteModal}
 					onHide={closeDeleteModal}
 					handleDelete={() => handleDelete(productToDelete)}
-					title={"أنت على وشك حذف منتج من السوق"}
-					description={`هل أنت متأكد أنك تريد حذف ال${productToDelete} ? لا يمكن التراجع عن هذا الإجراء`}
+					title={"حذف المنتج"}
+					description={`هل أنت متأكد أنك تريد حذف "${productToDelete}"؟ لا يمكن التراجع عن هذا الإجراء.`}
 				/>
 			</Box>
 		</>
