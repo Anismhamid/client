@@ -242,7 +242,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 					/>
 				</Box>
 				<Box className='container pb-5'>
-					<Row className='mt-3 g-3'>
+					<Row className='mt-3 g-1'>
 						{filteredProducts.length ? (
 							filteredProducts
 								.slice(0, visibleProducts.length)
@@ -263,9 +263,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 												border: 1,
 												minHeight: "max-content",
 											}}
-											xs={6}
-											md={4}
-											xl={2}
+											xs={12}
+											md={6}
+											xl={4}
 											ref={isLast ? lastProductRef : null}
 										>
 											<ProductCard
