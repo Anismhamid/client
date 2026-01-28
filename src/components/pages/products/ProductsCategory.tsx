@@ -278,10 +278,9 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 				{/* Sticky Search Bar */}
 				<Box
 					sx={{
-						position: "sticky",
+						position: "static",
 						top: 64,
 						zIndex: 1100,
-						bgcolor: "#f0f2f5",
 						py: 2,
 						px: {xs: 2, md: 0},
 						borderBottom: "1px solid #e4e6eb",

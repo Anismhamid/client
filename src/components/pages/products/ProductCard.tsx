@@ -531,28 +531,40 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 							rowGap={1}
 						>
 							<Link
-								to={`/category/${product.category}`}
+								to={`/category/${product.category.toLocaleLowerCase()}`}
 								style={{textDecoration: "none"}}
 							>
 								<Chip
 									label={`${t(`categories.${product.category.toLocaleLowerCase()}.label`)}`}
 									size='small'
+									variant='filled'
 									sx={{
-										bgcolor: "#e8f0fe",
-										color: "#1a73e8",
+										color: "#e8f0fe",
+										bgcolor: "#1a73e8",
 										fontWeight: 500,
 										height: 24,
+										"&:hover": {
+											transform: "scale(1.1)",
+										},
 									}}
 								/>
-								-
+							</Link>
+							-
+							<Link
+								to={`/category/${product.category.toLocaleLowerCase()}/${product.subcategory}`}
+								style={{textDecoration: "none"}}
+							>
 								<Chip
 									label={`${t(`categories.${product.category.toLocaleLowerCase()}.subCategories.${product.subcategory}`)}`}
 									size='small'
 									sx={{
-										bgcolor: "#e8f0fe",
-										color: "#1a73e8",
+										color: "#e8f0fe",
+										bgcolor: "#1a73e8",
 										fontWeight: 500,
 										height: 24,
+										"&:hover": {
+											transform: "scale(1.1)",
+										},
 									}}
 								/>
 							</Link>
