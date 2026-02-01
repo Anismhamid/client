@@ -19,7 +19,7 @@ import ProducDetails from "../components/pages/products/ProducDetails";
 import Products from "../components/pages/products/Products";
 import Messages from "../components/settings/Messages";
 import WebSiteAdmins from "../components/settings/WebSiteAdmins";
-import CustomerProfile from "../components/settings/CustomerProfile";
+import CustomerProfile from "../components/settings/customerProfile/CustomerProfile";
 import Favorite from "../components/pages/products/Favorite";
 import DiscountsAndOffers from "../components/pages/products/DiscountsAndOffers";
 import SellingHelp from "../components/pages/SellingHelp";

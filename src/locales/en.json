@@ -613,43 +613,43 @@
 	},
 
 	"about": {
-		"title": "Our Success Story",
-		"subtitle": "Safqa: The Revolution in E-commerce Between Individuals - Where Conscious Sellers Meet Smart Buyers",
+		"title": "About Us",
+		"subtitle": "Safqa — a simple and secure platform for buying and selling between individuals",
 
 		"what-we-are": {
-			"safqa": "Our Core Essence",
-			"title": "The Future Platform for Personal Commerce",
-			"subtitle": "We're building a future where every individual becomes a successful trader. Our mission is to empower you to transform your possessions into opportunities and your dreams into tangible reality"
+			"safqa": "Our Idea",
+			"title": "Buy and Sell Without Complication",
+			"subtitle": "We created Safqa to provide an organized space that connects sellers and buyers directly, without chaos or middlemen"
 		},
 
 		"buy-and-sell": {
-			"title": "Our Philosophy",
-			"subtitle": "Simplicity in design, power in performance. We eliminate complexities and build bridges between sellers and buyers directly, without barriers or costly intermediaries"
+			"title": "How It Works",
+			"subtitle": "An easy interface, clear steps, and direct communication to help you complete deals quickly and comfortably"
 		},
 
 		"what-we-have": {
-			"title": "A World of Choices",
-			"subtitle": "A vibrant digital marketplace featuring a wide variety that caters to all tastes and budgets: from rare artistic pieces to essential daily commodities, everything you're looking for you'll find here"
+			"title": "What You’ll Find on Safqa",
+			"subtitle": "A variety of products from real users — from everyday items to unique pieces"
 		},
 
 		"control": {
-			"title": "Power in Your Hands",
-			"subtitle": "You're the decision-maker at every step: smart pricing, premium presentation, and direct communication. We provide the tools, and you create the success"
+			"title": "You’re in Control",
+			"subtitle": "You decide the price, presentation, and communication — we simply make the process easier"
 		},
 
 		"trust": {
-			"title": "Your Security is Our Honor",
-			"subtitle": "We work tirelessly to build a secure commercial environment based on advanced verification systems, realistic ratings, and absolute transparency in every transaction"
+			"title": "Building Trust Step by Step",
+			"subtitle": "We provide tools that help reduce fake listings and improve the buying and selling experience"
 		},
 
 		"why-register": {
-			"title": "Launch Towards Success",
-			"subtitle": "Just two minutes separate you from starting a successful business journey. Our carefully designed interface turns selling into an art and buying into a pleasure"
+			"title": "Get Started Easily",
+			"subtitle": "A quick account setup opens the door to buying or selling within minutes"
 		},
 
 		"locations": {
-			"title": "Proximity Brings Us Together",
-			"subtitle": "Local shopping, global value. Discover treasures in your area or venture into new horizons - all with smart search tools that understand your geographical needs"
+			"title": "Close to You",
+			"subtitle": "Find deals in your area or explore offers from other locations with ease"
 		}
 	},
 	"footer": {

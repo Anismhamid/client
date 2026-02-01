@@ -1,6 +1,6 @@
-import {FunctionComponent, useEffect, useRef, useState} from "react";
+import {FunctionComponent, useEffect, useMemo, useRef, useState} from "react";
 import {deleteUserById, getUserById} from "../../services/usersServices";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {
 	Button,
 	Typography,
@@ -60,9 +60,8 @@ import {useTranslation} from "react-i18next";
 import {motion} from "framer-motion";
 import {formatDate} from "../../helpers/dateAndPriceFormat";
 import {showSuccess} from "../../atoms/toasts/ReactToast";
-import {getAllProducts} from "../../services/productsServices";
-import {User} from "../../interfaces/usersMessages";
-import { Products } from "../../interfaces/Products";
+import {Products} from "../../interfaces/Products";
+import {useUserProducts} from "../../hooks/useUserProducts";
 
 interface ProfileProps {}
 
@@ -81,7 +80,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [showEdit, setShowEdit] = useState<boolean>(false);
-	const [products, setProducts] = useState<Products[]>([]);
+	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+
+	const {id} = useParams();
+	// Use the useUserProducts hook at the top level
 
 	const handleShowIdit = () => setShowEdit(!showEdit);
 
@@ -100,6 +102,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		activity: string[];
 		createdAt: string;
 		slug: string;
+		gender?: string; // Added gender to match User interface
 	}>({
 		name: {first: "", last: ""},
 		phone: {phone_1: "", phone_2: ""},
@@ -113,18 +116,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		slug: "",
 	});
 
-	const {id} = useParams();
+	const {userProducts, loading: productsLoading} = useUserProducts(user.slug);
 
-	// Stats
-	const [stats, setStats] = useState({
-		totalProducts: 0,
-		totalFavorites: 0,
-		rating: 4.5,
-		totalLikesOnMyProducts:0,
-		completionPercentage: 65,
-	});
-
-	const calculateProfileCompletion = (user: User) => {
+	const calculateProfileCompletion = (user: any) => {
 		const fields = [
 			user.name?.first,
 			user.name?.last,
@@ -140,12 +134,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	};
 
 	const calculateRating = (products: Products[]) => {
+		if (!products.length) return 0;
+
 		const ratings = products.flatMap((p) => p.reviews?.map((r) => r.rating) || []);
 
 		if (!ratings.length) return 0;
 
 		const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-
 		return Number(avg.toFixed(1));
 	};
 
@@ -185,40 +180,15 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		navigate(path.Home);
 	};
 
+	const targetId = id || decodedToken?._id;
+
 	useEffect(() => {
-		const targetId = id || decodedToken?._id;
 		if (!targetId) return;
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-				const [userRes, productsRes] = await Promise.all([
-					getUserById(targetId),
-					getAllProducts(),
-				]);
-
+				const userRes = await getUserById(targetId);
 				setUser(userRes);
-				setProducts(productsRes);
-
-				const userProducts = productsRes.filter(
-					(p: Products) => p.userId === targetId,
-				);
-
-				const totalFavorites = products.filter((p: Products) =>
-					p.likes?.includes(targetId),
-				).length;
-
-				const totalLikesOnMyProducts = userProducts.reduce(
-					(sum, p) => sum + (p.likes?.length || 0),
-					0,
-				);
-
-				setStats({
-					totalLikesOnMyProducts:totalLikesOnMyProducts,
-					totalProducts: userProducts.length,
-					totalFavorites: totalFavorites ,
-					rating: calculateRating(userProducts),
-					completionPercentage: calculateProfileCompletion(userRes),
-				});
 			} catch (err) {
 				console.error("Error fetching profile data:", err);
 			} finally {
@@ -227,9 +197,29 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		};
 
 		fetchData();
-	}, [id, decodedToken]);
+	}, [id, decodedToken, targetId]);
+
+	// Calculate stats using useMemo to avoid unnecessary recalculations
+	const stats = useMemo(() => {
+		if (!user)
+			return {
+				totalProducts: userProducts.length,
+				totalFavorites: 0,
+				rating: 0,
+				totalLikesOnMyProducts: 0,
+				completionPercentage: 0,
+			};
+
+		return {
+			totalProducts: userProducts.length,
+			rating: calculateRating(userProducts || []),
+			completionPercentage: calculateProfileCompletion(user),
+		};
+	}, [user, userProducts]);
 
 	const handleDeleteAccount = () => {
+		if (!decodedToken?._id) return;
+
 		deleteUserById(decodedToken._id).then(() => {
 			localStorage.removeItem("token");
 			setAuth(emptyAuthValues);
@@ -243,7 +233,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		setActiveTab(newValue);
 	};
 
-	if (loading) {
+	if (loading || productsLoading) {
 		return (
 			<Box
 				sx={{
@@ -504,19 +494,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									{/* Action Buttons */}
 									<Grid size={{xs: 12, md: 4}}>
 										<Stack spacing={2}>
-											{/* <Button
-												variant='contained'
-												size='large'
-												startIcon={<EditIcon />}
-												fullWidth
-												onClick={updateProfile}
-												sx={{
-													background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-													gap: 2,
-												}}
-											>
-												تعديل الملف
-											</Button> */}
 											<Button
 												variant='outlined'
 												size='large'
@@ -547,26 +524,38 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						{/* Stats Section */}
 						<Grid container spacing={3} sx={{mb: 4}}>
 							<Grid size={{xs: 6, sm: 3}}>
-								<Paper
-									sx={{
-										p: 2,
-										textAlign: "center",
-										borderRadius: 3,
-										height: "100%",
-									}}
+								<Link
+									style={{textDecoration: "none"}}
+									to={`/users/customer/${user.slug}`}
 								>
-									<ShoppingCart
-										color='primary'
-										sx={{fontSize: 40, mb: 1}}
-									/>
-									<Typography variant='h4' fontWeight='bold'>
-										{stats.totalProducts}
-									</Typography>
-									<Typography
-										variant='body2'
-										color='text.secondary'
-									></Typography>
-								</Paper>
+									<Paper
+										sx={{
+											p: 2,
+											textAlign: "center",
+											borderRadius: 3,
+											height: "100%",
+											"&:hover": {
+												bgcolor: "#8AD6F7",
+												transform: "scale(1.1)",
+											},
+											transition: "all 0.3s ",
+										}}
+									>
+										<ShoppingCart
+											color='primary'
+											sx={{fontSize: 40, mb: 1}}
+										/>
+										<Typography variant='h4' fontWeight='bold'>
+											{userProducts.length || 0}
+										</Typography>
+										<Typography
+											variant='body2'
+											color='text.secondary'
+										>
+											المنشواتي
+										</Typography>
+									</Paper>
+								</Link>
 							</Grid>
 							<Grid size={{xs: 6, sm: 3}}>
 								<Paper
@@ -836,51 +825,137 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</motion.div>
 						)}
 
-						{activeTab === 1 && (
-							<Card sx={{borderRadius: 3}}>
-								<CardContent>
-									<Typography
-										variant='h5'
-										gutterBottom
-										fontWeight='bold'
-										color='primary'
-									>
-										قائمة المفضلة
-									</Typography>
-									<Box textAlign='center' py={8}>
-										<Favorite
-											sx={{
-												fontSize: 80,
-												color: "text.secondary",
-												mb: 2,
-											}}
-										/>
-										<Typography
-											variant='h6'
-											color='text.secondary'
-											gutterBottom
-										>
-											قائمة المفضلة فارغة
-										</Typography>
-										<Typography
-											variant='body2'
-											color='text.secondary'
-											paragraph
-										>
-											يمكنك إضافة المنتجات التي تعجبك إلى قائمة
-											المفضلة
-										</Typography>
-										<Button
-											variant='contained'
-											onClick={() => navigate(path.Home)}
-											sx={{mt: 2}}
-										>
-											تصفح المنتجات
-										</Button>
-									</Box>
-								</CardContent>
-							</Card>
-						)}
+						{/* {activeTab === 1 && (
+							<>
+								{favoritesProducts && favoritesProducts.length > 0 ? (
+									<Card sx={{borderRadius: 3, mb: 4}}>
+										<CardContent>
+											<Typography
+												variant='h5'
+												gutterBottom
+												fontWeight='bold'
+												color='primary'
+												sx={{mb: 3}}
+											>
+												قائمة المفضلة ({favoritesProducts.length})
+											</Typography>
+											<Grid container spacing={3}>
+												{favoritesProducts.map((product) => {
+													// Calculate discounted price
+													const discountedPrice =
+														product.sale && product.discount
+															? product.price *
+																(1 -
+																	product.discount /
+																		100)
+															: product.price;
+
+													return (
+														<Grid
+															size={{
+																xs: 12,
+																sm: 6,
+																md: 4,
+																lg: 3,
+															}}
+															key={product._id}
+															sx={{
+																display: "flex",
+																justifyContent: "center",
+															}}
+														>
+															<Box
+																sx={{
+																	width: "100%",
+																	maxWidth: 500,
+																}}
+															>
+																<ProductCard
+																	product={product}
+																	discountedPrice={
+																		discountedPrice
+																	}
+																	canEdit={false} // Since these are favorites, not user's own products
+																	setProductIdToUpdate={() => {}}
+																	onShowUpdateProductModal={() => {}}
+																	openDeleteModal={() => {}}
+																	setLoadedImages={
+																		setLoadedImages
+																	}
+																	loadedImages={
+																		loadedImages
+																	}
+																	category={
+																		product.category
+																	}
+																	onLikeToggle={
+																		handleLikeToggle
+																	}
+																	updateProductInList={(
+																		updatedProduct,
+																	) => {
+																		// Update the product in favorites list
+																		// This would need to be handled by your useUserProducts hook
+																		console.log(
+																			"Product updated:",
+																			updatedProduct,
+																		);
+																	}}
+																/>
+															</Box>
+														</Grid>
+													);
+												})}
+											</Grid>
+										</CardContent>
+									</Card>
+								) : (
+									<Card sx={{borderRadius: 3}}>
+										<CardContent>
+											<Typography
+												variant='h5'
+												gutterBottom
+												fontWeight='bold'
+												color='primary'
+											>
+												قائمة المفضلة
+											</Typography>
+											<Box textAlign='center' py={8}>
+												<Favorite
+													sx={{
+														fontSize: 80,
+														color: "text.secondary",
+														mb: 2,
+													}}
+												/>
+												<Typography
+													variant='h6'
+													color='text.secondary'
+													gutterBottom
+												>
+													قائمة المفضلة فارغة
+												</Typography>
+												<Typography
+													variant='body2'
+													color='text.secondary'
+													paragraph
+												>
+													يمكنك إضافة المنتجات التي تعجبك إلى
+													قائمة المفضلة
+												</Typography>
+												<Button
+													variant='contained'
+													onClick={() => navigate(path.Home)}
+													sx={{mt: 2}}
+												>
+													تصفح المنتجات
+												</Button>
+											</Box>
+										</CardContent>
+									</Card>
+								)}
+							</>
+						)} */}
 
 						{activeTab === 2 && (
 							<Card sx={{borderRadius: 3}}>
@@ -986,7 +1061,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</Button>
 						</Box>
 
-						{showEdit && <EditUserData userId={decodedToken._id} />}
+						{showEdit && <EditUserData userId={decodedToken?._id || ""} />}
 
 						{/* Delete Account Section */}
 						<Box sx={{mt: 4}}>

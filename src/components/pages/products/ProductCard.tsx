@@ -29,7 +29,6 @@ import {
 	Sell,
 	VisibilityRounded,
 	Report,
-	Navigation,
 } from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
 import {Link} from "react-router-dom";
@@ -66,7 +65,6 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		openDeleteModal,
 		setLoadedImages,
 		loadedImages,
-		category,
 		onLikeToggle,
 		updateProductInList,
 	}) => {
