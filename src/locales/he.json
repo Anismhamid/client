@@ -16,6 +16,7 @@
 	"shares": "מודעות",
 	"seller": "פורסם ע'י",
 	"login": {
+		"lastLogin": "כניסה אחרונה",
 		"email": "דואר אלקטרוני",
 		"password": "סיסמה",
 		"loginButton": "התחברות",

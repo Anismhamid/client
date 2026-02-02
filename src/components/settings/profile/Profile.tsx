@@ -1,5 +1,4 @@
 import {FunctionComponent, useEffect, useMemo, useRef, useState} from "react";
-import {deleteUserById, getUserById} from "../../services/usersServices";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {
 	Button,
@@ -48,20 +47,23 @@ import {
 	ShoppingCart,
 	Star,
 } from "@mui/icons-material";
-import {path} from "../../routes/routes";
-import useToken from "../../hooks/useToken";
-import {useUser} from "../../context/useUSer";
-import {emptyAuthValues} from "../../interfaces/authValues";
-import DeleteAccountBox from "../../atoms/userManage/DeleteAccountBox";
-import UserDetailTable from "../../atoms/userManage/UesrDetailsTable";
-import EditUserData from "../../atoms/userManage/EditUserData";
 import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
 import {motion} from "framer-motion";
-import {formatDate} from "../../helpers/dateAndPriceFormat";
-import {showSuccess} from "../../atoms/toasts/ReactToast";
-import {Products} from "../../interfaces/Products";
-import {useUserProducts} from "../../hooks/useUserProducts";
+import PersonalInformation from "./tabs/PersonalInformationTab";
+import {useUserProducts} from "../../../hooks/useUserProducts";
+import useToken from "../../../hooks/useToken";
+import {useUser} from "../../../context/useUSer";
+import {Products} from "../../../interfaces/Products";
+import {path} from "../../../routes/routes";
+import {showSuccess} from "../../../atoms/toasts/ReactToast";
+import {AuthValues, emptyAuthValues} from "../../../interfaces/authValues";
+import {deleteUserById, getUserById} from "../../../services/usersServices";
+import {formatDate} from "../../../helpers/dateAndPriceFormat";
+import DeleteAccountBox from "../../../atoms/userManage/DeleteAccountBox";
+import EditUserData from "../../../atoms/userManage/EditUserData";
+import QuickActionsTab from "./tabs/QuickActionsTab";
+import FavoritesProducts from "../../pages/products/FavoritesProducts";
 
 interface ProfileProps {}
 
@@ -80,7 +82,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [showEdit, setShowEdit] = useState<boolean>(false);
-	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
 	const {id} = useParams();
 	// Use the useUserProducts hook at the top level
@@ -149,10 +150,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	// 	navigate(path.ChangePassword);
 	// };
 
-	const contactSupport = () => {
-		navigate(path.Contact);
-	};
-
 	const handleShareProfile = () => {
 		const profileUrl = `${window.location.origin}/users/customer/${user.slug}`;
 		if (navigator.share) {
@@ -165,11 +162,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 			navigator.clipboard.writeText(profileUrl);
 			showSuccess("تم نسخ رابط الملف الشخصي");
 		}
-	};
-
-	const handleExportData = () => {
-		// Logic to export user data
-		showSuccess("سيتم تحميل بياناتك قريباً");
 	};
 
 	const handleLogout = () => {
@@ -656,102 +648,12 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 								transition={{duration: 0.3}}
 							>
 								<Grid container spacing={3}>
-									{/* Personal Information */}
 									<Grid size={{xs: 12, lg: 8}}>
-										<Card sx={{mb: 3, borderRadius: 3}}>
-											<CardContent>
-												<Typography
-													variant='h5'
-													gutterBottom
-													fontWeight='bold'
-													color='primary'
-												>
-													البيانات الشخصية
-												</Typography>
-												<UserDetailTable user={user} />
-											</CardContent>
-										</Card>
+										{/* Personal Information */}
+										<PersonalInformation user={user as AuthValues} />
 
 										{/* Quick Actions */}
-										<Card sx={{borderRadius: 3}}>
-											<CardContent>
-												<Typography
-													variant='h5'
-													gutterBottom
-													fontWeight='bold'
-													color='primary'
-												>
-													إجراءات سريعة
-												</Typography>
-												<Grid container spacing={2}>
-													<Grid size={{xs: 12, sm: 6}}>
-														{/* TODO:change password */}
-														<Button
-															variant='outlined'
-															fullWidth
-															startIcon={<SecurityIcon />}
-															// onClick={changePassword}
-															sx={{
-																py: 1.5,
-																justifyContent:
-																	"flex-start",
-															}}
-														>
-															تغيير كلمة المرور
-														</Button>
-													</Grid>
-													<Grid size={{xs: 12, sm: 6}}>
-														<Button
-															variant='outlined'
-															fullWidth
-															startIcon={<SupportIcon />}
-															onClick={contactSupport}
-															sx={{
-																py: 1.5,
-																justifyContent:
-																	"flex-start",
-															}}
-														>
-															دعم فني
-														</Button>
-													</Grid>
-													<Grid size={{xs: 12, sm: 6}}>
-														<Button
-															variant='outlined'
-															fullWidth
-															startIcon={<Download />}
-															onClick={handleExportData}
-															sx={{
-																py: 1.5,
-																justifyContent:
-																	"flex-start",
-															}}
-														>
-															تصدير البيانات
-														</Button>
-													</Grid>
-													<Grid size={{xs: 12, sm: 6}}>
-														<Button
-															variant='outlined'
-															fullWidth
-															startIcon={<QrCode />}
-															onClick={() =>
-																navigate(
-																	`/users/customer/${user.slug}`,
-																)
-															}
-															sx={{
-																py: 1.5,
-																justifyContent:
-																	"flex-start",
-															}}
-														>
-															معاينة الملف
-														</Button>
-													</Grid>
-												</Grid>
-											</CardContent>
-										</Card>
+										<QuickActionsTab user={user as AuthValues} />
 									</Grid>
 
 									{/* Activity History */}
@@ -790,9 +692,11 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 																		</ListItemIcon>
 																		<ListItemText
 																			primary={date.toLocaleString(
-																				"ar-SA",
+																				"he-IL",
 																			)}
-																			secondary='آخر تسجيل دخول'
+																			secondary={t(
+																				"login.lastLogin",
+																			)}
 																		/>
 																	</ListItem>
 																);
@@ -825,137 +729,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 							</motion.div>
 						)}
 
-						{/* {activeTab === 1 && (
-							<>
-								{favoritesProducts && favoritesProducts.length > 0 ? (
-									<Card sx={{borderRadius: 3, mb: 4}}>
-										<CardContent>
-											<Typography
-												variant='h5'
-												gutterBottom
-												fontWeight='bold'
-												color='primary'
-												sx={{mb: 3}}
-											>
-												قائمة المفضلة ({favoritesProducts.length})
-											</Typography>
-											<Grid container spacing={3}>
-												{favoritesProducts.map((product) => {
-													// Calculate discounted price
-													const discountedPrice =
-														product.sale && product.discount
-															? product.price *
-																(1 -
-																	product.discount /
-																		100)
-															: product.price;
-
-													return (
-														<Grid
-															size={{
-																xs: 12,
-																sm: 6,
-																md: 4,
-																lg: 3,
-															}}
-															key={product._id}
-															sx={{
-																display: "flex",
-																justifyContent: "center",
-															}}
-														>
-															<Box
-																sx={{
-																	width: "100%",
-																	maxWidth: 500,
-																}}
-															>
-																<ProductCard
-																	product={product}
-																	discountedPrice={
-																		discountedPrice
-																	}
-																	canEdit={false} // Since these are favorites, not user's own products
-																	setProductIdToUpdate={() => {}}
-																	onShowUpdateProductModal={() => {}}
-																	openDeleteModal={() => {}}
-																	setLoadedImages={
-																		setLoadedImages
-																	}
-																	loadedImages={
-																		loadedImages
-																	}
-																	category={
-																		product.category
-																	}
-																	onLikeToggle={
-																		handleLikeToggle
-																	}
-																	updateProductInList={(
-																		updatedProduct,
-																	) => {
-																		// Update the product in favorites list
-																		// This would need to be handled by your useUserProducts hook
-																		console.log(
-																			"Product updated:",
-																			updatedProduct,
-																		);
-																	}}
-																/>
-															</Box>
-														</Grid>
-													);
-												})}
-											</Grid>
-										</CardContent>
-									</Card>
-								) : (
-									<Card sx={{borderRadius: 3}}>
-										<CardContent>
-											<Typography
-												variant='h5'
-												gutterBottom
-												fontWeight='bold'
-												color='primary'
-											>
-												قائمة المفضلة
-											</Typography>
-											<Box textAlign='center' py={8}>
-												<Favorite
-													sx={{
-														fontSize: 80,
-														color: "text.secondary",
-														mb: 2,
-													}}
-												/>
-												<Typography
-													variant='h6'
-													color='text.secondary'
-													gutterBottom
-												>
-													قائمة المفضلة فارغة
-												</Typography>
-												<Typography
-													variant='body2'
-													color='text.secondary'
-													paragraph
-												>
-													يمكنك إضافة المنتجات التي تعجبك إلى
-													قائمة المفضلة
-												</Typography>
-												<Button
-													variant='contained'
-													onClick={() => navigate(path.Home)}
-													sx={{mt: 2}}
-												>
-													تصفح المنتجات
-												</Button>
-											</Box>
-										</CardContent>
-									</Card>
-								)}
-							</>
-						)} */}
+						{/* Favorites Products */}
+						{activeTab === 1 && <FavoritesProducts />}
 
 						{activeTab === 2 && (
 							<Card sx={{borderRadius: 3}}>
@@ -979,18 +754,30 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												</Typography>
 												<Stack spacing={2}>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<VisibilityIcon />}
 													>
 														إعدادات الظهور
 													</Button>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<Lock />}
 													>
 														خصوصية الحساب
 													</Button>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<Email />}
 													>
@@ -1009,22 +796,34 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												</Typography>
 												<Stack spacing={2}>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<ShoppingCart />}
 													>
 														البطاقات المصرفية
 													</Button>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<HistoryIcon />}
 													>
-														سجل الدفع
+														سجل الدفع (قريبأ)
 													</Button>
 													<Button
+														sx={{
+															gap: 2,
+														}}
+														disabled
 														variant='outlined'
 														startIcon={<Settings />}
 													>
-														إعدادات الدفع
+														إعدادات الدفع (قريبأ)
 													</Button>
 												</Stack>
 											</Card>

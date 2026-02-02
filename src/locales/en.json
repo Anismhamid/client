@@ -15,6 +15,7 @@
 	"shares": "Posts",
 	"seller": "Published by",
 	"login": {
+		"lastLogin": "Last login",
 		"email": "Email",
 		"password": "Password",
 		"loginButton": "Login",

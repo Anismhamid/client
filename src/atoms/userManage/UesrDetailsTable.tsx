@@ -10,18 +10,10 @@ import {
 	TableRow,
 	Paper,
 } from "@mui/material";
+import {User} from "../../interfaces/usersMessages";
+
 interface UserDetailTableProps {
-	user: {
-		name: {first: string; last: string};
-		phone: {phone_1: string; phone_2: string};
-		email: string;
-		role: string;
-		address: {
-			city: string;
-			street: string;
-			houseNumber: string;
-		};
-	};
+	user: User;
 }
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
@@ -50,11 +42,11 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 					<TableRow>
 						<StyledTableCell align='center'>هاتف</StyledTableCell>
 						<TableCell className=' fs-5'>
-							{user.phone.phone_1 || "-"}
+							{user.phone?.phone_1 || "-"}
 						</TableCell>
 					</TableRow>
 
-					{user.phone.phone_2 && (
+					{user.phone?.phone_2 && (
 						<TableRow>
 							<StyledTableCell>هاتف ثانوي</StyledTableCell>
 							<TableCell className=' fs-5'>{user.phone.phone_2}</TableCell>
@@ -64,7 +56,7 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 					<TableRow>
 						<StyledTableCell align='center'>العنوان</StyledTableCell>
 						<TableCell className=' fs-5'>
-							{`البلد: ${user.address.city} شارع: ${user.address.street} رفم البيت: ${user.address.houseNumber}` ||
+							{`البلد: ${user.address?.city} شارع: ${user.address?.street} رفم البيت: ${user.address?.houseNumber}` ||
 								"-"}
 						</TableCell>
 					</TableRow>
@@ -86,9 +78,7 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 								? "مدير ومشرف"
 								: user.role === RoleType.Moderator
 									? "مشرف"
-									: user.role === RoleType.Delivery
-										? "مرسل"
-										: "مستخدم"}
+									: "مستخدم"}
 						</TableCell>
 					</TableRow>
 				</TableBody>

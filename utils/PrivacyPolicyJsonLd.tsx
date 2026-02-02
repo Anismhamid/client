@@ -1,5 +1,6 @@
 // components/PrivacyPolicyJsonLd.tsx
-import {FunctionComponent} from "react";
+import React from "react";
+import  {FunctionComponent} from "react";
 
 const PrivacyPolicyJsonLd: FunctionComponent = () => {
 	const data = {

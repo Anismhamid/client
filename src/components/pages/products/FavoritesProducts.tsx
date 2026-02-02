@@ -13,9 +13,11 @@ import handleRTL from "../../../locales/handleRTL";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 
-const Favorite: FunctionComponent = () => {
+const FavoritesProducts: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const [products, setProducts] = useState<Products[]>([]);
+	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	useEffect(() => {
@@ -99,12 +101,17 @@ const Favorite: FunctionComponent = () => {
 							<ProductCard
 								key={product._id}
 								product={product}
-								discountedPrice={0}
+								discountedPrice={product.discount || 0}
 								setProductIdToUpdate={() => {}}
 								onShowUpdateProductModal={() => {}}
 								openDeleteModal={() => {}}
-								setLoadedImages={() => {}}
-								loadedImages={{}}
+								setLoadedImages={() =>
+									setLoadedImages((prev) => ({
+										...prev,
+										[product._id as string]: true,
+									}))
+								}
+								loadedImages={loadedImages}
 								category={product.category}
 								onLikeToggle={handleToggleLike}
 							/>
@@ -116,4 +123,4 @@ const Favorite: FunctionComponent = () => {
 	);
 };
 
-export default Favorite;
+export default FavoritesProducts;
