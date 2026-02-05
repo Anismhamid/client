@@ -15,6 +15,24 @@
 	"faq": "الأسئلة الشائعة",
 	"shares": "منشورات",
 	"seller": "نشر بواسطة",
+	"member_since": "تاريخ الانضمام",
+	"status": {
+		"title": "الحاله",
+		"active": "نشط",
+		"inactive": "غير نشط",
+		"lastActivity": "اخر ظهور"
+	},
+	"messages": {
+		"main": "رسائل",
+		"directMessage": "مراسلة مباشرة",
+		"contactWith": "تواصل مع "
+	},
+	"roles": {
+		"title": "الدور",
+		"admin": "مدير",
+		"client": "مستخدم",
+		"moderator": "مشرف الموقع"
+	},
 	"login": {
 		"lastLogin": "آخر تسجيل دخول",
 		"email": "البريد الإلكتروني",
@@ -161,6 +179,7 @@
 	"orderNumber": "رقم الطلب",
 	"UserId": "ID المستخدم",
 	"users-management": "ادارة المستخدمين",
+	"account-management": "ادارة الحساب",
 	"date": "تاريخ",
 	"phone": "هاتف",
 	"customerInfo": "تفاصيل العميل",
@@ -590,7 +609,9 @@
 		"profile": "حسابي",
 		"messages": "الرسائل",
 		"settings": "الإعدادات",
-		"logout": "تسجيل الخروج"
+		"logout": "تسجيل الخروج",
+		"admin": "مدير الموقع",
+		"siteModerator": "مشرف الموقع"
 	},
 	"about": {
 		"title": "من نحن",

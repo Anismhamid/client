@@ -6,18 +6,19 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import {fontAwesomeIcon} from "../../FontAwesome/Icons";
 import {FunctionComponent, useState} from "react";
-import {useUser} from "../../context/useUSer";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import {Typography} from "@mui/material";
+import {Typography, alpha, useTheme} from "@mui/material";
 import {useTranslation} from "react-i18next";
 import RoleType from "../../interfaces/UserType";
-import MarkunreadIcon from "@mui/icons-material/Markunread";
 import handleRTL from "../../locales/handleRTL";
-import BrokenImageOutlinedIcon from "@mui/icons-material/BrokenImageOutlined";
-import {Dashboard} from "@mui/icons-material";
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import SettingsIcon from "@mui/icons-material/Settings";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import LogoutIcon from "@mui/icons-material/Logout";
+import EmailIcon from "@mui/icons-material/Email";
+import {useUser} from "../../context/useUSer";
 
 interface AccountMenuProps {
 	logout: Function;
@@ -29,6 +30,8 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
+	const theme = useTheme();
+	const direction = handleRTL();
 
 	const handleClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -38,139 +41,316 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 		setAnchorEl(null);
 	};
 
-	const direction = handleRTL();
-
 	const isAdmin = auth && auth.role === RoleType.Admin;
+	const isSiteModerator = auth && auth.role === RoleType.Moderator;
+
+	// Get user initials for avatar
+	const getUserInitials = () => {
+		if (auth?.name?.first && auth?.name?.last) {
+			return `${auth.name.first[0]}.${auth.name.last[0]}`.toUpperCase();
+		}
+		if (auth?.name?.first) {
+			return auth.name.first[0].toUpperCase();
+		}
+		return "U";
+	};
 
 	return (
 		<>
-			<Box
-				dir={direction}
-				sx={{display: "flex", alignItems: "center", textAlign: "center"}}
-			>
-				<Tooltip title='הגדרות חשבון'>
+			<Box sx={{display: "flex", alignItems: "center"}}>
+				<Tooltip title={t("account-management") || "Account Settings"}>
 					<IconButton
 						onClick={handleClick}
 						sx={{
 							width: 44,
 							height: 44,
-							border: "1px solid #f75a4f",
-							transition: ".2s",
+							border: `2px solid ${theme.palette.primary.main}`,
+							transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
 							"&:hover": {
-								borderColor: "#81D4FA",
-								transform: "scale(1.1)",
+								borderColor: theme.palette.secondary.main,
+								transform: "scale(1.05)",
+								boxShadow: `0 0 0 4px ${alpha(theme.palette.primary.main, 0.1)}`,
 							},
 						}}
 					>
-						{auth?.image?.url ? (
-							<Avatar
-								className='bg-primary'
-								sx={{width: 30, height: 30}}
-								children={auth && auth?.name?.last?.[0]}
-								src={
-									(auth && auth?.image?.url) ||
-									"https://i.ibb.co/5GzXkwq/user.png"
-								}
-							/>
-						) : (
-							<Avatar src='https://i.ibb.co/5GzXkwq/user.png' />
-						)}
+						<Avatar
+							sx={{
+								width: 32,
+								height: 32,
+								bgcolor: theme.palette.primary.main,
+								fontWeight: 600,
+								fontSize: "0.9rem",
+								boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+							}}
+							src={auth?.image?.url || undefined}
+						>
+							{!auth?.image?.url && getUserInitials()}
+						</Avatar>
 					</IconButton>
 				</Tooltip>
 			</Box>
 			<Menu
 				dir={direction}
 				anchorEl={anchorEl}
-				id='account-menu'
 				open={open}
 				onClose={handleClose}
 				onClick={handleClose}
-				slotProps={{
-					paper: {
-						elevation: 0,
-						sx: {
-							overflow: "hidden",
-							backgroundColor: "#1A1E22",
-							color: "#fff",
-							mt: 1.5,
-							borderRadius: 2,
-							minWidth: 180,
-							boxShadow: "0 8px 20px rgba(0,0,0,0.4)",
-							"& .MuiMenuItem-root": {
-								transition: "0.2s",
-								"&:hover": {
-									backgroundColor: "#263238",
-									color: "#4FC3F7",
-								},
-							},
+				elevation={8}
+				PaperProps={{
+					elevation: 8,
+					sx: {
+						overflow: "hidden",
+						mt: 1.5,
+						borderRadius: 2,
+						minWidth: 220,
+						boxShadow:
+							"0 10px 40px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.05)",
+						"&:before": {
+							content: '""',
+							display: "block",
+							position: "absolute",
+							top: 0,
+							right: direction === "ltr" ? 14 : 180,
+							width: 15,
+							height: 15,
+							bgcolor: "#22AAF4",
+							transform: "translateY(-50%) rotate(45deg)",
+							zIndex: 0,
+							boxShadow: "-2px -2px 5px rgba(0,0,0,0.05)",
 						},
 					},
 				}}
 				transformOrigin={{horizontal: "right", vertical: "top"}}
-				anchorOrigin={{horizontal: "left", vertical: "bottom"}}
+				anchorOrigin={{horizontal: "right", vertical: "bottom"}}
 			>
-				<MenuItem onClick={() => navigate(path.Profile)}>
-					{auth?.image?.url ? (
-						<Avatar
-							src={
-								(auth && auth?.image.url) ||
-								"https://i.ibb.co/5GzXkwq/user.png"
-							}
-						/>
-					) : (
-						<BrokenImageOutlinedIcon />
-					)}
-					{t("accountMenu.profile")}
+				{/* User Profile Section */}
+				<MenuItem
+					// onClick={() => {
+					// 	handleClose();
+					// 	navigate(path.Profile);
+					// }}
+					sx={{
+						py: 1.5,
+						gap: 2,
+						px: 2,
+						cursor: "default",
+						"&:hover": {
+							bgcolor: "transparent",
+						},
+					}}
+				>
+					<Avatar
+						sx={{
+							width: 40,
+							height: 40,
+							bgcolor: theme.palette.primary.main,
+							fontWeight: 600,
+							boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+						}}
+						src={auth?.image?.url || undefined}
+					>
+						{!auth?.image?.url && getUserInitials()}
+					</Avatar>
+					<Box sx={{ml: 2, overflow: "hidden"}}>
+						<Typography
+							variant='subtitle1'
+							fontWeight={600}
+							sx={{
+								color: "text.primary",
+								lineHeight: 1.2,
+							}}
+						>
+							{auth?.name?.first && auth?.name?.last
+								? `${auth.name.first} ${auth.name.last}`
+								: auth?.name?.first || "User"}
+						</Typography>
+						<Typography
+							variant='caption'
+							sx={{
+								color: "text.secondary",
+								display: "block",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+							}}
+						>
+							{auth?.email || ""}
+						</Typography>
+						{isAdmin && (
+							<Typography
+								variant='caption'
+								sx={{
+									color: "primary.main",
+									fontWeight: 600,
+									bgcolor: alpha(theme.palette.primary.main, 0.1),
+									px: 1,
+									py: 0.25,
+									borderRadius: 1,
+									mt: 0.5,
+									display: "inline-block",
+								}}
+							>
+								{isAdmin
+									? t("accountMenu.admin")
+									: isSiteModerator
+										? "accountMenu.siteModerator"
+										: "Client"}
+							</Typography>
+						)}
+					</Box>
 				</MenuItem>
-				<Divider />
 
-				<Link className=' text-decoration-none' to={path.Messages}>
-					<MenuItem onClick={handleClose}>
-						<ListItemIcon>
-							<MarkunreadIcon color='error' />
+				<Divider sx={{my: 1, borderColor: "divider"}} />
+
+				{/* Profile Link */}
+				<MenuItem
+					onClick={() => {
+						handleClose();
+						navigate(path.Profile);
+					}}
+					sx={{
+						py: 1.25,
+						px: 2,
+						transition: "all 0.2s",
+						"&:hover": {
+							bgcolor: alpha(theme.palette.primary.main, 0.08),
+							transform: "translateX(4px)",
+						},
+					}}
+				>
+					<ListItemIcon sx={{minWidth: 40}}>
+						<PersonOutlineIcon sx={{fontSize: 20, color: "text.secondary"}} />
+					</ListItemIcon>
+					<Typography variant='body2' sx={{color: "text.primary"}}>
+						{t("accountMenu.profile") || "Profile"}
+					</Typography>
+				</MenuItem>
+
+				{/* Messages Link */}
+				<Link
+					to={path.Messages}
+					style={{textDecoration: "none", color: "inherit"}}
+				>
+					<MenuItem
+						onClick={handleClose}
+						sx={{
+							py: 1.25,
+							px: 2,
+							transition: "all 0.2s",
+							"&:hover": {
+								bgcolor: alpha(theme.palette.primary.main, 0.08),
+								transform: "translateX(4px)",
+							},
+						}}
+					>
+						<ListItemIcon sx={{minWidth: 40}}>
+							<EmailIcon sx={{fontSize: 20, color: "text.secondary"}} />
 						</ListItemIcon>
-						<Typography color='warning'>
-							{t("accountMenu.messages")}
+						<Typography variant='body2' sx={{color: "text.primary"}}>
+							{t("accountMenu.messages") || "Messages"}
 						</Typography>
 					</MenuItem>
 				</Link>
 
-				<Divider />
-
+				{/* Admin Links */}
 				{isAdmin && (
-					<Link className=' text-decoration-none' to={path.AdminSettings}>
-						<MenuItem onClick={handleClose}>
-							<ListItemIcon sx={{color: "azure"}}>
-								{fontAwesomeIcon.setting}
-							</ListItemIcon>
-							<Typography color='warning'>
-								{t("accountMenu.settings")}
-							</Typography>
-						</MenuItem>
-					</Link>
-				)}
-				
-				{isAdmin && (
-					<Link className=' text-decoration-none' to={path.WebSiteAdmins}>
-						<MenuItem onClick={handleClose}>
-							<ListItemIcon>
-								<Dashboard color='error' />
-							</ListItemIcon>
-							<Typography color='warning'>
-								{t("إحصائيات المتجر")}
-							</Typography>
-						</MenuItem>
-					</Link>
+					<>
+						<Divider sx={{my: 1, borderColor: "divider"}} />
+						<Typography
+							variant='caption'
+							sx={{
+								px: 2,
+								pt: 1,
+								pb: 0.5,
+								color: "text.secondary",
+								fontWeight: 600,
+								letterSpacing: 0.5,
+								textTransform: "uppercase",
+							}}
+						>
+							{isAdmin ? t("accountMenu.admin") : "Client"}
+						</Typography>
+
+						<Link
+							to={path.AdminSettings}
+							style={{textDecoration: "none", color: "inherit"}}
+						>
+							<MenuItem
+								onClick={handleClose}
+								sx={{
+									py: 1.25,
+									px: 2,
+									transition: "all 0.2s",
+									"&:hover": {
+										bgcolor: alpha(theme.palette.primary.main, 0.08),
+										transform: "translateX(4px)",
+									},
+								}}
+							>
+								<ListItemIcon sx={{minWidth: 40}}>
+									<SettingsIcon
+										sx={{fontSize: 20, color: "text.secondary"}}
+									/>
+								</ListItemIcon>
+								<Typography variant='body2' sx={{color: "text.primary"}}>
+									{t("accountMenu.settings") || "Settings"}
+								</Typography>
+							</MenuItem>
+						</Link>
+
+						<Link
+							to={path.WebSiteAdmins}
+							style={{textDecoration: "none", color: "inherit"}}
+						>
+							<MenuItem
+								onClick={handleClose}
+								sx={{
+									py: 1.25,
+									px: 2,
+									transition: "all 0.2s",
+									"&:hover": {
+										bgcolor: alpha(theme.palette.primary.main, 0.08),
+										transform: "translateX(4px)",
+									},
+								}}
+							>
+								<ListItemIcon sx={{minWidth: 40}}>
+									<DashboardIcon
+										sx={{fontSize: 20, color: "text.secondary"}}
+									/>
+								</ListItemIcon>
+								<Typography variant='body2' sx={{color: "text.primary"}}>
+									{t("إحصائيات المتجر") || "Store Statistics"}
+								</Typography>
+							</MenuItem>
+						</Link>
+					</>
 				)}
 
-				<Divider sx={{borderColor: "#4FC3F7", my: 0.5}} />
-
-				<MenuItem onClick={() => logout()}>
-					<ListItemIcon sx={{color: "#FF5252"}}>
-						{fontAwesomeIcon.logOut}
+				{/* Logout */}
+				<Divider sx={{my: 1, borderColor: "divider"}} />
+				<MenuItem
+					onClick={() => {
+						handleClose();
+						logout();
+					}}
+					sx={{
+						py: 1.25,
+						px: 2,
+						transition: "all 0.2s",
+						"&:hover": {
+							bgcolor: alpha(theme.palette.error.main, 0.08),
+							transform: "translateX(4px)",
+						},
+					}}
+				>
+					<ListItemIcon sx={{minWidth: 40}}>
+						<LogoutIcon sx={{fontSize: 20, color: "error.main"}} />
 					</ListItemIcon>
-					<Typography ml={1} color='#FF5252'>
-						{t("accountMenu.logout")}
+					<Typography
+						variant='body2'
+						sx={{color: "error.main", fontWeight: 600}}
+					>
+						{t("accountMenu.logout") || "Logout"}
 					</Typography>
 				</MenuItem>
 			</Menu>

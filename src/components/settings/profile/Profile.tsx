@@ -28,8 +28,6 @@ import {
 import {
 	// Edit as EditIcon,
 	History as HistoryIcon,
-	Security as SecurityIcon,
-	SupportAgent as SupportIcon,
 	Visibility as VisibilityIcon,
 	Phone,
 	Email,
@@ -37,8 +35,6 @@ import {
 	VerifiedUser,
 	CalendarToday,
 	Share,
-	QrCode,
-	Download,
 	Lock,
 	Person,
 	Settings,
@@ -282,7 +278,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 			<Box
 				sx={{
 					minHeight: "100vh",
-					background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+					// background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
 					py: 4,
 					px: {xs: 2, sm: 3},
 				}}

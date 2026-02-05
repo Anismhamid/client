@@ -10,21 +10,22 @@
 }
 
 #root {
-  background: radial-gradient(circle at 30% 15%, #EEF1F8, transparent 45%),
-    radial-gradient(circle at 75% 60%, #EFF2F8, transparent 50%),
-    linear-gradient(180deg, #f0f0f8a2, #f0f0f8d8),
+  background: radial-gradient(circle at 30% 15%, #eef1f870, transparent 45%),
+    radial-gradient(circle at 75% 60%, #eff2f883, transparent 50%),
+    linear-gradient(180deg, #f0f0f850, #f0f0f852),
     url('./assets/bbblurry.svg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+
 }
 
 
 
 main {
   min-height: 90vh;
-  width: 90%;
-  margin: auto;
+  width: 70%;
+  margin: 50px auto;
 }
 
 .header-image {
@@ -137,13 +138,27 @@ main {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .float-animation {

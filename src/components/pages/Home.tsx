@@ -225,155 +225,150 @@ const Home: FunctionComponent<HomeProps> = () => {
 					}
 				/>
 			</Helmet>
+			<Box
+				className='container-fluid'
+				sx={{
+					py: {xs: 4, md: 6},
+					position: "relative",
+					overflow: "hidden",
+				}}
+			>
+				{/* Animated Background Elements */}
+				<Box
+					sx={{
+						position: "absolute",
+						top: -100,
+						right: -100,
+						width: 300,
+						height: 300,
+						borderRadius: "50%",
+						background: "linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
+						animation: "float 8s ease-in-out infinite",
+						border: 1,
+						borderColor: "rgba(0,0,0,0.05)",
+						opacity: 0.8,
+					}}
+				/>
+				<Box
+					sx={{
+						position: "absolute",
+						bottom: -80,
+						left: -80,
+						width: 250,
+						height: 250,
+						borderRadius: "50%",
+						background: "linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
+						animation: "float 10s ease-in-out infinite 1s",
+						opacity: 0.8,
+					}}
+				/>
+
+				<Box
+					sx={{
+						position: "relative",
+						zIndex: 1,
+						textAlign: "center",
+						px: 2,
+						width: "100%",
+						maxWidth: "100%",
+						margin: "0 auto",
+					}}
+				>
+					<motion.div
+						initial={{opacity: 0, y: 30}}
+						animate={{opacity: 1, y: 0}}
+						transition={{duration: 0.8}}
+					>
+						<Typography
+							variant='h1'
+							sx={{
+								fontWeight: 800,
+								mb: 3,
+								fontSize: {xs: "2.5rem", sm: "3rem", md: "3.75rem"},
+								textShadow: "0 4px 8px rgba(0,0,0,0.1)",
+								animation: "float 8s ease-in-out infinite 0.5s",
+								color: "#1a237e",
+								direction: {diriction},
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								gap: 1,
+							}}
+						>
+							<span style={{fontSize: "1.2em"}}>🛒</span>
+							<span>{t("webPageName")}</span>
+						</Typography>
+
+						<Typography
+							variant='h5'
+							sx={{
+								mb: 4,
+								color: "text.secondary",
+								maxWidth: "600px",
+								margin: "0 auto",
+								fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
+							}}
+						>
+							{t("bestOffers")}
+						</Typography>
+					</motion.div>
+
+					{/* Buttons Section - Improved */}
+					<Box
+						sx={{
+							display: "flex",
+							gap: 2,
+							justifyContent: "center",
+							flexWrap: "wrap",
+							mt: 4,
+						}}
+					>
+						<Button
+							variant='contained'
+							size='large'
+							sx={{
+								px: 4,
+								py: 1.5,
+								borderRadius: 2,
+								fontSize: "1.1rem",
+								"&:hover": {
+									borderWidth: 2,
+									background:
+										"linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+								},
+
+								minWidth: "150px",
+							}}
+						>
+							تصفح العروض
+						</Button>
+						<Button
+							onClick={showAddProductModal}
+							variant='contained'
+							size='large'
+							sx={{
+								px: 4,
+								py: 1.5,
+								borderRadius: 2,
+								fontSize: "1.1rem",
+								borderWidth: 2,
+								"&:hover": {
+									borderWidth: 2,
+									background:
+										"linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+								},
+								minWidth: "150px",
+							}}
+						>
+							أضف إعلان
+						</Button>
+					</Box>
+				</Box>
+			</Box>
+			<ChepNavigation />
 
 			<Box dir={diriction} component='main'>
 				{/* Hero Section with Gradient */}
-				<Box
-					sx={{
-						// background: "#EFF3F9",
-						py: {xs: 4, md: 6},
-						position: "relative",
-						overflow: "hidden",
-						borderBottom: 1,
-						borderColor: "divider",
-						display: "flex",
-						flexDirection: "column",
-						alignItems: "center",
-						maxHeight: "60vh",
-						justifyContent: "center",
-					}}
-				>
-					{/* Animated Background Elements */}
-					<Box
-						sx={{
-							position: "absolute",
-							top: -100,
-							right: -100,
-							width: 300,
-							height: 300,
-							borderRadius: "50%",
-							background:
-								"linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
-							animation: "float 8s ease-in-out infinite",
-							border: 1,
-							borderColor: "rgba(0,0,0,0.05)",
-							opacity: 0.8,
-						}}
-					/>
-					<Box
-						sx={{
-							position: "absolute",
-							bottom: -80,
-							left: -80,
-							width: 250,
-							height: 250,
-							borderRadius: "50%",
-							background:
-								"linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
-							animation: "float 10s ease-in-out infinite 1s",
-							opacity: 0.8,
-						}}
-					/>
-
-					<Box
-						sx={{
-							position: "relative",
-							zIndex: 1,
-							textAlign: "center",
-							px: 2,
-							width: "100%",
-							maxWidth: "100%",
-							margin: "0 auto",
-						}}
-					>
-						<motion.div
-							initial={{opacity: 0, y: 30}}
-							animate={{opacity: 1, y: 0}}
-							transition={{duration: 0.8}}
-						>
-							<Typography
-								variant='h1'
-								sx={{
-									fontWeight: 800,
-									mb: 3,
-									fontSize: {xs: "2.5rem", sm: "3rem", md: "3.75rem"},
-									textShadow: "0 4px 8px rgba(0,0,0,0.1)",
-									animation: "float 8s ease-in-out infinite 0.5s",
-									color: "#1a237e",
-									direction: {diriction},
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									gap: 1,
-								}}
-							>
-								<span style={{fontSize: "1.2em"}}>🛒</span>
-								<span>{t("webPageName")}</span>
-							</Typography>
-
-							<Typography
-								variant='h5'
-								sx={{
-									mb: 4,
-									color: "text.secondary",
-									maxWidth: "600px",
-									margin: "0 auto",
-									fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
-								}}
-							>
-								{t("bestOffers")}
-							</Typography>
-						</motion.div>
-
-						{/* Buttons Section - Improved */}
-						<Box
-							sx={{
-								display: "flex",
-								gap: 2,
-								justifyContent: "center",
-								flexWrap: "wrap",
-								mt: 4,
-							}}
-						>
-							<Button
-								variant='contained'
-								size='large'
-								sx={{
-									px: 4,
-									py: 1.5,
-									borderRadius: 2,
-									fontSize: "1.1rem",
-									background:
-										"linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
-									boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
-									minWidth: "150px",
-								}}
-							>
-								تصفح العروض
-							</Button>
-							<Button
-								onClick={showAddProductModal}
-								variant='outlined'
-								size='large'
-								sx={{
-									px: 4,
-									py: 1.5,
-									borderRadius: 2,
-									fontSize: "1.1rem",
-									borderWidth: 2,
-									"&:hover": {
-										borderWidth: 2,
-									},
-									minWidth: "150px",
-								}}
-							>
-								أضف إعلان
-							</Button>
-						</Box>
-					</Box>
-				</Box>
-
-				<ChepNavigation />
 				<Alert
 					component='section'
 					role='region'

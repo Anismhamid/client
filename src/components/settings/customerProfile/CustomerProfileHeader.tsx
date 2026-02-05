@@ -122,7 +122,11 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										}
 									>
 										<Avatar
-											src={user.image?.url ?? "/user.png"}
+											src={
+												user.image?.url
+													? user.image.url
+													: "/user.png"
+											}
 											sx={{
 												width: {xs: 100, md: 120},
 												height: {xs: 100, md: 120},

@@ -1,6 +1,6 @@
 import {Card, Tabs as MuiTabs, Tab} from "@mui/material";
 import {FunctionComponent, SyntheticEvent} from "react";
-import {Storefront, VerifiedUser, Star, ChatBubble} from "@mui/icons-material";
+import {Storefront, VerifiedUser, Star, ChatBubble, ChatBubbleOutlineSharp, ChatBubbleTwoTone} from "@mui/icons-material";
 
 interface TabsProps {
 	tabValue: number;
@@ -9,7 +9,7 @@ interface TabsProps {
 
 const CustomTabs: FunctionComponent<TabsProps> = ({handleTabChange, tabValue}) => {
 	return (
-		<Card sx={{mb: 4, borderRadius: 3}}>
+		<Card>
 			<MuiTabs
 				value={tabValue}
 				onChange={handleTabChange}
@@ -24,10 +24,34 @@ const CustomTabs: FunctionComponent<TabsProps> = ({handleTabChange, tabValue}) =
 					},
 				}}
 			>
-				<Tab label='المنتجات' icon={<Storefront />} iconPosition='start' />
-				<Tab label='المعلومات' icon={<VerifiedUser />} iconPosition='start' />
-				<Tab label='التقييمات' icon={<Star />} iconPosition='start' />
-				<Tab label='التواصل' icon={<ChatBubble />} iconPosition='start' />
+				<Tab
+					// label='المنشورات'
+					title='المنشورات'
+					aria-label='المنشورات'
+					icon={<Storefront color='secondary' />}
+					iconPosition='end'
+				/>
+				<Tab
+					// label='المعلومات'
+					title='المعلومات'
+					aria-label='المعلومات'
+					icon={<VerifiedUser color='info' />}
+					iconPosition='start'
+				/>
+				<Tab
+					// label='التقييمات'
+					title='التقييمات'
+					aria-label='التقييمات'
+					icon={<Star color='warning' />}
+					iconPosition='start'
+				/>
+				<Tab
+					// label='التواصل'
+					title='التواصل'
+					aria-label='التواصل'
+					icon={<ChatBubbleTwoTone color='secondary' />}
+					iconPosition='start'
+				/>
 			</MuiTabs>
 		</Card>
 	);

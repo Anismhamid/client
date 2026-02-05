@@ -1,5 +1,8 @@
+import {ReactNode} from "react";
+
 export const emptyAuthValues = {
 	_id: "",
+	status: "",
 	name: {
 		first: "",
 		last: "",
@@ -21,9 +24,12 @@ export const emptyAuthValues = {
 	iat: 0,
 	slug: "",
 	gender: "",
+	createdAt: "",
 };
 
 export interface AuthValues {
+	status: ReactNode;
+	createdAt: any;
 	exp?: number;
 	_id?: string;
 	name: {

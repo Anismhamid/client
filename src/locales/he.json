@@ -15,6 +15,24 @@
 	"faq": "שאלות נפוצות",
 	"shares": "מודעות",
 	"seller": "פורסם ע'י",
+	"member_since": "חבר מאז",
+	"status": {
+		"title": "סטטוס",
+		"active": "פעיל",
+		"inactive": "לא פעיל",
+		"lastActivity": "פעילות אחרונה"
+	},
+	"messages": {
+		"main": "הודעות",
+		"directMessage": "הודעה ישירה",
+		"contactWith": "צור קשר עם "
+	},
+	"roles": {
+		"title": "תפקיד",
+		"admin": "מנהל",
+		"client": "משתמש",
+		"moderator": "מפקח אתר"
+	},
 	"login": {
 		"lastLogin": "כניסה אחרונה",
 		"email": "דואר אלקטרוני",
@@ -97,7 +115,10 @@
 			"slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
 			"slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים"
 		},
-		"selectGender": "בחר מין"
+		"selectGender": "בחר מין",
+		"gender": "מין",
+		"male": "זכר",
+		"female": "נקבה"
 	},
 	"common": {
 		"back": "חזרה",
@@ -121,6 +142,7 @@
 	"orderNumber": "מספר הזמנה",
 	"UserId": "מזהה משתמש",
 	"users-management": "ניהול משתמשים",
+	"account-management": "ניהול חשבון",
 	"date": "תאריך",
 	"phone": "טלפון",
 	"customerInfo": "פרטי לקוח",
@@ -181,6 +203,7 @@
 			"updateButton": "עדכן",
 			"closeButton": "סגור",
 			"location": "עיר מוצא",
+
 			"validation": {
 				"productNameRequired": "שם מוצר נדרש",
 				"productNameMin": "שם מוצר חייב להכיל לפחות 2 תווים",
@@ -578,7 +601,9 @@
 		"account": "החשבון שלי",
 		"profile": "הפרופיל שלי",
 		"settings": "הגדרות",
-		"logout": "התנתקות"
+		"logout": "התנתקות",
+		"admin": "מנהל האתר",
+		"siteModerator": "מפקח האתר"
 	},
 	"about": {
 		"title": "מי אנחנו",

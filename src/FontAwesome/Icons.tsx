@@ -74,7 +74,7 @@ export const fontAwesomeIcon = {
 	menuBars: <FontAwesomeIcon icon={faBars} />,
 	trash: <FontAwesomeIcon icon={faTrash} />,
 	edit: <FontAwesomeIcon icon={faEdit} />,
-	setting: <FontAwesomeIcon color='green' icon={faCog} />,
+	setting: <FontAwesomeIcon icon={faCog} />,
 	addPerson: <FontAwesomeIcon icon={faUserPlus} />,
 	backButton: <FontAwesomeIcon icon={faChevronCircleRight} />,
 	watches: <FontAwesomeIcon icon={faClock} />,

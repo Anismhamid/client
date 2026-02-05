@@ -14,6 +14,24 @@
 	"faq": "FAQ",
 	"shares": "Posts",
 	"seller": "Published by",
+	"member_since": "Member since",
+	"status": {
+		"title": "Status",
+		"active": "Active",
+		"inactive": "Inactive",
+		"lastActivity": "Last activity"
+	},
+	"messages": {
+		"main": "Messages",
+		"directMessage": "Direct message",
+		"contactWith": "Contact with "
+	},
+	"roles": {
+		"title": "Role",
+		"admin": "Admin",
+		"client": "Customer",
+		"moderator": "Site Moderator"
+	},
 	"login": {
 		"lastLogin": "Last login",
 		"email": "Email",
@@ -147,8 +165,8 @@
 	"cash": "Cash",
 	"orderNumber": "Order Number",
 	"UserId": "User ID",
-	"users-management": "users managment משתמשים",
-
+	"users-management": "Asers managment",
+	"account-management": "Account managment",
 	"date": "Date",
 	"phone": "Phone",
 	"customerInfo": "Customer Details",
@@ -610,7 +628,9 @@
 		"account": "My Account",
 		"profile": "My Profile",
 		"settings": "Settings",
-		"logout": "Logout"
+		"logout": "Logout",
+		"admin": "Site Admin",
+		"siteModerator": "Site Moderator"
 	},
 
 	"about": {
