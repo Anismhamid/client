@@ -45,12 +45,33 @@ import {getAllProducts} from "../../services/productsServices";
 import {User} from "../../interfaces/usersMessages";
 import {useUser} from "../../context/useUSer";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
+import {path} from "../../routes/routes";
+import {Link} from "react-router-dom";
+import {AuthValues} from "../../interfaces/authValues";
 
 interface WebSiteAdminsProps {}
 
 interface ProductWithUser extends Products {
 	userData?: User;
 }
+
+type MostPopularProduct = {
+	id: string;
+	name: string;
+	image?: string;
+	likes: number;
+	views: number;
+	price: number;
+	status: string;
+	seller: {
+		name: string;
+		slug: string;
+		user: string;
+		link: string;
+	};
+	category: string;
+	createdAt: string;
+};
 
 interface Statistics {
 	// إحصائيات المنتجات
@@ -99,18 +120,7 @@ interface Statistics {
 	}>;
 
 	// أكثر المنتجات تفاعلاً
-	mostPopularProducts: Array<{
-		id: string;
-		name: string;
-		image?: string;
-		likes: number;
-		views: number;
-		price: number;
-		status: string;
-		sellerName: string;
-		category: string;
-		createdAt: string;
-	}>;
+	mostPopularProducts: MostPopularProduct[];
 
 	// أكثر البائعين نشاطاً
 	topSellers: Array<{
@@ -136,8 +146,7 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"
 
 const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 	const {auth} = useUser();
-	const [users, setUsers] = useState<User[]>([]);
-	const [products, setProducts] = useState<ProductWithUser[]>([]);
+
 	const [timeFrame, setTimeFrame] = useState<string>("today");
 	const [statistics, setStatistics] = useState<Statistics>({
 		totalProducts: 0,
@@ -196,8 +205,6 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 				),
 			}));
 
-			setUsers(usersData);
-			setProducts(productsWithUserData);
 			calculateStatistics(usersData, productsWithUserData);
 		} catch (err) {
 			console.error("Error fetching data:", err);
@@ -213,7 +220,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 	};
 
 	// حساب جميع الإحصائيات لموقع C2C
-	const calculateStatistics = (users: User[], products: ProductWithUser[]) => {
+	const calculateStatistics = (users: AuthValues[], products: ProductWithUser[]) => {
 		const now = new Date();
 		const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -245,6 +252,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 		const activeProducts = products.filter((p) => p.in_stock === true).length;
 		const pendingProducts = products.filter((p) => p.status === "pending").length;
 		const soldProducts = products.filter((p) => p.status === "sold").length;
+		const activeUsers = users.filter((user) => user.status === true).length;
 
 		// حساب البائعين النشطين (المستخدمين الذين لديهم منتجات)
 		const sellersMap = new Map<
@@ -278,7 +286,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 			}
 		});
 
-		const activeSellers = Array.from(sellersMap.values()).length;
+		const activeSellers = activeUsers;
 
 		// إحصائيات التفاعل
 		const totalLikes = products.reduce(
@@ -362,20 +370,27 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 
 		// أكثر المنتجات تفاعلاً
 		const mostPopularProducts = [...products]
-			.map((product) => ({
-				id: product._id || "",
-				name: product.product_name || "منتج بدون اسم",
-				image: product.image?.url,
-				likes: product.likes?.length || 0,
-				views: product.views || 0,
-				price: product.price || 0,
-				status: product.in_stock ? "active" : "sold",
-				sellerName: product.userData?.name?.first || "مستخدم",
-				category: product.category || "غير مصنف",
-				createdAt: product.createdAt || "",
-			}))
+			.map(
+				(product) =>
+					({
+						id: product._id || "",
+						name: product.product_name || "منتد بدون اسم",
+						image: product.image?.url,
+						likes: product.likes?.length || 0,
+						views: product.views || 0,
+						price: product.price || 0,
+						status: product.in_stock ? "active" : "sold",
+						seller: {
+							name: `${product.userData?.name?.first || ""} ${product.userData?.name?.last || ""}`.trim(),
+							link: `${path.CustomerProfile}/${product.seller?.slug || ""}`,
+							slug: product.seller?.slug || "",
+							user: product.seller?.user || "",
+						},
+						category: product.category || "غير مصنف",
+						createdAt: product.createdAt || "",
+					}) as any,
+			) // استخدم as any لتجاوز تحقق TypeScript مؤقتاً
 			.sort((a, b) => {
-				// ترتيب حسب مجموع التفاعلات (لايكات + مشاهدات)
 				const aScore = a.likes * 2 + a.views;
 				const bScore = b.likes * 2 + b.views;
 				return bScore - aScore;
@@ -527,12 +542,12 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 
 	return (
 		<>
-				<link rel='canonical' href={currentUrl} />
-				<title>لوحة تحكم الإدارة | صفقة - منصة C2C</title>
-				<meta
-					name='description'
-					content={"لوحة تحكم إدارة منصة بيع وشراء C2C | صفقة"}
-				/>
+			<link rel='canonical' href={currentUrl} />
+			<title>لوحة تحكم الإدارة | صفقة - منصة C2C</title>
+			<meta
+				name='description'
+				content={"لوحة تحكم إدارة منصة بيع وشراء C2C | صفقة"}
+			/>
 			<main>
 				{/* العنوان الرئيسي */}
 				<Box
@@ -1316,10 +1331,42 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 																</Box>
 															</TableCell>
 															<TableCell align='center'>
-																<Typography variant='body2'>
-																	{product.sellerName}
-																</Typography>
+																{product.seller.slug && (
+																	<Link
+																		to={`${path.CustomerProfile.replace(":slug", "")}/${product.seller.slug}`}
+																		style={{
+																			textDecoration:
+																				"none",
+																		}}
+																	>
+																		<Tooltip
+																			title={
+																				product
+																					.seller
+																					.name
+																			}
+																		>
+																			<Typography
+																				variant='caption'
+																				color='text.secondary'
+																				display='block'
+																				sx={{
+																					color: "primary",
+																				}}
+																			>
+																				@
+																				{
+																					product
+																						.seller
+																						.slug
+																				}
+																			</Typography>
+																		</Tooltip>{" "}
+																	</Link>
+																)}
 															</TableCell>
+
+															{/* category */}
 															<TableCell align='center'>
 																<Chip
 																	label={getCategoryName(
@@ -1329,6 +1376,8 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 																	variant='outlined'
 																/>
 															</TableCell>
+
+															{/* Likes */}
 															<TableCell align='center'>
 																<Box
 																	display='flex'
@@ -1871,33 +1920,36 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 												</strong>{" "}
 												مشاهدة على المنتجات.
 											</Typography>
-											<Typography variant='body2' paragraph>
+											<Typography variant='body2'>
 												<strong>النشاط:</strong> تم إضافة{" "}
 												<strong>
 													{statistics.newProductsToday}
-												</strong>{" "}
-												منتج و{" "}
+												</strong>
+												منتج و
 												<strong>
 													{statistics.newUsersToday}
-												</strong>{" "}
+												</strong>
 												مستخدم جديد اليوم.
 											</Typography>
 										</Box>
 									</Grid>
 									<Grid size={{xs: 12, md: 6}}>
 										<Box>
-											<Typography variant='body2' paragraph>
-												<strong>البائعون:</strong> يوجد{" "}
+											<Typography gap={3} variant='body2'>
+												<strong style={{margin: 1}}>
+													المستخدمون:
+												</strong>
+												يوجد
 												<strong>
 													{statistics.activeSellers}
-												</strong>{" "}
-												بائع نشط من أصل{" "}
-												<strong>{statistics.totalUsers}</strong>{" "}
+												</strong>
+												مستخدم نشط من أصل
+												<strong>{statistics.totalUsers}</strong>
 												مستخدم.
 											</Typography>
-											<Typography variant='body2' paragraph>
+											<Typography variant='body2'>
 												<strong>الفئات:</strong> أكثر الفئات
-												نشاطاً هي{" "}
+												نشاطاً هي
 												<strong>
 													{statistics.topCategories.length > 0
 														? getCategoryName(
@@ -1906,11 +1958,11 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 																	.category,
 															)
 														: "-"}
-												</strong>{" "}
-												بعدد{" "}
+												</strong>
+												بعدد
 												{statistics.topCategories.length > 0
 													? statistics.topCategories[0].count
-													: 0}{" "}
+													: 0}
 												منتج.
 											</Typography>
 											<Typography variant='body2'>
