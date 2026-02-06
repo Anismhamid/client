@@ -29,7 +29,7 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
 
 const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({user}) => {
 	return (
-		<TableContainer component={Paper}>
+		<TableContainer style={{width: "100%"}} component={Paper}>
 			<Table aria-label='user details table '>
 				<TableBody>
 					<TableRow>

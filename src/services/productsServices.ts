@@ -61,7 +61,7 @@ export const getAllProducts = async () => {
  * @param products - Product data to be created
  * @returns The created product if successful, or null if there's an error
  */
-export async function createNewProduct(product: Products) {
+export async function createNewPost(product: Products) {
 	try {
 		const response = await axios.post(`${api}/products`, product, {
 			headers: {

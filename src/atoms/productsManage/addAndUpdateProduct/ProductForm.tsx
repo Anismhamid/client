@@ -11,7 +11,6 @@ import {productsCategories} from "../../../interfaces/productsCategoeis";
 import {LoadingButton} from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CollectionsIcon from "@mui/icons-material/Collections";
-import { updateProduct } from "../../../services/productsServices";
 
 interface ProductFormProps {
 	formik: FormikProps<Products>;
@@ -38,7 +37,6 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 	setImageFile,
 	onHide,
 	imageData,
-	imageFile,
 	mode,
 }) => {
 	const {t} = useTranslation();

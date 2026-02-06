@@ -1,7 +1,7 @@
 import {useFormik} from "formik";
 import * as yup from "yup";
 import {useTranslation} from "react-i18next";
-import {createNewProduct} from "../services/productsServices";
+import {createNewPost} from "../services/productsServices";
 import {Products} from "../interfaces/Products";
 import {useState} from "react";
 import {uploadImage} from "../services/uploadImage";
@@ -18,7 +18,7 @@ const useAddProductFormik = (onHide: () => void) => {
 	const formik = useFormik<Products>({
 		initialValues: {
 			product_name: "",
-			image: {url: "", publicId: ""},
+			image: { url: "", publicId: "" },
 			category: "House",
 			subcategory: "",
 			type: "",
@@ -28,6 +28,11 @@ const useAddProductFormik = (onHide: () => void) => {
 			discount: 0,
 			in_stock: true,
 			location: "",
+			seller: {
+				name: "",
+				slug: undefined,
+				user: ""
+			}
 		},
 		validationSchema: yup.object({
 			product_name: yup
@@ -62,7 +67,7 @@ const useAddProductFormik = (onHide: () => void) => {
 					});
 				}
 
-				await createNewProduct({
+				await createNewPost({
 					...values,
 					image: {
 						url: uploadedImage?.url || "",

@@ -140,7 +140,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							/>
 						</ListItemButton>
 					</ListItem>
-
 					{/* Favorites */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton
@@ -166,7 +165,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							/>
 						</ListItemButton>
 					</ListItem>
-
 					{/* Products with categories - IMPLEMENTED */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton
@@ -187,7 +185,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							)}
 						</ListItemButton>
 					</ListItem>
-
 					<Collapse
 						in={expandedMobileMenu === "products"}
 						// timeout='auto'
@@ -355,7 +352,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							))}
 						</List>
 					</Collapse>
-
 					{/* About */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton
@@ -381,7 +377,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							/>
 						</ListItemButton>
 					</ListItem>
-
 					{/* Contact */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton
@@ -407,7 +402,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							/>
 						</ListItemButton>
 					</ListItem>
-
 					{/* My Listings - only if logged in */}
 					{isLoggedIn && (
 						<ListItem disablePadding sx={{mb: 1}}>
@@ -436,7 +430,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							</ListItemButton>
 						</ListItem>
 					)}
-
 					{/* Help */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton
@@ -462,43 +455,40 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 							/>
 						</ListItemButton>
 					</ListItem>
-
 					{/* Admin Panel - only if admin */}
+					{isAdmin && <Divider sx={{my: 2, height: 30, color: "red"}} />}
 					{isAdmin && (
-						<>
-							<Divider sx={{my: 2}} />
-							<ListItem disablePadding sx={{mb: 1}}>
-								<ListItemButton
-									component={NavLink}
-									to={path.UsersManagement}
-									onClick={handleNavLinkClick}
-									sx={{
-										borderRadius: "8px",
-										backgroundColor:
-											mode === "dark"
-												? "rgba(144, 202, 249, 0.1)"
-												: "rgba(33, 150, 243, 0.1)",
-										"&.active": {
-											backgroundColor: "rgba(33, 150, 243, 0.2)",
+						<ListItem disablePadding sx={{mb: 1}}>
+							<ListItemButton
+								component={NavLink}
+								to={path.UsersManagement}
+								onClick={handleNavLinkClick}
+								sx={{
+									borderRadius: "8px",
+									backgroundColor:
+										mode === "dark"
+											? "rgba(144, 202, 249, 0.1)"
+											: "rgba(33, 150, 243, 0.1)",
+									"&.active": {
+										backgroundColor: "rgba(33, 150, 243, 0.2)",
+										color: "#2196f3",
+										fontWeight: "bold",
+									},
+								}}
+							>
+								<DashboardIcon sx={{ml: 1, color: "#2196f3"}} />
+								<ListItemText
+									primary={t("users-management") || "لوحة التحكم"}
+									primaryTypographyProps={{
+										sx: {
+											fontWeight: 600,
 											color: "#2196f3",
-											fontWeight: "bold",
 										},
+										"aria-label": "لوحة تحكم الإدارة",
 									}}
-								>
-									<DashboardIcon sx={{ml: 1, color: "#2196f3"}} />
-									<ListItemText
-										primary={t("users-management") || "لوحة التحكم"}
-										primaryTypographyProps={{
-											sx: {
-												fontWeight: 600,
-												color: "#2196f3",
-											},
-											"aria-label": "لوحة تحكم الإدارة",
-										}}
-									/>
-								</ListItemButton>
-							</ListItem>
-						</>
+								/>
+							</ListItemButton>
+						</ListItem>
 					)}
 				</List>
 			</Box>

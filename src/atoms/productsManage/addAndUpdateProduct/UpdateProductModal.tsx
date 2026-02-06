@@ -77,6 +77,11 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			location: product.location || "",
 			in_stock: product.in_stock,
 			...initialDynamicValues,
+			seller: {
+				name: "",
+				slug: undefined,
+				user: "",
+			},
 		},
 		validationSchema: yup.object({
 			product_name: yup.string().min(2).required(),
@@ -86,10 +91,10 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			image: yup.object({
 				url: yup.string().required().url(),
 				publicId: yup.string(),
-			}),
+			}).required(),
 		}),
 		onSubmit(values, {resetForm}) {
-			updateProduct(product._id as string,values)
+			updateProduct(product._id as string, values)
 				.then(() => {
 					resetForm();
 					refresh();

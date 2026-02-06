@@ -125,10 +125,6 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 			>
 				{/* User Profile Section */}
 				<MenuItem
-					// onClick={() => {
-					// 	handleClose();
-					// 	navigate(path.Profile);
-					// }}
 					sx={{
 						py: 1.5,
 						gap: 2,
@@ -252,78 +248,76 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				</Link>
 
 				{/* Admin Links */}
+				{isAdmin && <Divider sx={{my: 1, borderColor: "divider"}} />}
+				<Typography
+					variant='caption'
+					sx={{
+						px: 2,
+						pt: 1,
+						pb: 0.5,
+						color: "text.secondary",
+						fontWeight: 600,
+						letterSpacing: 0.5,
+						textTransform: "uppercase",
+					}}
+				>
+					{isAdmin ? t("accountMenu.admin") : "Client"}
+				</Typography>
 				{isAdmin && (
-					<>
-						<Divider sx={{my: 1, borderColor: "divider"}} />
-						<Typography
-							variant='caption'
-							sx={{
-								px: 2,
-								pt: 1,
-								pb: 0.5,
-								color: "text.secondary",
-								fontWeight: 600,
-								letterSpacing: 0.5,
-								textTransform: "uppercase",
-							}}
-						>
-							{isAdmin ? t("accountMenu.admin") : "Client"}
-						</Typography>
-
+					<MenuItem
+						onClick={handleClose}
+						sx={{
+							py: 1.25,
+							px: 2,
+							transition: "all 0.2s",
+							"&:hover": {
+								bgcolor: alpha(theme.palette.primary.main, 0.08),
+								transform: "translateX(4px)",
+							},
+						}}
+					>
 						<Link
 							to={path.AdminSettings}
 							style={{textDecoration: "none", color: "inherit"}}
 						>
-							<MenuItem
-								onClick={handleClose}
-								sx={{
-									py: 1.25,
-									px: 2,
-									transition: "all 0.2s",
-									"&:hover": {
-										bgcolor: alpha(theme.palette.primary.main, 0.08),
-										transform: "translateX(4px)",
-									},
-								}}
-							>
-								<ListItemIcon sx={{minWidth: 40}}>
-									<SettingsIcon
-										sx={{fontSize: 20, color: "text.secondary"}}
-									/>
-								</ListItemIcon>
-								<Typography variant='body2' sx={{color: "text.primary"}}>
-									{t("accountMenu.settings") || "Settings"}
-								</Typography>
-							</MenuItem>
+							<ListItemIcon sx={{minWidth: 40}}>
+								<SettingsIcon
+									sx={{fontSize: 20, color: "text.secondary"}}
+								/>
+							</ListItemIcon>
+							<Typography variant='body2' sx={{color: "text.primary"}}>
+								{t("accountMenu.settings") || "Settings"}
+							</Typography>
 						</Link>
-
+					</MenuItem>
+				)}
+				{isAdmin && (
+					<MenuItem
+						onClick={handleClose}
+						sx={{
+							py: 1.25,
+							px: 2,
+							transition: "all 0.2s",
+							"&:hover": {
+								bgcolor: alpha(theme.palette.primary.main, 0.08),
+								transform: "translateX(4px)",
+							},
+						}}
+					>
 						<Link
 							to={path.WebSiteAdmins}
 							style={{textDecoration: "none", color: "inherit"}}
 						>
-							<MenuItem
-								onClick={handleClose}
-								sx={{
-									py: 1.25,
-									px: 2,
-									transition: "all 0.2s",
-									"&:hover": {
-										bgcolor: alpha(theme.palette.primary.main, 0.08),
-										transform: "translateX(4px)",
-									},
-								}}
-							>
-								<ListItemIcon sx={{minWidth: 40}}>
-									<DashboardIcon
-										sx={{fontSize: 20, color: "text.secondary"}}
-									/>
-								</ListItemIcon>
-								<Typography variant='body2' sx={{color: "text.primary"}}>
-									{t("إحصائيات المتجر") || "Store Statistics"}
-								</Typography>
-							</MenuItem>
+							<ListItemIcon sx={{minWidth: 40}}>
+								<DashboardIcon
+									sx={{fontSize: 20, color: "text.secondary"}}
+								/>
+							</ListItemIcon>
+							<Typography variant='body2' sx={{color: "text.primary"}}>
+								{t("إحصائيات المتجر") || "Store Statistics"}
+							</Typography>
 						</Link>
-					</>
+					</MenuItem>
 				)}
 
 				{/* Logout */}
