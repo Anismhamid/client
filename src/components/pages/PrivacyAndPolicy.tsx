@@ -1,7 +1,6 @@
 import {FunctionComponent} from "react";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
-import {Helmet} from "react-helmet";
 import PrivacyPolicyJsonLd from "../../../utils/PrivacyPolicyJsonLd";
 
 interface PrivacyAdnPolicyProps {}
@@ -12,25 +11,25 @@ interface PrivacyAdnPolicyProps {}
 const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 	const {t} = useTranslation();
 	const diriction = handleRTL();
-	const currentUrl = `https://client-qqq1.vercel.app/Privacy-and-policy`;
+	const currentUrl = `https://client-qqq1.vercel.app/privacy-and-policy`;
 
 	return (
 		<>
-			<Helmet><link rel='canonical' href={currentUrl} />
-				<title>سياسة الخصوصية | موقع صفقه</title>
-				<meta
-					name='description'
-					content='اطلع على سياسة الخصوصية لمتجر سوق السخنيني في أم الفحم. كيف نجمع البيانات، نستخدمها، ونحافظ على سريتها.'
-				/>
-				<link
-					rel='canonical'
-					href='https://client-qqq1.vercel.app/Privacy-and-policy'
-				/>
-				<meta
-					name='keywords'
-					content='سياسة الخصوصية, موقع صفقه, أم الفحم, بيانات المستخدم'
-				/>
-			</Helmet>
+			{/* TODO:Translate */}
+			<link rel='canonical' href={currentUrl} />
+			<title>سياسة الخصوصية | موقع صفقه</title>
+			<meta
+				name='description'
+				content='اطلع على سياسة الخصوصية لمتجر سوق السخنيني في أم الفحم. كيف نجمع البيانات، نستخدمها، ونحافظ على سريتها.'
+			/>
+			<link
+				rel='canonical'
+				href='https://client-qqq1.vercel.app/Privacy-and-policy'
+			/>
+			<meta
+				name='keywords'
+				content='سياسة الخصوصية, موقع صفقه, أم الفحم, بيانات المستخدم'
+			/>
 
 			<main className='min-vh-100'>
 				<div
@@ -157,9 +156,9 @@ const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
 						<h1 className='text-center mb-4 text-primary'>سياسة الخصوصية</h1>
 						<p className='mb-5'>آخر تحديث: 23/01/2026</p>
 						<p>
-							في موقع صفقه نحن نهتم بخصوصيتك ونلتزم بحماية بياناتك
-							الشخصية. توضح هذه السياسة كيف نجمع المعلومات ونستخدمها ونحافظ
-							على سريتها
+							في موقع صفقه نحن نهتم بخصوصيتك ونلتزم بحماية بياناتك الشخصية.
+							توضح هذه السياسة كيف نجمع المعلومات ونستخدمها ونحافظ على
+							سريتها
 						</p>
 					</div>
 				</noscript>

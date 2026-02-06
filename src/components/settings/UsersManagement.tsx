@@ -36,7 +36,6 @@ import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
-import {Helmet} from "react-helmet";
 
 interface UersManagementProps {}
 
@@ -152,12 +151,10 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 
 	return (
 		<>
-			<Helmet>
-				{" "}
+
 				<link rel='canonical' href={currentUrl} />
 				<title>اداره المستخدمين | صفقة</title>
 				<meta name='description' content={"ادارة المستخدمين | صفقة"} />
-			</Helmet>
 			<main className='min-vh-100'>
 				<div className='container-fluid my-5'>
 					<h1 className='text-center display-6 rounded p-3 mb-4'>

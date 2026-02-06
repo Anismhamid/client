@@ -16,7 +16,7 @@ const Footer: FunctionComponent<FooterProps> = () => {
 		{label: t("footer.myAccount"), href: "/profile"},
 		{
 			label: t("footer.myListings"),
-			href: `${path.myCustomerProfile}/${auth?.slug}`,
+			href: `${path.CustomerProfile}/${auth?.slug}`,
 		},
 		{label: t("footer.postListing"), href: "/"},
 	];

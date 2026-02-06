@@ -8,7 +8,7 @@ export interface Products {
 	likes?: string[];
 	isNew?: boolean;
 	_id?: string;
-	seller?: {name: string; slug?: string; user: string};
+	seller: {name: string; slug?: string; user: string};
 	product_name: string;
 	category: CategoryValue;
 	subcategory?: string;

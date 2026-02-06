@@ -30,7 +30,6 @@ import {
 } from "@mui/icons-material";
 import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
-import {Helmet} from "react-helmet";
 
 interface DisputeStep {
 	icon: JSX.Element;
@@ -176,14 +175,12 @@ const DisputesHelp: FunctionComponent = () => {
 	const currentUrl = `https://client-qqq1.vercel.app/help/disputes`;
 	return (
 		<>
-			<Helmet>
-				<link rel='canonical' href={currentUrl} />
-				<title>{t("pages.contact.resolveDisputes")} | صفقة</title>
-				<meta name='description' content={t("pages.contact.resolveDisputes")} />
-			</Helmet>
+			<link rel='canonical' href={currentUrl} />
+			<title>{t("pages.contact.resolveDisputes")} | صفقة</title>
+			<meta name='description' content={t("pages.contact.resolveDisputes")} />{" "}
 			<Container maxWidth='lg' sx={{py: {xs: 4, md: 8}, direction}}>
 				{/* Header */}
-				<Box textAlign='center' mb={8}>
+				<Box component={"main"} textAlign='center' mb={8}>
 					<Box
 						sx={{
 							display: "inline-flex",

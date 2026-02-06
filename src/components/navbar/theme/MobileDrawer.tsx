@@ -413,7 +413,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 						<ListItem disablePadding sx={{mb: 1}}>
 							<ListItemButton
 								component={NavLink}
-								to={`${path.myCustomerProfile}/${auth?.slug}`}
+								to={`${path.CustomerProfile}/${auth?.slug}`}
 								onClick={handleNavLinkClick}
 								sx={{
 									borderRadius: "8px",

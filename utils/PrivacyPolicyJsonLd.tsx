@@ -1,26 +1,30 @@
-// components/PrivacyPolicyJsonLd.tsx
-import React from "react";
-import  {FunctionComponent} from "react";
+import {FunctionComponent} from "react";
 
 const PrivacyPolicyJsonLd: FunctionComponent = () => {
 	const data = {
 		"@context": "https://schema.org",
-		"@type": "PrivacyPolicy",
-		name: "سياسة الخصوصية - بيع وشراء",
+		"@type": "WebPage",
+		name: "سياسة الخصوصية",
+		url: "https://client-qqq1.vercel.app/privacy-and-policy",
 		description:
 			"اطلع على سياسة الخصوصية لمتجر بيع وشراء في أم الفحم. كيف نجمع البيانات، نستخدمها، ونحافظ على سريتها.",
-		url: "https://client-qqq1.vercel.app/Privacy-and-policy",
+		inLanguage: ["ar", "he", "en"],
+		isPartOf: {
+			"@type": "WebSite",
+			name: "صفقه",
+			url: "https://client-qqq1.vercel.app",
+		},
 		publisher: {
 			"@type": "Organization",
-			name: "بيع وشراء أم الفحم",
+			name: "صفقه",
 			logo: {
 				"@type": "ImageObject",
 				url: "https://client-qqq1.vercel.app/myLogo.png",
 			},
 		},
 		availableLanguage: ["ar", "he", "en"],
-		datePublished: "2025-04-13",
-		dateModified: "2025-04-13",
+		datePublished: "2025-1-06",
+		dateModified: "2025-1-06",
 	};
 
 	return (

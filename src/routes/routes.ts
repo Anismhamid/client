@@ -6,7 +6,6 @@ export const productsPathes = {
 	trucks: "/category/trucks",
 	electricVehicles: "/category/electric-vehicles",
 
-	// Other products (optional)
 	house: "/category/house",
 	garden: "/category/garden",
 	baby: "/category/baby",
@@ -20,8 +19,12 @@ export const productsPathes = {
 	menClothes: "/category/men-clothes",
 	womenBags: "/category/women-bags",
 
+	blog: "/blog",
+	brand: "/brands/:brand",
+	categories: "/categories",
+
 	// Product details
-	productDetails: "/product-details",
+	productDetails: "/products",
 	// will add other products here if nedded...
 };
 
@@ -31,34 +34,31 @@ export enum path {
 	Login = "/login",
 	Register = "/register",
 	Profile = "/profile",
+
+	// Help (SEO gold)
 	SellingHelp = "/help/selling",
 	SafetyHelp = "/help/safety",
 	DisputesHelp = "/help/disputes",
-	Favorite = "/favorites",
-	DicountAndOfers = "/dicounts-and-offers",
+
+	// User
 	CustomerProfile = "/users/customer/:slug",
-	myCustomerProfile = "/users/customer",
-	UsersManagement = "/usersManagement",
+	UsersManagement = "/users-management",
 	WebSiteAdmins = "/admins",
 	Messages = "/messages",
 
-	// Vehicles Pages
-	Cars = "/category/cars",
-	Motorcycles = "/category/motorcycles",
-	Bikes = "/category/bikes",
-	Trucks = "/category/trucks",
-	ElectricVehicles = "/category/electric-vehicles",
+	// Admin
+	AdminSettings = "/admin-settings",
 
-	// Other products
-	AdminSettings = "/adminSettings",
-
-	// Other Pages
-	PrivacyAndPolicy = "/Privacy-and-policy",
-	CompleteProfile = "/completeProfile",
+	// Pages
+	PrivacyAndPolicy = "/privacy-and-policy",
 	TermOfUse = "/term-of-use",
 	Contact = "/contact",
 	About = "/about",
+
+	// Ecommerce
 	Cart = "/cart",
+	Favorite = "/favorites",
+	DiscountsAndOffers = "/discounts-and-offers",
 
 	// Catch-all
 	Png = "*",

@@ -408,7 +408,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								{isLoggedIn && (
 									<Box component='li' role='listitem'>
 										<StyledNavLink
-											to={`${path.myCustomerProfile}/${auth?.slug}`}
+											to={`${path.CustomerProfile}/${auth?.slug}`}
 											aria-label={`${t("footer.myListings")} إعلاناتي موقع صفقة`}
 											title={`${t("footer.myListings")} إعلاناتي موقع صفقة`}
 										>

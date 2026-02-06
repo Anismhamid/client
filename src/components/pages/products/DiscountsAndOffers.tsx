@@ -12,11 +12,8 @@ import {Autoplay, Navigation, EffectCoverflow} from "swiper/modules";
 import "swiper/css";
 import JsonLd from "../../../../utils/JsonLd";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import {
-	generateDiscountsJsonLd,
-} from "../../../../utils/structuredData";
+import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
 import {path} from "../../../routes/routes";
-import {Helmet} from "react-helmet";
 
 interface DiscountsAndOffersProps {}
 
@@ -133,22 +130,19 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 	return (
 		<>
 			<JsonLd data={productsList} />
-			<Helmet>
-				<link rel='canonical' href={currentUrl} />
+			<link rel='canonical' href={currentUrl} />
 
-				<title>
-					{t(
-						`categories.discountsAndOffers.categories.discountsAndOffers.title`,
-					)}
-					| صفقة
-				</title>
-				<meta
-					name='description'
-					content={t(
-						`categories.discountsAndOffers.categories.discountsAndOffers.title`,
-					)}
-				/>
-			</Helmet>
+			<title>
+				{t(`categories.discountsAndOffers.categories.discountsAndOffers.title`)}|
+				صفقة
+			</title>
+			<meta
+				name='description'
+				content={t(
+					`categories.discountsAndOffers.categories.discountsAndOffers.title`,
+				)}
+			/>
+
 			<Box
 				component='section'
 				aria-labelledby='discounts-heading'
@@ -421,7 +415,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				{productsInDiscount.length > 3 && (
 					<Box textAlign='center' mt={4}>
 						<Link
-							to={path.DicountAndOfers}
+							to={path.DiscountsAndOffers}
 							style={{
 								textDecoration: "none",
 								color: theme.palette.primary.main,

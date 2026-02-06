@@ -1,10 +1,14 @@
 User-agent: *
 Allow: /
 
-# منع أرشفة صفحات الإدارة والحساب الشخصي
-Disallow: /adminSettings/
-Disallow: /usersManagement/
+
 Disallow: /profile/
 Disallow: /messages/
+Disallow: /admin-settings/
+Disallow: /users-management/
+Disallow: /cart/
+Disallow: /favorites/
+Disallow: /login/
+Disallow: /register/
 
 Sitemap: https://client-qqq1.vercel.app/sitemap.xml

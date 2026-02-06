@@ -4,7 +4,6 @@ import {getAllProducts} from "../../../services/productsServices";
 import {useUser} from "../../../context/useUSer";
 import {Box, Grid, Typography} from "@mui/material";
 import ProductCard from "./ProductCard";
-import {Helmet} from "react-helmet";
 // import JsonLd from "../../../../utils/JsonLd";
 import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
@@ -87,12 +86,11 @@ const FavoritesProducts: FunctionComponent = () => {
 
 	return (
 		<>
-			<Helmet>
-				<JsonLd data={productsList} />
-				<link rel='canonical' href={currentUrl} />
-				<title>{t("favorites")} | صفقه</title>
-				<meta name='description' content={t("favorites")} />
-			</Helmet>
+			<JsonLd data={productsList} />
+			<link rel='canonical' href={currentUrl} />
+			<title>{t("favorites")} | صفقه</title>
+			<meta name='description' content={t("favorites")} />
+
 			<Box dir={direction} sx={{px: {xs: 2, md: 4}, py: 4}}>
 				<h1>{t("favorites")}</h1>
 				<Grid container spacing={3}>

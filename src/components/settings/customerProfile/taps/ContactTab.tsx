@@ -3,7 +3,6 @@ import {FunctionComponent} from "react";
 import {User} from "../../../../interfaces/usersMessages";
 import {
 	Phone,
-	Email,
 	WhatsApp,
 	Facebook,
 	Instagram,

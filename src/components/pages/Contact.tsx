@@ -32,7 +32,6 @@ import {
 import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
 import {path} from "../../routes/routes";
-import {Helmet} from "react-helmet";
 
 interface ContactProps {}
 
@@ -53,11 +52,11 @@ const Contact: FunctionComponent<ContactProps> = () => {
 
 	return (
 		<>
-			<Helmet>
-				<link rel='canonical' href={currentUrl} />
-				<title>{t("pages.contact.title")} | صفقة</title>
-				<meta name='description' content={t("pages.contact.title")} />
-			</Helmet>
+			<link rel='canonical' href={currentUrl} />
+			<title>{t("pages.contact.title")} | صفقة</title>
+			<meta name='description' content={t("pages.contact.title")} />
+			<link rel='canonical' href={currentUrl} />
+
 			<Container maxWidth='lg' sx={{py: 6, direction}}>
 				{/* Header */}
 				<Box textAlign='center' mb={6}>

@@ -23,7 +23,7 @@ import {
 	BookmarkBorder,
 	Comment,
 	MoreHoriz,
-	Send,
+
 	Share as ShareIcon,
 	LocationOn,
 	Sell,
@@ -40,6 +40,7 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/LikeButton";
+import { path, productsPathes } from "../../../routes/routes";
 
 interface ProductCardProps {
 	product: Products;
@@ -72,15 +73,17 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		const theme = useTheme();
 		const dir = handleRTL();
 
-		const generateImageAlt = (product: Products) => {
-			return `${product.product_name} - بيع وشراء في ${product.category}`;
-		};
 		const [isBookmarked, setIsBookmarked] = useState(false);
 		const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+
+		const [expanded, setExpanded] = useState<boolean>(false);
 
 		const jsonLdData = generateSingleProductJsonLd(product);
 		const menuRef = useRef(null);
 
+		const generateImageAlt = (product: Products) => {
+			return `${product.product_name} - بيع وشراء في ${product.category}`;
+		};
 		const formatTimeAgo = () => {
 			const now = new Date();
 			const productDate = new Date(product.createdAt || now);
@@ -337,13 +340,32 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 								variant='body2'
 								sx={{
 									fontSize: "0.9375rem",
-									lineHeight: 1.3333,
+									lineHeight: 1.5,
 									color: "#050505",
 									whiteSpace: "pre-line",
+									display: "-webkit-box",
+									WebkitLineClamp: expanded ? "none" : 1,
+									WebkitBoxOrient: "vertical",
+									overflow: "hidden",
 								}}
 							>
 								{product.description}
 							</Typography>
+							{product.description.length > 120 && (
+								<Button
+									size='small'
+									onClick={() => setExpanded(!expanded)}
+									sx={{
+										mt: 0.5,
+										px: 0,
+										textTransform: "none",
+										fontWeight: 600,
+										color: theme.palette.primary.main,
+									}}
+								>
+									{expanded ? "إخفاء" : "قراءة المزيد"}
+								</Button>
+							)}
 						</Box>
 					)}
 
@@ -363,7 +385,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									showError("هذا المنتج غير متوفر حالياً");
 								}
 							}}
-							to={`/product-details/${product.category}/${product.brand}/${product._id}`}
+							to={`/product/${product.category}/${product.brand}/${product._id}`}
 							aria-label={`تفاصيل عن ${product.product_name}`}
 							style={{display: "block"}}
 						>
@@ -452,7 +474,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						{/* اسم المنتج والسعر */}
 						<Box sx={{mb: 1.5}}>
 							<Link
-								to={`/product-details/${product.category}/${product.brand}/${product._id}`}
+								to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
 								style={{textDecoration: "none", color: "inherit"}}
 							>
 								<Typography
@@ -788,19 +810,5 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 		);
 	},
 );
-
-// أيقونة الإعجاب
-const LikeIcon = () => (
-	<svg width='12' height='12' viewBox='0 0 24 24' fill='currentColor'>
-		<path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z' />
-	</svg>
-);
-
-// أيقونة الإبلاغ المؤقتة
-// const ReportIcon = ({...props}) => (
-// 	<svg {...props} viewBox='0 0 24 24' fill='currentColor'>
-// 		<path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z' />
-// 	</svg>
-// );
 
 export default ProductCard;

@@ -34,22 +34,15 @@ import {
 	MonetizationOn,
 	Visibility,
 	ThumbUp,
-	Comment,
-	Category,
-	Store,
 	LocalOffer,
 	AccessTime,
 	AttachMoney,
-	Sell,
-	CheckCircle,
-	PendingActions,
 	Refresh,
 } from "@mui/icons-material";
 import {Products} from "../../interfaces/Products";
 import {getAllUsers} from "../../services/usersServices";
 import {getAllProducts} from "../../services/productsServices";
 import {User} from "../../interfaces/usersMessages";
-import {Helmet} from "react-helmet";
 import {useUser} from "../../context/useUSer";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";
 
@@ -534,14 +527,12 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>لوحة تحكم الإدارة | صفقة - منصة C2C</title>
 				<meta
 					name='description'
 					content={"لوحة تحكم إدارة منصة بيع وشراء C2C | صفقة"}
 				/>
-			</Helmet>
 			<main>
 				{/* العنوان الرئيسي */}
 				<Box

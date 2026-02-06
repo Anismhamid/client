@@ -43,7 +43,6 @@ import {
 	ShoppingCart,
 	Star,
 } from "@mui/icons-material";
-import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
 import {motion} from "framer-motion";
 import PersonalInformation from "./tabs/PersonalInformationTab";
@@ -255,7 +254,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>
 					{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
@@ -273,7 +271,6 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					content={`تعرف على ${user.name.first} على موقع صفقه`}
 				/>
 				<meta property='og:image' content={user.image?.url} />
-			</Helmet>
 
 			<Box
 				sx={{

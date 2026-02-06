@@ -1,9 +1,9 @@
 import {Products} from "../src/interfaces/Products";
 
 const getProductUrl = (product: Products) =>
-	`https://client-qqq1.vercel.app/product-details/${product.category}/${product.brand}/${product._id}`;
+	`https://client-qqq1.vercel.app/product/${product.category}/${product.brand}/${product._id}`;
 
-//🟢 For a general product (category or type)
+// For a general product (category or type)
 export const generateCategoryJsonLd = (
 	categoryName: string,
 	products: Products[] = [],
@@ -11,7 +11,7 @@ export const generateCategoryJsonLd = (
 	"@context": "https://schema.org",
 	"@type": "CollectionPage",
 	name: categoryName,
-	description: `منتجات معروضة ضمن تصنيف ${categoryName}`,
+	description: `منشورات معروضة للبيع ضمن تصنيف ${categoryName}`,
 	mainEntity: {
 		"@type": "ItemList",
 		itemListOrder: "https://schema.org/ItemListOrderAscending",
@@ -22,22 +22,9 @@ export const generateCategoryJsonLd = (
 			url: getProductUrl(product),
 		})),
 	},
-	serviceArea: {
-		"@type": "GeoCircle",
-		itemOffered: {
-			"@type": "Service",
-			name: "Marketplace",
-		},
-		geoMidpoint: {
-			"@type": "GeoCoordinates",
-			latitude: "32.5186",
-			longitude: "35.1524",
-		},
-		geoRadius: "50000",
-	},
 });
 
-//🟢 On an individual product page
+// On an individual product page
 export const generateSingleProductJsonLd = (product: Products) => {
 	const finalPrice =
 		product.sale && product.discount
@@ -57,23 +44,31 @@ export const generateSingleProductJsonLd = (product: Products) => {
 		category: product.category,
 		brand: {
 			"@type": "Brand",
-			name: product.brand || "صفقة",
+			name: product.brand || "غير محدد",
 		},
 		offers: {
 			"@type": "Offer",
+			url: productUrl,
 			priceCurrency: "ILS",
 			price: Number(finalPrice.toFixed(2)),
-			hasMerchantReturnPolicy: {
-				"@type": "MerchantReturnPolicy",
-				returnPolicyCategory: "https://schema.org/DynamicReturnPolicy",
-			},
-			url: productUrl,
+			itemCondition: "https://schema.org/UsedCondition",
 			availability:
 				product.in_stock && product.in_stock === true
 					? "https://schema.org/InStock"
 					: "https://schema.org/OutOfStock",
+			hasMerchantReturnPolicy: {
+				"@type": "MerchantReturnPolicy",
+				returnPolicyCategory: "https://schema.org/DynamicReturnPolicy",
+				seller: {
+					"@type": "Person",
+					name: product.seller?.name || "مستخدم مسجل",
+					url: product.seller.slug
+						? `https://client-qqq1.vercel.app/user/customer/${product.seller.slug}`
+						: undefined,
+				},
+			},
+
 			priceValidUntil: "2026-12-31",
-			itemCondition: "https://schema.org/UsedCondition",
 			shippingDetails: {
 				"@type": "OfferShippingDetails",
 				shippingRate: {
@@ -90,17 +85,10 @@ export const generateSingleProductJsonLd = (product: Products) => {
 				},
 				geoMidpoint: {
 					"@type": "GeoCoordinates",
-					latitude: "32.5186", // إحداثيات منطقة أم الفحم/المثلث تقريبياً
+					latitude: "32.5186",
 					longitude: "35.1524",
 				},
-				geoRadius: "50000", // قطر 50 كم ليغطي أغلب المناطق
-			},
-			seller: {
-				"@type": "Person",
-				name: product.seller?.name || "مستخدم مسجل",
-				url: product.seller?.slug
-					? `https://client-qqq1.vercel.app/user/customer/${product.seller.slug}`
-					: `https://client-qqq1.vercel.app/`,
+				geoRadius: "50000",
 			},
 		},
 	};

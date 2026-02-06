@@ -472,8 +472,8 @@
 		}
 	},
 	"seo": {
-		"categoryTitle": "صفقه | {{category}}",
-		"categoryDescription": "تصفح مجموعة متنوعة من {{category}} الطازجة وعالية الجودة على موقعنا!"
+		"categoryTitle": "{{category}}",
+		"categoryDescription": "تصفح مجموعة متنوعة من {{category}} للبيع على موقع صفقه {{location}} والمناطق القريبة. أسعار منافسة وتواصل مباشر مع البائعين."
 	},
 	"links": {
 		"home": "الرئيسية",

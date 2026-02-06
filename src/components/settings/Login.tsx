@@ -186,7 +186,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>{`${t("login.loginButton")} | صفقة`}</title>
 				<meta name='description' content={`${t("login.metaDescription")}`} />
@@ -197,7 +196,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 					content={`${t("login.metaDescription")}`}
 				/>
 				<meta property='og:url' content={currentUrl} />
-			</Helmet>
 
 			<Container maxWidth='md' sx={{py: 8}}>
 				<Box

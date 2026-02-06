@@ -28,7 +28,6 @@ import {
 } from "@mui/icons-material";
 import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
-import {Helmet} from "react-helmet";
 
 // Type-safe theme palette access
 const getPaletteColor = (theme: any, colorKey: string) => {
@@ -123,7 +122,6 @@ const SellingHelp: FunctionComponent = () => {
 	const currentUrl = `https://client-qqq1.vercel.app/help/selling`;
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("help.selling.title", "كيف تبيع على صفقة")} | صفقة</title>
 				<meta
@@ -133,8 +131,7 @@ const SellingHelp: FunctionComponent = () => {
 						"اتبع هذه الخطوات البسيطة لبيع منتجاتك بسرعة وبأمان",
 					)}
 				/>
-			</Helmet>
-			<Container maxWidth='lg' sx={{py: {xs: 4, md: 8}, direction}}>
+			<Container component={"main"} maxWidth='lg' sx={{py: {xs: 4, md: 8}, direction}}>
 				{/* Header with gradient */}
 				<Box
 					textAlign='center'

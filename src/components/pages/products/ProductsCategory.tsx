@@ -18,23 +18,16 @@ import {
 	Button,
 	Container,
 	Grid,
-	IconButton,
-	InputAdornment,
-	TextField,
 	Typography,
 	useTheme,
 	alpha,
 } from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
-import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Clear";
 import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {Helmet} from "react-helmet";
-import ChepNavigation from "../../navbar/ChepNavigation";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
@@ -228,8 +221,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 	if (!loading && products.length === 0)
 		return (
-			<Box component={"main"} sx={{minHeight: "100vh"}}>
-				<ChepNavigation />
+			<main>
 				<Container maxWidth='lg' sx={{py: 8, textAlign: "center"}}>
 					<Typography variant='h5' color='text.secondary' sx={{mb: 3}}>
 						لم يتم العثور على أي منتجات في هذه الفئة
@@ -248,7 +240,7 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 						تحديث الصفحة
 					</Button>
 				</Container>
-			</Box>
+			</main>
 		);
 
 	const generateCategory = generateCategoryJsonLd(category, products);
@@ -256,95 +248,51 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 
 	return (
 		<>
-			<Helmet>
-				<JsonLd data={generateCategory} />
-				<link rel='canonical' href={currentUrl} />
-				<title>{t(`categories.${category}.heading`)} | صفقة</title>
-				<meta
-					name='description'
-					content={t(`categories.${category}.description`)}
-				/>
-			</Helmet>
-			<ChepNavigation />
+			<JsonLd data={generateCategory} />
+			<title>{t(`categories.${category}.heading`)} | صفقة</title>
+			<link rel='canonical' href={currentUrl} />
+			<meta name='description' content={t(`categories.${category}.description`)} />
 
+			{/* Sticky Search Bar */}
+
+			<Box
+				sx={{
+					position: "static",
+					top: 64,
+					zIndex: 1100,
+					py: 2,
+					px: {xs: 2, md: 0},
+					borderBottom: "1px solid #e4e6eb",
+				}}
+			>
+				<Box sx={{flex: 1}}>
+					<SearchBox
+						searchQuery={searchQuery}
+						setSearchQuery={setSearchQuery}
+						text={t("")}
+					/>
+				</Box>
+				<Container maxWidth='lg'>
+					<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+						<Typography
+							variant='h6'
+							sx={{
+								color: theme.palette.primary.main,
+								fontWeight: 600,
+								display: {xs: "none", md: "block"},
+							}}
+						>
+							{t(`categories.${category}.heading`)}
+						</Typography>
+					</Box>
+				</Container>
+			</Box>
 			<Box
 				component='main'
 				sx={{
-					minHeight: "100vh",
-					bgcolor: "#f0f2f5",
 					pt: {xs: 8, md: 10},
 				}}
 			>
-				{/* Sticky Search Bar */}
-				<Box
-					sx={{
-						position: "static",
-						top: 64,
-						zIndex: 1100,
-						py: 2,
-						px: {xs: 2, md: 0},
-						borderBottom: "1px solid #e4e6eb",
-					}}
-				>
-					<Container maxWidth='lg'>
-						<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
-							<Box sx={{flex: 1}}>
-								<SearchBox
-									searchQuery={searchQuery}
-									setSearchQuery={setSearchQuery}
-									text={t("searchin") || "بحث عن منتج..."}
-
-								/>
-								{/* <TextField
-									fullWidth
-									placeholder=
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-									variant='outlined'
-									size='small'
-									sx={{
-										bgcolor: "#fff",
-										borderRadius: 2,
-										"& .MuiOutlinedInput-root": {
-											borderRadius: 2,
-											"&:hover fieldset": {
-												borderColor: theme.palette.primary.main,
-											},
-										},
-									}}
-									InputProps={{
-										startAdornment: (
-											<InputAdornment position='start'>
-												<SearchIcon color='action' />
-											</InputAdornment>
-										),
-										endAdornment: searchQuery && (
-											<InputAdornment position='end'>
-												<IconButton
-													size='small'
-													onClick={() => setSearchQuery("")}
-												>
-													<ClearIcon fontSize='small' />
-												</IconButton>
-											</InputAdornment>
-										),
-									}}
-								/> */}
-							</Box>
-							<Typography
-								variant='h6'
-								sx={{
-									color: theme.palette.primary.main,
-									fontWeight: 600,
-									display: {xs: "none", md: "block"},
-								}}
-							>
-								{t(`categories.${category}.heading`)}
-							</Typography>
-						</Box>
-					</Container>
-				</Box>
-
 				<Container maxWidth='lg' sx={{py: 3}}>
 					{/* Results Count */}
 					<Typography
@@ -425,10 +373,10 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 								mt: 3,
 							}}
 						>
-							<Typography variant='h6' color='text.secondary' sx={{mb: 2}}>
+							<Typography variant='h6' color='primary.main' sx={{mb: 2}}>
 								لم يتم العثور على منتجات مطابقة لمعايير البحث
 							</Typography>
-							<Typography variant='body2' color='text.secondary'>
+							<Typography variant='body2' color='primary.main'>
 								حاول البحث باستخدام كلمات أخرى
 							</Typography>
 						</Box>

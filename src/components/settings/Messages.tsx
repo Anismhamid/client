@@ -25,7 +25,6 @@ import RoleType from "../../interfaces/UserType";
 import {User, UserMessage} from "../../interfaces/usersMessages";
 import {useUser} from "../../context/useUSer";
 import socket from "../../socket/globalSocket";
-import {Helmet} from "react-helmet";
 
 const MessagingPage: React.FC = () => {
 	const {auth} = useUser();
@@ -173,11 +172,9 @@ const MessagingPage: React.FC = () => {
 	return (
 		<>
 			{/* TODO:Translate */}
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>الرسائل | صفقة</title>
 				<meta name='description' content={"الرسائل | صفقة"} />
-			</Helmet>
 			<Container dir={direction} maxWidth='md' sx={{mt: 5}}>
 				<Typography textAlign='center' variant='h4' gutterBottom>
 					الرسائل

@@ -40,7 +40,6 @@ import {useUser} from "../../../context/useUSer";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {Helmet} from "react-helmet";
 import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
 import ProductDetailsTable from "./ProductDetailsTable";
 import LikeButton from "../../../atoms/LikeButton";
@@ -129,11 +128,11 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 
 	const productJ = generateSingleProductJsonLd(product);
 
-	const currentUrl = `https://client-qqq1.vercel.app/product-details/${product.category}/${product.brand}/${product._id}`;
+	const currentUrl = `https://client-qqq1.vercel.app/product/${product.category}/${product.brand}/${product._id}`;
 
 	return (
 		<>
-			<Helmet>
+			
 				<JsonLd data={productJ} />
 				<title>{product.product_name} | صفقة</title>
 				<link rel='canonical' href={currentUrl} />
@@ -153,7 +152,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 					content={product.price.toString()}
 				/>
 				<meta property='product:price:currency' content='ILS' />
-			</Helmet>
+			
 			<Box component={"main"}>
 				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
 					{/* Breadcrumbs */}

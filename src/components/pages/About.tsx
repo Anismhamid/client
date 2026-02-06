@@ -12,7 +12,6 @@ import {
 	Button,
 } from "@mui/material";
 import {useNavigate} from "react-router-dom";
-import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
 import {
 	Groups as GroupsIcon,
@@ -77,14 +76,14 @@ const About: FunctionComponent = () => {
 
 	return (
 		<>
-			<Helmet>
+		
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("about.title")} | صفقة</title>
 				<meta name='description' content={t("about.subtitle")} />
 				<meta property='og:title' content={t("about.title")} />
 				<meta property='og:description' content={t("about.subtitle")} />
 				<meta property='og:type' content='website' />
-			</Helmet>
+
 
 			<Box
 				sx={{

@@ -27,7 +27,6 @@ import {
 	LocalPolice,
 } from "@mui/icons-material";
 import handleRTL from "../../locales/handleRTL";
-import {Helmet} from "react-helmet";
 
 interface SafetyTip {
 	icon: JSX.Element;
@@ -145,7 +144,6 @@ const SafetyHelp: FunctionComponent = () => {
 	const currentUrl = `https://client-qqq1.vercel.app/help/safety`;
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("safety.title", "الامان")} | صفقة</title>
 				<meta
@@ -155,7 +153,6 @@ const SafetyHelp: FunctionComponent = () => {
 						"نحرص في صفقة على تجربة بيع وشراء آمنة للجميع. اتبع هذه الإرشادات لضمان معاملات آمنة ومضمونة",
 					)}
 				/>
-			</Helmet>
 			<Container maxWidth='lg' sx={{py: {xs: 4, md: 8}, direction}}>
 				{/* Header */}
 				<Box textAlign='center' mb={8}>

@@ -49,7 +49,6 @@ import {
 } from "@mui/icons-material";
 import useAddressData from "../../hooks/useAddressData";
 import {useTranslation} from "react-i18next";
-import {Helmet} from "react-helmet";
 import {motion, AnimatePresence} from "framer-motion";
 import {debounce} from "lodash";
 import handleRTL from "../../locales/handleRTL";
@@ -469,13 +468,11 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	if (submitSuccess) {
 		return (
 			<>
-				<Helmet>
 					<title>{t("register.success.title")} | صفقة</title>
 					<meta
 						name='description'
 						content={t("register.success.description")}
 					/>
-				</Helmet>
 				<Box
 					dir={dir}
 					sx={{
@@ -532,11 +529,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("register.title")} | صفقة</title>
 				<meta name='description' content={`${t("register.title")} | صفقة`} />
-			</Helmet>
 
 			<Box
 				dir={dir}

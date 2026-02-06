@@ -22,7 +22,6 @@ import {
 	ArrowBack,
 } from "@mui/icons-material";
 import {Products} from "../../../interfaces/Products";
-import {Helmet} from "react-helmet";
 import {motion} from "framer-motion";
 import {useUser} from "../../../context/useUSer";
 import {showSuccess, showError} from "../../../atoms/toasts/ReactToast";
@@ -38,6 +37,7 @@ import RatingsTab from "./taps/RatingsTab";
 import ContactTab from "./taps/ContactTab";
 import UserInformation from "./taps/UserInformation";
 import CustomerProfileHeader from "./CustomerProfileHeader";
+import {AuthValues} from "../../../interfaces/authValues";
 
 const CustomerProfile: FunctionComponent = () => {
 	const {slug} = useParams<{slug: string}>();
@@ -195,60 +195,57 @@ const CustomerProfile: FunctionComponent = () => {
 	const dir = handleRTL();
 	return (
 		<>
-			<Helmet>
-				<link rel='canonical' href={currentUrl} />
-				<title>{`منتجات ${user.name?.first} ${user.name?.last} للبيع في ${user.address?.city || "كافة البلاد"} | صفقة`}</title>
-				<meta
-					name='description'
-					content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${products.length} منتجات تشمل ${products
-						.slice(0, 3)
-						.map((p) => p.product_name)
-						.join("، ")}. بيع وشراء آمن عبر صفقة.`}
-				/>
-				<meta
-					property='og:title'
-					content={`متجر ${user.name?.first} على صفقة - عروض لا تفوت`}
-				/>
-				<meta property='og:type' content='secondary_user.profile' />
-				<meta property='og:url' content={window.location.href} />
-				<meta property='og:image' content={user?.image?.url || "/user.png"} />
-				<JsonLd
-					data={{
-						"@context": "https://schema.org",
-						"@graph": [
-							{
-								"@type": "Person",
-								"@id": `${currentUrl}#person`,
-								name: `${user.name?.first} ${user.name?.last}`,
-								image: user.image?.url || "/user.png",
-								address: {
-									"@type": "PostalAddress",
-									addressLocality: user.address?.city,
-									addressCountry: "IL",
-								},
+			<link rel='canonical' href={currentUrl} />
+			<title>{`منتجات ${user.name?.first} ${user.name?.last} للبيع في ${user.address?.city || "كافة البلاد"} | صفقة`}</title>
+			<meta
+				name='description'
+				content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${products.length} منتجات تشمل ${products
+					.slice(0, 3)
+					.map((p) => p.product_name)
+					.join("، ")}. بيع وشراء آمن عبر صفقة.`}
+			/>
+			<meta
+				property='og:title'
+				content={`متجر ${user.name?.first} على صفقة - عروض لا تفوت`}
+			/>
+			<meta property='og:type' content='secondary_user.profile' />
+			<meta property='og:url' content={window.location.href} />
+			<meta property='og:image' content={user?.image?.url || "/user.png"} />
+			<JsonLd
+				data={{
+					"@context": "https://schema.org",
+					"@graph": [
+						{
+							"@type": "Person",
+							"@id": `${currentUrl}#person`,
+							name: `${user.name?.first} ${user.name?.last}`,
+							image: user.image?.url || "/user.png",
+							address: {
+								"@type": "PostalAddress",
+								addressLocality: user.address?.city,
+								addressCountry: "IL",
 							},
-							{
-								"@type": "CollectionPage",
-								name: `منتجات البائع ${user.name?.first}`,
-								description: `قائمة المنتجات المعروضة بواسطة ${user.name?.first} على منصة صفقة`,
-								mainEntity: {
-									"@type": "ItemList",
-									numberOfItems: products.length,
-									itemListElement: products.map((product, index) => ({
-										"@type": "ListItem",
-										position: index + 1,
-										url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
-										name: product.product_name,
-										image: product.image?.url,
-									})),
-								},
+						},
+						{
+							"@type": "CollectionPage",
+							name: `منتجات البائع ${user.name?.first}`,
+							description: `قائمة المنتجات المعروضة بواسطة ${user.name?.first} على منصة صفقة`,
+							mainEntity: {
+								"@type": "ItemList",
+								numberOfItems: products.length,
+								itemListElement: products.map((product, index) => ({
+									"@type": "ListItem",
+									position: index + 1,
+									url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
+									name: product.product_name,
+									image: product.image?.url,
+								})),
 							},
-						],
-					}}
-				/>
-				;
-			</Helmet>
-
+						},
+					],
+				}}
+			/>
+			;
 			<Container dir={dir} maxWidth='lg' sx={{py: 4}}>
 				{/* Back Button */}
 				<CustomerProfileHeader
@@ -333,7 +330,7 @@ const CustomerProfile: FunctionComponent = () => {
 
 					{/* User Information */}
 					<TabPanel value={tabValue} index={1}>
-						<UserInformation user={user} />
+						<UserInformation user={user as unknown as AuthValues} />
 					</TabPanel>
 
 					<TabPanel value={tabValue} index={1}>

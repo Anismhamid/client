@@ -1,5 +1,5 @@
 import {Card, Grid, Typography, Chip} from "@mui/material";
-import {FunctionComponent, useEffect} from "react";
+import {FunctionComponent} from "react";
 import {formatDate} from "../../../../helpers/dateAndPriceFormat";
 import {AuthValues} from "../../../../interfaces/authValues";
 import {useTranslation} from "react-i18next";
@@ -10,9 +10,7 @@ interface UserInformationProps {
 
 const UserInformation: FunctionComponent<UserInformationProps> = ({user}) => {
 	const {t} = useTranslation();
-	useEffect(() => {
-		console.log(user);
-	}, [user]);
+
 	return (
 		<Grid container spacing={3}>
 			<Grid size={{xs: 12}}>

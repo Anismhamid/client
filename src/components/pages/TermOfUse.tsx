@@ -1,7 +1,6 @@
 import {FunctionComponent} from "react";
 import {Link} from "react-router-dom";
 import {path} from "../../routes/routes";
-import {Helmet} from "react-helmet";
 import {
 	Container,
 	Typography,
@@ -69,7 +68,6 @@ const TermOfUse: FunctionComponent<TermOfUseProps> = () => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>{t("pages.terms.title", "شروط الاستخدام")} | صفقة</title>
 				<meta
@@ -79,7 +77,6 @@ const TermOfUse: FunctionComponent<TermOfUseProps> = () => {
 						"شروط وأحكام استخدام منصة صفقة",
 					)}
 				/>
-			</Helmet>
 
 			<Container maxWidth='lg' sx={{py: 6, direction}}>
 				{/* Header */}

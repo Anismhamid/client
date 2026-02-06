@@ -1,6 +1,6 @@
 import {Card, Tabs as MuiTabs, Tab} from "@mui/material";
 import {FunctionComponent, SyntheticEvent} from "react";
-import {Storefront, VerifiedUser, Star, ChatBubble, ChatBubbleOutlineSharp, ChatBubbleTwoTone} from "@mui/icons-material";
+import {Storefront, VerifiedUser, Star, ChatBubbleTwoTone} from "@mui/icons-material";
 
 interface TabsProps {
 	tabValue: number;

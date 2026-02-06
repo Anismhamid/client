@@ -23,7 +23,6 @@ import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import handleRTL from "../../locales/handleRTL";
 import ProductCard from "./products/ProductCard";
-import {Helmet} from "react-helmet";
 import {useTranslation} from "react-i18next";
 import {productsAndCategories} from "../navbar/navCategoryies";
 import {motion, AnimatePresence} from "framer-motion";
@@ -211,20 +210,21 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
+	const currentUrl = `https://client-qqq1.vercel.app/`;
 
 	const diriction = handleRTL();
 
 	return (
 		<>
-			<Helmet>
-				<title>{t("home")} | صفقة</title>
-				<meta
-					name='description'
-					content={
-						"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
-					}
-				/>
-			</Helmet>
+			<title>{t("home")} | صفقة</title>
+			<meta
+				name='description'
+				content={
+					"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
+				}
+			/>
+			<link rel='canonical' href={currentUrl} />
+
 			<Box
 				className='container-fluid'
 				sx={{
@@ -393,8 +393,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 					</Typography>
 
 					<Typography component='p' variant='body2'>
-						يمكنك البحث عن أي منتج تريده، فقط اكتب ما تبحث عنه وسيظهر إن كان
-						متوفرًا على موقع صفقه
+						اكتب اسم المنتج الذي تبحث عنه، ودعنا نعرض لك أفضل العروض المتوفرة
+						من مستخدمين على موقع صفقة.
 					</Typography>
 				</Alert>
 				{!searchQuery && <DiscountsAndOffers />}
@@ -706,7 +706,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 									gap: 1,
 								}}
 							>
-								⏳ جاري تحميل المزيد من المنتجات...
+								جاري تحميل المزيد من المنشورات...
 							</Typography>
 						</motion.div>
 					</Box>
@@ -715,7 +715,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 				{/* Contact CTA Section */}
 				<Box
 					sx={{
-						background: "linear-gradient(135deg, #faf8fc 0%, #ECF0F7 100%)",
+						// background: "linear-gradient(135deg, #faf8fc 0%, #ECF0F7 100%)",
 						py: 8,
 						position: "relative",
 						overflow: "hidden",

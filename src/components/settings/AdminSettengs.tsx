@@ -20,7 +20,6 @@ import {BusinessInfoType} from "../../interfaces/businessInfoType";
 import {showSuccess} from "../../atoms/toasts/ReactToast";
 import Loader from "../../atoms/loader/Loader";
 import {useNavigate} from "react-router-dom";
-import {Helmet} from "react-helmet";
 
 interface AdminSettingsProps {}
 
@@ -80,11 +79,9 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 
 	return (
 		<>
-			<Helmet>
 				<link rel='canonical' href={currentUrl} />
 				<title>اداره | {businessInfoState.businessName}</title>
 				<meta name='description' content={"تغيير اعدادات الموقع"} />
-			</Helmet>
 			<main style={{fontFamily: "Heebo"}}>
 				<Box
 					style={{
