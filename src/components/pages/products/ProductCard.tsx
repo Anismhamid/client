@@ -23,7 +23,6 @@ import {
 	BookmarkBorder,
 	Comment,
 	MoreHoriz,
-
 	Share as ShareIcon,
 	LocationOn,
 	Sell,
@@ -40,7 +39,7 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/LikeButton";
-import { path, productsPathes } from "../../../routes/routes";
+import {path, productsPathes} from "../../../routes/routes";
 
 interface ProductCardProps {
 	product: Products;
@@ -179,6 +178,14 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "space-between",
+						// TODO:Add user mask
+// 						background: `
+// 	radial-gradient(circle at 20% 30%, #E0EDEF 15%, transparent 20%),
+// 	radial-gradient(circle at 80% 70%, #A1DAC2 15%, transparent 20%),
+// 	radial-gradient(circle at 40% 80%, #EADDF0 10%, transparent 15%),
+// 	radial-gradient(circle at 60% 20%, #A2C7DE 10%, transparent 15%),
+// 	linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)
+// `,
 					}}
 				>
 					<Link
@@ -385,7 +392,7 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 									showError("هذا المنتج غير متوفر حالياً");
 								}
 							}}
-							to={`/product/${product.category}/${product.brand}/${product._id}`}
+							to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
 							aria-label={`تفاصيل عن ${product.product_name}`}
 							style={{display: "block"}}
 						>

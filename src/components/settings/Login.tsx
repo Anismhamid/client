@@ -43,7 +43,6 @@ import {jwtDecode} from "jwt-decode";
 import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
-import {Helmet} from "react-helmet";
 import Loader from "../../atoms/loader/Loader";
 
 interface LoginProps {
@@ -186,16 +185,13 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 	return (
 		<>
-				<link rel='canonical' href={currentUrl} />
-				<title>{`${t("login.loginButton")} | صفقة`}</title>
-				<meta name='description' content={`${t("login.metaDescription")}`} />
-				<meta name='keywords' content={t("login.metaKeywords")} />
-				<meta property='og:title' content={`${t("login.loginButton")} | صفقة`} />
-				<meta
-					property='og:description'
-					content={`${t("login.metaDescription")}`}
-				/>
-				<meta property='og:url' content={currentUrl} />
+			<link rel='canonical' href={currentUrl} />
+			<title>{`${t("login.loginButton")} | صفقة`}</title>
+			<meta name='description' content={`${t("login.metaDescription")}`} />
+			<meta name='keywords' content={t("login.metaKeywords")} />
+			<meta property='og:title' content={`${t("login.loginButton")} | صفقة`} />
+			<meta property='og:description' content={`${t("login.metaDescription")}`} />
+			<meta property='og:url' content={currentUrl} />
 
 			<Container maxWidth='md' sx={{py: 8}}>
 				<Box

@@ -10,10 +10,15 @@
 }
 
 #root {
-  background: radial-gradient(circle at 30% 15%, #eef1f870, transparent 45%),
+  /* background: radial-gradient(circle at 30% 15%, #eef1f870, transparent 45%),
     radial-gradient(circle at 75% 60%, #eff2f883, transparent 50%),
     linear-gradient(180deg, #f0f0f850, #f0f0f852),
-    url('./assets/bbblurry.svg');
+    url('./assets/bbblurry.svg'); */
+  /* background: 
+  radial-gradient(circle at 20% 30%, #e0edef7c 15%, transparent 16%),
+    radial-gradient(circle at 80% 70%, #a1dac257 15%, transparent 18%),
+    radial-gradient(circle at 40% 80%, #eaddf038 10%, transparent 11%),
+    radial-gradient(circle at 60% 20%, #a2c7de6e 10%, transparent 18%); */
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

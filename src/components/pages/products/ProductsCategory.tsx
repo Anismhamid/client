@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
-import socket from "../../../socket/globalSocket";
+// import socket from "../../../socket/globalSocket";
 import ProductCard from "./ProductCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";

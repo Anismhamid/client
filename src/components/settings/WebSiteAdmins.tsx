@@ -936,7 +936,7 @@ const WebSiteAdmins: FunctionComponent<WebSiteAdminsProps> = () => {
 												>
 													{statistics.productsByCategory
 														.slice(0, 5)
-														.map((entry, index) => (
+														.map((_, index) => (
 															<Cell
 																key={`cell-${index}`}
 																fill={
