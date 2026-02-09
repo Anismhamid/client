@@ -45,7 +45,6 @@ import AccountMenu from "../../../atoms/userManage/AccountMenu";
 import {useUser} from "../../../context/useUSer";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {productsAndCategories} from "../navCategoryies";
-import {Helmet} from "react-helmet";
 import JsonLd from "../../../../utils/JsonLd";
 import {GradientSwitch} from "./GradientSwitch";
 import MobileDrawer from "./MobileDrawer";
@@ -189,7 +188,6 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	return (
 		<>
 			{/* Structured data for SEO */}
-			<Helmet>
 				<JsonLd
 					data={{
 						"@context": "https://schema.org",
@@ -211,7 +209,6 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						},
 					}}
 				/>
-			</Helmet>
 
 			<AppBar
 				component='header'
