@@ -1,7 +1,5 @@
 import {useFormik} from "formik";
 import {FunctionComponent, useState, useEffect, useCallback} from "react";
-import * as yup from "yup";
-import {UserRegister} from "../../../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 import {
@@ -92,7 +90,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 	const dir = handleRTL();
 
-	// دالة للتحقق من توفر slug مع debounce
+	// checking slug debounce
 	const checkSlug = useCallback(
 		debounce(async (slug: string) => {
 			if (slug.length < 3) {

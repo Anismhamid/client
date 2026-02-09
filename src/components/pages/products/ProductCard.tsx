@@ -39,7 +39,7 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/LikeButton";
-import {path, productsPathes} from "../../../routes/routes";
+import { productsPathes} from "../../../routes/routes";
 
 interface ProductCardProps {
 	product: Products;
