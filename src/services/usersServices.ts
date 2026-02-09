@@ -17,9 +17,10 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 		const response = await axios.post(api, newUserData, {
 			headers: {"Content-Type": "application/json"},
 		});
+		localStorage.setItem("tiken", response.data);
 		return response.data;
 	} catch (error) {
-		return null;
+		throw new Error;
 	}
 };
 

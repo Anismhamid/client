@@ -8,7 +8,7 @@ import About from "../components/pages/About";
 import Contact from "../components/pages/Contact";
 import PageNotFound from "../components/pages/Png";
 import PrivacyAdnPolicy from "../components/pages/PrivacyAndPolicy";
-import Register from "../components/settings/Register";
+import Register from "../components/settings/register/Register";
 import TermOfUse from "../components/pages/TermOfUse";
 import AdminSettings from "../components/settings/AdminSettengs";
 import Profile from "../components/settings/profile/Profile";

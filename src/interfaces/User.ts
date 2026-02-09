@@ -23,7 +23,6 @@ export interface UserRegister {
 		url?: string;
 		alt?: string;
 	};
-	role: string;
 	status?: boolean;
 	terms: boolean;
 }
@@ -55,3 +54,5 @@ export interface UserLogin {
 	email: string;
 	password: string;
 }
+
+

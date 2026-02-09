@@ -1,14 +1,14 @@
 import {useFormik} from "formik";
 import {FunctionComponent, useState, useEffect, useCallback} from "react";
 import * as yup from "yup";
-import {UserLogin, UserRegister} from "../../interfaces/User";
+import {UserRegister} from "../../../interfaces/User";
 import {Link, useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
+import {path} from "../../../routes/routes";
 import {
 	registerNewUser,
 	checkSlugAvailability,
-	loginUser,
-} from "../../services/usersServices";
+	// loginUser,
+} from "../../../services/usersServices";
 import {
 	Autocomplete,
 	Box,
@@ -47,14 +47,19 @@ import {
 	Close as CloseIcon,
 	Tag,
 } from "@mui/icons-material";
-import useAddressData from "../../hooks/useAddressData";
+import useAddressData from "../../../hooks/useAddressData";
 import {useTranslation} from "react-i18next";
 import {motion, AnimatePresence} from "framer-motion";
 import {debounce} from "lodash";
-import handleRTL from "../../locales/handleRTL";
-import useToken from "../../hooks/useToken";
-import {showSuccess} from "../../atoms/toasts/ReactToast";
-import { useUser } from "../../context/useUSer";
+import handleRTL from "../../../locales/handleRTL";
+import {
+	registerValidationSchema,
+	registerInitialValues,
+	UserRegisterFormValues,
+} from "./registerSchema";
+// import useToken from "../../hooks/useToken";
+// import {showSuccess} from "../../atoms/toasts/ReactToast";
+// import { useUser } from "../../context/useUSer";
 
 interface RegisterProps {}
 
@@ -71,8 +76,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	const [currentStep, setCurrentStep] = useState(0);
 	const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
 	const [checkingSlug, setCheckingSlug] = useState<boolean>(false);
-	const {setAuth, setIsLoggedIn} = useUser();
-	const {decodedToken, setAfterDecode} = useToken();
+	// const {setAuth, setIsLoggedIn} = useUser();
+	// const {decodedToken, setAfterDecode} = useToken();
 	const navigate = useNavigate();
 	const {t} = useTranslation();
 	const theme = useTheme();
@@ -116,118 +121,26 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		};
 	}, [checkSlug]);
 
-	const formik = useFormik<UserRegister>({
-		initialValues: {
-			name: {
-				first: "",
-				last: "",
-			},
-			phone: {
-				phone_1: "",
-				phone_2: "",
-			},
-			address: {
-				city: "",
-				street: "",
-				houseNumber: "",
-			},
-			email: "",
-			password: "",
-			confirmPassword: "",
-			gender: "",
-			image: {
-				url: "",
-				alt: "",
-			},
-			slug: "",
-			role: "Client",
-			terms: false,
-		},
-		validationSchema: yup.object({
-			name: yup.object({
-				first: yup
-					.string()
-					.required(t("register.validation.firstNameRequired"))
-					.min(2, t("register.validation.firstNameMin"))
-					.matches(/^[\p{L}\s]+$/u, t("register.validation.nameLettersOnly")),
-				last: yup
-					.string()
-					.required(t("register.validation.lastNameRequired"))
-					.min(2, t("register.validation.lastNameMin"))
-					.matches(/^[\p{L}\s]+$/u, t("register.validation.nameLettersOnly")),
-			}),
-			phone: yup.object({
-				phone_1: yup
-					.string()
-					.matches(/^0[0-9]{8,9}$/, t("register.validation.phone1Format"))
-					.required(t("register.validation.phone1Required")),
-				phone_2: yup
-					.string()
-					.matches(/^0[0-9]{8,9}$|^$/, t("register.validation.phone2Format")),
-			}),
-			address: yup.object({
-				city: yup
-					.string()
-					.required(t("register.validation.cityRequired"))
-					.min(2, t("register.validation.cityMin")),
-				street: yup
-					.string()
-					.required(t("register.validation.streetRequired"))
-					.min(2, t("register.validation.streetMin")),
-				houseNumber: yup
-					.string()
-					.matches(/^[0-9]*$/, t("register.validation.houseNumberDigits")),
-			}),
-			email: yup
-				.string()
-				.min(5, t("register.validation.emailMin"))
-				.email(t("register.validation.emailInvalid"))
-				.required(t("register.validation.emailRequired")),
-			password: yup
-				.string()
-				.required(t("register.validation.passwordRequired"))
-				.min(8, t("register.validation.passwordMin"))
-				.max(60, t("register.validation.passwordMax"))
-				.matches(/[a-z]/, t("register.validation.passwordLowercase"))
-				.matches(/[A-Z]/, t("register.validation.passwordUppercase"))
-				.matches(/[0-9]/, t("register.validation.passwordNumber"))
-				.matches(
-					/[!@#$%^&*(),.?":{}|<>]/,
-					t("register.validation.passwordSpecial"),
-				),
-			confirmPassword: yup
-				.string()
-				.oneOf(
-					[yup.ref("password")],
-					t("register.validation.confirmPasswordMatch"),
-				)
-				.required(t("register.validation.confirmPasswordRequired")),
-			gender: yup.string().required(t("register.validation.genderRequired")),
-			slug: yup
-				.string()
-				.required(t("register.validation.slugRequired"))
-				.min(3, t("register.validation.slugMin"))
-				.max(30, t("register.validation.slugMax"))
-				.matches(/^[a-z0-9-]+$/, t("register.validation.nameLettersOnly"))
-				.test(
-					"no-spaces",
-					t("register.validation.slugNoSpaces"),
-					(value) => !/\s/.test(value),
-				)
-				.test(
-					"no-special-chars",
-					t("register.validation.slugNoSpecial"),
-					(value) => /^[a-z0-9-]+$/.test(value),
-				),
-			terms: yup.boolean().oneOf([true], t("register.validation.termsRequired")),
-			image: yup.object({
-				url: yup.string().url(t("register.validation.imageUrlInvalid")),
-				alt: yup.string(),
-			}),
-		}),
-		onSubmit: async (user: UserRegister) => {
+	const handleRegistrationError = (error: any) => {
+		const errorMap: Record<string, string> = {
+			EMAIL_EXISTS: t("register.errors.emailExists"),
+			SLUG_EXISTS: t("register.errors.slugExists"),
+			WEAK_PASSWORD: t("register.errors.weakPassword"),
+			INVALID_PHONE: t("register.errors.invalidPhone"),
+			NETWORK_ERROR: t("register.errors.networkError"),
+			RATE_LIMITED: t("register.errors.rateLimited"),
+		};
+
+		const errorCode = error.response?.data?.code;
+		return errorMap[errorCode] || t("register.errors.serverError");
+	};
+
+	const formik = useFormik<UserRegisterFormValues>({
+		initialValues: registerInitialValues,
+		validationSchema: registerValidationSchema(),
+		onSubmit: (user: UserRegisterFormValues) => {
 			setIsLoading(true);
-			setSubmitError(null);
+			setSubmitError("");
 
 			const dataToSend = {
 				name: {
@@ -236,7 +149,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				},
 				phone: {
 					phone_1: user.phone.phone_1.trim(),
-					phone_2: user.phone.phone_2.trim(),
+					phone_2: user.phone.phone_2?.trim() || "",
 				},
 				address: {
 					city: user.address.city.trim(),
@@ -247,46 +160,75 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				password: user.password,
 				gender: user.gender,
 				slug: user.slug.trim().toLowerCase(),
-				role: user.role,
 				image: {
 					url: user?.image?.url?.trim(),
 					alt: user.image.alt || `${user.name.first} ${user.name.last}`,
 				},
 				terms: user.terms,
 			};
-			try {
-				await registerNewUser(dataToSend);
+			// try {
+			// 	await registerNewUser(dataToSend);
 
-				const login: UserLogin = {
-					email: dataToSend.email,
-					password: dataToSend.password,
-				};
+			// 	const login: UserLogin = {
+			// 		email: dataToSend.email,
+			// 		password: dataToSend.password,
+			// 	};
 
-				const token = await loginUser(login);
-				if (token) {
+			// 	const token = await loginUser(login);
+			// 	if (token) {
+			// 		localStorage.setItem("token", token);
+			// 		setAfterDecode(token);
+			// 		setAuth({...decodedToken, slug: decodedToken?.slug || ""});
+			// 		setIsLoggedIn(true);
+			// 		showSuccess("התחברת בהצלחה!");
+
+			// 		setSubmitSuccess(true);
+
+			// 		// Redirect after 3 seconds
+			// 		setTimeout(() => {
+			// 			navigate(path.Home);
+			// 		}, 3000);
+			// 	}
+			// } catch (error: any) {
+			// 	console.error("Registration error:", error);
+			// 	setSubmitError(
+			// 		error.response?.data?.message ||
+			// 			t("register.errors.serverError") ||
+			// 			"حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.",
+			// 	);
+			// } finally {
+			// 	setIsLoading(false);
+			// }
+			registerNewUser(dataToSend)
+				.then((res) => {
+					const token = res.data.token || res.data;
 					localStorage.setItem("token", token);
-					setAfterDecode(token);
-					setAuth({...decodedToken, slug: decodedToken?.slug || ""});
-					setIsLoggedIn(true);
-					showSuccess("התחברת בהצלחה!");
 
 					setSubmitSuccess(true);
 
-					// Redirect after 3 seconds
 					setTimeout(() => {
 						navigate(path.Home);
-					}, 3000);
-				}
-			} catch (error: any) {
-				console.error("Registration error:", error);
-				setSubmitError(
-					error.response?.data?.message ||
-						t("register.errors.serverError") ||
-						"حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.",
-				);
-			} finally {
-				setIsLoading(false);
-			}
+					}, 1500);
+				})
+				.catch((error) => {
+					const errorMessage = handleRegistrationError(error);
+					//  ||
+					// error.response?.data?.message ||
+					// t("register.errors.serverError");
+
+					setSubmitError(errorMessage);
+
+					// لو الإيميل موجود، رجّع المستخدم لخطوة المعلومات الشخصية
+					if (error) {
+						setCurrentStep(0);
+						formik.setFieldError("email", error);
+						formik.setFieldTouched("email", true);
+						console.log(error);
+					} else {
+						formik.setStatus({serverError: "حدث خطأ في السيرفر"});
+					}
+				})
+				.finally(() => setIsLoading(false));
 		},
 	});
 
@@ -468,11 +410,8 @@ const Register: FunctionComponent<RegisterProps> = () => {
 	if (submitSuccess) {
 		return (
 			<>
-					<title>{t("register.success.title")} | صفقة</title>
-					<meta
-						name='description'
-						content={t("register.success.description")}
-					/>
+				<title>{t("register.success.title")} | صفقة</title>
+				<meta name='description' content={t("register.success.description")} />
 				<Box
 					dir={dir}
 					sx={{
@@ -529,9 +468,9 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 	return (
 		<>
-				<link rel='canonical' href={currentUrl} />
-				<title>{t("register.title")} | صفقة</title>
-				<meta name='description' content={`${t("register.title")} | صفقة`} />
+			<link rel='canonical' href={currentUrl} />
+			<title>{t("register.title")} | صفقة</title>
+			<meta name='description' content={`${t("register.title")} | صفقة`} />
 
 			<Box
 				dir={dir}

@@ -138,7 +138,9 @@
 			"slugMax": "שם המשתמש לא יכול לעלות על 30 תווים",
 			"slugFormat": "שם המשתמש יכול להכיל אותיות באנגלית קטנות, מספרים ומקפים בלבד",
 			"slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
-			"slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים"
+			"slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים",
+			"termsRequired": "Please agree to the Terms of Service and Privacy Policy to continue",
+			"emailExists": "Please try another email"
 		},
 		"gender": "מין",
 		"selectGender": "בחר מין",
