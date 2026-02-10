@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import {getAllProducts} from "../services/productsServices";
-import {Products} from "../interfaces/Products";
+import {getAllProducts} from "../services/postsServices";
+import {Products} from "../interfaces/Posts";
 
 const useProducts = () => {
 	const [products, setProducts] = useState<Products[]>([]);

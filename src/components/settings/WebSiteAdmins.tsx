@@ -39,9 +39,9 @@ import {
 	AttachMoney,
 	Refresh,
 } from "@mui/icons-material";
-import {Products} from "../../interfaces/Products";
+import {Products} from "../../interfaces/Posts";
 import {getAllUsers} from "../../services/usersServices";
-import {getAllProducts} from "../../services/productsServices";
+import {getAllProducts} from "../../services/postsServices";
 import {User} from "../../interfaces/usersMessages";
 import {useUser} from "../../context/useUSer";
 import {formatPrice} from "../../helpers/dateAndPriceFormat";

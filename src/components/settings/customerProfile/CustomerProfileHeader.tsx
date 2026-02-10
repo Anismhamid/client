@@ -29,7 +29,7 @@ import {NavigateFunction} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {User} from "../../../interfaces/usersMessages";
 import {Stats} from "./types/states";
-import {Products} from "../../../interfaces/Products";
+import {Products} from "../../../interfaces/Posts";
 
 interface CustomerProfileHeaderProps {
 	handleShareProfile: () => void;

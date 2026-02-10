@@ -2,6 +2,8 @@
 	"home": "בית",
 	"webPageName": "ספקה",
 	"bestOffers": "העסקות הטובים ביותר במקום אחד",
+	"browse-posts":"עיין בפוסטים",
+	"create-post":"צור פוסט",
 	"allRightsReserved": "כל הזכויות שמורות.",
 	"help": "עזרה",
 	"favorites": "מועדפים",
@@ -161,13 +163,19 @@
 	},
 	"modals": {
 		"addProductModal": {
-			"title": "הוספת פוסט",
-			"productName": "שם מוצר (ייחודי)",
-			"productNamePlaceholder": "שם מוצר",
+			"title": "צור מודעה חדשה",
+			"productName": "כותרת",
+			"productNamePlaceholder": "כותרת",
 			"category": "קטגוריה",
 			"selectCategory": "בחר קטגוריה",
+			"subcategory": "תת קטגורה",
+			"selectSubcategory": "בחר תת קטגורה",
+			"selectColor": "בחר צבע",
+			"color": "צבע",
+			"image": "תמונה",
+			"in_stock": "במלאי",
+			"not_in_stock": "חסר במלאי",
 			"price": "מחיר",
-			"quantity": "כמות במלאי",
 			"description": "תיאור מוצר",
 			"descriptionPlaceholder": "הכנס תיאור מוצר",
 			"imageUrl": "קישור לתמונה",
@@ -319,7 +327,7 @@
 				"hand": "שעוני יד"
 			}
 		},
-		"men-clothes": {
+		"menclothes": {
 			"label": "ביגוד גברים",
 			"heading": "ביגוד גברים",
 			"description": "ביגוד לגברים לשימושים שונים.",
@@ -329,7 +337,7 @@
 				"shoes": "נעליים"
 			}
 		},
-		"women-clothes": {
+		"womenclothes": {
 			"label": "ביגוד נשים",
 			"heading": "ביגוד נשים",
 			"description": "ביגוד לנשים בסגנונות שונים.",
@@ -339,7 +347,7 @@
 				"shoes": "נעליים"
 			}
 		},
-		"women-bags": {
+		"womenbags": {
 			"label": "תיקים לנשים",
 			"heading": "תיקים לנשים",
 			"description": "תיקים לנשים בגדלים ושימושים שונים.",
@@ -358,7 +366,18 @@
 				"electric": "רכבים חשמליים",
 				"parts": "חלפים",
 				"accessories": "אביזרי רכב"
-			}
+			},
+			"fuel": {
+				"label": "צריכה",
+				"settings": {
+					"gasoline": "דלק",
+					"diesel": "דיזל",
+					"electric": "חשמלי"
+				}
+			},
+			"year": "שנה",
+			"brand": "יצרן",
+			"mileage": "קילומטרים"
 		},
 		"motorcycles": {
 			"label": "אופנועים",
@@ -368,7 +387,10 @@
 				"sport": "אופנועי ספורט",
 				"scooters": "קטנועים",
 				"parts": "חלפים"
-			}
+			},
+			"year": "שנה",
+			"brand": "יצרן",
+			"mileage": "קילומטרים"
 		},
 		"trucks": {
 			"label": "משאיות",
@@ -377,7 +399,10 @@
 			"subCategories": {
 				"light": "משאיות קלות",
 				"heavy": "משאיות כבדות"
-			}
+			},
+			"year": "שנה",
+			"brand": "יצרן",
+			"mileage": "קילומטרים"
 		},
 		"bikes": {
 			"label": "אופניים",
@@ -387,16 +412,22 @@
 				"kids": "אופני ילדים",
 				"mountain": "אופני הרים",
 				"road": "אופני כביש"
-			}
+			},
+			"year": "שנה",
+			"brand": "יצרן",
+			"mileage": "קילומטרים"
 		},
-		"electric-vehicles": {
+		"electricvehicles": {
 			"label": "כלי רכב חשמליים",
 			"heading": "כלי רכב חשמליים",
 			"description": "כלי רכב הפועלים באמצעות חשמל.",
 			"subCategories": {
 				"cars": "רכבים חשמליים",
 				"scooters": "קורקינטים חשמליים"
-			}
+			},
+			"year": "שנה",
+			"brand": "יצרן",
+			"mileage": "קילומטרים"
 		},
 		"discountsAndOffers": {
 			"common": {

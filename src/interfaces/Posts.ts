@@ -1,4 +1,4 @@
-import {CategoryValue} from "../atoms/productsManage/productLogicMap";
+import {CategoryValue} from "../atoms/productsManage/postLogicMap";
 
 /**
  * Products interface

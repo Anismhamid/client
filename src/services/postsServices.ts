@@ -1,5 +1,5 @@
 import axios from "axios";
-import {Products} from "../interfaces/Products";
+import {Products} from "../interfaces/Posts";
 
 const api = `${import.meta.env.VITE_API_URL}`;
 

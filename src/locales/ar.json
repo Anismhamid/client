@@ -2,6 +2,8 @@
 	"home": "الرئيسيه",
 	"House": "مستلزمات البيت",
 	"webPageName": "صفقة",
+	"browse-posts": "تصفح المنشورات",
+	"create-post": "اضافة منشور",
 	"help": "مساعده",
 	"favorites": "المفضله",
 	"startFree": "ابدأ الآن مجاناً",
@@ -208,14 +210,6 @@
 			"image": "صورة",
 			"in_stock": "المنتج متوفر حاليا",
 			"not_in_stock": "المنتج غير متوفر حاليا",
-			"fuel": {
-				"label": "دعم",
-				"settings": {
-					"gasoline": "بنزين",
-					"diesel": "ديزل",
-					"electric": "كهربائيه"
-				}
-			},
 			"year": "السنه",
 			"brand": "العلامه التجاريه",
 			"mileage": "كيلومترات",
@@ -372,7 +366,7 @@
 				"hand": "ساعات اليد"
 			}
 		},
-		"men-clothes": {
+		"menclothes": {
 			"label": "ملابس رجالية",
 			"heading": "ملابس رجالية",
 			"description": "ملابس مخصّصة للرجال بمختلف الاستخدامات.",
@@ -382,7 +376,7 @@
 				"shoes": "أحذية"
 			}
 		},
-		"women-clothes": {
+		"womenclothes": {
 			"label": "ملابس نسائية",
 			"heading": "ملابس نسائية",
 			"description": "ملابس مخصّصة للنساء بمختلف الأنماط.",
@@ -392,7 +386,7 @@
 				"shoes": "أحذية"
 			}
 		},
-		"women-bags": {
+		"womenbags": {
 			"label": "حقائب نسائية",
 			"heading": "حقائب نسائية",
 			"description": "حقائب نسائية بمختلف الأحجام والاستخدامات.",
@@ -411,7 +405,18 @@
 				"electric": "سيارات كهربائية",
 				"parts": "قطع غيار",
 				"accessories": "إكسسوارات سيارات"
-			}
+			},
+			"fuel": {
+				"label": "دعم",
+				"settings": {
+					"gasoline": "بنزين",
+					"diesel": "ديزل",
+					"electric": "كهربائيه"
+				}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات"
 		},
 		"motorcycles": {
 			"label": "دراجات نارية",
@@ -421,7 +426,18 @@
 				"sport": "رياضية",
 				"scooters": "سكوترات",
 				"parts": "قطع غيار"
-			}
+			},
+			"fuel": {
+				"label": "دعم",
+				"settings": {
+					"gasoline": "بنزين",
+					"diesel": "ديزل",
+					"electric": "كهربائيه"
+				}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات"
 		},
 		"trucks": {
 			"label": "شاحنات",
@@ -430,7 +446,18 @@
 			"subCategories": {
 				"light": "شاحنات خفيفة",
 				"heavy": "شاحنات ثقيلة"
-			}
+			},
+			"fuel": {
+				"label": "دعم",
+				"settings": {
+					"gasoline": "بنزين",
+					"diesel": "ديزل",
+					"electric": "كهربائيه"
+				}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات"
 		},
 		"bikes": {
 			"label": "دراجات هوائية",
@@ -440,16 +467,22 @@
 				"kids": "دراجات أطفال",
 				"mountain": "دراجات جبلية",
 				"road": "دراجات طرق"
-			}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات"
 		},
-		"electric-vehicles": {
+		"electricvehicles": {
 			"label": "مركبات كهربائية",
 			"heading": "مركبات كهربائية",
 			"description": "مركبات تعمل بالطاقة الكهربائية.",
 			"subCategories": {
 				"cars": "سيارات كهربائية",
 				"scooters": "سكوترات كهربائية"
-			}
+			},
+			"year": "السنه",
+			"brand": "العلامه التجاريه",
+			"mileage": "كيلومترات"
 		},
 		"discountsAndOffers": {
 			"common": {

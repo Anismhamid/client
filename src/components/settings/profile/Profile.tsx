@@ -49,7 +49,7 @@ import PersonalInformation from "./tabs/PersonalInformationTab";
 import {useUserProducts} from "../../../hooks/useUserProducts";
 import useToken from "../../../hooks/useToken";
 import {useUser} from "../../../context/useUSer";
-import {Products} from "../../../interfaces/Products";
+import {Products} from "../../../interfaces/Posts";
 import {path} from "../../../routes/routes";
 import {showSuccess} from "../../../atoms/toasts/ReactToast";
 import {AuthValues, emptyAuthValues} from "../../../interfaces/authValues";
@@ -254,23 +254,23 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 
 	return (
 		<>
-				<link rel='canonical' href={currentUrl} />
-				<title>
-					{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
-				</title>
-				<meta
-					name='description'
-					content={`${t("accountMenu.profile")} ${user.name.first} ${user.name.last}`}
-				/>
-				<meta
-					property='og:title'
-					content={`${user.name.first} ${user.name.last} - ملف شخصي`}
-				/>
-				<meta
-					property='og:description'
-					content={`تعرف على ${user.name.first} على موقع صفقه`}
-				/>
-				<meta property='og:image' content={user.image?.url} />
+			<link rel='canonical' href={currentUrl} />
+			<title>
+				{t("accountMenu.profile")} {user.name.first} {user.name.last} | صفقة
+			</title>
+			<meta
+				name='description'
+				content={`${t("accountMenu.profile")} ${user.name.first} ${user.name.last}`}
+			/>
+			<meta
+				property='og:title'
+				content={`${user.name.first} ${user.name.last} - ملف شخصي`}
+			/>
+			<meta
+				property='og:description'
+				content={`تعرف على ${user.name.first} على موقع صفقه`}
+			/>
+			<meta property='og:image' content={user.image?.url} />
 
 			<Box
 				sx={{

@@ -1,5 +1,5 @@
 import {toast} from "react-toastify";
-import { Products } from "../../interfaces/Products";
+import {Products} from "../../interfaces/Posts";
 
 export const showNewProductToast = ({
 	navigate,
@@ -14,7 +14,8 @@ export const showNewProductToast = ({
 		({closeToast}) => (
 			<div>
 				<p>
-					<strong>נוסף מוצר חדש:</strong> {`${product.category}, ${product.product_name}`}
+					<strong>נוסף מוצר חדש:</strong>{" "}
+					{`${product.category}, ${product.product_name}`}
 				</p>
 				<button
 					onClick={() => {

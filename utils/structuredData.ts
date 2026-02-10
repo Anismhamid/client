@@ -1,4 +1,4 @@
-import {Products} from "../src/interfaces/Products";
+import {Products} from "../src/interfaces/Posts";
 
 const getProductUrl = (product: Products) =>
 	`https://client-qqq1.vercel.app/product/${product.category}/${product.brand}/${product._id}`;

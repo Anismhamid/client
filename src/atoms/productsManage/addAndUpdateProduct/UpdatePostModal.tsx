@@ -1,13 +1,13 @@
 import {FunctionComponent, useEffect, useState} from "react";
 import {useFormik} from "formik";
-import {initialProductValue, Products} from "../../../interfaces/Products";
+import {initialProductValue, Products} from "../../../interfaces/Posts";
 import * as yup from "yup";
 import {Modal, ModalHeader} from "react-bootstrap";
-import {getProductById, updateProduct} from "../../../services/productsServices";
+import {getProductById, updateProduct} from "../../../services/postsServices";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import ProductForm, {DynamicField} from "./ProductForm";
-import {categoriesLogic} from "../productLogicMap";
+import ProductForm, {DynamicField} from "./PostForm";
+import {categoriesLogic} from "../postLogicMap";
 
 interface UpdateProductModalProps {
 	show: boolean;
@@ -88,10 +88,12 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			category: yup.string().required(),
 			price: yup.number().required(),
 			description: yup.string().min(2).max(500),
-			image: yup.object({
-				url: yup.string().required().url(),
-				publicId: yup.string(),
-			}).required(),
+			image: yup
+				.object({
+					url: yup.string().required().url(),
+					publicId: yup.string(),
+				})
+				.required(),
 		}),
 		onSubmit(values, {resetForm}) {
 			updateProduct(product._id as string, values)

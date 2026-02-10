@@ -1,6 +1,6 @@
 import {FunctionComponent, useEffect, useState, useCallback} from "react";
-import {Products} from "../../../interfaces/Products";
-import {getProductsInDiscount} from "../../../services/productsServices";
+import {Products} from "../../../interfaces/Posts";
+import {getProductsInDiscount} from "../../../services/postsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
 import {Skeleton, Box, Typography, useTheme, useMediaQuery} from "@mui/material";

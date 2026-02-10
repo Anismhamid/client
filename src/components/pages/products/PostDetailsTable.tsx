@@ -1,11 +1,8 @@
 import {FunctionComponent} from "react";
 import {useTranslation} from "react-i18next";
 
-import {
-	categoriesLogic,
-	CategoryValue,
-} from "../../../atoms/productsManage/productLogicMap";
-import { getColorHex } from "../../../atoms/colorsSettings/carsColors";
+import {categoriesLogic, CategoryValue} from "../../../atoms/productsManage/postLogicMap";
+import {getColorHex} from "../../../atoms/colorsSettings/carsColors";
 
 interface Product {
 	category: CategoryValue;
@@ -20,11 +17,11 @@ interface Field {
 	options?: string[];
 }
 
-interface ProductDetailsTableProps {
+interface PostDetailsTableProps {
 	product: Product;
 }
 
-const ProductDetailsTable: FunctionComponent<ProductDetailsTableProps> = ({product}) => {
+const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) => {
 	const {t} = useTranslation();
 
 	const fields: Field[] = product.subcategory
@@ -63,4 +60,4 @@ const ProductDetailsTable: FunctionComponent<ProductDetailsTableProps> = ({produ
 	);
 };
 
-export default ProductDetailsTable;
+export default PostDetailsTable;

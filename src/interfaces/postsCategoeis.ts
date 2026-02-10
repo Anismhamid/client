@@ -12,7 +12,7 @@ export const postsCategory = [
 	{id: "Watches"},
 	{id: "MenClothes"},
 	{id: "WomenClothes"},
-	{id: "WomenBags"},
+	{id: "Womenbags"},
 	{id: "cars"},
 	{id: "Motorcycles"},
 	{id: "Trucks"},

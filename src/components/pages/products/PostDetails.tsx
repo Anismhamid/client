@@ -8,8 +8,8 @@ import {
 	useRef,
 } from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
-import {deleteProduct, getProductById} from "../../../services/productsServices";
-import {initialProductValue, Products} from "../../../interfaces/Products";
+import {deleteProduct, getProductById} from "../../../services/postsServices";
+import {initialProductValue, Products} from "../../../interfaces/Posts";
 import {
 	Box,
 	CircularProgress,
@@ -55,15 +55,15 @@ import {useUser} from "../../../context/useUSer";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {categoryLabels, categoryPathMap} from "../../../interfaces/productsCategoeis";
-import ProductDetailsTable from "./ProductDetailsTable";
+import {categoryLabels, categoryPathMap} from "../../../interfaces/postsCategoeis";
 import LikeButton from "../../../atoms/LikeButton";
-import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
+import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
+import PostDetailsTable from "./PostDetailsTable";
 
-interface ProductDetailsProps {}
+interface PostDetailsProps {}
 
-const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
+const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	const {t} = useTranslation();
 	const [product, setProduct] = useState<Products>(initialProductValue as Products);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -146,7 +146,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 		);
 	}, [auth?._id, product.seller?.user]);
 
-	const MemoizedProductDetailsTable = memo(ProductDetailsTable);
+	const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
 	// ----- Memoized handlers -----
 	const handleShare = useCallback(async () => {
@@ -774,7 +774,7 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 						>
 							تفاصيل المنتج
 						</Typography>
-						<MemoizedProductDetailsTable product={product} />
+						<MemoizedPostDetailsTable product={product} />
 					</Box>
 
 					{/* Comments Section */}
@@ -928,4 +928,4 @@ const ProductDetails: FunctionComponent<ProductDetailsProps> = () => {
 	);
 };
 
-export default ProductDetails;
+export default PostDetails;

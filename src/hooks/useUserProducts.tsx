@@ -1,9 +1,7 @@
 // hooks/useUserProducts.ts
 import {useEffect, useState, useMemo} from "react";
-import {
-	getCustomerProfileProductsBySlug,
-} from "../services/productsServices";
-import {Products} from "../interfaces/Products";
+import {getCustomerProfileProductsBySlug} from "../services/postsServices";
+import {Products} from "../interfaces/Posts";
 
 export const useUserProducts = (slug: string) => {
 	const [userProducts, setUserProducts] = useState<Products[]>([]);

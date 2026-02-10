@@ -1,7 +1,7 @@
 import {Fab, SpeedDial, SpeedDialAction, Zoom} from "@mui/material";
 import {FunctionComponent, useEffect, useState} from "react";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
-import AddProductModal from "./addAndUpdateProduct/AddProdutModal";
+import AddProductModal from "./addAndUpdateProduct/CreatePostModal";
 import SettingsIcon from "@mui/icons-material/Settings";
 import {useUser} from "../../context/useUSer";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";

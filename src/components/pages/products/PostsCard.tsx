@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
 import {Link} from "react-router-dom";
-import {Products} from "../../../interfaces/Products";
+import {Products} from "../../../interfaces/Posts";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
@@ -39,9 +39,9 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/LikeButton";
-import { productsPathes} from "../../../routes/routes";
+import {productsPathes} from "../../../routes/routes";
 
-interface ProductCardProps {
+interface PostCardProps {
 	product: Products;
 	discountedPrice: number;
 	canEdit?: boolean;
@@ -55,7 +55,7 @@ interface ProductCardProps {
 	updateProductInList?: (updatedProduct: Products) => void;
 }
 
-const ProductCard: FunctionComponent<ProductCardProps> = memo(
+const PostCard: FunctionComponent<PostCardProps> = memo(
 	({
 		product,
 		discountedPrice,
@@ -179,13 +179,13 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 						alignItems: "center",
 						justifyContent: "space-between",
 						// TODO:Add user mask
-// 						background: `
-// 	radial-gradient(circle at 20% 30%, #E0EDEF 15%, transparent 20%),
-// 	radial-gradient(circle at 80% 70%, #A1DAC2 15%, transparent 20%),
-// 	radial-gradient(circle at 40% 80%, #EADDF0 10%, transparent 15%),
-// 	radial-gradient(circle at 60% 20%, #A2C7DE 10%, transparent 15%),
-// 	linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)
-// `,
+						// 						background: `
+						// 	radial-gradient(circle at 20% 30%, #E0EDEF 15%, transparent 20%),
+						// 	radial-gradient(circle at 80% 70%, #A1DAC2 15%, transparent 20%),
+						// 	radial-gradient(circle at 40% 80%, #EADDF0 10%, transparent 15%),
+						// 	radial-gradient(circle at 60% 20%, #A2C7DE 10%, transparent 15%),
+						// 	linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)
+						// `,
 					}}
 				>
 					<Link
@@ -818,4 +818,4 @@ const ProductCard: FunctionComponent<ProductCardProps> = memo(
 	},
 );
 
-export default ProductCard;
+export default PostCard;

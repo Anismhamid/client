@@ -8,8 +8,8 @@ import {UserRegister} from "../interfaces/User";
 import RoleType from "../interfaces/UserType";
 import socket from "../socket/globalSocket";
 import useNotificationSound from "./useNotificationSound";
-import {Products} from "../interfaces/Products";
-import { productsPathes } from "../routes/routes";
+import {Products} from "../interfaces/Posts";
+import {productsPathes} from "../routes/routes";
 
 const useSocketEvents = () => {
 	const {auth} = useUser();

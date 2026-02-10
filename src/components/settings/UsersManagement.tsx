@@ -1,5 +1,4 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {UserRegister} from "../../interfaces/User";
 import {
 	getAllUsers,
 	patchUserStatus,
@@ -36,6 +35,7 @@ import EditUserData from "../../atoms/userManage/EditUserData";
 import socket from "../../socket/globalSocket";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
+import {UserRegister} from "../../interfaces/User";
 
 interface UersManagementProps {}
 
@@ -122,9 +122,11 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 	const changeRole = (email: string, newRole: string) => {
 		patchUserRole(email, newRole)
 			.then(() => {
-				setUsers(
+				return setUsers(
 					users.map((user) =>
-						user.email === email ? {...user, role: newRole} : user,
+						user.email === email
+							? {...user, role: newRole as UserRegister["role"]}
+							: user,
 					),
 				);
 			})
@@ -151,10 +153,9 @@ const UersManagement: FunctionComponent<UersManagementProps> = () => {
 
 	return (
 		<>
-
-				<link rel='canonical' href={currentUrl} />
-				<title>اداره المستخدمين | صفقة</title>
-				<meta name='description' content={"ادارة المستخدمين | صفقة"} />
+			<link rel='canonical' href={currentUrl} />
+			<title>اداره المستخدمين | صفقة</title>
+			<meta name='description' content={"ادارة المستخدمين | صفقة"} />
 			<main className='min-vh-100'>
 				<div className='container-fluid my-5'>
 					<h1 className='text-center display-6 rounded p-3 mb-4'>

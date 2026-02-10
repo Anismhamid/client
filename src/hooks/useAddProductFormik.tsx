@@ -1,8 +1,8 @@
 import {useFormik} from "formik";
 import * as yup from "yup";
 import {useTranslation} from "react-i18next";
-import {createNewPost} from "../services/productsServices";
-import {Products} from "../interfaces/Products";
+import {createNewPost} from "../services/postsServices";
+import {Products} from "../interfaces/Posts";
 import {useState} from "react";
 import {uploadImage} from "../services/uploadImage";
 
@@ -18,7 +18,7 @@ const useAddProductFormik = (onHide: () => void) => {
 	const formik = useFormik<Products>({
 		initialValues: {
 			product_name: "",
-			image: { url: "", publicId: "" },
+			image: {url: "", publicId: ""},
 			category: "House",
 			subcategory: "",
 			type: "",
@@ -31,8 +31,8 @@ const useAddProductFormik = (onHide: () => void) => {
 			seller: {
 				name: "",
 				slug: undefined,
-				user: ""
-			}
+				user: "",
+			},
 		},
 		validationSchema: yup.object({
 			product_name: yup

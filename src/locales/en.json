@@ -2,6 +2,8 @@
 	"home": "Home",
 	"webPageName": "safqa",
 	"bestOffers": "The best deals in one place",
+	"browse-posts": "Browse posts",
+	"create-post": "Create post",
 	"allRightsReserved": "All rights reserved.",
 	"help": "Help",
 	"favorites": "favorites",
@@ -186,15 +188,22 @@
 	"modals": {
 		"addProductModal": {
 			"title": "Create Post",
-			"productName": "Product Name (Unique)",
-			"productNamePlaceholder": "Product Name",
+			"productName": "Title",
+			"productNamePlaceholder": "Title",
 			"category": "Category",
 			"selectCategory": "Select Category",
+			"selectSubcategory": "Choose Subcategory",
+			"subcategory": "Subcategory",
+			"selectColor": "Choose color",
+			"color": "Color",
+			"image": "Image",
+			"in_stock": "In stock",
+			"not_in_stock": "Not n stock",
 			"price": "Price",
 			"quantity": "Stock Quantity",
 			"description": "Product Description",
 			"descriptionPlaceholder": "Enter product description",
-			"imageUrl": "Image URL",
+			"imageUrl": "Image",
 			"sale": "On Sale",
 			"discount": "Discount Percentage",
 			"addButton": "Add",
@@ -343,8 +352,7 @@
 				"hair": "Hair Care"
 			}
 		},
-
-		"women-clothes": {
+		"womenclothes": {
 			"label": "Women's Clothing",
 			"heading": "Women's Clothing",
 			"description": "Clothing for women of various styles.",
@@ -354,7 +362,7 @@
 				"shoes": "Shoes"
 			}
 		},
-		"women-bags": {
+		"womenbags": {
 			"label": "Women's Bags",
 			"heading": "Women's Bags",
 			"description": "Bags for women of different sizes and uses.",
@@ -364,7 +372,7 @@
 				"travel": "Travel Bags"
 			}
 		},
-		"men-clothes": {
+		"menclothes": {
 			"label": "Men's Clothing",
 			"heading": "Men's Clothing",
 			"description": "Clothing for men for various uses.",
@@ -383,7 +391,18 @@
 				"electric": "Electric Cars",
 				"parts": "Spare Parts",
 				"accessories": "Car Accessories"
-			}
+			},
+			"fuel": {
+				"label": "fuel",
+				"settings": {
+					"gasoline": "Gasoline",
+					"diesel": "Diesel",
+					"electric": "Full electric"
+				}
+			},
+			"year": "Year",
+			"brand": "Brand",
+			"mileage": "Mileage"
 		},
 		"motorcycles": {
 			"label": "Motorcycles",
@@ -393,7 +412,18 @@
 				"sport": "Sport Bikes",
 				"scooters": "Scooters",
 				"parts": "Spare Parts"
-			}
+			},
+			"fuel": {
+				"label": "fuel",
+				"settings": {
+					"gasoline": "Gasoline",
+					"diesel": "Diesel",
+					"electric": "Full electric"
+				}
+			},
+			"year": "Year",
+			"brand": "Brand",
+			"mileage": "Mileage"
 		},
 		"trucks": {
 			"label": "Trucks",
@@ -402,7 +432,18 @@
 			"subCategories": {
 				"light": "Light Trucks",
 				"heavy": "Heavy Trucks"
-			}
+			},
+			"fuel": {
+				"label": "fuel",
+				"settings": {
+					"gasoline": "Gasoline",
+					"diesel": "Diesel",
+					"electric": "Full electric"
+				}
+			},
+			"year": "Year",
+			"brand": "Brand",
+			"mileage": "Mileage"
 		},
 		"bikes": {
 			"label": "Bicycles",
@@ -412,16 +453,22 @@
 				"kids": "Kids Bikes",
 				"mountain": "Mountain Bikes",
 				"road": "Road Bikes"
-			}
+			},
+			"year": "Year",
+			"brand": "Brand",
+			"mileage": "Mileage"
 		},
-		"electric-vehicles": {
+		"electricvehicles": {
 			"label": "Electric Vehicles",
 			"heading": "Electric Vehicles",
 			"description": "Vehicles powered by electricity.",
 			"subCategories": {
 				"cars": "Electric Cars",
 				"scooters": "Electric Scooters"
-			}
+			},
+			"year": "Year",
+			"brand": "Brand",
+			"mileage": "Mileage"
 		},
 		"discountsAndOffers": {
 			"common": {

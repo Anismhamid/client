@@ -1,9 +1,9 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {Products} from "../../../interfaces/Products";
-import {getAllProducts} from "../../../services/productsServices";
+import {Products} from "../../../interfaces/Posts";
+import {getAllProducts} from "../../../services/postsServices";
 import {useUser} from "../../../context/useUSer";
 import {Box, Grid, Typography} from "@mui/material";
-import ProductCard from "./ProductCard";
+import ProductCard from "./PostsCard";
 // import JsonLd from "../../../../utils/JsonLd";
 import {generateProductsItemListJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";

@@ -1,8 +1,8 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import {useUser} from "../../context/useUSer";
-import {deleteProduct, getAllProducts} from "../../services/productsServices";
-import {Products} from "../../interfaces/Products";
+import {deleteProduct, getAllProducts} from "../../services/postsServices";
+import {Products} from "../../interfaces/Posts";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
-import UpdateProductModal from "../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
+import UpdateProductModal from "../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
@@ -22,12 +22,12 @@ import SearchBox from "../../atoms/productsManage/SearchBox";
 import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import handleRTL from "../../locales/handleRTL";
-import ProductCard from "./products/ProductCard";
 import {useTranslation} from "react-i18next";
 import {productsAndCategories} from "../navbar/navCategoryies";
 import {motion, AnimatePresence} from "framer-motion";
 import ChepNavigation from "../navbar/ChepNavigation";
-import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/AddProdutModal";
+import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/CreatePostModal";
+import PostCard from "./products/PostsCard";
 
 interface HomeProps {}
 
@@ -342,7 +342,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								minWidth: "150px",
 							}}
 						>
-							تصفح العروض
+							{t("browse-posts")}
 						</Button>
 						<Button
 							onClick={showAddProductModal}
@@ -362,7 +362,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 								minWidth: "150px",
 							}}
 						>
-							أضف إعلان
+							{t("create-post")}
 						</Button>
 					</Box>
 				</Box>
@@ -481,7 +481,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 															transition: {duration: 0.01},
 														}}
 													>
-														<ProductCard
+														<PostCard
 															product={product}
 															discountedPrice={
 																discountedPrice

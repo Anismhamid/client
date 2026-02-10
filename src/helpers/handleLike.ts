@@ -1,8 +1,8 @@
 import {showError, showSuccess} from "../atoms/toasts/ReactToast";
 import {AuthValues} from "../interfaces/authValues";
-import {Products} from "../interfaces/Products";
+import {Products} from "../interfaces/Posts";
 import {path} from "../routes/routes";
-import {toggleLike} from "../services/productsServices";
+import {toggleLike} from "../services/postsServices";
 
 export interface HandleLikeParams {
 	isLoggedIn: boolean;

@@ -4,10 +4,10 @@ import {FunctionComponent, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
-import {Products} from "../../../interfaces/Products";
+import {Products} from "../../../interfaces/Posts";
 import {deleteImage, uploadImage} from "../../../services/uploadImage";
-import {categoriesLogic, CategoryValue} from "../productLogicMap";
-import {categoryLabels, postsCategory} from "../../../interfaces/productsCategoeis";
+import {categoriesLogic, CategoryValue} from "../postLogicMap";
+import {postsCategory} from "../../../interfaces/postsCategoeis";
 import {LoadingButton} from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CollectionsIcon from "@mui/icons-material/Collections";
@@ -254,7 +254,10 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 					}`}
 					id='product_name'
 					placeholder={
-						t("modals.addProductModal.productNamePlaceholder") as string
+						t(
+							"modals.addProductModal.productNamePlaceholder",
+							"not provided",
+						) as string
 					}
 					required
 				/>
@@ -290,10 +293,13 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 					{postsCategory
 						.filter((cat) => Object.keys(categoriesLogic).includes(cat.id))
 						.map((category) => {
-							const categoryLabel = category.id.toLocaleLowerCase();
+							const categoryLabel = t(
+								`categories.${category.id.toLocaleLowerCase()}.label`,
+							);
+
 							return (
 								<option value={category.id} key={category.id}>
-									{t(`categories.${categoryLabel}.label`)}
+									{categoryLabel}
 								</option>
 							);
 						})}

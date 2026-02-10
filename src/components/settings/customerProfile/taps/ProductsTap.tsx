@@ -23,13 +23,13 @@ import {
 	Share,
 	Storefront,
 } from "@mui/icons-material";
-import {Products} from "../../../../interfaces/Products";
+import {Products} from "../../../../interfaces/Posts";
 import {User} from "../../../../interfaces/usersMessages";
 import {productsPathes} from "../../../../routes/routes";
 import {useTranslation} from "react-i18next";
 import {formatPrice} from "../../../../helpers/dateAndPriceFormat";
 import LikeButton from "../../../../atoms/LikeButton";
-import { showSuccess } from "../../../../atoms/toasts/ReactToast";
+import {showSuccess} from "../../../../atoms/toasts/ReactToast";
 
 interface ProductsTabProps {
 	tabValue: number;

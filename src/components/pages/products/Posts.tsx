@@ -1,5 +1,5 @@
 import {FunctionComponent} from "react";
-import ProductCategory from "./ProductsCategory";
+import ProductCategory from "./PostsCategory";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 import JsonLd from "../../../../utils/JsonLd";

@@ -8,7 +8,7 @@ import {
 } from "@mui/icons-material";
 import {useUser} from "../context/useUSer";
 import {HandleLikeParams, handleLike} from "../helpers/handleLike";
-import {Products} from "../interfaces/Products";
+import {Products} from "../interfaces/Posts";
 
 interface LikeButtonProps {
 	product: Products;

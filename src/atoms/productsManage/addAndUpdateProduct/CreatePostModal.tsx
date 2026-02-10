@@ -12,7 +12,7 @@ import {
 import {Close as CloseIcon} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import NewProductForm from "./ProductForm";
+import NewProductForm from "./PostForm";
 import useAddProductFormik from "../../../hooks/useAddProductFormik";
 
 interface AddProductModalProps {

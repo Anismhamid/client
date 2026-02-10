@@ -14,59 +14,63 @@ export type CategoryValue =
 	| "Watches"
 	| "ElectricVehicles";
 
-export const categoriesLogic = {
-	// ================== House ==================
+export interface Field {
+	name: string;
+	type: "text" | "number" | "boolean" | "select" | "date";
+	required?: boolean;
+	options?: string[];
+}
+
+export type SubCategoryFields = Record<string, Field[]>;
+
+export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
 	House: {
 		kitchen: [
-			{name: "brand", type: "text"},
+			{name: "brand", type: "text", required: true},
 			{name: "material", type: "text"},
 			{name: "powerWatts", type: "number"},
 			{name: "location", type: "text"},
 		],
-
 		storage: [
 			{name: "material", type: "text", required: true},
 			{name: "dimensions", type: "text"},
 			{name: "capacity", type: "number"},
 		],
-
 		decor: [
 			{name: "material", type: "text"},
 			{name: "color", type: "text"},
 		],
-
 		maintenance: [
 			{name: "brand", type: "text"},
-			{name: "usageType", type: "text"},
+			{name: "usageType", type: "select", options: ["indoor", "outdoor"]},
 		],
 	},
 
-	// ================== Garden ==================
 	Garden: {
 		plants: [
 			{name: "plantType", type: "text", required: true},
-			{name: "season", type: "text"},
+			{
+				name: "season",
+				type: "select",
+				options: ["spring", "summer", "autumn", "winter"],
+			},
 			{name: "sunExposure", type: "text"},
 		],
-
 		watering: [
 			{name: "brand", type: "text"},
 			{name: "hoseLength", type: "number"},
 			{name: "automatic", type: "boolean"},
 		],
-
 		tools: [
 			{name: "brand", type: "text", required: true},
 			{name: "toolType", type: "text"},
 		],
-
 		outdoorDecor: [
 			{name: "material", type: "text"},
 			{name: "weatherResistant", type: "boolean"},
 		],
 	},
 
-	// ================== Cars ==================
 	Cars: {
 		private: [
 			{name: "brand", type: "text", required: true},
@@ -89,7 +93,6 @@ export const categoriesLogic = {
 		accessories: [],
 	},
 
-	// ================== BIKES ==================
 	Bikes: {
 		kids: [
 			{name: "frameSize", type: "text"},
@@ -105,7 +108,6 @@ export const categoriesLogic = {
 		],
 	},
 
-	// ================== TRUCKS ==================
 	Trucks: {
 		light: [
 			{name: "brand", type: "text", required: true},
@@ -118,7 +120,6 @@ export const categoriesLogic = {
 		],
 	},
 
-	// ================== CLEANING ==================
 	Cleaning: {
 		detergents: [
 			{name: "brand", type: "text", required: true},
@@ -131,40 +132,57 @@ export const categoriesLogic = {
 		],
 	},
 
-	// ================== MEN CLOTHES ==================
 	MenClothes: {
 		casual: [
-			{name: "size", type: "text", required: true},
+			{
+				name: "size",
+				type: "select",
+				options: ["S", "M", "L", "XL"],
+				required: true,
+			},
 			{name: "material", type: "text"},
 			{name: "color", type: "text"},
 		],
 		formal: [
-			{name: "size", type: "text", required: true},
+			{
+				name: "size",
+				type: "select",
+				options: ["S", "M", "L", "XL"],
+				required: true,
+			},
 			{name: "material", type: "text"},
 		],
 		shoes: [
-			{name: "size", type: "text", required: true},
+			{name: "size", type: "number", required: true},
 			{name: "color", type: "text"},
 		],
 	},
 
-	// ================== WOMEN CLOTHES ==================
 	WomenClothes: {
 		casual: [
-			{name: "size", type: "text", required: true},
+			{
+				name: "size",
+				type: "select",
+				options: ["XS", "S", "M", "L", "XL"],
+				required: true,
+			},
 			{name: "color", type: "text"},
 		],
 		dresses: [
-			{name: "size", type: "text", required: true},
+			{
+				name: "size",
+				type: "select",
+				options: ["XS", "S", "M", "L", "XL"],
+				required: true,
+			},
 			{name: "length", type: "text"},
 		],
 		shoes: [
-			{name: "size", type: "text", required: true},
+			{name: "size", type: "number", required: true},
 			{name: "heelHeight", type: "number"},
 		],
 	},
 
-	// ================== BABY ==================
 	Baby: {
 		clothes: [
 			{name: "ageGroup", type: "text", required: true},
@@ -177,7 +195,6 @@ export const categoriesLogic = {
 		],
 	},
 
-	// ================== KIDS ==================
 	Kids: {
 		educational: [
 			{name: "ageGroup", type: "text", required: true},
@@ -186,31 +203,32 @@ export const categoriesLogic = {
 		toys: [
 			{name: "ageGroup", type: "text"},
 			{name: "safeMaterial", type: "boolean"},
+			{name: "material", type: "text"},
 		],
-		outdoor: [{name: "ageGroup", type: "text"}],
+		outdoor: [
+			{name: "ageGroup", type: "text"},
+			{name: "material", type: "text"},
+		],
 	},
 
-	// ================== HEALTH ==================
 	Health: {
 		personalCare: [{name: "brand", type: "text", required: true}],
 		medical: [
 			{name: "brand", type: "text"},
-			{name: "expiryDate", type: "text"},
+			{name: "expiryDate", type: "date"},
 		],
 		fitness: [{name: "brand", type: "text"}],
 	},
 
-	// ================== BEAUTY ==================
 	Beauty: {
 		makeup: [{name: "brand", type: "text", required: true}],
 		skincare: [
 			{name: "brand", type: "text"},
-			{name: "expiryDate", type: "text"},
+			{name: "expiryDate", type: "date"},
 		],
 		hair: [{name: "brand", type: "text"}],
 	},
 
-	// ================== WATCHES ==================
 	Watches: {
 		classic: [{name: "brand", type: "text"}],
 		smart: [
@@ -220,10 +238,14 @@ export const categoriesLogic = {
 		hand: [{name: "brand", type: "text"}],
 	},
 
-	// ================== ELECTRIC VEHICLES ==================
 	ElectricVehicles: {
 		scooters: [
 			{name: "brand", type: "text"},
+			{name: "rangeKm", type: "number"},
+		],
+		cars: [
+			{name: "brand", type: "text"},
+			{name: "batteryCapacity", type: "number"},
 			{name: "rangeKm", type: "number"},
 		],
 	},

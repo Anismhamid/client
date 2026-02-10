@@ -12,7 +12,7 @@ import {FunctionComponent, useEffect, useState, SyntheticEvent} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {User} from "../../../interfaces/usersMessages";
 import {getCustomerProfileBySlug} from "../../../services/usersServices";
-import {getCustomerProfileProductsBySlug} from "../../../services/productsServices";
+import {getCustomerProfileProductsBySlug} from "../../../services/postsServices";
 import {
 	Visibility,
 	Star,
@@ -21,7 +21,7 @@ import {
 	// Comment,
 	ArrowBack,
 } from "@mui/icons-material";
-import {Products} from "../../../interfaces/Products";
+import {Products} from "../../../interfaces/Posts";
 import {motion} from "framer-motion";
 import {useUser} from "../../../context/useUSer";
 import {showSuccess, showError} from "../../../atoms/toasts/ReactToast";

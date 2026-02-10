@@ -6,39 +6,31 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {deleteProduct, getProductsByCategory} from "../../../services/productsServices";
-import {Products} from "../../../interfaces/Products";
+import {deleteProduct, getProductsByCategory} from "../../../services/postsServices";
+import {Products} from "../../../interfaces/Posts";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
-import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdateProductModal";
+import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import {showError} from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {
-	Box,
-	Button,
-	Container,
-	Grid,
-	Typography,
-	useTheme,
-	alpha,
-} from "@mui/material";
+import {Box, Button, Container, Grid, Typography, useTheme, alpha} from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import {useTranslation} from "react-i18next";
 // import socket from "../../../socket/globalSocket";
-import ProductCard from "./ProductCard";
+import ProductCard from "./PostsCard";
 import {generateCategoryJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
 
-interface ProductCategoryProps {
+interface PostsCategoryProps {
 	category: string;
 }
 
-const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
+const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	category,
-}: ProductCategoryProps) => {
+}: PostsCategoryProps) => {
 	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
 	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
 	const [products, setProducts] = useState<Products[]>([]);
@@ -450,4 +442,4 @@ const ProductCategory: FunctionComponent<ProductCategoryProps> = ({
 	);
 };
 
-export default ProductCategory;
+export default PostsCategory;
