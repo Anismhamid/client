@@ -185,7 +185,7 @@
 	},
 	"modals": {
 		"addProductModal": {
-			"title": "Add New Product",
+			"title": "Create Post",
 			"productName": "Product Name (Unique)",
 			"productNamePlaceholder": "Product Name",
 			"category": "Category",

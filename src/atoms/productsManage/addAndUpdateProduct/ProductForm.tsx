@@ -7,7 +7,7 @@ import {CarColor, colors} from "../../colorsSettings/carsColors";
 import {Products} from "../../../interfaces/Products";
 import {deleteImage, uploadImage} from "../../../services/uploadImage";
 import {categoriesLogic, CategoryValue} from "../productLogicMap";
-import {productsCategories} from "../../../interfaces/productsCategoeis";
+import {categoryLabels, postsCategory} from "../../../interfaces/productsCategoeis";
 import {LoadingButton} from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CollectionsIcon from "@mui/icons-material/Collections";
@@ -287,13 +287,13 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 					required
 				>
 					<option value=''>{t("modals.addProductModal.selectCategory")}</option>
-					{productsCategories
+					{postsCategory
 						.filter((cat) => Object.keys(categoriesLogic).includes(cat.id))
 						.map((category) => {
-							const categoryLabel = category.label; // label موجود بالفعل كـ string
+							const categoryLabel = category.id.toLocaleLowerCase();
 							return (
 								<option value={category.id} key={category.id}>
-									{categoryLabel}
+									{t(`categories.${categoryLabel}.label`)}
 								</option>
 							);
 						})}
@@ -323,9 +323,12 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							{t("modals.addProductModal.selectSubcategory")}
 						</option>
 						{availableSubcategories.map((subcat) => {
-							const subcatText = t(`subcategories.${subcat}`, {
-								defaultValue: subcat,
-							});
+							const subcatText = t(
+								`categories.${formik.values.category.toLocaleLowerCase()}.subCategories.${subcat}`,
+								{
+									defaultValue: subcat,
+								},
+							);
 							return (
 								<option value={subcat} key={subcat}>
 									{subcatText}

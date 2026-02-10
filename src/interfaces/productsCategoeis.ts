@@ -1,23 +1,23 @@
 import {productsPathes} from "../routes/routes";
 
-export const productsCategories = [
-	{id: "House", label: "مستلزمات البيت"},
-	{id: "Garden", label: "الحديقة"},
-	{id: "Electronics", label: "إلكترونيات"},
-	{id: "Kids", label: "ألعاب الأطفال"},
-	{id: "Baby", label: "مستلزمات الأطفال"},
-	{id: "Beauty", label: "مستحضرات التجميل"},
-	{id: "Cleaning", label: "مواد التنظيف"},
-	{id: "Health", label: "الصحة والعناية"},
-	{id: "Watches", label: "ساعات"},
-	{id: "MenClothes", label: "ملابس رجالية"},
-	{id: "WomenClothes", label: "ملابس نسائية"},
-	{id: "WomenBags", label: "حقائب نسائية"},
-	{id: "Cars", label: "سيارات"},
-	{id: "Motorcycles", label: "دراجات نارية"},
-	{id: "Trucks", label: "شاحنات"},
-	{id: "Bikes", label: "دراجات هوائية"},
-	{id: "ElectricVehicles", label: "مركبات كهربائية"},
+export const postsCategory = [
+	{id: "House"},
+	{id: "Garden"},
+	{id: "Electronics"},
+	{id: "Kids"},
+	{id: "Baby"},
+	{id: "Beauty"},
+	{id: "Cleaning"},
+	{id: "Health"},
+	{id: "Watches"},
+	{id: "MenClothes"},
+	{id: "WomenClothes"},
+	{id: "WomenBags"},
+	{id: "cars"},
+	{id: "Motorcycles"},
+	{id: "Trucks"},
+	{id: "Bikes"},
+	{id: "ElectricVehicles"},
 ];
 
 // ----- Category Labels -----

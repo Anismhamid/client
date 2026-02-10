@@ -216,7 +216,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 	return (
 		<>
-			<title>{t("home")} | صفقة</title>
+			<title>
+				{t("home")} | {t("webPageName")}
+			</title>
 			<meta
 				name='description'
 				content={

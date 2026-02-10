@@ -161,7 +161,7 @@
 	},
 	"modals": {
 		"addProductModal": {
-			"title": "הוספת מוצר חדש",
+			"title": "הוספת פוסט",
 			"productName": "שם מוצר (ייחודי)",
 			"productNamePlaceholder": "שם מוצר",
 			"category": "קטגוריה",
