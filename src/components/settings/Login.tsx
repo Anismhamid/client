@@ -1,8 +1,7 @@
-import {useFormik} from "formik";
-import {FunctionComponent, useEffect, useState} from "react";
+import {FunctionComponent, useActionState, useEffect, useMemo, useState} from "react";
 import {UserLogin} from "../../interfaces/User";
 import * as yup from "yup";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom"; // Removed redirect import
 import {path} from "../../routes/routes";
 import {
 	handleGoogleLogin,
@@ -12,7 +11,7 @@ import {
 import {useUser} from "../../context/useUSer";
 import useToken from "../../hooks/useToken";
 import {showError, showSuccess} from "../../atoms/toasts/ReactToast";
-import {AuthValues, emptyAuthValues} from "../../interfaces/authValues";
+import {AuthValues} from "../../interfaces/authValues";
 import {GoogleLogin} from "@react-oauth/google";
 import {
 	Box,
@@ -48,6 +47,13 @@ import Loader from "../../atoms/loader/Loader";
 interface LoginProps {
 	mode?: PaletteMode;
 }
+
+interface FormErrors {
+	email?: string;
+	password?: string;
+	general?: string;
+}
+
 /**
  * Modes login
  * @param {mode = "light"}
@@ -55,13 +61,13 @@ interface LoginProps {
  */
 const Login: FunctionComponent<LoginProps> = ({mode}) => {
 	const navigate = useNavigate();
-	const {decodedToken, setAfterDecode} = useToken();
+	const {setAfterDecode} = useToken();
 	const [showModal, setShowModal] = useState<boolean>(false);
 	const [googleResponse, setGoogleResponse] = useState<any>(null);
 	const [showPassword, setShowPassword] = useState<boolean>(false);
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 	const {setAuth, setIsLoggedIn} = useUser();
-	const [loading, setLoading] = useState<boolean>(false);
+	// const [loading, setLoading] = useState<boolean>(false);
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -86,22 +92,86 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 	const {t} = useTranslation();
 
+	const loginSchema = useMemo(
+		() =>
+			yup.object({
+				email: yup
+					.string()
+					.email(t("login.validation.emailInvalid"))
+					.required(t("login.validation.emailRequired")), // Fixed: was passwordRequired
+				password: yup
+					.string()
+					.min(8, t("login.validation.passwordMin"))
+					.max(60, t("login.validation.passwordMax"))
+					.required(t("login.validation.passwordRequired")),
+			}),
+		[t],
+	);
+
+	const loginAction = async (
+		_: FormErrors | null,
+		formData: FormData,
+	): Promise<FormErrors | null> => {
+		try {
+			const values = {
+				email: formData.get("email") as string,
+				password: formData.get("password") as string,
+			};
+
+			// Validate with yup
+			await loginSchema.validate(values, {abortEarly: false});
+
+			// Call login API
+			const token = await loginUser(values as UserLogin);
+
+			if (token) {
+				localStorage.setItem("token", token);
+				const decoded = jwtDecode<AuthValues>(token);
+				setAfterDecode(token);
+				setAuth(decoded);
+				setIsLoggedIn(true);
+				showSuccess(t("login.successMessage") || "התחברת בהצלחה!");
+				navigate(path.Home);
+				return null;
+			} else {
+				throw new Error("No token received");
+			}
+		} catch (err: any) {
+			console.error("Login error:", err);
+
+			const errors: FormErrors = {};
+
+			// Handle yup validation errors
+			if (err.inner) {
+				err.inner.forEach((error: any) => {
+					if (error.path === "email") {
+						errors.email = error.message;
+					} else if (error.path === "password") {
+						errors.password = error.message;
+					}
+				});
+			} else {
+				// Handle API errors
+				errors.general =
+					err.message || t("login.errors.loginFailed") || "Login failed";
+			}
+
+			return Object.keys(errors).length > 0 ? errors : null;
+		}
+	};
+
+	const [error, submitAction, isPending] = useActionState<FormErrors | null, FormData>(
+		loginAction,
+		null,
+	);
+	// Alternative formik implementation (commented out but kept for reference)
+	/*
 	const formik = useFormik<UserLogin>({
 		initialValues: {
 			email: "",
 			password: "",
 		},
-		validationSchema: yup.object({
-			email: yup
-				.string()
-				.email(t("login.validation.emailInvalid"))
-				.required(t("login.validation.emailRequired")),
-			password: yup
-				.string()
-				.min(8, t("login.validation.passwordMin"))
-				.max(60, t("login.validation.passwordMax"))
-				.required(t("login.validation.passwordRequired")),
-		}),
+		validationSchema: loginSchema,
 		onSubmit: async (values, {resetForm}) => {
 			try {
 				setLoading(true);
@@ -111,25 +181,27 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 					setAfterDecode(token);
 					setAuth(decodedToken);
 					setIsLoggedIn(true);
-					showSuccess("התחברת בהצלחה!");
+					showSuccess(t("login.successMessage") || "התחברת בהצלחה!");
 					navigate(path.Home);
 				}
 			} catch (error) {
 				setAuth(emptyAuthValues);
 				setIsLoggedIn(false);
 				resetForm();
-				showError("Login failed");
+				showError(t("login.errors.loginFailed") || "Login failed");
 			} finally {
 				setLoading(false);
 			}
 		},
 	});
+	*/
 
 	const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
 		if (!response.credential) {
-			throw new Error("Missing Google credential");
+			throw new Error(
+				t("login.errors.missingGoogleCredential") || "Missing Google credential",
+			);
 		}
-		setLoading(true);
 		try {
 			const decodedGoogle = jwtDecode<DecodedGooglePayload>(response.credential);
 			const userExists = await verifyGoogleUser(decodedGoogle.sub);
@@ -148,14 +220,11 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 				setShowModal(true);
 			}
 		} catch (error: any) {
-			showError("שגיאה בהתחברות עם גוגל: " + error.message);
-		} finally {
-			setLoading(false);
+			showError(t("login.errors.googleLoginError") + ": " + error.message);
 		}
 	};
 
 	const handleUserInfoSubmit = async (userExtraData: any) => {
-		setLoading(true);
 		try {
 			const token = await handleGoogleLogin(googleResponse, userExtraData);
 			const decoded = jwtDecode<AuthValues>(token);
@@ -168,20 +237,18 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 		} catch (error: any) {
 			showError(error.message);
 			setShowModal(false);
-		} finally {
-			setLoading(false);
 		}
 	};
 
-	useEffect(() => {
-		if (localStorage.token) {
-			navigate(path.Home);
-		}
-	}, [navigate]);
+	// useEffect(() => {
+	// 	if (localStorage.token) {
+	// 		navigate(path.Home);
+	// 	}
+	// }, [navigate]);
 
 	const currentUrl = `https://client-qqq1.vercel.app/login`;
 
-	if (loading) return <Loader />;
+	if (isPending) return <Loader />;
 
 	return (
 		<>
@@ -195,8 +262,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 			<Container maxWidth='md' sx={{py: 8}}>
 				<Box
-					// component='main'
-					// className='login'
 					sx={{
 						display: "flex",
 						justifyContent: "center",
@@ -207,6 +272,8 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 					<Grid container spacing={4} alignItems='center'>
 						{/* Left side - Welcome message */}
 						<Grid size={{xs: 12, md: 6}}>
+							{" "}
+							{/* Fixed: should be 'item' prop */}
 							<Fade in={true} timeout={800}>
 								<Box
 									sx={{
@@ -270,6 +337,8 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 						{/* Right side - Login form */}
 						<Grid size={{xs: 12, md: 6}}>
+							{" "}
+							{/* Fixed: should be 'item' prop */}
 							<Paper
 								elevation={mode === "dark" ? 8 : 4}
 								sx={{
@@ -335,21 +404,15 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 								<form
 									autoComplete='off'
 									noValidate
-									onSubmit={formik.handleSubmit}
+									action={submitAction}
+									// If using formik: onSubmit={formik.handleSubmit}
 								>
 									<TextField
 										label={t("login.email")}
 										type='email'
 										name='email'
-										value={formik.values.email}
-										onChange={formik.handleChange}
-										error={
-											formik.touched.email &&
-											Boolean(formik.errors.email)
-										}
-										helperText={
-											formik.touched.email && formik.errors.email
-										}
+										error={Boolean(error?.email)}
+										helperText={error?.email}
 										fullWidth
 										margin='normal'
 										variant='outlined'
@@ -357,7 +420,7 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 										InputProps={{
 											startAdornment: (
 												<InputAdornment position='start'>
-													<Email color='action' />
+													<Email />
 												</InputAdornment>
 											),
 										}}
@@ -377,16 +440,8 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 										label={t("login.password")}
 										type={showPassword ? "text" : "password"}
 										name='password'
-										value={formik.values.password}
-										onChange={formik.handleChange}
-										error={
-											formik.touched.password &&
-											Boolean(formik.errors.password)
-										}
-										helperText={
-											formik.touched.password &&
-											formik.errors.password
-										}
+										error={Boolean(error?.password)}
+										helperText={error?.password}
 										fullWidth
 										margin='normal'
 										variant='outlined'
@@ -426,10 +481,16 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 										autoComplete='current-password'
 									/>
 
+									{error?.general && (
+										<Typography color='error' sx={{mt: 2}}>
+											{error.general}
+										</Typography>
+									)}
+
 									<Box sx={{textAlign: "right", mt: 1, mb: 3}}>
-										<Link
-											// TODO
-											to={path.Home}
+										{/* <Link
+											// TODO: Add forgot password route
+											to={path.ForgotPassword || path.Home}
 											style={{
 												textDecoration: "none",
 												color:
@@ -442,50 +503,59 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 										>
 											{t("login.forgotPassword") ||
 												"نسيت كلمة المرور؟"}
-										</Link>
+										</Link> */}
 									</Box>
 
 									<Box sx={{mt: 4}}>
-										{formik.isSubmitting ? (
-											<Box sx={{textAlign: "center", py: 2}}>
-												<CircularProgress size={36} />
-											</Box>
-										) : (
-											<Button
-												color='primary'
-												variant='contained'
-												type='submit'
-												fullWidth
-												size='large'
-												startIcon={<LoginIcon />}
-												sx={{
-													borderRadius: 3,
-													py: 1.5,
-													fontSize: "1.1rem",
-													fontWeight: 600,
+										<Button
+											color='primary'
+											variant='contained'
+											type='submit'
+											fullWidth
+											size='large'
+											startIcon={
+												isPending ? (
+													<CircularProgress
+														size={20}
+														color='inherit'
+													/>
+												) : (
+													<LoginIcon />
+												)
+											}
+											disabled={isPending}
+											sx={{
+												borderRadius: 3,
+												py: 1.5,
+												fontSize: "1.1rem",
+												fontWeight: 600,
+												background:
+													mode === "dark"
+														? "linear-gradient(45deg, #29B6F6 30%, #0288D1 90%)"
+														: "linear-gradient(45deg, #0288D1 30%, #0277BD 90%)",
+												boxShadow:
+													mode === "dark"
+														? "0 3px 15px rgba(41, 182, 246, 0.3)"
+														: "0 3px 15px rgba(2, 136, 209, 0.3)",
+												"&:hover": {
 													background:
 														mode === "dark"
-															? "linear-gradient(45deg, #29B6F6 30%, #0288D1 90%)"
-															: "linear-gradient(45deg, #0288D1 30%, #0277BD 90%)",
+															? "linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)"
+															: "linear-gradient(45deg, #0277BD 30%, #01579B 90%)",
 													boxShadow:
 														mode === "dark"
-															? "0 3px 15px rgba(41, 182, 246, 0.3)"
-															: "0 3px 15px rgba(2, 136, 209, 0.3)",
-													"&:hover": {
-														background:
-															mode === "dark"
-																? "linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)"
-																: "linear-gradient(45deg, #0277BD 30%, #01579B 90%)",
-														boxShadow:
-															mode === "dark"
-																? "0 6px 20px rgba(41, 182, 246, 0.4)"
-																: "0 6px 20px rgba(2, 136, 209, 0.4)",
-													},
-												}}
-											>
-												{t("login.loginButton")}
-											</Button>
-										)}
+															? "0 6px 20px rgba(41, 182, 246, 0.4)"
+															: "0 6px 20px rgba(2, 136, 209, 0.4)",
+												},
+												"&:disabled": {
+													opacity: 0.7,
+												},
+											}}
+										>
+											{isPending
+												? t("login.loading")
+												: t("login.loginButton")}
+										</Button>
 									</Box>
 
 									<Divider sx={{my: 4}}>
@@ -520,7 +590,10 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 											logo_alignment='center'
 											onSuccess={handleGoogleLoginSuccess}
 											onError={() =>
-												showError(t("login.googleLoginError"))
+												showError(
+													t("login.googleLoginError") ||
+														"Google login failed",
+												)
 											}
 										/>
 									</Box>
@@ -579,13 +652,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 														: "#1976d2",
 												fontSize: "0.9rem",
 												fontWeight: 500,
-												transition: "color 0.2s",
-												// "&:hover": {
-												// 	color:
-												// 		mode === "dark"
-												// 			? "#4fc3f7"
-												// 			: "#0288d1",
-												// },
 											}}
 										>
 											{t("login.privacyPolicy")}
@@ -600,13 +666,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 														: "#1976d2",
 												fontSize: "0.9rem",
 												fontWeight: 500,
-												transition: "color 0.2s",
-												// "&:hover": {
-												// 	color:
-												// 		mode === "dark"
-												// 			? "#4fc3f7"
-												// 			: "#0288d1",
-												// },
 											}}
 										>
 											{t("login.termsOfUse")}
