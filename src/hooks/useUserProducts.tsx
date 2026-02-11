@@ -1,5 +1,5 @@
 // hooks/useUserProducts.ts
-import {useEffect, useState, useMemo} from "react";
+import {useEffect, useState} from "react";
 import {getCustomerProfileProductsBySlug} from "../services/postsServices";
 import {Products} from "../interfaces/Posts";
 

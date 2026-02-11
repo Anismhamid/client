@@ -281,7 +281,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										setMegaAnchor(null);
 									}}
 								>
-									<LogoText variant='h1'>صـفـقـه</LogoText>
+									<LogoText variant='h1'>{t("webPageName")}</LogoText>
 								</Link>
 							</motion.div>
 

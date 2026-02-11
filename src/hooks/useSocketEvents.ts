@@ -64,6 +64,17 @@ const useSocketEvents = () => {
 			}, 1000);
 		};
 
+		const handleMessageReceived = (data: any) => {
+			playNotificationSound();
+
+			showInfo(`رسالة جديدة من ${data.from.name.first}`);
+
+			showNotification(`رسالة جديدة من ${data.from.name.first}`);
+
+			console.log("New message:", data);
+		};
+
+
 		// הזמנה חדשה
 		// const handleNewOrder = (newProduct: Products) => {
 		// 	if (isAdminOrModerator) {
@@ -157,6 +168,7 @@ const useSocketEvents = () => {
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
+		socket.on("message:received", handleMessageReceived);
 		// socket.on("new order", handleNewOrder);
 		// socket.on("order:status:client", handleClientOrderStatus);
 		// socket.on("order:status:updated", handleOrderStatusUpdated);
@@ -169,6 +181,7 @@ const useSocketEvents = () => {
 			socket.off("connect", handleConnect);
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
+			socket.off("message:received", handleMessageReceived);
 			// socket.off("new order", handleNewOrder);
 			// socket.off("order:status:client", handleClientOrderStatus);
 			// socket.off("order:status:updated", handleOrderStatusUpdated);

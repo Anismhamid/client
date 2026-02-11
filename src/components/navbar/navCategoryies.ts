@@ -210,46 +210,46 @@ export const productsAndCategories: NavCategory[] = [
 		],
 	},
 	{
-		labelKey: "categories.women-clothes.label",
+		labelKey: "categories.womenclothes.label",
 		value: "women-clothes",
 		path: productsPathes.womenClothes,
 		icon: "/categories/woman-clothes.png",
 		subCategories: [
 			{
-				labelKey: "categories.women-clothes.subCategories.casual",
+				labelKey: "categories.womenclothes.subCategories.casual",
 				path: `${productsPathes.womenClothes}/casual`,
 				value: "casual",
 			},
 			{
-				labelKey: "categories.women-clothes.subCategories.dresses",
+				labelKey: "categories.womenclothes.subCategories.dresses",
 				path: `${productsPathes.womenClothes}/dresses`,
 				value: "dresses",
 			},
 			{
-				labelKey: "categories.women-clothes.subCategories.shoes",
+				labelKey: "categories.womenclothes.subCategories.shoes",
 				path: `${productsPathes.womenClothes}/shoes`,
 				value: "shoes",
 			},
 		],
 	},
 	{
-		labelKey: "categories.men-clothes.label",
+		labelKey: "categories.menclothes.label",
 		value: "men-clothes",
 		path: productsPathes.menClothes,
 		icon: "/categories/man-clothes.png",
 		subCategories: [
 			{
-				labelKey: "categories.men-clothes.subCategories.casual",
+				labelKey: "categories.menclothes.subCategories.casual",
 				path: `${productsPathes.menClothes}/casual`,
 				value: "casual",
 			},
 			{
-				labelKey: "categories.men-clothes.subCategories.formal",
+				labelKey: "categories.menclothes.subCategories.formal",
 				path: `${productsPathes.menClothes}/formal`,
 				value: "formal",
 			},
 			{
-				labelKey: "categories.men-clothes.subCategories.shoes",
+				labelKey: "categories.menclothes.subCategories.shoes",
 				path: `${productsPathes.menClothes}/shoes`,
 				value: "shoes",
 			},
