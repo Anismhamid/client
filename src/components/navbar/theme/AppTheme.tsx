@@ -188,27 +188,27 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	return (
 		<>
 			{/* Structured data for SEO */}
-				<JsonLd
-					data={{
-						"@context": "https://schema.org",
-						"@type": "WebSite",
+			<JsonLd
+				data={{
+					"@context": "https://schema.org",
+					"@type": "WebSite",
+					name: "صفقة",
+					alternateName: "صفقة - موقع البيع والشراء",
+					url: window.location.origin,
+					description: "أكبر موقع عربي للبيع والشراء عبر الإنترنت",
+					inLanguage: "ar",
+					potentialAction: {
+						"@type": "SearchAction",
+						target: `${window.location.origin}/search?q={search_term_string}`,
+						"query-input": "required name=search_term_string",
+					},
+					publisher: {
+						"@type": "Organization",
 						name: "صفقة",
-						alternateName: "صفقة - موقع البيع والشراء",
-						url: window.location.origin,
-						description: "أكبر موقع عربي للبيع والشراء عبر الإنترنت",
-						inLanguage: "ar",
-						potentialAction: {
-							"@type": "SearchAction",
-							target: `${window.location.origin}/search?q={search_term_string}`,
-							"query-input": "required name=search_term_string",
-						},
-						publisher: {
-							"@type": "Organization",
-							name: "صفقة",
-							logo: `${window.location.origin}/logo.png`,
-						},
-					}}
-				/>
+						logo: `${window.location.origin}/logo.png`,
+					},
+				}}
+			/>
 
 			<AppBar
 				component='header'
@@ -405,9 +405,9 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								{isLoggedIn && (
 									<Box component='li' role='listitem'>
 										<StyledNavLink
-											to={`${path.CustomerProfile}/${auth?.slug}`}
-											aria-label={`${t("footer.myListings")} إعلاناتي موقع صفقة`}
-											title={`${t("footer.myListings")} إعلاناتي موقع صفقة`}
+											to={`${path.CustomerProfile.replace(":slug", "")}/${auth?.slug}`}
+											aria-label={`${t("footer.myListings")}`}
+											title={`${t("footer.myListings")}`}
 										>
 											<ListIcon sx={{fontSize: 20}} />
 										</StyledNavLink>

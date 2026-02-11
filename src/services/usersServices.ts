@@ -17,10 +17,14 @@ export const registerNewUser = async (newUserData: UserRegister) => {
 		const response = await axios.post(api, newUserData, {
 			headers: {"Content-Type": "application/json"},
 		});
-		localStorage.setItem("tiken", response.data);
+		localStorage.setItem("token", response.data);
 		return response.data;
-	} catch (error) {
-		throw new Error;
+	} catch (error: any) {
+		if (error.response) {
+			throw error.response.data;
+		} else {
+			throw {data: {code: "NETWORK_ERROR"}};
+		}
 	}
 };
 

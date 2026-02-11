@@ -121,7 +121,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 
 	const handleRegistrationError = (error: any) => {
 		const errorMap: Record<string, string> = {
-			EMAIL_EXISTS: t("register.errors.emailExists"),
+			EMAIL_EXISTS: t("register.errors.EMAIL_EXISTS"),
 			SLUG_EXISTS: t("register.errors.slugExists"),
 			WEAK_PASSWORD: t("register.errors.weakPassword"),
 			INVALID_PHONE: t("register.errors.invalidPhone"),
@@ -129,7 +129,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 			RATE_LIMITED: t("register.errors.rateLimited"),
 		};
 
-		const errorCode = error.response?.data?.code;
+		const errorCode = error.code;
 		return errorMap[errorCode] || t("register.errors.serverError");
 	};
 
@@ -164,43 +164,10 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				},
 				terms: user.terms,
 			};
-			// try {
-			// 	await registerNewUser(dataToSend);
 
-			// 	const login: UserLogin = {
-			// 		email: dataToSend.email,
-			// 		password: dataToSend.password,
-			// 	};
-
-			// 	const token = await loginUser(login);
-			// 	if (token) {
-			// 		localStorage.setItem("token", token);
-			// 		setAfterDecode(token);
-			// 		setAuth({...decodedToken, slug: decodedToken?.slug || ""});
-			// 		setIsLoggedIn(true);
-			// 		showSuccess("התחברת בהצלחה!");
-
-			// 		setSubmitSuccess(true);
-
-			// 		// Redirect after 3 seconds
-			// 		setTimeout(() => {
-			// 			navigate(path.Home);
-			// 		}, 3000);
-			// 	}
-			// } catch (error: any) {
-			// 	console.error("Registration error:", error);
-			// 	setSubmitError(
-			// 		error.response?.data?.message ||
-			// 			t("register.errors.serverError") ||
-			// 			"حدث خطأ أثناء التسجيل. يرجى المحاولة مرة أخرى.",
-			// 	);
-			// } finally {
-			// 	setIsLoading(false);
-			// }
 			registerNewUser(dataToSend)
-				.then((res) => {
-					const token = res.data.token || res.data;
-					localStorage.setItem("token", token);
+				.then((data) => {
+					localStorage.setItem("token", data);
 
 					setSubmitSuccess(true);
 
@@ -209,19 +176,15 @@ const Register: FunctionComponent<RegisterProps> = () => {
 					}, 1500);
 				})
 				.catch((error) => {
-					const errorMessage = handleRegistrationError(error);
-					//  ||
-					// error.response?.data?.message ||
-					// t("register.errors.serverError");
+					const errors = error.data || error;
+					const errorMessage = handleRegistrationError(errors);
 
 					setSubmitError(errorMessage);
 
-					// لو الإيميل موجود، رجّع المستخدم لخطوة المعلومات الشخصية
-					if (error) {
+					if (errors.code === "EMAIL_EXISTS") {
 						setCurrentStep(0);
-						formik.setFieldError("email", error);
-						formik.setFieldTouched("email", true);
-						console.log(error);
+						formik.setFieldError("email", errorMessage);
+						console.log(errors);
 					} else {
 						formik.setStatus({serverError: "حدث خطأ في السيرفر"});
 					}
@@ -240,6 +203,7 @@ const Register: FunctionComponent<RegisterProps> = () => {
 		}
 
 		const fullName = `${firstName} ${lastName}`.trim();
+
 		const generatedSlug = fullName
 			.toLowerCase()
 			.replace(/\s+/g, "-")
@@ -551,24 +515,22 @@ const Register: FunctionComponent<RegisterProps> = () => {
 									)}
 
 									{/* Error/Success Messages */}
-									<AnimatePresence>
-										{submitError && (
-											<motion.div
-												initial={{opacity: 0, y: -20}}
-												animate={{opacity: 1, y: 0}}
-												exit={{opacity: 0, y: -20}}
+									{submitError && (
+										<motion.div
+											initial={{opacity: 0, y: -20}}
+											animate={{opacity: 1, y: 0}}
+											exit={{opacity: 0, y: -20}}
+										>
+											<Alert
+												severity='error'
+												sx={{mb: 3}}
+												onClose={() => setSubmitError(null)}
+												icon={<ErrorIcon />}
 											>
-												<Alert
-													severity='error'
-													sx={{mb: 3}}
-													onClose={() => setSubmitError(null)}
-													icon={<ErrorIcon />}
-												>
-													{submitError}
-												</Alert>
-											</motion.div>
-										)}
-									</AnimatePresence>
+												{submitError}
+											</Alert>
+										</motion.div>
+									)}
 
 									<form
 										autoComplete='off'
