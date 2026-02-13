@@ -1,7 +1,24 @@
 import {useEffect, useState, useRef, FunctionComponent} from "react";
 import axios from "axios";
-import {Box, Typography, TextField, IconButton, Badge, Paper} from "@mui/material";
+import {
+	Box,
+	Typography,
+	TextField,
+	IconButton,
+	Badge,
+	Paper,
+	Avatar,
+	Divider,
+	Tooltip,
+	Zoom,
+	Fade,
+	CircularProgress,
+} from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+import CheckIcon from "@mui/icons-material/Check";
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
 import {UserMessage} from "../../../interfaces/usersMessages";
@@ -36,70 +53,34 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	} = useChat();
 	const [input, setInput] = useState("");
 	const [typing, setTyping] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
 	const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
 	const userMessages = messages[otherUser._id as string] || [];
 	const unreadCount = unreadCounts[otherUser._id as string] || 0;
 
-	const scrollToBottom = () => {
-		messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+		messagesEndRef.current?.scrollIntoView({behavior});
 	};
 
 	const loadConversation = async () => {
+		setIsLoading(true);
 		try {
 			const res = await axios.get(`${api}/messages/conversation/${otherUser._id}`, {
 				headers: {Authorization: token},
 			});
 			setMessagesForUser(otherUser._id as string, res.data.messages);
 			setUnreadForUser(otherUser._id as string, res.data.unreadCount || 0);
-			setTimeout(scrollToBottom, 100);
+			setTimeout(() => scrollToBottom("auto"), 100);
 		} catch (err) {
 			console.error("Failed to load conversation:", err);
+		} finally {
+			setIsLoading(false);
 		}
 	};
-
-	// const sendMessage = async (text?: string) => {
-	// 	if (!socket.connected || !text?.trim()) return;
-
-	// 	const messageText = text.trim();
-
-	// 	const tempMessage: LocalMessage = {
-	// 		_id: `temp-${Date.now()}`,
-	// 		from: currentUser,
-	// 		to: otherUser,
-	// 		message: messageText,
-	// 		status: "sent",
-	// 		warning: false,
-	// 		isImportant: false,
-	// 		replyTo: null,
-	// 		createdAt: new Date().toISOString(),
-	// 	};
-
-	// 	addMessageForUser(otherUser._id as string, tempMessage);
-	// 	setInput("");
-	// 	scrollToBottom();
-
-	// 	// socket.emit("send:message", {
-	// 	// 	toUserId: otherUser._id,
-	// 	// 	message: messageText,
-	// 	// });
-
-	// 	try {
-	// 		const res = await axios.post(
-	// 			`${api}/messages`,
-	// 			{toUserId: otherUser._id, message: messageText},
-	// 			{headers: {Authorization: token}},
-	// 		);
-
-	// 		setMessagesForUser(otherUser._id as string, (prev) =>
-	// 			prev.map((m) => (m._id === tempMessage._id ? res.data : m)),
-	// 		);
-	// 	} catch (err) {
-	// 		console.error("Failed to send message:", err);
-	// 	}
-	// };
 
 	const sendMessage = async (text?: string) => {
 		if (!text?.trim()) return;
@@ -130,9 +111,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				{toUserId: otherUser._id, message: messageText},
 				{headers: {Authorization: token}},
 			);
-
-			// ❌ لا تعمل replace هنا
-			// لأن realtime سيصل من السيرفر
 		} catch (err) {
 			console.error("Failed to send message:", err);
 		}
@@ -163,7 +141,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	useEffect(() => {
 		if (!currentUser || !otherUser) return;
 
-		// socket.current = socket;
 		loadConversation();
 
 		const handleIncoming = (msg: LocalMessage) => {
@@ -189,23 +166,20 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 		const handleConnect = () => loadConversation();
 
+		const handleMessageSeen = ({by}: {by: string}) => {
+			if (by === otherUser._id) {
+				setUnreadForUser(otherUser._id, 0);
+				setMessagesForUser(otherUser._id, (prev) =>
+					prev.map((msg) =>
+						msg.from._id === currentUser._id ? {...msg, status: "seen"} : msg,
+					),
+				);
+			}
+		};
+
 		socket.on("connect", handleConnect);
 		socket.on("message:received", handleIncoming);
-socket.on("message:seen", ({by}: {by: string}) => {
-	if (by === otherUser._id) {
-		// تحديث عدد الرسائل غير المقروءة
-		setUnreadForUser(otherUser._id, 0);
-
-		// ✅ تحديث حالة كل الرسائل المرسلة إلى "seen"
-		setMessagesForUser(otherUser._id, (prev) =>
-			prev.map((msg) =>
-				msg.from._id === currentUser._id ? {...msg, status: "seen"} : msg,
-			),
-		);
-	}
-});
-
-
+		socket.on("message:seen", handleMessageSeen);
 		socket.on("user:typing", ({from}: {from: string}) => {
 			if (from === otherUser._id) setTyping(true);
 		});
@@ -216,88 +190,391 @@ socket.on("message:seen", ({by}: {by: string}) => {
 		return () => {
 			socket.off("connect", handleConnect);
 			socket.off("message:received", handleIncoming);
-			socket.off("message:seen");
+			socket.off("message:seen", handleMessageSeen);
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
 	}, [currentUser, otherUser]);
 
+	const getStatusIcon = (status: string) => {
+		switch (status) {
+			case "seen":
+				return <DoneAllIcon sx={{fontSize: 14, color: "#4caf50"}} />;
+			case "delivered":
+				return <DoneAllIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+			default:
+				return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+		}
+	};
+
+	const formatMessageTime = (timestamp: string) => {
+		const date = new Date(timestamp);
+		const now = new Date();
+		const isToday = date.toDateString() === now.toDateString();
+
+		if (isToday) {
+			return date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+		}
+		return (
+			date.toLocaleDateString([], {month: "short", day: "numeric"}) +
+			" " +
+			date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})
+		);
+	};
+
 	return (
-		<Paper sx={{p: 2, height: "100%", display: "flex", flexDirection: "column"}}>
-			<Typography variant='h6' gutterBottom>
-				Chat with {otherUser.from.first} {otherUser.from.last}
+		<Paper
+			elevation={3}
+			sx={{
+				height: "100%",
+				display: "flex",
+				flexDirection: "column",
+				borderRadius: 2,
+				overflow: "hidden",
+			}}
+		>
+			{/* Header */}
+			<Box
+				sx={{
+					p: 2,
+					display: "flex",
+					alignItems: "center",
+					borderBottom: 1,
+					borderColor: "divider",
+					backgroundColor: "background.paper",
+				}}
+			>
+				<Badge color='success' variant='dot' sx={{mr: 1.5}}>
+					<Avatar
+						sx={{
+							width: 40,
+							height: 40,
+							bgcolor: "primary.main",
+							fontWeight: "bold",
+						}}
+					>
+						{otherUser.from.first?.charAt(0).toUpperCase()}
+						{otherUser.from.last?.charAt(0).toUpperCase()}
+					</Avatar>
+				</Badge>
+
+				<Box sx={{flexGrow: 1}}>
+					<Typography variant='subtitle1' sx={{fontWeight: 600}}>
+						{otherUser.from.first} {otherUser.from.last}
+					</Typography>
+					<Typography variant='caption' color='text.secondary'>
+						{otherUser.from.role === "doctor" ? "👨‍⚕️ Doctor" : "👤 Patient"}
+					</Typography>
+				</Box>
+
 				<Badge
 					color='primary'
 					badgeContent={unreadCount}
 					invisible={unreadCount === 0}
-				/>
-			</Typography>
+					sx={{mr: 1}}
+				>
+					<Box sx={{width: 40, height: 40}} />
+				</Badge>
+			</Box>
 
-			<Box sx={{flexGrow: 1, overflowY: "auto", mb: 2}}>
-				{userMessages.map((msg) => (
+			{/* Messages Container */}
+			<Box
+				ref={chatContainerRef}
+				sx={{
+					flexGrow: 1,
+					overflowY: "auto",
+					p: 2,
+					backgroundColor: "#f5f5f5",
+					backgroundImage:
+						"radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 2%, transparent 2%)",
+					backgroundSize: "30px 30px",
+				}}
+			>
+				{isLoading ? (
 					<Box
-						key={msg._id}
 						sx={{
 							display: "flex",
-							justifyContent:
-								msg.from._id === currentUser._id
-									? "flex-end"
-									: "flex-start",
-							mb: 1,
+							justifyContent: "center",
+							alignItems: "center",
+							height: "100%",
 						}}
 					>
-						<Paper
-							sx={{
-								p: 1,
-								maxWidth: "70%",
-								backgroundColor:
-									msg.from._id === currentUser._id
-										? "primary.light"
-										: "grey.200",
-							}}
-						>
-							{msg.replyTo && (
-								<Paper
-									sx={{p: 0.5, mb: 0.5, backgroundColor: "grey.300"}}
-								>
-									<Typography variant='caption' noWrap>
-										{msg.replyTo.message}
-									</Typography>
-								</Paper>
-							)}
-							<Typography>{msg.message}</Typography>
-							<Typography
-								variant='caption'
-								color={msg.status === "seen" ? "green" : ""}
-								sx={{display: "block", textAlign: "right"}}
-							>
-								{new Date(msg.createdAt).toLocaleTimeString()}{" "}
-								{msg.status === "seen" && "✓✓"}
-							</Typography>
-						</Paper>
+						<CircularProgress />
 					</Box>
-				))}
-				<div ref={messagesEndRef} />
+				) : (
+					<>
+						{userMessages.length === 0 ? (
+							<Fade in={true}>
+								<Box
+									sx={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										justifyContent: "center",
+										height: "100%",
+										color: "text.secondary",
+									}}
+								>
+									<Typography variant='body2' sx={{mb: 1}}>
+										👋 No messages yet
+									</Typography>
+									<Typography variant='caption'>
+										Send a message to start the conversation
+									</Typography>
+								</Box>
+							</Fade>
+						) : (
+							userMessages.map((msg, index) => {
+								const isCurrentUser = msg.from._id === currentUser._id;
+								const showAvatar =
+									index === 0 ||
+									userMessages[index - 1]?.from._id !== msg.from._id;
+
+								return (
+									<Fade in={true} key={msg._id}>
+										<Box
+											sx={{
+												display: "flex",
+												justifyContent: isCurrentUser
+													? "flex-end"
+													: "flex-start",
+												mb: 1.5,
+											}}
+										>
+											<Box
+												sx={{
+													display: "flex",
+													maxWidth: "70%",
+													alignItems: "flex-end",
+												}}
+											>
+												{!isCurrentUser && showAvatar && (
+													<Avatar
+														sx={{
+															width: 28,
+															height: 28,
+															mr: 1,
+															bgcolor: "secondary.main",
+															fontSize: 14,
+														}}
+													>
+														{otherUser.from.first?.charAt(0)}
+													</Avatar>
+												)}
+
+												<Box sx={{flexGrow: 1}}>
+													{msg.replyTo && (
+														<Paper
+															elevation={1}
+															sx={{
+																p: 0.5,
+																mb: 0.5,
+																backgroundColor:
+																	"grey.300",
+																borderRadius: 1,
+																opacity: 0.8,
+															}}
+														>
+															<Typography
+																variant='caption'
+																noWrap
+															>
+																↪ {msg.replyTo.message}
+															</Typography>
+														</Paper>
+													)}
+
+													<Tooltip
+														title={new Date(
+															msg.createdAt,
+														).toLocaleString()}
+														placement={
+															isCurrentUser
+																? "left"
+																: "right"
+														}
+														TransitionComponent={Zoom}
+													>
+														<Paper
+															elevation={2}
+															sx={{
+																p: 1.5,
+																borderRadius: 2,
+																backgroundColor:
+																	isCurrentUser
+																		? "primary.main"
+																		: "background.paper",
+																color: isCurrentUser
+																	? "white"
+																	: "text.primary",
+																position: "relative",
+																wordBreak: "break-word",
+															}}
+														>
+															<Typography variant='body2'>
+																{msg.message}
+															</Typography>
+														</Paper>
+													</Tooltip>
+
+													<Box
+														sx={{
+															display: "flex",
+															justifyContent: isCurrentUser
+																? "flex-end"
+																: "flex-start",
+															alignItems: "center",
+															mt: 0.5,
+															gap: 0.5,
+														}}
+													>
+														<Typography
+															variant='caption'
+															color='text.secondary'
+														>
+															{formatMessageTime(
+																msg.createdAt,
+															)}
+														</Typography>
+														{isCurrentUser &&
+															getStatusIcon(msg.status)}
+													</Box>
+												</Box>
+											</Box>
+										</Box>
+									</Fade>
+								);
+							})
+						)}
+
+						{/* Typing indicator */}
+						{typing && (
+							<Fade in={true}>
+								<Box sx={{display: "flex", alignItems: "center", mt: 1}}>
+									<Avatar
+										sx={{
+											width: 24,
+											height: 24,
+											mr: 1,
+											bgcolor: "secondary.main",
+											fontSize: 12,
+										}}
+									>
+										{otherUser.from.first?.charAt(0)}
+									</Avatar>
+									<Paper
+										sx={{
+											p: 1,
+											borderRadius: 2,
+											backgroundColor: "grey.100",
+										}}
+									>
+										<Box sx={{display: "flex", gap: 0.5}}>
+											<Box
+												sx={{
+													width: 6,
+													height: 6,
+													bgcolor: "text.secondary",
+													borderRadius: "50%",
+													animation: "pulse 1.5s infinite",
+												}}
+											/>
+											<Box
+												sx={{
+													width: 6,
+													height: 6,
+													bgcolor: "text.secondary",
+													borderRadius: "50%",
+													animation: "pulse 1.5s infinite",
+													animationDelay: "0.2s",
+												}}
+											/>
+											<Box
+												sx={{
+													width: 6,
+													height: 6,
+													bgcolor: "text.secondary",
+													borderRadius: "50%",
+													animation: "pulse 1.5s infinite",
+													animationDelay: "0.4s",
+												}}
+											/>
+										</Box>
+									</Paper>
+								</Box>
+							</Fade>
+						)}
+
+						<div ref={messagesEndRef} />
+					</>
+				)}
 			</Box>
 
-			{typing && (
-				<Typography variant='caption'>
-					{otherUser.from.first} is typing...
-				</Typography>
-			)}
+			{/* Input Area */}
+			<Divider />
+			<Box
+				sx={{
+					p: 2,
+					backgroundColor: "background.paper",
+					borderTop: 1,
+					borderColor: "divider",
+				}}
+			>
+				<Box sx={{display: "flex", gap: 1, alignItems: "center"}}>
+					<IconButton size='small' sx={{color: "text.secondary"}}>
+						<AttachFileIcon />
+					</IconButton>
 
-			<Box sx={{display: "flex", mt: 1}}>
-				<TextField
-					fullWidth
-					placeholder='Type a message...'
-					value={input}
-					onChange={(e) => setInput(e.target.value)}
-					onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
-				/>
-				<IconButton onClick={() => sendMessage(input)}>
-					<SendIcon />
-				</IconButton>
+					<IconButton size='small' sx={{color: "text.secondary"}}>
+						<InsertEmoticonIcon />
+					</IconButton>
+
+					<TextField
+						fullWidth
+						placeholder='Type a message...'
+						value={input}
+						onChange={(e) => setInput(e.target.value)}
+						onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
+						size='small'
+						variant='outlined'
+						sx={{
+							"& .MuiOutlinedInput-root": {
+								borderRadius: 3,
+								backgroundColor: "#f5f5f5",
+							},
+						}}
+					/>
+
+					<IconButton
+						color='primary'
+						onClick={() => sendMessage(input)}
+						disabled={!input.trim()}
+						sx={{
+							backgroundColor: "primary.main",
+							color: "white",
+							"&:hover": {
+								backgroundColor: "primary.dark",
+							},
+							"&:disabled": {
+								backgroundColor: "grey.300",
+								color: "grey.500",
+							},
+						}}
+					>
+						<SendIcon />
+					</IconButton>
+				</Box>
 			</Box>
+
+			{/* CSS Animation */}
+			<style>
+				{`
+					@keyframes pulse {
+						0%, 100% { opacity: 0.4; }
+						50% { opacity: 1; }
+					}
+				`}
+			</style>
 		</Paper>
 	);
 };
