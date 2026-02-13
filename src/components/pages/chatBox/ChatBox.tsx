@@ -138,6 +138,79 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	}, [input]);
 
 	// Initialize socket listeners
+	// useEffect(() => {
+	// 	if (!currentUser || !otherUser) return;
+
+	// 	loadConversation();
+
+	// 	const handleIncoming = (msg: LocalMessage) => {
+	// 		if (
+	// 			(msg.from._id === otherUser._id && msg.to._id === currentUser._id) ||
+	// 			(msg.from._id === currentUser._id && msg.to._id === otherUser._id)
+	// 		) {
+	// 			setMessagesForUser(otherUser._id as string, (prev) => {
+	// 				const withoutTemp = prev.filter(
+	// 					(m) => !m._id.startsWith("temp-") || m.message !== msg.message,
+	// 				);
+
+	// 				return [...withoutTemp, msg];
+	// 			});
+
+	// 			if (msg.to._id === currentUser._id) {
+	// 				setUnreadForUser(otherUser._id as string, (prev) => prev + 1);
+	// 			}
+
+	// 			scrollToBottom();
+	// 		}
+	// 	};
+
+	// 	const handleConnect = () => loadConversation();
+
+	// 	const handleMessageSeen = ({
+	// 		by,
+	// 		messageIds,
+	// 	}: {
+	// 		by: string;
+	// 		messageIds: string[];
+	// 	}) => {
+	// 		if (by === otherUser._id) {
+	// 			setUnreadForUser(otherUser._id, 0);
+	// 			setMessagesForUser(otherUser._id, (prev) =>
+	// 				prev.map((msg) => {
+	// 					if (
+	// 						msg.from._id === currentUser._id &&
+	// 						messageIds.includes(msg._id)
+	// 					) {
+	// 						return {...msg, status: "seen"};
+	// 					}
+	// 					if (msg.from._id === otherUser._id) {
+	// 						return {...msg, status: "seen"};
+	// 					}
+	// 					return msg;
+	// 				}),
+	// 			);
+	// 		}
+	// 	};
+
+	// 	socket.on("connect", handleConnect);
+	// 	socket.on("message:received", handleIncoming);
+	// 	socket.on("message:seen", handleMessageSeen);
+	// 	socket.on("user:typing", ({from}: {from: string}) => {
+	// 		if (from === otherUser._id) setTyping(true);
+	// 	});
+	// 	socket.on("user:stopTyping", ({from}: {from: string}) => {
+	// 		if (from === otherUser._id) setTyping(false);
+	// 	});
+
+	// 	return () => {
+	// 		socket.off("connect", handleConnect);
+	// 		socket.off("message:received", handleIncoming);
+	// 		socket.off("message:seen", handleMessageSeen);
+	// 		socket.off("user:typing");
+	// 		socket.off("user:stopTyping");
+	// 	};
+	// }, [currentUser, otherUser]);
+
 	useEffect(() => {
 		if (!currentUser || !otherUser) return;
 
@@ -166,17 +239,34 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 		const handleConnect = () => loadConversation();
 
-		const handleMessageSeen = ({by}: {by: string}) => {
+		const handleMessageSeen = ({
+			by,
+			messageIds,
+		}: {
+			by: string;
+			messageIds: string[];
+		}) => {
 			if (by === otherUser._id) {
 				setUnreadForUser(otherUser._id, 0);
 				setMessagesForUser(otherUser._id, (prev) =>
-					prev.map((msg) =>
-						msg.from._id === currentUser._id ? {...msg, status: "seen"} : msg,
-					),
+					prev.map((msg) => {
+						if (
+							msg.from._id === currentUser._id &&
+							messageIds.includes(msg._id)
+						) {
+							return {...msg, status: "seen"};
+						}
+						if (msg.from._id === otherUser._id) {
+							return {...msg, status: "seen"};
+						}
+						return msg;
+					}),
 				);
 			}
 		};
 
+		// استقبل حدث read
+		socket.on("messages:read", handleMessageSeen);
 		socket.on("connect", handleConnect);
 		socket.on("message:received", handleIncoming);
 		socket.on("message:seen", handleMessageSeen);
@@ -191,6 +281,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			socket.off("connect", handleConnect);
 			socket.off("message:received", handleIncoming);
 			socket.off("message:seen", handleMessageSeen);
+			socket.off("messages:read", handleMessageSeen);
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
@@ -199,11 +290,29 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const getStatusIcon = (status: string) => {
 		switch (status) {
 			case "seen":
-				return <DoneAllIcon sx={{fontSize: 14, color: "#4caf50"}} />;
+				return (
+					<span style={{color: "#4caf50"}}>
+						<DoneAllIcon sx={{fontSize: 14}} />
+					</span>
+				);
 			case "delivered":
-				return <DoneAllIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+				return (
+					<span style={{color: "#2196f3"}}>
+						<DoneAllIcon sx={{fontSize: 14}} />
+					</span>
+				);
+			case "sent":
+				return (
+					<span style={{color: "#9e9e9e"}}>
+						<CheckIcon sx={{fontSize: 14}} />
+					</span>
+				);
 			default:
-				return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+				return (
+					<span style={{color: "#9e9e9e"}}>
+						<CheckIcon sx={{fontSize: 14}} />
+					</span>
+				);
 		}
 	};
 
@@ -341,6 +450,19 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												mb: 1.5,
 											}}
 										>
+											{!isCurrentUser && showAvatar && (
+												<Avatar
+													sx={{
+														width: 28,
+														height: 28,
+														m: 1,
+														bgcolor: "secondary.main",
+														fontSize: 14,
+													}}
+												>
+													{otherUser.from.first?.charAt(0)}
+												</Avatar>
+											)}
 											<Box
 												sx={{
 													display: "flex",
@@ -348,20 +470,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 													alignItems: "flex-end",
 												}}
 											>
-												{!isCurrentUser && showAvatar && (
-													<Avatar
-														sx={{
-															width: 28,
-															height: 28,
-															mr: 1,
-															bgcolor: "secondary.main",
-															fontSize: 14,
-														}}
-													>
-														{otherUser.from.first?.charAt(0)}
-													</Avatar>
-												)}
-
 												<Box sx={{flexGrow: 1}}>
 													{msg.replyTo && (
 														<Paper
