@@ -31,6 +31,7 @@ import {
 	List as ListIcon,
 	Help as HelpIcon,
 	Dashboard as DashboardIcon,
+	ChatBubble,
 } from "@mui/icons-material";
 import {motion, AnimatePresence} from "framer-motion";
 import {path} from "../../../routes/routes";
@@ -386,6 +387,17 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										title={`${t("links.about")} معلومات عن موقع صفقة`}
 									>
 										<InfoIcon sx={{fontSize: 20}} />
+									</StyledNavLink>
+								</Box>
+
+								{/* Messages */}
+								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
+									<StyledNavLink
+										to={path.MessagesPage}
+										aria-label={`${t("links.about")} معلومات عن موقع صفقة`}
+										title={`${t("links.Messages")} معلومات عن موقع صفقة`}
+									>
+										<ChatBubble sx={{fontSize: 20}} />
 									</StyledNavLink>
 								</Box>
 

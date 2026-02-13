@@ -47,7 +47,6 @@ interface UserProviderProps {
 export const UserProvider: FunctionComponent<UserProviderProps> = ({children}) => {
 	const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 	const [auth, setAuth] = useState<Auth>(emptyAuthValues);
-
 	return (
 		<UserContext.Provider
 			value={{

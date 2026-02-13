@@ -46,6 +46,7 @@ export enum path {
 	WebSiteAdmins = "/admins",
 	Messages = "/messages",
 	userTouserMessage = "chat",
+	MessagesPage = "messages/chat",
 
 	// Admin
 	AdminSettings = "/admin-settings",

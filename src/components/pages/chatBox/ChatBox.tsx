@@ -103,7 +103,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 		addMessageForUser(otherUser._id as string, tempMessage);
 		setInput("");
-		scrollToBottom();
 
 		try {
 			await axios.post(
@@ -136,6 +135,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			});
 		}
 	}, [input]);
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [userMessages.length]);
 
 	// Initialize socket listeners
 	// useEffect(() => {
@@ -230,7 +233,14 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				});
 
 				if (msg.to._id === currentUser._id) {
-					setUnreadForUser(otherUser._id as string, (prev) => prev + 1);
+					if (otherUser._id !== msg.from._id) {
+						setUnreadForUser(otherUser._id as string, (prev) => prev + 1);
+					} else {
+						socket.emit("message:seen", {
+							to: msg.from._id,
+							messageIds: [msg._id],
+						});
+					}
 				}
 
 				scrollToBottom();
@@ -285,7 +295,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
-	}, [currentUser, otherUser]);
+	}, [currentUser._id, otherUser._id]);
 
 	const getStatusIcon = (status: string) => {
 		switch (status) {

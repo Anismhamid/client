@@ -27,7 +27,8 @@ import SafetyHelp from "../components/pages/SafetyHelp";
 import DisputesHelp from "../components/pages/DisputesHelp";
 import ChatBox from "../components/pages/chatBox/ChatBox";
 import ChatBoxWrapper from "../components/pages/chatBox/ChatBoxWrapper";
-import { UserMessage } from "../interfaces/usersMessages";
+import {UserMessage} from "../interfaces/usersMessages";
+import MessagesPage from "../components/pages/chatBox/MessagesPage";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -48,7 +49,11 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 
 			<Route path={path.Register} element={<Register />} />
 			<Route path={path.Messages} element={<Messages />} />
-			<Route path={path.userTouserMessage} element={<ChatBoxWrapper user={auth as unknown as UserMessage}/>} />
+			<Route
+				path={path.userTouserMessage}
+				element={<ChatBoxWrapper user={auth as unknown as UserMessage} />}
+			/>
+			<Route path={path.MessagesPage} element={<MessagesPage />} />
 			<Route path={path.WebSiteAdmins} element={<WebSiteAdmins />} />
 			<Route
 				path={path.UsersManagement}
