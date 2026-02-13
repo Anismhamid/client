@@ -6,6 +6,7 @@ import {
 	Card,
 	CardContent,
 	Chip,
+	Drawer,
 	Grid,
 	Rating,
 	Stack,
@@ -13,7 +14,7 @@ import {
 	useTheme,
 } from "@mui/material";
 import {motion} from "framer-motion";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import {
 	Share,
 	Phone,
@@ -27,9 +28,11 @@ import {
 } from "@mui/icons-material";
 import {NavigateFunction} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {User} from "../../../interfaces/usersMessages";
+import {User, UserMessage} from "../../../interfaces/usersMessages";
 import {Stats} from "./types/states";
 import {Products} from "../../../interfaces/Posts";
+import ChatBoxWrapper from "../../pages/chatBox/ChatBoxWrapper";
+import {useUser} from "../../../context/useUSer";
 
 interface CustomerProfileHeaderProps {
 	handleShareProfile: () => void;
@@ -54,6 +57,8 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 }) => {
 	const theme = useTheme();
 	const {t} = useTranslation();
+	const [openChat, setOpenChat] = useState<boolean>(false);
+	const {auth} = useUser();
 
 	return (
 		<>
@@ -253,8 +258,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										variant='contained'
 										size='large'
 										startIcon={<ChatBubble />}
+										// open={openChat}
 										fullWidth
-										onClick={handleContactSeller}
+										onClick={() => setOpenChat(!openChat)}
+										// onClick={handleContactSeller}
 										sx={{
 											background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
 											boxShadow: 3,
@@ -263,6 +270,36 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 									>
 										تواصل مع البائع عبر المنصه
 									</Button>
+									<Drawer
+										anchor='right'
+										open={openChat}
+										onClose={() => setOpenChat(false)}
+									>
+										{auth && (
+											<ChatBoxWrapper
+												user={{
+													_id: user._id,
+													from: {
+														_id: user._id,
+														first: user.name.first,
+														last: user.name.last,
+														email: user.email,
+														role: user.role,
+													},
+													to: {
+														_id: auth._id,
+														first: auth.name.first,
+														last: auth.name.last,
+														email: auth.email,
+														role: auth.role,
+													},
+													message: "",
+													status: "sent",
+													createdAt: new Date().toISOString(),
+												}}
+											/>
+										)}
+									</Drawer>
 									<Button
 										variant='outlined'
 										size='large'

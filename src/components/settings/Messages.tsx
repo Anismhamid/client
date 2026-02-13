@@ -1065,8 +1065,8 @@ const MessagingPage: React.FC = () => {
 							transition={{delay: 0.5}}
 							style={{
 								position: "fixed",
-								bottom: 24,
-								right: direction === "rtl" ? 24 : "auto",
+								bottom: 70,
+								right: direction === "rtl" ? 13 : "auto",
 								left: direction === "rtl" ? "auto" : 24,
 								zIndex: 1000,
 							}}

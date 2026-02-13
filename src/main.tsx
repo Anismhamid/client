@@ -7,17 +7,20 @@ import {UserProvider} from "./context/useUSer.tsx";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {Buffer} from "buffer";
 import ErrorBoundary from "./components/pages/ErrorBoundary.tsx";
+import {ChatProvider} from "./hooks/useChat.tsx";
 window.Buffer = Buffer;
 
 createRoot(document.getElementById("root")!).render(
 	<GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API}>
 		<UserProvider>
-			<SpeedInsights />
-			<BrowserRouter>
-				<ErrorBoundary>
-					<App />
-				</ErrorBoundary>
-			</BrowserRouter>
+			<ChatProvider>
+				<SpeedInsights />
+				<BrowserRouter>
+					<ErrorBoundary>
+						<App />
+					</ErrorBoundary>
+				</BrowserRouter>
+			</ChatProvider>
 		</UserProvider>
 	</GoogleOAuthProvider>,
 );

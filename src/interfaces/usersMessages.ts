@@ -20,4 +20,7 @@ export interface UserMessage {
 	status: string;
 	replyTo?: string;
 	createdAt: string;
+	name?:string
+	email?:string
+	role?:string
 }

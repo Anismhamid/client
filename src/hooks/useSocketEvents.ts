@@ -1,4 +1,4 @@
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 // import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
 import {showNewProductToast} from "../atoms/bootStrapToast/SocketToast";
@@ -14,7 +14,6 @@ import {productsPathes} from "../routes/routes";
 const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
-	// const {t} = useTranslation();
 	const {playNotificationSound, showNotification} = useNotificationSound();
 
 	useEffect(() => {
@@ -32,107 +31,31 @@ const useSocketEvents = () => {
 		};
 
 		// התחברות אם לא מחובר
-		if (!socket.connected) {
-			socket.connect();
-			console.log("Connecting socket...");
-		}
+		if (!socket.connected) socket.connect();
 
 		// התחברות לחדר אדמין
 		const handleConnect = () => {
-			console.log("Socket connected!");
-			if (isAdminOrModerator) {
-				socket.emit("admins", {
-					userId: auth._id,
-					role: auth.role,
-				});
-			}
+			if (isAdminOrModerator)
+				socket.emit("admins", {userId: auth._id, role: auth.role});
 		};
 
 		// הודעת שגיאה
-		const handleError = (error: any) => {
-			console.error("Socket error:", error);
-		};
+		const handleError = (err: any) => console.error("Socket error:", err);
 
 		// ניתוק
 		const handleDisconnect = (reason: any) => {
 			console.warn("Socket disconnected:", reason);
 			setTimeout(() => {
-				if (!socket.connected) {
-					console.log("Attempting to reconnect...");
-					socket.connect();
-				}
+				if (!socket.connected) socket.connect();
 			}, 1000);
 		};
-
-		const handleMessageReceived = (data: any) => {
-			playNotificationSound();
-
-			showInfo(`رسالة جديدة من ${data.from.name.first}`);
-
-			showNotification(`رسالة جديدة من ${data.from.name.first}`);
-
-			console.log("New message:", data);
-		};
-
-
-		// הזמנה חדשה
-		// const handleNewOrder = (newProduct: Products) => {
-		// 	if (isAdminOrModerator) {
-		// 		playNotificationSound();
-		// 		showNewProductToast({
-		// 			navigate,
-		// 			navigateTo: `/product-details/${newProduct._id}`,
-		// 			product: newProduct,
-		// 		});
-		// 		showNotification(`تم إصدار أمر جديد بواسطة ${newProduct.category}`);
-		// 	}
-		// };
-
-		// עדכון סטטוס ללקוח
-		// const handleClientOrderStatus = ({
-		// 	orderNumber,
-		// 	status,
-		// }: {
-		// 	orderNumber: string;
-		// 	status: string;
-		// }) => {
-		// 	playNotificationSound();
-		// 	showInfo(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
-		// 	showNotification(`ההזמנה שלך (${orderNumber}) ${getStatusText(status, t)}`);
-		// };
-
-		// עדכון סטטוס כללי
-		// const handleOrderStatusUpdated = ({
-		// 	orderNumber,
-		// 	status,
-		// 	userId,
-		// 	updatedBy,
-		// }: {
-		// 	orderNumber: string;
-		// 	status: string;
-		// 	userId: string;
-		// 	updatedBy: string;
-		// }) => {
-		// 	playNotificationSound();
-		// 	const msg =
-		// 		auth._id === userId
-		// 			? `ההזמנה שלך (${orderNumber}) עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
-		// 			: isAdminOrModerator
-		// 				? `הזמנה מספר ${orderNumber} עודכנה לסטטוס: ${getStatusText(status, t)} ע"י ${updatedBy}`
-		// 				: null;
-
-		// 	if (msg) {
-		// 		showInfo(msg);
-		// 		showNotification(msg);
-		// 	}
-		// };
 
 		// משתמש חדש נרשם
 		const handleUserRegistered = (user: UserRegister) => {
 			if (auth.role === RoleType.Admin) {
 				playNotificationSound();
-				showInfo(`${user.email} ${user.role} משתמש חדש נרשם`);
-				showNotification(`${user.email} ${user.role} משתמש חדש נרשם`);
+				showInfo(`${user.email} ${user.role} مستخدم جديد تم تسجيله`);
+				showNotification(`${user.email} ${user.role} مستخدم جديد تم تسجيله`);
 			}
 		};
 
@@ -168,10 +91,6 @@ const useSocketEvents = () => {
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
-		socket.on("message:received", handleMessageReceived);
-		// socket.on("new order", handleNewOrder);
-		// socket.on("order:status:client", handleClientOrderStatus);
-		// socket.on("order:status:updated", handleOrderStatusUpdated);
 		socket.on("user:registered", handleUserRegistered);
 		socket.on("user:newUserLoggedIn", handleUserLoggedIn);
 		socket.on("product:new", handleNewProduct);
@@ -181,15 +100,11 @@ const useSocketEvents = () => {
 			socket.off("connect", handleConnect);
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
-			socket.off("message:received", handleMessageReceived);
-			// socket.off("new order", handleNewOrder);
-			// socket.off("order:status:client", handleClientOrderStatus);
-			// socket.off("order:status:updated", handleOrderStatusUpdated);
 			socket.off("user:registered", handleUserRegistered);
 			socket.off("user:newUserLoggedIn", handleUserLoggedIn);
 			socket.off("product:new", handleNewProduct);
 		};
-	}, [auth?._id, auth?.role, auth?.name?.first]);
+	}, [navigate, playNotificationSound]);
 };
 
 export default useSocketEvents;

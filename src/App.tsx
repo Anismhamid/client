@@ -98,23 +98,23 @@ function App() {
 
 	return (
 		<ThemeProvider theme={theme}>
-			<CssBaseline />
-			<ToastContainer
-				position='top-right'
-				autoClose={3000}
-				hideProgressBar={false}
-				newestOnTop
-				closeOnClick
-				rtl={diriction === "rtl"}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme={mode}
-			/>
-			<Theme mode={mode} setMode={setMode} />
-			<SpeedDialComponent />
-			<AppRoutes auth={auth} />
-			<Footer  />
+				<CssBaseline />
+				<ToastContainer
+					position='top-right'
+					autoClose={3000}
+					hideProgressBar={false}
+					newestOnTop
+					closeOnClick
+					rtl={diriction === "rtl"}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme={mode}
+				/>
+				<Theme mode={mode} setMode={setMode} />
+				<SpeedDialComponent />
+				<AppRoutes auth={auth} />
+				<Footer />
 		</ThemeProvider>
 	);
 }
