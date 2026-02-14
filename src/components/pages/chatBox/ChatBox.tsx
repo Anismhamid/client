@@ -580,7 +580,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundColor: "background.paper",
 					borderTop: 1,
 					borderColor: "divider",
-					zIndex: 1,
+					zIndex: 100000,
 				}}
 			>
 				<Box sx={{display: "flex", gap: 1, alignItems: "center"}}>
