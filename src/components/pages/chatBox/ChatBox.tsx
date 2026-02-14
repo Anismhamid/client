@@ -363,7 +363,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundColor: "background.paper",
 				}}
 			>
-				<Badge color='success' variant='dot' sx={{mr: 1.5}}>
+				{/* <Badge color='success' variant='dot' sx={{mr: 1.5}}>
 					<Avatar
 						sx={{
 							width: 40,
@@ -375,16 +375,16 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						{otherUser.from.first?.charAt(0).toUpperCase()}
 						{otherUser.from.last?.charAt(0).toUpperCase()}
 					</Avatar>
-				</Badge>
+				</Badge> */}
 
-				<Box sx={{flexGrow: 1}}>
+				{/* <Box sx={{flexGrow: 1}}>
 					<Typography variant='subtitle1' sx={{fontWeight: 600}}>
 						{otherUser.from.first} {otherUser.from.last}
 					</Typography>
 					<Typography variant='caption' color='text.secondary'>
 						{otherUser.from.role === "doctor" ? "👨‍⚕️ Doctor" : "👤 Patient"}
 					</Typography>
-				</Box>
+				</Box> */}
 
 				<Badge
 					color='primary'
@@ -460,7 +460,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												mb: 1.5,
 											}}
 										>
-											{!isCurrentUser && showAvatar && (
+											{/* {!isCurrentUser && showAvatar && (
 												<Avatar
 													sx={{
 														width: 28,
@@ -472,7 +472,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												>
 													{otherUser.from.first?.charAt(0)}
 												</Avatar>
-											)}
+											)} */}
 											<Box
 												sx={{
 													display: "flex",
