@@ -325,6 +325,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundImage:
 						"radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 2%, transparent 2%)",
 					backgroundSize: "30px 30px",
+					zIndex: 100000,
 				}}
 			>
 				{isLoading ? (
@@ -484,7 +485,14 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						{/* Typing indicator */}
 						{typing && (
 							<Fade in={true}>
-								<Box sx={{display: "flex", alignItems: "center", mt: 1}}>
+								<Box
+									sx={{
+										display: "flex",
+										alignItems: "center",
+										mt: 1,
+										zIndex: 100000,
+									}}
+								>
 									<Avatar
 										sx={{
 											width: 24,
@@ -551,6 +559,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundColor: "background.paper",
 					borderTop: 1,
 					borderColor: "divider",
+					zIndex: 100000,
 				}}
 			>
 				<Box sx={{display: "flex", gap: 1, alignItems: "center"}}>

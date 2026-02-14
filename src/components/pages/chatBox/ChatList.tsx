@@ -146,9 +146,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 				display: "flex",
 				flexDirection: "column",
 				borderRadius: 2,
+      
 			}}
 		>
-			<Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
+			<Box sx={{p: 2, borderBottom: 1, borderColor: "divider" }}>
 				<Typography variant='h6'>Messages</Typography>
 				<TextField
 					fullWidth

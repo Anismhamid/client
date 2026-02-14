@@ -394,8 +394,8 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
 									<StyledNavLink
 										to={path.MessagesPage}
-										aria-label={`${t("links.about")} معلومات عن موقع صفقة`}
-										title={`${t("links.Messages")} معلومات عن موقع صفقة`}
+										aria-label={`${t("links.messages")} الرسائل موقع صفقة`}
+										title={`${t("links.Messages")} الرسائل موقع صفقة`}
 									>
 										<ChatBubble sx={{fontSize: 20}} />
 									</StyledNavLink>
