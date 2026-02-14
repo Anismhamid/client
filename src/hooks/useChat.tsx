@@ -1,6 +1,6 @@
 // context/ChatContext.tsx
 import {createContext, useContext, useState, ReactNode} from "react";
-import {LocalMessage} from "../components/pages/chatBox/ChatBox";
+import { LocalMessage } from "../interfaces/chat/localMessage";
 
 interface ChatContextType {
 	messages: Record<string, LocalMessage[]>;

@@ -21,32 +21,39 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
+import {ChatUser} from "../../../interfaces/chat/chatUser";
+import { LocalMessage } from "../../../interfaces/chat/localMessage";
 
 const api = import.meta.env.VITE_API_URL;
 
-export type LocalMessage = {
+export interface ChatMessage {
 	_id: string;
-	from: {_id: string; name: string; email: string; role: string};
-	to: {_id: string};
 	message: string;
-	warning: boolean;
-	isImportant: boolean;
-	replyTo?: LocalMessage | null;
-	status: "sent" | "delivered" | "seen";
+	from: {
+		_id: string;
+		name: {
+			first: string;
+			last: string;
+		};
+		role: string;
+		email: string;
+	};
+	to: {
+		_id: string;
+		name: {
+			first: string;
+			last: string;
+		};
+		role: string;
+		email: string;
+	};
 	createdAt: string;
-};
+	status: string;
+}
 
 interface ChatBoxProps {
 	currentUser: {_id: string; name: string; email: string; role: string};
-	otherUser: {
-		_id: string;
-		from: {
-			first: string;
-			last: string;
-			email: string;
-			role: string;
-		};
-	};
+	otherUser: ChatUser
 	token: string;
 }
 
@@ -581,7 +588,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 											fontSize: 12,
 										}}
 									>
-										{otherUser.from.first?.charAt(0)}
+										{otherUser.from.name.first?.charAt(0)}
 									</Avatar>
 									<Paper
 										sx={{

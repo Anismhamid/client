@@ -1,15 +1,46 @@
 import {useState} from "react";
 import {Grid, Box, Paper, Typography} from "@mui/material";
 import ChatList from "./ChatList";
-import ChatBox from "./ChatBox";
+import ChatBox, {ChatMessage} from "./ChatBox";
 import {UserMessage} from "../../../interfaces/usersMessages";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 
+export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
+	return {
+		_id: msg._id ?? `temp-${Date.now()}`,
+		from: {
+			_id: msg.from?._id ?? "unknown",
+			name: {
+				first: msg.from?.first ?? "Unknown",
+				last: msg.from?.last ?? "",
+			},
+			email: msg.from?.email ?? "",
+			role: msg.from?.role ?? "Client",
+		},
+		to: {
+			_id: msg.to?._id ?? "unknown",
+			name: {
+				first: msg.to?.first ?? "Unknown",
+				last: msg.to?.last ?? "",
+			},
+			email: msg.to?.email ?? "",
+			role: msg.to?.role ?? "Client",
+		},
+		message: msg.message,
+		status: msg.status as "sent" | "delivered" | "seen",
+		createdAt: msg.createdAt,
+		warning: msg.warning ?? false,
+		isImportant: msg.isImportant ?? false,
+		replyTo: msg.replyTo
+			? mapUserMessageToChatBox(msg.replyTo as unknown as UserMessage)
+			: null,
+	} as ChatMessage;
+};
+
 const MessagesPage = () => {
 	const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
 	const {auth} = useUser();
-
 
 	if (!auth) return <Loader />;
 
@@ -19,8 +50,6 @@ const MessagesPage = () => {
 		email: auth.email as string,
 		role: auth.role as string,
 	};
-
-
 
 	return (
 		<Box sx={{height: "calc(100vh - 100px)", p: 2}}>
@@ -38,15 +67,7 @@ const MessagesPage = () => {
 					{selectedUser ? (
 						<ChatBox
 							currentUser={currentUser}
-							otherUser={{
-								_id: selectedUser._id || "unknown-id",
-								from: {
-									first: selectedUser.from?.first || "Unknown",
-									last: selectedUser.from?.last || "",
-									email: selectedUser.from?.email || "",
-									role: selectedUser.from?.role || "Client",
-								},
-							}}
+							otherUser={mapUserMessageToChatBox(selectedUser)}
 							token={localStorage.getItem("token") as string}
 						/>
 					) : (

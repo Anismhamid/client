@@ -2,6 +2,7 @@ import ChatBox from "./ChatBox";
 import {useUser} from "../../../context/useUSer";
 import {FunctionComponent} from "react";
 import {UserMessage} from "../../../interfaces/usersMessages";
+import { mapUserMessageToChatBox } from "./MessagesPage";
 
 interface ChatBoxWrapperProps {
 	user: UserMessage;
@@ -11,10 +12,9 @@ const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({user}) => {
 	const {auth} = useUser();
 	const token = localStorage.getItem("token");
 
-if (!auth || !auth._id) {
-	return <div>⚠️ الرجاء تسجيل الدخول أولاً</div>;
-}
-
+	if (!auth || !auth._id) {
+		return <div>⚠️ الرجاء تسجيل الدخول أولاً</div>;
+	}
 
 	return (
 		<ChatBox
@@ -24,15 +24,7 @@ if (!auth || !auth._id) {
 				email: auth.email ?? "",
 				role: auth.role ?? "Client",
 			}}
-			otherUser={{
-				_id: user._id!,
-				from: {
-					first: user.from?.first ?? "Unknown",
-					last: user.from?.last ?? "",
-					email: user.from?.email ?? "",
-					role: user.from?.role ?? "Client",
-				},
-			}}
+			otherUser={mapUserMessageToChatBox(user)}
 			token={token || ""}
 		/>
 	);
