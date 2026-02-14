@@ -1,10 +1,12 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Grid, Box, Paper, Typography} from "@mui/material";
 import ChatList from "./ChatList";
 import ChatBox, {ChatMessage} from "./ChatBox";
 import {UserMessage} from "../../../interfaces/usersMessages";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
+import handleRTL from "../../../locales/handleRTL";
+import {useTranslation} from "react-i18next";
 
 export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
 	return {
@@ -40,6 +42,8 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
 
 const MessagesPage = () => {
 	const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
+	const {t} = useTranslation();
+
 	const {auth} = useUser();
 
 	if (!auth) return <Loader />;
@@ -51,8 +55,10 @@ const MessagesPage = () => {
 		role: auth.role as string,
 	};
 
+	const dir = handleRTL();
+
 	return (
-		<Box sx={{height: "calc(100vh - 100px)", p: 2}}>
+		<Box sx={{height: "calc(100vh - 100px)", p: 2, direction: dir}}>
 			<Grid container spacing={2} sx={{height: "100%"}}>
 				<Grid size={{xs: 12, md: 4}} sx={{height: "100%"}}>
 					<ChatList

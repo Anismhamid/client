@@ -23,7 +23,7 @@ export interface UserMessage {
 	status: string;
 	replyTo?: string;
 	createdAt: string;
-	name?:string
-	email?:string
-	role?:string
+	name?: {first: string; last: string};
+	email?: string;
+	role?: string;
 }

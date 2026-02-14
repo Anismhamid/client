@@ -22,7 +22,9 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
 import {ChatUser} from "../../../interfaces/chat/chatUser";
-import { LocalMessage } from "../../../interfaces/chat/localMessage";
+import {LocalMessage} from "../../../interfaces/chat/localMessage";
+import Linkify from "./Linkify";
+import handleRTL from "../../../locales/handleRTL";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -53,7 +55,7 @@ export interface ChatMessage {
 
 interface ChatBoxProps {
 	currentUser: {_id: string; name: string; email: string; role: string};
-	otherUser: ChatUser
+	otherUser: ChatUser;
 	token: string;
 }
 
@@ -76,10 +78,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const userMessages = messages[otherUser._id] || [];
 	const unreadCount = unreadCounts[otherUser._id] || 0;
 
-	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
-		messagesEndRef.current?.scrollIntoView({behavior});
-	};
-
 	const loadConversation = async () => {
 		setIsLoading(true);
 		try {
@@ -88,7 +86,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			});
 			setMessagesForUser(otherUser._id, res.data.messages);
 			setUnreadForUser(otherUser._id, res.data.unreadCount || 0);
-			setTimeout(() => scrollToBottom("auto"), 100);
+			// setTimeout(() => scrollToBottom("auto"), 100);
 		} catch (err) {
 			console.error("Failed to load conversation:", err);
 		} finally {
@@ -151,84 +149,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	}, [input, otherUser._id, currentUser._id]);
 
 	useEffect(() => {
-		scrollToBottom();
-	}, [userMessages.length]);
-
-	// Initialize socket listeners
-	// useEffect(() => {
-	// 	if (!currentUser || !otherUser) return;
-
-	// 	loadConversation();
-
-	// 	const handleIncoming = (msg: LocalMessage) => {
-	// 		if (
-	// 			(msg.from._id === otherUser._id && msg.to._id === currentUser._id) ||
-	// 			(msg.from._id === currentUser._id && msg.to._id === otherUser._id)
-	// 		) {
-	// 			setMessagesForUser(otherUser._id as string, (prev) => {
-	// 				const withoutTemp = prev.filter(
-	// 					(m) => !m._id.startsWith("temp-") || m.message !== msg.message,
-	// 				);
-
-	// 				return [...withoutTemp, msg];
-	// 			});
-
-	// 			if (msg.to._id === currentUser._id) {
-	// 				setUnreadForUser(otherUser._id as string, (prev) => prev + 1);
-	// 			}
-
-	// 			scrollToBottom();
-	// 		}
-	// 	};
-
-	// 	const handleConnect = () => loadConversation();
-
-	// 	const handleMessageSeen = ({
-	// 		by,
-	// 		messageIds,
-	// 	}: {
-	// 		by: string;
-	// 		messageIds: string[];
-	// 	}) => {
-	// 		if (by === otherUser._id) {
-	// 			setUnreadForUser(otherUser._id, 0);
-	// 			setMessagesForUser(otherUser._id, (prev) =>
-	// 				prev.map((msg) => {
-	// 					if (
-	// 						msg.from._id === currentUser._id &&
-	// 						messageIds.includes(msg._id)
-	// 					) {
-	// 						return {...msg, status: "seen"};
-	// 					}
-	// 					if (msg.from._id === otherUser._id) {
-	// 						return {...msg, status: "seen"};
-	// 					}
-	// 					return msg;
-	// 				}),
-	// 			);
-	// 		}
-	// 	};
-
-	// 	socket.on("connect", handleConnect);
-	// 	socket.on("message:received", handleIncoming);
-	// 	socket.on("message:seen", handleMessageSeen);
-	// 	socket.on("user:typing", ({from}: {from: string}) => {
-	// 		if (from === otherUser._id) setTyping(true);
-	// 	});
-	// 	socket.on("user:stopTyping", ({from}: {from: string}) => {
-	// 		if (from === otherUser._id) setTyping(false);
-	// 	});
-
-	// 	return () => {
-	// 		socket.off("connect", handleConnect);
-	// 		socket.off("message:received", handleIncoming);
-	// 		socket.off("message:seen", handleMessageSeen);
-	// 		socket.off("user:typing");
-	// 		socket.off("user:stopTyping");
-	// 	};
-	// }, [currentUser, otherUser]);
-
-	useEffect(() => {
 		if (!currentUser || !otherUser) return;
 
 		loadConversation();
@@ -253,7 +173,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					});
 				}
 
-				scrollToBottom();
+				// scrollToBottom();
 			}
 		};
 
@@ -351,6 +271,12 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		);
 	};
 
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
+	}, [messages]);
+
+	// const dir = handleRTL();
+
 	return (
 		<Paper
 			elevation={3}
@@ -373,7 +299,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundColor: "background.paper",
 				}}
 			>
-				{/* <Badge color='success' variant='dot' sx={{mr: 1.5}}>
+				<Badge color='success' variant='dot' sx={{mr: 1.5}}>
 					<Avatar
 						sx={{
 							width: 40,
@@ -382,27 +308,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 							fontWeight: "bold",
 						}}
 					>
-						{otherUser.from.first?.charAt(0).toUpperCase()}
-						{otherUser.from.last?.charAt(0).toUpperCase()}
+						{otherUser.from.name.first.charAt(0).toUpperCase()}
+						{otherUser.from.name.last.charAt(0).toUpperCase()}
 					</Avatar>
-				</Badge> */}
-
-				{/* <Box sx={{flexGrow: 1}}>
-					<Typography variant='subtitle1' sx={{fontWeight: 600}}>
-						{otherUser.from.first} {otherUser.from.last}
-					</Typography>
-					<Typography variant='caption' color='text.secondary'>
-						{otherUser.from.role === "doctor" ? "👨‍⚕️ Doctor" : "👤 Patient"}
-					</Typography>
-				</Box> */}
-
-				<Badge
-					color='primary'
-					badgeContent={unreadCount}
-					invisible={unreadCount === 0}
-					sx={{mr: 1}}
-				>
-					<Box sx={{width: 40, height: 40}} />
 				</Badge>
 			</Box>
 
@@ -470,7 +378,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												mb: 1.5,
 											}}
 										>
-											{/* {!isCurrentUser && showAvatar && (
+											{!isCurrentUser && showAvatar && (
 												<Avatar
 													sx={{
 														width: 28,
@@ -480,9 +388,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 														fontSize: 14,
 													}}
 												>
-													{otherUser.from.first?.charAt(0)}
+													{otherUser.from.name.first?.charAt(0)}
 												</Avatar>
-											)} */}
+											)}
 											<Box
 												sx={{
 													display: "flex",
@@ -539,9 +447,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 																wordBreak: "break-word",
 															}}
 														>
-															<Typography variant='body2'>
-																{msg.message}
-															</Typography>
+															<Linkify text={msg.message} />
 														</Paper>
 													</Tooltip>
 
@@ -632,7 +538,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								</Box>
 							</Fade>
 						)}
-
 						<div ref={messagesEndRef} />
 					</>
 				)}

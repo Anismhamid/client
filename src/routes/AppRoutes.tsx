@@ -25,7 +25,6 @@ import DiscountsAndOffers from "../components/pages/products/DiscountsAndOffers"
 import SellingHelp from "../components/pages/SellingHelp";
 import SafetyHelp from "../components/pages/SafetyHelp";
 import DisputesHelp from "../components/pages/DisputesHelp";
-import ChatBox from "../components/pages/chatBox/ChatBox";
 import ChatBoxWrapper from "../components/pages/chatBox/ChatBoxWrapper";
 import {UserMessage} from "../interfaces/usersMessages";
 import MessagesPage from "../components/pages/chatBox/MessagesPage";
