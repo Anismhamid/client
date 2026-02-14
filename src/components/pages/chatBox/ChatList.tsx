@@ -186,7 +186,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 						</Typography>
 					</Box>
 				) : (
-					<List sx={{p: 0}}>
+					<List sx={{p: 0, zIndex:1}}>
 						{filteredConversations.map((conv) => {
 							const isSelected = selectedUserId === conv.user._id;
 							return (

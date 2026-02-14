@@ -58,7 +58,7 @@ const MessagesPage = () => {
 	const dir = handleRTL();
 
 	return (
-		<Box  sx={{height: "80vh", p: 2, direction: dir}}>
+		<Box sx={{height: "80vh", p: 2, direction: dir}}>
 			<Grid container spacing={0} sx={{height: "100%"}}>
 				{/* قائمة المحادثات */}
 				<Grid size={{xs: 12, md: 4}} sx={{height: "100%"}}>

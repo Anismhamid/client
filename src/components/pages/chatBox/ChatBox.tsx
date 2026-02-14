@@ -71,7 +71,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const [typing, setTyping] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
-	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	// const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -317,6 +317,16 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						{otherUser.from.name.last.charAt(0).toUpperCase()}
 					</Avatar>
 				</Badge>
+				<Box sx={{flexGrow: 1}}>
+					<Typography variant='subtitle1' sx={{fontWeight: "bold"}}>
+						{otherUser.from.name.first} {otherUser.from.name.last}
+					</Typography>
+					{unreadCount > 0 && (
+						<Typography variant='caption' color='primary'>
+							{unreadCount} رسالة غير مقروءة
+						</Typography>
+					)}
+				</Box>
 			</Box>
 
 			{/* Messages Container */}
