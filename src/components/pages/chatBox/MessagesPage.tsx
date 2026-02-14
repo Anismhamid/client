@@ -20,6 +20,8 @@ const MessagesPage = () => {
 		role: auth.role as string,
 	};
 
+
+
 	return (
 		<Box sx={{height: "calc(100vh - 100px)", p: 2}}>
 			<Grid container spacing={2} sx={{height: "100%"}}>
@@ -36,7 +38,15 @@ const MessagesPage = () => {
 					{selectedUser ? (
 						<ChatBox
 							currentUser={currentUser}
-							otherUser={selectedUser}
+							otherUser={{
+								_id: selectedUser._id || "unknown-id",
+								from: {
+									first: selectedUser.from?.first || "Unknown",
+									last: selectedUser.from?.last || "",
+									email: selectedUser.from?.email || "",
+									role: selectedUser.from?.role || "Client",
+								},
+							}}
 							token={localStorage.getItem("token") as string}
 						/>
 					) : (

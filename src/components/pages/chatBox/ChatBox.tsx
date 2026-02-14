@@ -21,14 +21,13 @@ import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
-import {UserMessage} from "../../../interfaces/usersMessages";
 
 const api = import.meta.env.VITE_API_URL;
 
 export type LocalMessage = {
 	_id: string;
 	from: {_id: string; name: string; email: string; role: string};
-	to: UserMessage;
+	to: {_id: string};
 	message: string;
 	warning: boolean;
 	isImportant: boolean;
@@ -39,7 +38,15 @@ export type LocalMessage = {
 
 interface ChatBoxProps {
 	currentUser: {_id: string; name: string; email: string; role: string};
-	otherUser: UserMessage;
+	otherUser: {
+		_id: string;
+		from: {
+			first: string;
+			last: string;
+			email: string;
+			role: string;
+		};
+	};
 	token: string;
 }
 
@@ -59,8 +66,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
-	const userMessages = messages[otherUser._id as string] || [];
-	const unreadCount = unreadCounts[otherUser._id as string] || 0;
+	const userMessages = messages[otherUser._id] || [];
+	const unreadCount = unreadCounts[otherUser._id] || 0;
 
 	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
 		messagesEndRef.current?.scrollIntoView({behavior});
@@ -72,8 +79,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			const res = await axios.get(`${api}/messages/conversation/${otherUser._id}`, {
 				headers: {Authorization: token},
 			});
-			setMessagesForUser(otherUser._id as string, res.data.messages);
-			setUnreadForUser(otherUser._id as string, res.data.unreadCount || 0);
+			setMessagesForUser(otherUser._id, res.data.messages);
+			setUnreadForUser(otherUser._id, res.data.unreadCount || 0);
 			setTimeout(() => scrollToBottom("auto"), 100);
 		} catch (err) {
 			console.error("Failed to load conversation:", err);
@@ -101,7 +108,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			createdAt: new Date().toISOString(),
 		};
 
-		addMessageForUser(otherUser._id as string, tempMessage);
+		addMessageForUser(otherUser._id, tempMessage);
 		setInput("");
 
 		try {
@@ -134,7 +141,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				from: currentUser._id,
 			});
 		}
-	}, [input]);
+	}, [input, otherUser._id, currentUser._id]);
 
 	useEffect(() => {
 		scrollToBottom();
@@ -224,7 +231,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				(msg.from._id === otherUser._id && msg.to._id === currentUser._id) ||
 				(msg.from._id === currentUser._id && msg.to._id === otherUser._id)
 			) {
-				setMessagesForUser(otherUser._id as string, (prev) => {
+				setMessagesForUser(otherUser._id, (prev) => {
 					const withoutTemp = prev.filter(
 						(m) => !m._id.startsWith("temp-") || m.message !== msg.message,
 					);
@@ -233,14 +240,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				});
 
 				if (msg.to._id === currentUser._id) {
-					if (otherUser._id !== msg.from._id) {
-						setUnreadForUser(otherUser._id as string, (prev) => prev + 1);
-					} else {
-						socket.emit("message:seen", {
-							to: msg.from._id,
-							messageIds: [msg._id],
-						});
-					}
+					socket.emit("message:seen", {
+						to: msg.from._id,
+						messageIds: [msg._id],
+					});
 				}
 
 				scrollToBottom();
@@ -295,7 +298,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
-	}, [currentUser._id, otherUser._id]);
+	}, [currentUser?._id, otherUser?._id]);
 
 	const getStatusIcon = (status: string) => {
 		switch (status) {

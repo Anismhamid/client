@@ -23,7 +23,6 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import socket from "../../../socket/globalSocket";
 import {UserMessage} from "../../../interfaces/usersMessages";
-import { LocalMessage } from "./ChatBox";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -31,8 +30,9 @@ interface ChatListProps {
 	currentUser: {_id: string; name: string; email: string; role: string};
 	token: string;
 	onSelectChat: (user: UserMessage) => void;
-	selectedUserId?: LocalMessage;
+	selectedUserId?: string;
 }
+
 
 interface Conversation {
 	user: UserMessage;
@@ -149,7 +149,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 			socket.off("message:received", handleNewMessage);
 			socket.off("message:seen", handleMessageSeen);
 		};
-	}, [currentUser]);
+	}, [currentUser._id]);
 
 	const formatTime = (timestamp: string) => {
 		const date = new Date(timestamp);
