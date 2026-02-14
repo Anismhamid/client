@@ -272,10 +272,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	};
 
 	useEffect(() => {
-		messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
-	}, [messages]);
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTo({
+				top: chatContainerRef.current.scrollHeight,
+				behavior: "smooth",
+			});
+		}
+	}, [userMessages]);
 
-	// const dir = handleRTL();
+	const dir = handleRTL();
 
 	return (
 		<Paper
@@ -321,11 +326,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					flexGrow: 1,
 					overflowY: "auto",
 					p: 2,
-					backgroundColor: "#f5f5f5",
+					// backgroundColor: "#f5f5f5",
 					backgroundImage:
 						"radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 2%, transparent 2%)",
 					backgroundSize: "30px 30px",
-					zIndex: 100000,
+					zIndex: 1,
 				}}
 			>
 				{isLoading ? (
@@ -374,8 +379,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 											sx={{
 												display: "flex",
 												justifyContent: isCurrentUser
-													? "flex-end"
-													: "flex-start",
+													? "flex-start"
+													: "flex-end",
 												mb: 1.5,
 											}}
 										>
@@ -427,8 +432,12 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 														).toLocaleString()}
 														placement={
 															isCurrentUser
-																? "left"
-																: "right"
+																? dir === "rtl"
+																	? "left"
+																	: "right"
+																: dir === "rtl"
+																	? "right"
+																	: "left"
 														}
 														TransitionComponent={Zoom}
 													>
@@ -456,10 +465,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 														sx={{
 															display: "flex",
 															justifyContent: isCurrentUser
-																? "flex-end"
-																: "flex-start",
-															alignItems: "center",
-															mt: 0.5,
+																? dir === "rtl"
+																	? "flex-end"
+																	: "flex-start"
+																: dir === "rtl"
+																	? "flex-start"
+																	: "flex-end",
+															mb: 1.5,
 															gap: 0.5,
 														}}
 													>
@@ -546,7 +558,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								</Box>
 							</Fade>
 						)}
-						<div ref={messagesEndRef} />
 					</>
 				)}
 			</Box>
@@ -559,7 +570,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					backgroundColor: "background.paper",
 					borderTop: 1,
 					borderColor: "divider",
-					zIndex: 100000,
+					zIndex: 1,
 				}}
 			>
 				<Box sx={{display: "flex", gap: 1, alignItems: "center"}}>
@@ -592,7 +603,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						onClick={() => sendMessage(input)}
 						disabled={!input.trim()}
 						sx={{
-							backgroundColor: "primary.main",
+							backgroundColor: "success.main",
 							color: "white",
 							"&:hover": {
 								backgroundColor: "primary.dark",

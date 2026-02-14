@@ -91,6 +91,7 @@ const useSocketEvents = () => {
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
+		socket.on("message:received", playNotificationSound);
 		socket.on("user:registered", handleUserRegistered);
 		socket.on("user:newUserLoggedIn", handleUserLoggedIn);
 		socket.on("product:new", handleNewProduct);
@@ -100,6 +101,7 @@ const useSocketEvents = () => {
 			socket.off("connect", handleConnect);
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
+			socket.off("message:received", playNotificationSound);
 			socket.off("user:registered", handleUserRegistered);
 			socket.off("user:newUserLoggedIn", handleUserLoggedIn);
 			socket.off("product:new", handleNewProduct);

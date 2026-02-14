@@ -58,18 +58,37 @@ const MessagesPage = () => {
 	const dir = handleRTL();
 
 	return (
-		<Box sx={{height: "calc(100vh - 100px)", p: 2, direction: dir}}>
-			<Grid container spacing={2} sx={{height: "100%"}}>
+		<Box  sx={{height: "80vh", p: 2, direction: dir}}>
+			<Grid container spacing={0} sx={{height: "100%"}}>
+				{/* قائمة المحادثات */}
 				<Grid size={{xs: 12, md: 4}} sx={{height: "100%"}}>
-					<ChatList
-						currentUser={currentUser}
-						token={localStorage.getItem("token") as string}
-						onSelectChat={setSelectedUser}
-						selectedUserId={selectedUser?._id}
-					/>
+					<Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
+						<Typography variant='h6' fontWeight='bold'>
+							Chats
+						</Typography>
+					</Box>
+					<Box sx={{flexGrow: 1, overflowY: "auto"}}>
+						<ChatList
+							currentUser={currentUser}
+							token={localStorage.getItem("token") as string}
+							onSelectChat={setSelectedUser}
+							selectedUserId={selectedUser?._id}
+						/>
+					</Box>
 				</Grid>
 
-				<Grid size={{xs: 12, md: 8}} sx={{height: "100%"}}>
+				{/* صندوق الدردشة */}
+				<Grid
+					size={{xs: 12, md: 8}}
+					sx={{
+						height: "100%",
+						display: "flex",
+						flexDirection: "column",
+						borderRadius: 2,
+						boxShadow: 3,
+						overflow: "hidden",
+					}}
+				>
 					{selectedUser ? (
 						<ChatBox
 							currentUser={currentUser}
@@ -78,28 +97,25 @@ const MessagesPage = () => {
 						/>
 					) : (
 						<Paper
-							elevation={3}
+							elevation={0}
 							sx={{
 								height: "100%",
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "center",
-								borderRadius: 2,
-								bgcolor: "#f5f5f5",
+								flexDirection: "column",
+								bgcolor: "grey.50",
 							}}
 						>
-							<Box sx={{textAlign: "center"}}>
-								<Typography
-									variant='h6'
-									color='text.secondary'
-									gutterBottom
-								>
-									👋 Select a conversation
-								</Typography>
-								<Typography variant='body2' color='text.secondary'>
-									Choose a chat from the list to start messaging
-								</Typography>
-							</Box>
+							<Typography variant='h5' color='text.secondary' gutterBottom>
+								👋{" "}
+								{t("messages.selectConversation") ||
+									"Select a conversation"}
+							</Typography>
+							<Typography variant='body1' color='text.secondary'>
+								{t("messages.chooseChat") ||
+									"Choose a chat from the list to start messaging"}
+							</Typography>
 						</Paper>
 					)}
 				</Grid>
