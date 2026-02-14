@@ -87,6 +87,7 @@ const MessagesPage = () => {
 						borderRadius: 2,
 						boxShadow: 3,
 						overflow: "hidden",
+zIndex:10000
 					}}
 				>
 					{selectedUser ? (
