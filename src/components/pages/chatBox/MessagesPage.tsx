@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import {Grid, Box, Paper, Typography} from "@mui/material";
 import ChatList from "./ChatList";
 import ChatBox, {ChatMessage} from "./ChatBox";
