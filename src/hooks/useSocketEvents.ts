@@ -84,14 +84,29 @@ const useSocketEvents = () => {
 				product: newProduct,
 			});
 
-			showNotification(`تم إضافة منتج جديد: ${newProduct.product_name}`);
+			showNotification(`تم إضافة منشور جديد: ${newProduct.product_name}`);
 		};
+
+	const messageSent = (msg: any) => {
+		// إذا المرسل هو المستخدم الحالي
+		if (msg.to !== auth._id || msg.from !== auth._id) {
+			playNotificationSound("messageSent");
+		}
+	};
+
+	const messageReceived = (msg: any) => {
+		// إذا المستلم هو المستخدم الحالي
+		if (msg.to !== auth._id) {
+			playNotificationSound("messageReceived");
+		}
+	};
 
 		// חיבור מאזינים
 		socket.on("connect", handleConnect);
 		socket.on("error", handleError);
 		socket.on("disconnect", handleDisconnect);
-		socket.on("message:received", playNotificationSound);
+		socket.on("message:sent", messageSent);
+		socket.on("message:received", messageReceived);
 		socket.on("user:registered", handleUserRegistered);
 		socket.on("user:newUserLoggedIn", handleUserLoggedIn);
 		socket.on("product:new", handleNewProduct);
@@ -101,7 +116,8 @@ const useSocketEvents = () => {
 			socket.off("connect", handleConnect);
 			socket.off("error", handleError);
 			socket.off("disconnect", handleDisconnect);
-			socket.off("message:received", playNotificationSound);
+			socket.off("message:sent", messageSent);
+			socket.off("message:received", messageReceived);
 			socket.off("user:registered", handleUserRegistered);
 			socket.off("user:newUserLoggedIn", handleUserLoggedIn);
 			socket.off("product:new", handleNewProduct);

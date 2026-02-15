@@ -14,8 +14,8 @@ import {
 	ListItemButton,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import socket from "../../../socket/globalSocket";
 import {UserMessage} from "../../../interfaces/usersMessages";
+import {useChat} from "../../../hooks/useChat";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -29,7 +29,6 @@ interface ChatListProps {
 interface Conversation {
 	user: UserMessage;
 	lastMessage: {message: string; createdAt: string};
-	unreadCount: number;
 }
 
 const ChatList: FunctionComponent<ChatListProps> = ({
@@ -42,6 +41,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filter, setFilter] = useState<"all" | "unread">("all");
+	const {unreadCounts} = useChat();
 
 	const getUserName = (user: UserMessage) => {
 		if (typeof user.name === "string") return user.name;
@@ -76,50 +76,47 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 		if (!currentUser) return;
 		loadConversations();
 
-		// Socket listener for new messages
-		const handleNewMessage = (msg: any) => {
-			setConversations((prev) => {
-				const otherUser = msg.from._id === currentUser._id ? msg.to : msg.from;
+		// // Socket listener for new messages
+		// const handleNewMessage = (msg: any) => {
+		// 	setConversations((prev) => {
+		// 		const otherUser = msg.from._id === currentUser._id ? msg.to : msg.from;
 
-				const existingIndex = prev.findIndex(
-					(conv) => conv.user._id === otherUser._id,
-				);
+		// 		const existingIndex = prev.findIndex(
+		// 			(conv) => conv.user._id === otherUser._id,
+		// 		);
 
-				const newConv: Conversation = {
-					user: otherUser,
-					lastMessage: {
-						message: msg.message,
-						createdAt: msg.createdAt,
-					},
-					unreadCount: msg.from._id !== currentUser._id ? 1 : 0,
-				};
+		// 		const newConv: Conversation = {
+		// 			user: otherUser,
+		// 			lastMessage: {
+		// 				message: msg.message,
+		// 				createdAt: msg.createdAt,
+		// 			},
+		// 		};
 
-				if (existingIndex !== -1) {
-					// Update existing conversation
-					const updated = [...prev];
-					const existing = updated[existingIndex];
-					updated[existingIndex] = {
-						...existing,
-						lastMessage: newConv.lastMessage,
-						unreadCount:
-							msg.from._id !== currentUser._id
-								? (existing.unreadCount || 0) + 1
-								: existing.unreadCount,
-					};
-					return updated;
-				} else {
-					// Add new conversation
-					return [newConv, ...prev];
-				}
-			});
-		};
+		// 		if (existingIndex !== -1) {
+		// 			// Update existing conversation
+		// 			const updated = [...prev];
+		// 			const existing = updated[existingIndex];
+		// 			updated[existingIndex] = {
+		// 				...existing,
+		// 				lastMessage: newConv.lastMessage,
+		// 			};
+		// 			return updated;
+		// 		} else {
+		// 			// Add new conversation
+		// 			return [newConv, ...prev];
+		// 		}
+		// 	});
+		// };
 
-		socket.on("message:received", handleNewMessage);
+		// // socket.on("message:received", handleNewMessage);
+		// socket.on("message:sent", handleNewMessage);
 
-		return () => {
-			socket.off("message:received", handleNewMessage);
-		};
-	}, []);
+		// return () => {
+		// 	// socket.off("message:received", handleNewMessage);
+		// 	socket.off("message:sent", handleNewMessage);
+		// };
+	}, [currentUser?._id]);
 
 	const filteredConversations = useMemo(() => {
 		return conversations
@@ -129,7 +126,8 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 					.toLowerCase()
 					.includes(searchTerm.toLowerCase());
 				const unreadMatch =
-					filter === "all" || (filter === "unread" && conv.unreadCount > 0);
+					filter === "all" ||
+					(filter === "unread" && unreadCounts[conv.user._id as string] > 0);
 				return searchMatch && unreadMatch;
 			})
 			.sort(
@@ -137,7 +135,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 					new Date(b.lastMessage.createdAt).getTime() -
 					new Date(a.lastMessage.createdAt).getTime(),
 			);
-	}, [conversations, searchTerm, filter]);
+	}, [conversations, searchTerm, filter, unreadCounts]);
 
 	return (
 		<Paper
@@ -146,10 +144,9 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 				display: "flex",
 				flexDirection: "column",
 				borderRadius: 2,
-      
 			}}
 		>
-			<Box sx={{p: 2, borderBottom: 1, borderColor: "divider" }}>
+			<Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
 				<Typography variant='h6'>Messages</Typography>
 				<TextField
 					fullWidth
@@ -186,7 +183,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 						</Typography>
 					</Box>
 				) : (
-					<List sx={{p: 0, zIndex:1}}>
+					<List sx={{p: 0, zIndex: 1}}>
 						{filteredConversations.map((conv) => {
 							const isSelected = selectedUserId === conv.user._id;
 							return (

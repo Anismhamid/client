@@ -81,12 +81,14 @@ const MessagesPage = () => {
 				<Grid
 					size={{xs: 12, md: 8}}
 					sx={{
+						position:"relative",
 						height: "100%",
 						display: "flex",
 						flexDirection: "column",
 						borderRadius: 2,
 						boxShadow: 3,
-						overflow: "hidden",
+						// overflow: "hidden",
+						// zIndex:100
 					}}
 				>
 					{selectedUser ? (

@@ -1,6 +1,7 @@
 // context/ChatContext.tsx
-import {createContext, useContext, useState, ReactNode} from "react";
-import { LocalMessage } from "../interfaces/chat/localMessage";
+import {createContext, useContext, useState, ReactNode, useEffect} from "react";
+import {LocalMessage} from "../interfaces/chat/localMessage";
+import socket from "../socket/globalSocket";
 
 interface ChatContextType {
 	messages: Record<string, LocalMessage[]>;
@@ -22,6 +23,26 @@ const ChatContext = createContext<ChatContextType | null>(null);
 export const ChatProvider = ({children}: {children: ReactNode}) => {
 	const [messages, setMessages] = useState<Record<string, LocalMessage[]>>({});
 	const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
+	useEffect(() => {
+		const handleUnread = ({userId, count}: {userId: string; count: number}) => {
+			setUnreadForUser(userId, count);
+		};
+
+		const handleIncomingMessage = (msg: LocalMessage) => {
+			const otherUserId = msg.from._id === msg.to._id ? msg.to._id : msg.from._id;
+
+			addMessageForUser(otherUserId, msg);
+		};
+
+		socket.on("message:unreadCount", handleUnread);
+		socket.on("message:received", handleIncomingMessage);
+
+		return () => {
+			socket.off("message:unreadCount", handleUnread);
+			socket.off("message:received", handleIncomingMessage);
+		};
+	}, []);
 
 	const setMessagesForUser = (
 		userId: string,
@@ -49,17 +70,14 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
 	};
 
 	const setUnreadForUser = (
-  userId: string,
-  count: number | ((prev: number) => number)
-) => {
-  setUnreadCounts((prev) => ({
-    ...prev,
-    [userId]:
-      typeof count === "function"
-        ? count(prev[userId] || 0)
-        : count,
-  }));
-};
+		userId: string,
+		count: number | ((prev: number) => number),
+	) => {
+		setUnreadCounts((prev) => ({
+			...prev,
+			[userId]: typeof count === "function" ? count(prev[userId] || 0) : count,
+		}));
+	};
 
 	return (
 		<ChatContext.Provider
@@ -67,8 +85,8 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
 				messages,
 				setMessagesForUser,
 				addMessageForUser,
-				unreadCounts,
 				setUnreadForUser,
+				unreadCounts,
 			}}
 		>
 			{children}

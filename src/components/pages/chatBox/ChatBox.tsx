@@ -76,7 +76,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
 	const userMessages = messages[otherUser._id] || [];
-	const unreadCount = unreadCounts[otherUser._id] || 0;
+	const unreadCount = unreadCounts[otherUser._id];
 
 	const loadConversation = async () => {
 		setIsLoading(true);
@@ -152,30 +152,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		if (!currentUser || !otherUser) return;
 
 		loadConversation();
-
-		const handleIncoming = (msg: LocalMessage) => {
-			if (
-				(msg.from._id === otherUser._id && msg.to._id === currentUser._id) ||
-				(msg.from._id === currentUser._id && msg.to._id === otherUser._id)
-			) {
-				setMessagesForUser(otherUser._id, (prev) => {
-					const withoutTemp = prev.filter(
-						(m) => !m._id.startsWith("temp-") || m.message !== msg.message,
-					);
-
-					return [...withoutTemp, msg];
-				});
-
-				if (msg.to._id === currentUser._id) {
-					socket.emit("message:seen", {
-						to: msg.from._id,
-						messageIds: [msg._id],
-					});
-				}
-
-				// scrollToBottom();
-			}
-		};
+		setUnreadForUser(otherUser._id, 0);
+		socket.emit("message:seen", {
+			to: otherUser._id,
+		});
 
 		const handleConnect = () => loadConversation();
 
@@ -208,7 +188,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		// استقبل حدث read
 		socket.on("messages:read", handleMessageSeen);
 		socket.on("connect", handleConnect);
-		socket.on("message:received", handleIncoming);
+		// socket.on("message:received", handleIncoming);
 		socket.on("message:seen", handleMessageSeen);
 		socket.on("user:typing", ({from}: {from: string}) => {
 			if (from === otherUser._id) setTyping(true);
@@ -219,7 +199,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 		return () => {
 			socket.off("connect", handleConnect);
-			socket.off("message:received", handleIncoming);
+			// socket.off("message:received", handleIncoming);
 			socket.off("message:seen", handleMessageSeen);
 			socket.off("messages:read", handleMessageSeen);
 			socket.off("user:typing");

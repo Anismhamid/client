@@ -134,7 +134,7 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 				navigate(path.Home);
 				return null;
 			} else {
-				throw new Error("No token received");
+				throw new Error("Something is wrong please try again");
 			}
 		} catch (err: any) {
 			console.error("Login error:", err);
