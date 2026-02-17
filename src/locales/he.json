@@ -2,8 +2,8 @@
 	"home": "בית",
 	"webPageName": "ספקה",
 	"bestOffers": "העסקות הטובים ביותר במקום אחד",
-	"browse-posts":"עיין בפוסטים",
-	"create-post":"צור פוסט",
+	"browse-posts": "עיין בפוסטים",
+	"create-post": "צור פוסט",
 	"allRightsReserved": "כל הזכויות שמורות.",
 	"help": "עזרה",
 	"favorites": "מועדפים",
@@ -26,6 +26,9 @@
 	},
 	"messages": {
 		"main": "הודעות",
+		"search": "חפש הודעות",
+		"all": "הכל",
+		"unread": "הודעות שלא נקראו",
 		"directMessage": "הודעה ישירה",
 		"contactWith": "צור קשר עם "
 	},

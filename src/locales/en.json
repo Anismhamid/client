@@ -25,6 +25,9 @@
 	},
 	"messages": {
 		"main": "Messages",
+		"search": "Search messages",
+		"all": "All",
+		"unread": "Unread",
 		"directMessage": "Direct message",
 		"contactWith": "Contact with "
 	},

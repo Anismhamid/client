@@ -5,53 +5,24 @@ import {
 	Typography,
 	TextField,
 	IconButton,
-	Badge,
 	Paper,
-	Avatar,
-	Divider,
-	Tooltip,
-	Zoom,
-	Fade,
 	CircularProgress,
+	InputAdornment,
+	Fade,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
 import {ChatUser} from "../../../interfaces/chat/chatUser";
 import {LocalMessage} from "../../../interfaces/chat/localMessage";
 import Linkify from "./Linkify";
 import handleRTL from "../../../locales/handleRTL";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 const api = import.meta.env.VITE_API_URL;
-
-export interface ChatMessage {
-	_id: string;
-	message: string;
-	from: {
-		_id: string;
-		name: {
-			first: string;
-			last: string;
-		};
-		role: string;
-		email: string;
-	};
-	to: {
-		_id: string;
-		name: {
-			first: string;
-			last: string;
-		};
-		role: string;
-		email: string;
-	};
-	createdAt: string;
-	status: string;
-}
 
 interface ChatBoxProps {
 	currentUser: {_id: string; name: string; email: string; role: string};
@@ -60,23 +31,44 @@ interface ChatBoxProps {
 }
 
 const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token}) => {
-	const {
-		messages,
-		addMessageForUser,
-		setMessagesForUser,
-		unreadCounts,
-		setUnreadForUser,
-	} = useChat();
+	const {messages, addMessageForUser, setMessagesForUser, setUnreadForUser} = useChat();
 	const [input, setInput] = useState("");
 	const [typing, setTyping] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
 
-	// const messagesEndRef = useRef<HTMLDivElement | null>(null);
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
-
 	const userMessages = messages[otherUser._id] || [];
-	const unreadCount = unreadCounts[otherUser._id];
+	const dir = handleRTL();
+
+	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+		if (chatContainerRef.current) {
+			chatContainerRef.current.scrollTo({
+				top: chatContainerRef.current.scrollHeight,
+				behavior,
+			});
+		}
+	};
+
+	// עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
+	const markAsSeen = () => {
+		if (!otherUser?._id || !socket) return;
+		socket.emit("message:seen", {from: otherUser._id, to: currentUser._id});
+		setUnreadForUser(otherUser._id, 0);
+	};
+
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setInput(e.target.value);
+		if (!socket) return;
+
+		socket.emit("user:typing", {to: otherUser._id, from: currentUser._id});
+		if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+
+		typingTimeoutRef.current = setTimeout(() => {
+			socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
+		}, 2000);
+	};
 
 	const loadConversation = async () => {
 		setIsLoading(true);
@@ -85,8 +77,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				headers: {Authorization: token},
 			});
 			setMessagesForUser(otherUser._id, res.data.messages);
-			setUnreadForUser(otherUser._id, res.data.unreadCount || 0);
-			// setTimeout(() => scrollToBottom("auto"), 100);
+			markAsSeen(); // סימון כנקרא עם טעינת השיחה
+			setTimeout(() => scrollToBottom("auto"), 100);
 		} catch (err) {
 			console.error("Failed to load conversation:", err);
 		} finally {
@@ -94,11 +86,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	};
 
-	const sendMessage = async (text?: string) => {
-		if (!text?.trim()) return;
-
+	const sendMessage = async (text: string) => {
+		if (!text.trim()) return;
 		const messageText = text.trim();
-
 		const tempId = `temp-${Date.now()}`;
 
 		const tempMessage: LocalMessage = {
@@ -107,14 +97,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			to: otherUser,
 			message: messageText,
 			status: "sent",
-			warning: false,
-			isImportant: false,
-			replyTo: null,
 			createdAt: new Date().toISOString(),
-		};
+		} as any;
 
 		addMessageForUser(otherUser._id, tempMessage);
 		setInput("");
+		socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
+		setTimeout(() => scrollToBottom(), 50);
 
 		try {
 			await axios.post(
@@ -123,502 +112,329 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				{headers: {Authorization: token}},
 			);
 		} catch (err) {
-			console.error("Failed to send message:", err);
+			console.error("Failed to send:", err);
 		}
 	};
 
-	// Typing indicator
 	useEffect(() => {
-		if (!socket) return;
-
-		if (input.trim()) {
-			socket.emit("typing", {to: otherUser._id, from: currentUser._id});
-			if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
-			typingTimeoutRef.current = setTimeout(() => {
-				socket?.emit("stopTyping", {
-					to: otherUser._id,
-					from: currentUser._id,
-				});
-			}, 1000);
-		} else {
-			socket.emit("stopTyping", {
-				to: otherUser._id,
-				from: currentUser._id,
-			});
-		}
-	}, [input, otherUser._id, currentUser._id]);
-
-	useEffect(() => {
-		if (!currentUser || !otherUser) return;
-
 		loadConversation();
-		setUnreadForUser(otherUser._id, 0);
-		socket.emit("message:seen", {
-			to: otherUser._id,
+
+		socket.on("message:received", (message: LocalMessage) => {
+			if (message.from._id === otherUser._id) {
+				addMessageForUser(otherUser._id, message);
+				scrollToBottom();
+				markAsSeen();
+			}
 		});
 
-		const handleConnect = () => loadConversation();
-
-		const handleMessageSeen = ({
-			by,
-			messageIds,
-		}: {
-			by: string;
-			messageIds: string[];
-		}) => {
-			if (by === otherUser._id) {
-				setUnreadForUser(otherUser._id, 0);
+		socket.on("message:sent", (message: LocalMessage) => {
+			if (message.to._id === otherUser._id) {
 				setMessagesForUser(otherUser._id, (prev) =>
-					prev.map((msg) => {
-						if (
-							msg.from._id === currentUser._id &&
-							messageIds.includes(msg._id)
-						) {
-							return {...msg, status: "seen"};
-						}
-						if (msg.from._id === otherUser._id) {
-							return {...msg, status: "seen"};
-						}
-						return msg;
-					}),
+					prev.map((m) => (m._id.startsWith("temp-") ? message : m)),
 				);
 			}
-		};
-
-		// استقبل حدث read
-		socket.on("messages:read", handleMessageSeen);
-		socket.on("connect", handleConnect);
-		// socket.on("message:received", handleIncoming);
-		socket.on("message:seen", handleMessageSeen);
-		socket.on("user:typing", ({from}: {from: string}) => {
-			if (from === otherUser._id) setTyping(true);
 		});
+
+		socket.on("user:typing", ({from}: {from: string}) => {
+			if (from === otherUser._id) {
+				setTyping(true);
+				scrollToBottom();
+			}
+		});
+
 		socket.on("user:stopTyping", ({from}: {from: string}) => {
 			if (from === otherUser._id) setTyping(false);
 		});
 
+		// האזנה לעדכון סטטוס "נקרא" מהצד השני
+		socket.on("messages:seen", ({by}: {by: string}) => {
+			if (by === otherUser._id) {
+				setMessagesForUser(otherUser._id, (prev) =>
+					prev.map((m) =>
+						m.from._id === currentUser._id ? {...m, status: "seen"} : m,
+					),
+				);
+			}
+		});
+
 		return () => {
-			socket.off("connect", handleConnect);
-			// socket.off("message:received", handleIncoming);
-			socket.off("message:seen", handleMessageSeen);
-			socket.off("messages:read", handleMessageSeen);
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
+			socket.off("user:received");
+			socket.off("user:sent");
+			socket.off("messages:seen");
 		};
-	}, [currentUser?._id, otherUser?._id]);
-
-	const getStatusIcon = (status: string) => {
-		switch (status) {
-			case "seen":
-				return (
-					<span style={{color: "#4caf50"}}>
-						<DoneAllIcon sx={{fontSize: 14}} />
-					</span>
-				);
-			case "delivered":
-				return (
-					<span style={{color: "#2196f3"}}>
-						<DoneAllIcon sx={{fontSize: 14}} />
-					</span>
-				);
-			case "sent":
-				return (
-					<span style={{color: "#9e9e9e"}}>
-						<CheckIcon sx={{fontSize: 14}} />
-					</span>
-				);
-			default:
-				return (
-					<span style={{color: "#9e9e9e"}}>
-						<CheckIcon sx={{fontSize: 14}} />
-					</span>
-				);
-		}
-	};
-
-	const formatMessageTime = (timestamp: string) => {
-		const date = new Date(timestamp);
-		const now = new Date();
-		const isToday = date.toDateString() === now.toDateString();
-
-		if (isToday) {
-			return date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
-		}
-		return (
-			date.toLocaleDateString([], {month: "short", day: "numeric"}) +
-			" " +
-			date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"})
-		);
-	};
+	}, [otherUser?._id,token]);
 
 	useEffect(() => {
-		if (chatContainerRef.current) {
-			chatContainerRef.current.scrollTo({
-				top: chatContainerRef.current.scrollHeight,
-				behavior: "smooth",
-			});
+		if (userMessages.length > 0) {
+			scrollToBottom();
+			// אם קיבלנו הודעה חדשה בזמן שהצ'אט פתוח - נסמן כנקרא
+			const lastMessage = userMessages[userMessages.length - 1];
+			if (lastMessage.from._id === otherUser._id && document.hasFocus()) {
+				markAsSeen();
+			}
 		}
-	}, [userMessages]);
+	}, [userMessages.length]);
 
-	const dir = handleRTL();
+	const getStatusIcon = (status: string) => {
+		if (status === "seen")
+			return <DoneAllIcon sx={{fontSize: 14, color: "#4caf50"}} />;
+		if (status === "delivered")
+			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
+		return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+	};
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		// בדיקת גודל (למשל עד 5MB)
+		if (file.size > 5 * 1024 * 1024) {
+			alert("הקובץ גדול מדי. מקסימום 5MB");
+			return;
+		}
+
+		const formData = new FormData();
+		formData.append("file", file);
+		formData.append("toUserId", otherUser._id);
+
+		try {
+			// שליחה לשרת (Endpoint ייעודי לקבצים)
+			const res = await axios.post(`${api}/messages/upload`, formData, {
+				headers: {
+					Authorization: token,
+					"Content-Type": "multipart/form-data",
+				},
+			});
+
+			// הוספת הודעה זמנית או רענון צ'אט
+			if (res.data.message) {
+				addMessageForUser(otherUser._id, res.data.message);
+				scrollToBottom();
+			}
+		} catch (err) {
+			console.error("Failed to upload file:", err);
+		}
+	};
 
 	return (
-		<Paper
-			elevation={3}
+		<Box
 			sx={{
 				height: "100%",
 				display: "flex",
 				flexDirection: "column",
-				borderRadius: 2,
-				overflow: "hidden",
+				bgcolor: "background.paper",
 			}}
 		>
-			{/* Header */}
-			<Box
-				sx={{
-					p: 2,
-					display: "flex",
-					alignItems: "center",
-					borderBottom: 1,
-					borderColor: "divider",
-					backgroundColor: "background.paper",
-				}}
-			>
-				<Badge color='success' variant='dot' sx={{mr: 1.5}}>
-					<Avatar
-						sx={{
-							width: 40,
-							height: 40,
-							bgcolor: "primary.main",
-							fontWeight: "bold",
-						}}
-					>
-						{otherUser.from.name.first.charAt(0).toUpperCase()}
-						{otherUser.from.name.last.charAt(0).toUpperCase()}
-					</Avatar>
-				</Badge>
-				<Box sx={{flexGrow: 1}}>
-					<Typography variant='subtitle1' sx={{fontWeight: "bold"}}>
-						{otherUser.from.name.first} {otherUser.from.name.last}
-					</Typography>
-					{unreadCount > 0 && (
-						<Typography variant='caption' color='primary'>
-							{unreadCount} رسالة غير مقروءة
-						</Typography>
-					)}
-				</Box>
-			</Box>
-
-			{/* Messages Container */}
 			<Box
 				ref={chatContainerRef}
 				sx={{
 					flexGrow: 1,
 					overflowY: "auto",
 					p: 2,
-					// backgroundColor: "#f5f5f5",
-					backgroundImage:
-						"radial-gradient(circle at 25% 25%, rgba(0,0,0,0.02) 2%, transparent 2%)",
-					backgroundSize: "30px 30px",
-					zIndex: 1,
+					display: "flex",
+					flexDirection: "column",
+					gap: 1.5,
+					bgcolor: (theme) =>
+						theme.palette.mode === "dark" ? "#0b141a" : "#f0f2f5",
 				}}
 			>
 				{isLoading ? (
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "center",
-							alignItems: "center",
-							height: "100%",
-						}}
-					>
-						<CircularProgress />
+					<Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
+						<CircularProgress size={24} />
 					</Box>
 				) : (
-					<>
-						{userMessages.length === 0 ? (
-							<Fade in={true}>
-								<Box
+					userMessages.map((msg) => {
+						const isMe = msg.from._id === currentUser._id;
+						const isFile = msg.fileUrl;
+						return (
+							<Box
+								key={msg._id}
+								sx={{
+									alignSelf: isMe ? "flex-end" : "flex-start",
+									maxWidth: "80%",
+									display: "flex",
+									flexDirection: "column",
+								}}
+							>
+								<Paper
+									elevation={1}
 									sx={{
-										display: "flex",
-										flexDirection: "column",
-										alignItems: "center",
-										justifyContent: "center",
-										height: "100%",
-										color: "text.secondary",
+										p: "8px 12px",
+										borderRadius: isMe
+											? "12px 0px 12px 12px"
+											: "0px 12px 12px 12px",
+										bgcolor: isMe
+											? "primary.main"
+											: "background.paper",
+										color: isMe ? "white" : "text.primary",
 									}}
 								>
-									<Typography variant='body2' sx={{mb: 1}}>
-										👋 No messages yet
-									</Typography>
-									<Typography variant='caption'>
-										Send a message to start the conversation
-									</Typography>
-								</Box>
-							</Fade>
-						) : (
-							userMessages.map((msg, index) => {
-								const isCurrentUser = msg.from._id === currentUser._id;
-								const showAvatar =
-									index === 0 ||
-									userMessages[index - 1]?.from._id !== msg.from._id;
-
-								return (
-									<Fade in={true} key={msg._id}>
+									{isFile ? (
 										<Box
 											sx={{
 												display: "flex",
-												justifyContent: isCurrentUser
-													? "flex-start"
-													: "flex-end",
-												mb: 1.5,
+												flexDirection: "column",
+												gap: 1,
 											}}
 										>
-											{!isCurrentUser && showAvatar && (
-												<Avatar
+											{msg.fileType?.includes("image") ? (
+												<img
+													src={msg.fileUrl}
+													alt='sent file'
+													style={{
+														maxWidth: "100%",
+														borderRadius: 4,
+														cursor: "pointer",
+													}}
+													onClick={() =>
+														window.open(msg.fileUrl)
+													}
+												/>
+											) : (
+												<Box
 													sx={{
-														width: 28,
-														height: 28,
-														m: 1,
-														bgcolor: "secondary.main",
-														fontSize: 14,
+														display: "flex",
+														alignItems: "center",
+														gap: 1,
+														p: 1,
+														bgcolor: "rgba(0,0,0,0.05)",
+														borderRadius: 1,
 													}}
 												>
-													{otherUser.from.name.first?.charAt(0)}
-												</Avatar>
-											)}
-											<Box
-												sx={{
-													display: "flex",
-													maxWidth: "70%",
-													alignItems: "flex-end",
-												}}
-											>
-												<Box sx={{flexGrow: 1}}>
-													{msg.replyTo && (
-														<Paper
-															elevation={1}
-															sx={{
-																p: 0.5,
-																mb: 0.5,
-																backgroundColor:
-																	"grey.300",
-																borderRadius: 1,
-																opacity: 0.8,
-															}}
-														>
-															<Typography
-																variant='caption'
-																noWrap
-															>
-																↪ {msg.replyTo.message}
-															</Typography>
-														</Paper>
-													)}
-
-													<Tooltip
-														title={new Date(
-															msg.createdAt,
-														).toLocaleString()}
-														placement={
-															isCurrentUser
-																? dir === "rtl"
-																	? "left"
-																	: "right"
-																: dir === "rtl"
-																	? "right"
-																	: "left"
-														}
-														TransitionComponent={Zoom}
-													>
-														<Paper
-															elevation={2}
-															sx={{
-																p: 1.5,
-																borderRadius: 2,
-																backgroundColor:
-																	isCurrentUser
-																		? "primary.main"
-																		: "background.paper",
-																color: isCurrentUser
-																	? "white"
-																	: "text.primary",
-																position: "relative",
-																wordBreak: "break-word",
-															}}
-														>
-															<Linkify text={msg.message} />
-														</Paper>
-													</Tooltip>
-
-													<Box
+													<InsertDriveFileIcon />
+													<Typography
+														variant='caption'
 														sx={{
-															display: "flex",
-															justifyContent: isCurrentUser
-																? dir === "rtl"
-																	? "flex-end"
-																	: "flex-start"
-																: dir === "rtl"
-																	? "flex-start"
-																	: "flex-end",
-															mb: 1.5,
-															gap: 0.5,
+															textDecoration: "underline",
+															cursor: "pointer",
 														}}
+														onClick={() =>
+															window.open(msg.fileUrl)
+														}
 													>
-														<Typography
-															variant='caption'
-															color='text.secondary'
-														>
-															{formatMessageTime(
-																msg.createdAt,
-															)}
-														</Typography>
-														{isCurrentUser &&
-															getStatusIcon(msg.status)}
-													</Box>
+														צפה בקובץ
+													</Typography>
 												</Box>
-											</Box>
+											)}
 										</Box>
-									</Fade>
-								);
-							})
-						)}
+									) : (
+										<Typography
+											variant='body1'
+											sx={{
+												wordBreak: "break-word",
+												lineHeight: 1.4,
+											}}
+										>
+											<Linkify text={msg.message} />
+										</Typography>
+									)}
 
-						{/* Typing indicator */}
-						{typing && (
-							<Fade in={true}>
-								<Box
-									sx={{
-										display: "flex",
-										alignItems: "center",
-										mt: 1,
-										zIndex: 100000,
-									}}
-								>
-									<Avatar
+									<Box
 										sx={{
-											width: 24,
-											height: 24,
-											mr: 1,
-											bgcolor: "secondary.main",
-											fontSize: 12,
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "flex-end",
+											gap: 0.5,
+											mt: 0.3,
 										}}
 									>
-										{otherUser.from.name.first?.charAt(0)}
-									</Avatar>
-									<Paper
-										sx={{
-											p: 1,
-											borderRadius: 2,
-											backgroundColor: "grey.100",
-										}}
-									>
-										<Box sx={{display: "flex", gap: 0.5}}>
-											<Box
-												sx={{
-													width: 6,
-													height: 6,
-													bgcolor: "text.secondary",
-													borderRadius: "50%",
-													animation: "pulse 1.5s infinite",
-												}}
-											/>
-											<Box
-												sx={{
-													width: 6,
-													height: 6,
-													bgcolor: "text.secondary",
-													borderRadius: "50%",
-													animation: "pulse 1.5s infinite",
-													animationDelay: "0.2s",
-												}}
-											/>
-											<Box
-												sx={{
-													width: 6,
-													height: 6,
-													bgcolor: "text.secondary",
-													borderRadius: "50%",
-													animation: "pulse 1.5s infinite",
-													animationDelay: "0.4s",
-												}}
-											/>
-										</Box>
-									</Paper>
-								</Box>
-							</Fade>
-						)}
-					</>
+										<Typography
+											variant='caption'
+											sx={{opacity: 0.7, fontSize: "0.6rem"}}
+										>
+											{new Date(msg.createdAt).toLocaleTimeString(
+												[],
+												{hour: "2-digit", minute: "2-digit"},
+											)}
+										</Typography>
+										{isMe && getStatusIcon(msg.status)}
+									</Box>
+								</Paper>
+							</Box>
+						);
+					})
+				)}
+
+				{typing && (
+					<Fade in={typing}>
+						<Box
+							sx={{
+								alignSelf: "flex-start",
+								bgcolor: "action.hover",
+								px: 1.5,
+								py: 0.5,
+								borderRadius: 2,
+							}}
+						>
+							<Typography
+								variant='caption'
+								sx={{fontStyle: "italic", color: "text.secondary"}}
+							>
+								{otherUser.from.name.first} מקליד/ה...
+							</Typography>
+						</Box>
+					</Fade>
 				)}
 			</Box>
 
-			{/* Input Area */}
-			<Divider />
 			<Box
 				sx={{
 					p: 2,
-					backgroundColor: "background.paper",
-					borderTop: 1,
+					bgcolor: "background.paper",
+					borderTop: "1px solid",
 					borderColor: "divider",
-					zIndex: 100000,
 				}}
 			>
-				<Box sx={{display: "flex", gap: 1, alignItems: "center"}}>
-					<IconButton size='small' sx={{color: "text.secondary"}}>
-						<AttachFileIcon />
-					</IconButton>
+				<input
+					type='file'
+					hidden
+					ref={fileInputRef}
+					style={{display: "none"}}
+					onChange={handleFileChange}
+					accept='image/*,.pdf,.doc,.docx'
+				/>
 
-					<IconButton size='small' sx={{color: "text.secondary"}}>
-						<InsertEmoticonIcon />
-					</IconButton>
+				<IconButton color='primary' onClick={() => fileInputRef.current?.click()}>
+					<AttachFileIcon />
+				</IconButton>
 
-					<TextField
-						fullWidth
-						placeholder='Type a message...'
-						value={input}
-						onChange={(e) => setInput(e.target.value)}
-						onKeyDown={(e) => e.key === "Enter" && sendMessage(input)}
-						size='small'
-						variant='outlined'
-						sx={{
-							"& .MuiOutlinedInput-root": {
-								borderRadius: 3,
-								backgroundColor: "#f5f5f5",
-							},
-						}}
-					/>
-
-					<IconButton
-						color='primary'
-						onClick={() => sendMessage(input)}
-						disabled={!input.trim()}
-						sx={{
-							backgroundColor: "success.main",
-							color: "white",
-							"&:hover": {
-								backgroundColor: "primary.dark",
-							},
-							"&:disabled": {
-								backgroundColor: "grey.300",
-								color: "grey.500",
-							},
-						}}
-					>
-						<SendIcon />
-					</IconButton>
-				</Box>
+				<TextField
+					fullWidth
+					multiline
+					maxRows={4}
+					value={input}
+					onChange={handleInputChange}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && !e.shiftKey) {
+							e.preventDefault();
+							sendMessage(input);
+						}
+					}}
+					placeholder='הקלד הודעה...'
+					InputProps={{
+						endAdornment: (
+							<InputAdornment position='end'>
+								<IconButton
+									color='primary'
+									onClick={() => sendMessage(input)}
+									disabled={!input.trim()}
+								>
+									<SendIcon
+										sx={{
+											transform:
+												dir === "rtl" ? "rotate(180deg)" : "none",
+										}}
+									/>
+								</IconButton>
+							</InputAdornment>
+						),
+						sx: {borderRadius: 4, bgcolor: "grey.50"},
+					}}
+				/>
 			</Box>
-
-			{/* CSS Animation */}
-			<style>
-				{`
-					@keyframes pulse {
-						0%, 100% { opacity: 0.4; }
-						50% { opacity: 1; }
-					}
-				`}
-			</style>
-		</Paper>
+		</Box>
 	);
 };
 

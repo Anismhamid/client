@@ -26,6 +26,9 @@
 	},
 	"messages": {
 		"main": "رسائل",
+		"search": "بحث عن رسائل",
+		"all": "الكل",
+		"unread": "الرسائل الغير مقروئه",
 		"directMessage": "مراسلة مباشرة",
 		"contactWith": "تواصل مع "
 	},

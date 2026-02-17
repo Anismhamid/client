@@ -1,4 +1,6 @@
 export type LocalMessage = {
+	fileType: any;
+	fileUrl: any;
 	_id: string;
 	from: {_id: string; name: string; email: string; role: string};
 	to: {_id: string};
