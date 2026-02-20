@@ -30,7 +30,7 @@ import {
 	Report,
 } from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
-import {Link} from "react-router-dom";
+import {generatePath, Link, useNavigate} from "react-router-dom";
 import {Products} from "../../../interfaces/Posts";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
@@ -39,7 +39,8 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/LikeButton";
-import {productsPathes} from "../../../routes/routes";
+import {path, productsPathes} from "../../../routes/routes";
+import { formatTimeAgo } from "./helpers/helperFunctions";
 
 interface PostCardProps {
 	product: Products;
@@ -71,6 +72,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		const {t} = useTranslation();
 		const theme = useTheme();
 		const dir = handleRTL();
+		const navigate = useNavigate();
 
 		const [isBookmarked, setIsBookmarked] = useState(false);
 		const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -83,17 +85,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		const generateImageAlt = (product: Products) => {
 			return `${product.product_name} - بيع وشراء في ${product.category}`;
 		};
-		const formatTimeAgo = () => {
-			const now = new Date();
-			const productDate = new Date(product.createdAt || now);
-			const diffMs = now.getTime() - productDate.getTime();
-			const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
 
-			if (diffHours < 1) return "منذ دقائق";
-			if (diffHours < 24) return `منذ ${diffHours} ساعة`;
-			if (diffHours < 168) return `منذ ${Math.floor(diffHours / 24)} يوم`;
-			return `منذ ${Math.floor(diffHours / 168)} أسبوع`;
-		};
 
 		const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
 			setMenuAnchor(event.currentTarget);
@@ -135,6 +127,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				updateProductInList(updatedProduct);
 			}
 		};
+
+
 
 		const setProduct = updateProductInList
 			? (updater: (prev: Products) => Products) => {
@@ -189,17 +183,23 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 					}}
 				>
 					<Link
-						to={`/users/customer/${product.seller?.slug}`}
+						to={generatePath(path.CustomerProfile, {
+							slug: encodeURIComponent(product.seller?.slug ?? ""),
+						})}
 						style={{textDecoration: "none"}}
 					>
 						<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
 							<Avatar
-								src={product.seller?.name || ""}
+								src={product.seller?.imageUrl}
 								alt={product.seller?.name || "بائع"}
 								sx={{
-									width: 40,
-									height: 40,
+									width: 48,
+									height: 48,
 									border: "2px solid #e4e6eb",
+									"& img": {
+										objectFit: "cover",
+										transform: "scale(2)", // تكبير الصورة داخل الإطار
+									},
 									"&:hover": {
 										borderColor: theme.palette.primary.main,
 									},
@@ -210,8 +210,9 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								<Typography
 									variant='subtitle2'
 									fontWeight={600}
+									aria-label={`زيارة ملف ${product.seller?.name || "البائع"}`}
 									sx={{
-										color: "#050505",
+										borderColor: theme.palette.primary.main,
 										fontSize: "0.9375rem",
 										"&:hover": {
 											textDecoration: "underline",
@@ -231,7 +232,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											fontSize: "0.8125rem",
 										}}
 									>
-										{formatTimeAgo()}
+										{formatTimeAgo(product.createdAt)}
 									</Typography>
 									<Typography
 										variant='caption'
@@ -609,8 +610,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									},
 								}}
 							/>
-							<a
-								href={`https://waze.com/ul?q=${encodeURIComponent(
+							<Link
+								to={`https://waze.com/ul?q=${encodeURIComponent(
 									product.location || "أم الفحم",
 								)}&navigate=yes`}
 								target='_blank'
@@ -641,7 +642,24 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 										},
 									}}
 								/>
-							</a>
+							</Link>
+							<Button
+								variant='contained'
+								size='small'
+								startIcon={<Comment />}
+								onClick={() =>
+									navigate(
+										generatePath(path.CustomerProfile, {
+											slug: encodeURIComponent(
+												product.seller?.slug ?? "",
+											),
+										}),
+									)
+								}
+								sx={{display: "flex"}}
+							>
+								تواصل
+							</Button>
 							{product.condition && (
 								<Chip
 									label={

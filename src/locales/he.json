@@ -128,11 +128,14 @@
 		"female": "נקבה"
 	},
 	"common": {
+		"outOf": "מתוך",
+		"countOfPosts": "פוסטים באתר",
 		"back": "חזרה",
 		"next": "הבא",
 		"faq": "שאלות נפוצות",
 		"contact": "צור קשר",
-		"about": "אודות"
+		"about": "אודות",
+		"businessName": "שם מסחרי"
 	},
 
 	"price": "מחיר",

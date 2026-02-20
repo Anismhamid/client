@@ -9,8 +9,9 @@ import {
 	Chip,
 	Typography,
 	useTheme,
+	Button,
 } from "@mui/material";
-import {FunctionComponent} from "react";
+import {FunctionComponent, useState} from "react";
 import TabPanel from "./TabPanel";
 import {} from "@mui/material";
 import {Link, useNavigate} from "react-router-dom";
@@ -25,11 +26,12 @@ import {
 } from "@mui/icons-material";
 import {Products} from "../../../../interfaces/Posts";
 import {User} from "../../../../interfaces/usersMessages";
-import {productsPathes} from "../../../../routes/routes";
+import { productsPathes} from "../../../../routes/routes";
 import {useTranslation} from "react-i18next";
 import {formatPrice} from "../../../../helpers/dateAndPriceFormat";
 import LikeButton from "../../../../atoms/LikeButton";
 import {showSuccess} from "../../../../atoms/toasts/ReactToast";
+import PromotionCard from "../../../pages/products/PromotionCard";
 
 interface ProductsTabProps {
 	tabValue: number;
@@ -49,7 +51,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 	const theme = useTheme();
 	const {t} = useTranslation();
 	const navigate = useNavigate();
-
+	const [open, setOpen] = useState(false);
 	return (
 		<TabPanel value={tabValue} index={0}>
 			<Box mb={4}>
@@ -306,6 +308,24 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 												</IconButton>
 											</Stack>
 										</CardContent>
+										<Stack>
+											<Button onClick={() => setOpen(!open)}>
+												Promotion
+											</Button>
+											{open && (
+												<PromotionCard
+													title='ترويج المنشور'
+													category={product.category}
+													onViewPost={() =>
+														navigate(
+															`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`,
+														)
+													}
+													imageUrl={product.image.url}
+													sellerName={`${product.seller.name}`}
+												/>
+											)}
+										</Stack>
 									</Card>
 								</motion.div>
 							</Grid>

@@ -12,7 +12,6 @@ import {deleteProduct, getProductById} from "../../../services/postsServices";
 import {initialProductValue, Products} from "../../../interfaces/Posts";
 import {
 	Box,
-	CircularProgress,
 	Typography,
 	Button,
 	Card,
@@ -30,6 +29,8 @@ import {
 	Alert,
 	Stack,
 	IconButton,
+	Avatar,
+	Skeleton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -60,6 +61,7 @@ import LikeButton from "../../../atoms/LikeButton";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
+import {formatTimeAgo, generatePath} from "./helpers/helperFunctions";
 
 interface PostDetailsProps {}
 
@@ -75,7 +77,6 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
 	//  التحكم بالصوره
-	// ===== إضافة الـ states في بداية المكون =====
 	const [zoomLevel, setZoomLevel] = useState<number>(1);
 	const [isZoomed, setIsZoomed] = useState<boolean>(false);
 	const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
@@ -227,13 +228,10 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	// ----- Loading State -----
 	if (loading) {
 		return (
-			<Box
-				display='flex'
-				justifyContent='center'
-				alignItems='center'
-				minHeight='80vh'
-			>
-				<CircularProgress color='primary' size={60} />
+			<Box sx={{p: 3}}>
+				<Skeleton variant='rectangular' height={400} sx={{borderRadius: 2}} />
+				<Skeleton variant='text' sx={{mt: 2}} />
+				<Skeleton variant='text' width='60%' />
 			</Box>
 		);
 	}
@@ -304,6 +302,164 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 
 			{/* Main Content */}
 			<Box component='main'>
+				<Box sx={{mb: 4}}>
+					<Box
+						sx={{
+							p: 3,
+							mx: 2,
+							border: 1,
+							borderColor: "divider",
+							borderRadius: 2,
+						}}
+					>
+						<Link
+							to={generatePath(path.CustomerProfile, {
+								slug: encodeURIComponent(product.seller?.slug ?? ""),
+							})}
+							style={{textDecoration: "none"}}
+						>
+							<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+								<Avatar
+									src={product.seller?.imageUrl}
+									alt={product.seller?.name || "بائع"}
+									sx={{
+										width: 56,
+										height: 56,
+										border: "2px solid",
+										borderColor: "divider",
+										transition: "all 0.2s ease",
+										"&:hover": {
+											borderColor: "primary.main",
+											transform: "scale(1.05)",
+										},
+									}}
+								/>
+
+								<Box sx={{flex: 1}}>
+									<Box
+										sx={{
+											display: "flex",
+											alignItems: "center",
+											gap: 1,
+											mb: 0.5,
+										}}
+									>
+										<Typography
+											variant='h6'
+											component={"h1"}
+											fontWeight={600}
+											sx={{
+												color: "text.primary",
+												"&:hover": {
+													color: "primary.main",
+												},
+											}}
+										>
+											{product.seller?.name ||
+												product.seller?.slug ||
+												"بائع"}
+										</Typography>
+										{isOwner && (
+											<Chip
+												label='صاحب المنشور'
+												aria-label='صاحب المنشور'
+												size='small'
+												color='primary'
+												variant='outlined'
+											/>
+										)}
+									</Box>
+
+									<Stack
+										direction='row'
+										spacing={2}
+										alignItems='center'
+										divider={
+											<Box
+												sx={{
+													width: 4,
+													height: 4,
+													borderRadius: "50%",
+													bgcolor: "text.disabled",
+												}}
+											/>
+										}
+									>
+										<Typography
+											variant='body2'
+											sx={{color: "text.secondary"}}
+										>
+											{product.seller.slug}@
+										</Typography>
+
+										<Tooltip title='عام للجميع'>
+											<Box
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													gap: 0.5,
+												}}
+											>
+												<Box
+													sx={{
+														width: 20,
+														height: 20,
+														borderRadius: "50%",
+														bgcolor: "action.selected",
+														display: "flex",
+														alignItems: "center",
+														justifyContent: "center",
+													}}
+												>
+													<Typography
+														variant='caption'
+														sx={{fontSize: "0.7rem"}}
+													>
+														🌍
+													</Typography>
+												</Box>
+												<Typography
+													variant='caption'
+													sx={{color: "text.secondary"}}
+												>
+													منذ {formatTimeAgo(product.createdAt)}
+												</Typography>
+											</Box>
+										</Tooltip>
+									</Stack>
+								</Box>
+
+								{/* <Link
+									style={{display: "flex"}}
+									to={
+									})}
+								>
+								
+									<span></span>
+								</Link> */}
+								{/* زر التواصل السريع */}
+								<Button
+									variant='contained'
+									size='small'
+									startIcon={<Comment />}
+									onClick={() =>
+										navigate(
+											generatePath(path.CustomerProfile, {
+												slug: encodeURIComponent(
+													product.seller?.slug ?? "",
+												),
+											}),
+										)
+									}
+									sx={{display: {xs: "none", sm: "flex"}}}
+								>
+									تواصل
+								</Button>
+							</Box>
+						</Link>
+					</Box>
+				</Box>
+
 				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
 					{/* Breadcrumbs */}
 					<Box sx={{mb: 4, px: {xs: 1, sm: 0}, py: 1}}>
@@ -389,10 +545,105 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 							</Box>
 						</Breadcrumbs>
 					</Box>
+					{/* <Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
+						<Link
+							to={generatePath(path.CustomerProfile, {
+								slug: encodeURIComponent(product.seller?.slug ?? ""),
+							})}
+							style={{textDecoration: "none"}}
+						>
+							<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+								<Avatar
+									src={product.seller?.imageUrl}
+									alt={product.seller?.name || "بائع"}
+									sx={{
+										width: 48,
+										height: 48,
+										border: "2px solid",
+										borderColor: "divider",
+										transition: "all 0.2s ease",
+										"&:hover": {
+											borderColor: "primary.main",
+											transform: "scale(1.05)",
+										},
+									}}
+								/>
 
+								<Box>
+									<Typography
+										variant='subtitle1'
+										fontWeight={600}
+										sx={{
+											color: "text.primary",
+											"&:hover": {
+												color: "primary.main",
+											},
+										}}
+									>
+										{product.seller?.name ||
+											product.seller?.slug ||
+											"بائع"}
+									</Typography>
+
+									<Stack
+										direction='row'
+										spacing={1}
+										alignItems='center'
+									>
+										<Typography
+											variant='caption'
+											sx={{color: "text.secondary"}}
+										>
+											{formatTimeAgo(product.createdAt)}
+										</Typography>
+										<Box
+											sx={{
+												width: 4,
+												height: 4,
+												borderRadius: "50%",
+												bgcolor: "text.disabled",
+											}}
+										/>
+										<Tooltip title='عام للجميع'>
+											<Box
+												sx={{
+													display: "flex",
+													alignItems: "center",
+													gap: 0.5,
+													color: "text.secondary",
+												}}
+											>
+												<Box
+													sx={{
+														width: 16,
+														height: 16,
+														borderRadius: "50%",
+														bgcolor: "action.selected",
+														display: "flex",
+														alignItems: "center",
+														justifyContent: "center",
+													}}
+												>
+													<Typography
+														variant='caption'
+														sx={{
+															fontSize: "0.65rem",
+															lineHeight: 1,
+														}}
+													>
+														🌍
+													</Typography>
+												</Box>
+											</Box>
+										</Tooltip>
+									</Stack>
+								</Box>
+							</Box>
+						</Link>
+					</Box> */}
 					{/* Main Product Grid */}
 					<Grid container spacing={4}>
-						<Grid size={{xs: 12}}>
+						<Grid size={{xs: 12, md: 6}}>
 							<Card
 								sx={{
 									borderRadius: 2,
@@ -580,7 +831,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 									استخدم الماوس للتكبير/التصغير
 								</Box>
 
-								{/* باقي الأكواد (أزرار المشاركة واللايك) */}
+								{/*  أزرار المشاركة واللايك */}
 								<Box
 									sx={{
 										display: "flex",
@@ -610,6 +861,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 								</Box>
 
 								{/* Owner Actions */}
+								{/* TODO:Problem */}
 								{isOwner && (
 									<Box
 										sx={{
@@ -628,7 +880,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 											onClick={handleEditProduct}
 											size='small'
 										>
-											تعديل
+											{t("edit")}
 										</Button>
 										<Button
 											variant='contained'
@@ -637,13 +889,14 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 											onClick={() => setShowDeleteModal(true)}
 											size='small'
 										>
-											حذف
+											{t("delete")}
 										</Button>
 									</Box>
 								)}
 							</Card>
 						</Grid>
 
+						{/* informations */}
 						<Grid size={{xs: 12, md: 6}}>
 							<Box
 								sx={{

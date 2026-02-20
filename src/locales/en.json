@@ -153,11 +153,14 @@
 		"female": "נקבה"
 	},
 	"common": {
+		"outOf": "of",
+		"countOfPosts": "posts on the website",
 		"back": "Back",
 		"next": "Next",
 		"faq": "FAQ",
 		"contact": "Contact Us",
-		"about": "About Us"
+		"about": "About Us",
+		"businessName": "Business Name"
 	},
 	"price": "Price",
 	"quantity": "Quantity",

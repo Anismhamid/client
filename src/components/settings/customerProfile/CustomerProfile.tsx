@@ -245,10 +245,10 @@ const CustomerProfile: FunctionComponent = () => {
 					],
 				}}
 			/>
-			;
+
 			<Container dir={dir} maxWidth='lg' sx={{py: 4}}>
-				{/* Back Button */}
 				<CustomerProfileHeader
+					dir={dir}
 					handleContactSeller={handleContactSeller}
 					handleShareProfile={handleShareProfile}
 					handleWhatsApp={handleWhatsApp}

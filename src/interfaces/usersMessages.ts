@@ -11,8 +11,8 @@ export interface User {
 }
 
 export interface UserMessage {
-	last: any;
-	first: any;
+	first: string;
+	last: string;
 	otherUser: any;
 	_id?: string;
 	from: {_id?: string; email?: string; first?: string; last?: string; role?: string};

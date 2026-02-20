@@ -8,7 +8,7 @@ export interface Products {
 	likes?: string[];
 	isNew?: boolean;
 	_id?: string;
-	seller: {name: string; slug?: string; user: string};
+	seller: {name: string; slug?: string; user: string,imageUrl:string};
 	product_name: string;
 	category: CategoryValue;
 	subcategory?: string;
@@ -30,7 +30,13 @@ export interface Products {
 }
 
 export const initialProductValue: Partial<Products> = {
-	seller: {name: "", slug: "", user: ""},
+	seller: {
+		name: "",
+		slug: "",
+		user: "",
+		imageUrl:
+			"https://res.cloudinary.com/drxqielit/image/upload/v1771561611/475507246_1070716745087366_3353853525796400233_n_ef97vj.jpg",
+	},
 	product_name: "",
 	category: "House",
 	subcategory: "",

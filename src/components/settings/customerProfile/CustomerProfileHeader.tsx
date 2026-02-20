@@ -25,10 +25,11 @@ import {
 	WhatsApp,
 	ChatBubble,
 	ArrowRight,
+	ArrowLeft,
 } from "@mui/icons-material";
 import {NavigateFunction} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {User, UserMessage} from "../../../interfaces/usersMessages";
+import {User} from "../../../interfaces/usersMessages";
 import {Stats} from "./types/states";
 import {Products} from "../../../interfaces/Posts";
 import ChatBoxWrapper from "../../pages/chatBox/ChatBoxWrapper";
@@ -43,17 +44,18 @@ interface CustomerProfileHeaderProps {
 	products: Products[];
 	handleContactSeller: () => void;
 	handleWhatsApp: () => void;
+	dir: "ltr" | "rtl";
 }
 
 const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 	handleShareProfile,
-	handleContactSeller,
 	handleWhatsApp,
 	navigate,
 	user,
 	slug,
 	stats,
 	products,
+	dir,
 }) => {
 	const theme = useTheme();
 	const {t} = useTranslation();
@@ -62,25 +64,11 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 
 	return (
 		<>
-			<Button
-				startIcon={<ArrowRight />}
-				onClick={() => navigate(-1)}
-				sx={{
-					mb: 3,
-					gap: 2,
-					"&:hover": {
-						transform: "scale(1.1)",
-					},
-				}}
-			>
-				{t("back")}
-			</Button>
-
 			{/* ENHANCED PROFILE HEADER */}
 			<motion.div
 				initial={{opacity: 0, y: 20}}
 				animate={{opacity: 1, y: 0}}
-				transition={{duration: 0.5}}
+				transition={{duration: 0.2}}
 			>
 				<Card
 					sx={{
@@ -95,15 +83,30 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 							top: 0,
 							left: 0,
 							right: 0,
-							height: 4,
+							height: 10,
 							background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
 						},
 					}}
 				>
+					{/* Back Button */}
+					<Button
+						startIcon={dir === "rtl" ? <ArrowRight /> : <ArrowLeft />}
+						onClick={() => navigate(-1)}
+						aria-label={t("common.back")}
+						sx={{
+							m: 3,
+							gap: 2,
+							"&:hover": {
+								transform: "scale(1.1)",
+							},
+						}}
+					>
+						{t("common.back")}
+					</Button>
 					<CardContent sx={{p: {xs: 2, md: 3}}}>
 						<Grid container alignItems='center' spacing={3}>
 							{/* Avatar Section */}
-							<Grid size={{xs: 12, md: "auto"}}>
+							<Grid size={{xs: 12, md: "auto"}} m={6}>
 								<Box
 									position='relative'
 									sx={{display: "flex", justifyContent: "center"}}
@@ -112,7 +115,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										overlap='circular'
 										anchorOrigin={{
 											vertical: "bottom",
-											horizontal: "right",
+											horizontal: dir === "rtl" ? "right" : "left",
 										}}
 										badgeContent={
 											<VerifiedUser
@@ -127,22 +130,23 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										}
 									>
 										<Avatar
-											src={
-												user.image?.url
-													? user.image.url
-													: "/user.png"
-											}
+											src={user.image?.url}
 											sx={{
-												width: {xs: 100, md: 120},
-												height: {xs: 100, md: 120},
-												fontSize: {xs: 36, md: 48},
-												border: `4px solid ${theme.palette.background.paper}`,
+												width: {xs: 150, md: 200},
+												height: {xs: 150, md: 200},
+												border: `2px solid ${theme.palette.background.paper}`,
 												boxShadow: 3,
 												bgcolor: theme.palette.primary.main,
+												transition: "all 400ms ease-in-out",
+												"&:hover": {
+													transform: "scale(1.5)",
+													boxShadow: 20,
+													zIndex: 2,
+												},
 											}}
 										>
-											{!user.image?.url &&
-												user.name.first.charAt(0).toUpperCase()}
+											{user.name.first.charAt(0).toUpperCase()}.
+											{user.name.last.charAt(0).toUpperCase()}
 										</Avatar>
 									</Badge>
 								</Box>
@@ -151,7 +155,8 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 							{/* User Info */}
 							<Grid size={{xs: 12, md: 6}}>
 								<Typography variant='h4' fontWeight='bold' gutterBottom>
-									{user.name?.first} {user.name?.last}
+									{`${user.name?.first || ""} ${user.name?.last || ""}`.trim() ||
+										t("unknownUser")}
 								</Typography>
 								<Stack
 									direction='row'
@@ -161,8 +166,15 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 									gap={1}
 								>
 									<Typography
-										variant='subtitle1'
+										variant='body2'
 										color='text.secondary'
+										fontWeight={"bold"}
+									>
+										{t("common.businessName")}
+									</Typography>
+									<Typography
+										variant='body2'
+										color='primary.main'
 										fontWeight={"bold"}
 									>
 										@{slug}
@@ -195,33 +207,36 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 									<Box>
 										<Rating
 											value={stats.rating}
-											precision={0.1}
+											precision={1}
 											readOnly
 										/>
 										<Typography
 											variant='caption'
 											color='text.secondary'
 										>
-											({stats.rating} من 5)
+											({stats.rating} {t("common.outOf")} 5)
 										</Typography>
 									</Box>
-									<Typography
-										variant='body2'
-										color='text.secondary'
-										sx={{p: 0.4, border: 1, borderRadius: 5}}
-									>
-										{products.length} منتج
-									</Typography>
 								</Stack>
+								<Typography
+									variant='body2'
+									color='text.secondary'
+									aria-label={`${t("common.countOfPosts")} ${products.length}`}
+									sx={{mb: 2}}
+								>
+									{t("common.countOfPosts")}
+									<Chip
+										sx={{mx: 1}}
+										color='success'
+										label={products.length}
+										variant="outlined"
+										
+									/>
+								</Typography>
 
 								{/* Contact Info */}
-								<Stack
-									direction='row'
-									spacing={2}
-									flexWrap='wrap'
-									gap={1}
-								>
-									{user.email && (
+								<Stack direction='row' flexWrap='wrap' gap={1}>
+									{/* {user.email && (
 										<Chip
 											icon={<Email />}
 											label={user.email}
@@ -229,7 +244,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 											sx={{p: 1}}
 											size='small'
 										/>
-									)}
+									)} */}
 									{user.phone?.phone_1 && (
 										<Chip
 											icon={<Phone />}
@@ -271,7 +286,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										تواصل مع البائع عبر المنصه
 									</Button>
 									<Drawer
-										anchor='right'
+										anchor={dir === "rtl" ? "left" : "right"}
 										open={openChat}
 										onClose={() => setOpenChat(false)}
 									>
@@ -279,6 +294,9 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 											<ChatBoxWrapper
 												user={{
 													_id: user._id,
+													first: user.name.first,
+													last: user.name.last,
+													otherUser: null,
 													from: {
 														_id: user._id,
 														first: user.name.first,

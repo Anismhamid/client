@@ -49,7 +49,7 @@ function App() {
 								secondary: {main: "#ce93d8"},
 								background: {
 									default: "#121212",
-									paper: "#1e1e1e",
+									paper: "#0C141A",
 								},
 								text: {
 									primary: "#ffffff",
