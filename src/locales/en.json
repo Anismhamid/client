@@ -160,7 +160,13 @@
 		"faq": "FAQ",
 		"contact": "Contact Us",
 		"about": "About Us",
-		"businessName": "Business Name"
+		"businessName": "Business Name",
+		"gasoline": "Gasoline",
+		"brand": "Brand",
+		"year": "Year",
+		"fuel": "Fuel",
+		"mileage": "Mileage",
+		"color": "Color"
 	},
 	"price": "Price",
 	"quantity": "Quantity",

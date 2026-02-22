@@ -135,7 +135,13 @@
 		"faq": "שאלות נפוצות",
 		"contact": "צור קשר",
 		"about": "אודות",
-		"businessName": "שם מסחרי"
+		"businessName": "שם מסחרי",
+		"gasoline": "בנזין",
+		"brand": "מותג",
+		"year": "שנת ייצור",
+		"fuel": "סוג מנוע",
+		"mileage": "קילומטראז'",
+		"color": "צבע"
 	},
 
 	"price": "מחיר",

@@ -1,4 +1,3 @@
-import {useCallback} from "react";
 import {showError} from "../../../../atoms/toasts/ReactToast";
 
 export const generatePath = (path: string, params: Record<string, string>) => {
