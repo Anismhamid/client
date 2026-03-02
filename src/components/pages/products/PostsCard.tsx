@@ -168,7 +168,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				{/* Header - رأس المنشور */}
 				<Box
 					sx={{
-						p: 2,
+						p: 1,
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "space-between",

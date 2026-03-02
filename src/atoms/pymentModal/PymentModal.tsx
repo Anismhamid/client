@@ -19,13 +19,17 @@ export interface CreditCardValues {
 	cardHolder: string;
 }
 
-interface PymentModalProps {
+interface PaymentModalProps {
 	show: boolean;
 	onHide: () => void;
 	onConfirm: (data: CreditCardValues) => void;
 }
 
-const PaymentModal: FunctionComponent<PymentModalProps> = ({show, onHide, onConfirm}) => {
+const PaymentModal: FunctionComponent<PaymentModalProps> = ({
+	show,
+	onHide,
+	onConfirm,
+}) => {
 	const formik = useFormik<CreditCardValues>({
 		initialValues: {
 			cardNumber: "",
@@ -48,14 +52,15 @@ const PaymentModal: FunctionComponent<PymentModalProps> = ({show, onHide, onConf
 				.matches(/^\d{3,4}$/, "CVV לא תקין"),
 			cardHolder: yup.string().required("שם בעל הכרטיס נדרש"),
 		}),
-		onSubmit: (values) => {
+		onSubmit: (values, {resetForm}) => {
 			onConfirm(values);
+			resetForm();
 			onHide();
 		},
 	});
 
 	return (
-		<Modal sx={{direction: "rtl", textAlign: "right"}} open={show} onClose={onHide}>
+		<Modal sx={{direction: "ltr", textAlign: "right"}} open={show} onClose={onHide}>
 			<Box
 				sx={{
 					position: "absolute",

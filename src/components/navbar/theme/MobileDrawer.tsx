@@ -102,7 +102,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 				}}
 			>
 				<Typography variant='h6' sx={{fontWeight: 700}}>
-					{t("navigation.menu") || "القائمة الرئيسية"}
+					{t("navigationMenu") || "قائمة التنقل"}
 				</Typography>
 				<IconButton
 					onClick={handleDrawerToggle}
@@ -133,7 +133,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 						>
 							<HomeIcon sx={{ml: 1}} />
 							<ListItemText
-								primary='الرئيسية'
+								primary={t("home")}
 								primaryTypographyProps={{
 									sx: {fontWeight: 500},
 									"aria-label": "الصفحة الرئيسية - موقع صفقة",
@@ -183,7 +183,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 						>
 							<ChatBubble sx={{fontSize: 20}} />
 							<ListItemText
-								primary={t("messages") || "الرسائل"}
+								primary={t("accountMenu.messages") || "الرسائل"}
 								primaryTypographyProps={{
 									sx: {fontWeight: 500},
 									"aria-label": "الرسائل - موقع صفقة",

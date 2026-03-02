@@ -44,7 +44,6 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
 			{name: "brand", type: "text"},
 			{name: "usageType", type: "select", options: ["indoor", "outdoor"]},
 		],
-		
 	},
 
 	Garden: {

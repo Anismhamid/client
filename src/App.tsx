@@ -1,7 +1,12 @@
 import Footer from "./components/footer/Footer.tsx";
 import {ToastContainer} from "react-toastify";
 import {useUser} from "./context/useUSer.tsx";
-import {CssBaseline, ThemeProvider, createTheme, PaletteMode} from "@mui/material";
+import {
+	CssBaseline,
+	ThemeProvider,
+	createTheme,
+	PaletteMode,
+} from "@mui/material";
 import "./locales/i18n.tsx";
 import AppRoutes from "./routes/AppRoutes.tsx";
 import Theme from "./components/navbar/theme/AppTheme.tsx";

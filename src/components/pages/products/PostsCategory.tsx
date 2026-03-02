@@ -306,7 +306,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 								return (
 									<Grid
-										size={{xs: 12, sm: 6, lg: 4}}
+										size={{xs: 12, sm: 4, lg: 3}}
 										key={product._id}
 										sx={{
 											display: "flex",
@@ -315,7 +315,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 									>
 										<Box
 											ref={observerRef}
-											sx={{width: "100%", maxWidth: 500}}
 										>
 											<ProductCard
 												product={product}

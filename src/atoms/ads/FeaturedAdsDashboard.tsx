@@ -17,11 +17,20 @@ import {
 import axios from "axios";
 import dayjs from "dayjs";
 import {FeaturedAd} from "../../interfaces/featuredAd";
+import useSnackbar from "../../hooks/useSnackbar";
+import {Snackbar as MuiSnackbar, Alert} from "@mui/material";
+import PaymentModal from "../pymentModal/PymentModal";
+import {
+	getCustomerProfileProductsBySlug,
+} from "../../services/postsServices";
+import {useUser} from "../../context/useUSer";
+import {Products} from "../../interfaces/Posts";
 
 const api = import.meta.env.VITE_API_URL;
 
 const FeaturedAdsDashboard = () => {
 	const [ads, setAds] = useState<FeaturedAd[]>([]);
+	const {auth} = useUser();
 	const [loading, setLoading] = useState(true);
 	const [newAd, setNewAd] = useState({
 		listingId: "",
@@ -30,6 +39,23 @@ const FeaturedAdsDashboard = () => {
 		endDate: dayjs().add(7, "day").format("YYYY-MM-DD"),
 	});
 	const [saving, setSaving] = useState(false);
+	const {snackbar, showSnackbar, closeSnackbar} = useSnackbar();
+	const [showPaymentModal, setShowPaymentModal] = useState(false);
+	const [userListings, setUserListings] = useState<Products[]>([]);
+
+	const handleOpenPayment = () => setShowPaymentModal(true);
+	const handleClosePayment = () => setShowPaymentModal(false);
+
+	useEffect(() => {
+		getCustomerProfileProductsBySlug(auth?.slug as string)
+			.then((res) => {
+				setUserListings(res);
+			})
+			.catch((err) => {
+				console.log(err);
+				setUserListings([]);
+			});
+	}, []);
 
 	const fetchAds = async () => {
 		setLoading(true);
@@ -68,8 +94,8 @@ const FeaturedAdsDashboard = () => {
 					"Content-Type": "application/json",
 				},
 			});
+			showSnackbar("تم ترويج الإعلان بنجاح!", "success");
 			await fetchAds();
-			alert("تم شراء الإعلان بنجاح!");
 			setNewAd({
 				listingId: "",
 				type: "homepage",
@@ -77,7 +103,7 @@ const FeaturedAdsDashboard = () => {
 				endDate: dayjs().add(7, "day").format("YYYY-MM-DD"),
 			});
 		} catch (err: any) {
-			alert(err.response?.data?.message || "حدث خطأ");
+			showSnackbar(err.response?.data?.message || "حدث خطأ", "error");
 		} finally {
 			setSaving(false);
 		}
@@ -86,11 +112,11 @@ const FeaturedAdsDashboard = () => {
 	const handleDelete = async (adId: string) => {
 		if (!confirm("هل أنت متأكد من حذف الإعلان؟")) return;
 		try {
-			await axios.delete(`${api}/featured-ads/${adId}`, {
+			await axios.delete(`${api}/featured-ads/delete/${adId}`, {
 				headers: {Authorization: localStorage.getItem("token")},
 			});
 			await fetchAds();
-			alert("تم حذف الإعلان بنجاح!");
+			showSnackbar("تم حذف الإعلان بنجاح!", "success");
 		} catch (err) {
 			console.error(err);
 			alert("حدث خطأ أثناء الحذف");
@@ -113,7 +139,20 @@ const FeaturedAdsDashboard = () => {
 			<Typography variant='h4' gutterBottom>
 				إدارة Featured Ads
 			</Typography>
-
+			<MuiSnackbar
+				open={snackbar.open}
+				autoHideDuration={6000}
+				onClose={closeSnackbar}
+				anchorOrigin={{vertical: "bottom", horizontal: "center"}}
+			>
+				<Alert
+					onClose={closeSnackbar}
+					severity={snackbar.severity}
+					sx={{width: "100%"}}
+				>
+					{snackbar.message}
+				</Alert>
+			</MuiSnackbar>
 			{/* شراء إعلان جديد */}
 			<Paper sx={{p: 3, mb: 4}}>
 				<Typography variant='h6' gutterBottom>
@@ -121,13 +160,25 @@ const FeaturedAdsDashboard = () => {
 				</Typography>
 				<Grid container spacing={2}>
 					<Grid size={{xs: 12, sm: 4}}>
-						<TextField
-							label='ID الإعلان'
-							name='listingId'
-							value={newAd.listingId}
-							onChange={handleChange}
-							fullWidth
-						/>
+						<FormControl fullWidth>
+							<InputLabel>اختر الإعلان</InputLabel>
+							<Select
+								name='listingId'
+								value={newAd.listingId}
+								onChange={(e) =>
+									setNewAd((prev) => ({
+										...prev,
+										listingId: e.target.value,
+									}))
+								}
+							>
+								{userListings.map((listing) => (
+									<MenuItem key={listing._id} value={listing._id}>
+										{listing.product_name || "بدون عنوان"}
+									</MenuItem>
+								))}
+							</Select>
+						</FormControl>
 					</Grid>
 
 					<Grid size={{xs: 12, sm: 4}}>
@@ -174,11 +225,22 @@ const FeaturedAdsDashboard = () => {
 					<Grid size={{xs: 12}}>
 						<Button
 							variant='contained'
-							onClick={handleSubmit}
-							disabled={saving}
+							disabled={!newAd.listingId || saving}
+							onClick={handleOpenPayment}
 						>
 							{saving ? <CircularProgress size={24} /> : "شراء"}
 						</Button>
+
+						<PaymentModal
+							show={showPaymentModal}
+							onHide={handleClosePayment}
+							onConfirm={(data) => {
+								handleSubmit();
+								console.log("Payment confirmed:", data);
+								showSnackbar("تم تأكيد الدفع", "success");
+								handleClosePayment();
+							}}
+						/>
 					</Grid>
 				</Grid>
 			</Paper>
@@ -199,6 +261,24 @@ const FeaturedAdsDashboard = () => {
 						color='success'
 					/>
 				</Stack>
+				{/* <Button variant='contained' onClick={handleOpenPayment}>
+					دفع
+				</Button>
+
+				<MuiSnackbar
+					open={snackbar.open}
+					autoHideDuration={6000}
+					onClose={closeSnackbar}
+					anchorOrigin={{vertical: "bottom", horizontal: "center"}}
+				>
+					<Alert
+						onClose={closeSnackbar}
+						severity={snackbar.severity}
+						sx={{width: "100%"}}
+					>
+						{snackbar.message}
+					</Alert>
+				</MuiSnackbar> */}
 			</Paper>
 
 			{/* إعلانات المستخدم */}
@@ -234,7 +314,18 @@ const FeaturedAdsDashboard = () => {
 										{dayjs(ad.endDate).format("DD/MM/YYYY")}
 									</Typography>
 									<Typography variant='body2'>
-										الحالة: {isActive ? "نشط" : "منتهي"}
+										الحالة:
+										{isActive ? (
+											<Chip
+												label={"common.active"}
+												color='success'
+											/>
+										) : (
+											<Chip
+												label={"common.inActive"}
+												color='error'
+											/>
+										)}
 									</Typography>
 									<Button
 										variant='outlined'
