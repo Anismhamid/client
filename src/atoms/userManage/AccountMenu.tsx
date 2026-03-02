@@ -319,6 +319,30 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						</Link>
 					</MenuItem>
 				)}
+				<MenuItem
+					onClick={handleClose}
+					sx={{
+						py: 1.25,
+						px: 2,
+						transition: "all 0.2s",
+						"&:hover": {
+							bgcolor: alpha(theme.palette.primary.main, 0.08),
+							transform: "translateX(4px)",
+						},
+					}}
+				>
+					<Link
+						to={path.FeaturedAdsDashboard}
+						style={{textDecoration: "none", color: "inherit"}}
+					>
+						<ListItemIcon sx={{minWidth: 40}}>
+							<DashboardIcon sx={{fontSize: 20, color: "text.secondary"}} />
+						</ListItemIcon>
+						<Typography variant='body2' sx={{color: "text.primary"}}>
+							{t("Ads Dashboard") || "Ads Dashboard"}
+						</Typography>
+					</Link>
+				</MenuItem>
 
 				{/* Logout */}
 				<Divider sx={{my: 1, borderColor: "divider"}} />

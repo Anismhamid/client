@@ -28,6 +28,7 @@ import DisputesHelp from "../components/pages/DisputesHelp";
 import ChatBoxWrapper from "../components/pages/chatBox/ChatBoxWrapper";
 import {UserMessage} from "../interfaces/usersMessages";
 import MessagesPage from "../components/pages/chatBox/MessagesPage";
+import FeaturedAdsDashboard from "../atoms/ads/FeaturedAdsDashboard";
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -39,6 +40,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path={path.Home} element={<Home />} />
 			<Route path={path.Login} element={<Login />} />
 			<Route path={path.Profile} element={<Profile />} />
+			<Route path={path.FeaturedAdsDashboard} element={<FeaturedAdsDashboard />} />
 			<Route path={path.SellingHelp} element={<SellingHelp />} />
 			<Route path={path.SafetyHelp} element={<SafetyHelp />} />
 			<Route path={path.DisputesHelp} element={<DisputesHelp />} />
