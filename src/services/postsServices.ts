@@ -1,5 +1,6 @@
 import axios from "axios";
 import {Products} from "../interfaces/Posts";
+import {showError} from "../atoms/toasts/ReactToast";
 
 const api = `${import.meta.env.VITE_API_URL}`;
 
@@ -61,7 +62,7 @@ export const getAllProducts = async () => {
  * @param products - Product data to be created
  * @returns The created product if successful, or null if there's an error
  */
-export async function createNewPost(product: Products) {
+export const createNewPost = async (product: Products) => {
 	try {
 		const response = await axios.post(`${api}/products`, product, {
 			headers: {
@@ -71,10 +72,15 @@ export async function createNewPost(product: Products) {
 		});
 
 		return response.data;
-	} catch (error) {
-		return null;
+	} catch (error: any) {
+		const message =
+			error?.response?.data?.message || error?.message || "Something went wrong";
+
+		showError(message);
+
+		throw error;
 	}
-}
+};
 
 /**
  * Get products in discount limit (6 items)

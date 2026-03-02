@@ -102,7 +102,8 @@
 		"errors": {
 			"serverError": "אירעה שגיאה בשרת. אנא נסה שוב.",
 			"networkError": "שגיאת רשת. אנא בדוק את חיבור האינטרנט שלך.",
-			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר."
+			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
+			"createPostFailed": "אירעה שגיאה בפרסום המוצר, נסה שוב"
 		},
 		"validation": {
 			"nameLettersOnly": "השם חייב להכיל אותיות בלבד",

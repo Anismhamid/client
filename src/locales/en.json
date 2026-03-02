@@ -113,7 +113,8 @@
 		"errors": {
 			"serverError": "אירעה שגיאת שרת. אנא נסה שוב.",
 			"networkError": "שגיאת חיבור לרשת. אנא בדוק את חיבור האינטרנט שלך.",
-			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר."
+			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
+			"createPostFailed": "Failed to create post, please try again"
 		},
 		"validation": {
 			"firstNameRequired": "שם פרטי הוא שדה חובה",

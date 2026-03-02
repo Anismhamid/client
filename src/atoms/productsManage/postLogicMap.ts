@@ -16,7 +16,7 @@ export type CategoryValue =
 
 export interface Field {
 	name: string;
-	type: "text" | "number" | "boolean" | "select" | "date";
+	type: "text" | "number" | "boolean" | "select" | "date" | "color";
 	required?: boolean;
 	options?: string[];
 }
@@ -44,6 +44,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
 			{name: "brand", type: "text"},
 			{name: "usageType", type: "select", options: ["indoor", "outdoor"]},
 		],
+		
 	},
 
 	Garden: {

@@ -12,7 +12,7 @@ import {
 import {Close as CloseIcon} from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import NewProductForm from "./PostForm";
+import PostForm from "./PostForm";
 import useAddProductFormik from "../../../hooks/useAddProductFormik";
 
 interface AddProductModalProps {
@@ -215,7 +215,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({show, onHide}
 										: "inset 0 1px 0 rgba(255,255,255,0.8)",
 							}}
 						>
-							<NewProductForm
+							<PostForm
 								formik={formik}
 								imageFile={imageFile}
 								setImageFile={setImageFile}

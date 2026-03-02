@@ -12,7 +12,7 @@ import {LoadingButton} from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CollectionsIcon from "@mui/icons-material/Collections";
 
-interface ProductFormProps {
+interface PostFormProps {
 	formik: FormikProps<Products>;
 	imageFile: File | null;
 	setImageFile: (file: File | null) => void;
@@ -24,14 +24,14 @@ interface ProductFormProps {
 
 export interface DynamicField {
 	name: string;
-	type: "text" | "number" | "select" | "boolean" | "date";
+	type: "text" | "number" | "select" | "boolean" | "date" | "color";
 	required?: boolean;
 	options?: string[];
 	min?: number;
 	step?: number;
 }
 
-const ProductForm: FunctionComponent<ProductFormProps> = ({
+const PostForm: FunctionComponent<PostFormProps> = ({
 	formik,
 	setImageData,
 	setImageFile,
@@ -84,7 +84,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 			formik.setFieldValue("subcategory", firstSubcat);
 			formik.setFieldValue("type", firstSubcat);
 		}
-	}, [formik.values.category, mode]);
+	}, [formik.values.category]);
 
 	const availableSubcategories = useMemo((): string[] => {
 		const category = formik.values.category as CategoryValue;
@@ -96,19 +96,6 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 		const label = t(`fields.labels.${name}`, {defaultValue: name});
 		return required ? `${label} *` : label;
 	};
-
-	// const getDynamicFields = (): DynamicField[] => {
-	// 	const category = formik.values.category as CategoryValue;
-
-	// 	if (!category) return [];
-
-	// 	const subcat = formik.values
-	// 		.subcategory as keyof (typeof categoriesLogic)[CategoryValue];
-
-	// 	if (!subcat) return [];
-
-	// 	return categoriesLogic[category][subcat] || [];
-	// };
 
 	// handling category change
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -159,17 +146,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 			const selectDefaultText = t(`fields.select.${field.name}`, {
 				defaultValue: `اختر ${field.name}`,
 			});
-			// console.table({
-			// 	fieldValue,
-			// 	isRequired,
-			// 	fieldId,
-			// 	error,
-			// 	baseInputProps,
-			// 	fieldLabel,
-			// 	placeholderText,
-			// 	selectDefaultText,
-			// 	handleCategoryChange,
-			// });
+
 
 			switch (field.type) {
 				case "text":
@@ -183,6 +160,48 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							<label htmlFor={fieldId}>{fieldLabel}</label>
 						</div>
 					);
+					
+				case "color":
+				return (
+					<div className='mb-3'>
+						<label htmlFor='color' className='form-label'>
+							{t("modals.addProductModal.color")}
+						</label>
+						<select
+							name='color'
+							value={formik.values.color || ""}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							className={`form-control ${
+								formik.touched.color && formik.errors.color
+									? "is-invalid"
+									: ""
+							}`}
+							id='color'
+						>
+							<option value=''>
+								{t("modals.addProductModal.selectColor")}
+							</option>
+							{colors.map((color: CarColor) => (
+								<option value={color.hex} key={color.hex}>
+									{color.key} ({color.hex})
+								</option>
+							))}
+						</select>
+						<Box className='d-flex align-items-center gap-2 mt-2'>
+							<Box
+								sx={{
+									width: 20,
+									height: 20,
+									backgroundColor: formik.values.color,
+									border: "1px solid #ccc",
+									borderRadius: "4px",
+								}}
+							/>
+							<span>{formik.values.color}</span>
+						</Box>
+					</div>
+				);
 
 				case "number":
 					return (
@@ -414,7 +433,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 				</Box>
 			)}
 
-			{/* Color Field (خاص بالسيارات) */}
+			{/* Color Field (خاص بالسيارات)
 			{formik.values.category === "Cars" && (
 				<div className='mb-3'>
 					<label htmlFor='color' className='form-label'>
@@ -456,7 +475,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 						</Box>
 					)}
 				</div>
-			)}
+			)} */}
 
 			{/* Description */}
 			<div className='mb-3'>
@@ -669,15 +688,10 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 						fontSize: "1rem",
 						fontWeight: 600,
 						background: `linear-gradient(45deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
-						boxShadow: (theme: {palette: {primary: {main: any}}}) =>
-							`0 4px 15px ${theme.palette.primary.main}40`,
+						boxShadow: `0 4px 15px ${theme.palette.primary.main}40`,
 						"&:hover": {
-							background: (theme: {
-								palette: {primary: {dark: any; main: any}};
-							}) =>
-								`linear-gradient(45deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
-							boxShadow: (theme: {palette: {primary: {main: any}}}) =>
-								`0 6px 20px ${theme.palette.primary.main}60`,
+							background: `linear-gradient(45deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+							boxShadow: `0 6px 20px ${theme.palette.primary.main}60`,
 						},
 					}}
 				>
@@ -690,4 +704,4 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 	);
 };
 
-export default ProductForm;
+export default PostForm;

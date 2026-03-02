@@ -89,14 +89,14 @@ const useSocketEvents = () => {
 
 	const messageSent = (msg: any) => {
 		// إذا المرسل هو المستخدم الحالي
-		if (msg.to !== auth._id || msg.from !== auth._id) {
+		if (msg.from?._id === auth._id) {
 			playNotificationSound("messageSent");
 		}
 	};
 
 	const messageReceived = (msg: any) => {
 		// إذا المستلم هو المستخدم الحالي
-		if (msg.to !== auth._id) {
+		if (msg.to?._id === auth._id) {
 			playNotificationSound("messageReceived");
 		}
 	};

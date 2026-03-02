@@ -28,11 +28,12 @@ const useAddProductFormik = (onHide: () => void) => {
 			discount: 0,
 			in_stock: true,
 			location: "",
-			seller: {
-				name: "",
-				slug: undefined,
-				user: "",
-			},
+			// seller: {
+			// 	name: "",
+			// 	slug: undefined,
+			// 	user: "",
+			// 	imageUrl: "",
+			// },
 		},
 		validationSchema: yup.object({
 			product_name: yup
@@ -67,22 +68,26 @@ const useAddProductFormik = (onHide: () => void) => {
 					});
 				}
 
+
+				const {seller, ...productData} = values;
+
+				console.log(productData);
+				
+
 				await createNewPost({
-					...values,
+					...productData,
 					image: {
 						url: uploadedImage?.url || "",
 						publicId: uploadedImage?.publicId || "",
 					},
 				});
-
+			
 				resetForm();
 				setImageFile(null);
 				setImageData(null);
 				onHide?.();
 			} catch (error) {
-				resetForm();
-				setImageFile(null);
-				setImageData(null);
+				console.error(error);
 			}
 		},
 	});

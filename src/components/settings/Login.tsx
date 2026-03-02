@@ -227,6 +227,10 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 	const handleUserInfoSubmit = async (userExtraData: any) => {
 		try {
 			const token = await handleGoogleLogin(googleResponse, userExtraData);
+			if (!token) {
+				showError("Please try again");
+				return;
+			}
 			const decoded = jwtDecode<AuthValues>(token);
 			if (token) {
 				setAfterDecode(token);

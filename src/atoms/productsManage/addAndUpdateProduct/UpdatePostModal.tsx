@@ -81,6 +81,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				name: "",
 				slug: undefined,
 				user: "",
+				imageUrl: ""
 			},
 		},
 		validationSchema: yup.object({
