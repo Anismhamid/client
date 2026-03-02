@@ -20,9 +20,7 @@ import {FeaturedAd} from "../../interfaces/featuredAd";
 import useSnackbar from "../../hooks/useSnackbar";
 import {Snackbar as MuiSnackbar, Alert} from "@mui/material";
 import PaymentModal from "../pymentModal/PymentModal";
-import {
-	getCustomerProfileProductsBySlug,
-} from "../../services/postsServices";
+import {getCustomerProfileProductsBySlug} from "../../services/postsServices";
 import {useUser} from "../../context/useUSer";
 import {Products} from "../../interfaces/Posts";
 

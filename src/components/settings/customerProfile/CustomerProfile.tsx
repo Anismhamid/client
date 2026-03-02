@@ -23,7 +23,6 @@ import {
 } from "@mui/icons-material";
 import {Products} from "../../../interfaces/Posts";
 import {motion} from "framer-motion";
-import {useUser} from "../../../context/useUSer";
 import {showSuccess, showError} from "../../../atoms/toasts/ReactToast";
 import {path} from "../../../routes/routes";
 import JsonLd from "../../../../utils/JsonLd";
@@ -38,6 +37,7 @@ import ContactTab from "./taps/ContactTab";
 import UserInformation from "./taps/UserInformation";
 import CustomerProfileHeader from "./CustomerProfileHeader";
 import {AuthValues} from "../../../interfaces/authValues";
+import { useUser } from "../../../context/useUSer";
 
 const CustomerProfile: FunctionComponent = () => {
 	const {slug} = useParams<{slug: string}>();
@@ -346,7 +346,6 @@ const CustomerProfile: FunctionComponent = () => {
 					<TabPanel value={tabValue} index={3}>
 						<ContactTab
 							user={user}
-							handleContactSeller={handleContactSeller}
 							handleWhatsApp={handleWhatsApp}
 						/>
 					</TabPanel>

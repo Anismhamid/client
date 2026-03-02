@@ -7,40 +7,23 @@ import {
 	Facebook,
 	Instagram,
 	Twitter,
-	ChatBubble,
 } from "@mui/icons-material";
 import {useTranslation} from "react-i18next";
 
 interface ContactTabProps {
-	handleContactSeller: () => void;
 	handleWhatsApp: () => void;
 	user: User;
 }
 
-const ContactTab: FunctionComponent<ContactTabProps> = ({
-	user,
-	handleContactSeller,
-	handleWhatsApp,
-}) => {
+const ContactTab: FunctionComponent<ContactTabProps> = ({user, handleWhatsApp}) => {
 	const {t} = useTranslation();
 	return (
 		<Card sx={{p: 3, borderRadius: 2}}>
 			<Typography variant='h6' gutterBottom color='primary'>
-				{t("messages.contactWith")}{user.name?.first}
+				{t("messages.contactWith")}
+				{user.name?.first}
 			</Typography>
 			<Grid container spacing={3}>
-				<Grid size={{xs: 12, md: 6}}>
-					<Button
-						variant='contained'
-						fullWidth
-						size='large'
-						startIcon={<ChatBubble />}
-						onClick={handleContactSeller}
-						sx={{py: 1.5, gap: 1}}
-					>
-						{t("messages.directMessage")}
-					</Button>
-				</Grid>
 				<Grid size={{xs: 12, md: 6}}>
 					<Button
 						variant='contained'
@@ -57,7 +40,7 @@ const ContactTab: FunctionComponent<ContactTabProps> = ({
 			</Grid>
 
 			<Divider sx={{my: 3}} />
-
+{/* TODO:SOCIAL MEDIA */}
 			<Typography variant='subtitle2' gutterBottom color='text.secondary'>
 				أو تواصل عبر:
 			</Typography>
@@ -71,12 +54,6 @@ const ContactTab: FunctionComponent<ContactTabProps> = ({
 				<IconButton color='error'>
 					<Instagram />
 				</IconButton>
-				{/* <IconButton
-					color='primary'
-					onClick={() => window.open(`mailto:${user.email}`)}
-				>
-					<Email />
-				</IconButton> */}
 				<IconButton
 					color='secondary'
 					onClick={() => window.open(`tel:${user.phone?.phone_1}`)}

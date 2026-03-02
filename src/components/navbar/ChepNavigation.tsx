@@ -83,7 +83,7 @@ const ChipNavigation = () => {
 				sx={{
 					display: "flex",
 					alignItems: "center",
-
+justifyContent:"space-around",
 					listStyle: "none",
 					overflowX: "auto",
 					scrollbarWidth: "none",

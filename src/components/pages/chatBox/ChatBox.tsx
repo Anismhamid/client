@@ -119,81 +119,39 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	};
 
 
-	// useEffect(() => {
-	// 	loadConversation();
 
-	// 	socket.on("message:received", (message: LocalMessage) => {
-	// 		if (message.from._id === otherUser._id) {
-	// 			addMessageForUser(otherUser._id, message);
-	// 			scrollToBottom();
-	// 			markAsSeen();
-	// 		}
-	// 	});
+	useEffect(() => {
+		loadConversation();
 
-	// 	socket.on("message:sent", (message: LocalMessage) => {
-	// 		if (message.to._id === otherUser._id) {
-	// 			setMessagesForUser(otherUser._id, (prev) =>
-	// 				prev.map((m) => (m._id.startsWith("temp-") ? message : m)),
-	// 			);
-	// 		}
-	// 	});
+		socket.on("message:received", (message: LocalMessage) => {
+			if (message.from._id === otherUser._id) {
+				addMessageForUser(otherUser._id, message);
+				scrollToBottom();
+				markAsSeen();
+			}
+		});
 
-	// 	socket.on("user:typing", ({from}: {from: string}) => {
-	// 		if (from === otherUser._id) {
-	// 			setTyping(true);
-	// 			scrollToBottom();
-	// 		}
-	// 	});
+		socket.on("message:sent", (message: LocalMessage) => {
+			if (message.to._id === otherUser._id) {
+				setMessagesForUser(otherUser._id, (prev) =>
+					prev.map((m) => (m._id.startsWith("temp-") ? message : m)),
+				);
+			}
+		});
 
-	// 	socket.on("user:stopTyping", ({from}: {from: string}) => {
-	// 		if (from === otherUser._id) setTyping(false);
-	// 	});
+		socket.on("user:typing", ({from}: {from: string}) => {
+			if (from === otherUser._id) {
+				setTyping(true);
+				scrollToBottom();
+			}
+		});
 
-	// 	// האזנה לעדכון סטטוס "נקרא" מהצד השני
-	
+		socket.on("user:stopTyping", ({from}: {from: string}) => {
+			if (from === otherUser._id) setTyping(false);
+		});
 
-
-	// 	return () => {
-	// 		socket.off("user:typing");
-	// 		socket.off("user:stopTyping");
-	// 		socket.off("user:received");
-	// 		socket.off("user:sent");
-	// 		socket.off("messages:seen");
-	// 	};
-	// }, [otherUser?._id, token]);
-
-	// ✅ Fix — extract all handlers and clean up by reference
-useEffect(() => {
-	loadConversation();
-
-	const handleReceived = (message: LocalMessage) => {
-		if (message.from._id === otherUser._id) {
-			addMessageForUser(otherUser._id, message);
-			scrollToBottom();
-			markAsSeen();
-		}
-	};
-
-	const handleSent = (message: LocalMessage) => {
-		if (message.to._id === otherUser._id) {
-			setMessagesForUser(otherUser._id, (prev) =>
-				prev.map((m) => (m._id.startsWith("temp-") ? message : m)),
-			);
-		}
-	};
-
-	const handleTyping = ({from}: {from: string}) => {
-		if (from === otherUser._id) {
-			setTyping(true);
-			scrollToBottom();
-		}
-	};
-
-	const handleStopTyping = ({from}: {from: string}) => {
-		if (from === otherUser._id) setTyping(false);
-	};
-
-	const handleSeen = ({by}: {by: string}) => {
+		// האזנה לעדכון סטטוס "נקרא" מהצד השני
+	socket.on("message:seen", ({by}: {by: string}) => {
 		if (by === otherUser._id) {
 			setMessagesForUser(otherUser._id, (prev) =>
 				prev.map((m) =>
@@ -201,23 +159,17 @@ useEffect(() => {
 				),
 			);
 		}
-	};
+	});
 
-	socket.on("message:received", handleReceived);
-	socket.on("message:sent", handleSent);
-	socket.on("user:typing", handleTyping);
-	socket.on("user:stopTyping", handleStopTyping);
-	socket.on("message:seen", handleSeen);
 
-	return () => {
-		socket.off("message:received", handleReceived);
-		socket.off("message:sent", handleSent);
-		socket.off("user:typing", handleTyping);
-		socket.off("user:stopTyping", handleStopTyping);
-		socket.off("message:seen", handleSeen);
-	};
-}, [otherUser?._id, token]);
-
+		return () => {
+			socket.off("user:typing");
+			socket.off("user:stopTyping");
+			socket.off("user:received");
+			socket.off("user:sent");
+			socket.off("messages:seen");
+		};
+	}, [otherUser?._id, token]);
 
 	useEffect(() => {
 		if (userMessages.length > 0) {
@@ -270,6 +222,7 @@ useEffect(() => {
 			console.error("Failed to upload file:", err);
 		}
 	};
+
 
 	return (
 		<Box

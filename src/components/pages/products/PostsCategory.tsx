@@ -313,9 +313,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 											justifyContent: "center",
 										}}
 									>
-										<Box
-											ref={observerRef}
-										>
+										<Box ref={observerRef}>
 											<ProductCard
 												product={product}
 												discountedPrice={discountedPrice}

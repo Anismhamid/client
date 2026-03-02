@@ -1,4 +1,4 @@
-import {useState, useEffect, useCallback, useRef} from "react";
+import {useState, useEffect, useCallback} from "react";
 import {
 	Box,
 	Container,
@@ -10,7 +10,6 @@ import {
 	FormControl,
 	InputLabel,
 	Alert,
-	List,
 	Checkbox,
 	FormControlLabel,
 	CircularProgress,
@@ -18,7 +17,6 @@ import {
 	Avatar,
 	IconButton,
 	Paper,
-	Divider,
 	Chip,
 	Badge,
 	Skeleton,
@@ -35,11 +33,7 @@ import {
 	Send as SendIcon,
 	Warning as WarningIcon,
 	Reply as ReplyIcon,
-	Delete as DeleteIcon,
 	Star as StarIcon,
-	StarBorder as StarBorderIcon,
-	MoreVert as MoreVertIcon,
-	ArrowBack as ArrowBackIcon,
 	Markunread as MarkunreadIcon,
 	CheckCircle as CheckCircleIcon,
 	Info as InfoIcon,
@@ -85,7 +79,7 @@ const MessagingPage: React.FC = () => {
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 	const [tabValue, setTabValue] = useState(0);
-	const messagesEndRef = useRef<HTMLDivElement>(null);
+	// const messagesEndRef = useRef<HTMLDivElement>(null);
 	const [selectedMessage, setSelectedMessage] = useState<UserMessage | null>(null);
 
 	const [users, setUsers] = useState<User[]>([]);
@@ -147,7 +141,7 @@ const MessagingPage: React.FC = () => {
 		return () => {
 			socket.off("message:received", handleNewMessage);
 		};
-	}, [loadData,socket]);
+	}, [loadData, socket]);
 
 	const validateRecipient = useCallback(
 		(recipientId: string) => {
@@ -226,16 +220,16 @@ const MessagingPage: React.FC = () => {
 		return `${user.email}`;
 	};
 
-	const getUserEmail = (
-		user?:
-			| {_id?: string; email?: string; first?: string; last?: string; role?: string}
-			| User
-			| null,
-	) => {
-		if (!user) return "بريد غير معروف";
-		if ("email" in user && user.email) return user.email;
-		return "بريد غير متوفر";
-	};
+	// const getUserEmail = (
+	// 	user?:
+	// 		| {_id?: string; email?: string; first?: string; last?: string; role?: string}
+	// 		| User
+	// 		| null,
+	// ) => {
+	// 	if (!user) return "بريد غير معروف";
+	// 	if ("email" in user && user.email) return user.email;
+	// 	return "بريد غير متوفر";
+	// };
 
 	const getUserAvatar = (
 		user?:
@@ -329,7 +323,7 @@ const MessagingPage: React.FC = () => {
 		const isSelected = selectedMessage?._id === msg._id;
 		const userRole = getUserRole(user);
 		const displayName = getUserDisplayName(user);
-		const userEmail = getUserEmail(user);
+		// const userEmail = getUserEmail(user);
 		const avatarUrl = getUserAvatar(user);
 
 		return (

@@ -1,8 +1,8 @@
 import ChatBox from "./ChatBox";
-import {useUser} from "../../../context/useUSer";
 import {FunctionComponent} from "react";
 import {UserMessage} from "../../../interfaces/usersMessages";
 import { mapUserMessageToChatBox } from "./MessagesPage";
+import { useUser } from "../../../context/useUSer";
 
 interface ChatBoxWrapperProps {
 	user: UserMessage;

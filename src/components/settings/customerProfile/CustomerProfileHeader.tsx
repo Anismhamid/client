@@ -18,7 +18,7 @@ import {FunctionComponent, useState} from "react";
 import {
 	Share,
 	Phone,
-	Email,
+	// Email,
 	LocationOn,
 	VerifiedUser,
 	Storefront,
@@ -42,7 +42,7 @@ interface CustomerProfileHeaderProps {
 	slug: string;
 	stats: Stats;
 	products: Products[];
-	handleContactSeller: () => void;
+	handleContactSeller: Function;
 	handleWhatsApp: () => void;
 	dir: "ltr" | "rtl";
 }
@@ -229,8 +229,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										sx={{mx: 1}}
 										color='success'
 										label={products.length}
-										variant="outlined"
-										
+										variant='outlined'
 									/>
 								</Typography>
 

@@ -87,19 +87,19 @@ const useSocketEvents = () => {
 			showNotification(`تم إضافة منشور جديد: ${newProduct.product_name}`);
 		};
 
-	const messageSent = (msg: any) => {
-		// إذا المرسل هو المستخدم الحالي
-		if (msg.from?._id === auth._id) {
-			playNotificationSound("messageSent");
-		}
-	};
+		const messageSent = (msg: any) => {
+			// إذا المرسل هو المستخدم الحالي
+			if (msg.from?._id === auth._id) {
+				playNotificationSound("messageSent");
+			}
+		};
 
-	const messageReceived = (msg: any) => {
-		// إذا المستلم هو المستخدم الحالي
-		if (msg.to?._id === auth._id) {
-			playNotificationSound("messageReceived");
-		}
-	};
+		const messageReceived = (msg: any) => {
+			// إذا المستلم هو المستخدم الحالي
+			if (msg.to?._id === auth._id) {
+				playNotificationSound("messageReceived");
+			}
+		};
 
 		// חיבור מאזינים
 		socket.on("connect", handleConnect);

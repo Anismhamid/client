@@ -5,8 +5,7 @@ import {Link as RouterLink} from "react-router-dom";
 import {useUser} from "../../context/useUSer";
 import {path} from "../../routes/routes";
 
-interface FooterProps {
-}
+interface FooterProps {}
 
 const Footer: FunctionComponent<FooterProps> = () => {
 	const {t} = useTranslation();
