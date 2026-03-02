@@ -214,7 +214,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	if (!loading && products.length === 0)
 		return (
 			<main>
-				<Container maxWidth='lg' sx={{py: 8, textAlign: "center"}}>
+				<Container maxWidth='lg' sx={{textAlign: "center"}}>
 					<Typography variant='h5' color='text.secondary' sx={{mb: 3}}>
 						لم يتم العثور على أي منتجات في هذه الفئة
 					</Typography>
@@ -250,11 +250,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 			<Box
 				sx={{
 					position: "static",
-					top: 64,
-					zIndex: 1100,
-					py: 2,
-					px: {xs: 2, md: 0},
-					borderBottom: "1px solid #e4e6eb",
+					zIndex: 2,
+					px: "auto",
+					borderBottom: "1px solid #2C3646",
 				}}
 			>
 				<Box sx={{flex: 1}}>
@@ -265,7 +263,13 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					/>
 				</Box>
 				<Container maxWidth='lg'>
-					<Box sx={{display: "flex", alignItems: "center", gap: 2}}>
+					<Box
+						sx={{
+							display: "flex",
+							alignItems: "center",
+							gap: 2,
+						}}
+					>
 						<Typography
 							variant='h6'
 							sx={{
@@ -279,20 +283,16 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					</Box>
 				</Container>
 			</Box>
-			<Box
-				component='main'
-				sx={{
-					pt: {xs: 8, md: 10},
-				}}
-			>
-				<Container maxWidth='lg' sx={{py: 3}}>
+			<Box component='main'>
+				<Container maxWidth='lg'>
 					{/* Results Count */}
 					<Typography
 						variant='body2'
 						color='text.secondary'
 						sx={{mb: 3, px: {xs: 2, md: 0}}}
 					>
-						عرض {visibleProducts.length} من {filteredProducts.length} منتج
+						{t("common.viewOf")} {visibleProducts.length} {t("common.outOf")}{" "}
+						{filteredProducts.length} {t("common.countOfPosts")}
 					</Typography>
 
 					{/* Products Grid */}
@@ -417,7 +417,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 						filteredProducts.length > 0 && (
 							<Box sx={{py: 4, textAlign: "center"}}>
 								<Typography variant='body2' color='text.secondary'>
-									🎉 لقد وصلت إلى نهاية النتائج
+									🎉 {t("common.endOfPosts")}
 								</Typography>
 							</Box>
 						)}

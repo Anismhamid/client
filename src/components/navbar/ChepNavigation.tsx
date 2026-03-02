@@ -1,5 +1,5 @@
 import {useRef} from "react"; // Add useCallback
-import {Box, Chip, IconButton, Typography} from "@mui/material";
+import {Box, Chip, IconButton, Typography, useTheme} from "@mui/material";
 import {ChevronLeftTwoTone, ChevronRightTwoTone} from "@mui/icons-material";
 import {NavLink} from "react-router-dom";
 import {productsAndCategories} from "./navCategoryies";
@@ -9,7 +9,7 @@ import JsonLd from "../../../utils/JsonLd";
 const ChipNavigation = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const {t} = useTranslation();
-
+	const theme = useTheme();
 	const scroll = (direction: "left" | "right") => {
 		const container = containerRef.current;
 		if (!container) return;
@@ -33,7 +33,8 @@ const ChipNavigation = () => {
 				position: "sticky",
 				top: 0,
 				zIndex: 200,
-				backgroundColor: "white",
+				backgroundColor: `${theme.palette.primary}`,
+				backdropFilter: "blur(90px)",
 				borderRadius: "0 0 20px 20px",
 				py: 1,
 				boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
@@ -82,10 +83,7 @@ const ChipNavigation = () => {
 				sx={{
 					display: "flex",
 					alignItems: "center",
-					gap: 2,
-					px: 5,
-					m: 0,
-					p: 1,
+
 					listStyle: "none",
 					overflowX: "auto",
 					scrollbarWidth: "none",
@@ -106,7 +104,7 @@ const ChipNavigation = () => {
 							display: "flex",
 							flexDirection: "column",
 							alignItems: "center",
-							minWidth: 120,
+							minWidth: 80,
 						}}
 					>
 						<NavLink

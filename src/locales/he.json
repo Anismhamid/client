@@ -129,21 +129,23 @@
 		"female": "נקבה"
 	},
 	"common": {
-		"typing":"מקליד/ה...",
+		"typing": "מקליד/ה...",
+		"viewOf": "מציג",
 		"outOf": "מתוך",
-		"countOfPosts": "פוסטים באתר",
-		"back": "חזרה",
+		"countOfPosts": "מודעות זמינות",
+		"endOfPosts": "הגעת לסוף המודעות",
+		"back": "הקודם",
 		"next": "הבא",
 		"faq": "שאלות נפוצות",
 		"contact": "צור קשר",
-		"about": "אודות",
+		"about": "אודותינו",
 		"businessName": "שם מסחרי",
 		"gasoline": "בנזין",
-		"brand": "מותג",
+		"brand": "יצרן",
 		"year": "שנת ייצור",
-		"fuel": "סוג מנוע",
-		"mileage": "קילומטראז'",
-		"color": "צבע"
+		"fuel": "סוג דלק",
+		"mileage": "קילומטר'ז'",
+		"color": "צבע חיצוני"
 	},
 
 	"price": "מחיר",
