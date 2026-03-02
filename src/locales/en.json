@@ -153,6 +153,7 @@
 		"female": "נקבה"
 	},
 	"common": {
+		"typing":"Typing...",
 		"outOf": "of",
 		"countOfPosts": "posts on the website",
 		"back": "Back",

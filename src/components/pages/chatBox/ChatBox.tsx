@@ -21,6 +21,7 @@ import Linkify from "./Linkify";
 import handleRTL from "../../../locales/handleRTL";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import {useTranslation} from "react-i18next";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -41,6 +42,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 	const userMessages = messages[otherUser._id] || [];
 	const dir = handleRTL();
+	const {t} = useTranslation();
 
 	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
 		if (chatContainerRef.current) {
@@ -147,15 +149,16 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		});
 
 		// האזנה לעדכון סטטוס "נקרא" מהצד השני
-		socket.on("messages:seen", ({by}: {by: string}) => {
-			if (by === otherUser._id) {
-				setMessagesForUser(otherUser._id, (prev) =>
-					prev.map((m) =>
-						m.from._id === currentUser._id ? {...m, status: "seen"} : m,
-					),
-				);
-			}
-		});
+	socket.on("message:seen", ({by}: {by: string}) => {
+		if (by === otherUser._id) {
+			setMessagesForUser(otherUser._id, (prev) =>
+				prev.map((m) =>
+					m.from._id === currentUser._id ? {...m, status: "seen"} : m,
+				),
+			);
+		}
+	});
+
 
 		return () => {
 			socket.off("user:typing");
@@ -164,7 +167,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			socket.off("user:sent");
 			socket.off("messages:seen");
 		};
-	}, [otherUser?._id,token]);
+	}, [otherUser?._id, token]);
 
 	useEffect(() => {
 		if (userMessages.length > 0) {
@@ -180,8 +183,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const getStatusIcon = (status: string) => {
 		if (status === "seen")
 			return <DoneAllIcon sx={{fontSize: 14, color: "#4caf50"}} />;
-		if (status === "delivered")
-			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
+		// if (status === "delivered")
+		// 	return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
 		return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
 	};
 
@@ -372,7 +375,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								variant='caption'
 								sx={{fontStyle: "italic", color: "text.secondary"}}
 							>
-								{otherUser.from.name.first} מקליד/ה...
+								{otherUser.from.name.first} {t("common.typing")}
 							</Typography>
 						</Box>
 					</Fade>

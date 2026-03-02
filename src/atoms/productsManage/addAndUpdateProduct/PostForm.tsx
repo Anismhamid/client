@@ -1,6 +1,6 @@
-import {Avatar, Box, Button, Typography} from "@mui/material";
+import {Avatar, Box, Button, Typography, useTheme} from "@mui/material";
 import {FormikProps} from "formik";
-import {FunctionComponent, useEffect, useMemo} from "react";
+import {FunctionComponent, useCallback, useEffect, useMemo} from "react";
 import {useTranslation} from "react-i18next";
 import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
 import {CarColor, colors} from "../../colorsSettings/carsColors";
@@ -43,14 +43,14 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 	// const [imageKey, setImageKey] = useState(0);
 	const selectedSubcategory = formik.values.subcategory;
 	// const [selectedSubcategory, setSelectedSubcategory] = useState(...)
-
+	const theme = useTheme();
 	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (!e.target.files?.[0]) return;
 
 		const file = e.target.files[0];
 		setImageFile(file);
 
-		// 🗑️ حذف الصورة القديمة إذا موجودة
+		// حذف الصورة القديمة إذا موجودة
 		if (mode === "update" && imageData?.publicId) {
 			try {
 				await deleteImage(imageData.publicId);
@@ -62,11 +62,14 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 		}
 
 		// رفع الصورة الجديدة
-		const {url, publicId} = await uploadImage(file);
-		const newImageData = {url: url, publicId: publicId};
-		setImageData(newImageData);
-
-		formik.setFieldValue("image", newImageData);
+		try {
+			const {url, publicId} = await uploadImage(file);
+			const newImageData = {url: url, publicId: publicId};
+			setImageData(newImageData);
+			formik.setFieldValue("image", newImageData);
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	useEffect(() => {
@@ -83,35 +86,34 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 		}
 	}, [formik.values.category, mode]);
 
-	const getAvailableSubcategories = (): string[] => {
+	const availableSubcategories = useMemo((): string[] => {
 		const category = formik.values.category as CategoryValue;
 		if (!category) return [];
-
 		return Object.keys(categoriesLogic[category]);
-	};
+	}, [formik.values.category]);
 
 	const getFieldLabel = (name: string, required?: boolean) => {
 		const label = t(`fields.labels.${name}`, {defaultValue: name});
 		return required ? `${label} *` : label;
 	};
 
-	const getDynamicFields = (): DynamicField[] => {
-		const category = formik.values.category as CategoryValue;
-		if (!category) return [];
+	// const getDynamicFields = (): DynamicField[] => {
+	// 	const category = formik.values.category as CategoryValue;
 
-		const subcat = formik.values
-			.subcategory as keyof (typeof categoriesLogic)[CategoryValue];
+	// 	if (!category) return [];
 
-		if (!subcat) return [];
+	// 	const subcat = formik.values
+	// 		.subcategory as keyof (typeof categoriesLogic)[CategoryValue];
 
-		return categoriesLogic[category][subcat] || [];
-	};
+	// 	if (!subcat) return [];
+
+	// 	return categoriesLogic[category][subcat] || [];
+	// };
 
 	// handling category change
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const newCategory = e.target.value as CategoryValue;
 		formik.setFieldValue("category", newCategory);
-
 		const firstSubcat = Object.keys(categoriesLogic[newCategory])[0] || "";
 		formik.setFieldValue("subcategory", firstSubcat);
 		formik.setFieldValue("type", firstSubcat);
@@ -123,119 +125,132 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 		formik.setFieldValue("type", newSubcat);
 	};
 
-	const availableSubcategories = useMemo(
-		() => getAvailableSubcategories(),
-		[formik.values.category],
-	);
-
-	const dynamicFields = useMemo(
-		() => getDynamicFields(),
-		[formik.values.category, selectedSubcategory],
-	);
+	const dynamicFields = useMemo((): DynamicField[] => {
+		const category = formik.values.category as CategoryValue;
+		if (!category) return [];
+		const subcat = formik.values
+			.subcategory as keyof (typeof categoriesLogic)[CategoryValue];
+		if (!subcat) return [];
+		return categoriesLogic[category][subcat] || [];
+	}, [formik.values.category, formik.values.subcategory]);
 
 	// dynamic field display
-	const renderDynamicField = (field: DynamicField) => {
-		const fieldValue = formik.values[field.name] || "";
-		const isRequired = field.required;
-		const fieldId = `field-${field.name}`;
-		const error = formik.touched[field.name] && formik.errors[field.name];
+	const renderDynamicField = useCallback(
+		(field: DynamicField) => {
+			const fieldValue = formik.values[field.name] || "";
+			const isRequired = field.required;
+			const fieldId = `field-${field.name}`;
+			const error = formik.touched[field.name] && formik.errors[field.name];
 
-		const baseInputProps = {
-			name: field.name,
-			value: fieldValue,
-			onChange: formik.handleChange,
-			onBlur: formik.handleBlur,
-			id: fieldId,
-			className: `form-control ${error ? "is-invalid" : ""}`,
-			required: isRequired,
-		};
+			const baseInputProps = {
+				name: field.name,
+				value: fieldValue,
+				onChange: formik.handleChange,
+				onBlur: formik.handleBlur,
+				id: fieldId,
+				className: `form-control ${error ? "is-invalid" : ""}`,
+				required: isRequired,
+			};
 
-		const fieldLabel = getFieldLabel(field.name, isRequired);
-		const placeholderText = t(`fields.placeholder.${field.name}`, {
-			defaultValue: field.name,
-		});
-		const selectDefaultText = t(`fields.select.${field.name}`, {
-			defaultValue: `اختر ${field.name}`,
-		});
+			const fieldLabel = getFieldLabel(field.name, isRequired);
+			const placeholderText = t(`fields.placeholder.${field.name}`, {
+				defaultValue: field.name,
+			});
+			const selectDefaultText = t(`fields.select.${field.name}`, {
+				defaultValue: `اختر ${field.name}`,
+			});
+			// console.table({
+			// 	fieldValue,
+			// 	isRequired,
+			// 	fieldId,
+			// 	error,
+			// 	baseInputProps,
+			// 	fieldLabel,
+			// 	placeholderText,
+			// 	selectDefaultText,
+			// 	handleCategoryChange,
+			// });
 
-		switch (field.type) {
-			case "text":
-				return (
-					<div className='form-floating'>
-						<input
-							type='text'
-							{...baseInputProps}
-							placeholder={placeholderText as string}
-						/>
-						<label htmlFor={fieldId}>{fieldLabel}</label>
-					</div>
-				);
+			switch (field.type) {
+				case "text":
+					return (
+						<div className='form-floating'>
+							<input
+								type='text'
+								{...baseInputProps}
+								placeholder={placeholderText as string}
+							/>
+							<label htmlFor={fieldId}>{fieldLabel}</label>
+						</div>
+					);
 
-			case "number":
-				return (
-					<div className='form-floating'>
-						<input
-							type='number'
-							{...baseInputProps}
-							placeholder={placeholderText as string}
-							min={field.min || 0}
-							step={field.step || 1}
-						/>
-						<label htmlFor={fieldId}>{fieldLabel}</label>
-					</div>
-				);
+				case "number":
+					return (
+						<div className='form-floating'>
+							<input
+								type='number'
+								{...baseInputProps}
+								placeholder={placeholderText as string}
+								min={field.min || 0}
+								step={field.step || 1}
+							/>
+							<label htmlFor={fieldId}>{fieldLabel}</label>
+						</div>
+					);
 
-			case "select":
-				return (
-					<div className='form-floating'>
-						<select {...baseInputProps}>
-							<option value=''>{selectDefaultText}</option>
-							{field.options?.map((option: string) => {
-								const optionText = t(`options.${option}`, {
-									defaultValue: option,
-								});
-								return (
-									<option key={option} value={option}>
-										{optionText}
-									</option>
-								);
-							})}
-						</select>
-						<label htmlFor={fieldId}>{fieldLabel}</label>
-					</div>
-				);
+				case "select":
+					return (
+						<div className='form-floating'>
+							<select {...baseInputProps}>
+								<option value=''>{selectDefaultText}</option>
+								{field.options?.map((option: string) => {
+									const optionText = t(`options.${option}`, {
+										defaultValue: option,
+									});
+									return (
+										<option key={option} value={option}>
+											{optionText}
+										</option>
+									);
+								})}
+							</select>
+							<label htmlFor={fieldId}>{fieldLabel}</label>
+						</div>
+					);
 
-			case "boolean":
-				return (
-					<div className='form-check form-switch'>
-						<input
-							className='form-check-input'
-							type='checkbox'
-							role='switch'
-							id={fieldId}
-							name={field.name}
-							checked={Boolean(fieldValue)}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-						/>
-						<label className='form-check-label' htmlFor={fieldId}>
-							{fieldLabel}
-						</label>
-					</div>
-				);
+				case "boolean":
+					return (
+						<div className='form-check form-switch'>
+							<input
+								className='form-check-input'
+								type='checkbox'
+								role='switch'
+								id={fieldId}
+								name={field.name}
+								checked={Boolean(fieldValue)}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+							/>
+							<label className='form-check-label' htmlFor={fieldId}>
+								{fieldLabel}
+							</label>
+						</div>
+					);
 
-			case "date":
-				return (
-					<div className='form-floating'>
-						<input type='date' {...baseInputProps} />
-						<label htmlFor={fieldId}>{fieldLabel}</label>
-					</div>
-				);
+				case "date":
+					return (
+						<div className='form-floating'>
+							<input type='date' {...baseInputProps} />
+							<label htmlFor={fieldId}>{fieldLabel}</label>
+						</div>
+					);
 
-			default:
-				return null;
-		}
-	};
+				default:
+					return null;
+			}
+		},
+		[formik.values, formik.touched, formik.errors, t],
+	);
 
 	return (
 		<form autoComplete='off' noValidate onSubmit={formik.handleSubmit}>
@@ -500,6 +515,8 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							"&:hover": {borderColor: "#003561"},
 						}}
 					>
+						{/* TODO:camera translate */}
+						{t("modals.addProductModal.openCamera")}
 						فتح الكاميرا
 						<input
 							type='file'
@@ -525,6 +542,8 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 							"&:hover": {borderColor: "#003561"},
 						}}
 					>
+						{/* TODO:camera translate */}
+						{t("modals.addProductModal.chooseFromGallery")}
 						اختيار من المعرض
 						<input
 							type='file'
@@ -649,10 +668,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 						borderRadius: "12px",
 						fontSize: "1rem",
 						fontWeight: 600,
-						background: (theme: {
-							palette: {primary: {main: any; light: any}};
-						}) =>
-							`linear-gradient(45deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
+						background: `linear-gradient(45deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 100%)`,
 						boxShadow: (theme: {palette: {primary: {main: any}}}) =>
 							`0 4px 15px ${theme.palette.primary.main}40`,
 						"&:hover": {
@@ -665,7 +681,7 @@ const ProductForm: FunctionComponent<ProductFormProps> = ({
 						},
 					}}
 				>
-					{mode === "add" && !formik.isSubmitting
+					{mode === "add"
 						? t("modals.addProductModal.addProduct")
 						: t("modals.updateProductModal.updateButton")}
 				</LoadingButton>
