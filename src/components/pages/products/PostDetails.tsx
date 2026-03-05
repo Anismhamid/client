@@ -62,6 +62,7 @@ import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduc
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
 import {formatTimeAgo, generatePath} from "./helpers/helperFunctions";
+const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
 interface PostDetailsProps {}
 
@@ -89,10 +90,13 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 		setIsZoomed(true);
 	}, []);
 
-	const handleZoomOut = useCallback(() => {
-		setZoomLevel((prev) => Math.max(prev - 0.5, 1));
-		if (zoomLevel <= 1) setIsZoomed(false);
-	}, [zoomLevel]);
+const handleZoomOut = useCallback(() => {
+	setZoomLevel((prev) => {
+		const newZoom = Math.max(prev - 0.5, 1);
+		if (newZoom === 1) setIsZoomed(false);
+		return newZoom;
+	});
+}, []);
 
 	const handleResetZoom = useCallback(() => {
 		setZoomLevel(1);
@@ -146,8 +150,6 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 			auth?._id && product.seller?.user && auth._id === String(product.seller.user)
 		);
 	}, [auth?._id, product.seller?.user]);
-
-	const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
 	// ----- Memoized handlers -----
 	const handleShare = useCallback(async () => {
@@ -229,9 +231,17 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	if (loading) {
 		return (
 			<Box sx={{p: 3}}>
-				<Skeleton variant='rectangular' height={400} sx={{borderRadius: 2}} />
-				<Skeleton variant='text' sx={{mt: 2}} />
-				<Skeleton variant='text' width='60%' />
+				<Grid container spacing={8}>
+					<Grid size={{xs: 6}}>
+						<Skeleton height={500} />
+					</Grid>
+
+					<Grid size={{xs: 6}} sx={{mt:13}}>
+						<Skeleton height={50} />
+						<Skeleton height={30} />
+						<Skeleton height={30} />
+					</Grid>
+				</Grid>
 			</Box>
 		);
 	}
@@ -278,7 +288,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 
 	// ----- SEO Data -----
 	const productJsonLd = generateSingleProductJsonLd(product);
-	const currentUrl = `https://client-qqq1.vercel.app/product/${product.category}/${product.brand}/${product._id}`;
+	const currentUrl = `https://client-qqq1.vercel.app/product/${product.category}/${product._id}`;
 
 	return (
 		<>
@@ -389,7 +399,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 											variant='body2'
 											sx={{color: "text.secondary"}}
 										>
-											{product.seller.slug}@
+											{product.seller?.slug}@
 										</Typography>
 
 										<Tooltip title='عام للجميع'>

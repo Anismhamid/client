@@ -1,34 +1,40 @@
 import {Routes, Route} from "react-router-dom";
-import UsersManagement from "../components/settings/UsersManagement";
-import {path, productsPathes} from "./routes";
-import Home from "../components/pages/Home";
-import Login from "../components/settings/Login";
-import About from "../components/pages/About";
-// import EditUserData from "../atoms/userManage/EditUserData";
-import Contact from "../components/pages/Contact";
-import PageNotFound from "../components/pages/Png";
-import PrivacyAdnPolicy from "../components/pages/PrivacyAndPolicy";
-import Register from "../components/settings/register/Register";
-import TermOfUse from "../components/pages/TermOfUse";
-import AdminSettings from "../components/settings/AdminSettengs";
-import Profile from "../components/settings/profile/Profile";
-import RoleType from "../interfaces/UserType";
+import {lazy} from "react";
 import {FunctionComponent} from "react";
+import {path, productsPathes} from "./routes";
+import RoleType from "../interfaces/UserType";
 import {AuthValues} from "../interfaces/authValues";
-import ProducDetails from "../components/pages/products/PostDetails";
-import Products from "../components/pages/products/Posts";
-import Messages from "../components/settings/Messages";
-import WebSiteAdmins from "../components/settings/WebSiteAdmins";
-import CustomerProfile from "../components/settings/customerProfile/CustomerProfile";
-import Favorite from "../components/pages/products/FavoritesProducts";
-import DiscountsAndOffers from "../components/pages/products/DiscountsAndOffers";
-import SellingHelp from "../components/pages/SellingHelp";
-import SafetyHelp from "../components/pages/SafetyHelp";
-import DisputesHelp from "../components/pages/DisputesHelp";
-import ChatBoxWrapper from "../components/pages/chatBox/ChatBoxWrapper";
 import {UserMessage} from "../interfaces/usersMessages";
-import MessagesPage from "../components/pages/chatBox/MessagesPage";
-import FeaturedAdsDashboard from "../atoms/ads/FeaturedAdsDashboard";
+
+const UsersManagement = lazy(() => import("../components/settings/UsersManagement"));
+const Home = lazy(() => import("../components/pages/Home"));
+const Login = lazy(() => import("../components/settings/Login"));
+const About = lazy(() => import("../components/pages/About"));
+// import EditUserData from "../atoms/userManage/EditUserData";
+const Contact = lazy(() => import("../components/pages/Contact"));
+const PageNotFound = lazy(() => import("../components/pages/Png"));
+const PrivacyAdnPolicy = lazy(() => import("../components/pages/PrivacyAndPolicy"));
+const Register = lazy(() => import("../components/settings/register/Register"));
+const TermOfUse = lazy(() => import("../components/pages/TermOfUse"));
+const AdminSettings = lazy(() => import("../components/settings/AdminSettengs"));
+const Profile = lazy(() => import("../components/settings/profile/Profile"));
+const ProducDetails = lazy(() => import("../components/pages/products/PostDetails"));
+const Products = lazy(() => import("../components/pages/products/Posts"));
+const Messages = lazy(() => import("../components/settings/Messages"));
+const WebSiteAdmins = lazy(() => import("../components/settings/WebSiteAdmins"));
+const CustomerProfile = lazy(
+	() => import("../components/settings/customerProfile/CustomerProfile"),
+);
+const Favorite = lazy(() => import("../components/pages/products/FavoritesProducts"));
+const DiscountsAndOffers = lazy(
+	() => import("../components/pages/products/DiscountsAndOffers"),
+);
+const SellingHelp = lazy(() => import("../components/pages/SellingHelp"));
+const SafetyHelp = lazy(() => import("../components/pages/SafetyHelp"));
+const DisputesHelp = lazy(() => import("../components/pages/DisputesHelp"));
+const ChatBoxWrapper = lazy(() => import("../components/pages/chatBox/ChatBoxWrapper"));
+const MessagesPage = lazy(() => import("../components/pages/chatBox/MessagesPage"));
+const FeaturedAdsDashboard = lazy(() => import("../atoms/ads/FeaturedAdsDashboard"));
 
 interface AppRoutesProps {
 	auth: AuthValues;
@@ -72,7 +78,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 
 			<Route path='/category/:category' element={<Products />} />
 
-			<Route path='/category/:category/:subcategory' element={<Products />} />
+			<Route path='/category/:category/*' element={<Products />} />
 
 			<Route
 				path={`${productsPathes.productDetails}/:category/:brand/:productId`}
@@ -84,7 +90,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			/>
 			<Route path={`${path.DiscountsAndOffers}`} element={<DiscountsAndOffers />} />
 
-			<Route path={path.Png} element={<PageNotFound />} />
+			<Route path={"*"} element={<PageNotFound />} />
 		</Routes>
 	);
 };

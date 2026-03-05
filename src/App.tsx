@@ -9,6 +9,8 @@ import SpeedDialComponent from "./atoms/productsManage/SpeedDialComponent.tsx";
 import useSocketEvents from "./hooks/useSocketEvents.ts";
 import {useEffect, useMemo, useState} from "react";
 import handleRTL from "./locales/handleRTL.ts";
+import {Suspense} from "react";
+import Loader from "./atoms/loader/Loader.tsx";
 
 function App() {
 	const {auth} = useUser();
@@ -113,7 +115,9 @@ function App() {
 			/>
 			<Theme mode={mode} setMode={setMode} />
 			<SpeedDialComponent />
-			<AppRoutes auth={auth} />
+			<Suspense fallback={<Loader />}>
+				<AppRoutes auth={auth} />
+			</Suspense>
 			<Footer />
 		</ThemeProvider>
 	);
