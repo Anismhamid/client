@@ -10,6 +10,9 @@ interface ChatContextType {
 		msgs: LocalMessage[] | ((prev: LocalMessage[]) => LocalMessage[]),
 	) => void;
 
+	currentChatId: string | null;
+	setCurrentChatId: (id: string | null) => void;
+
 	addMessageForUser: (userId: string, msg: LocalMessage) => void;
 	unreadCounts: Record<string, number>;
 	setUnreadForUser: (
@@ -23,7 +26,7 @@ const ChatContext = createContext<ChatContextType | null>(null);
 export const ChatProvider = ({children}: {children: ReactNode}) => {
 	const [messages, setMessages] = useState<Record<string, LocalMessage[]>>({});
 	const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
-
+	const [currentChatId, setCurrentChatId] = useState<string | null>(null);
 	useEffect(() => {
 		const handleUnread = ({userId, count}: {userId: string; count: number}) => {
 			setUnreadForUser(userId, count);
@@ -86,6 +89,8 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
 				setMessagesForUser,
 				addMessageForUser,
 				setUnreadForUser,
+				currentChatId,
+				setCurrentChatId,
 				unreadCounts,
 			}}
 		>

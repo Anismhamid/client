@@ -10,11 +10,14 @@ import socket from "../socket/globalSocket";
 import useNotificationSound from "./useNotificationSound";
 import {Products} from "../interfaces/Posts";
 import {productsPathes} from "../routes/routes";
+import {useChat} from "./useChat";
+import {LocalMessage} from "../interfaces/chat/localMessage";
 
 const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {playNotificationSound, showNotification} = useNotificationSound();
+	const {currentChatId, addMessageForUser, setUnreadForUser, unreadCounts} = useChat();
 
 	useEffect(() => {
 		if (!auth) return;
@@ -87,17 +90,36 @@ const useSocketEvents = () => {
 			showNotification(`تم إضافة منشور جديد: ${newProduct.product_name}`);
 		};
 
-		const messageSent = (msg: any) => {
-			// إذا المرسل هو المستخدم الحالي
-			if (msg.from?._id === auth._id) {
-				playNotificationSound("messageSent");
+		// const messageReceived = (msg: any) => {
+		// 	// إذا المرسل هو المستخدم الحالي
+		// 	if (msg.to?._id === auth._id) {
+		// 		playNotificationSound("messageReceived");
+		// 		if (addMessageForUser !== msg.chatId)
+		// 			new Notification(`رسالة من ${msg.from?.name.first}`, {
+		// 				body: msg.text,
+		// 			});
+		// 	}
+		// };
+		const messageReceived = (msg: LocalMessage) => {
+			const otherUserId = msg.from._id === auth._id ? msg.to._id : msg.from._id;
+
+			addMessageForUser(otherUserId, msg);
+
+			if (currentChatId !== otherUserId) {
+				setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
+				playNotificationSound("messageReceived");
+				if (Notification.permission === "granted") {
+					new Notification(`رسالة من ${msg.from?.name.first}`, {
+						body: msg.text,
+					});
+				}
 			}
 		};
 
-		const messageReceived = (msg: any) => {
+		const messageSent = (msg: any) => {
 			// إذا المستلم هو المستخدم الحالي
-			if (msg.to?._id === auth._id) {
-				playNotificationSound("messageReceived");
+			if (msg.from?._id === auth._id) {
+				playNotificationSound("messageSent");
 			}
 		};
 
@@ -122,7 +144,7 @@ const useSocketEvents = () => {
 			socket.off("user:newUserLoggedIn", handleUserLoggedIn);
 			socket.off("product:new", handleNewProduct);
 		};
-	}, [navigate, playNotificationSound]);
+	}, [auth, navigate, playNotificationSound]);
 };
 
 export default useSocketEvents;
