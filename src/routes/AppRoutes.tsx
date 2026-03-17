@@ -37,6 +37,7 @@ const MessagesPage = lazy(() => import("../components/pages/chatBox/MessagesPage
 const FeaturedAdsDashboard = lazy(() => import("../atoms/ads/FeaturedAdsDashboard"));
 
 interface AppRoutesProps {
+
 	auth: AuthValues;
 }
 
