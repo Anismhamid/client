@@ -1,53 +1,52 @@
-# E-Commerce C2C Marketplace - بيع وشراء
+# E-Commerce C2C Marketplace - Sell & Buy
+
+![React](https://img.shields.io/badge/React-19-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-6.0-purple?logo=vite)
+![Socket.io](https://img.shields.io/badge/Socket.io-4.0-black?logo=socket.io)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## Project Summary
 
-This is a straightforward e-commerce application allowing users to **browse and buy fresh products** like fruits, vegetables, fish, and dairy. Users can explore product categories, find discounts, add items to their cart, and complete purchases.
+This is a comprehensive C2C (Consumer-to-Consumer) e-commerce marketplace that allows users to **list, sell, and buy** a wide range of products (cars, electronics, real estate, and personal items). The system features direct messaging, featured ad management, and an intelligent SEO archiving system.
 
 ---
 
-## Table of Contents
+## 📑 Table of Contents
 
-1.  [Project Overview](#project-overview)
-2.  [Features](#features)
-3.  [Technologies](#technologies)
-4.  [File Structure](#file-structure)
-5.  [Setup](#setup)
-6.  [Usage](#usage)
-7.  [Components Overview](#components-overview)
-8.  [Services](#services)
-9.  [API Integration](#api-integration)
-10. [License](#license)
+1. [Project Overview](#project-overview)
+2. [Features](#features)
+3. [Technologies](#technologies)
+4. [Environment Variables](#environment-variables)
+5. [Setup & Installation](#setup--installation)
+6. [Components Overview](#components-overview)
+7. [Services](#services)
+8. [API Integration](#api-integration)
+9. [SEO & Sitemap](#seo--sitemap)
+10. [Routes](#routes)
 11. [How to Contribute](#how-to-contribute)
+12. [License](#license)
 
 ---
 
-## Project Overview
+## 🌐 Project Overview
 
-This e-commerce platform delivers a variety of fresh products directly from local suppliers. Customers can pick products, see available discounts, and checkout. The application supports multiple payment and collection methods, including credit card, cash on delivery, and self-collection. The checkout process automatically calculates the final price, taking into account product discounts and delivery options.
+A C2C e-commerce platform that enables local suppliers and individuals to showcase their products in organized categories. The application supports direct communication between buyers and sellers via real-time chat, featured ad management, with a strong focus on user experience and search engine visibility.
 
 ---
 
-## Features
+## ✨ Features
 
-- **Product Categories:** Displays categories such as Fish, Dairy, Fruits, and Vegetables.
-- **Discounts & Offers:** Applies special discounts to specific products.
-- **Cart & Checkout:** Users can add products to their cart, view a summary, and select a payment method.
-- **Responsive Design:** Optimized for seamless use on both mobile and desktop devices.
-- **Authentication:** Provides secure user authentication and token management.
-- **Order Management:** Users can place orders with various payment and delivery choices.
-- **Receipts Generation:** Automatically generates detailed receipts for each order, including business information, customer details, product lists, delivery fees, and discounts.
-- **Export Options:** Users can download PDF receipts directly from the receipts page.
+- **Comprehensive Categories:** Includes cars, motorcycles, trucks, electronics, home, garden, clothing, and health products.
+- **Advanced User Roles:** Sophisticated permission system (Admin, Moderator, Client).
 - **Internal Messaging System:**
-    - **User Communication:** Clients can message Moderators, while Moderators and Admins can communicate with Clients and other Admins/Moderators.
-    - **Real-time Messaging:** Messages are delivered instantly using Socket.IO.
-    - **Message Status:** Messages can be flagged as 'warning' or 'important'.
-    - **Reply Functionality:** Users can reply to specific messages.
-    - **Pagination:** Efficiently loads and displays message history.
-- **Real-Time Updates with Socket.IO:**
-    - **Order Status Updates:** Customers receive instant notifications about their order status.
-    - **Discount Alerts:** Get immediate alerts on new discounts and offers.
-    - **Admin/Moderator Notifications:** Real-time alerts for new orders and updates on specific order statuses.
+    - Real-time chat using **Socket.IO**
+    - Reply to specific messages and important message alerts
+    - Direct communication between buyer and seller without sharing personal contact information
+- **Smart SEO:** Search engine friendly URLs, dynamic sitemap, and optimized help center pages for better visibility
+- **Featured Ads Dashboard:** Dedicated dashboard for managing and activating featured advertisements
+- **Responsive Design:** Modern UI compatible with all screen sizes using **MUI** and **Bootstrap 5**
+- **User Profiles:** User profile pages (sellers/buyers) displaying ratings and listings
 
 ---
 
@@ -55,31 +54,22 @@ This e-commerce platform delivers a variety of fresh products directly from loca
 
 ### Frontend
 
-- React 19
-- Vite
-- React Router DOM v7
-- State Management with **useState** and **useContext API**
-- **Socket.IO Client** for real-time notifications and messaging
-- Styling: Bootstrap v5, React Bootstrap, **MUI**, Emotion, Font Awesome, React Toastify, CSS
-- **Axios** for API communication
-- **Formik & Yup** for forms and validation
-
-### Development & Tooling
-
-- TypeScript
-- Vite
-- ESLint
+- **Framework:** React 19 + Vite
+- **Language:** TypeScript
+- **Routing:** React Router DOM v7
+- **Real-time:** Socket.IO Client
+- **Styling:** Material UI (MUI), Bootstrap 5, Font Awesome
+- **Form Handling:** Formik & Yup
 
 ### Backend
 
-- [Visit GitHub for Server-side](https://github.com/Anismhamid/server)
-- **Express.js**
-- **Node.js**
-- **MongoDB Atlas** (via Mongoose)
+- **Runtime:** Node.js & Express.js
+- **Database:** MongoDB Atlas (Mongoose)
+- **API Design:** Modular RESTful API routing
 
 ### Real-time Communication
 
-- **Socket.IO** for live updates and notifications, including real-time messaging
+- **Socket.IO** for live updates, notifications, and real-time messaging between users
 
 ### Security & Auth
 
@@ -94,124 +84,239 @@ This e-commerce platform delivers a variety of fresh products directly from loca
 - **Joi** for request data validation
 - Custom logging middleware with file persistence
 
-### Miscellaneous
+### Development & Tooling
 
-- **CORS** middleware for cross-origin requests
-- Modular RESTful API routing
+- TypeScript
+- Vite
+- ESLint
+- CORS middleware
 - Development tools: chalk, express-list-routes, cross-env
+
+### Backend Repository
+
+- [Visit GitHub for Server-side](https://github.com/Anismhamid/server)
 
 ---
 
-## Setup
+## 🔐 Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env` file. An example file `.env.example` is provided in the repository.
+
+```env
+# The URL of your running backend API
+VITE_API_URL=http://localhost:8209/api
+
+# The URL for the Socket.IO server (usually the same as your backend)
+VITE_SOCKET_URL=http://localhost:8209
+
+# Your Google OAuth Client ID for social login
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+
+## Setup & Installation
 
 ### Prerequisites
 
-- Node.js v20.18.x or higher — [Download Node.js](https://nodejs.org/)
+- Node.js v20.18.x or higher — Download Node.js
 - npm (comes with Node.js)
-- MongoDB (local or Atlas) — If local, install [MongoDB Compass](https://www.mongodb.com/try/download/community) and create a database named `fruit-store`
-- Postman or Insomnia for API testing
 
-### Installation
+- Backend Server: This project requires the backend server to be running. You can find it at: https://github.com/Anismhamid/server. Follow its setup instructions to get it running locally.
+
+- MongoDB (local or Atlas)
+
+- Postman or Insomnia for API testing (optional)
+
+## Installation
 
 ```bash
 git clone https://github.com/Anismhamid/client.git
+
 ```
 
 ```bash
+cd client
 npm install
 ```
 
-### Run the Application on development mod and production mode
+### Run the Application
 
-**Development mode:**
+## Development mode:
 
 ```bash
 npm run dev
 ```
 
-- Runs the client at - http://localhost:5173
+- Runs the client at: http://localhost:5173
 
-- and the server at - http://localhost:8209</p>
+- Backend server (if running locally) at: http://localhost:8209
 
-**Production mode:**
+## Production mode:
 
 ```bash
-npm run start
+npm run build
+npm run preview
 ```
 
-- Runs the client at - http://localhost:4173
-
-- and the server at - http://localhost:8201
+- Runs the client at: http://localhost:4173
 
 ### Usage
 
-- After starting the application, open the browser at- http://localhost:5173 / http://localhost:4173
+- After starting the application, open your browser at the URL mentioned above
 
-    - Browse products by categories, add to cart, apply discounts, and place orders.
-    - Use the admin panel (login required) to manage products, discounts, and orders.
+- Browse products by categories, communicate with sellers via direct messaging
 
-<section id="components-overview" style="margin-bottom:30px;">
-  <h2 style="color:#b22222;">Components Overview</h2>
-  <ul>
-    <li><strong>Navbar:</strong> Dynamic navigation with category filters, search, login/logout, cart icon, and user profile menu.</li>
-    <li><strong>ProductCard:</strong> Displays individual products with image, price, discount, and add-to-cart button.</li>
-    <li><strong>Cart:</strong> Shows selected products, quantities, total price, and checkout button.</li>
-    <li><strong>CheckoutModal:</strong> Modal window to finalize order with payment and collection options.</li>
-    <li><strong>Login/Register forms:</strong> User authentication and registration with validation.</li>
-    <li><strong>AdminDashboards:</strong> For managing users, products, orders, discounts, and site content.</li>
-    <li>**MessagingPage:** Allows users to send and receive internal messages, with features like recipient selection, reply-to, and message importance.</li>
-  </ul>
-</section>
+- Use the dashboard (after login) to manage ads and products
 
-<section id="services" style="margin-bottom:30px;">
-  <h2 style="color:#b22222;">Services</h2>
-  <ul>
-    <li><strong>AuthService:</strong> Handles login, registration, JWT storage, and Google OAuth login.</li>
-    <li><strong>ProductService:</strong> Fetches products, categories, and manages CRUD operations for admins.</li>
-    <li><strong>OrderService:</strong> Places orders, fetches order status, and manages order updates.</li>
-    <li><strong>DiscountService:</strong> Retrieves and applies discounts and offers.</li>
-    <li>**MessageService:** Manages sending and retrieving messages, including filtering and pagination.</li>
-  </ul>
-</section>
+### Components Overview
 
-<section id="api-integration" style="margin-bottom:30px;">
-  <h2 style="color:#b22222;">API Integration</h2>
-  <p>All data exchange with the backend server is done via RESTful API endpoints secured with JWT tokens.</p>
-  <p>Socket.IO is used to receive real-time notifications for order updates and discount announcements.</p>
-  <p>**Messaging:** Dedicated API endpoints for sending and retrieving messages, with real-time delivery via Socket.IO.</p>
-  <p>Example Axios usage to get products:</p>
+- Navbar: Dynamic navigation with category filters, search, login/logout, and user profile menu (no shopping cart - C2C model)
 
-```js
-import axios from "axios";
+- ProductCard: Displays individual products with image, price, contact seller button, and favorite option
 
-const getProducts = async () => {
-	try {
-		const response = await axios.get("http://localhost:8209/api/products");
-		return response.data;
-	} catch (error) {
-		console.log(error); // Changed consol.log to console.log
-	}
-};
+- UserProfile: Displays user information (seller/buyer), ratings, and listings
+
+- MessagingPage: Direct messaging system with ability to reply to specific messages
+
+- ChatWindow: Real-time chat window with another user
+
+- Login/Register forms: User authentication and registration with validation
+
+- AdminDashboard: Admin panel for managing users and featured ads
+
+- FeaturedAdsDashboard: Dashboard for managing and activating featured advertisements
+
+- HelpCenter: SEO-optimized help pages (selling, safety, disputes)
+
+### Services
+
+- AuthService: Handles login, registration, JWT storage, and Google OAuth login
+
+- ProductService: Fetches products, categories, and manages CRUD operations
+
+- UserService: Manages user profiles and ratings
+
+- MessageService: Manages sending and retrieving messages, including filtering and real-time updates via Socket.IO
+
+- FeaturedAdService: Manages featured advertisements and their activation
+
+- CategoryService: Fetches categories and their data
+
+### API Integration
+
+All data exchange with the backend server is done via RESTful API endpoints secured with JWT tokens.
+
+#### Socket.IO is used for real-time features:
+
+- Messaging: Send and receive instant messages between users
+
+- Notifications: Alerts for new messages and ad updates
+
+### SEO & Sitemap
+
+- SEO-Friendly URLs: Clean and descriptive URLs for all product and category pages
+
+- Dynamic Sitemap: Automatically generated sitemap.xml file to help search engines index the site
+
+- Help Center Pages: Optimized help pages (selling, safety, disputes) for better search engine visibility
+
+- Meta Tags: Optimized titles and descriptions for each page
+
+- Structured Data: JSON-LD for rich snippets
+
+## Routes
+
+### Main Pages
+
+| Path            | Description            |
+| --------------- | ---------------------- |
+| `/`             | Homepage               |
+| `/login`        | Login                  |
+| `/register`     | Register new account   |
+| `/profile`      | User profile           |
+| `/adsDashboard` | Featured ads dashboard |
+
+### Categories
+
+| Path                          | Description       |
+| ----------------------------- | ----------------- |
+| `/category/cars`              | Cars              |
+| `/category/motorcycles`       | Motorcycles       |
+| `/category/bikes`             | Bicycles          |
+| `/category/trucks`            | Trucks            |
+| `/category/electric-vehicles` | Electric vehicles |
+| `/category/house`             | House             |
+| `/category/garden`            | Garden            |
+| `/category/baby`              | Baby products     |
+| `/category/electronics`       | Electronics       |
+| `/category/kids`              | Kids products     |
+| `/category/beauty`            | Beauty products   |
+| `/category/cleaning`          | Cleaning supplies |
+| `/category/health`            | Health products   |
+| `/category/watches`           | Watches           |
+| `/category/women-clothes`     | Women's clothing  |
+| `/category/men-clothes`       | Men's clothing    |
+| `/category/women-bags`        | Women's bags      |
+
+### Help Center (SEO)
+
+| Path             | Description         |
+| ---------------- | ------------------- |
+| `/help/selling`  | Selling guidelines  |
+| `/help/safety`   | Safety instructions |
+| `/help/disputes` | Dispute resolution  |
+
+### User & Messaging
+
+| Path                    | Description             |
+| ----------------------- | ----------------------- |
+| `/users/customer/:slug` | User profile page       |
+| `/users-management`     | User management (admin) |
+| `/admins`               | Admin management        |
+| `/messages`             | Messages page           |
+| `/messages/chat`        | Chat window             |
+
+### Other Pages
+
+| Path                    | Description          |
+| ----------------------- | -------------------- |
+| `/about`                | About us             |
+| `/contact`              | Contact us           |
+| `/blog`                 | Blog                 |
+| `/brands/:brand`        | Brand page           |
+| `/categories`           | All categories       |
+| `/discounts-and-offers` | Discounts and offers |
+| `/favorites`            | Favorites            |
+| `/privacy-and-policy`   | Privacy policy       |
+| `/term-of-use`          | Terms of use         |
+
+### How to Contribute
+
+1.  Fork the repository
+
+2.  Create your feature branch
+
+```bash
+git checkout -b feature/amazing-feature
 ```
 
-  </section>
+3. Create your feature branch
 
-  <section id="license" style="margin-bottom:30px;">
-    <h2 style="color:#b22222;">License</h2>
-    <p>This project is licensed under the MIT License.</p>
-  </section>
+```bash
+git commit -m 'Add some amazing feature'
+```
 
-  <section id="how-to-contribute" style="margin-bottom:30px;">
-    <h2 style="color:#b22222;">How to Contribute</h2>
-    <ol>
-      <li>Fork the repository</li>
-      <li>Create your feature branch 
-        <code>git checkout -b feature-name</code>
-      </li>
-      <li>Commit your changes (<code>git commit -m 'Add some feature'</code>)</li>
-      <li>Push to the branch (<code>git push origin feature-name</code>)</li>
-      <li>Open a pull request</li>
-    </ol>
-  </section>
+4. Push to the branch
 
-</main>
+```bash
+git push origin feature/amazing-feature
+```
+
+5. Open a pull request
+
+### License
+
+This project is licensed under the MIT License.
+
+Made with ❤️ for the C2C community
+
+A complete marketplace platform for peer-to-peer buying and selling
