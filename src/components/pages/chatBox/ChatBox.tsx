@@ -11,10 +11,10 @@ import {
 	Fade,
 	Zoom,
 	Fab,
+	Avatar,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
-import CheckIcon from "@mui/icons-material/Check";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
+
 import socket from "../../../socket/globalSocket";
 import {useChat} from "../../../hooks/useChat";
 import {ChatUser} from "../../../interfaces/chat/chatUser";
@@ -25,11 +25,17 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {useTranslation} from "react-i18next";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import {
+	formatMessageTime,
+	getStatusIcon,
+	handleScroll,
+	scrollToBottom,
+} from "./helpers/functions";
 
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatBoxProps {
-	currentUser: {_id: string; name: string; email: string; role: string};
+	currentUser: {_id: string; name: string; email: string; role: string; image?: string};
 	otherUser: ChatUser;
 	token: string;
 }
@@ -51,29 +57,29 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 	const lastScrollHeightRef = useRef<number>(0);
 
-	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
-		if (chatContainerRef.current) {
-			chatContainerRef.current.scrollTo({
-				top: chatContainerRef.current.scrollHeight,
-				behavior,
-			});
-		}
-	};
+	// const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+	// 	if (chatContainerRef.current) {
+	// 		chatContainerRef.current.scrollTo({
+	// 			top: chatContainerRef.current.scrollHeight,
+	// 			behavior,
+	// 		});
+	// 	}
+	// };
 
 	const [showScrollBtn, setShowScrollBtn] = useState(false);
-	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-		const {scrollTop, scrollHeight, clientHeight} = e.currentTarget;
+	// const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+	// 	const {scrollTop, scrollHeight, clientHeight} = e.currentTarget;
 
-		// 1. Pagination logic (Top of chat)
-		if (scrollTop === 0 && hasMore && !isFetchingMore) {
-			loadConversation(false);
-		}
+	// 	// 1. Pagination logic (Top of chat)
+	// 	if (scrollTop === 0 && hasMore && !isFetchingMore) {
+	// 		loadConversation(false);
+	// 	}
 
-		// 2. Scroll Button logic (Bottom of chat)
-		// Show button if we are more than 400px away from the bottom
-		const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-		setShowScrollBtn(distanceFromBottom > 400);
-	};
+	// 	// 2. Scroll Button logic (Bottom of chat)
+	// 	// Show button if we are more than 400px away from the bottom
+	// 	const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+	// 	setShowScrollBtn(distanceFromBottom > 400);
+	// };
 
 	// עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
 	const markAsSeen = () => {
@@ -112,20 +118,24 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				},
 			);
 
-			if (!isInitial && chatContainerRef.current) {
-				lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
-			}
+			// if (!isInitial && chatContainerRef.current) {
+			// 	lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
+			// }
 
-			const fetchedMessages = res.data.messages; 
+			const fetchedMessages = res.data.messages;
 
 			if (isInitial) {
 				setMessagesForUser(otherUser._id, fetchedMessages);
-				setTimeout(() => scrollToBottom("auto"), 100);
+				setTimeout(() => scrollToBottom("smooth", chatContainerRef), 100);
 			} else {
+				if (chatContainerRef.current) {
+					lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
+				}
+
 				// Prepend old messages to the top
 				setMessagesForUser(otherUser._id, (prev) => [
-					...prev,
 					...fetchedMessages,
+					...prev,
 				]);
 			}
 
@@ -156,7 +166,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		addMessageForUser(otherUser._id, tempMessage);
 		setInput("");
 		socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
-		setTimeout(() => scrollToBottom(), 50);
+		setTimeout(() => scrollToBottom("smooth", chatContainerRef), 50);
 
 		try {
 			await axios.post(
@@ -171,6 +181,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 	useLayoutEffect(() => {
 		const container = chatContainerRef.current;
+
 		if (container && isFetchingMore && lastScrollHeightRef.current > 0) {
 			// Calculate how much the height increased
 			const heightDifference = container.scrollHeight - lastScrollHeightRef.current;
@@ -181,7 +192,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			// Reset the ref
 			lastScrollHeightRef.current = 0;
 		}
-	}, [userMessages]); // Trigger this whenever messages change
+	}, [userMessages, isFetchingMore]); // Trigger this whenever messages change
 
 	useEffect(() => {
 		loadConversation();
@@ -189,7 +200,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		socket.on("message:received", (message: LocalMessage) => {
 			if (message.from._id === otherUser._id) {
 				addMessageForUser(otherUser._id, message);
-				scrollToBottom();
+				scrollToBottom("smooth", chatContainerRef);
 				markAsSeen();
 			}
 		});
@@ -207,7 +218,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		socket.on("user:typing", ({from}: {from: string}) => {
 			if (from === otherUser._id) {
 				setTyping(true);
-				scrollToBottom();
+				scrollToBottom("smooth", chatContainerRef);
 			}
 		});
 
@@ -253,16 +264,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	}, [userMessages.length, otherUser._id]);
 
-	const getStatusIcon = (status: string) => {
-		if (status === "seen")
-			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
-
-		if (status === "delivered")
-			return <DoneAllIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
-
-		return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
-	};
-
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file) return;
@@ -289,7 +290,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			// הוספת הודעה זמנית או רענון צ'אט
 			if (res.data.message) {
 				addMessageForUser(otherUser._id, res.data.message);
-				scrollToBottom();
+				scrollToBottom("smooth", chatContainerRef);
 			}
 		} catch (err) {
 			console.error("Failed to upload file:", err);
@@ -307,7 +308,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		>
 			<Box
 				ref={chatContainerRef}
-				onScroll={handleScroll}
+				onScroll={(e) =>
+					handleScroll(
+						e,
+						loadConversation,
+						hasMore,
+						isFetchingMore,
+						setShowScrollBtn,
+					)
+				}
 				sx={{
 					flexGrow: 1,
 					overflowY: "auto",
@@ -332,42 +341,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						<CircularProgress size={24} />
 					</Box>
 				) : (
-					// <Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
-					// 	{isFetchingMore && (
-					// 		<Box
-					// 			sx={{
-					// 				height: isFetchingMore ? 40 : 0,
-					// 				transition: "height 0.2s",
-					// 			}}
-					// 		>
-					// 			<Box
-					// 				sx={{
-					// 					display: "flex",
-					// 					justifyContent: "center",
-					// 					py: 1,
-					// 				}}
-					// 			>
-					// 				<CircularProgress size={20} />
-					// 			</Box>
-					// 			<Zoom in={showScrollBtn}>
-					// 				<Fab
-					// 					color='primary'
-					// 					size='small'
-					// 					onClick={() => scrollToBottom("smooth")}
-					// 					sx={{
-					// 						position: "absolute",
-					// 						bottom: 90, // Positioned above the input area
-					// 						right: dir === "rtl" ? "auto" : 20,
-					// 						left: dir === "rtl" ? 20 : "auto",
-					// 						opacity: 0.9,
-					// 					}}
-					// 				>
-					// 					<ArrowDownwardIcon />
-					// 				</Fab>
-					// 			</Zoom>
-					// 		</Box>
-					// 	)}
-					// </Box>
 					userMessages.map((msg) => {
 						const isMe = msg.from._id === currentUser._id;
 						const isFile = msg.fileUrl;
@@ -376,15 +349,31 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								key={msg._id}
 								sx={{
 									alignSelf: isMe ? "flex-end" : "flex-start",
-									maxWidth: "80%",
+									maxWidth: "100%",
 									display: "flex",
 									flexDirection: "column",
 								}}
 							>
+								<Box sx={{display: "flex", mb: 1}}>
+									{!isMe && (
+										<Avatar
+											src={otherUser.from.image?.url || ""}
+											sx={{
+												width: 30,
+												height: 30,
+												fontSize: "0.9rem",
+												bgcolor: "primary.main",
+											}}
+										>
+											{`${otherUser.from.name.first[0]}.${otherUser.from.name.last[0]}`}
+										</Avatar>
+									)}
+								</Box>
 								<Paper
 									elevation={1}
 									sx={{
 										p: "8px 12px",
+										minWidth: "80px",
 										borderRadius: isMe
 											? "12px 0px 12px 12px"
 											: "0px 12px 12px 12px",
@@ -463,17 +452,21 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 											mt: 0.3,
 										}}
 									>
-										<Typography
-											variant='caption'
-											sx={{opacity: 0.7, fontSize: "0.6rem"}}
-										>
-											{new Date(msg.createdAt).toLocaleTimeString(
-												[],
-												{hour: "2-digit", minute: "2-digit"},
-											)}
+										<Typography variant='caption'>
+											{formatMessageTime(msg.createdAt)}
 										</Typography>
 										{isMe && getStatusIcon(msg.status)}
 									</Box>
+									{msg.fileUrl && (
+										<img
+											src={msg.fileUrl}
+											style={{
+												minHeight: "70px",
+												width: "70px",
+												objectFit: "cover",
+											}}
+										/>
+									)}
 								</Paper>
 							</Box>
 						);
@@ -506,10 +499,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					<Fab
 						color='primary'
 						size='small'
-						onClick={() => scrollToBottom("smooth")}
+						onClick={() => scrollToBottom("smooth", chatContainerRef)}
 						sx={{
 							position: "absolute",
-							bottom: 100, // Above the text input area
+							bottom: 50, // Above the text input area
 							right: dir === "rtl" ? "auto" : 20,
 							left: dir === "rtl" ? 20 : "auto",
 							zIndex: 10,
