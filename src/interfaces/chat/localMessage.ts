@@ -1,5 +1,5 @@
 export type LocalMessage = {
-	text: string | undefined;
+	text?: string | undefined;
 	fileType: any;
 	fileUrl: any;
 	_id: string;

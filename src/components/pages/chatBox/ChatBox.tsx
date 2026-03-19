@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef, FunctionComponent} from "react";
+import {useEffect, useState, useRef, FunctionComponent, useLayoutEffect} from "react";
 import axios from "axios";
 import {
 	Box,
@@ -9,6 +9,8 @@ import {
 	CircularProgress,
 	InputAdornment,
 	Fade,
+	Zoom,
+	Fab,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import CheckIcon from "@mui/icons-material/Check";
@@ -22,6 +24,7 @@ import handleRTL from "../../../locales/handleRTL";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import {useTranslation} from "react-i18next";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -36,6 +39,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const [input, setInput] = useState("");
 	const [typing, setTyping] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const [hasMore, setHasMore] = useState(true);
+	const [isFetchingMore, setIsFetchingMore] = useState(false);
 
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +48,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const userMessages = messages[otherUser._id] || [];
 	const dir = handleRTL();
 	const {t} = useTranslation();
+
+	const lastScrollHeightRef = useRef<number>(0);
 
 	const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
 		if (chatContainerRef.current) {
@@ -53,10 +60,29 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	};
 
+	const [showScrollBtn, setShowScrollBtn] = useState(false);
+	const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+		const {scrollTop, scrollHeight, clientHeight} = e.currentTarget;
+
+		// 1. Pagination logic (Top of chat)
+		if (scrollTop === 0 && hasMore && !isFetchingMore) {
+			loadConversation(false);
+		}
+
+		// 2. Scroll Button logic (Bottom of chat)
+		// Show button if we are more than 400px away from the bottom
+		const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+		setShowScrollBtn(distanceFromBottom > 400);
+	};
+
 	// עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
 	const markAsSeen = () => {
 		if (!otherUser?._id || !socket) return;
-		socket.emit("message:seen", {from: otherUser._id, to: currentUser._id});
+		socket.emit("message:seen", {
+			from: otherUser._id,
+			to: currentUser._id,
+			roomId: [otherUser._id, currentUser._id].sort().join("_"),
+		});
 		setUnreadForUser(otherUser._id, 0);
 	};
 
@@ -72,19 +98,44 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}, 2000);
 	};
 
-	const loadConversation = async () => {
+	const loadConversation = async (isInitial = true) => {
+		if (isInitial) setIsLoading(true);
+		else setIsFetchingMore(true);
+
 		setIsLoading(true);
 		try {
-			const res = await axios.get(`${api}/messages/conversation/${otherUser._id}`, {
-				headers: {Authorization: token},
-			});
-			setMessagesForUser(otherUser._id, res.data.messages);
-			markAsSeen(); // סימון כנקרא עם טעינת השיחה
-			setTimeout(() => scrollToBottom("auto"), 100);
+			const skip = isInitial ? 0 : userMessages.length;
+			const res = await axios.get(
+				`${api}/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
+				{
+					headers: {Authorization: token},
+				},
+			);
+
+			if (!isInitial && chatContainerRef.current) {
+				lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
+			}
+
+			const fetchedMessages = res.data.messages; 
+
+			if (isInitial) {
+				setMessagesForUser(otherUser._id, fetchedMessages);
+				setTimeout(() => scrollToBottom("auto"), 100);
+			} else {
+				// Prepend old messages to the top
+				setMessagesForUser(otherUser._id, (prev) => [
+					...prev,
+					...fetchedMessages,
+				]);
+			}
+
+			markAsSeen();
+			setHasMore(res.data.hasMore);
 		} catch (err) {
-			console.error("Failed to load conversation:", err);
+			console.error("Pagination error:", err);
 		} finally {
 			setIsLoading(false);
+			setIsFetchingMore(false);
 		}
 	};
 
@@ -118,7 +169,19 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	};
 
+	useLayoutEffect(() => {
+		const container = chatContainerRef.current;
+		if (container && isFetchingMore && lastScrollHeightRef.current > 0) {
+			// Calculate how much the height increased
+			const heightDifference = container.scrollHeight - lastScrollHeightRef.current;
 
+			// Adjust the scroll position so the user stays on the same message
+			container.scrollTop = heightDifference;
+
+			// Reset the ref
+			lastScrollHeightRef.current = 0;
+		}
+	}, [userMessages]); // Trigger this whenever messages change
 
 	useEffect(() => {
 		loadConversation();
@@ -134,7 +197,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		socket.on("message:sent", (message: LocalMessage) => {
 			if (message.to._id === otherUser._id) {
 				setMessagesForUser(otherUser._id, (prev) =>
-					prev.map((m) => (m._id.startsWith("temp-") ? message : m)),
+					prev.map((m) =>
+						m._id.startsWith("temp-") ? {...message, status: "delivered"} : m,
+					),
 				);
 			}
 		});
@@ -151,42 +216,50 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		});
 
 		// האזנה לעדכון סטטוס "נקרא" מהצד השני
-	socket.on("message:seen", ({by}: {by: string}) => {
-		if (by === otherUser._id) {
-			setMessagesForUser(otherUser._id, (prev) =>
-				prev.map((m) =>
-					m.from._id === currentUser._id ? {...m, status: "seen"} : m,
-				),
-			);
-		}
-	});
-
+		socket.on("message:seen", ({by}: {by: string}) => {
+			if (by === otherUser._id) {
+				setMessagesForUser(otherUser._id, (prev) =>
+					prev.map((m) =>
+						m.from._id === currentUser._id ? {...m, status: "seen"} : m,
+					),
+				);
+			}
+		});
 
 		return () => {
+			socket.off("message:received");
+			socket.off("message:sent");
+			socket.off("message:seen");
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
-			socket.off("user:received");
-			socket.off("user:sent");
-			socket.off("messages:seen");
 		};
 	}, [otherUser?._id, token]);
 
 	useEffect(() => {
 		if (userMessages.length > 0) {
-			scrollToBottom();
-			// אם קיבלנו הודעה חדשה בזמן שהצ'אט פתוח - נסמן כנקרא
 			const lastMessage = userMessages[userMessages.length - 1];
-			if (lastMessage.from._id === otherUser._id && document.hasFocus()) {
+			// If the last message is from the OTHER user and I am currently looking at the chat
+			if (lastMessage.from._id === otherUser._id && lastMessage.status !== "seen") {
 				markAsSeen();
+				// Also call the API to persist this in the DB
+				axios.patch(
+					`${api}/messages/mark-as-seen/${otherUser._id}`,
+					{},
+					{
+						headers: {Authorization: token},
+					},
+				);
 			}
 		}
-	}, [userMessages.length]);
+	}, [userMessages.length, otherUser._id]);
 
 	const getStatusIcon = (status: string) => {
 		if (status === "seen")
-			return <DoneAllIcon sx={{fontSize: 14, color: "#4caf50"}} />;
-		// if (status === "delivered")
-		// 	return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
+			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />;
+
+		if (status === "delivered")
+			return <DoneAllIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+
 		return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
 	};
 
@@ -223,7 +296,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	};
 
-
 	return (
 		<Box
 			sx={{
@@ -235,6 +307,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		>
 			<Box
 				ref={chatContainerRef}
+				onScroll={handleScroll}
 				sx={{
 					flexGrow: 1,
 					overflowY: "auto",
@@ -242,15 +315,59 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					display: "flex",
 					flexDirection: "column",
 					gap: 1.5,
+					overflowAnchor: "auto",
 					bgcolor: (theme) =>
 						theme.palette.mode === "dark" ? "#0b141a" : "#f0f2f5",
 				}}
 			>
-				{isLoading ? (
+				{/* TOP SPINNER: Shown when fetching older messages */}
+				{isFetchingMore && (
+					<Box sx={{display: "flex", justifyContent: "center", py: 1}}>
+						<CircularProgress size={20} />
+					</Box>
+				)}
+
+				{isLoading && !isFetchingMore ? (
 					<Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
 						<CircularProgress size={24} />
 					</Box>
 				) : (
+					// <Box sx={{display: "flex", justifyContent: "center", mt: 4}}>
+					// 	{isFetchingMore && (
+					// 		<Box
+					// 			sx={{
+					// 				height: isFetchingMore ? 40 : 0,
+					// 				transition: "height 0.2s",
+					// 			}}
+					// 		>
+					// 			<Box
+					// 				sx={{
+					// 					display: "flex",
+					// 					justifyContent: "center",
+					// 					py: 1,
+					// 				}}
+					// 			>
+					// 				<CircularProgress size={20} />
+					// 			</Box>
+					// 			<Zoom in={showScrollBtn}>
+					// 				<Fab
+					// 					color='primary'
+					// 					size='small'
+					// 					onClick={() => scrollToBottom("smooth")}
+					// 					sx={{
+					// 						position: "absolute",
+					// 						bottom: 90, // Positioned above the input area
+					// 						right: dir === "rtl" ? "auto" : 20,
+					// 						left: dir === "rtl" ? 20 : "auto",
+					// 						opacity: 0.9,
+					// 					}}
+					// 				>
+					// 					<ArrowDownwardIcon />
+					// 				</Fab>
+					// 			</Zoom>
+					// 		</Box>
+					// 	)}
+					// </Box>
 					userMessages.map((msg) => {
 						const isMe = msg.from._id === currentUser._id;
 						const isFile = msg.fileUrl;
@@ -274,7 +391,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 										bgcolor: isMe
 											? "primary.main"
 											: "background.paper",
-										color: isMe ? "white" : "text.primary",
+										color: isMe ? "white" : "success",
 									}}
 								>
 									{isFile ? (
@@ -383,8 +500,28 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						</Box>
 					</Fade>
 				)}
+
+				{/* SCROLL BUTTON */}
+				<Zoom in={showScrollBtn}>
+					<Fab
+						color='primary'
+						size='small'
+						onClick={() => scrollToBottom("smooth")}
+						sx={{
+							position: "absolute",
+							bottom: 100, // Above the text input area
+							right: dir === "rtl" ? "auto" : 20,
+							left: dir === "rtl" ? 20 : "auto",
+							zIndex: 10,
+							boxShadow: 3,
+						}}
+					>
+						<ArrowDownwardIcon />
+					</Fab>
+				</Zoom>
 			</Box>
 
+			{/* Input Area */}
 			<Box
 				sx={{
 					p: 2,
@@ -397,48 +534,54 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 					type='file'
 					hidden
 					ref={fileInputRef}
-					style={{display: "none"}}
 					onChange={handleFileChange}
 					accept='image/*,.pdf,.doc,.docx'
 				/>
 
-				<IconButton color='primary' onClick={() => fileInputRef.current?.click()}>
-					<AttachFileIcon />
-				</IconButton>
+				<Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+					<IconButton
+						color='primary'
+						onClick={() => fileInputRef.current?.click()}
+					>
+						<AttachFileIcon />
+					</IconButton>
 
-				<TextField
-					fullWidth
-					multiline
-					maxRows={4}
-					value={input}
-					onChange={handleInputChange}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" && !e.shiftKey) {
-							e.preventDefault();
-							sendMessage(input);
-						}
-					}}
-					placeholder='הקלד הודעה...'
-					InputProps={{
-						endAdornment: (
-							<InputAdornment position='end'>
-								<IconButton
-									color='primary'
-									onClick={() => sendMessage(input)}
-									disabled={!input.trim()}
-								>
-									<SendIcon
-										sx={{
-											transform:
-												dir === "rtl" ? "rotate(180deg)" : "none",
-										}}
-									/>
-								</IconButton>
-							</InputAdornment>
-						),
-						sx: {borderRadius: 4, bgcolor: "grey.50"},
-					}}
-				/>
+					<TextField
+						fullWidth
+						multiline
+						maxRows={4}
+						value={input}
+						onChange={handleInputChange}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								sendMessage(input);
+							}
+						}}
+						placeholder='הקלד הודעה...'
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position='end'>
+									<IconButton
+										color='primary'
+										onClick={() => sendMessage(input)}
+										disabled={!input.trim()}
+									>
+										<SendIcon
+											sx={{
+												transform:
+													dir === "rtl"
+														? "rotate(180deg)"
+														: "none",
+											}}
+										/>
+									</IconButton>
+								</InputAdornment>
+							),
+							sx: {borderRadius: 4, bgcolor: "grey.50"},
+						}}
+					/>
+				</Box>
 			</Box>
 		</Box>
 	);

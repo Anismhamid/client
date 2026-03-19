@@ -17,7 +17,33 @@ const useSocketEvents = () => {
 	const {auth} = useUser();
 	const navigate = useNavigate();
 	const {playNotificationSound, showNotification} = useNotificationSound();
-	const {currentChatId, addMessageForUser, setUnreadForUser, unreadCounts} = useChat();
+	const {
+		currentChatId,
+		updateMessageStatus,
+		addMessageForUser,
+		setUnreadForUser,
+		messages,
+	} = useChat();
+
+	useEffect(() => {
+		if (!currentChatId || !auth || !messages) return;
+
+		const userMessages = messages[currentChatId] || [];
+
+		userMessages.forEach((msg) => {
+			if (msg.from._id !== auth._id && msg.status === "sent") {
+				// تحديث محليًا
+				updateMessageStatus(currentChatId, msg._id, "seen");
+
+				// إرسال إلى السيرفر
+				socket.emit("message:seen", {
+					messageId: msg._id,
+					from: auth._id,
+					to: msg.from._id,
+				});
+			}
+		});
+	}, [currentChatId, messages, auth?._id, updateMessageStatus]);
 
 	useEffect(() => {
 		if (!auth) return;
@@ -109,7 +135,7 @@ const useSocketEvents = () => {
 				setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
 				playNotificationSound("messageReceived");
 				if (Notification.permission === "granted") {
-					new Notification(`رسالة من ${msg.from?.name.first}`, {
+					new Notification(`رسالة من ${msg.from?.name}`, {
 						body: msg.text,
 					});
 				}
