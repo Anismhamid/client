@@ -106,11 +106,21 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 		formik.setFieldValue("type", firstSubcat);
 	};
 
-	const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const newSubcat = e.target.value;
-		formik.setFieldValue("subcategory", newSubcat);
-		formik.setFieldValue("type", newSubcat);
-	};
+const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	const newSubcat = e.target.value;
+	const category = formik.values.category as CategoryValue;
+
+	const oldSubcat = formik.values.subcategory;
+	if (oldSubcat && categoriesLogic[category][oldSubcat]) {
+		categoriesLogic[category][oldSubcat].forEach((field) => {
+			// نمسح القيمة من الفورميك عشان ما تروح للـ API
+			formik.setFieldValue(field.name, undefined);
+		});
+	}
+
+	formik.setFieldValue("subcategory", newSubcat);
+	formik.setFieldValue("type", newSubcat);
+};
 
 	const dynamicFields = useMemo((): DynamicField[] => {
 		const category = formik.values.category as CategoryValue;
@@ -147,7 +157,6 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 				defaultValue: `اختر ${field.name}`,
 			});
 
-
 			switch (field.type) {
 				case "text":
 					return (
@@ -160,48 +169,48 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 							<label htmlFor={fieldId}>{fieldLabel}</label>
 						</div>
 					);
-					
+
 				case "color":
-				return (
-					<div className='mb-3'>
-						<label htmlFor='color' className='form-label'>
-							{t("modals.addProductModal.color")}
-						</label>
-						<select
-							name='color'
-							value={formik.values.color || ""}
-							onChange={formik.handleChange}
-							onBlur={formik.handleBlur}
-							className={`form-control ${
-								formik.touched.color && formik.errors.color
-									? "is-invalid"
-									: ""
-							}`}
-							id='color'
-						>
-							<option value=''>
-								{t("modals.addProductModal.selectColor")}
-							</option>
-							{colors.map((color: CarColor) => (
-								<option value={color.hex} key={color.hex}>
-									{color.key} ({color.hex})
+					return (
+						<div className='mb-3'>
+							<label htmlFor='color' className='form-label'>
+								{t("modals.addProductModal.color")}
+							</label>
+							<select
+								name='color'
+								value={formik.values.color || ""}
+								onChange={formik.handleChange}
+								onBlur={formik.handleBlur}
+								className={`form-control ${
+									formik.touched.color && formik.errors.color
+										? "is-invalid"
+										: ""
+								}`}
+								id='color'
+							>
+								<option value=''>
+									{t("modals.addProductModal.selectColor")}
 								</option>
-							))}
-						</select>
-						<Box className='d-flex align-items-center gap-2 mt-2'>
-							<Box
-								sx={{
-									width: 20,
-									height: 20,
-									backgroundColor: formik.values.color,
-									border: "1px solid #ccc",
-									borderRadius: "4px",
-								}}
-							/>
-							<span>{formik.values.color}</span>
-						</Box>
-					</div>
-				);
+								{colors.map((color: CarColor) => (
+									<option value={color.hex} key={color.hex}>
+										{color.key} ({color.hex})
+									</option>
+								))}
+							</select>
+							<Box className='d-flex align-items-center gap-2 mt-2'>
+								<Box
+									sx={{
+										width: 20,
+										height: 20,
+										backgroundColor: formik.values.color,
+										border: "1px solid #ccc",
+										borderRadius: "4px",
+									}}
+								/>
+								<span>{formik.values.color}</span>
+							</Box>
+						</div>
+					);
 
 				case "number":
 					return (

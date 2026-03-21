@@ -87,9 +87,12 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
 		electric: [
 			{name: "brand", type: "text", required: true},
 			{name: "batteryCapacity", type: "number", required: true},
+			{name: "year", type: "number", required: true},
 			{name: "rangeKm", type: "number"},
 		],
-		parts: [],
+		parts: [
+			{name: "brand", type: "text"},
+		],
 		accessories: [],
 	},
 

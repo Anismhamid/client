@@ -1,14 +1,14 @@
 // atoms/LikeButton.tsx
-import {FunctionComponent, useState} from "react";
+import {FunctionComponent, useCallback, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {IconButton, CircularProgress, Typography} from "@mui/material";
 import {
 	Favorite as FavoriteIcon,
 	FavoriteBorder as FavoriteBorderIcon,
 } from "@mui/icons-material";
-import {useUser} from "../context/useUSer";
-import {HandleLikeParams, handleLike} from "../helpers/handleLike";
-import {Products} from "../interfaces/Posts";
+import {useUser} from "../../context/useUSer";
+import {handleLike, HandleLikeParams} from "../../helpers/handleLike";
+import {Products} from "../../interfaces/Posts";
 
 interface LikeButtonProps {
 	product: Products;
@@ -24,6 +24,13 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 	const [isLiking, setIsLiking] = useState(false);
 	const navigate = useNavigate();
 	const {isLoggedIn, auth} = useUser();
+	const defaultSound = new Audio("/Like-Sound-Effect (mp3cut.net).mp3");
+
+	const playNotificationSound = useCallback(() => {
+		let audio: HTMLAudioElement;
+		audio = defaultSound;
+		audio.play().catch(console.error);
+	}, []);
 
 	// تحقق من وجود auth و _id
 	const userLiked = auth?._id ? product.likes?.includes(auth._id) : false;
@@ -52,7 +59,12 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 	return (
 		<IconButton
 			aria-label={userLiked ? "remove from favorites" : "add to favorites"}
-			onClick={handleClick}
+			onClick={() => {
+				handleClick();
+				if (!userLiked) {
+					playNotificationSound();
+				}
+			}}
 			disabled={isLiking || !auth}
 			sx={{
 				position: "relative",
@@ -81,7 +93,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 							animation: "pulse 0.3s ease-in-out",
 							"@keyframes pulse": {
 								"0%": {transform: "scale(1)"},
-								"50%": {transform: "scale(1.2)"},
+								"50%": {transform: "scale(1.5)"},
 								"100%": {transform: "scale(1)"},
 							},
 						}}

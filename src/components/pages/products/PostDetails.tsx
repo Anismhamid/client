@@ -57,7 +57,7 @@ import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
 import {categoryLabels, categoryPathMap} from "../../../interfaces/postsCategoeis";
-import LikeButton from "../../../atoms/LikeButton";
+import LikeButton from "../../../atoms/like/LikeButton";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
@@ -90,13 +90,13 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 		setIsZoomed(true);
 	}, []);
 
-const handleZoomOut = useCallback(() => {
-	setZoomLevel((prev) => {
-		const newZoom = Math.max(prev - 0.5, 1);
-		if (newZoom === 1) setIsZoomed(false);
-		return newZoom;
-	});
-}, []);
+	const handleZoomOut = useCallback(() => {
+		setZoomLevel((prev) => {
+			const newZoom = Math.max(prev - 0.5, 1);
+			if (newZoom === 1) setIsZoomed(false);
+			return newZoom;
+		});
+	}, []);
 
 	const handleResetZoom = useCallback(() => {
 		setZoomLevel(1);
@@ -236,7 +236,7 @@ const handleZoomOut = useCallback(() => {
 						<Skeleton height={500} />
 					</Grid>
 
-					<Grid size={{xs: 6}} sx={{mt:13}}>
+					<Grid size={{xs: 6}} sx={{mt: 13}}>
 						<Skeleton height={50} />
 						<Skeleton height={30} />
 						<Skeleton height={30} />

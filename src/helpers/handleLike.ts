@@ -1,4 +1,4 @@
-import {showError, showSuccess} from "../atoms/toasts/ReactToast";
+import {showError} from "../atoms/toasts/ReactToast";
 import {AuthValues} from "../interfaces/authValues";
 import {Products} from "../interfaces/Posts";
 import {path} from "../routes/routes";
@@ -59,11 +59,7 @@ export const handleLike = async ({
 			onLikeToggle(product._id!, res.liked);
 		}
 
-		showSuccess(
-			res.liked ? "تمت إضافة المنتج للمفضلة" : "تمت إزالة المنتج من المفضلة",
-		);
 	} catch (err) {
-		console.error(err);
 		showError("حدث خطأ أثناء تحديث المفضلة");
 	} finally {
 		setIsLiking(false);

@@ -142,12 +142,16 @@ export const getCustomerProfileProductsBySlug = async (
 
 export const toggleLike = async (productId: string) => {
 	const token = localStorage.getItem("token");
-	const res = await axios.patch(
-		`${api}/products/${productId}/like`,
-		{},
-		{
-			headers: {Authorization: token},
-		},
-	);
-	return res.data; // { liked: true/false, totalLikes: number }
+	try {
+		const res = await axios.patch(
+			`${api}/products/${productId}/like`,
+			{},
+			{
+				headers: {Authorization: token},
+			},
+		);
+		return res.data; // { liked: true/false, totalLikes: number }
+	} catch (error) {
+		return [];
+	}
 };

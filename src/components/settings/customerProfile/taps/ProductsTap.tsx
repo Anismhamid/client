@@ -26,10 +26,10 @@ import {
 } from "@mui/icons-material";
 import {Products} from "../../../../interfaces/Posts";
 import {User} from "../../../../interfaces/usersMessages";
-import { productsPathes} from "../../../../routes/routes";
+import {productsPathes} from "../../../../routes/routes";
 import {useTranslation} from "react-i18next";
 import {formatPrice} from "../../../../helpers/dateAndPriceFormat";
-import LikeButton from "../../../../atoms/LikeButton";
+import LikeButton from "../../../../atoms/like/LikeButton";
 import {showSuccess} from "../../../../atoms/toasts/ReactToast";
 import PromotionCard from "../../../pages/products/PromotionCard";
 
@@ -322,7 +322,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 														)
 													}
 													imageUrl={product.image.url}
-													sellerName={`${product.seller.name}`}
+													sellerName={`${product.seller?.name}`}
 												/>
 											)}
 										</Stack>

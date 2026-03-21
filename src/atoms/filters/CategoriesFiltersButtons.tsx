@@ -1,6 +1,6 @@
 import {Box} from "@mui/material";
 import {FunctionComponent} from "react";
-import {productCategories} from "../../components/navbar/navCategoryies";
+import {productsAndCategories} from "../../components/navbar/navCategoryies";
 import {useTranslation} from "react-i18next";
 
 interface CategoriesFiltersButtonsProps {
@@ -17,7 +17,7 @@ const CategoriesFiltersButtons: FunctionComponent<CategoriesFiltersButtonsProps>
 		<>
 			{" "}
 			{/* ازرار التصفيه */}
-			{productCategories.map(({labelKey}) => {
+			{productsAndCategories.map(({labelKey}) => {
 				const isActive = searchQuery === t(labelKey);
 
 				return (

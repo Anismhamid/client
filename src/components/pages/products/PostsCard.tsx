@@ -38,9 +38,9 @@ import JsonLd from "../../../../utils/JsonLd";
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
-import LikeButton from "../../../atoms/LikeButton";
+import LikeButton from "../../../atoms/like/LikeButton";
 import {path, productsPathes} from "../../../routes/routes";
-import { formatTimeAgo } from "./helpers/helperFunctions";
+import {formatTimeAgo} from "./helpers/helperFunctions";
 
 interface PostCardProps {
 	product: Products;
@@ -86,7 +86,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			return `${product.product_name} - بيع وشراء في ${product.category}`;
 		};
 
-
 		const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
 			setMenuAnchor(event.currentTarget);
 		};
@@ -128,8 +127,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			}
 		};
 
-
-
 		const setProduct = updateProductInList
 			? (updater: (prev: Products) => Products) => {
 					const updated = updater(product);
@@ -141,17 +138,17 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		// TODO: Translate
 		return (
 			<Card
-				className='product-card'
 				dir={dir}
 				sx={{
+					color: "red",
 					borderRadius: 2,
 					display: "flex",
 					flexDirection: "column",
-					backgroundColor: "#FFFFFF",
+					// backgroundColor: "#FFFFFF",
 					boxShadow: "0 1px 2px rgba(0, 0, 0, 0.1)",
 					mb: 2,
 					overflow: "hidden",
-					border: "1px solid #dddfe2",
+					// border: "1px solid #dddfe2",
 					cursor: product.in_stock === false ? "not-allowed" : "pointer",
 					filter: product.in_stock === false ? "grayscale(0.5)" : "none",
 					"&:hover": {
@@ -260,7 +257,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 													variant='caption'
 													sx={{
 														color: "#65676b",
-														fontSize: "0.5rem",
+														fontSize: "1rem",
 													}}
 												>
 													🌍
@@ -413,8 +410,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								sx={{
 									width: "100%",
 									height: "auto",
-									maxHeight: 400,
-									objectFit: "contain",
+									minHeight: 300,
+									objectFit: "scale-down",
 								}}
 								onLoad={() => {
 									if (!imageKey) return;
