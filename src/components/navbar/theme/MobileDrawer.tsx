@@ -142,30 +142,32 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 						</ListItemButton>
 					</ListItem>
 					{/* Favorites */}
-					<ListItem disablePadding sx={{mb: 1}}>
-						<ListItemButton
-							component={NavLink}
-							to={path.Favorite}
-							onClick={handleNavLinkClick}
-							sx={{
-								borderRadius: "8px",
-								"&.active": {
-									backgroundColor: "rgba(220, 53, 69, 0.1)",
-									color: "#dc3545",
-									fontWeight: "bold",
-								},
-							}}
-						>
-							<FavoriteIcon sx={{ml: 1}} />
-							<ListItemText
-								primary={t("favorites") || "المفضلة"}
-								primaryTypographyProps={{
-									sx: {fontWeight: 500},
-									"aria-label": "المفضلة - موقع صفقة",
+					{auth._id && (
+						<ListItem disablePadding sx={{mb: 1}}>
+							<ListItemButton
+								component={NavLink}
+								to={path.Favorite}
+								onClick={handleNavLinkClick}
+								sx={{
+									borderRadius: "8px",
+									"&.active": {
+										backgroundColor: "rgba(220, 53, 69, 0.1)",
+										color: "#dc3545",
+										fontWeight: "bold",
+									},
 								}}
-							/>
-						</ListItemButton>
-					</ListItem>
+							>
+								<FavoriteIcon sx={{ml: 1}} />
+								<ListItemText
+									primary={t("favorites") || "المفضلة"}
+									primaryTypographyProps={{
+										sx: {fontWeight: 500},
+										"aria-label": "المفضلة - موقع صفقة",
+									}}
+								/>
+							</ListItemButton>
+						</ListItem>
+					)}
 					{/* Messages page */}
 					<ListItem disablePadding sx={{mb: 1}}>
 						<ListItemButton

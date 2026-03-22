@@ -76,14 +76,12 @@ const About: FunctionComponent = () => {
 
 	return (
 		<>
-		
-				<link rel='canonical' href={currentUrl} />
-				<title>{t("about.title")} | صفقة</title>
-				<meta name='description' content={t("about.subtitle")} />
-				<meta property='og:title' content={t("about.title")} />
-				<meta property='og:description' content={t("about.subtitle")} />
-				<meta property='og:type' content='website' />
-
+			<link rel='canonical' href={currentUrl} />
+			<title>{t("about.title")} | صفقة</title>
+			<meta name='description' content={t("about.subtitle")} />
+			<meta property='og:title' content={t("about.title")} />
+			<meta property='og:description' content={t("about.subtitle")} />
+			<meta property='og:type' content='website' />
 
 			<Box
 				sx={{
@@ -236,7 +234,7 @@ const About: FunctionComponent = () => {
 					{/* Features Grid */}
 					<Grid container spacing={4}>
 						{features.map((feature, index) => (
-							<Grid size={{xs: 6, sm: 6, md: 4}} key={index}>
+							<Grid size={{xs: 12, md: 6, lg: 4}} key={index}>
 								<motion.div
 									initial={{y: 50, opacity: 0}}
 									animate={{y: 0, opacity: 1}}

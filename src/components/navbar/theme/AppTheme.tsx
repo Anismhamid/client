@@ -282,7 +282,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										setMegaAnchor(null);
 									}}
 								>
-									<LogoText variant='h1'>{t("webPageName")}</LogoText>
+									<img
+										src='/d3.png'
+										alt='Safqa Logo'
+										style={{width: "80px"}}
+									/>
+									{/* <LogoText variant='h1'>{t("webPageName")}</LogoText> */}
 								</Link>
 							</motion.div>
 
@@ -318,15 +323,21 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								</Box>
 
 								{/* Favorites */}
-								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
-									<StyledNavLink
-										to={path.Favorite}
-										aria-label={t("favorites") || "المفضلة"}
-										title={t("favorites") || "المفضلة"}
+								{auth._id && (
+									<Box
+										component='li'
+										role='listitem'
+										sx={{flexShrink: 0}}
 									>
-										<FavoriteIcon sx={{fontSize: 20}} />
-									</StyledNavLink>
-								</Box>
+										<StyledNavLink
+											to={path.Favorite}
+											aria-label={t("favorites") || "المفضلة"}
+											title={t("favorites") || "المفضلة"}
+										>
+											<FavoriteIcon sx={{fontSize: 20}} />
+										</StyledNavLink>
+									</Box>
+								)}
 
 								{/* Products with mega menu */}
 								<Box
