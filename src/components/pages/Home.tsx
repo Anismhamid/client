@@ -11,6 +11,7 @@ import {
 	Typography,
 	useMediaQuery,
 	Alert,
+	Grid,
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
@@ -182,30 +183,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 			});
 	};
 
-	if (loading) {
-		return (
-			<>
-				<Typography
-					variant='h6'
-					sx={{
-						color: "white",
-						textAlign: "center",
-						my: 3,
-						fontWeight: "bold",
-						textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-					}}
-				>
-					جاري تحميل المنتجات الرائعة...
-				</Typography>
-				<Loader />
-				<motion.div
-					initial={{opacity: 0}}
-					animate={{opacity: 1}}
-					transition={{delay: 0.5}}
-				></motion.div>
-			</>
-		);
-	}
+	if (loading) return <Loader />;
 
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;
@@ -451,10 +429,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 							)}
 						</Box>
 
-						<Box className='home-row'>
+						<Box >
 							<AnimatePresence mode='wait'>
 								{visibleProducts.length > 0 ? (
-									<Row className='mt-3'>
+									<Grid container spacing={5}>
 										{visibleProducts.map((product, index) => {
 											const discountedPrice = product.sale
 												? product.price -
@@ -464,13 +442,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 												: product.price;
 
 											return (
-												<Col
+												<Grid
+													size={{xs: 12, sm: 6, md: 4, lg: 3}}
 													key={product._id}
-													style={{marginBlock: 10}}
-													xs={12}
-													md={6}
-													lg={4}
-													xl={3}
 												>
 													<motion.div
 														initial={{opacity: 0, y: 20}}
@@ -506,10 +480,10 @@ const Home: FunctionComponent<HomeProps> = () => {
 															}
 														/>
 													</motion.div>
-												</Col>
+												</Grid>
 											);
 										})}
-									</Row>
+									</Grid>
 								) : (
 									<motion.div
 										key='no-products'
@@ -521,7 +495,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 											sx={{
 												backgroundColor: "white",
 												p: {xs: 3, md: 5},
-												width: "90%",
+												width: "100%",
 												maxWidth: "600px",
 												m: "auto",
 												mt: 5,
@@ -668,9 +642,6 @@ const Home: FunctionComponent<HomeProps> = () => {
 							justifyContent: "center",
 							alignItems: "center",
 							flexDirection: "column",
-							background:
-								"linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%)",
-							py: 4,
 						}}
 					>
 						<motion.div
@@ -756,8 +727,8 @@ const Home: FunctionComponent<HomeProps> = () => {
 									width: 80,
 									height: 80,
 									borderRadius: "50%",
-									background:
-										"linear-gradient(45deg, #ffffff, #f0f0f0)",
+									// background:
+									// 	"linear-gradient(45deg, #ffffff, #f0f0f0)",
 									display: "flex",
 									alignItems: "center",
 									justifyContent: "center",

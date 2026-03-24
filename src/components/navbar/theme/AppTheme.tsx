@@ -55,46 +55,6 @@ interface ThemeProps {
 	setMode: (mode: PaletteMode) => void;
 }
 
-// Custom Logo with animation
-// const LogoText = styled(Typography)(
-// 	({theme}) => `
-//   font-weight: 800;
-//   font-size: ${theme.breakpoints.up("xs") ? "1.4rem" : "1.6rem"};
-//   font-family: 'Tajawal', 'Cairo', sans-serif;
-//   background: ${
-// 		theme.palette.mode === "dark"
-// 			? "linear-gradient(45deg, #ffffff 0%, #90caf9 100%)"
-// 			: "linear-gradient(45deg, #1a237e 0%, #283593 100%)"
-//   };
-//   -webkit-background-clip: text;
-//   -webkit-text-fill-color: transparent;
-//   background-clip: text;
-//   text-shadow: 0 2px 10px rgba(53, 124, 255, 0.3);
-//   position: relative;
-//   padding: ${theme.breakpoints.down("sm") ? "2px 10px" : "4px 20px"};
-//   border-radius: 12px;
-  
-//   &::after {
-//     content: "";
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     right: 0;
-//     bottom: 0;
-//     border-radius: 12px;
-//     padding: 2px;
-//     background: ${
-// 		theme.palette.mode === "dark"
-// 			? "linear-gradient(45deg, #FF6B35, #537bff)"
-// 			: "linear-gradient(45deg, #FF6B35, #1a237e)"
-// 	};
-//     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-//     -webkit-mask-composite: xor;
-//     mask-composite: exclude;
-//     opacity: 0.5;
-//   }
-// `,
-// );
 
 // Styled NavLink for better SEO and accessibility
 const StyledNavLink = styled(NavLink)(({theme}) => ({

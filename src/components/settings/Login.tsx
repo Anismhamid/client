@@ -43,6 +43,7 @@ import {CredentialResponse} from "@react-oauth/google";
 import {DecodedGooglePayload} from "../../interfaces/googleValues";
 import {useTranslation} from "react-i18next";
 import Loader from "../../atoms/loader/Loader";
+import handleRTL from "../../locales/handleRTL";
 
 interface LoginProps {
 	mode?: PaletteMode;
@@ -254,6 +255,8 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 
 	if (isPending) return <Loader />;
 
+	const dire = handleRTL();
+
 	return (
 		<>
 			<link rel='canonical' href={currentUrl} />
@@ -264,7 +267,7 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 			<meta property='og:description' content={`${t("login.metaDescription")}`} />
 			<meta property='og:url' content={currentUrl} />
 
-			<Container maxWidth='md' sx={{py: 8}}>
+			<Container dir={dire} maxWidth='md' sx={{py: 8}}>
 				<Box
 					sx={{
 						display: "flex",
@@ -274,86 +277,16 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 					}}
 				>
 					<Grid container spacing={4} alignItems='center'>
-						{/* Left side - Welcome message */}
-						<Grid size={{xs: 12, md: 6}}>
-							{" "}
-							{/* Fixed: should be 'item' prop */}
-							<Fade in={true} timeout={800}>
-								<Box
-									sx={{
-										textAlign: {xs: "center", md: "right"},
-										pr: {md: 4},
-										mb: {xs: 4, md: 0},
-									}}
-								>
-									<Typography
-										variant='h2'
-										component='h1'
-										sx={{
-											fontWeight: 800,
-											background:
-												mode === "dark"
-													? "linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)"
-													: "linear-gradient(45deg, #0288D1 30%, #0277BD 90%)",
-											WebkitBackgroundClip: "text",
-											WebkitTextFillColor: "transparent",
-											mb: 2,
-											fontSize: {xs: "2.5rem", md: "3.5rem"},
-										}}
-									>
-										{t("login.welcomeBack") || "مرحباً بعودتك!"}
-									</Typography>
-									<Typography
-										variant='h6'
-										sx={{
-											color:
-												mode === "dark"
-													? "text.secondary"
-													: "text.primary",
-											mb: 3,
-											lineHeight: 1.6,
-										}}
-									>
-										{t(
-											"login.welcomeMessage",
-											"سجل دخولك للوصول إلى حسابك والاستمرار من حيث توقفت",
-										)}
-									</Typography>
-									<Button
-										variant='outlined'
-										startIcon={<ArrowRight />}
-										onClick={() => navigate(path.Home)}
-										sx={{
-											borderRadius: 3,
-											px: 4,
-											py: 1,
-											borderWidth: 2,
-											"&:hover": {
-												borderWidth: 2,
-											},
-										}}
-									>
-										{t("login.backToHome", "العودة للرئيسية")}
-									</Button>
-								</Box>
-							</Fade>
-						</Grid>
-
 						{/* Right side - Login form */}
 						<Grid size={{xs: 12, md: 6}}>
-							{" "}
 							{/* Fixed: should be 'item' prop */}
 							<Paper
 								elevation={mode === "dark" ? 8 : 4}
 								sx={{
 									p: {xs: 3, sm: 4, md: 5},
 									borderRadius: 4,
-									background:
-										mode === "dark"
-											? "linear-gradient(145deg, rgba(26, 32, 44, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%)"
-											: "linear-gradient(145deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%)",
 									backdropFilter: "blur(20px)",
-									border: `2px solid ${mode === "dark" ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.08)"}`,
+									border: `2px solid ${mode === "dark" ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"}`,
 									position: "relative",
 									overflow: "hidden",
 									transform: isHovered
@@ -395,13 +328,6 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 												: "primary.main",
 									}}
 								>
-									<LoginIcon
-										sx={{
-											verticalAlign: "middle",
-											mr: 1,
-											fontSize: 32,
-										}}
-									/>
 									{t("login.loginButton")}
 								</Typography>
 
@@ -420,6 +346,7 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 										fullWidth
 										margin='normal'
 										variant='outlined'
+										disabled={isPending}
 										color='primary'
 										InputProps={{
 											startAdornment: (
@@ -624,12 +551,13 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 											size='large'
 											sx={{
 												borderRadius: 3,
-												py: 1.5,
-												borderWidth: 2,
+												py: 0.5,
+												// borderWidth: 2,
 												fontWeight: 600,
 												"&:hover": {
-													borderWidth: 2,
+													gap: 3,
 												},
+												gap: 1,
 											}}
 										>
 											{t("login.register")}
@@ -677,6 +605,86 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 									</Box>
 								</form>
 							</Paper>
+						</Grid>
+						<Box
+							sx={{
+								display: {xs: "none", md: "block"},
+								width: "5px",
+								height: "70vh",
+								mx: "auto",
+								background:
+									"linear-gradient(to bottom, #48C1F7, #103365)",
+								borderRadius: "10px",
+							}}
+						/>{" "}
+						{/* Left side - Welcome message */}
+						<Grid size={{xs: 12, md: 5}}>
+							{" "}
+							{/* Fixed: should be 'item' prop */}
+							<Fade in={true} timeout={800}>
+								<Box
+									sx={{
+										textAlign: {xs: "center", md: "right"},
+										pr: {md: 4},
+										mb: {xs: 4, md: 0},
+									}}
+								>
+									<Typography
+										variant='h2'
+										component='h1'
+										sx={{
+											fontWeight: 800,
+											background:
+												mode === "dark"
+													? "linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)"
+													: "linear-gradient(45deg, #0288D1 30%, #0277BD 90%)",
+											WebkitBackgroundClip: "text",
+											WebkitTextFillColor: "transparent",
+											mb: 2,
+											fontSize: {xs: "2.5rem", md: "3.5rem"},
+										}}
+									>
+										{/* {t("login.welcome") || "مرحباً بعودتك!"} */}
+									</Typography>
+									<img
+										src={"/myLogo2.png"}
+										style={{width: "100%", maxWidth: "220px"}}
+										alt='logo'
+									/>
+									<Typography
+										variant='h6'
+										sx={{
+											color:
+												mode === "dark"
+													? "text.secondary"
+													: "text.primary",
+											mb: 3,
+											lineHeight: 1.6,
+										}}
+									>
+										{t(
+											"login.welcomeMessage",
+											"سجل دخولك للوصول إلى حسابك والاستمرار من حيث توقفت",
+										)}
+									</Typography>
+									<Button
+										variant='outlined'
+										startIcon={<ArrowRight />}
+										onClick={() => navigate(path.Home)}
+										sx={{
+											borderRadius: 3,
+											px: 4,
+											py: 1,
+											borderWidth: 2,
+											"&:hover": {
+												borderWidth: 2,
+											},
+										}}
+									>
+										{t("login.backToHome", "العودة للرئيسية")}
+									</Button>
+								</Box>
+							</Fade>
 						</Grid>
 					</Grid>
 				</Box>

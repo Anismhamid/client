@@ -44,6 +44,7 @@ import {
 	Check as CheckIcon,
 	Close as CloseIcon,
 	Tag,
+	ArrowForward,
 } from "@mui/icons-material";
 import useAddressData from "../../../hooks/useAddressData";
 import {useTranslation} from "react-i18next";
@@ -438,7 +439,6 @@ const Register: FunctionComponent<RegisterProps> = () => {
 				dir={dir}
 				sx={{
 					minHeight: "100vh",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
 					py: 4,
 					px: 2,
 				}}
@@ -455,14 +455,15 @@ const Register: FunctionComponent<RegisterProps> = () => {
 								sx={{
 									borderRadius: 4,
 									overflow: "hidden",
-									background: "rgba(255, 255, 255, 0.95)",
+									// background: "rgba(255, 255, 255, 0.95)",
 									backdropFilter: "blur(10px)",
 								}}
 							>
 								<Box
 									sx={{
 										background:
-											"linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+											"linear-gradient(45deg, #2195f367 30%, #21CBF3 90%)",
+
 										color: "white",
 										p: 3,
 										textAlign: "center",
@@ -480,7 +481,11 @@ const Register: FunctionComponent<RegisterProps> = () => {
 											sx={{color: "white"}}
 											aria-label={t("common.back")}
 										>
-											<ArrowBack />
+											{dir === "rtl" ? (
+												<ArrowForward />
+											) : (
+												<ArrowBack />
+											)}
 										</IconButton>
 										<Typography variant='h4' sx={{fontWeight: 700}}>
 											<PersonAdd
@@ -1460,8 +1465,14 @@ const Register: FunctionComponent<RegisterProps> = () => {
 												variant='outlined'
 												onClick={handleBack}
 												disabled={currentStep === 0 || isLoading}
-												startIcon={<ArrowBack />}
-												sx={{minWidth: 120}}
+												startIcon={
+													dir === "rtl" ? (
+														<ArrowForward />
+													) : (
+														<ArrowBack />
+													)
+												}
+												sx={{minWidth: 120,gap:1}}
 											>
 												{t("common.back")}
 											</Button>
