@@ -20,7 +20,6 @@ import AlertDialogs from "../../atoms/toasts/Sweetalert";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import SearchBox from "../../atoms/productsManage/SearchBox";
-import {Col, Row} from "react-bootstrap";
 import {useRef} from "react";
 import handleRTL from "../../locales/handleRTL";
 import {useTranslation} from "react-i18next";
@@ -385,9 +384,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 					setSearchQuery={setSearchQuery}
 				/>
 
-				<Box className='container border-1'>
+				<Box className='container-fluid border-1'>
 					{/* Products Grid */}
-					<Box className='container pb-5'>
+					<Box>
 						{/* Results Count */}
 						<Box sx={{mb: 3, textAlign: "center"}}>
 							{searchQuery && (
@@ -429,11 +428,11 @@ const Home: FunctionComponent<HomeProps> = () => {
 							)}
 						</Box>
 
-						<Box >
+						<Box>
 							<AnimatePresence mode='wait'>
 								{visibleProducts.length > 0 ? (
-									<Grid container spacing={5}>
-										{visibleProducts.map((product, index) => {
+									<Grid container spacing={1} sx={{px: {xs: 1, md: 2}}}>
+										{visibleProducts.map((product) => {
 											const discountedPrice = product.sale
 												? product.price -
 													(product.price *
@@ -443,13 +442,13 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 											return (
 												<Grid
-													size={{xs: 12, sm: 6, md: 4, lg: 3}}
+													size={{xs: 12, md: 4, lg: 3}}
 													key={product._id}
 												>
 													<motion.div
 														initial={{opacity: 0, y: 20}}
 														animate={{opacity: 1, y: 0}}
-														transition={{delay: index * 0.05}}
+														transition={{duration: 0.3}}
 														whileHover={{
 															y: -3,
 															transition: {duration: 0.01},

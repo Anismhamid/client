@@ -327,7 +327,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									}}
 								>
 									<DeleteIcon
-										sx={{mr: 1, fontSize: 20, color: "error.main"}}
+										sx={{mr: 1, fontSize: 20, color: "error"}}
 									/>
 									<Typography color='error'>حذف</Typography>
 								</MenuItem>
@@ -338,7 +338,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 
 				{/* محتوى المنشور */}
 				<CardContent sx={{p: 0}}>
-					{/* الوصف */}
 					{product.description && (
 						<Box sx={{px: 2, pb: 1}}>
 							<Typography
@@ -394,43 +393,48 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							aria-label={`تفاصيل عن ${product.product_name}`}
 							style={{display: "block"}}
 						>
-							{imageKey && !loadedImages[imageKey] && (
-								<Skeleton
-									variant='rectangular'
-									width='100%'
-									height={350}
-									animation='wave'
+							<Box sx={{position: "relative"}}>
+								<CardMedia
+									component='img'
+									image={product.image.url}
+									alt={product.product_name}
+									sx={{
+										height: 220,
+										objectFit: "cover",
+									}}
 								/>
-							)}
-							<CardMedia
-								component='img'
-								loading='lazy'
-								image={product.image.url}
-								alt={generateImageAlt(product)}
-								sx={{
-									width: "100%",
-									height: "auto",
-									minHeight: 300,
-									objectFit: "scale-down",
-								}}
-								onLoad={() => {
-									if (!imageKey) return;
-									setLoadedImages((prev) => ({
-										...prev,
-										[imageKey]: true,
-									}));
-								}}
-								onError={() => {
-									if (!imageKey) return;
-									setLoadedImages((prev) => ({
-										...prev,
-										[imageKey]: true,
-									}));
-								}}
-							/>
+
+								{/* Discount badge */}
+								{product.sale && (
+									<Chip
+										label={`-${product.discount}%`}
+										sx={{
+											position: "absolute",
+											top: 10,
+											left: 10,
+											bgcolor: "error.main",
+											color: "#fff",
+											fontWeight: "bold",
+										}}
+									/>
+								)}
+
+								{/* Bookmark */}
+								<IconButton
+									onClick={() => setIsBookmarked(!isBookmarked)}
+									sx={{
+										position: "absolute",
+										top: 10,
+										right: 10,
+										bgcolor: "rgba(255, 255, 255, 0.466)",
+										"&:hover": {bgcolor: "#fff", color: "black"},
+									}}
+								>
+									{isBookmarked ? <Bookmark /> : <BookmarkBorder />}
+								</IconButton>
+							</Box>
 						</Link>
 
-						{/* البادجات */}
 						<Box
 							sx={{
 								position: "absolute",
@@ -488,7 +492,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									gutterBottom
 									sx={{
 										fontSize: "1.0625rem",
-										color: "#050505",
+										color: "info",
 										"&:hover": {
 											textDecoration: "underline",
 										},
@@ -503,7 +507,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									variant='h5'
 									fontWeight={700}
 									sx={{
-										color: "#1a73e8",
+										color: "primary.main",
 										fontSize: "1.375rem",
 									}}
 									itemProp='offers'
