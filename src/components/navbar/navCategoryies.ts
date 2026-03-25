@@ -210,48 +210,61 @@ export const productsAndCategories: NavCategory[] = [
 		],
 	},
 	{
-		labelKey: "categories.womenclothes.label",
-		value: "women-clothes",
+		labelKey: "categories.women-clothes.label",
+		value: "womenclothes",
 		path: productsPathes.womenClothes,
 		icon: "/categories/woman-clothes.png",
 		subCategories: [
 			{
-				labelKey: "categories.womenclothes.subCategories.casual",
+				labelKey: "categories.women-clothes.subCategories.casual",
 				path: `${productsPathes.womenClothes}/casual`,
 				value: "casual",
 			},
 			{
-				labelKey: "categories.womenclothes.subCategories.dresses",
+				labelKey: "categories.women-clothes.subCategories.dresses",
 				path: `${productsPathes.womenClothes}/dresses`,
 				value: "dresses",
 			},
 			{
-				labelKey: "categories.womenclothes.subCategories.shoes",
+				labelKey: "categories.women-clothes.subCategories.shoes",
 				path: `${productsPathes.womenClothes}/shoes`,
 				value: "shoes",
 			},
 		],
 	},
 	{
-		labelKey: "categories.menclothes.label",
-		value: "men-clothes",
+		labelKey: "categories.men-clothes.label",
+		value: "menclothes",
 		path: productsPathes.menClothes,
-		icon: "/categories/man-clothes.png",
+		icon: "/categories/men-clothes.png",
 		subCategories: [
 			{
-				labelKey: "categories.menclothes.subCategories.casual",
+				labelKey: "categories.men-clothes.subCategories.casual",
 				path: `${productsPathes.menClothes}/casual`,
 				value: "casual",
 			},
 			{
-				labelKey: "categories.menclothes.subCategories.formal",
+				labelKey: "categories.men-clothes.subCategories.formal",
 				path: `${productsPathes.menClothes}/formal`,
 				value: "formal",
 			},
 			{
-				labelKey: "categories.menclothes.subCategories.shoes",
+				labelKey: "categories.men-clothes.subCategories.shoes",
 				path: `${productsPathes.menClothes}/shoes`,
 				value: "shoes",
+			},
+		],
+	},
+	{
+		labelKey: "categories.women-bags.label",
+		value: "womenbags",
+		path: productsPathes.womenBags,
+		icon: "/categories/women-bags.png",
+		subCategories: [
+			{
+				labelKey: "categories.men-clothes.subCategories.casual",
+				path: `${productsPathes.womenBags}`,
+				value: "casual",
 			},
 		],
 	},

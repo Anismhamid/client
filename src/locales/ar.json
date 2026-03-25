@@ -391,7 +391,7 @@
 				"hand": "ساعات اليد"
 			}
 		},
-		"menclothes": {
+		"men-clothes": {
 			"label": "ملابس رجالية",
 			"heading": "ملابس رجالية",
 			"description": "ملابس مخصّصة للرجال بمختلف الاستخدامات.",
@@ -401,7 +401,7 @@
 				"shoes": "أحذية"
 			}
 		},
-		"womenclothes": {
+		"women-clothes": {
 			"label": "ملابس نسائية",
 			"heading": "ملابس نسائية",
 			"description": "ملابس مخصّصة للنساء بمختلف الأنماط.",
@@ -411,7 +411,7 @@
 				"shoes": "أحذية"
 			}
 		},
-		"womenbags": {
+		"women-bags": {
 			"label": "حقائب نسائية",
 			"heading": "حقائب نسائية",
 			"description": "حقائب نسائية بمختلف الأحجام والاستخدامات.",
@@ -497,7 +497,7 @@
 			"brand": "العلامه التجاريه",
 			"mileage": "كيلومترات"
 		},
-		"electricvehicles": {
+		"electric-vehicles": {
 			"label": "مركبات كهربائية",
 			"heading": "مركبات كهربائية",
 			"description": "مركبات تعمل بالطاقة الكهربائية.",
