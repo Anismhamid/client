@@ -12,7 +12,7 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
-	Skeleton,
+	// Skeleton,
 	Stack,
 	Tooltip,
 	Typography,
@@ -64,8 +64,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		setProductIdToUpdate,
 		onShowUpdateProductModal,
 		openDeleteModal,
-		setLoadedImages,
-		loadedImages,
+		// setLoadedImages,
+		// loadedImages,
 		onLikeToggle,
 		updateProductInList,
 	}) => {
@@ -82,9 +82,9 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		const jsonLdData = generateSingleProductJsonLd(product);
 		const menuRef = useRef(null);
 
-		const generateImageAlt = (product: Products) => {
-			return `${product.product_name} - بيع وشراء في ${product.category}`;
-		};
+		// const generateImageAlt = (product: Products) => {
+		// 	return `${product.product_name} - بيع وشراء في ${product.category}`;
+		// };
 
 		const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
 			setMenuAnchor(event.currentTarget);
@@ -134,7 +134,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				}
 			: undefined;
 
-		const imageKey = product._id;
+		// const imageKey = product._id;
 		// TODO: Translate
 		return (
 			<Card

@@ -9,6 +9,6 @@ export type LocalMessage = {
 	warning: boolean;
 	isImportant: boolean;
 	replyTo?: LocalMessage | null;
-	status: "sent" | "delivered" | "seen";
+	status: "pending" | "sent" | "delivered" | "seen" | "error";
 	createdAt: string;
 };

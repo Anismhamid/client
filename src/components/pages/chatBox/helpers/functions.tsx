@@ -6,10 +6,13 @@ import {ChatUser} from "../../../../interfaces/chat/chatUser";
 import AccessTimeIcon from "@mui/icons-material/AccessTime"; // אופציונלי להודעה בשליחה
 import socket from "../../../../socket/globalSocket";
 import axios from "axios";
+import {Typography} from "@mui/material";
 
 const api = import.meta.env.VITE_API_URL;
 
-export const getStatusIcon = (status: string) => {
+export const getStatusIcon = (
+	status: "seen" | "delivered" | "sent" | "pending" | "error",
+) => {
 	switch (status) {
 		case "seen":
 			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />; // כחול (נקרא)
@@ -19,8 +22,12 @@ export const getStatusIcon = (status: string) => {
 			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />; // אפור יחיד (נשלח מהטלפון)
 		case "pending":
 			return <AccessTimeIcon sx={{fontSize: 12, color: "#9e9e9e"}} />; // שעון (בטעינה)
+		case "pending":
+			return <AccessTimeIcon sx={{fontSize: 12, color: "#ff9800"}} />;
 		default:
 			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+		case "error":
+			return <Typography sx={{color: "error.main", fontSize: 12}}>⚠</Typography>;
 	}
 };
 
@@ -43,6 +50,7 @@ export const sendMessage = async (
 	setInput: Dispatch<SetStateAction<string>>,
 	chatContainerRef: RefObject<HTMLDivElement | null>,
 	addMessageForUser: (userId: string, msg: LocalMessage) => void,
+	token: string,
 ) => {
 	if (!text.trim()) return;
 	const messageText = text.trim();
@@ -66,7 +74,7 @@ export const sendMessage = async (
 		await axios.post(
 			`${api}/messages`,
 			{toUserId: otherUser._id, message: messageText},
-			{headers: {Authorization: localStorage.getItem("token")}},
+			{headers: {Authorization: token}},
 		);
 	} catch (err) {
 		console.error("Failed to send:", err);
@@ -79,6 +87,7 @@ export const handleScroll = (
 	hasMore: boolean,
 	isFetchingMore: boolean,
 	setShowScrollBtn: (value: SetStateAction<boolean>) => void,
+	markAsSeen: () => void,
 ) => {
 	const {scrollTop, scrollHeight, clientHeight} = e.currentTarget;
 
@@ -90,7 +99,11 @@ export const handleScroll = (
 	// 2. Scroll Button logic (Bottom of chat)
 	// Show button if we are more than 400px away from the bottom
 	const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-	setShowScrollBtn(distanceFromBottom > 400);
+	setShowScrollBtn(distanceFromBottom > 200);
+
+	if (distanceFromBottom < 100) {
+		markAsSeen();
+	}
 };
 
 export const formatMessageTime = (dateString: string) => {

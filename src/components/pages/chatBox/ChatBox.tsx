@@ -30,12 +30,19 @@ import {
 	getStatusIcon,
 	handleScroll,
 	scrollToBottom,
+	sendMessage,
 } from "./helpers/functions";
 
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatBoxProps {
-	currentUser: {_id: string; name: string; email: string; role: string; image?: string};
+	currentUser: {
+		_id: string;
+		name: string;
+		email: string;
+		role: string;
+		image?: string;
+	};
 	otherUser: ChatUser;
 	token: string;
 }
@@ -49,6 +56,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	const [isFetchingMore, setIsFetchingMore] = useState(false);
 
 	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const isTypingRef = useRef(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
 	const userMessages = messages[otherUser._id] || [];
@@ -93,22 +101,40 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 	};
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setInput(e.target.value);
+		const value = e.target.value;
+		setInput(value);
 		if (!socket) return;
 
-		socket.emit("user:typing", {to: otherUser._id, from: currentUser._id});
+		if (!value.trim()) {
+			socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
+			isTypingRef.current = false;
+			return;
+		}
+
+		if (!isTypingRef.current) {
+			socket.emit("user:typing", {
+				to: otherUser._id,
+				from: currentUser._id,
+			});
+			isTypingRef.current = true;
+		}
+
+		// reset timer
 		if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
 
 		typingTimeoutRef.current = setTimeout(() => {
-			socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
-		}, 2000);
+			socket.emit("user:stopTyping", {
+				to: otherUser._id,
+				from: currentUser._id,
+			});
+			isTypingRef.current = false;
+		}, 1500);
 	};
 
 	const loadConversation = async (isInitial = true) => {
 		if (isInitial) setIsLoading(true);
 		else setIsFetchingMore(true);
 
-		setIsLoading(true);
 		try {
 			const skip = isInitial ? 0 : userMessages.length;
 			const res = await axios.get(
@@ -126,7 +152,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 
 			if (isInitial) {
 				setMessagesForUser(otherUser._id, fetchedMessages);
-				setTimeout(() => scrollToBottom("smooth", chatContainerRef), 100);
+				setTimeout(() => scrollToBottom("smooth", chatContainerRef), 1000);
 			} else {
 				if (chatContainerRef.current) {
 					lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
@@ -139,43 +165,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 				]);
 			}
 
-			markAsSeen();
+			// markAsSeen();
 			setHasMore(res.data.hasMore);
 		} catch (err) {
 			console.error("Pagination error:", err);
 		} finally {
 			setIsLoading(false);
 			setIsFetchingMore(false);
-		}
-	};
-
-	const sendMessage = async (text: string) => {
-		if (!text.trim()) return;
-		const messageText = text.trim();
-		const tempId = `temp-${Date.now()}`;
-
-		const tempMessage: LocalMessage = {
-			_id: tempId,
-			from: currentUser,
-			to: otherUser,
-			message: messageText,
-			status: "sent",
-			createdAt: new Date().toISOString(),
-		} as any;
-
-		addMessageForUser(otherUser._id, tempMessage);
-		setInput("");
-		socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
-		setTimeout(() => scrollToBottom("smooth", chatContainerRef), 50);
-
-		try {
-			await axios.post(
-				`${api}/messages`,
-				{toUserId: otherUser._id, message: messageText},
-				{headers: {Authorization: token}},
-			);
-		} catch (err) {
-			console.error("Failed to send:", err);
 		}
 	};
 
@@ -201,7 +197,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			if (message.from._id === otherUser._id) {
 				addMessageForUser(otherUser._id, message);
 				scrollToBottom("smooth", chatContainerRef);
-				markAsSeen();
 			}
 		});
 
@@ -218,7 +213,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		socket.on("user:typing", ({from}: {from: string}) => {
 			if (from === otherUser._id) {
 				setTyping(true);
-				scrollToBottom("smooth", chatContainerRef);
 			}
 		});
 
@@ -244,14 +238,17 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
-	}, [otherUser?._id, token]);
+	}, [otherUser?._id, token, currentUser._id]);
 
 	useEffect(() => {
 		if (userMessages.length > 0) {
 			const lastMessage = userMessages[userMessages.length - 1];
 			// If the last message is from the OTHER user and I am currently looking at the chat
-			if (lastMessage.from._id === otherUser._id && lastMessage.status !== "seen") {
-				markAsSeen();
+			if (
+				lastMessage.from._id === otherUser._id &&
+				lastMessage.status !== "seen" &&
+				isNearBottom()
+			) {
 				// Also call the API to persist this in the DB
 				axios.patch(
 					`${api}/messages/mark-as-seen/${otherUser._id}`,
@@ -260,6 +257,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						headers: {Authorization: token},
 					},
 				);
+				markAsSeen();
 			}
 		}
 	}, [userMessages.length, otherUser._id]);
@@ -297,10 +295,29 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 		}
 	};
 
+	const isNearBottom = () => {
+		if (!chatContainerRef.current) return false;
+		const {scrollTop, scrollHeight, clientHeight} = chatContainerRef.current;
+		return scrollHeight - scrollTop - clientHeight < 300; // 300px من الأسفل
+	};
+
+	useLayoutEffect(() => {
+		if (!chatContainerRef.current || !userMessages.length) return;
+
+		if (isFetchingMore) return;
+
+		const lastMessage = userMessages[userMessages.length - 1];
+
+		// إذا آخر رسالة من المستخدم الحالي أو إذا المستخدم قريب من الأسفل
+		if (lastMessage.from._id === currentUser._id || isNearBottom()) {
+			scrollToBottom("smooth", chatContainerRef);
+		}
+	}, [userMessages, isFetchingMore]);
+
 	return (
 		<Box
 			sx={{
-				height: "100%",
+				height: "90%",
 				display: "flex",
 				flexDirection: "column",
 				bgcolor: "background.paper",
@@ -315,6 +332,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						hasMore,
 						isFetchingMore,
 						setShowScrollBtn,
+						markAsSeen,
 					)
 				}
 				sx={{
@@ -357,7 +375,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								<Box sx={{display: "flex", mb: 1}}>
 									{!isMe && (
 										<Avatar
-											src={otherUser.from.image?.url || ""}
+											src={otherUser.from.image?.url || "/user.png"}
 											sx={{
 												width: 30,
 												height: 30,
@@ -365,7 +383,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												bgcolor: "primary.main",
 											}}
 										>
-											{`${otherUser.from.name.first[0]}.${otherUser.from.name.last[0]}`}
+											{/* {`${otherUser?.from.name?.first?.[0] || ""}.${otherUser?.from?.name.last?.[0] || ""}`} */}
 										</Avatar>
 									)}
 								</Box>
@@ -457,7 +475,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 										</Typography>
 										{isMe && getStatusIcon(msg.status)}
 									</Box>
-									{msg.fileUrl && (
+									{/* {msg.fileUrl && (
 										<img
 											src={msg.fileUrl}
 											style={{
@@ -466,7 +484,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 												objectFit: "cover",
 											}}
 										/>
-									)}
+									)} */}
 								</Paper>
 							</Box>
 						);
@@ -548,7 +566,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 						onKeyDown={(e) => {
 							if (e.key === "Enter" && !e.shiftKey) {
 								e.preventDefault();
-								sendMessage(input);
+								sendMessage(
+									input,
+									currentUser,
+									otherUser,
+									setInput,
+									chatContainerRef,
+									addMessageForUser,
+									token,
+								);
 							}
 						}}
 						placeholder='הקלד הודעה...'
@@ -557,7 +583,17 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 								<InputAdornment position='end'>
 									<IconButton
 										color='primary'
-										onClick={() => sendMessage(input)}
+										onClick={() =>
+											sendMessage(
+												input,
+												currentUser,
+												otherUser,
+												setInput,
+												chatContainerRef,
+												addMessageForUser,
+												token,
+											)
+										}
 										disabled={!input.trim()}
 									>
 										<SendIcon

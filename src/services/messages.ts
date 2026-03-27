@@ -124,8 +124,7 @@ export const getMessageById = async (messageId: string): Promise<UserMessage | n
 
 // دالة لتحديث حالة الرسالة (مقروءة/غير مقروءة)
 export const updateMessageStatus = async (
-	messageId: string,
-	status: string,
+messageId: string, status: string,
 ): Promise<UserMessage | null> => {
 	try {
 		const response = await axiosInstance.patch<UserMessage>(
