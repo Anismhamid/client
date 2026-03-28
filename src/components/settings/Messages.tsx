@@ -51,6 +51,7 @@ import RoleType from "../../interfaces/UserType";
 import {User, UserMessage} from "../../interfaces/usersMessages";
 import {useUser} from "../../context/useUSer";
 import socket from "../../socket/globalSocket";
+import axios from "axios";
 
 interface TabPanelProps {
 	children?: React.ReactNode;
@@ -141,7 +142,7 @@ const MessagingPage: React.FC = () => {
 		return () => {
 			socket.off("message:received", handleNewMessage);
 		};
-	}, [loadData, socket]);
+	}, [loadData,auth?._id]);
 
 	const validateRecipient = useCallback(
 		(recipientId: string) => {
@@ -189,13 +190,20 @@ const MessagingPage: React.FC = () => {
 			setStatus("✅ تم إرسال الرسالة بنجاح");
 			showSuccess("تم إرسال الرسالة بنجاح");
 			setTabValue(1);
-		} catch (err: any) {
-			const errorMsg =
-				err.response?.data?.error ||
-				err.response?.data?.message ||
-				"فشل إرسال الرسالة";
-			setStatus(errorMsg);
-			showError(errorMsg);
+		} catch (err: unknown) {
+	let errorMsg = "فشل إرسال الرسالة";
+
+	if (axios.isAxiosError(err)) {
+		errorMsg =
+			err.response?.data?.error ||
+			err.response?.data?.message ||
+			err.message;
+	} else if (err instanceof Error) {
+		errorMsg = err.message;
+	}
+
+	setStatus(errorMsg);
+	showError(errorMsg);
 		} finally {
 			setSending(false);
 		}

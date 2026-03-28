@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {FunctionComponent, useActionState, useEffect, useMemo, useState} from "react";
 import {UserLogin} from "../../interfaces/User";
 import * as yup from "yup";
@@ -87,6 +88,8 @@ const Login: FunctionComponent<LoginProps> = ({mode}) => {
 			} catch (error) {
 				// Invalid token, remove it
 				localStorage.removeItem("token");
+				console.log(error);
+				
 			}
 		}
 	}, [navigate]);
