@@ -33,6 +33,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
 			name: { first: msg.name?.first ?? "Unknown", last: msg.name?.last ?? "" },
 			email: msg.email,
 			role: msg.role,
+			status: msg.from?.status ?? false,
 		},
 		to: {
 			_id: msg.to?._id ?? "unknown",
@@ -70,6 +71,11 @@ const MessagesPage = () => {
 
 	if (!auth?._id) return <Navigate to={path.Login} replace />;
 
+	const isOnline =
+		selectedUser?.from?._id === currentUser._id
+			? selectedUser?.to?.status
+			: selectedUser?.from?.status;
+
 	return (
 		<Box
 			sx={{
@@ -95,7 +101,7 @@ const MessagesPage = () => {
 					border: "1px solid rgba(255,255,255,0.1)",
 				}}
 			>
-				<Grid container sx={{ height: "100%" }}>
+				<Grid container sx={{ height: "100%" ,width:"100%",}}>
 					{/* SIDEBAR: Chat List */}
 					{(!isMobile || !selectedUser) && (
 						<Grid
@@ -178,9 +184,14 @@ const MessagesPage = () => {
 												<Typography variant="subtitle1" fontWeight={700}>
 													{selectedUser.name?.first} {selectedUser.name?.last}
 												</Typography>
-												<Typography variant="caption" color="success.main">
-													● Online
-												</Typography>
+												{isOnline ? (
+
+													<Typography variant="caption" color="success.main">
+														● Online
+													</Typography>
+												) : <Typography variant="caption" color="error.main">
+													● Offline
+												</Typography>}
 											</Box>
 										</Box>
 
@@ -210,10 +221,12 @@ const MessagesPage = () => {
 									<Box
 										sx={{
 											bgcolor: "primary.light",
-											p: 3,
+											background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
+											p: 4,
 											borderRadius: "50%",
-											mb: 2,
-											opacity: 0.2
+											mb: 3,
+											color: "white",
+											boxShadow: "0 10px 30px rgba(99,102,241,0.3)",
 										}}
 									>
 										<ForumTwoToneIcon sx={{ fontSize: 60, color: "primary.main" }} />

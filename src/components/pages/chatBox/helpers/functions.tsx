@@ -83,28 +83,6 @@ export const sendMessage = async (
 	}
 };
 
-// export const handleScroll = (
-// 	e: React.UIEvent<HTMLDivElement>,
-// 	loadConversation: (isInitial?: boolean) => Promise<void>,
-// 	hasMore: boolean,
-// 	isFetchingMore: boolean,
-// 	setShowScrollBtn: (value: SetStateAction<boolean>) => void,
-// 	markAsSeen: () => void,
-// ) => {
-// 	const container = e.currentTarget;
-//     const {scrollTop, scrollHeight, clientHeight} = container;
-
-// 	// جلب الرسائل عند الوصول للأعلى
-//     if (scrollTop < 5 && hasMore && !isFetchingMore) {
-//         loadConversation(false);
-//     }
-
-// 	const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-//     setShowScrollBtn(distanceFromBottom > 200);
-//     if (distanceFromBottom < 100) {
-//         markAsSeen();
-//     }
-// };
 
 export const formatMessageTime = (dateString: string) => {
 	try {

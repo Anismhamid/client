@@ -456,10 +456,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 										</Box>
 									) : (
 										<Typography
-											variant='body1'
+											variant="body2"
 											sx={{
 												wordBreak: "break-word",
-												lineHeight: 1.4,
+												lineHeight: 1.5,
+												whiteSpace: "pre-wrap",
 											}}
 										>
 											<Linkify text={msg.message} />
@@ -567,7 +568,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 						fullWidth
 						multiline
 						maxRows={4}
-						
+
 						value={input}
 						onChange={handleInputChange}
 						onKeyDown={(e) => {
