@@ -53,23 +53,23 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 		return `${first} ${last}`.trim() || "User";
 	};
 
-	const loadConversations = async () => {
-		try {
-			setLoading(true);
-			const res = await axios.get(`${api}/messages/conversations`, {
-				headers: { Authorization: token },
-			});
-			setConversations(res.data.conversations || []);
-		} catch (err) {
-			console.error("Failed to load conversations:", err);
-		} finally {
-			setLoading(false);
-		}
-	};
-
 	useEffect(() => {
-		if (currentUser) loadConversations();
-	}, [currentUser?._id]);
+		const loadConversations = async () => {
+			try {
+				setLoading(true);
+				const res = await axios.get(`${api}/messages/conversations`, {
+					headers: { Authorization: token },
+				});
+				setConversations(res.data.conversations || []);
+			} catch (err) {
+				console.error("Failed to load conversations:", err);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		if (currentUser._id) loadConversations();
+	}, [currentUser, token]);
 
 	const filteredConversations = useMemo(() => {
 		return conversations
@@ -102,7 +102,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 	return (
 		<Box
 			sx={{
-				height: "100%",
+				height: "100dvh",
 				display: "flex",
 				flexDirection: "column",
 				bgcolor: "background.paper",

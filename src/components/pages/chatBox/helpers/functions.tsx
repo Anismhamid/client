@@ -83,30 +83,28 @@ export const sendMessage = async (
 	}
 };
 
-export const handleScroll = (
-	e: React.UIEvent<HTMLDivElement>,
-	loadConversation: (isInitial?: boolean) => Promise<void>,
-	hasMore: boolean,
-	isFetchingMore: boolean,
-	setShowScrollBtn: (value: SetStateAction<boolean>) => void,
-	markAsSeen: () => void,
-) => {
-	const {scrollTop, scrollHeight, clientHeight} = e.currentTarget;
+// export const handleScroll = (
+// 	e: React.UIEvent<HTMLDivElement>,
+// 	loadConversation: (isInitial?: boolean) => Promise<void>,
+// 	hasMore: boolean,
+// 	isFetchingMore: boolean,
+// 	setShowScrollBtn: (value: SetStateAction<boolean>) => void,
+// 	markAsSeen: () => void,
+// ) => {
+// 	const container = e.currentTarget;
+//     const {scrollTop, scrollHeight, clientHeight} = container;
 
-	// 1. Pagination logic (Top of chat)
-	if (scrollTop === 0 && hasMore && !isFetchingMore) {
-		loadConversation(false);
-	}
+// 	// جلب الرسائل عند الوصول للأعلى
+//     if (scrollTop < 5 && hasMore && !isFetchingMore) {
+//         loadConversation(false);
+//     }
 
-	// 2. Scroll Button logic (Bottom of chat)
-	// Show button if we are more than 400px away from the bottom
-	const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-	setShowScrollBtn(distanceFromBottom > 200);
-
-	if (distanceFromBottom < 100) {
-		markAsSeen();
-	}
-};
+// 	const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+//     setShowScrollBtn(distanceFromBottom > 200);
+//     if (distanceFromBottom < 100) {
+//         markAsSeen();
+//     }
+// };
 
 export const formatMessageTime = (dateString: string) => {
 	try {
