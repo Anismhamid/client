@@ -2,7 +2,6 @@ import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import {useUser} from "../../context/useUSer";
 import {deleteProduct, getAllProducts} from "../../services/postsServices";
-import {Products} from "../../interfaces/Posts";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
@@ -12,6 +11,7 @@ import {
 	useMediaQuery,
 	Alert,
 	Grid,
+	Container,
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
 import {showError} from "../../atoms/toasts/ReactToast";
@@ -28,21 +28,21 @@ import {motion, AnimatePresence} from "framer-motion";
 import ChepNavigation from "../navbar/ChepNavigation";
 import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/CreatePostModal";
 import PostCard from "./products/PostsCard";
+import { Posts } from "../../interfaces/Posts";
 
-interface HomeProps {}
 
 /**
  * Home page
  * @returns All products and categories
  */
 
-const Home: FunctionComponent<HomeProps> = () => {
+const Home: FunctionComponent = () => {
 	const {auth} = useUser();
 	const {t} = useTranslation();
-	const [products, setProducts] = useState<Products[]>([]);
+	const [posts, setPosts] = useState<Posts[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(true);
-	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
+	const [visibleProducts, setVisibleProducts] = useState<Posts[]>([]);
 	const [visibleCount, setVisibleCount] = useState(16);
 	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
@@ -75,14 +75,14 @@ const Home: FunctionComponent<HomeProps> = () => {
 
 		const userId = auth._id;
 
-		setProducts((prev) =>
+		setPosts((prev) =>
 			prev.map((p) =>
 				p._id === productId
 					? {
 							...p,
 							likes: liked
 								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id) => id !== userId),
+								: (p.likes || []).filter((id:string) => id !== userId),
 						}
 					: p,
 			),
@@ -95,7 +95,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							...p,
 							likes: liked
 								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id) => id !== userId),
+								: (p.likes || []).filter((id:string) => id !== userId),
 						}
 					: p,
 			),
@@ -106,35 +106,35 @@ const Home: FunctionComponent<HomeProps> = () => {
 		getAllProducts()
 			.then((products) => {
 				const safeProducts = Array.isArray(products) ? products : [];
-				setProducts(safeProducts);
+				setPosts(safeProducts);
 				setVisibleProducts(safeProducts.slice(0, 16));
 				window.scrollTo(0, 0);
 			})
 			.catch(() => {
-				setProducts([]);
+				setPosts([]);
 				setVisibleProducts([]);
 			})
 			.finally(() => setLoading(false));
 	}, [refresh]);
 
 	const filteredProducts = useMemo(() => {
-		if (!Array.isArray(products)) return [];
+		if (!Array.isArray(posts)) return [];
 
 		// إذا كانت searchQuery هي "عروض"، اعرض المنتجات المخفضة فقط
 		if (searchQuery === "عروض") {
-			return products.filter((product) => product.sale === true);
+			return posts.filter((product) => product.sale === true);
 		}
 
 		// إذا كانت searchQuery تطابق إحدى الفئات
 		const categoryKeys = productsAndCategories.map((cat) => t(cat.labelKey));
 		if (categoryKeys.includes(searchQuery)) {
-			return products.filter((product) =>
+			return posts.filter((product) =>
 				product.category?.includes(searchQuery.toLowerCase()),
 			);
 		}
 
 		// بحث عام
-		return products.filter((product) => {
+		return posts.filter((product) => {
 			const productName = product.product_name || "";
 			const productPrice = product.price || 0;
 			const cartegory = product.category || "";
@@ -146,7 +146,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					cartegory.toLowerCase().includes(searchQuery.toLowerCase()))
 			);
 		});
-	}, [products, searchQuery, t]);
+	}, [posts, searchQuery, t]);
 
 	useEffect(() => {
 		if (!observerRef.current || searchQuery) return;
@@ -174,7 +174,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 	const handleDelete = (product_name: string) => {
 		deleteProduct(product_name)
 			.then(() => {
-				setProducts((p) => p.filter((p) => p.product_name !== product_name));
+				setPosts((p) => p.filter((p) => p.product_name !== product_name));
 			})
 			.catch((err) => {
 				console.error(err);
@@ -384,7 +384,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 					setSearchQuery={setSearchQuery}
 				/>
 
-				<Box className='container-fluid border-1'>
+				<main >
 					{/* Products Grid */}
 					<Box>
 						{/* Results Count */}
@@ -428,7 +428,7 @@ const Home: FunctionComponent<HomeProps> = () => {
 							)}
 						</Box>
 
-						<Box>
+						<Container>
 							<AnimatePresence mode='wait'>
 								{visibleProducts.length > 0 ? (
 									<Grid container spacing={1} sx={{px: {xs: 1, md: 2}}}>
@@ -627,9 +627,9 @@ const Home: FunctionComponent<HomeProps> = () => {
 									</motion.div>
 								)}
 							</AnimatePresence>
-						</Box>
+						</Container>
 					</Box>
-				</Box>
+				</main>
 
 				{/* Load More Indicator */}
 				{visibleCount < filteredProducts.length && (

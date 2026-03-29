@@ -13,7 +13,6 @@ export interface User {
 export interface UserMessage {
 	first: string;
 	last: string;
-	otherUser: any;
 	_id?: string;
 	from: {_id?: string; email?: string; first?: string; last?: string; role?: string};
 	to: {_id?: string; email?: string; first?: string; last?: string; role?: string};

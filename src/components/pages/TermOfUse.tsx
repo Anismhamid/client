@@ -35,9 +35,8 @@ import {
 import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 
-interface TermOfUseProps {}
 
-const TermOfUse: FunctionComponent<TermOfUseProps> = () => {
+const TermOfUse: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 	const direction = handleRTL();

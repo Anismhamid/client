@@ -1,4 +1,4 @@
-import {useEffect, useState, FunctionComponent, useMemo, Fragment} from "react";
+import { useEffect, useState, FunctionComponent, useMemo, Fragment } from "react";
 import axios from "axios";
 import {
 	Box,
@@ -15,14 +15,14 @@ import {
 	Badge,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {UserMessage} from "../../../interfaces/usersMessages";
-import {useChat} from "../../../hooks/useChat";
-import {useTranslation} from "react-i18next";
+import { UserMessage } from "../../../interfaces/usersMessages";
+import { useChat } from "../../../hooks/useChat";
+import { useTranslation } from "react-i18next";
 
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatListProps {
-	currentUser: {_id: string; name: string; email: string; role: string};
+	currentUser: { _id: string; name: string; email: string; role: string };
 	token: string;
 	onSelectChat: (user: UserMessage) => void;
 	selectedUserId?: string;
@@ -30,7 +30,7 @@ interface ChatListProps {
 
 interface Conversation {
 	user: UserMessage;
-	lastMessage: {message: string; createdAt: string};
+	lastMessage: { message: string; createdAt: string };
 }
 
 const ChatList: FunctionComponent<ChatListProps> = ({
@@ -43,8 +43,8 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [filter, setFilter] = useState<"all" | "unread">("all");
-	const {unreadCounts} = useChat();
-	const {t} = useTranslation();
+	const { unreadCounts } = useChat();
+	const { t } = useTranslation();
 
 	const getUserName = (user: UserMessage) => {
 		if (typeof user.name === "string") return user.name;
@@ -57,7 +57,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 		try {
 			setLoading(true);
 			const res = await axios.get(`${api}/messages/conversations`, {
-				headers: {Authorization: token},
+				headers: { Authorization: token },
 			});
 			setConversations(res.data.conversations || []);
 		} catch (err) {
@@ -94,9 +94,9 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 		const date = new Date(dateString);
 		const now = new Date();
 		if (date.toDateString() === now.toDateString()) {
-			return date.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"});
+			return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 		}
-		return date.toLocaleDateString([], {day: "2-digit", month: "2-digit"});
+		return date.toLocaleDateString([], { day: "2-digit", month: "2-digit" });
 	};
 
 	return (
@@ -109,7 +109,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 			}}
 		>
 			{/* Search & Tabs */}
-			<Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
+			<Box sx={{ p: 2, borderBottom: 1, borderColor: "divider" }}>
 				<TextField
 					fullWidth
 					size='small'
@@ -122,42 +122,47 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 								<SearchIcon fontSize='small' />
 							</InputAdornment>
 						),
-						sx: {borderRadius: 2},
+						sx: { borderRadius: 2 },
 					}}
 				/>
 				<Tabs
 					value={filter}
 					onChange={(_, val) => setFilter(val)}
 					variant='fullWidth'
-					sx={{mt: 1, minHeight: 40}}
+					sx={{ mt: 1, minHeight: 40 }}
 				>
 					<Tab
 						label={t("messages.all") || "All"}
 						value='all'
-						sx={{fontSize: "0.8rem"}}
+						sx={{ fontSize: "0.8rem" }}
 					/>
 					<Tab
 						label={t("messages.unread") || "Unread"}
 						value='unread'
-						sx={{fontSize: "0.8rem"}}
+						sx={{ fontSize: "0.8rem" }}
 					/>
 				</Tabs>
 			</Box>
 
 			{/* List Area */}
-			<Box sx={{flexGrow: 1, overflowY: "auto"}}>
+			<Box sx={{
+				flexGrow: 1, overflowY: "auto", '&::-webkit-scrollbar': { width: '6px' },
+				'&::-webkit-scrollbar-thumb': { bgcolor: 'rgba(0,0,0,0.1)', borderRadius: '10px' }
+			}}>
+
 				{loading ? (
-					<Box sx={{display: "flex", justifyContent: "center", py: 4}}>
+					<Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
 						<CircularProgress size={24} />
 					</Box>
 				) : filteredConversations.length === 0 ? (
-					<Box sx={{textAlign: "center", py: 4, px: 2}}>
+					<Box sx={{ textAlign: "center", py: 4, px: 2 }}>
 						<Typography variant='body2' color='text.secondary'>
 							{searchTerm ? "No results found" : "No active conversations"}
 						</Typography>
 					</Box>
 				) : (
-					<List sx={{p: 0}}>
+					<List sx={{ p: 0 }}>
+
 						{filteredConversations.map((conv) => {
 							const isSelected = selectedUserId === conv.user._id;
 							const unreadCount =
@@ -201,7 +206,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 											</Avatar>
 										</Badge>
 
-										<Box sx={{flex: 1, minWidth: 0}}>
+										<Box sx={{ flex: 1, minWidth: 0 }}>
 											<Box
 												sx={{
 													display: "flex",
@@ -251,7 +256,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
 									<Divider
 										variant='inset'
 										component='li'
-										sx={{ml: 9}}
+										sx={{ ml: 9 }}
 									/>
 								</Fragment>
 							);

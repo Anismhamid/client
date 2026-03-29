@@ -25,7 +25,7 @@ const WebSiteAdmins = lazy(() => import("../components/settings/WebSiteAdmins"))
 const CustomerProfile = lazy(
 	() => import("../components/settings/customerProfile/CustomerProfile"),
 );
-const Favorite = lazy(() => import("../components/pages/products/FavoritesProducts"));
+const Favorite = lazy(() => import("../components/pages/products/FavoritesPosts"));
 const DiscountsAndOffers = lazy(
 	() => import("../components/pages/products/DiscountsAndOffers"),
 );

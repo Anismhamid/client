@@ -37,7 +37,6 @@ import {useNavigate} from "react-router-dom";
 import {path} from "../../routes/routes";
 import {UserRegister} from "../../interfaces/User";
 
-interface UersManagementProps {}
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -63,7 +62,7 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
  * Users uers management
  * @returns all users table for management
  */
-const UersManagement: FunctionComponent<UersManagementProps> = () => {
+const UersManagement: FunctionComponent = () => {
 	const [users, setUsers] = useState<UserRegister[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [searchQuery, setSearchQuery] = useState<string>("");

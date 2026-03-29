@@ -471,10 +471,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({currentUser, otherUser, token
 										}}
 									>
 										<Typography variant='caption'>
-											{formatMessageTime(msg.createdAt)}
+											{String(formatMessageTime(msg.createdAt))}
 										</Typography>
 										{isMe && getStatusIcon(msg.status)}
 									</Box>
+
+
+									
 									{/* {msg.fileUrl && (
 										<img
 											src={msg.fileUrl}

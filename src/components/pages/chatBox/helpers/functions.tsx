@@ -22,8 +22,6 @@ export const getStatusIcon = (
 			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />; // אפור יחיד (נשלח מהטלפון)
 		case "pending":
 			return <AccessTimeIcon sx={{fontSize: 12, color: "#9e9e9e"}} />; // שעון (בטעינה)
-		case "pending":
-			return <AccessTimeIcon sx={{fontSize: 12, color: "#ff9800"}} />;
 		default:
 			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
 		case "error":
@@ -63,7 +61,11 @@ export const sendMessage = async (
 		message: messageText,
 		status: "sent",
 		createdAt: new Date().toISOString(),
-	} as any;
+		fileType: null,
+		fileUrl: null,
+		warning: false,
+		isImportant: false,
+	};
 
 	addMessageForUser(otherUser._id, tempMessage);
 	setInput("");
@@ -112,7 +114,7 @@ export const formatMessageTime = (dateString: string) => {
 			hour: "2-digit",
 			minute: "2-digit",
 		});
-	} catch (e) {
-		return "";
+	} catch (error) {
+		return error;
 	}
 };

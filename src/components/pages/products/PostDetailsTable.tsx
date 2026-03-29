@@ -14,15 +14,11 @@ import {
 	alpha,
 	Divider,
 } from "@mui/material";
-import {categoriesLogic, CategoryValue} from "../../../atoms/productsManage/postLogicMap";
+import {categoriesLogic} from "../../../atoms/productsManage/postLogicMap";
 import {getColorHex} from "../../../atoms/colorsSettings/carsColors";
+import { Posts as PostType } from "../../../interfaces/Posts";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
-interface Product {
-	category: CategoryValue;
-	subcategory?: string;
-	[key: string]: any;
-}
 
 interface Field {
 	name: string;
@@ -32,23 +28,23 @@ interface Field {
 }
 
 interface PostDetailsTableProps {
-	product: Product;
+	Posts: PostType;
 }
 
-const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) => {
+const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 
 	const fields: Field[] = useMemo(() => {
-		if (!product.subcategory) return [];
+		if (!Posts.subcategory) return [];
 
 		const categoryFields =
-			categoriesLogic[product.category]?.[
-				product.subcategory as keyof (typeof categoriesLogic)[typeof product.category]
+			categoriesLogic[Posts.category]?.[
+				Posts.subcategory as keyof (typeof categoriesLogic)[typeof Posts.category]
 			];
 
 		return (categoryFields as Field[]) || [];
-	}, [product.category, product.subcategory]);
+	}, [Posts]);
 
 	if (fields.length === 0) {
 		return (
@@ -81,8 +77,8 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) =
 		);
 	}
 
-	const renderValue = (field: Field, value: any | []) => {
-		if (field.name === "color" && value) {
+	const renderValue = (field: Field, value: string | number | boolean | string[] | undefined | null) => {
+		if (field.name === "color" && typeof value === "string") {
 			const colorHex = getColorHex(value);
 			return (
 				<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
@@ -216,10 +212,10 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) =
 						</TableCell>
 						<TableCell sx={{borderBottom: "none", py: 2.5}}>
 							<Box sx={{display: "flex", gap: 1, flexWrap: "wrap"}}>
-								{product.subcategory && (
+								{Posts.subcategory && (
 									<Chip
 										label={t(
-											`categories.${product.category.toLocaleLowerCase()}.subCategories.${product.subcategory.toLocaleLowerCase()}`,
+											`categories.${Posts.category.toLocaleLowerCase()}.subCategories.${Posts.subcategory.toLocaleLowerCase()}`,
 										)}
 										variant='filled'
 										size='small'
@@ -236,7 +232,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) =
 								)}
 								<Chip
 									label={t(
-										`categories.${t(product.category.toLocaleLowerCase())}.label`,
+										`categories.${t(Posts.category.toLocaleLowerCase())}.label`,
 									)}
 									color='primary'
 									size='small'
@@ -256,7 +252,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({product}) =
 					</TableRow>
 
 					{fields.map((field, index) => {
-						const value = product[field.name];
+						const value = Posts[field.name] as string | number | boolean | string[] | undefined | null;
 						if (value === undefined || value === null) return null;
 
 						return (

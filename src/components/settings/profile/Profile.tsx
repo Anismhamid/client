@@ -58,7 +58,7 @@ import {formatDate} from "../../../helpers/dateAndPriceFormat";
 import DeleteAccountBox from "../../../atoms/userManage/DeleteAccountBox";
 import EditUserData from "../../../atoms/userManage/EditUserData";
 import QuickActionsTab from "./tabs/QuickActionsTab";
-import FavoritesProducts from "../../pages/products/FavoritesProducts";
+import FavoritesProducts from "../../pages/products/FavoritesPosts";
 
 interface ProfileProps {}
 

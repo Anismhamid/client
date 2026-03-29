@@ -21,9 +21,8 @@ import {showSuccess} from "../../atoms/toasts/ReactToast";
 import Loader from "../../atoms/loader/Loader";
 import {useNavigate} from "react-router-dom";
 
-interface AdminSettingsProps {}
 
-const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
+const AdminSettings: FunctionComponent = () => {
 	const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
 	const [businessInfoState, setBusinessInfoState] = useState<BusinessInfoType>({
 		deliveryFee: [{area: "", fee: 0}],
@@ -249,7 +248,7 @@ const AdminSettings: FunctionComponent<AdminSettingsProps> = () => {
 												onClick={() => {
 													const newFees = [
 														...(formik.values
-															.deliveryFee as any),
+															.deliveryFee as Array<{area: string; fee: number}>),
 													];
 													newFees.splice(index, 1);
 													formik.setFieldValue(

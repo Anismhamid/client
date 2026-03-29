@@ -3,12 +3,12 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../locales/handleRTL";
 import PrivacyPolicyJsonLd from "../../../utils/PrivacyPolicyJsonLd";
 
-interface PrivacyAdnPolicyProps {}
+
 /**
  * Mains privacy and policy
  * @returns
  */
-const PrivacyAdnPolicy: FunctionComponent<PrivacyAdnPolicyProps> = () => {
+const PrivacyAdnPolicy: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const diriction = handleRTL();
 	const currentUrl = `https://client-qqq1.vercel.app/privacy-and-policy`;

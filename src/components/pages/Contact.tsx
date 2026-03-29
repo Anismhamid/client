@@ -33,14 +33,13 @@ import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
 import {path} from "../../routes/routes";
 
-interface ContactProps {}
 
-const Contact: FunctionComponent<ContactProps> = () => {
+const Contact: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 	const direction = handleRTL();
 
-	const mainCategories = [
+	const mainCategories: {name: string; icon: string; color: "primary" | "secondary" | "success" | "info" | "warning" | "error"}[] = [
 		{name: t("categories.electronics.label"), icon: "📱", color: "primary"},
 		{name: t("categories.cars.label"), icon: "🚗", color: "secondary"},
 		{name: t("categories.women-clothes.label"), icon: "👚", color: "success"},
@@ -100,7 +99,7 @@ const Contact: FunctionComponent<ContactProps> = () => {
 								key={index}
 								icon={<span>{category.icon}</span>}
 								label={category.name}
-								color={category.color as any}
+								color={category.color }
 								variant='outlined'
 								sx={{fontSize: "0.9rem", fontWeight: 500}}
 							/>

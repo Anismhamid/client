@@ -8,12 +8,11 @@ import {Box, Typography} from "@mui/material";
 import {motion} from "framer-motion";
 import ChepNavigation from "../../navbar/ChepNavigation";
 
-interface ProductsProps {}
 /**
  * Mains products
  * @returns products
  */
-const Products: FunctionComponent<ProductsProps> = () => {
+const Posts: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const {category} = useParams<{category: string}>();
 
@@ -120,4 +119,4 @@ const Products: FunctionComponent<ProductsProps> = () => {
 	);
 };
 
-export default Products;
+export default Posts;

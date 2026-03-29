@@ -9,7 +9,7 @@ import {
 } from "react";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {deleteProduct, getProductById} from "../../../services/postsServices";
-import {initialProductValue, Products} from "../../../interfaces/Posts";
+import {initialProductValue, Posts} from "../../../interfaces/Posts";
 import {
 	Box,
 	Typography,
@@ -64,11 +64,9 @@ import PostDetailsTable from "./PostDetailsTable";
 import {formatTimeAgo, generatePath} from "./helpers/helperFunctions";
 const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
-interface PostDetailsProps {}
-
-const PostDetails: FunctionComponent<PostDetailsProps> = () => {
+const PostDetails: FunctionComponent = () => {
 	const {t} = useTranslation();
-	const [product, setProduct] = useState<Products>(initialProductValue as Products);
+	const [post, setPost] = useState<Posts>(initialProductValue as Posts);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
 	const {productId} = useParams<{productId: string}>();
@@ -147,9 +145,9 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	// ----- Memoized values -----
 	const isOwner = useMemo(() => {
 		return (
-			auth?._id && product.seller?.user && auth._id === String(product.seller.user)
+			auth?._id && post.seller?.user && auth._id === String(post.seller.user)
 		);
-	}, [auth?._id, product.seller?.user]);
+	}, [auth?._id, post.seller?.user]);
 
 	// ----- Memoized handlers -----
 	const handleShare = useCallback(async () => {
@@ -161,8 +159,8 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 		setIsSharing(true);
 		try {
 			await navigator.share({
-				title: `منتج ${product.product_name} رائع`,
-				text: `شوف ${product.product_name} المميز! على موقع صفقه`,
+				title: `منتج ${post.product_name} رائع`,
+				text: `شوف ${post.product_name} المميز! على موقع صفقه`,
 				url: window.location.href,
 			});
 			showSuccess("تمت المشاركة بنجاح");
@@ -173,7 +171,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 		} finally {
 			setIsSharing(false);
 		}
-	}, [product.product_name]);
+	}, [post.product_name]);
 
 	const handleDeleteProduct = useCallback(async () => {
 		if (!productId) return;
@@ -199,7 +197,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 		if (!productId) return;
 		setLoading(true);
 		getProductById(productId)
-			.then((res) => setProduct(res))
+			.then((res) => setPost(res))
 			.catch(() => setError("حدث خطأ أثناء تحميل المنتج"))
 			.finally(() => setLoading(false));
 	}, [productId]);
@@ -216,7 +214,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 
 		getProductById(productId)
 			.then((res) => {
-				setProduct(res);
+				setPost(res);
 				// تحديث rating هنا بعد جلب البيانات
 				setRating(res.rating || 0);
 			})
@@ -247,7 +245,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	}
 
 	// ----- Check if product exists -----
-	if (!product?._id) {
+	if (!post?._id) {
 		return (
 			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
 				<ErrorIcon sx={{fontSize: 64, color: "error.main", mb: 3}} />
@@ -287,27 +285,27 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 	}
 
 	// ----- SEO Data -----
-	const productJsonLd = generateSingleProductJsonLd(product);
-	const currentUrl = `https://client-qqq1.vercel.app/product/${product.category}/${product._id}`;
+	const productJsonLd = generateSingleProductJsonLd(post);
+	const currentUrl = `https://client-qqq1.vercel.app/product/${post.category}/${post._id}`;
 
 	return (
 		<>
 			{/* SEO Metadata */}
 			<JsonLd data={productJsonLd} />
-			<title>{product.product_name} | صفقة</title>
+			<title>{post.product_name} | صفقة</title>
 			<link rel='canonical' href={currentUrl} />
 			<meta
 				name='description'
-				content={`اشتري ${product.product_name} بأفضل سعر على صفقة. ${product.description?.substring(0, 120)}`}
+				content={`اشتري ${post.product_name} بأفضل سعر على صفقة. ${post.description?.substring(0, 120)}`}
 			/>
-			<meta property='og:title' content={product.product_name} />
+			<meta property='og:title' content={post.product_name} />
 			<meta
 				property='og:description'
-				content={product.description?.substring(0, 160)}
+				content={post.description?.substring(0, 160)}
 			/>
-			<meta property='og:image' content={product.image?.url} />
+			<meta property='og:image' content={post.image?.url} />
 			<meta property='og:type' content='product' />
-			<meta property='product:price:amount' content={product.price.toString()} />
+			<meta property='product:price:amount' content={post.price.toString()} />
 			<meta property='product:price:currency' content='ILS' />
 
 			{/* Main Content */}
@@ -324,14 +322,14 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 					>
 						<Link
 							to={generatePath(path.CustomerProfile, {
-								slug: encodeURIComponent(product.seller?.slug ?? ""),
+								slug: encodeURIComponent(post.seller?.slug ?? ""),
 							})}
 							style={{textDecoration: "none"}}
 						>
 							<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
 								<Avatar
-									src={product.seller?.imageUrl}
-									alt={product.seller?.name || "بائع"}
+									src={post.seller?.imageUrl}
+									alt={post.seller?.name || "بائع"}
 									sx={{
 										width: 56,
 										height: 56,
@@ -365,8 +363,8 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 												},
 											}}
 										>
-											{product.seller?.name ||
-												product.seller?.slug ||
+											{post.seller?.name ||
+												post.seller?.slug ||
 												"بائع"}
 										</Typography>
 										{isOwner && (
@@ -399,7 +397,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 											variant='body2'
 											sx={{color: "text.secondary"}}
 										>
-											{product.seller?.slug}@
+											{post.seller?.slug}@
 										</Typography>
 
 										<Tooltip title='عام للجميع'>
@@ -432,21 +430,13 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 													variant='caption'
 													sx={{color: "text.secondary"}}
 												>
-													منذ {formatTimeAgo(product.createdAt)}
+													منذ {formatTimeAgo(String(post.createdAt || ""))}
 												</Typography>
 											</Box>
 										</Tooltip>
 									</Stack>
 								</Box>
 
-								{/* <Link
-									style={{display: "flex"}}
-									to={
-									})}
-								>
-								
-									<span></span>
-								</Link> */}
 								{/* زر التواصل السريع */}
 								<Button
 									variant='contained'
@@ -456,7 +446,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 										navigate(
 											generatePath(path.CustomerProfile, {
 												slug: encodeURIComponent(
-													product.seller?.slug ?? "",
+													post.seller?.slug ?? "",
 												),
 											}),
 										)
@@ -503,22 +493,22 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 								</Button>
 							</Tooltip>
 
-							{product.category && (
+							{post.category && (
 								<Tooltip
 									title={
-										categoryLabels[product.category] ||
-										t(product.category)
+										categoryLabels[post.category] ||
+										t(post.category)
 									}
 									arrow
 								>
 									<Button
 										onClick={() => {
 											const catPath =
-												categoryPathMap[product.category] || "";
+												categoryPathMap[post.category] || "";
 											if (catPath) navigate(catPath);
 										}}
 										startIcon={<StoreIcon />}
-										disabled={!categoryPathMap[product.category]}
+										disabled={!categoryPathMap[post.category]}
 										sx={{
 											display: "flex",
 											alignItems: "center",
@@ -530,8 +520,8 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 										}}
 									>
 										<Typography variant='body2'>
-											{categoryLabels[product.category] ||
-												t(product.category)}
+											{categoryLabels[post.category] ||
+												t(post.category)}
 										</Typography>
 									</Button>
 								</Tooltip>
@@ -548,9 +538,9 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 								<Typography
 									variant='body2'
 									sx={{fontWeight: 600}}
-									title={product.product_name}
+									title={post.product_name}
 								>
-									{product.product_name}
+									{post.product_name}
 								</Typography>
 							</Box>
 						</Breadcrumbs>
@@ -677,12 +667,12 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 										},
 									}}
 								>
-									{product.image?.url ? (
+									{post.image?.url ? (
 										<>
 											<CardMedia
 												component='img'
-												image={`${product.image.url}?w=1200&q=85`}
-												alt={`صورة ${product.product_name}`}
+												image={`${post.image.url}?w=1200&q=85`}
+												alt={`صورة ${post.product_name}`}
 												sx={{
 													width: "100%",
 													height: "100%",
@@ -857,8 +847,8 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 										}}
 									>
 										<LikeButton
-											product={product}
-											setProduct={setProduct}
+											product={post}
+											setProduct={setPost}
 										/>
 									</IconButton>
 
@@ -870,7 +860,6 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 									</IconButton>
 								</Box>
 
-								{/* Owner Actions */}
 								{/* TODO:Problem */}
 								{isOwner && (
 									<Box
@@ -922,13 +911,13 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 									gutterBottom
 									sx={{fontWeight: 700}}
 								>
-									{product.product_name}
+									{post.product_name}
 								</Typography>
 
 								{/* Category */}
-								{product.category && (
+								{post.category && (
 									<Chip
-										label={categoryLabels[product.category]}
+										label={categoryLabels[post.category]}
 										color='secondary'
 										sx={{mb: 2, alignSelf: "flex-start"}}
 									/>
@@ -945,7 +934,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 										sx={{mr: 1}}
 									/>
 									<Typography variant='body2' color='text.secondary'>
-										({product.reviewCount || 0} تقييم)
+										({typeof post.reviewCount === 'number' ? post.reviewCount : 0} تقييم)
 									</Typography>
 								</Box>
 
@@ -956,16 +945,16 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 									gutterBottom
 									sx={{fontWeight: 700, mb: 3}}
 								>
-									{formatPrice(product.price)}
+									{formatPrice(post.price)}
 								</Typography>
 
 								{/* Colors and Sizes */}
-								<ColorsAndSizes category={product.category} />
+								<ColorsAndSizes category={post.category} />
 
 								<Divider sx={{my: 3}} />
 
 								{/* Description */}
-								{product.description && (
+								{post.description && (
 									<>
 										<Typography
 											variant='h6'
@@ -979,7 +968,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 											color='text.secondary'
 											sx={{mb: 3, lineHeight: 1.8}}
 										>
-											{product.description}
+											{post.description}
 										</Typography>
 									</>
 								)}
@@ -1037,7 +1026,7 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 						>
 							تفاصيل المنتج
 						</Typography>
-						<MemoizedPostDetailsTable product={product} />
+						<MemoizedPostDetailsTable Posts={post} />
 					</Box>
 
 					{/* Comments Section */}
@@ -1177,14 +1166,14 @@ const PostDetails: FunctionComponent<PostDetailsProps> = () => {
 				handleDelete={handleDeleteProduct}
 				onHide={() => setShowDeleteModal(false)}
 				show={showDeleteModal}
-				title={`حذف ${product.product_name}`}
-				description={`هل أنت متأكد من حذف المنتج "${product.product_name}"؟`}
+				title={`حذف ${post.product_name}`}
+				description={`هل أنت متأكد من حذف المنتج "${post.product_name}"؟`}
 			/>
 
 			<UpdateProductModal
 				show={showUpdateModal}
 				onHide={handleCloseUpdateModal}
-				productId={product._id as string}
+				productId={post._id as string}
 				refresh={handleRefreshProduct}
 			/>
 		</>

@@ -7,7 +7,6 @@ import {
 	useState,
 } from "react";
 import {deleteProduct, getProductsByCategory} from "../../../services/postsServices";
-import {Products} from "../../../interfaces/Posts";
 import {useUser} from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
@@ -23,6 +22,7 @@ import JsonLd from "../../../../utils/JsonLd";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
+import { Posts } from "../../../interfaces/Posts";
 
 interface PostsCategoryProps {
 	category: string;
@@ -32,8 +32,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	category,
 }: PostsCategoryProps) => {
 	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
-	const [visibleProducts, setVisibleProducts] = useState<Products[]>([]);
-	const [products, setProducts] = useState<Products[]>([]);
+	const [visibleProducts, setVisibleProducts] = useState<Posts[]>([]);
+	const [products, setProducts] = useState<Posts[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const {auth} = useUser();
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
@@ -179,7 +179,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 	// Fetch products by category
 	useEffect(() => {
-		setLoading(true);
 		getProductsByCategory(category)
 			.then((res) => {
 				setProducts(res);
@@ -298,7 +297,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					{/* Products Grid */}
 					{filteredProducts.length > 0 ? (
 						<Grid container spacing={2}>
-							{visibleProducts.map((product: Products) => {
+							{visibleProducts.map((product: Posts) => {
 								const discountedPrice = product.sale
 									? product.price -
 										(product.price * (product.discount || 0)) / 100

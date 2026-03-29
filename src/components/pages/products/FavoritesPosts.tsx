@@ -1,5 +1,4 @@
 import {FunctionComponent, useEffect, useState} from "react";
-import {Products} from "../../../interfaces/Posts";
 import {getAllProducts} from "../../../services/postsServices";
 import {useUser} from "../../../context/useUSer";
 import {Box, Grid, Typography} from "@mui/material";
@@ -11,10 +10,11 @@ import {useTranslation} from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../routes/routes";
+import { Posts } from "../../../interfaces/Posts";
 
-const FavoritesProducts: FunctionComponent = () => {
+const FavoritesPosts: FunctionComponent = () => {
 	const {t} = useTranslation();
-	const [products, setProducts] = useState<Products[]>([]);
+	const [posts, setPosts] = useState<Posts[]>([]);
 	const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
 	const {auth} = useUser();
@@ -28,12 +28,12 @@ const FavoritesProducts: FunctionComponent = () => {
 					(product) =>
 						Array.isArray(product.likes) && product.likes.includes(auth._id!),
 				);
-				setProducts(filtered);
+				setPosts(filtered);
 			})
 			.catch(console.error);
 	}, [auth?._id]);
 
-	if (!products.length) {
+	if (!posts.length) {
 		return (
 			<Box sx={{textAlign: "center", py: 6}}>
 				<Typography variant='h6' color='text.secondary'>
@@ -45,7 +45,7 @@ const FavoritesProducts: FunctionComponent = () => {
 
 	const direction = handleRTL();
 
-	const productsList = generateProductsItemListJsonLd(products);
+	const productsList = generateProductsItemListJsonLd(posts);
 
 	const currentUrl = `https://client-qqq1.vercel.app/favorites`;
 
@@ -57,27 +57,27 @@ const FavoritesProducts: FunctionComponent = () => {
 
 		const userId = auth._id;
 
-		setProducts((prev) =>
+		setPosts((prev) =>
 			prev.map((p) =>
 				p._id === productId
 					? {
 							...p,
 							likes: liked
 								? [...(p.likes || []), userId] // userId مؤكد كـ string
-								: (p.likes || []).filter((id) => id !== userId),
+								: (p.likes || []).filter((id:string) => id !== userId),
 						}
 					: p,
 			),
 		);
 
-		setProducts((prev) =>
+		setPosts((prev) =>
 			prev.map((p) =>
 				p._id === productId
 					? {
 							...p,
 							likes: liked
 								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id) => id !== userId),
+								: (p.likes || []).filter((id:string) => id !== userId),
 						}
 					: p,
 			),
@@ -94,23 +94,23 @@ const FavoritesProducts: FunctionComponent = () => {
 			<Box dir={direction} sx={{px: {xs: 2, md: 4}, py: 4}}>
 				<h1>{t("favorites")}</h1>
 				<Grid container spacing={3}>
-					{products.map((product) => (
-						<Grid size={{xs: 12, sm: 6, md: 4, lg: 3}} key={product._id}>
+					{posts.map((Post) => (
+						<Grid size={{xs: 12, sm: 6, md: 4, lg: 3}} key={Post._id}>
 							<ProductCard
-								key={product._id}
-								product={product}
-								discountedPrice={product.discount || 0}
+								key={Post._id}
+								product={Post}
+								discountedPrice={Post.discount || 0}
 								setProductIdToUpdate={() => {}}
 								onShowUpdateProductModal={() => {}}
 								openDeleteModal={() => {}}
 								setLoadedImages={() =>
 									setLoadedImages((prev) => ({
 										...prev,
-										[product._id as string]: true,
+										[Post._id as string]: true,
 									}))
 								}
 								loadedImages={loadedImages}
-								category={product.category}
+								category={Post.category}
 								onLikeToggle={handleToggleLike}
 							/>
 						</Grid>
@@ -121,4 +121,4 @@ const FavoritesProducts: FunctionComponent = () => {
 	);
 };
 
-export default FavoritesProducts;
+export default FavoritesPosts;

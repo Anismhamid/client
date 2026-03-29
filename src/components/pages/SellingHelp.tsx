@@ -16,6 +16,7 @@ import {
 	alpha,
 	Fade,
 	Container,
+	Theme,
 } from "@mui/material";
 import {
 	ArrowBack,
@@ -30,7 +31,7 @@ import {Link as RouterLink} from "react-router-dom";
 import handleRTL from "../../locales/handleRTL";
 
 // Type-safe theme palette access
-const getPaletteColor = (theme: any, colorKey: string) => {
+const getPaletteColor = (theme: Theme, colorKey: string) => {
 	const palette = theme.palette;
 
 	// Safely access palette colors

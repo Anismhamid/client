@@ -31,7 +31,7 @@ import {
 } from "@mui/icons-material";
 import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
 import {generatePath, Link, useNavigate} from "react-router-dom";
-import {Products} from "../../../interfaces/Posts";
+import {Posts} from "../../../interfaces/Posts";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
@@ -43,7 +43,7 @@ import {path, productsPathes} from "../../../routes/routes";
 import {formatTimeAgo} from "./helpers/helperFunctions";
 
 interface PostCardProps {
-	product: Products;
+	product: Posts;
 	discountedPrice: number;
 	canEdit?: boolean;
 	setProductIdToUpdate: Dispatch<SetStateAction<string>>;
@@ -53,7 +53,7 @@ interface PostCardProps {
 	loadedImages: Record<string, boolean>;
 	category: string;
 	onLikeToggle?: (productId: string, liked: boolean) => void;
-	updateProductInList?: (updatedProduct: Products) => void;
+	updateProductInList?: (updatedProduct: Posts) => void;
 }
 
 const PostCard: FunctionComponent<PostCardProps> = memo(
@@ -121,14 +121,14 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			handleMenuClose();
 		};
 
-		const handleProductUpdate = (updatedProduct: Products) => {
+		const handleProductUpdate = (updatedProduct: Posts) => {
 			if (updateProductInList) {
 				updateProductInList(updatedProduct);
 			}
 		};
 
 		const setProduct = updateProductInList
-			? (updater: (prev: Products) => Products) => {
+			? (updater: (prev: Posts) => Posts) => {
 					const updated = updater(product);
 					handleProductUpdate(updated);
 				}
@@ -140,7 +140,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			<Card
 				dir={dir}
 				sx={{
-					color: "red",
+					// color: "main",
 					borderRadius: 2,
 					display: "flex",
 					flexDirection: "column",
@@ -229,7 +229,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											fontSize: "0.8125rem",
 										}}
 									>
-										{formatTimeAgo(product.createdAt)}
+										{formatTimeAgo(String(product.createdAt)||"")}
 									</Typography>
 									<Typography
 										variant='caption'
@@ -338,40 +338,29 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 
 				{/* محتوى المنشور */}
 				<CardContent sx={{p: 0}}>
-					{product.description && (
-						<Box sx={{px: 2, pb: 1}}>
-							<Typography
-								variant='body2'
-								sx={{
-									fontSize: "0.9375rem",
-									lineHeight: 1.5,
-									color: "#050505",
-									whiteSpace: "pre-line",
-									display: "-webkit-box",
-									WebkitLineClamp: expanded ? "none" : 1,
-									WebkitBoxOrient: "vertical",
-									overflow: "hidden",
-								}}
+										<Box sx={{p: 2, pt: 1.5}}>
+						{/* اسم المنتج والسعر */}
+						<Box sx={{mb: 1.5}}>
+							<Link
+								to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
+								style={{textDecoration: "none", color: "inherit"}}
 							>
-								{product.description}
-							</Typography>
-							{product.description.length > 120 && (
-								<Button
-									size='small'
-									onClick={() => setExpanded(!expanded)}
+								<Typography
+									variant='h6'
+									fontWeight={600}
+									gutterBottom
 									sx={{
-										mt: 0.5,
-										px: 0,
-										textTransform: "none",
-										fontWeight: 600,
-										color: theme.palette.primary.main,
+										fontSize: "1.0625rem",
+										color: "info",
+										"&:hover": {
+											textDecoration: "underline",
+										},
 									}}
+									itemProp='name'
 								>
-									{expanded ? "إخفاء" : "قراءة المزيد"}
-								</Button>
-							)}
-						</Box>
-					)}
+									{product.product_name}
+								</Typography>
+							</Link>
 
 					{/* الصورة */}
 					<Box
@@ -463,7 +452,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									}}
 								/>
 							)}
-							{product.in_stock === false && (
+							{!product.in_stock && (
 								<Chip
 									label='غير متوفر'
 									size='small'
@@ -479,29 +468,41 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 					</Box>
 
 					{/* تفاصيل المنتج */}
-					<Box sx={{p: 2, pt: 1.5}}>
-						{/* اسم المنتج والسعر */}
-						<Box sx={{mb: 1.5}}>
-							<Link
-								to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
-								style={{textDecoration: "none", color: "inherit"}}
+
+							{product.description && (
+						<Box sx={{px: 2, pb: 1}}>
+							<Typography
+								component={"h2"}
+								variant='body2'
+								sx={{
+									fontSize: "1rem",
+									lineHeight: 1.5,
+									whiteSpace: "pre-line",
+									display: "-webkit-box",
+									WebkitLineClamp: expanded ? "none" : 1,
+									WebkitBoxOrient: "vertical",
+									overflow: "hidden",
+								}}
 							>
-								<Typography
-									variant='h6'
-									fontWeight={600}
-									gutterBottom
+								{product.description}
+							</Typography>
+							{product.description.length > 120 && (
+								<Button
+									size='small'
+									onClick={() => setExpanded(!expanded)}
 									sx={{
-										fontSize: "1.0625rem",
-										color: "info",
-										"&:hover": {
-											textDecoration: "underline",
-										},
+										mt: 0.5,
+										px: 0,
+										textTransform: "none",
+										fontWeight: 600,
+										color: theme.palette.primary.main,
 									}}
-									itemProp='name'
 								>
-									{product.product_name}
-								</Typography>
-							</Link>
+									{expanded ? "إخفاء" : "قراءة المزيد"}
+								</Button>
+							)}
+						</Box>
+					)}
 							<Stack direction='row' spacing={1.5} alignItems='baseline'>
 								<Typography
 									variant='h5'

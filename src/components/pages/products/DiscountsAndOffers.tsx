@@ -1,5 +1,4 @@
 import {FunctionComponent, useEffect, useState, useCallback} from "react";
-import {Products} from "../../../interfaces/Posts";
 import {getProductsInDiscount} from "../../../services/postsServices";
 import {Link} from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
@@ -14,20 +13,20 @@ import JsonLd from "../../../../utils/JsonLd";
 import {formatPrice} from "../../../helpers/dateAndPriceFormat";
 import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
 import {path} from "../../../routes/routes";
+import { Posts } from "../../../interfaces/Posts";
 
-interface DiscountsAndOffersProps {}
 
 /**
  * Products in discount component
  * @returns Products in discount section with swiper carousel
  */
-const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
+const DiscountsAndOffers: FunctionComponent = () => {
 	const {t} = useTranslation();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-	const [productsInDiscount, setProductsInDiscount] = useState<Products[]>([]);
+	const [postsInDiscount, setPostsInDiscount] = useState<Posts[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string | null>(null);
 	const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
@@ -38,7 +37,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				setLoading(true);
 				setError(null);
 				const data = await getProductsInDiscount();
-				setProductsInDiscount(data);
+				setPostsInDiscount(data);
 			} catch (err) {
 				console.error("Failed to fetch discounted products:", err);
 				setError(t("common.errors.fetchFailed") || "Failed to load products");
@@ -119,11 +118,11 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 		);
 	}
 
-	if (productsInDiscount.length === 0 && !loading) {
+	if (postsInDiscount.length === 0 && !loading) {
 		return null;
 	}
 
-	const productsList = generateDiscountsJsonLd(productsInDiscount);
+	const productsList = generateDiscountsJsonLd(postsInDiscount);
 
 	const currentUrl = `https://client-qqq1.vercel.app/dicounts-and-offers`;
 
@@ -206,7 +205,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 							disableOnInteraction: false,
 							pauseOnMouseEnter: true,
 						}}
-						loop={productsInDiscount.length > 1}
+						loop={postsInDiscount.length > 1}
 						navigation={!isMobile}
 						centeredSlides={true}
 						grabCursor={true}
@@ -228,7 +227,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 							"Discounted products carousel"
 						}
 					>
-						{productsInDiscount.map((product) => {
+						{postsInDiscount.map((product) => {
 							const isLoaded = loadedImages.has(product._id as string);
 							const discountedPrice = calculateDiscountedPrice(
 								product.price,
@@ -412,7 +411,7 @@ const DiscountsAndOffers: FunctionComponent<DiscountsAndOffersProps> = () => {
 				</Box>
 
 				{/* View All Link (optional) */}
-				{productsInDiscount.length > 3 && (
+				{postsInDiscount.length > 3 && (
 					<Box textAlign='center' mt={4}>
 						<Link
 							to={path.DiscountsAndOffers}

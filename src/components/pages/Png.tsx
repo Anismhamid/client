@@ -2,12 +2,11 @@ import {Button} from "@mui/material";
 import {FunctionComponent} from "react";
 import {useNavigate} from "react-router-dom";
 
-interface PageNotFoundProps {}
 /**
  * Divs page not found
  * @returns not found page
  */
-const PageNotFound: FunctionComponent<PageNotFoundProps> = () => {
+const PageNotFound: FunctionComponent = () => {
 	const navigate = useNavigate();
 
 	return (

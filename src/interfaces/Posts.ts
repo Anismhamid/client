@@ -1,9 +1,10 @@
 import {CategoryValue} from "../atoms/productsManage/postLogicMap";
+import {User} from "./usersMessages";
 
 /**
  * Products interface
  */
-export interface Products {
+export interface Posts {
 	location: string;
 	likes?: string[];
 	isNew?: boolean;
@@ -25,11 +26,12 @@ export interface Products {
 	rating?: number;
 	reviews?: {rating: number}[];
 	in_stock: boolean;
+	userData?: User;
 
-	[key: string]: any;
+	[key: string]: string | number | boolean | string[] | {name?: string; slug?: string; user: string; imageUrl: string} | {url: string; publicId: string} | {rating: number}[] | User | undefined;
 }
 
-export const initialProductValue: Partial<Products> = {
+export const initialProductValue: Partial<Posts> = {
 	seller: {
 		name: "",
 		slug: "",
