@@ -1,10 +1,10 @@
 // shared/hooks/useProducts.ts
 import {useEffect, useRef, useState, useCallback} from "react";
 import {getAllProducts} from "../services/postsServices";
-import {Products} from "../interfaces/Posts";
+import {Posts} from "../interfaces/Posts";
 
 export const useProducts = () => {
-	const [products, setProducts] = useState<Products[]>([]);
+	const [products, setProducts] = useState<Posts[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 
@@ -20,6 +20,7 @@ export const useProducts = () => {
 			if (isMounted.current) {
 				setProducts(data);
 			}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error(err);
 

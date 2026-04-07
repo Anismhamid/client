@@ -1,88 +1,126 @@
 import {
 	FunctionComponent,
 	memo,
-	useEffect,
-	useState,
 	useCallback,
+	useEffect,
 	useMemo,
 	useRef,
+	useState,
 } from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
-import {deleteProduct, getProductById} from "../../../services/postsServices";
-import {initialProductValue, Posts} from "../../../interfaces/Posts";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
+	Alert,
+	Avatar,
 	Box,
-	Typography,
+	Breadcrumbs,
 	Button,
 	Card,
 	CardMedia,
-	Container,
-	Grid,
-	Divider,
 	Chip,
-	Breadcrumbs,
-	Rating,
-	useTheme,
-	useMediaQuery,
-	Tooltip,
-	TextField,
-	Alert,
-	Stack,
+	Container,
+	Divider,
+	Grid,
 	IconButton,
-	Avatar,
+	Rating,
 	Skeleton,
+	Stack,
+	TextField,
+	Tooltip,
+	Typography,
+	useMediaQuery,
+	useTheme,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
 	ArrowBack as ArrowBackIcon,
-	Share as ShareIcon,
-	Home as HomeIcon,
-	Store as StoreIcon,
-	Phone,
 	ChevronRight,
 	Comment,
 	Error as ErrorIcon,
-	ZoomOut,
-	FullscreenExit,
 	Fullscreen,
+	FullscreenExit,
+	Home as HomeIcon,
+	Phone,
+	Share as ShareIcon,
+	Store as StoreIcon,
 	ZoomIn,
+	ZoomOut,
 } from "@mui/icons-material";
-import {path} from "../../../routes/routes";
-import {formatPrice} from "../../../helpers/dateAndPriceFormat";
+import { deleteProduct, getProductById } from "../../../services/postsServices";
+import { initialProductValue, Posts } from "../../../interfaces/Posts";
+import { path } from "../../../routes/routes";
+import { formatPrice } from "../../../helpers/dateAndPriceFormat";
 import ColorsAndSizes from "../../../atoms/productsManage/ColorsAndSizes";
-import {useTranslation} from "react-i18next";
-import {useUser} from "../../../context/useUSer";
-import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
-import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
+import { useTranslation } from "react-i18next";
+import { useUser } from "../../../context/useUSer";
+import { showError, showSuccess } from "../../../atoms/toasts/ReactToast";
+import { generateSingleProductJsonLd } from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {categoryLabels, categoryPathMap} from "../../../interfaces/postsCategoeis";
+import {
+	categoryLabels,
+	categoryPathMap,
+} from "../../../interfaces/postsCategoeis";
 import LikeButton from "../../../atoms/like/LikeButton";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
-import {formatTimeAgo, generatePath} from "./helpers/helperFunctions";
+import { formatTimeAgo, generatePath } from "./helpers/helperFunctions";
+
 const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
+const sectionCardSx = {
+	borderRadius: 4,
+	border: 1,
+	borderColor: "divider",
+	boxShadow: "0 12px 32px rgba(15, 23, 42, 0.08)",
+};
+
+const SectionTitle = memo(({ title, subtitle }: { title: string; subtitle?: string }) => (
+	<Box sx={{ mb: 3 }}>
+		<Typography variant='h5' sx={{ fontWeight: 800, mb: 1 }}>
+			{title}
+		</Typography>
+		{subtitle && (
+			<Typography variant='body2' color='text.secondary'>
+				{subtitle}
+			</Typography>
+		)}
+	</Box>
+));
+
 const PostDetails: FunctionComponent = () => {
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const [post, setPost] = useState<Posts>(initialProductValue as Posts);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
-	const {productId} = useParams<{productId: string}>();
+	const { productId } = useParams<{ productId: string }>();
 	const navigate = useNavigate();
-	const {isLoggedIn, auth} = useUser();
+	const { isLoggedIn, auth } = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-	//  التحكم بالصوره
 	const [zoomLevel, setZoomLevel] = useState<number>(1);
 	const [isZoomed, setIsZoomed] = useState<boolean>(false);
 	const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-	const [mousePosition, setMousePosition] = useState({x: 0, y: 0});
+	const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 	const imageContainerRef = useRef<HTMLDivElement>(null);
 
-	// ===== دوال التحكم بالصورة =====
+	const [rating, setRating] = useState<number>(0);
+	const [comment, setComment] = useState("");
+	const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
+	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+	const [isSharing, setIsSharing] = useState<boolean>(false);
+
+	const sellerDisplayName =
+		post.seller?.name || post.seller?.slug || t("product.seller") || "بائع";
+	const categoryLabel = post.category
+		? categoryLabels[post.category] || t(post.category)
+		: t("product.category") || "التصنيف";
+
+	const isOwner = useMemo(() => {
+		return auth?._id && post.seller?.user && auth._id === String(post.seller.user);
+	}, [auth?._id, post.seller?.user]);
+
 	const handleZoomIn = useCallback(() => {
 		setZoomLevel((prev) => Math.min(prev + 0.5, 3));
 		setIsZoomed(true);
@@ -90,15 +128,16 @@ const PostDetails: FunctionComponent = () => {
 
 	const handleZoomOut = useCallback(() => {
 		setZoomLevel((prev) => {
-			const newZoom = Math.max(prev - 0.5, 1);
-			if (newZoom === 1) setIsZoomed(false);
-			return newZoom;
+			const nextZoom = Math.max(prev - 0.5, 1);
+			if (nextZoom === 1) setIsZoomed(false);
+			return nextZoom;
 		});
 	}, []);
 
 	const handleResetZoom = useCallback(() => {
 		setZoomLevel(1);
 		setIsZoomed(false);
+		setMousePosition({ x: 50, y: 50 });
 	}, []);
 
 	const handleMouseMove = useCallback(
@@ -106,67 +145,60 @@ const PostDetails: FunctionComponent = () => {
 			if (!isZoomed || !imageContainerRef.current) return;
 
 			const container = imageContainerRef.current;
-			const {left, top, width, height} = container.getBoundingClientRect();
+			const { left, top, width, height } = container.getBoundingClientRect();
 			const x = ((e.clientX - left) / width) * 100;
 			const y = ((e.clientY - top) / height) * 100;
-			setMousePosition({x, y});
+
+			setMousePosition({ x, y });
 		},
 		[isZoomed],
 	);
 
-	const handleFullscreenToggle = useCallback(() => {
-		if (!document.fullscreenElement) {
-			imageContainerRef.current?.requestFullscreen();
-			setIsFullscreen(true);
-		} else {
-			document.exitFullscreen();
+	const handleFullscreenToggle = useCallback(async () => {
+		try {
+			if (!document.fullscreenElement) {
+				await imageContainerRef.current?.requestFullscreen();
+				setIsFullscreen(true);
+				return;
+			}
+
+			await document.exitFullscreen();
 			setIsFullscreen(false);
+		} catch {
+			showError("تعذر تفعيل وضع ملء الشاشة");
 		}
 	}, []);
 
-	// ===== تأثير الخروج من Fullscreen =====
 	useEffect(() => {
 		const handleFullscreenChange = () => {
 			setIsFullscreen(!!document.fullscreenElement);
 		};
 
 		document.addEventListener("fullscreenchange", handleFullscreenChange);
-		return () =>
-			document.removeEventListener("fullscreenchange", handleFullscreenChange);
+		return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
 	}, []);
 
-	// أزل القيمة المبدئية المعتمدة على product
-	const [rating, setRating] = useState<number>(0);
-	const [comment, setComment] = useState("");
-	const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
-	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-	const [isSharing, setIsSharing] = useState<boolean>(false);
-
-	// ----- Memoized values -----
-	const isOwner = useMemo(() => {
-		return (
-			auth?._id && post.seller?.user && auth._id === String(post.seller.user)
-		);
-	}, [auth?._id, post.seller?.user]);
-
-	// ----- Memoized handlers -----
 	const handleShare = useCallback(async () => {
-		if (!navigator.share) {
-			showError("المشاركة غير مدعومة في هذا المتصفح");
-			return;
-		}
-
 		setIsSharing(true);
+
 		try {
-			await navigator.share({
+			const shareData = {
 				title: `منتج ${post.product_name} رائع`,
-				text: `شوف ${post.product_name} المميز! على موقع صفقه`,
+				text: `شاهد ${post.product_name} الآن على منصة صفقة`,
 				url: window.location.href,
-			});
-			showSuccess("تمت المشاركة بنجاح");
-		} catch (error) {
-			if ((error as Error).name !== "AbortError") {
-				showError("فشل المشاركة");
+			};
+
+			if (navigator.share) {
+				await navigator.share(shareData);
+				showSuccess("تمت مشاركة المنتج بنجاح");
+				return;
+			}
+
+			await navigator.clipboard.writeText(window.location.href);
+			showSuccess("تم نسخ رابط المنتج");
+		} catch (shareError) {
+			if ((shareError as Error).name !== "AbortError") {
+				showError("تعذر تنفيذ المشاركة حالياً");
 			}
 		} finally {
 			setIsSharing(false);
@@ -180,10 +212,10 @@ const PostDetails: FunctionComponent = () => {
 			await deleteProduct(productId);
 			showSuccess("تم حذف المنتج بنجاح");
 			navigate(-1);
-		} catch (err) {
-			showError(err as string);
+		} catch (deleteError) {
+			showError(deleteError as string);
 		}
-	}, [productId, navigate]);
+	}, [navigate, productId]);
 
 	const handleEditProduct = useCallback(() => {
 		setShowUpdateModal(true);
@@ -195,14 +227,17 @@ const PostDetails: FunctionComponent = () => {
 
 	const handleRefreshProduct = useCallback(() => {
 		if (!productId) return;
+
 		setLoading(true);
 		getProductById(productId)
-			.then((res) => setPost(res))
+			.then((res) => {
+				setPost(res);
+				setRating(res.rating || 0);
+			})
 			.catch(() => setError("حدث خطأ أثناء تحميل المنتج"))
 			.finally(() => setLoading(false));
 	}, [productId]);
 
-	// ----- Fetch Product -----
 	useEffect(() => {
 		if (!productId) {
 			navigate(path.Home);
@@ -215,82 +250,69 @@ const PostDetails: FunctionComponent = () => {
 		getProductById(productId)
 			.then((res) => {
 				setPost(res);
-				// تحديث rating هنا بعد جلب البيانات
 				setRating(res.rating || 0);
 			})
-			.catch((err) => {
-				console.error("Error fetching product:", err);
+			.catch((fetchError) => {
+				console.error("Error fetching product:", fetchError);
 				setError("حدث خطأ أثناء تحميل المنتج");
 			})
 			.finally(() => setLoading(false));
-	}, [productId, navigate]);
+	}, [navigate, productId]);
 
-	// ----- Loading State -----
 	if (loading) {
 		return (
-			<Box sx={{p: 3}}>
-				<Grid container spacing={8}>
-					<Grid size={{xs: 6}}>
-						<Skeleton height={500} />
+			<Container maxWidth='xl' sx={{ py: 5 }}>
+				<Stack spacing={3}>
+					<Skeleton variant='rounded' height={90} />
+					<Grid container spacing={3}>
+						<Grid size={{ xs: 12, lg: 7 }}>
+							<Skeleton variant='rounded' height={520} />
+						</Grid>
+						<Grid size={{ xs: 12, lg: 5 }}>
+							<Stack spacing={2}>
+								<Skeleton variant='rounded' height={220} />
+								<Skeleton variant='rounded' height={260} />
+							</Stack>
+						</Grid>
 					</Grid>
-
-					<Grid size={{xs: 6}} sx={{mt: 13}}>
-						<Skeleton height={50} />
-						<Skeleton height={30} />
-						<Skeleton height={30} />
-					</Grid>
-				</Grid>
-			</Box>
+				</Stack>
+			</Container>
 		);
 	}
 
-	// ----- Check if product exists -----
 	if (!post?._id) {
 		return (
-			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
-				<ErrorIcon sx={{fontSize: 64, color: "error.main", mb: 3}} />
+			<Container maxWidth='md' sx={{ py: 8, textAlign: "center" }}>
+				<ErrorIcon sx={{ fontSize: 64, color: "error.main", mb: 3 }} />
 				<Typography variant='h5' color='error' gutterBottom>
 					{t("product.notFound") || "المنتج غير موجود"}
 				</Typography>
-				<Button
-					variant='contained'
-					startIcon={<ArrowBackIcon />}
-					onClick={() => navigate(-1)}
-					sx={{mt: 3}}
-				>
+				<Button variant='contained' startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ mt: 3 }}>
 					{t("backOneStep")}
 				</Button>
 			</Container>
 		);
 	}
 
-	// ----- Error State -----
 	if (error) {
 		return (
-			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
-				<ErrorIcon sx={{fontSize: 64, color: "error.main", mb: 3}} />
+			<Container maxWidth='md' sx={{ py: 8, textAlign: "center" }}>
+				<ErrorIcon sx={{ fontSize: 64, color: "error.main", mb: 3 }} />
 				<Typography variant='h5' color='error' gutterBottom>
 					{error}
 				</Typography>
-				<Button
-					variant='contained'
-					startIcon={<ArrowBackIcon />}
-					onClick={() => navigate(-1)}
-					sx={{mt: 3}}
-				>
+				<Button variant='contained' startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ mt: 3 }}>
 					{t("backOneStep")}
 				</Button>
 			</Container>
 		);
 	}
 
-	// ----- SEO Data -----
 	const productJsonLd = generateSingleProductJsonLd(post);
 	const currentUrl = `https://client-qqq1.vercel.app/product/${post.category}/${post._id}`;
 
 	return (
 		<>
-			{/* SEO Metadata */}
 			<JsonLd data={productJsonLd} />
 			<title>{post.product_name} | صفقة</title>
 			<link rel='canonical' href={currentUrl} />
@@ -299,869 +321,443 @@ const PostDetails: FunctionComponent = () => {
 				content={`اشتري ${post.product_name} بأفضل سعر على صفقة. ${post.description?.substring(0, 120)}`}
 			/>
 			<meta property='og:title' content={post.product_name} />
-			<meta
-				property='og:description'
-				content={post.description?.substring(0, 160)}
-			/>
+			<meta property='og:description' content={post.description?.substring(0, 160)} />
 			<meta property='og:image' content={post.image?.url} />
 			<meta property='og:type' content='product' />
 			<meta property='product:price:amount' content={post.price.toString()} />
 			<meta property='product:price:currency' content='ILS' />
 
-			{/* Main Content */}
-			<Box component='main'>
-				<Box sx={{mb: 4}}>
-					<Box
-						sx={{
-							p: 3,
-							mx: 2,
-							border: 1,
-							borderColor: "divider",
-							borderRadius: 2,
-						}}
-					>
-						<Link
-							to={generatePath(path.CustomerProfile, {
-								slug: encodeURIComponent(post.seller?.slug ?? ""),
-							})}
-							style={{textDecoration: "none"}}
-						>
-							<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
-								<Avatar
-									src={post.seller?.imageUrl}
-									alt={post.seller?.name || "بائع"}
-									sx={{
-										width: 56,
-										height: 56,
-										border: "2px solid",
-										borderColor: "divider",
-										transition: "all 0.2s ease",
-										"&:hover": {
-											borderColor: "primary.main",
-											transform: "scale(1.05)",
-										},
-									}}
-								/>
+			<Box component='main' sx={{ backgroundColor: "background.default", pb: 8 }}>
+				<Container maxWidth='xl' sx={{ pt: { xs: 3, md: 5 } }}>
+					<Stack spacing={4}>
+						<Card sx={{ ...sectionCardSx, p: { xs: 2, md: 3 } }}>
+							<Link
+								to={generatePath(path.CustomerProfile, {
+									slug: encodeURIComponent(post.seller?.slug ?? ""),
+								})}
+								style={{ textDecoration: "none", color: "inherit" }}
+							>
+								<Stack
+									direction={{ xs: "column", sm: "row" }}
+									spacing={2}
+									alignItems={{ xs: "flex-start", sm: "center" }}
+									justifyContent='space-between'
+								>
+									<Stack direction='row' spacing={2} alignItems='center'>
+										<Avatar
+											src={post.seller?.imageUrl || "/user.png"}
+											alt={sellerDisplayName}
+											sx={{ width: 64, height: 64, border: 2, borderColor: "divider" }}
+										/>
+										<Box>
+											<Stack direction='row' spacing={1} alignItems='center' flexWrap='wrap'>
+												<Typography variant='h6' sx={{ fontWeight: 700 }}>
+													{sellerDisplayName}
+												</Typography>
+												{isOwner && <Chip label='صاحب المنشور' size='small' color='primary' variant='outlined' />}
+											</Stack>
+											<Stack
+												direction={{ xs: "column", sm: "row" }}
+												spacing={1}
+												divider={<Divider orientation='vertical' flexItem sx={{ display: { xs: "none", sm: "block" } }} />}
+												sx={{ mt: 0.75 }}
+											>
+												<Typography variant='body2' color='text.secondary'>
+													@{post.seller?.slug || "seller"}
+												</Typography>
+												<Typography variant='body2' color='text.secondary'>
+													منشور منذ {formatTimeAgo(String(post.createdAt || ""))}
+												</Typography>
+											</Stack>
+										</Box>
+									</Stack>
 
-								<Box sx={{flex: 1}}>
-									<Box
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											gap: 1,
-											mb: 0.5,
+									<Button
+										variant='contained'
+										startIcon={<Comment />}
+										sx={{ gap: 2 }}
+										onClick={(event) => {
+											event.preventDefault();
+											navigate(
+												generatePath(path.CustomerProfile, {
+													slug: encodeURIComponent(post.seller?.slug ?? ""),
+												}),
+											);
 										}}
 									>
-										<Typography
-											variant='h6'
-											component={"h1"}
-											fontWeight={600}
+										تواصل
+									</Button>
+								</Stack>
+							</Link>
+						</Card>
+
+						<Box>
+							<Breadcrumbs
+								aria-label={t("product.breadcrumbNavigation") || "مسار التنقل"}
+								separator={<ChevronRight sx={{ fontSize: 20 }} />}
+							>
+								<Button component={Link} to={path.Home} startIcon={<HomeIcon />} sx={{ textTransform: "none" }}>
+									{t("home")}
+								</Button>
+
+								{post.category && (
+									<Button
+										startIcon={<StoreIcon />}
+										onClick={() => {
+											const catPath = categoryPathMap[post.category] || "";
+											if (catPath) navigate(catPath);
+										}}
+										disabled={!categoryPathMap[post.category]}
+										sx={{ textTransform: "none" }}
+									>
+										{categoryLabel}
+									</Button>
+								)}
+
+								<Typography variant='body2' sx={{ fontWeight: 700 }}>
+									{post.product_name}
+								</Typography>
+							</Breadcrumbs>
+						</Box>
+
+						<Grid container spacing={4} alignItems='flex-start'>
+							<Grid size={{ xs: 12, lg: 7 }}>
+								<Stack spacing={3}>
+									<Card sx={{ ...sectionCardSx, overflow: "hidden" }}>
+										<Box
+											ref={imageContainerRef}
+											onMouseMove={handleMouseMove}
+											onClick={() => setIsZoomed((prev) => !prev)}
 											sx={{
-												color: "text.primary",
-												"&:hover": {
-													color: "primary.main",
+												position: "relative",
+												height: { xs: 320, md: 560 },
+												overflow: "hidden",
+												background: "linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%)",
+												cursor: isZoomed ? "zoom-out" : "zoom-in",
+												"&:hover .image-controls": {
+													opacity: 1,
 												},
 											}}
 										>
-											{post.seller?.name ||
-												post.seller?.slug ||
-												"بائع"}
-										</Typography>
-										{isOwner && (
-											<Chip
-												label='صاحب المنشور'
-												aria-label='صاحب المنشور'
-												size='small'
-												color='primary'
-												variant='outlined'
-											/>
-										)}
-									</Box>
-
-									<Stack
-										direction='row'
-										spacing={2}
-										alignItems='center'
-										divider={
-											<Box
-												sx={{
-													width: 4,
-													height: 4,
-													borderRadius: "50%",
-													bgcolor: "text.disabled",
-												}}
-											/>
-										}
-									>
-										<Typography
-											variant='body2'
-											sx={{color: "text.secondary"}}
-										>
-											{post.seller?.slug}@
-										</Typography>
-
-										<Tooltip title='عام للجميع'>
-											<Box
-												sx={{
-													display: "flex",
-													alignItems: "center",
-													gap: 0.5,
-												}}
-											>
-												<Box
-													sx={{
-														width: 20,
-														height: 20,
-														borderRadius: "50%",
-														bgcolor: "action.selected",
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "center",
-													}}
-												>
-													<Typography
-														variant='caption'
-														sx={{fontSize: "0.7rem"}}
-													>
-														🌍
-													</Typography>
-												</Box>
-												<Typography
-													variant='caption'
-													sx={{color: "text.secondary"}}
-												>
-													منذ {formatTimeAgo(String(post.createdAt || ""))}
-												</Typography>
-											</Box>
-										</Tooltip>
-									</Stack>
-								</Box>
-
-								{/* زر التواصل السريع */}
-								<Button
-									variant='contained'
-									size='small'
-									startIcon={<Comment />}
-									onClick={() =>
-										navigate(
-											generatePath(path.CustomerProfile, {
-												slug: encodeURIComponent(
-													post.seller?.slug ?? "",
-												),
-											}),
-										)
-									}
-									sx={{display: {xs: "none", sm: "flex"}}}
-								>
-									تواصل
-								</Button>
-							</Box>
-						</Link>
-					</Box>
-				</Box>
-
-				<Container maxWidth='xl' sx={{py: 4, my: 5}}>
-					{/* Breadcrumbs */}
-					<Box sx={{mb: 4, px: {xs: 1, sm: 0}, py: 1}}>
-						<Breadcrumbs
-							aria-label={
-								t("product.breadcrumbNavigation") || "مسار التنقل"
-							}
-							separator={<ChevronRight sx={{fontSize: 20, mx: 0.5}} />}
-						>
-							<Tooltip title={t("home") || "الصفحة الرئيسية"} arrow>
-								<Button
-									component={Link}
-									to={path.Home}
-									startIcon={<HomeIcon />}
-									sx={{
-										display: "flex",
-										alignItems: "center",
-										gap: 0.5,
-										textTransform: "none",
-										fontSize: {xs: "0.8rem", sm: "0.875rem"},
-										px: 1,
-										py: 0.5,
-									}}
-								>
-									<Typography
-										variant='body2'
-										sx={{display: {xs: "none", sm: "block"}}}
-									>
-										{t("home")}
-									</Typography>
-								</Button>
-							</Tooltip>
-
-							{post.category && (
-								<Tooltip
-									title={
-										categoryLabels[post.category] ||
-										t(post.category)
-									}
-									arrow
-								>
-									<Button
-										onClick={() => {
-											const catPath =
-												categoryPathMap[post.category] || "";
-											if (catPath) navigate(catPath);
-										}}
-										startIcon={<StoreIcon />}
-										disabled={!categoryPathMap[post.category]}
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											gap: 0.5,
-											textTransform: "none",
-											fontSize: {xs: "0.8rem", sm: "0.875rem"},
-											px: 1,
-											py: 0.5,
-										}}
-									>
-										<Typography variant='body2'>
-											{categoryLabels[post.category] ||
-												t(post.category)}
-										</Typography>
-									</Button>
-								</Tooltip>
-							)}
-
-							<Box
-								sx={{
-									display: "flex",
-									alignItems: "center",
-									px: 2,
-									py: 0.5,
-								}}
-							>
-								<Typography
-									variant='body2'
-									sx={{fontWeight: 600}}
-									title={post.product_name}
-								>
-									{post.product_name}
-								</Typography>
-							</Box>
-						</Breadcrumbs>
-					</Box>
-					{/* <Box sx={{p: 2, borderBottom: 1, borderColor: "divider"}}>
-						<Link
-							to={generatePath(path.CustomerProfile, {
-								slug: encodeURIComponent(product.seller?.slug ?? ""),
-							})}
-							style={{textDecoration: "none"}}
-						>
-							<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
-								<Avatar
-									src={product.seller?.imageUrl}
-									alt={product.seller?.name || "بائع"}
-									sx={{
-										width: 48,
-										height: 48,
-										border: "2px solid",
-										borderColor: "divider",
-										transition: "all 0.2s ease",
-										"&:hover": {
-											borderColor: "primary.main",
-											transform: "scale(1.05)",
-										},
-									}}
-								/>
-
-								<Box>
-									<Typography
-										variant='subtitle1'
-										fontWeight={600}
-										sx={{
-											color: "text.primary",
-											"&:hover": {
-												color: "primary.main",
-											},
-										}}
-									>
-										{product.seller?.name ||
-											product.seller?.slug ||
-											"بائع"}
-									</Typography>
-
-									<Stack
-										direction='row'
-										spacing={1}
-										alignItems='center'
-									>
-										<Typography
-											variant='caption'
-											sx={{color: "text.secondary"}}
-										>
-											{formatTimeAgo(product.createdAt)}
-										</Typography>
-										<Box
-											sx={{
-												width: 4,
-												height: 4,
-												borderRadius: "50%",
-												bgcolor: "text.disabled",
-											}}
-										/>
-										<Tooltip title='عام للجميع'>
-											<Box
-												sx={{
-													display: "flex",
-													alignItems: "center",
-													gap: 0.5,
-													color: "text.secondary",
-												}}
-											>
-												<Box
-													sx={{
-														width: 16,
-														height: 16,
-														borderRadius: "50%",
-														bgcolor: "action.selected",
-														display: "flex",
-														alignItems: "center",
-														justifyContent: "center",
-													}}
-												>
-													<Typography
-														variant='caption'
+											{post.image?.url ? (
+												<>
+													<CardMedia
+														component='img'
+														image={`${post.image.url}?w=1400&q=90`}
+														alt={`صورة ${post.product_name}`}
 														sx={{
-															fontSize: "0.65rem",
-															lineHeight: 1,
+															width: "100%",
+															height: "100%",
+															objectFit: "contain",
+															transition: "transform 0.35s ease-in-out",
+															transform: isZoomed
+																? `scale(${zoomLevel}) translate(${mousePosition.x - 50}%, ${mousePosition.y - 50}%)`
+																: "scale(1)",
+															transformOrigin: isZoomed
+																? `${mousePosition.x}% ${mousePosition.y}%`
+																: "center center",
+														}}
+													/>
+
+													<Stack
+														className='image-controls'
+														direction='row'
+														spacing={1}
+														sx={{
+															position: "absolute",
+															left: "50%",
+															bottom: 16,
+															transform: "translateX(-50%)",
+															backgroundColor: "rgba(15, 23, 42, 0.66)",
+															borderRadius: 999,
+															p: 0.75,
+															opacity: isMobile ? 1 : 0,
+															transition: "opacity 0.25s ease",
 														}}
 													>
-														🌍
-													</Typography>
-												</Box>
-											</Box>
-										</Tooltip>
-									</Stack>
-								</Box>
-							</Box>
-						</Link>
-					</Box> */}
-					{/* Main Product Grid */}
-					<Grid container spacing={4}>
-						<Grid size={{xs: 12, md: 6}}>
-							<Card
-								sx={{
-									borderRadius: 2,
-									overflow: "hidden",
-									boxShadow: theme.shadows[3],
-									position: "relative",
-								}}
-							>
-								{/* Image Container with Zoom */}
-								<Box
-									ref={imageContainerRef}
-									onMouseMove={handleMouseMove}
-									onClick={() => setIsZoomed(!isZoomed)}
-									sx={{
-										position: "relative",
-										height: isMobile ? 300 : 500,
-										overflow: "hidden",
-										cursor: isZoomed ? "zoom-out" : "zoom-in",
-										"&:hover .image-controls": {
-											opacity: 1,
-										},
-									}}
-								>
-									{post.image?.url ? (
-										<>
-											<CardMedia
-												component='img'
-												image={`${post.image.url}?w=1200&q=85`}
-												alt={`صورة ${post.product_name}`}
-												sx={{
-													width: "100%",
-													height: "100%",
-													objectFit: "contain",
-													transition:
-														"transform all ease-in-out",
-													transform: isZoomed
-														? `scale(${zoomLevel}) translate(${mousePosition.x - 50}%, ${mousePosition.y - 50}%)`
-														: "scale(1)",
-													transformOrigin: isZoomed
-														? `${mousePosition.x}% ${mousePosition.y}%`
-														: "center center",
-												}}
-											/>
+														<Tooltip title='تكبير'>
+															<IconButton size='small' onClick={(event) => {
+																event.stopPropagation();
+																handleZoomIn();
+															}} sx={{ color: "common.white" }}>
+																<ZoomIn />
+															</IconButton>
+														</Tooltip>
+														<Tooltip title='تصغير'>
+															<span>
+																<IconButton size='small' disabled={zoomLevel <= 1} onClick={(event) => {
+																	event.stopPropagation();
+																	handleZoomOut();
+																}} sx={{ color: "common.white" }}>
+																	<ZoomOut />
+																</IconButton>
+															</span>
+														</Tooltip>
+														<Tooltip title={isFullscreen ? 'إغلاق ملء الشاشة' : 'ملء الشاشة'}>
+															<IconButton size='small' onClick={(event) => {
+																event.stopPropagation();
+																void handleFullscreenToggle();
+															}} sx={{ color: "common.white" }}>
+																{isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+															</IconButton>
+														</Tooltip>
+														{isZoomed && (
+															<Tooltip title='إعادة الضبط'>
+																<IconButton size='small' onClick={(event) => {
+																	event.stopPropagation();
+																	handleResetZoom();
+																}} sx={{ color: "common.white" }}>
+																	<ZoomOut sx={{ transform: "rotate(45deg)" }} />
+																</IconButton>
+															</Tooltip>
+														)}
+													</Stack>
 
-											{/* Image Controls Overlay */}
+													{isZoomed && (
+														<Box
+															sx={{
+																position: "absolute",
+																top: 16,
+																right: 16,
+																backgroundColor: "rgba(15, 23, 42, 0.66)",
+																color: "common.white",
+																px: 1.25,
+																py: 0.5,
+																borderRadius: 99,
+															}}
+														>
+															{zoomLevel.toFixed(1)}x
+														</Box>
+													)}
+												</>
+											) : (
+												<Stack justifyContent='center' alignItems='center' spacing={1.5} sx={{ height: "100%" }}>
+													<Typography variant='h6'>لا توجد صورة للمنتج</Typography>
+													<Typography variant='body2' color='text.secondary'>
+														يمكن إضافة صورة لاحقاً لتحسين عرض المنتج.
+													</Typography>
+												</Stack>
+											)}
+
 											<Box
-												className='image-controls'
 												sx={{
 													position: "absolute",
-													bottom: 16,
-													left: "50%",
-													transform: "translateX(-50%)",
-													display: "flex",
-													gap: 1,
-													backgroundColor: "rgba(0,0,0,0.6)",
-													borderRadius: 2,
-													padding: "8px 12px",
-													opacity: 0,
-													transition: "opacity 0.3s ease",
-													zIndex: 10,
+													left: 16,
+													top: 16,
+													backgroundColor: "rgba(255,255,255,0.9)",
+													borderRadius: 999,
+													px: 1.25,
+													py: 0.5,
 												}}
 											>
-												<Tooltip title='تكبير'>
-													<IconButton
-														size='small'
-														onClick={(e) => {
-															e.stopPropagation();
-															handleZoomIn();
-														}}
-														sx={{color: "white"}}
-													>
-														<ZoomIn />
-													</IconButton>
-												</Tooltip>
-
-												<Tooltip title='تصغير'>
-													<IconButton
-														size='small'
-														onClick={(e) => {
-															e.stopPropagation();
-															handleZoomOut();
-														}}
-														disabled={zoomLevel <= 1}
-														sx={{color: "white"}}
-													>
-														<ZoomOut />
-													</IconButton>
-												</Tooltip>
-
-												<Tooltip title='عرض كامل الشاشة'>
-													<IconButton
-														size='small'
-														onClick={(e) => {
-															e.stopPropagation();
-															handleFullscreenToggle();
-														}}
-														sx={{color: "white"}}
-													>
-														{isFullscreen ? (
-															<FullscreenExit />
-														) : (
-															<Fullscreen />
-														)}
-													</IconButton>
-												</Tooltip>
-
-												{isZoomed && (
-													<Tooltip title='إعادة الضبط'>
-														<IconButton
-															size='small'
-															onClick={(e) => {
-																e.stopPropagation();
-																handleResetZoom();
-															}}
-															sx={{color: "white"}}
-														>
-															<ZoomOut
-																sx={{
-																	transform:
-																		"rotate(45deg)",
-																}}
-															/>
-														</IconButton>
-													</Tooltip>
-												)}
-											</Box>
-
-											{/* Zoom Level Indicator */}
-											{isZoomed && (
-												<Box
-													sx={{
-														position: "absolute",
-														top: 16,
-														right: 16,
-														backgroundColor:
-															"rgba(0,0,0,0.6)",
-														color: "white",
-														padding: "4px 8px",
-														borderRadius: 1,
-														fontSize: "0.875rem",
-														zIndex: 10,
-													}}
-												>
-													{zoomLevel.toFixed(1)}x
-												</Box>
-											)}
-										</>
-									) : (
-										<Box
-											sx={{
-												height: "100%",
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-												flexDirection: "column",
-												gap: 2,
-											}}
-										>
-											<Typography>لا توجد صورة للمنتج</Typography>
-											<Typography
-												variant='body2'
-												color='text.secondary'
-											>
-												انقر لإضافة صورة
-											</Typography>
-										</Box>
-									)}
-								</Box>
-
-								{/* Instructions Tooltip */}
-								<Box
-									sx={{
-										position: "absolute",
-										bottom: 8,
-										left: 8,
-										backgroundColor: "rgba(0,0,0,0.5)",
-										color: "white",
-										padding: "4px 8px",
-										borderRadius: 1,
-										fontSize: "0.75rem",
-										display: {xs: "none", md: "block"},
-										zIndex: 5,
-									}}
-								>
-									استخدم الماوس للتكبير/التصغير
-								</Box>
-
-								{/*  أزرار المشاركة واللايك */}
-								<Box
-									sx={{
-										display: "flex",
-										justifyContent: "space-between",
-										p: 2,
-										borderTop: 1,
-										borderColor: "divider",
-									}}
-								>
-									<IconButton
-										onClick={() => {
-											if (!isLoggedIn) navigate(path.Login);
-										}}
-									>
-										<LikeButton
-											product={post}
-											setProduct={setPost}
-										/>
-									</IconButton>
-
-									<IconButton
-										onClick={handleShare}
-										disabled={isSharing}
-									>
-										<ShareIcon />
-									</IconButton>
-								</Box>
-
-								{/* TODO:Problem */}
-								{isOwner && (
-									<Box
-										sx={{
-											display: "flex",
-											justifyContent: "center",
-											gap: 2,
-											p: 2,
-											borderTop: 1,
-											borderColor: "divider",
-										}}
-									>
-										<Button
-											variant='contained'
-											color='warning'
-											startIcon={<EditIcon />}
-											onClick={handleEditProduct}
-											size='small'
-										>
-											{t("edit")}
-										</Button>
-										<Button
-											variant='contained'
-											color='error'
-											startIcon={<DeleteIcon />}
-											onClick={() => setShowDeleteModal(true)}
-											size='small'
-										>
-											{t("delete")}
-										</Button>
-									</Box>
-								)}
-							</Card>
-						</Grid>
-
-						{/* informations */}
-						<Grid size={{xs: 12, md: 6}}>
-							<Box
-								sx={{
-									height: "100%",
-									display: "flex",
-									flexDirection: "column",
-								}}
-							>
-								{/* Product Name */}
-								<Typography
-									variant='h4'
-									component='h1'
-									gutterBottom
-									sx={{fontWeight: 700}}
-								>
-									{post.product_name}
-								</Typography>
-
-								{/* Category */}
-								{post.category && (
-									<Chip
-										label={categoryLabels[post.category]}
-										color='secondary'
-										sx={{mb: 2, alignSelf: "flex-start"}}
-									/>
-								)}
-
-								{/* Rating */}
-								<Box sx={{display: "flex", alignItems: "center", mb: 3}}>
-									<Rating
-										value={rating}
-										precision={0.5}
-										onChange={(_, newValue) =>
-											setRating(newValue ?? 0)
-										}
-										sx={{mr: 1}}
-									/>
-									<Typography variant='body2' color='text.secondary'>
-										({typeof post.reviewCount === 'number' ? post.reviewCount : 0} تقييم)
-									</Typography>
-								</Box>
-
-								{/* Price */}
-								<Typography
-									variant='h3'
-									color='primary'
-									gutterBottom
-									sx={{fontWeight: 700, mb: 3}}
-								>
-									{formatPrice(post.price)}
-								</Typography>
-
-								{/* Colors and Sizes */}
-								<ColorsAndSizes category={post.category} />
-
-								<Divider sx={{my: 3}} />
-
-								{/* Description */}
-								{post.description && (
-									<>
-										<Typography
-											variant='h6'
-											gutterBottom
-											sx={{fontWeight: 600}}
-										>
-											وصف المنتج
-										</Typography>
-										<Typography
-											variant='body1'
-											color='text.secondary'
-											sx={{mb: 3, lineHeight: 1.8}}
-										>
-											{post.description}
-										</Typography>
-									</>
-								)}
-
-								{/* Action Buttons */}
-								<Box sx={{mt: "auto", pt: 3}}>
-									<Grid container spacing={2}>
-										<Grid size={{xs: 12}}>
-											<Button
-												fullWidth
-												variant='contained'
-												size='large'
-												onClick={() => navigate(-1)}
-												sx={{py: 1.5, fontSize: "1.1rem"}}
-											>
-												{t("backOneStep")}
-											</Button>
-										</Grid>
-										<Grid size={{xs: 12, md: 6}}>
-											<Button
-												fullWidth
-												variant='outlined'
-												size='large'
-												startIcon={<Comment />}
-												onClick={() => navigate(path.Messages)}
-												sx={{py: 1.5}}
-											>
-												تواصل مع البائع
-											</Button>
-										</Grid>
-										<Grid size={{xs: 12, md: 6}}>
-											<Button
-												fullWidth
-												variant='contained'
-												size='large'
-												startIcon={<Phone />}
-												href='tel:0538346915'
-												sx={{py: 1.5}}
-											>
-												اتصل الآن
-											</Button>
-										</Grid>
-									</Grid>
-								</Box>
-							</Box>
-						</Grid>
-					</Grid>
-
-					{/* Product Details Table */}
-					<Box sx={{mt: 8}}>
-						<Typography
-							variant='h5'
-							gutterBottom
-							sx={{fontWeight: 700, mb: 4}}
-						>
-							تفاصيل المنتج
-						</Typography>
-						<MemoizedPostDetailsTable Posts={post} />
-					</Box>
-
-					{/* Comments Section */}
-					<Box sx={{mt: 8}}>
-						<Typography
-							variant='h5'
-							gutterBottom
-							sx={{fontWeight: 700, mb: 4}}
-						>
-							التعليقات والتقييمات
-						</Typography>
-						<Grid container spacing={4}>
-							<Grid size={{xs: 12, md: 8}}>
-								<Card
-									sx={{
-										p: 3,
-										borderRadius: 2,
-										boxShadow: theme.shadows[2],
-									}}
-								>
-									{/* Comments List */}
-									<Stack spacing={2} sx={{mb: 3}}>
-										{[1, 2, 3].map((item) => (
-											<Box
-												key={item}
-												sx={{
-													p: 2,
-													bgcolor: "grey.50",
-													borderRadius: 1,
-												}}
-											>
-												<Box
-													sx={{
-														display: "flex",
-														justifyContent: "space-between",
-														mb: 1,
-													}}
-												>
-													<Typography
-														variant='subtitle2'
-														fontWeight='bold'
-													>
-														مستخدم {item}
-													</Typography>
-													<Rating
-														value={4}
-														size='small'
-														readOnly
-													/>
-												</Box>
-												<Typography variant='body2'>
-													هذا تعليق تجريبي للمنتج رقم {item}
+												<Typography variant='caption' sx={{ fontWeight: 700 }}>
+													{isZoomed ? "اضغط لإلغاء التكبير" : "اضغط للتكبير"}
 												</Typography>
 											</Box>
-										))}
-									</Stack>
+										</Box>
 
-									{/* Add Comment */}
-									<Divider sx={{my: 3}} />
-									<Typography variant='h6' gutterBottom>
-										أضف تعليقك
-									</Typography>
-									<TextField
-										multiline
-										rows={4}
-										fullWidth
-										value={comment}
-										onChange={(e) => setComment(e.target.value)}
-										placeholder='اكتب تعليقك هنا...'
-										variant='outlined'
-										sx={{mb: 2}}
-									/>
-									<Box
-										sx={{
-											display: "flex",
-											justifyContent: "space-between",
-											alignItems: "center",
-										}}
-									>
-										<Rating
-											value={rating}
-											onChange={(_, newValue) =>
-												setRating(newValue ?? 0)
-											}
-											precision={0.5}
+										<Box sx={{ p: 2.5, borderTop: 1, borderColor: "divider" }}>
+											<Stack direction='row' justifyContent='space-between' alignItems='center'>
+												<Stack onClick={() => {
+													if (!isLoggedIn) {
+														navigate(path.Login);
+													}
+												}} direction='row' spacing={1}>
+													<LikeButton product={post} setProduct={setPost} />
+													<IconButton onClick={handleShare} disabled={isSharing}>
+														<ShareIcon />
+													</IconButton>
+												</Stack>
+
+												<Typography variant='body2' color='text.secondary'>
+													اعرض الصورة بوضوح أعلى قبل اتخاذ قرار الشراء.
+												</Typography>
+											</Stack>
+										</Box>
+
+										{isOwner && (
+											<Box sx={{ p: 2.5, borderTop: 1, borderColor: "divider" }}>
+												<Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+													<Button variant='contained' color='warning' startIcon={<EditIcon />} onClick={handleEditProduct} fullWidth>
+														{t("edit")}
+													</Button>
+													<Button variant='contained' color='error' startIcon={<DeleteIcon />} onClick={() => setShowDeleteModal(true)} fullWidth>
+														{t("delete")}
+													</Button>
+												</Stack>
+											</Box>
+										)}
+									</Card>
+
+									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
+										<SectionTitle
+											title='تفاصيل المنتج'
+											subtitle='معلومات منظمة تساعد المستخدم على فهم المنتج ومواصفاته بسرعة.'
 										/>
-										<Button
-											variant='contained'
-											disabled={!comment.trim()}
-										>
-											نشر التعليق
-										</Button>
-									</Box>
-								</Card>
+										<MemoizedPostDetailsTable Posts={post} />
+									</Card>
+
+									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
+										<SectionTitle
+											title='الأسئلة والتقييمات'
+											subtitle='شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء.'
+										/>
+
+										<Alert severity='info' sx={{ mb: 3, borderRadius: 2 }}>
+											لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً.
+										</Alert>
+
+										<Stack spacing={2.5}>
+											<TextField
+												multiline
+												rows={4}
+												fullWidth
+												value={comment}
+												onChange={(event) => setComment(event.target.value)}
+												placeholder='اكتب تعليقك أو سؤالك عن المنتج هنا...'
+												variant='outlined'
+											/>
+
+											<Stack
+												direction={{ xs: "column", sm: "row" }}
+												justifyContent='space-between'
+												alignItems={{ xs: "flex-start", sm: "center" }}
+												spacing={2}
+											>
+												<Stack spacing={0.75}>
+													<Typography variant='body2' color='text.secondary'>
+														قيّم تجربتك أو توقّعاتك من هذا المنتج.
+													</Typography>
+													<Rating value={rating} onChange={(_, newValue) => setRating(newValue ?? 0)} precision={0.5} />
+												</Stack>
+
+												<Button variant='contained' disabled={!comment.trim()}>
+													نشر التعليق
+												</Button>
+											</Stack>
+										</Stack>
+									</Card>
+								</Stack>
 							</Grid>
 
-							{/* Support Info */}
-							<Grid size={{xs: 12, md: 4}}>
-								<Card
-									sx={{
-										p: 3,
-										height: "100%",
-										borderRadius: 2,
-										boxShadow: theme.shadows[2],
-									}}
-								>
-									<Typography
-										variant='h6'
-										gutterBottom
-										sx={{fontWeight: 600}}
-									>
-										الدعم والمساعدة
-									</Typography>
-									<Typography
-										variant='body2'
-										color='text.secondary'
-										paragraph
-									>
-										فريق الدعم متاح على مدار الساعة للمساعدة في أي
-										استفسارات.
-									</Typography>
-									<Alert severity='info' sx={{mt: 2}}>
-										للاستفسار عن المنتج أو الشكاوى، يرجى التواصل عبر:
-										<br />
-										• الهاتف: 0538346915
-										<br />• البريد الإلكتروني: support@safqa.com
-									</Alert>
-								</Card>
+							<Grid size={{ xs: 12, lg: 5 }}>
+								<Stack spacing={3} sx={{ position: { lg: "sticky" }, top: { lg: 24 } }}>
+									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
+										<Stack spacing={2.5}>
+											<Box>
+												<Stack direction='row' spacing={1} flexWrap='wrap' sx={{ mb: 1.5 }}>
+													<Chip label={categoryLabel} color='secondary' />
+													{post.condition && <Chip label={String(post.condition)} variant='outlined' />}
+												</Stack>
+												<Typography variant='h3' component='h1' sx={{ fontWeight: 900, lineHeight: 1.2, mb: 1.5 }}>
+													{post.product_name}
+												</Typography>
+												<Stack direction='row' spacing={1.25} alignItems='center' flexWrap='wrap'>
+													<Rating value={rating} precision={0.5} onChange={(_, newValue) => setRating(newValue ?? 0)} />
+													<Typography variant='body2' color='text.secondary'>
+														{typeof post.reviewCount === "number" ? post.reviewCount : 0} تقييم
+													</Typography>
+												</Stack>
+											</Box>
+
+											<Box
+												sx={{
+													p: 2.5,
+													borderRadius: 3,
+													background: "linear-gradient(135deg, rgba(37,99,235,0.12) 0%, rgba(59,130,246,0.04) 100%)",
+													border: 1,
+													borderColor: "primary.light",
+												}}
+											>
+												<Typography variant='body2' color='text.secondary' sx={{ mb: 0.75 }}>
+													السعر الحالي
+												</Typography>
+												<Typography variant='h3' color='primary' sx={{ fontWeight: 900 }}>
+													{formatPrice(post.price)}
+												</Typography>
+											</Box>
+
+											<Box>
+												<Typography variant='h6' sx={{ fontWeight: 700, mb: 1.5 }}>
+													الخيارات المتاحة
+												</Typography>
+												<ColorsAndSizes category={post.category} />
+											</Box>
+
+											<Divider />
+
+											<Box>
+												<Typography variant='h6' sx={{ fontWeight: 700, mb: 1.5 }}>
+													وصف المنتج
+												</Typography>
+												<Typography variant='body1' color='text.secondary' sx={{ lineHeight: 1.9 }}>
+													{post.description || "لم تتم إضافة وصف تفصيلي لهذا المنتج بعد."}
+												</Typography>
+											</Box>
+
+											<Stack spacing={1.5}>
+												<Button fullWidth variant='contained' size='large' startIcon={<Comment />} onClick={(event) => {
+													event.preventDefault();
+													navigate(
+														generatePath(path.CustomerProfile, {
+															slug: encodeURIComponent(post.seller?.slug ?? ""),
+														}),
+													);
+												}} sx={{ py: 1.5 }}>
+													تواصل مع البائع
+												</Button>
+												<Button fullWidth variant='outlined' size='large' startIcon={<Phone />} href='tel:0538346915' sx={{ py: 1.5 }}>
+													اتصل الآن
+												</Button>
+												<Button fullWidth variant='text' size='large' startIcon={<ArrowBackIcon />} onClick={() => navigate(-1)} sx={{ py: 1.25 }}>
+													{t("backOneStep")}
+												</Button>
+											</Stack>
+										</Stack>
+									</Card>
+
+									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
+										<SectionTitle
+											title='عن البائع والدعم'
+											subtitle='منطقة مخصصة لبناء الثقة وتوضيح قنوات التواصل والمساندة.'
+										/>
+
+										<Stack spacing={2.5}>
+											<Stack direction='row' spacing={2} alignItems='center'>
+												<Link
+													to={generatePath(path.CustomerProfile, {
+														slug: encodeURIComponent(post.seller?.slug ?? ""),
+													})}
+													style={{ textDecoration: "none", color: "inherit" }}
+												>
+													<Avatar src={post.seller?.imageUrl || "/user.png"} alt={sellerDisplayName} sx={{ width: 56, height: 56 }} />
+												</Link>
+												<Box>
+													<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
+														{sellerDisplayName}
+													</Typography>
+													<Typography variant='body2' color='text.secondary'>
+														يمكنك زيارة ملف البائع للاطلاع على مزيد من المنتجات والتقييمات.
+													</Typography>
+												</Box>
+											</Stack>
+
+											<Alert severity='info' sx={{ borderRadius: 2 }}>
+												للاستفسار عن المنتج أو تقديم شكوى، يرجى التواصل عبر الهاتف 0538346915 أو البريد الإلكتروني support@safqa.com.
+											</Alert>
+
+											<Typography variant='body2' color='text.secondary' sx={{ lineHeight: 1.8 }}>
+												يعرض هذا التصميم المعلومات الأساسية أولاً، ثم ينقل المستخدم إلى التفاصيل والدعم في أقسام منفصلة وواضحة، مما يحسن تجربة التصفح ويُسهّل اتخاذ القرار.
+											</Typography>
+										</Stack>
+									</Card>
+								</Stack>
 							</Grid>
 						</Grid>
-					</Box>
+					</Stack>
 				</Container>
 			</Box>
 
-			{/* Modals */}
 			<AlertDialogs
 				handleDelete={handleDeleteProduct}
 				onHide={() => setShowDeleteModal(false)}
