@@ -41,10 +41,11 @@ import {
 } from "@mui/icons-material";
 import { Posts } from "../../interfaces/Posts";
 import { getAllUsers } from "../../services/usersServices";
-import { getAllProducts } from "../../services/postsServices";
+import { getAllPosts } from "../../services/postsServices";
 import { User } from "../../interfaces/usersMessages";
 import { useUser } from "../../context/useUSer";
 import { formatPrice } from "../../helpers/dateAndPriceFormat";
+import RoleType from "../../interfaces/UserType";
 
 // Helper function to safely get number from views
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -222,16 +223,15 @@ const WebSiteAdmins: FunctionComponent = () => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
 
     useEffect(() => {
-        if (auth.role !== "Admin" && auth.role !== "Moderator") return;
-        fetchData();
-    }, [auth]);
+        if (auth.role !== RoleType.Admin && auth.role !== RoleType.Moderator) return;
+    }, [auth._id, auth.role]);
 
     const fetchData = async (): Promise<void> => {
         setLoading(true);
         try {
             const [usersRes, productsRes] = await Promise.all([
                 getAllUsers(),
-                getAllProducts(),
+                getAllPosts(),
             ]);
 
             const usersData: AuthValues[] = (usersRes as AuthValues[]) || [];
@@ -305,35 +305,35 @@ const WebSiteAdmins: FunctionComponent = () => {
         const pendingPosts: number = posts.filter((p: PostWithUser) => p.status === "pending").length;
         const soldPosts: number = posts.filter((p: PostWithUser) => p.status === "sold").length;
 
-    // حساب البائعين النشطين (المستخدمين الذين لديهم منشورات)
-const sellersMap = new Map<string, SellerData>();
+        // حساب البائعين النشطين (المستخدمين الذين لديهم منشورات)
+        const sellersMap = new Map<string, SellerData>();
 
-posts.forEach((post: PostWithUser) => {
-    // نستخدم معرف المستخدم كـ Key أساسي وموحد
-    const sellerId = post.userId;
+        posts.forEach((post: PostWithUser) => {
+            // نستخدم معرف المستخدم كـ Key أساسي وموحد
+            const sellerId = post.userId;
 
-    if (sellerId && post.userData) {
-        const existing = sellersMap.get(sellerId as string);
-        
-        // إذا كان البائع موجوداً نأخذ بياناته، وإلا ننشئ كائن جديد
-        const seller: SellerData = existing || {
-            productsCount: 0,
-            totalLikes: 0,
-            totalViews: 0,
-            totalValue: 0,
-            user: post.userData,
-        };
+            if (sellerId && post.userData) {
+                const existing = sellersMap.get(sellerId as string);
 
-        // تحديث البيانات وإعادة تخزينها في الـ Map
-        sellersMap.set(sellerId as string, {
-            ...seller, // الحفاظ على بيانات المستخدم
-            productsCount: seller.productsCount + 1,
-            totalLikes: seller.totalLikes + (post.likes?.length || 0),
-            totalViews: seller.totalViews + getViewsAsNumber(post.views),
-            totalValue: seller.totalValue + (post.price || 0),
+                // إذا كان البائع موجوداً نأخذ بياناته، وإلا ننشئ كائن جديد
+                const seller: SellerData = existing || {
+                    productsCount: 0,
+                    totalLikes: 0,
+                    totalViews: 0,
+                    totalValue: 0,
+                    user: post.userData,
+                };
+
+                // تحديث البيانات وإعادة تخزينها في الـ Map
+                sellersMap.set(sellerId as string, {
+                    ...seller, // الحفاظ على بيانات المستخدم
+                    productsCount: seller.productsCount + 1,
+                    totalLikes: seller.totalLikes + (post.likes?.length || 0),
+                    totalViews: seller.totalViews + getViewsAsNumber(post.views),
+                    totalValue: seller.totalValue + (post.price || 0),
+                });
+            }
         });
-    }
-});
 
         const activeSellers: number = sellersMap.size;
 
@@ -998,8 +998,8 @@ posts.forEach((post: PostWithUser) => {
                                                                 key={`cell-${index}`}
                                                                 fill={
                                                                     COLORS[
-                                                                        index %
-                                                                        COLORS.length
+                                                                    index %
+                                                                    COLORS.length
                                                                     ]
                                                                 }
                                                             />
