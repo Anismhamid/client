@@ -20,9 +20,9 @@ import {FeaturedAd} from "../../interfaces/featuredAd";
 import useSnackbar from "../../hooks/useSnackbar";
 import {Snackbar as MuiSnackbar, Alert} from "@mui/material";
 import PaymentModal from "../pymentModal/PymentModal";
-import {getCustomerProfileProductsBySlug} from "../../services/postsServices";
+import {getCustomerProfilePostsBySlug} from "../../services/postsServices";
 import {useUser} from "../../context/useUSer";
-import {Products} from "../../interfaces/Posts";
+import {Posts} from "../../interfaces/Posts";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -39,13 +39,13 @@ const FeaturedAdsDashboard = () => {
 	const [saving, setSaving] = useState(false);
 	const {snackbar, showSnackbar, closeSnackbar} = useSnackbar();
 	const [showPaymentModal, setShowPaymentModal] = useState(false);
-	const [userListings, setUserListings] = useState<Products[]>([]);
+	const [userListings, setUserListings] = useState<Posts[]>([]);
 
 	const handleOpenPayment = () => setShowPaymentModal(true);
 	const handleClosePayment = () => setShowPaymentModal(false);
 
 	useEffect(() => {
-		getCustomerProfileProductsBySlug(auth?.slug as string)
+		getCustomerProfilePostsBySlug(auth?.slug as string)
 			.then((res) => {
 				setUserListings(res);
 			})
@@ -53,7 +53,7 @@ const FeaturedAdsDashboard = () => {
 				console.log(err);
 				setUserListings([]);
 			});
-	}, []);
+	}, [auth?.slug]);
 
 	const fetchAds = async () => {
 		setLoading(true);
@@ -100,6 +100,7 @@ const FeaturedAdsDashboard = () => {
 				startDate: dayjs().format("YYYY-MM-DD"),
 				endDate: dayjs().add(7, "day").format("YYYY-MM-DD"),
 			});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			showSnackbar(err.response?.data?.message || "حدث خطأ", "error");
 		} finally {

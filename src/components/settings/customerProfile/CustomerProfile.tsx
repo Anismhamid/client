@@ -8,11 +8,11 @@ import {
 	Container,
 	Paper,
 } from "@mui/material";
-import {FunctionComponent, useEffect, useState, SyntheticEvent} from "react";
-import {useNavigate, useParams} from "react-router-dom";
-import {User} from "../../../interfaces/usersMessages";
-import {getCustomerProfileBySlug} from "../../../services/usersServices";
-import {getCustomerProfileProductsBySlug} from "../../../services/postsServices";
+import { FunctionComponent, useEffect, useState, SyntheticEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { User } from "../../../interfaces/usersMessages";
+import { getCustomerProfileBySlug } from "../../../services/usersServices";
+import { getCustomerProfilePostsBySlug } from "../../../services/postsServices";
 import {
 	Visibility,
 	Star,
@@ -21,31 +21,31 @@ import {
 	// Comment,
 	ArrowBack,
 } from "@mui/icons-material";
-import {Products} from "../../../interfaces/Posts";
-import {motion} from "framer-motion";
-import {showSuccess, showError} from "../../../atoms/toasts/ReactToast";
-import {path} from "../../../routes/routes";
+import { Posts } from "../../../interfaces/Posts";
+import { motion } from "framer-motion";
+import { showSuccess, showError } from "../../../atoms/toasts/ReactToast";
+import { path } from "../../../routes/routes";
 import JsonLd from "../../../../utils/JsonLd";
 import handleRTL from "../../../locales/handleRTL";
 import TabPanel from "./taps/TabPanel";
 import ProductsTab from "./taps/ProductsTap";
 import CustomTabs from "./taps/Tabs";
 import ContactInfoTab from "./taps/ContactInfoTab";
-import {initStats, Stats} from "./types/states";
+import { initStats, Stats } from "./types/states";
 import RatingsTab from "./taps/RatingsTab";
 import ContactTab from "./taps/ContactTab";
 import UserInformation from "./taps/UserInformation";
 import CustomerProfileHeader from "./CustomerProfileHeader";
-import {AuthValues} from "../../../interfaces/authValues";
+import { AuthValues } from "../../../interfaces/authValues";
 import { useUser } from "../../../context/useUSer";
 
 const CustomerProfile: FunctionComponent = () => {
-	const {slug} = useParams<{slug: string}>();
+	const { slug } = useParams<{ slug: string }>();
 	const navigate = useNavigate();
-	const {isLoggedIn} = useUser();
+	const { isLoggedIn } = useUser();
 
 	const [user, setUser] = useState<User | null>(null);
-	const [products, setProducts] = useState<Products[]>([]);
+	const [posts, setPosts] = useState<Posts[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [wishlist, setWishlist] = useState<Set<string>>(new Set());
 	const [tabValue, setTabValue] = useState(0);
@@ -79,19 +79,19 @@ const CustomerProfile: FunctionComponent = () => {
 			try {
 				const [profile, productsData] = await Promise.all([
 					getCustomerProfileBySlug(slug),
-					getCustomerProfileProductsBySlug(slug),
+					getCustomerProfilePostsBySlug(slug),
 				]);
 
 				setUser(profile);
-				setProducts(productsData);
+				setPosts(productsData);
 
 				// حساب الإحصائيات
 				const totalLikes = productsData.reduce(
-					(sum, product) => sum + (product.likes?.length || 0),
+					(sum, post) => sum + (post.likes?.length || 0),
 					0,
 				);
 				const totalViews = productsData.reduce(
-					(sum, product) => sum + (product.views || 0),
+					(sum, post) => sum + (Number(post.views) || 0),
 					0,
 				);
 
@@ -110,8 +110,7 @@ const CustomerProfile: FunctionComponent = () => {
 		};
 
 		fetchData();
-		console.log(products);
-	}, [slug]);
+	}, [slug,posts]);
 
 	const handleShareProfile = () => {
 		if (navigator.share) {
@@ -156,8 +155,8 @@ const CustomerProfile: FunctionComponent = () => {
 				gap={3}
 			>
 				<motion.div
-					animate={{rotate: 360}}
-					transition={{duration: 2, repeat: Infinity, ease: "linear"}}
+					animate={{ rotate: 360 }}
+					transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
 				>
 					<CircularProgress size={60} />
 				</motion.div>
@@ -170,9 +169,9 @@ const CustomerProfile: FunctionComponent = () => {
 
 	if (!user) {
 		return (
-			<Container maxWidth='md' sx={{py: 8, textAlign: "center"}}>
-				<Card sx={{p: 4, borderRadius: 3}}>
-					<Box sx={{fontSize: 80, mb: 3}}>😔</Box>
+			<Container maxWidth='md' sx={{ py: 8, textAlign: "center" }}>
+				<Card sx={{ p: 4, borderRadius: 3 }}>
+					<Box sx={{ fontSize: 80, mb: 3 }}>😔</Box>
 					<Typography variant='h5' color='text.secondary' gutterBottom>
 						المستخدم غير موجود
 					</Typography>
@@ -183,7 +182,7 @@ const CustomerProfile: FunctionComponent = () => {
 						variant='contained'
 						startIcon={<ArrowBack />}
 						onClick={() => navigate(-1)}
-						sx={{mt: 2}}
+						sx={{ mt: 2 }}
 					>
 						العودة للخلف
 					</Button>
@@ -199,7 +198,7 @@ const CustomerProfile: FunctionComponent = () => {
 			<title>{`منتجات ${user.name?.first} ${user.name?.last} للبيع في ${user.address?.city || "كافة البلاد"} | صفقة`}</title>
 			<meta
 				name='description'
-				content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${products.length} منتجات تشمل ${products
+				content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${posts.length} منتجات تشمل ${posts
 					.slice(0, 3)
 					.map((p) => p.product_name)
 					.join("، ")}. بيع وشراء آمن عبر صفقة.`}
@@ -232,13 +231,13 @@ const CustomerProfile: FunctionComponent = () => {
 							description: `قائمة المنتجات المعروضة بواسطة ${user.name?.first} على منصة صفقة`,
 							mainEntity: {
 								"@type": "ItemList",
-								numberOfItems: products.length,
-								itemListElement: products.map((product, index) => ({
+								numberOfItems: posts.length,
+								itemListElement: posts.map((post, index) => ({
 									"@type": "ListItem",
 									position: index + 1,
-									url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
-									name: product.product_name,
-									image: product.image?.url,
+									url: `${window.location.origin}/product-details/${post.category}/${post.brand}/${post._id}`,
+									name: post.product_name,
+									image: post.image?.url,
 								})),
 							},
 						},
@@ -246,14 +245,14 @@ const CustomerProfile: FunctionComponent = () => {
 				}}
 			/>
 
-			<Container dir={dir} maxWidth='lg' sx={{py: 4}}>
+			<Container dir={dir} maxWidth='lg' sx={{ py: 4 }}>
 				<CustomerProfileHeader
 					dir={dir}
 					handleContactSeller={handleContactSeller}
 					handleShareProfile={handleShareProfile}
 					handleWhatsApp={handleWhatsApp}
 					navigate={navigate}
-					products={products}
+					products={posts}
 					slug={slug as string}
 					stats={stats}
 					user={user}
@@ -261,14 +260,14 @@ const CustomerProfile: FunctionComponent = () => {
 
 				{/* Stats Section */}
 				<motion.div
-					initial={{opacity: 0, y: 20}}
-					animate={{opacity: 1, y: 0}}
-					transition={{duration: 0.5, delay: 0.1}}
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5, delay: 0.1 }}
 				>
-					<Grid container spacing={2} sx={{mb: 4}}>
-						<Grid size={{xs: 6, sm: 3}}>
-							<Paper sx={{p: 2, textAlign: "center", borderRadius: 2}}>
-								<ThumbUp color='primary' sx={{fontSize: 40, mb: 1}} />
+					<Grid container spacing={2} sx={{ mb: 4 }}>
+						<Grid size={{ xs: 6, sm: 3 }}>
+							<Paper sx={{ p: 2, textAlign: "center", borderRadius: 2 }}>
+								<ThumbUp color='primary' sx={{ fontSize: 40, mb: 1 }} />
 								<Typography variant='h4' fontWeight='bold'>
 									{stats.totalLikes}
 								</Typography>
@@ -277,9 +276,9 @@ const CustomerProfile: FunctionComponent = () => {
 								</Typography>
 							</Paper>
 						</Grid>
-						<Grid size={{xs: 6, sm: 3}}>
-							<Paper sx={{p: 2, textAlign: "center", borderRadius: 2}}>
-								<Visibility color='info' sx={{fontSize: 40, mb: 1}} />
+						<Grid size={{ xs: 6, sm: 3 }}>
+							<Paper sx={{ p: 2, textAlign: "center", borderRadius: 2 }}>
+								<Visibility color='info' sx={{ fontSize: 40, mb: 1 }} />
 								<Typography variant='h4' fontWeight='bold'>
 									{stats.totalViews}
 								</Typography>
@@ -288,9 +287,9 @@ const CustomerProfile: FunctionComponent = () => {
 								</Typography>
 							</Paper>
 						</Grid>
-						<Grid size={{xs: 6, sm: 3}}>
-							<Paper sx={{p: 2, textAlign: "center", borderRadius: 2}}>
-								<LocalOffer color='success' sx={{fontSize: 40, mb: 1}} />
+						<Grid size={{ xs: 6, sm: 3 }}>
+							<Paper sx={{ p: 2, textAlign: "center", borderRadius: 2 }}>
+								<LocalOffer color='success' sx={{ fontSize: 40, mb: 1 }} />
 								<Typography variant='h4' fontWeight='bold'>
 									{stats.totalProducts}
 								</Typography>
@@ -299,9 +298,9 @@ const CustomerProfile: FunctionComponent = () => {
 								</Typography>
 							</Paper>
 						</Grid>
-						<Grid size={{xs: 6, sm: 3}}>
-							<Paper sx={{p: 2, textAlign: "center", borderRadius: 2}}>
-								<Star color='warning' sx={{fontSize: 40, mb: 1}} />
+						<Grid size={{ xs: 6, sm: 3 }}>
+							<Paper sx={{ p: 2, textAlign: "center", borderRadius: 2 }}>
+								<Star color='warning' sx={{ fontSize: 40, mb: 1 }} />
 								<Typography variant='h4' fontWeight='bold'>
 									{stats.rating}
 								</Typography>
@@ -314,7 +313,7 @@ const CustomerProfile: FunctionComponent = () => {
 				</motion.div>
 
 				{/* Tabs Section */}
-				<Card sx={{mb: 4, borderRadius: 3}}>
+				<Card sx={{ mb: 4, borderRadius: 3 }}>
 					<CustomTabs handleTabChange={handleTabChange} tabValue={tabValue} />
 
 					{/* Products */}
@@ -322,7 +321,7 @@ const CustomerProfile: FunctionComponent = () => {
 						<ProductsTab
 							toggleWishlist={toggleWishlist}
 							wishlist={wishlist}
-							products={products}
+							products={posts}
 							tabValue={tabValue}
 							user={user}
 						/>

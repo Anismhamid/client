@@ -13,8 +13,8 @@ import {
 	Typography,
 	useTheme,
 } from "@mui/material";
-import {motion} from "framer-motion";
-import {FunctionComponent, useState} from "react";
+import { motion } from "framer-motion";
+import { FunctionComponent, useState } from "react";
 import {
 	Share,
 	Phone,
@@ -27,13 +27,13 @@ import {
 	ArrowRight,
 	ArrowLeft,
 } from "@mui/icons-material";
-import {NavigateFunction} from "react-router-dom";
-import {useTranslation} from "react-i18next";
-import {User} from "../../../interfaces/usersMessages";
-import {Stats} from "./types/states";
-import {Products} from "../../../interfaces/Posts";
+import { NavigateFunction } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { User } from "../../../interfaces/usersMessages";
+import { Stats } from "./types/states";
+import { Posts } from "../../../interfaces/Posts";
 import ChatBoxWrapper from "../../pages/chatBox/ChatBoxWrapper";
-import {useUser} from "../../../context/useUSer";
+import { useUser } from "../../../context/useUSer";
 
 interface CustomerProfileHeaderProps {
 	handleShareProfile: () => void;
@@ -41,8 +41,8 @@ interface CustomerProfileHeaderProps {
 	user: User;
 	slug: string;
 	stats: Stats;
-	products: Products[];
-	handleContactSeller: Function;
+	products: Posts[];
+	handleContactSeller: () => void;
 	handleWhatsApp: () => void;
 	dir: "ltr" | "rtl";
 }
@@ -58,17 +58,17 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 	dir,
 }) => {
 	const theme = useTheme();
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const [openChat, setOpenChat] = useState<boolean>(false);
-	const {auth} = useUser();
+	const { auth } = useUser();
 
 	return (
 		<>
 			{/* ENHANCED PROFILE HEADER */}
 			<motion.div
-				initial={{opacity: 0, y: 20}}
-				animate={{opacity: 1, y: 0}}
-				transition={{duration: 0.2}}
+				initial={{ opacity: 0, y: 20 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.2 }}
 			>
 				<Card
 					sx={{
@@ -103,13 +103,13 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 					>
 						{t("common.back")}
 					</Button>
-					<CardContent sx={{p: {xs: 2, md: 3}}}>
+					<CardContent sx={{ p: { xs: 2, md: 3 } }}>
 						<Grid container alignItems='center' spacing={3}>
 							{/* Avatar Section */}
-							<Grid size={{xs: 12, md: "auto"}} m={6}>
+							<Grid size={{ xs: 12, md: "auto" }} m={6}>
 								<Box
 									position='relative'
-									sx={{display: "flex", justifyContent: "center"}}
+									sx={{ display: "flex", justifyContent: "center" }}
 								>
 									<Badge
 										overlap='circular'
@@ -132,8 +132,8 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										<Avatar
 											src={user.image?.url}
 											sx={{
-												width: {xs: 150, md: 200},
-												height: {xs: 150, md: 200},
+												width: { xs: 150, md: 200 },
+												height: { xs: 150, md: 200 },
 												border: `2px solid ${theme.palette.background.paper}`,
 												boxShadow: 3,
 												bgcolor: theme.palette.primary.main,
@@ -153,7 +153,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 							</Grid>
 
 							{/* User Info */}
-							<Grid size={{xs: 12, md: 6}}>
+							<Grid size={{ xs: 12, md: 6 }}>
 								<Typography variant='h4' fontWeight='bold' gutterBottom>
 									{`${user.name?.first || ""} ${user.name?.last || ""}`.trim() ||
 										t("unknownUser")}
@@ -184,7 +184,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										label='بائع معتمد'
 										size='small'
 										color='primary'
-										sx={{p: 2}}
+										sx={{ p: 2 }}
 										variant='outlined'
 									/>
 									{user.role === "Admin" && (
@@ -222,11 +222,11 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 									variant='body2'
 									color='text.secondary'
 									aria-label={`${t("common.countOfPosts")} ${products.length}`}
-									sx={{mb: 2}}
+									sx={{ mb: 2 }}
 								>
 									{t("common.countOfPosts")}
 									<Chip
-										sx={{mx: 1}}
+										sx={{ mx: 1 }}
 										color='success'
 										label={products.length}
 										variant='outlined'
@@ -249,7 +249,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 											icon={<Phone />}
 											label={user.phone.phone_1}
 											variant='outlined'
-											sx={{p: 1}}
+											sx={{ p: 1 }}
 											size='small'
 										/>
 									)}
@@ -258,7 +258,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 											icon={<LocationOn />}
 											label={user.address.city}
 											variant='outlined'
-											sx={{p: 1}}
+											sx={{ p: 1 }}
 											size='small'
 										/>
 									)}
@@ -266,7 +266,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 							</Grid>
 
 							{/* Action Buttons */}
-							<Grid size={{xs: 12, md: 6}}>
+							<Grid size={{ xs: 12, md: 6 }}>
 								<Stack spacing={2}>
 									<Button
 										variant='contained'
@@ -295,7 +295,6 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 													_id: user._id,
 													first: user.name.first,
 													last: user.name.last,
-													otherUser: null,
 													from: {
 														_id: user._id,
 														first: user.name.first,
@@ -321,7 +320,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										variant='outlined'
 										size='large'
 										fullWidth
-										sx={{gap: 1}}
+										sx={{ gap: 1 }}
 										startIcon={<WhatsApp />}
 										onClick={handleWhatsApp}
 										color='success'
@@ -332,7 +331,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										variant='outlined'
 										size='large'
 										fullWidth
-										sx={{gap: 1}}
+										sx={{ gap: 1 }}
 										startIcon={<Share />}
 										onClick={handleShareProfile}
 									>
