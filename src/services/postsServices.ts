@@ -45,9 +45,9 @@ export const getRelatedPosts = async (
 };
 
 // نسخة متقدمة مع فلترة وترتيب
-export const getRelatedPostssAdvanced = async (
+export const getRelatedPostsAdvanced = async (
     category: string,
-    currentProductId?: string,
+    currentPostId?: string,
     options?: {
         limit?: number;
         sortBy?: 'price' | 'rating' | 'createdAt';
@@ -64,16 +64,16 @@ export const getRelatedPostssAdvanced = async (
             ...(options?.sortOrder && { sortOrder: options.sortOrder }),
             ...(options?.minPrice && { minPrice: options.minPrice.toString() }),
             ...(options?.maxPrice && { maxPrice: options.maxPrice.toString() }),
-            ...(currentProductId && { excludeId: currentProductId }),
+            ...(currentPostId && { excludeId: currentPostId }),
         });
 
         const response = await axios.get(
-            `${api}/products/related?${params.toString()}`,
+            `${api}/postss/related?${params.toString()}`,
         );
 
-        return response.data?.products || response.data?.data || [];
+        return response.data?.posts || response.data?.data || [];
     } catch (error) {
-        console.error('Error in getRelatedProductsAdvanced:', error);
+        console.error('Error in getRelatedPostsAdvanced:', error);
         return [];
     }
 };

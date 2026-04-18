@@ -1,4 +1,3 @@
-import React from "react";
 import {memo, FunctionComponent} from "react";
 
 interface JsonLdProps {

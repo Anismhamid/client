@@ -342,7 +342,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 						{/* اسم المنتج والسعر */}
 						<Box sx={{ mb: 1.5 }}>
 							<Link
-								to={`${productsPathes.productDetails}/${post.category}/${post.brand}/${post._id}`}
+								to={`${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`}
 								style={{ textDecoration: "none", color: "inherit" }}
 							>
 								<Typography
@@ -378,7 +378,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											showError("هذا المنتج غير متوفر حالياً");
 										}
 									}}
-									to={`${productsPathes.productDetails}/${post.category}/${post.brand}/${post._id}`}
+									to={`${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`}
 									aria-label={`تفاصيل عن ${post.product_name}`}
 									style={{ display: "block" }}
 								>

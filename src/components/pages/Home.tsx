@@ -455,12 +455,12 @@ const Home: FunctionComponent = () => {
 														}}
 													>
 														<PostCard
-															product={product}
+															post={product}
 															discountedPrice={
 																discountedPrice
 															}
 															canEdit={canEdit}
-															setProductIdToUpdate={
+															setPostIdToUpdate={
 																setProductIdToUpdate
 															}
 															onShowUpdateProductModal={

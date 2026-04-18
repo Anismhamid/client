@@ -115,8 +115,9 @@ const PostDetails: FunctionComponent = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 	const [isSharing, setIsSharing] = useState<boolean>(false);
 
+
 	const sellerDisplayName =
-		post.userData?.name.first || post.userData?.name.last || t("product.seller") || "بائع";
+		post?.userData?.name?.first || post.userData?.name?.last || t("product.seller") || "بائع";
 	const categoryLabel = post.category
 		? categoryLabels[post.category] || t(post.category)
 		: t("product.category") || "التصنيف";
@@ -264,16 +265,12 @@ const PostDetails: FunctionComponent = () => {
 	}, [navigate, postId]);
 
 	useEffect(() => {
-		if (post.category && post._id) {
-			getRelatedPosts(post.category, post._id, 4)
-				.then((res) => {
-					console.log("RELATED:", res); // 👈 مهم
-					setRelatedProducts(res);
-				})
-				.catch((err) => console.error("Error fetching related products:", err));
-		}
-	}, [post._id, post.category]);
+		if (!post._id || !post.category) return;
 
+		getRelatedPosts(post.category, post._id, 4)
+			.then(setRelatedProducts)
+			.catch(console.error);
+	}, [post._id, post.category]);
 
 	if (loading) {
 		return (
@@ -780,20 +777,13 @@ const PostDetails: FunctionComponent = () => {
 									title='منتجات ذات صلة'
 									subtitle='اكتشف منتجات أخرى قد تعجبك بناءً على اهتماماتك.'
 								/>
+
 								<Grid container spacing={3}>
-									{relatedProducts.length === 0 ? (
-										<Typography color="text.secondary">
-											لا توجد منتجات مشابهة حالياً
-										</Typography>
-									) : (
-										<Grid container spacing={3}>
-											{relatedProducts.map((product) => (
-												<Grid key={product._id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-													<RelatedProductCard product={product} />
-												</Grid>
-											))}
+									{relatedProducts.map((product) => (
+										<Grid key={product._id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+											<RelatedProductCard product={product} />
 										</Grid>
-									)}
+									))}
 								</Grid>
 							</Box>
 						)}

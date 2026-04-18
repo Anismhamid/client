@@ -18,7 +18,7 @@ const Register = lazy(() => import("../components/settings/register/Register"));
 const TermOfUse = lazy(() => import("../components/pages/TermOfUse"));
 const AdminSettings = lazy(() => import("../components/settings/AdminSettengs"));
 const Profile = lazy(() => import("../components/settings/profile/Profile"));
-const ProducDetails = lazy(() => import("../components/pages/products/PostDetails"));
+const PostDetails = lazy(() => import("../components/pages/products/PostDetails"));
 const Products = lazy(() => import("../components/pages/products/Posts"));
 const Messages = lazy(() => import("../components/settings/Messages"));
 const WebSiteAdmins = lazy(() => import("../components/settings/WebSiteAdmins"));
@@ -82,12 +82,12 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({auth}) => {
 			<Route path='/category/:category/*' element={<Products />} />
 
 			<Route
-				path={`${productsPathes.productDetails}/:category/:brand/:productId`}
-				element={<ProducDetails />}
+				path={`${productsPathes.postsDetails}/:category/:brand/:postId`}
+				element={<PostDetails />}
 			/>
 			<Route
-				path={`${productsPathes.productDetails}/:productId`}
-				element={<ProducDetails />}
+				path={`${productsPathes.postsDetails}/:postId`}
+				element={<PostDetails />}
 			/>
 			<Route path={`${path.DiscountsAndOffers}`} element={<DiscountsAndOffers />} />
 
