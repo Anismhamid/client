@@ -1,5 +1,3 @@
-/* eslint-disable no-empty */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { Posts } from '../interfaces/Posts';
@@ -8,83 +6,46 @@ import { showError } from '../atoms/toasts/ReactToast';
 const api = `${import.meta.env.VITE_API_URL}`;
 
 /**
- * Gets a specific product by name
- * @param productName - The name of the product to fetch
- * @returns The product data if found, or null if there's an error or product not found
+ * Gets a specific post by name
+ * @param postName - The name of the post to fetch
+ * @returns The post data if found, or null if there's an error or post not found
  */
-export const getProductById = async (product_id: string) => {
+export const getPostById = async (post_id: string) => {
     try {
-        const product = await axios.get(
-            `${api}/products/spicific/${product_id}`,
-            {
-                headers: { Authorization: localStorage.getItem('token') },
-            },
-        );
-        return product.data;
+        const post = await axios.get(`${api}/posts/spicific/${post_id}`, {
+            headers: { Authorization: localStorage.getItem('token') },
+        });
+        return post.data;
     } catch (error) {
         console.log(error);
         return null;
     }
 };
 
-export const getRelatedProducts = async (
+export const getRelatedPosts = async (
     category: string,
-    currentProductId?: string,
+    currentPostId?: string,
     limit: number = 4,
 ): Promise<Posts[]> => {
     try {
-        // بناء الـ query params بشكل صحيح
         const params = new URLSearchParams({
-            category: category,
+            ...(currentPostId && { excludeId: currentPostId }),
             limit: limit.toString(),
-            ...(currentProductId && { excludeId: currentProductId }), // استبعاد المنتج الحالي
         });
 
         const response = await axios.get(
-            `${api}/products?${params.toString()}`,
+            `${api}/posts/related-posts/${category}?${params.toString()}`,
         );
 
-        // التحقق من هيكل البيانات المرجعة
-        if (response.data && Array.isArray(response.data)) {
-            return response.data;
-        }
-
-        // إذا كان الـ API يعيد البيانات في شكل مختلف
-        if (response.data?.products && Array.isArray(response.data.products)) {
-            return response.data.products;
-        }
-
-        // إذا كان الـ API يعيد بيانات داخل data
-        if (response.data?.data && Array.isArray(response.data.data)) {
-            return response.data.data;
-        }
-
-        return [];
+        return response.data || [];
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Error fetching related products:', {
-                status: error.response?.status,
-                message: error.message,
-                category,
-            });
-
-            // يمكن إضافة رسائل خطأ مخصصة حسب الحالة
-            if (error.response?.status === 404) {
-                console.warn(`No products found for category: ${category}`);
-            } else if (error.response?.status === 500) {
-                console.error('Server error while fetching related products');
-            }
-        } else {
-            console.error('Unexpected error:', error);
-        }
-
-        // نعيد مصفوفة فارغة بدلاً من undefined لتجنب أخطاء في الـ UI
+        console.error(error);
         return [];
     }
 };
 
 // نسخة متقدمة مع فلترة وترتيب
-export const getRelatedProductsAdvanced = async (
+export const getRelatedPostssAdvanced = async (
     category: string,
     currentProductId?: string,
     options?: {
@@ -118,27 +79,20 @@ export const getRelatedProductsAdvanced = async (
 };
 
 /**
- * Update product by id
- * @param productId - The id of the product to update
- * @param updatedProduct - The updated product data
- * @returns The updated product if successful, or null if there's an error
+ * Update post by id
+ * @param postId - The id of the post to update
+ * @param updatedPost - The updated post data
+ * @returns The updated post if successful, or null if there's an error
  */
-export const updateProduct = async (
-    productId: string,
-    updatedProduct: Posts,
-) => {
+export const updatePost = async (postId: string, updatedPost: Posts) => {
     try {
-        const product = await axios.put(
-            `${api}/products/${productId}`,
-            updatedProduct,
-            {
-                headers: {
-                    Authorization: localStorage.getItem('token'),
-                    'Content-Type': 'application/json',
-                },
+        const post = await axios.put(`${api}/Posts/${postId}`, updatedPost, {
+            headers: {
+                Authorization: localStorage.getItem('token'),
+                'Content-Type': 'application/json',
             },
-        );
-        return product.data;
+        });
+        return post.data;
     } catch (error) {
         console.log(error);
         return null;
@@ -146,12 +100,12 @@ export const updateProduct = async (
 };
 
 /**
- * Get all products from all categories
- * @returns An array of products, or an empty array if there's an error
+ * Get all Posts from all categories
+ * @returns An array of Posts, or an empty array if there's an error
  */
-export const getAllProducts = async () => {
+export const getAllPosts = async () => {
     try {
-        const response = await axios.get(`${api}/products`);
+        const response = await axios.get(`${api}/posts`);
         if (Array.isArray(response.data)) return response.data;
         return [];
     } catch (error: any) {
@@ -161,13 +115,13 @@ export const getAllProducts = async () => {
 };
 
 /**
- * Create a new product
- * @param products - Product data to be created
- * @returns The created product if successful, or null if there's an error
+ * Create a new post
+ * @param Posts - post data to be created
+ * @returns The created post if successful, or null if there's an error
  */
-export const createNewPost = async (product: Posts) => {
+export const createNewPost = async (post: Posts) => {
     try {
-        const response = await axios.post(`${api}/products`, product, {
+        const response = await axios.post(`${api}/posts`, post, {
             headers: {
                 Authorization: localStorage.getItem('token'),
                 'Content-Type': 'application/json',
@@ -188,10 +142,10 @@ export const createNewPost = async (product: Posts) => {
 };
 
 /**
- * Get products in discount limit (6 items)
- * @returns An array of products on discount, or an empty array if there's an error
+ * Get posts in discount limit (6 items)
+ * @returns An array of posts on discount, or an empty array if there's an error
  */
-export async function getProductsInDiscount() {
+export async function getPostsInDiscount() {
     try {
         const response = await axios.get(`${api}/discounts`);
         return response.data;
@@ -202,13 +156,13 @@ export async function getProductsInDiscount() {
 }
 
 /**
- * Delete product by name
- * @param productName - The name of the product to delete
- * @returns The deleted product if successful, or null if there's an error
+ * Delete post by name
+ * @param productName - The name of the post to delete
+ * @returns The deleted post if successful, or null if there's an error
  */
-export async function deleteProduct(productId: string) {
+export async function deletePost(postId: string) {
     try {
-        const response = await axios.delete(`${api}/products/${productId}`, {
+        const response = await axios.delete(`${api}/posts/${postId}`, {
             headers: {
                 Authorization: localStorage.getItem('token'),
             },
@@ -217,10 +171,10 @@ export async function deleteProduct(productId: string) {
         return response.data;
     } catch (error) {
         if (axios.isAxiosError(error)) {
-            console.error('Delete product error:', {
+            console.error('Delete post error:', {
                 status: error.response?.status,
                 message: error.response?.data || error.message,
-                productId,
+                postId,
             });
             throw new Error(error.response?.data || error.message);
         }
@@ -229,13 +183,13 @@ export async function deleteProduct(productId: string) {
 }
 
 /**
- * Get products by category name
- * @param category - The name of the category to fetch products for
- * @returns Array of products if successful, or an empty array if there's an error
+ * Get posts by category name
+ * @param category - The name of the category to fetch posts for
+ * @returns Array of posts if successful, or an empty array if there's an error
  */
-export const getProductsByCategory = async (category: string) => {
+export const getpostsByCategory = async (category: string) => {
     try {
-        const response = await axios.get(`${api}/products/${category}`);
+        const response = await axios.get(`${api}/posts/${category}`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -244,11 +198,11 @@ export const getProductsByCategory = async (category: string) => {
     }
 };
 
-export const getCustomerProfileProductsBySlug = async (
+export const getCustomerProfilePostsBySlug = async (
     slug: string,
 ): Promise<Posts[]> => {
     try {
-        const res = await axios.get(`${api}/products/customer/${slug}`);
+        const res = await axios.get(`${api}/posts/customer/${slug}`);
         return res.data;
     } catch (err) {
         console.log(err);
@@ -257,11 +211,11 @@ export const getCustomerProfileProductsBySlug = async (
     }
 };
 
-export const toggleLike = async (productId: string) => {
+export const toggleLike = async (postId: string) => {
     const token = localStorage.getItem('token');
     try {
         const res = await axios.patch(
-            `${api}/products/${productId}/like`,
+            `${api}/posts/${postId}/like`,
             {},
             {
                 headers: { Authorization: token },

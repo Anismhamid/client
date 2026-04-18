@@ -1,18 +1,18 @@
 // atoms/LikeButton.tsx
-import {FunctionComponent, useCallback, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {IconButton, CircularProgress, Typography} from "@mui/material";
+import { FunctionComponent, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { IconButton, CircularProgress, Typography } from "@mui/material";
 import {
 	Favorite as FavoriteIcon,
 	FavoriteBorder as FavoriteBorderIcon,
 } from "@mui/icons-material";
-import {useUser} from "../../context/useUSer";
-import {handleLike, HandleLikeParams} from "../../helpers/handleLike";
-import {Products} from "../../interfaces/Posts";
+import { useUser } from "../../context/useUSer";
+import { handleLike, HandleLikeParams } from "../../helpers/handleLike";
+import { Posts } from "../../interfaces/Posts";
 
 interface LikeButtonProps {
-	product: Products;
-	setProduct?: (updater: (prev: Products) => Products) => void;
+	product: Posts;
+	setProduct?: (updater: (prev: Posts) => Posts) => void;
 	onLikeToggle?: (productId: string, liked: boolean) => void;
 }
 
@@ -23,11 +23,12 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 }) => {
 	const [isLiking, setIsLiking] = useState(false);
 	const navigate = useNavigate();
-	const {isLoggedIn, auth} = useUser();
+	const { isLoggedIn, auth } = useUser();
 	const defaultSound = new Audio("/Like-Sound-Effect (mp3cut.net).mp3");
 
 	const playNotificationSound = useCallback(() => {
 		let audio: HTMLAudioElement;
+		// eslint-disable-next-line prefer-const
 		audio = defaultSound;
 		audio.play().catch(console.error);
 	}, []);
@@ -73,7 +74,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 		>
 			{isLiking ? (
 				<>
-					<FavoriteBorderIcon sx={{opacity: 0.3}} />
+					<FavoriteBorderIcon sx={{ opacity: 0.3 }} />
 					<CircularProgress
 						size={20}
 						sx={{
@@ -92,9 +93,9 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 							color: "error.main",
 							animation: "pulse 0.3s ease-in-out",
 							"@keyframes pulse": {
-								"0%": {transform: "scale(1)"},
-								"50%": {transform: "scale(1.5)"},
-								"100%": {transform: "scale(1)"},
+								"0%": { transform: "scale(1)" },
+								"50%": { transform: "scale(1.5)" },
+								"100%": { transform: "scale(1)" },
 							},
 						}}
 					/>
@@ -112,7 +113,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
 			) : (
 				<>
 					<FavoriteBorderIcon />
-					<Typography sx={{ml: 0.5, fontSize: "0.875rem"}}>
+					<Typography sx={{ ml: 0.5, fontSize: "0.875rem" }}>
 						{product.likes?.length ?? 0}
 					</Typography>
 				</>

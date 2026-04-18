@@ -1,6 +1,6 @@
 // hooks/useUserProducts.ts
 import {useEffect, useState} from "react";
-import {getCustomerProfileProductsBySlug} from "../services/postsServices";
+import {getCustomerProfilePostsBySlug} from "../services/postsServices";
 import {Posts} from "../interfaces/Posts";
 
 export const useUserProducts = (slug: string) => {
@@ -13,7 +13,7 @@ export const useUserProducts = (slug: string) => {
 
 		const fetch = async () => {
 			try {
-				const products = await getCustomerProfileProductsBySlug(slug);
+				const products = await getCustomerProfilePostsBySlug(slug);
 				setUserProducts(products);
 			} catch {
 				setError("Failed to load products");

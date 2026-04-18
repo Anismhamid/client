@@ -1,13 +1,13 @@
-import {useFormik} from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
-import {useTranslation} from "react-i18next";
-import {createNewPost} from "../services/postsServices";
-import {Products} from "../interfaces/Posts";
-import {useState} from "react";
-import {uploadImage} from "../services/uploadImage";
+import { useTranslation } from "react-i18next";
+import { createNewPost } from "../services/postsServices";
+import { Posts } from "../interfaces/Posts";
+import { useState } from "react";
+import { uploadImage } from "../services/uploadImage";
 
-const useAddProductFormik = (onHide: () => void) => {
-	const {t} = useTranslation();
+const useAddPostFormik = (onHide: () => void) => {
+	const { t } = useTranslation();
 	const [imageFile, setImageFile] = useState<File | null>(null);
 
 	const [imageData, setImageData] = useState<{
@@ -15,10 +15,10 @@ const useAddProductFormik = (onHide: () => void) => {
 		publicId: string;
 	} | null>(null);
 
-	const formik = useFormik<Products>({
+	const formik = useFormik<Posts>({
 		initialValues: {
 			product_name: "",
-			image: {url: "", publicId: ""},
+			image: { url: "", publicId: "" },
 			category: "House",
 			subcategory: "",
 			type: "",
@@ -56,7 +56,7 @@ const useAddProductFormik = (onHide: () => void) => {
 			discount: yup.number(),
 			location: yup.string(),
 		}),
-		onSubmit: async (values, {resetForm}) => {
+		onSubmit: async (values, { resetForm }) => {
 			try {
 				let uploadedImage = imageData;
 
@@ -69,10 +69,10 @@ const useAddProductFormik = (onHide: () => void) => {
 				}
 
 
-				const {seller, ...productData} = values;
+				const { seller, ...productData } = values;
 
 				console.log(productData);
-				
+
 
 				await createNewPost({
 					...productData,
@@ -80,8 +80,9 @@ const useAddProductFormik = (onHide: () => void) => {
 						url: uploadedImage?.url || "",
 						publicId: uploadedImage?.publicId || "",
 					},
+					seller: seller
 				});
-			
+
 				resetForm();
 				setImageFile(null);
 				setImageData(null);
@@ -91,7 +92,7 @@ const useAddProductFormik = (onHide: () => void) => {
 			}
 		},
 	});
-	return {formik, imageFile, setImageFile, imageData, setImageData};
+	return { formik, imageFile, setImageFile, imageData, setImageData };
 };
 
-export default useAddProductFormik;
+export default useAddPostFormik;

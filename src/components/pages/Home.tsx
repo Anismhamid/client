@@ -1,7 +1,7 @@
 import {FunctionComponent, useEffect, useMemo, useState} from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import {useUser} from "../../context/useUSer";
-import {deleteProduct, getAllProducts} from "../../services/postsServices";
+import {deletePost, getAllPosts} from "../../services/postsServices";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
@@ -103,7 +103,7 @@ const Home: FunctionComponent = () => {
 	};
 
 	useEffect(() => {
-		getAllProducts()
+		getAllPosts()
 			.then((products) => {
 				const safeProducts = Array.isArray(products) ? products : [];
 				setPosts(safeProducts);
@@ -172,7 +172,7 @@ const Home: FunctionComponent = () => {
 	}, [filteredProducts, visibleCount]);
 
 	const handleDelete = (product_name: string) => {
-		deleteProduct(product_name)
+		deletePost(product_name)
 			.then(() => {
 				setPosts((p) => p.filter((p) => p.product_name !== product_name));
 			})
@@ -800,7 +800,7 @@ const Home: FunctionComponent = () => {
 				{/* Modals */}
 				<UpdateProductModal
 					refresh={refreshAfterCange}
-					productId={productIdToUpdate}
+					postId={productIdToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}
 				/>

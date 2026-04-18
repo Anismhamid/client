@@ -1,31 +1,31 @@
 // shared/hooks/useProducts.ts
-import {useEffect, useRef, useState, useCallback} from "react";
-import {getAllProducts} from "../services/postsServices";
-import {Posts} from "../interfaces/Posts";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { getAllPosts } from "../services/postsServices";
+import { Posts } from "../interfaces/Posts";
 
 export const useProducts = () => {
-	const [products, setProducts] = useState<Posts[]>([]);
+	const [posts, setPosts] = useState<Posts[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 
 	const isMounted = useRef(true);
 
-	const fetchProducts = useCallback(async () => {
+	const fetchPostts = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
 
-			const data = await getAllProducts();
+			const data = await getAllPosts();
 
 			if (isMounted.current) {
-				setProducts(data);
+				setPosts(data);
 			}
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error(err);
 
 			if (isMounted.current) {
-				setError(err?.response?.data?.message || "Failed to load products");
+				setError(err?.response?.data?.message || "Failed to load posts");
 			}
 		} finally {
 			if (isMounted.current) {
@@ -37,20 +37,20 @@ export const useProducts = () => {
 	useEffect(() => {
 		isMounted.current = true;
 
-		fetchProducts();
+		fetchPostts();
 
 		return () => {
 			isMounted.current = false;
 		};
-	}, [fetchProducts]);
+	}, [fetchPostts]);
 
 	// 🔥 refetch function
 	const refetch = () => {
-		fetchProducts();
+		fetchPostts();
 	};
 
 	return {
-		products,
+		posts,
 		error,
 		loading,
 		refetch,

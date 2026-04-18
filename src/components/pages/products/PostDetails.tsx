@@ -46,7 +46,6 @@ import {
 	ZoomIn,
 	ZoomOut,
 } from "@mui/icons-material";
-import { deleteProduct, getProductById } from "../../../services/postsServices";
 import { initialProductValue, Posts } from "../../../interfaces/Posts";
 import { path } from "../../../routes/routes";
 import { formatPrice } from "../../../helpers/dateAndPriceFormat";
@@ -65,6 +64,8 @@ import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduc
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
 import { formatTimeAgo, generatePath } from "./helpers/helperFunctions";
+import RelatedProductCard from "./RelatedProductCard";
+import { deletePost, getPostById, getRelatedPosts } from "../../../services/postsServices";
 
 const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
@@ -88,12 +89,14 @@ const SectionTitle = memo(({ title, subtitle }: { title: string; subtitle?: stri
 	</Box>
 ));
 
+
+
 const PostDetails: FunctionComponent = () => {
 	const { t } = useTranslation();
 	const [post, setPost] = useState<Posts>(initialProductValue as Posts);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [error, setError] = useState<string>("");
-	const { productId } = useParams<{ productId: string }>();
+	const { postId } = useParams<{ postId: string }>();
 	const navigate = useNavigate();
 	const { isLoggedIn, auth } = useUser();
 	const theme = useTheme();
@@ -104,6 +107,7 @@ const PostDetails: FunctionComponent = () => {
 	const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 	const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 	const imageContainerRef = useRef<HTMLDivElement>(null);
+	const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]); // New state for related products
 
 	const [rating, setRating] = useState<number>(0);
 	const [comment, setComment] = useState("");
@@ -112,14 +116,14 @@ const PostDetails: FunctionComponent = () => {
 	const [isSharing, setIsSharing] = useState<boolean>(false);
 
 	const sellerDisplayName =
-		post.seller?.name || post.seller?.slug || t("product.seller") || "بائع";
+		post.userData?.name.first || post.userData?.name.last || t("product.seller") || "بائع";
 	const categoryLabel = post.category
 		? categoryLabels[post.category] || t(post.category)
 		: t("product.category") || "التصنيف";
 
 	const isOwner = useMemo(() => {
-		return auth?._id && post.seller?.user && auth._id === String(post.seller.user);
-	}, [auth?._id, post.seller?.user]);
+		return auth?._id && post.userData?._id && auth._id === String(post.userData?._id);
+	}, [auth?._id, post.userData?._id]);
 
 	const handleZoomIn = useCallback(() => {
 		setZoomLevel((prev) => Math.min(prev + 0.5, 3));
@@ -205,17 +209,17 @@ const PostDetails: FunctionComponent = () => {
 		}
 	}, [post.product_name]);
 
-	const handleDeleteProduct = useCallback(async () => {
-		if (!productId) return;
+	const handleDeletePost = useCallback(async () => {
+		if (!postId) return;
 
 		try {
-			await deleteProduct(productId);
+			await deletePost(postId);
 			showSuccess("تم حذف المنتج بنجاح");
 			navigate(-1);
 		} catch (deleteError) {
 			showError(deleteError as string);
 		}
-	}, [navigate, productId]);
+	}, [navigate, postId]);
 
 	const handleEditProduct = useCallback(() => {
 		setShowUpdateModal(true);
@@ -225,39 +229,51 @@ const PostDetails: FunctionComponent = () => {
 		setShowUpdateModal(false);
 	}, []);
 
-	const handleRefreshProduct = useCallback(() => {
-		if (!productId) return;
+	const handleRefreshPost = useCallback(() => {
+		if (!postId) return;
 
 		setLoading(true);
-		getProductById(productId)
+		getPostById(postId)
 			.then((res) => {
 				setPost(res);
 				setRating(res.rating || 0);
 			})
 			.catch(() => setError("حدث خطأ أثناء تحميل المنتج"))
 			.finally(() => setLoading(false));
-	}, [productId]);
+	}, [postId]);
 
 	useEffect(() => {
-		if (!productId) {
-			navigate(path.Home);
-			return;
-		}
+		// if (!postId) {
+		// 	navigate(path.Home);
+		// 	return;
+		// }
 
 		setLoading(true);
 		setError("");
 
-		getProductById(productId)
+		getPostById(postId as string)
 			.then((res) => {
 				setPost(res);
 				setRating(res.rating || 0);
 			})
 			.catch((fetchError) => {
-				console.error("Error fetching product:", fetchError);
-				setError("حدث خطأ أثناء تحميل المنتج");
+				console.error("Error fetching post:", fetchError);
+				setError("حدث خطأ أثناء تحميل المنشور");
 			})
 			.finally(() => setLoading(false));
-	}, [navigate, productId]);
+	}, [navigate, postId]);
+
+	useEffect(() => {
+		if (post.category && post._id) {
+			getRelatedPosts(post.category, post._id, 4)
+				.then((res) => {
+					console.log("RELATED:", res); // 👈 مهم
+					setRelatedProducts(res);
+				})
+				.catch((err) => console.error("Error fetching related products:", err));
+		}
+	}, [post._id, post.category]);
+
 
 	if (loading) {
 		return (
@@ -280,6 +296,7 @@ const PostDetails: FunctionComponent = () => {
 		);
 	}
 
+
 	if (!post?._id) {
 		return (
 			<Container maxWidth='md' sx={{ py: 8, textAlign: "center" }}>
@@ -294,6 +311,8 @@ const PostDetails: FunctionComponent = () => {
 		);
 	}
 
+
+
 	if (error) {
 		return (
 			<Container maxWidth='md' sx={{ py: 8, textAlign: "center" }}>
@@ -307,6 +326,7 @@ const PostDetails: FunctionComponent = () => {
 			</Container>
 		);
 	}
+
 
 	const productJsonLd = generateSingleProductJsonLd(post);
 	const currentUrl = `https://client-qqq1.vercel.app/product/${post.category}/${post._id}`;
@@ -754,13 +774,37 @@ const PostDetails: FunctionComponent = () => {
 								</Stack>
 							</Grid>
 						</Grid>
+						{relatedProducts.length > 0 && (
+							<Box sx={{ mt: 6 }}>
+								<SectionTitle
+									title='منتجات ذات صلة'
+									subtitle='اكتشف منتجات أخرى قد تعجبك بناءً على اهتماماتك.'
+								/>
+								<Grid container spacing={3}>
+									{relatedProducts.length === 0 ? (
+										<Typography color="text.secondary">
+											لا توجد منتجات مشابهة حالياً
+										</Typography>
+									) : (
+										<Grid container spacing={3}>
+											{relatedProducts.map((product) => (
+												<Grid key={product._id} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+													<RelatedProductCard product={product} />
+												</Grid>
+											))}
+										</Grid>
+									)}
+								</Grid>
+							</Box>
+						)}
 					</Stack>
 				</Container>
 			</Box>
 
 			<AlertDialogs
-				handleDelete={handleDeleteProduct}
+				handleDelete={handleDeletePost}
 				onHide={() => setShowDeleteModal(false)}
+
 				show={showDeleteModal}
 				title={`حذف ${post.product_name}`}
 				description={`هل أنت متأكد من حذف المنتج "${post.product_name}"؟`}
@@ -769,8 +813,8 @@ const PostDetails: FunctionComponent = () => {
 			<UpdateProductModal
 				show={showUpdateModal}
 				onHide={handleCloseUpdateModal}
-				productId={post._id as string}
-				refresh={handleRefreshProduct}
+				postId={post._id as string}
+				refresh={handleRefreshPost}
 			/>
 		</>
 	);

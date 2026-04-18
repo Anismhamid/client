@@ -29,39 +29,39 @@ import {
 	VisibilityRounded,
 	Report,
 } from "@mui/icons-material";
-import {Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef} from "react";
-import {generatePath, Link, useNavigate} from "react-router-dom";
-import {Posts} from "../../../interfaces/Posts";
-import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import {generateSingleProductJsonLd} from "../../../../utils/structuredData";
+import { Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef } from "react";
+import { generatePath, Link, useNavigate } from "react-router-dom";
+import { Posts } from "../../../interfaces/Posts";
+import { formatPrice } from "../../../helpers/dateAndPriceFormat";
+import { generateSingleProductJsonLd } from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import {showError, showSuccess} from "../../../atoms/toasts/ReactToast";
+import { showError, showSuccess } from "../../../atoms/toasts/ReactToast";
 import LikeButton from "../../../atoms/like/LikeButton";
-import {path, productsPathes} from "../../../routes/routes";
-import {formatTimeAgo} from "./helpers/helperFunctions";
+import { path, productsPathes } from "../../../routes/routes";
+import { formatTimeAgo } from "./helpers/helperFunctions";
 
 interface PostCardProps {
-	product: Posts;
+	post: Posts;
 	discountedPrice: number;
 	canEdit?: boolean;
-	setProductIdToUpdate: Dispatch<SetStateAction<string>>;
+	setPostIdToUpdate: Dispatch<SetStateAction<string>>;
 	onShowUpdateProductModal: () => void;
 	openDeleteModal: (name: string) => void;
 	setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadedImages: Record<string, boolean>;
 	category: string;
-	onLikeToggle?: (productId: string, liked: boolean) => void;
-	updateProductInList?: (updatedProduct: Posts) => void;
+	onLikeToggle?: (postId: string, liked: boolean) => void;
+	updateProductInList?: (updatedPost: Posts) => void;
 }
 
 const PostCard: FunctionComponent<PostCardProps> = memo(
 	({
-		product,
+		post,
 		discountedPrice,
 		canEdit,
-		setProductIdToUpdate,
+		setPostIdToUpdate,
 		onShowUpdateProductModal,
 		openDeleteModal,
 		// setLoadedImages,
@@ -69,7 +69,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		onLikeToggle,
 		updateProductInList,
 	}) => {
-		const {t} = useTranslation();
+		const { t } = useTranslation();
 		const theme = useTheme();
 		const dir = handleRTL();
 		const navigate = useNavigate();
@@ -79,11 +79,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 
 		const [expanded, setExpanded] = useState<boolean>(false);
 
-		const jsonLdData = generateSingleProductJsonLd(product);
+		const jsonLdData = generateSingleProductJsonLd(post);
 		const menuRef = useRef(null);
 
 		// const generateImageAlt = (product: Products) => {
-		// 	return `${product.product_name} - بيع وشراء في ${product.category}`;
+		// 	return `${post.product_name} - بيع وشراء في ${post.category}`;
 		// };
 
 		const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -95,13 +95,13 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		};
 
 		const handleShare = () => {
-			const shareUrl = `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`;
-			const shareText = `${product.product_name} - ${product.price} شيكل`;
+			const shareUrl = `${window.location.origin}/product-details/${post.category}/${post.brand}/${post._id}`;
+			const shareText = `${post.product_name} - ${post.price} شيكل`;
 
 			if (navigator.share) {
 				navigator
 					.share({
-						title: product.product_name,
+						title: post.product_name,
 						text: shareText,
 						url: shareUrl,
 					})
@@ -129,12 +129,12 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 
 		const setProduct = updateProductInList
 			? (updater: (prev: Posts) => Posts) => {
-					const updated = updater(product);
-					handleProductUpdate(updated);
-				}
+				const updated = updater(post);
+				handleProductUpdate(updated);
+			}
 			: undefined;
 
-		// const imageKey = product._id;
+		// const imageKey = post._id;
 		// TODO: Translate
 		return (
 			<Card
@@ -149,8 +149,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 					mb: 2,
 					overflow: "hidden",
 					// border: "1px solid #dddfe2",
-					cursor: product.in_stock === false ? "not-allowed" : "pointer",
-					filter: product.in_stock === false ? "grayscale(0.5)" : "none",
+					cursor: post.in_stock === false ? "not-allowed" : "pointer",
+					filter: post.in_stock === false ? "grayscale(0.5)" : "none",
 					"&:hover": {
 						boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
 					},
@@ -158,7 +158,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				itemScope
 				itemType='https://schema.org/Product'
 				role='article'
-				aria-label={`منتج: ${product.product_name}`}
+				aria-label={`منتج: ${post.product_name}`}
 			>
 				<JsonLd data={jsonLdData} />
 
@@ -181,14 +181,14 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				>
 					<Link
 						to={generatePath(path.CustomerProfile, {
-							slug: encodeURIComponent(product.seller?.slug ?? ""),
+							slug: encodeURIComponent(post.seller?.slug ?? ""),
 						})}
-						style={{textDecoration: "none"}}
+						style={{ textDecoration: "none" }}
 					>
-						<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+						<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
 							<Avatar
-								src={product.seller?.imageUrl}
-								alt={product.seller?.name || "بائع"}
+								src={post.seller?.imageUrl}
+								alt={post.seller?.name || "بائع"}
 								sx={{
 									width: 48,
 									height: 48,
@@ -207,7 +207,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								<Typography
 									variant='subtitle2'
 									fontWeight={600}
-									aria-label={`زيارة ملف ${product.seller?.name || "البائع"}`}
+									aria-label={`زيارة ملف ${post.seller?.name || "البائع"}`}
 									sx={{
 										borderColor: theme.palette.primary.main,
 										fontSize: "0.9375rem",
@@ -216,8 +216,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 										},
 									}}
 								>
-									{product.seller?.name ||
-										product.seller?.slug ||
+									{post.seller?.name ||
+										post.seller?.slug ||
 										"بائع"}
 								</Typography>
 
@@ -229,7 +229,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											fontSize: "0.8125rem",
 										}}
 									>
-										{formatTimeAgo(String(product.createdAt)||"")}
+										{formatTimeAgo(String(post.createdAt) || "")}
 									</Typography>
 									<Typography
 										variant='caption'
@@ -241,7 +241,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 										•
 									</Typography>
 									<Tooltip title='عام للجميع'>
-										<Box sx={{display: "flex", alignItems: "center"}}>
+										<Box sx={{ display: "flex", alignItems: "center" }}>
 											<Box
 												sx={{
 													width: 12,
@@ -296,13 +296,13 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 						}}
 					>
 						<MenuItem onClick={handleShare}>
-							<ShareIcon sx={{mr: 1, fontSize: 20}} />
+							<ShareIcon sx={{ mr: 1, fontSize: 20 }} />
 							مشاركة
 						</MenuItem>
 						<MenuItem onClick={handleReport}>
 							<Typography
 								color='error'
-								sx={{display: "flex", alignItems: "center"}}
+								sx={{ display: "flex", alignItems: "center" }}
 							>
 								<Report />
 								الإبلاغ عن منتج
@@ -312,22 +312,22 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							<Box>
 								<MenuItem
 									onClick={() => {
-										setProductIdToUpdate(product._id as string);
+										setPostIdToUpdate(post._id as string);
 										onShowUpdateProductModal();
 										handleMenuClose();
 									}}
 								>
-									<EditIcon sx={{mr: 1, fontSize: 20}} />
+									<EditIcon sx={{ mr: 1, fontSize: 20 }} />
 									تعديل
 								</MenuItem>
 								<MenuItem
 									onClick={() => {
-										openDeleteModal(product._id as string);
+										openDeleteModal(post._id as string);
 										handleMenuClose();
 									}}
 								>
 									<DeleteIcon
-										sx={{mr: 1, fontSize: 20, color: "error"}}
+										sx={{ mr: 1, fontSize: 20, color: "error" }}
 									/>
 									<Typography color='error'>حذف</Typography>
 								</MenuItem>
@@ -337,13 +337,13 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				</Box>
 
 				{/* محتوى المنشور */}
-				<CardContent sx={{p: 0}}>
-										<Box sx={{p: 2, pt: 1.5}}>
+				<CardContent sx={{ p: 0 }}>
+					<Box sx={{ p: 2, pt: 1.5 }}>
 						{/* اسم المنتج والسعر */}
-						<Box sx={{mb: 1.5}}>
+						<Box sx={{ mb: 1.5 }}>
 							<Link
-								to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
-								style={{textDecoration: "none", color: "inherit"}}
+								to={`${productsPathes.productDetails}/${post.category}/${post.brand}/${post._id}`}
+								style={{ textDecoration: "none", color: "inherit" }}
 							>
 								<Typography
 									variant='h6'
@@ -358,151 +358,151 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									}}
 									itemProp='name'
 								>
-									{product.product_name}
+									{post.product_name}
 								</Typography>
 							</Link>
 
-					{/* الصورة */}
-					<Box
-						sx={{
-							position: "relative",
-							width: "100%",
-							overflow: "hidden",
-							bgcolor: "#f0f2f5",
-						}}
-					>
-						<Link
-							onClick={(e) => {
-								if (product.in_stock === false) {
-									e.preventDefault();
-									showError("هذا المنتج غير متوفر حالياً");
-								}
-							}}
-							to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
-							aria-label={`تفاصيل عن ${product.product_name}`}
-							style={{display: "block"}}
-						>
-							<Box sx={{position: "relative"}}>
-								<CardMedia
-									component='img'
-									image={product.image.url}
-									alt={product.product_name}
-									sx={{
-										height: 220,
-										objectFit: "cover",
-									}}
-								/>
-
-								{/* Discount badge */}
-								{product.sale && (
-									<Chip
-										label={`-${product.discount}%`}
-										sx={{
-											position: "absolute",
-											top: 10,
-											left: 10,
-											bgcolor: "error.main",
-											color: "#fff",
-											fontWeight: "bold",
-										}}
-									/>
-								)}
-
-								{/* Bookmark */}
-								<IconButton
-									onClick={() => setIsBookmarked(!isBookmarked)}
-									sx={{
-										position: "absolute",
-										top: 10,
-										right: 10,
-										bgcolor: "rgba(255, 255, 255, 0.466)",
-										"&:hover": {bgcolor: "#fff", color: "black"},
-									}}
-								>
-									{isBookmarked ? <Bookmark /> : <BookmarkBorder />}
-								</IconButton>
-							</Box>
-						</Link>
-
-						<Box
-							sx={{
-								position: "absolute",
-								top: 12,
-								left: 12,
-								display: "flex",
-								flexDirection: "column",
-								gap: 1,
-								zIndex: 2,
-							}}
-						>
-							{product.sale && (
-								<Chip
-									icon={<Sell sx={{fontSize: 16}} />}
-									label={`${product.discount}%`}
-									size='small'
-									sx={{
-										bgcolor: "#ff4444",
-										color: "#fff",
-										fontWeight: 600,
-										height: 24,
-										"& .MuiChip-icon": {
-											color: "#fff",
-											marginLeft: 0.5,
-										},
-									}}
-								/>
-							)}
-							{!product.in_stock && (
-								<Chip
-									label='غير متوفر'
-									size='small'
-									sx={{
-										bgcolor: "rgba(0, 0, 0, 0.7)",
-										color: "#fff",
-										fontWeight: 500,
-										height: 24,
-									}}
-								/>
-							)}
-						</Box>
-					</Box>
-
-					{/* تفاصيل المنتج */}
-
-							{product.description && (
-						<Box sx={{px: 2, pb: 1}}>
-							<Typography
-								component={"h2"}
-								variant='body2'
+							{/* الصورة */}
+							<Box
 								sx={{
-									fontSize: "1rem",
-									lineHeight: 1.5,
-									whiteSpace: "pre-line",
-									display: "-webkit-box",
-									WebkitLineClamp: expanded ? "none" : 1,
-									WebkitBoxOrient: "vertical",
+									position: "relative",
+									width: "100%",
 									overflow: "hidden",
+									bgcolor: "#f0f2f5",
 								}}
 							>
-								{product.description}
-							</Typography>
-							{product.description.length > 120 && (
-								<Button
-									size='small'
-									onClick={() => setExpanded(!expanded)}
+								<Link
+									onClick={(e) => {
+										if (post.in_stock === false) {
+											e.preventDefault();
+											showError("هذا المنتج غير متوفر حالياً");
+										}
+									}}
+									to={`${productsPathes.productDetails}/${post.category}/${post.brand}/${post._id}`}
+									aria-label={`تفاصيل عن ${post.product_name}`}
+									style={{ display: "block" }}
+								>
+									<Box sx={{ position: "relative" }}>
+										<CardMedia
+											component='img'
+											image={post.image.url}
+											alt={post.product_name}
+											sx={{
+												height: 220,
+												objectFit: "cover",
+											}}
+										/>
+
+										{/* Discount badge */}
+										{post.sale && (
+											<Chip
+												label={`-${post.discount}%`}
+												sx={{
+													position: "absolute",
+													top: 10,
+													left: 10,
+													bgcolor: "error.main",
+													color: "#fff",
+													fontWeight: "bold",
+												}}
+											/>
+										)}
+
+										{/* Bookmark */}
+										<IconButton
+											onClick={() => setIsBookmarked(!isBookmarked)}
+											sx={{
+												position: "absolute",
+												top: 10,
+												right: 10,
+												bgcolor: "rgba(255, 255, 255, 0.466)",
+												"&:hover": { bgcolor: "#fff", color: "black" },
+											}}
+										>
+											{isBookmarked ? <Bookmark /> : <BookmarkBorder />}
+										</IconButton>
+									</Box>
+								</Link>
+
+								<Box
 									sx={{
-										mt: 0.5,
-										px: 0,
-										textTransform: "none",
-										fontWeight: 600,
-										color: theme.palette.primary.main,
+										position: "absolute",
+										top: 12,
+										left: 12,
+										display: "flex",
+										flexDirection: "column",
+										gap: 1,
+										zIndex: 2,
 									}}
 								>
-									{expanded ? "إخفاء" : "قراءة المزيد"}
-								</Button>
+									{post.sale && (
+										<Chip
+											icon={<Sell sx={{ fontSize: 16 }} />}
+											label={`${post.discount}%`}
+											size='small'
+											sx={{
+												bgcolor: "#ff4444",
+												color: "#fff",
+												fontWeight: 600,
+												height: 24,
+												"& .MuiChip-icon": {
+													color: "#fff",
+													marginLeft: 0.5,
+												},
+											}}
+										/>
+									)}
+									{!post.in_stock && (
+										<Chip
+											label='غير متوفر'
+											size='small'
+											sx={{
+												bgcolor: "rgba(0, 0, 0, 0.7)",
+												color: "#fff",
+												fontWeight: 500,
+												height: 24,
+											}}
+										/>
+									)}
+								</Box>
+							</Box>
+
+							{/* تفاصيل المنتج */}
+
+							{post.description && (
+								<Box sx={{ px: 2, pb: 1 }}>
+									<Typography
+										component={"h2"}
+										variant='body2'
+										sx={{
+											fontSize: "1rem",
+											lineHeight: 1.5,
+											whiteSpace: "pre-line",
+											display: "-webkit-box",
+											WebkitLineClamp: expanded ? "none" : 1,
+											WebkitBoxOrient: "vertical",
+											overflow: "hidden",
+										}}
+									>
+										{post.description}
+									</Typography>
+									{post.description.length > 120 && (
+										<Button
+											size='small'
+											onClick={() => setExpanded(!expanded)}
+											sx={{
+												mt: 0.5,
+												px: 0,
+												textTransform: "none",
+												fontWeight: 600,
+												color: theme.palette.primary.main,
+											}}
+										>
+											{expanded ? "إخفاء" : "قراءة المزيد"}
+										</Button>
+									)}
+								</Box>
 							)}
-						</Box>
-					)}
 							<Stack direction='row' spacing={1.5} alignItems='baseline'>
 								<Typography
 									variant='h5'
@@ -515,28 +515,28 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									itemScope
 									itemType='https://schema.org/Offer'
 								>
-									{product.sale
+									{post.sale
 										? formatPrice(discountedPrice)
-										: formatPrice(product.price)}
+										: formatPrice(post.price)}
 									<meta
 										itemProp='price'
 										content={
-											product.sale
+											post.sale
 												? discountedPrice.toString()
-												: product.price.toString()
+												: post.price.toString()
 										}
 									/>
 									<meta itemProp='priceCurrency' content='ILS' />
 									<meta
 										itemProp='availability'
 										content={
-											product.in_stock
+											post.in_stock
 												? "https://schema.org/InStock"
 												: "https://schema.org/OutOfStock"
 										}
 									/>
 								</Typography>
-								{product.sale && (
+								{post.sale && (
 									<Typography
 										variant='body2'
 										sx={{
@@ -545,7 +545,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											fontSize: "0.875rem",
 										}}
 									>
-										{formatPrice(product.price)}
+										{formatPrice(post.price)}
 									</Typography>
 								)}
 							</Stack>
@@ -555,17 +555,17 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 						<Stack
 							direction='row'
 							spacing={1.5}
-							sx={{mb: 1.5}}
+							sx={{ mb: 1.5 }}
 							flexWrap='wrap'
 							gap={1}
 							rowGap={1}
 						>
 							<Link
-								to={`/category/${product.category.toLocaleLowerCase()}`}
-								style={{textDecoration: "none"}}
+								to={`/category/${post.category.toLocaleLowerCase()}`}
+								style={{ textDecoration: "none" }}
 							>
 								<Chip
-									label={`${t(`categories.${product.category.toLocaleLowerCase()}.label`)}`}
+									label={`${t(`categories.${post.category.toLocaleLowerCase()}.label`)}`}
 									size='small'
 									variant='filled'
 									sx={{
@@ -581,11 +581,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							</Link>
 							-
 							<Link
-								to={`/category/${product.category.toLocaleLowerCase()}/${product.subcategory}`}
-								style={{textDecoration: "none"}}
+								to={`/category/${post.category.toLocaleLowerCase()}/${post.subcategory}`}
+								style={{ textDecoration: "none" }}
 							>
 								<Chip
-									label={`${t(`categories.${product.category.toLocaleLowerCase()}.subCategories.${product.subcategory}`)}`}
+									label={`${t(`categories.${post.category.toLocaleLowerCase()}.subCategories.${post.subcategory}`)}`}
 									size='small'
 									sx={{
 										color: "#e8f0fe",
@@ -599,8 +599,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								/>
 							</Link>
 							<Chip
-								icon={<LocationOn sx={{fontSize: 14}} />}
-								label={product.location || "أم الفحم"}
+								icon={<LocationOn sx={{ fontSize: 14 }} />}
+								label={post.location || "أم الفحم"}
 								size='small'
 								sx={{
 									bgcolor: "#f3f4f6",
@@ -614,18 +614,18 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							/>
 							<Link
 								to={`https://waze.com/ul?q=${encodeURIComponent(
-									product.location || "أم الفحم",
+									post.location || "أم الفحم",
 								)}&navigate=yes`}
 								target='_blank'
 								rel='noopener noreferrer'
-								style={{textDecoration: "none"}}
+								style={{ textDecoration: "none" }}
 							>
 								<Chip
 									icon={
 										<img
 											src='/waze.png'
 											width={30}
-											style={{fontSize: 10}}
+											style={{ fontSize: 10 }}
 										/>
 									}
 									label={"Waze"}
@@ -653,30 +653,30 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									navigate(
 										generatePath(path.CustomerProfile, {
 											slug: encodeURIComponent(
-												product.seller?.slug ?? "",
+												post.seller?.slug ?? "",
 											),
 										}),
 									)
 								}
-								sx={{display: "flex"}}
+								sx={{ display: "flex" }}
 							>
 								تواصل
 							</Button>
-							{product.condition && (
+							{post.condition && (
 								<Chip
 									label={
-										product.condition === "new"
+										post.condition === "new"
 											? "🆕 جديد"
 											: "🔄 مستعمل"
 									}
 									size='small'
 									sx={{
 										bgcolor:
-											product.condition === "new"
+											post.condition === "new"
 												? "#e8f5e9"
 												: "#fff3e0",
 										color:
-											product.condition === "new"
+											post.condition === "new"
 												? "#2e7d32"
 												: "#f57c00",
 										height: 24,
@@ -696,12 +696,12 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								gap: 1,
 							}}
 						>
-							{product.brand && (
+							{post.brand && (
 								<>
-									<span style={{fontWeight: 500}}>
+									<span style={{ fontWeight: 500 }}>
 										العلامة التجارية:
 									</span>
-									{product.brand}
+									{post.brand}
 								</>
 							)}
 						</Typography>
@@ -743,7 +743,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 									fontSize: "0.8125rem",
 								}}
 							>
-								{product.likes?.length || 0} إعجاب
+								{post.likes?.length || 0} إعجاب
 							</Typography>
 						</Stack>
 						<Typography
@@ -760,8 +760,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 				</Box>
 
 				{/* أزرار التفاعل - تم استخدام LikeButton هنا */}
-				<CardActions sx={{p: 0}}>
-					<Box sx={{width: "100%", display: "flex"}}>
+				<CardActions sx={{ p: 0 }}>
+					<Box sx={{ width: "100%", display: "flex" }}>
 						<Box
 							sx={{
 								flex: 1,
@@ -770,7 +770,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							}}
 						>
 							<LikeButton
-								product={product}
+								product={post}
 								setProduct={setProduct}
 								onLikeToggle={onLikeToggle}
 							/>
@@ -804,12 +804,12 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								تعليق
 							</Button>
 						</Box>
-						<Box sx={{flex: 1, display: "flex", justifyContent: "center"}}>
+						<Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
 							<Button
 								fullWidth
 								startIcon={
 									isBookmarked ? (
-										<Bookmark sx={{color: "#1a73e8"}} />
+										<Bookmark sx={{ color: "#1a73e8" }} />
 									) : (
 										<BookmarkBorder />
 									)

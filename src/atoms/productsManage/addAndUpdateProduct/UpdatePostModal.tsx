@@ -1,30 +1,30 @@
-import {FunctionComponent, useEffect, useState} from "react";
-import {useFormik} from "formik";
-import {initialProductValue, Products} from "../../../interfaces/Posts";
+import { FunctionComponent, useEffect, useState } from "react";
+import { useFormik } from "formik";
+import { initialProductValue, Posts } from "../../../interfaces/Posts";
 import * as yup from "yup";
-import {Modal, ModalHeader} from "react-bootstrap";
-import {getProductById, updateProduct} from "../../../services/postsServices";
-import {useTranslation} from "react-i18next";
+import { Modal, ModalHeader } from "react-bootstrap";
+import { getPostById, updatePost } from "../../../services/postsServices";
+import { useTranslation } from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
-import ProductForm, {DynamicField} from "./PostForm";
-import {categoriesLogic} from "../postLogicMap";
+import ProductForm, { DynamicField } from "./PostForm";
+import { categoriesLogic } from "../postLogicMap";
 
 interface UpdateProductModalProps {
 	show: boolean;
-	onHide: Function;
-	productId: string;
+	onHide: () => void;
+	postId: string;
 	refresh: () => void;
 }
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	show,
 	onHide,
-	productId,
+	postId,
 	refresh,
 }) => {
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	// const formik = useAddProductFormik();
-	const [product, setProduct] = useState<Products>(initialProductValue as Products);
+	const [product, setProduct] = useState<Posts>(initialProductValue as Posts);
 	const [imageFile, setImageFile] = useState<File | null>(null);
 	const [imageData, setImageData] = useState<{
 		url: string;
@@ -32,8 +32,8 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	} | null>(null);
 
 	useEffect(() => {
-		if (productId) {
-			getProductById(productId).then((res) => {
+		if (postId) {
+			getPostById(postId).then((res) => {
 				setProduct(res);
 				setImageData({
 					url: res.image,
@@ -41,7 +41,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				});
 			});
 		}
-	}, [productId]);
+	}, [postId]);
 
 	type CategoryValue = keyof typeof categoriesLogic;
 	type SubcategoryValue<C extends CategoryValue> = keyof (typeof categoriesLogic)[C];
@@ -55,14 +55,15 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	const initialDynamicValues = dynamicFields.reduce(
 		(acc, field) => {
 			acc[field.name] =
-				product[field.name as keyof Products] ??
+				product[field.name as keyof Posts] ??
 				(field.type === "boolean" ? false : "");
 			return acc;
 		},
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		{} as Record<string, any>,
 	);
 
-	const formik = useFormik<Products>({
+	const formik = useFormik<Posts>({
 		enableReinitialize: true,
 		initialValues: {
 			product_name: product.product_name || "",
@@ -71,7 +72,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			type: product.type || product.subcategory || "",
 			price: product.price || 0,
 			description: product.description || "",
-			image: {url: product.image.url || "", publicId: product.image.publicId || ""},
+			image: { url: product.image.url || "", publicId: product.image.publicId || "" },
 			sale: product.sale || false,
 			discount: product.discount || 0,
 			location: product.location || "",
@@ -96,8 +97,8 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 				})
 				.required(),
 		}),
-		onSubmit(values, {resetForm}) {
-			updateProduct(product._id as string, values)
+		onSubmit(values, { resetForm }) {
+			updatePost(product._id as string, values)
 				.then(() => {
 					resetForm();
 					refresh();
@@ -114,7 +115,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 	return (
 		<>
 			<Modal
-				style={{zIndex: 2000}}
+				style={{ zIndex: 2000 }}
 				show={show}
 				onHide={() => onHide()}
 				centered

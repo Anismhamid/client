@@ -1,21 +1,21 @@
 import {toast} from "react-toastify";
-import {Products} from "../../interfaces/Posts";
+import {Posts} from "../../interfaces/Posts";
 
-export const showNewProductToast = ({
+export const showNewPostToast = ({
 	navigate,
 	navigateTo,
-	product,
+	post,
 }: {
 	navigate: (path: string) => void;
 	navigateTo: string;
-	product: Products;
+	post: Posts;
 }) => {
 	toast.info(
 		({closeToast}) => (
 			<div>
 				<p>
 					<strong>נוסף מוצר חדש:</strong>{" "}
-					{`${product.category}, ${product.product_name}`}
+					{`${post.category}, ${post.product_name}`}
 				</p>
 				<button
 					onClick={() => {

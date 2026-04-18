@@ -1,23 +1,23 @@
-import {Avatar, Box, Button, Typography, useTheme} from "@mui/material";
-import {FormikProps} from "formik";
-import {FunctionComponent, useCallback, useEffect, useMemo} from "react";
-import {useTranslation} from "react-i18next";
-import {fontAwesomeIcon} from "../../../FontAwesome/Icons";
-import {CarColor, colors} from "../../colorsSettings/carsColors";
-import {Products} from "../../../interfaces/Posts";
-import {deleteImage, uploadImage} from "../../../services/uploadImage";
-import {categoriesLogic, CategoryValue} from "../postLogicMap";
-import {postsCategory} from "../../../interfaces/postsCategoeis";
-import {LoadingButton} from "@mui/lab";
+import { Avatar, Box, Button, Typography, useTheme } from "@mui/material";
+import { FormikProps } from "formik";
+import { FunctionComponent, useCallback, useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { fontAwesomeIcon } from "../../../FontAwesome/Icons";
+import { CarColor, colors } from "../../colorsSettings/carsColors";
+import { Posts } from "../../../interfaces/Posts";
+import { deleteImage, uploadImage } from "../../../services/uploadImage";
+import { categoriesLogic, CategoryValue } from "../postLogicMap";
+import { postsCategory } from "../../../interfaces/postsCategoeis";
+import { LoadingButton } from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import CollectionsIcon from "@mui/icons-material/Collections";
 
 interface PostFormProps {
-	formik: FormikProps<Products>;
+	formik: FormikProps<Posts>;
 	imageFile: File | null;
 	setImageFile: (file: File | null) => void;
-	imageData: {url: string; publicId: string} | null;
-	setImageData: (data: {url: string; publicId: string} | null) => void;
+	imageData: { url: string; publicId: string } | null;
+	setImageData: (data: { url: string; publicId: string } | null) => void;
 	onHide: () => void;
 	mode?: "add" | "update";
 }
@@ -39,7 +39,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 	imageData,
 	mode,
 }) => {
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	// const [imageKey, setImageKey] = useState(0);
 	const selectedSubcategory = formik.values.subcategory;
 	// const [selectedSubcategory, setSelectedSubcategory] = useState(...)
@@ -63,8 +63,8 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 
 		// رفع الصورة الجديدة
 		try {
-			const {url, publicId} = await uploadImage(file);
-			const newImageData = {url: url, publicId: publicId};
+			const { url, publicId } = await uploadImage(file);
+			const newImageData = { url: url, publicId: publicId };
 			setImageData(newImageData);
 			formik.setFieldValue("image", newImageData);
 		} catch (error) {
@@ -84,7 +84,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 			formik.setFieldValue("subcategory", firstSubcat);
 			formik.setFieldValue("type", firstSubcat);
 		}
-	}, [formik.values.category]);
+	}, [formik.values.category, formik, mode]);
 
 	const availableSubcategories = useMemo((): string[] => {
 		const category = formik.values.category as CategoryValue;
@@ -92,10 +92,11 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 		return Object.keys(categoriesLogic[category]);
 	}, [formik.values.category]);
 
-	const getFieldLabel = (name: string, required?: boolean) => {
-		const label = t(`fields.labels.${name}`, {defaultValue: name});
-		return required ? `${label} *` : label;
-	};
+	const getFieldLabel = useCallback(
+		(name: string, required?: boolean) => {
+			const label = t(`fields.labels.${name}`, { defaultValue: name });
+			return required ? `${label} *` : label;
+		}, [t]);
 
 	// handling category change
 	const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -106,21 +107,21 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 		formik.setFieldValue("type", firstSubcat);
 	};
 
-const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-	const newSubcat = e.target.value;
-	const category = formik.values.category as CategoryValue;
+	const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newSubcat = e.target.value;
+		const category = formik.values.category as CategoryValue;
 
-	const oldSubcat = formik.values.subcategory;
-	if (oldSubcat && categoriesLogic[category][oldSubcat]) {
-		categoriesLogic[category][oldSubcat].forEach((field) => {
-			// نمسح القيمة من الفورميك عشان ما تروح للـ API
-			formik.setFieldValue(field.name, undefined);
-		});
-	}
+		const oldSubcat = formik.values.subcategory;
+		if (oldSubcat && categoriesLogic[category][oldSubcat]) {
+			categoriesLogic[category][oldSubcat].forEach((field) => {
+				// نمسح القيمة من الفورميك عشان ما تروح للـ API
+				formik.setFieldValue(field.name, undefined);
+			});
+		}
 
-	formik.setFieldValue("subcategory", newSubcat);
-	formik.setFieldValue("type", newSubcat);
-};
+		formik.setFieldValue("subcategory", newSubcat);
+		formik.setFieldValue("type", newSubcat);
+	};
 
 	const dynamicFields = useMemo((): DynamicField[] => {
 		const category = formik.values.category as CategoryValue;
@@ -134,7 +135,17 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 	// dynamic field display
 	const renderDynamicField = useCallback(
 		(field: DynamicField) => {
-			const fieldValue = formik.values[field.name] || "";
+			const rawValue = formik.values[field.name];
+
+			let fieldValue: string | number = "";
+
+			if (typeof rawValue === "string" || typeof rawValue === "number") {
+				fieldValue = rawValue;
+			} else if (typeof rawValue === "boolean") {
+				fieldValue = rawValue ? "true" : "false";
+			} else {
+				fieldValue = "";
+			}
 			const isRequired = field.required;
 			const fieldId = `field-${field.name}`;
 			const error = formik.touched[field.name] && formik.errors[field.name];
@@ -181,11 +192,10 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 								value={formik.values.color || ""}
 								onChange={formik.handleChange}
 								onBlur={formik.handleBlur}
-								className={`form-control ${
-									formik.touched.color && formik.errors.color
-										? "is-invalid"
-										: ""
-								}`}
+								className={`form-control ${formik.touched.color && formik.errors.color
+									? "is-invalid"
+									: ""
+									}`}
 								id='color'
 							>
 								<option value=''>
@@ -277,7 +287,7 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 					return null;
 			}
 		},
-		[formik.values, formik.touched, formik.errors, t],
+		[formik.errors, formik.handleBlur, formik.handleChange, formik.touched, formik.values, getFieldLabel, t],
 	);
 
 	return (
@@ -290,11 +300,10 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 					value={formik.values.product_name}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
-					className={`form-control ${
-						formik.touched.product_name && formik.errors.product_name
-							? "is-invalid"
-							: ""
-					}`}
+					className={`form-control ${formik.touched.product_name && formik.errors.product_name
+						? "is-invalid"
+						: ""
+						}`}
 					id='product_name'
 					placeholder={
 						t(
@@ -324,11 +333,10 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 					value={formik.values.category}
 					onChange={handleCategoryChange}
 					onBlur={formik.handleBlur}
-					className={`form-control ${
-						formik.touched.category && formik.errors.category
-							? "is-invalid"
-							: ""
-					}`}
+					className={`form-control ${formik.touched.category && formik.errors.category
+						? "is-invalid"
+						: ""
+						}`}
 					id='category'
 					required
 				>
@@ -407,11 +415,10 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 							);
 						}}
 						onBlur={formik.handleBlur}
-						className={`form-control ${
-							formik.touched.price && formik.errors.price
-								? "is-invalid"
-								: ""
-						}`}
+						className={`form-control ${formik.touched.price && formik.errors.price
+							? "is-invalid"
+							: ""
+							}`}
 						id='price'
 						min='0'
 						step='0.01'
@@ -496,11 +503,10 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 					value={formik.values.description || ""}
 					onChange={formik.handleChange}
 					onBlur={formik.handleBlur}
-					className={`form-control ${
-						formik.touched.description && formik.errors.description
-							? "is-invalid"
-							: ""
-					}`}
+					className={`form-control ${formik.touched.description && formik.errors.description
+						? "is-invalid"
+						: ""
+						}`}
 					id='description'
 					rows={4}
 					placeholder={
@@ -516,7 +522,7 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 
 			{/* Image Upload */}
 			<div className='mb-3 p-1'>
-				<Typography variant='body1' sx={{mb: 1.5, fontWeight: "medium"}}>
+				<Typography variant='body1' sx={{ mb: 1.5, fontWeight: "medium" }}>
 					{t("modals.addProductModal.image")}
 				</Typography>
 
@@ -540,7 +546,7 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 							color: "#003561",
 							gap: 1,
 							m: "auto",
-							"&:hover": {borderColor: "#003561"},
+							"&:hover": { borderColor: "#003561" },
 						}}
 					>
 						{/* TODO:camera translate */}
@@ -567,7 +573,7 @@ const handleSubcategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 							color: "#003561",
 							gap: 1,
 							m: "auto",
-							"&:hover": {borderColor: "#003561"},
+							"&:hover": { borderColor: "#003561" },
 						}}
 					>
 						{/* TODO:camera translate */}

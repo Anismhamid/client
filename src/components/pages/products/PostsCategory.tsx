@@ -6,21 +6,21 @@ import {
 	useRef,
 	useState,
 } from "react";
-import {deleteProduct, getProductsByCategory} from "../../../services/postsServices";
-import {useUser} from "../../../context/useUSer";
+import { deletePost, getpostsByCategory } from "../../../services/postsServices";
+import { useUser } from "../../../context/useUSer";
 import Loader from "../../../atoms/loader/Loader";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
-import {showError} from "../../../atoms/toasts/ReactToast";
+import { showError } from "../../../atoms/toasts/ReactToast";
 import RoleType from "../../../interfaces/UserType";
-import {Box, Button, Container, Grid, Typography, useTheme, alpha} from "@mui/material";
+import { Box, Button, Container, Grid, Typography, useTheme, alpha } from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 // import socket from "../../../socket/globalSocket";
 import ProductCard from "./PostsCard";
-import {generateCategoryJsonLd} from "../../../../utils/structuredData";
+import { generateCategoryJsonLd } from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
-import {useNavigate} from "react-router-dom";
-import {path} from "../../../routes/routes";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../../routes/routes";
 import SearchBox from "../../../atoms/productsManage/SearchBox";
 import { Posts } from "../../../interfaces/Posts";
 
@@ -31,11 +31,11 @@ interface PostsCategoryProps {
 const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	category,
 }: PostsCategoryProps) => {
-	const [productIdToUpdate, setProductIdToUpdate] = useState<string>("");
+	const [postIdToUpdate, setPostIdToUpdate] = useState<string>("");
 	const [visibleProducts, setVisibleProducts] = useState<Posts[]>([]);
 	const [products, setProducts] = useState<Posts[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
-	const {auth} = useUser();
+	const { auth } = useUser();
 	const [showUpdateProductModal, setOnShowUpdateProductModal] =
 		useState<boolean>(false);
 	const [productToDelete, setProductToDelete] = useState<string>("");
@@ -47,7 +47,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	const observerRef = useRef<IntersectionObserver | null>(null);
 	const loadMoreRef = useRef<HTMLDivElement>(null);
 
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const theme = useTheme();
 
 	// Update product
@@ -65,11 +65,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	const closeDeleteModal = () => setShowDeleteModal(false);
 
 	const filteredProducts = useMemo(() => {
-		return products.filter((product) => {
-			const productName = product.product_name || "";
-			const productDescription = product.description || "";
-			const productBrand = product.brand || "";
-			const productPrice = product.price?.toString() || "";
+		return products.filter((post) => {
+			const productName = post.product_name || "";
+			const productDescription = post.description || "";
+			const productBrand = post.brand || "";
+			const productPrice = post.price?.toString() || "";
 
 			const searchLower = searchQuery.toLowerCase();
 
@@ -138,11 +138,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 			prev.map((p) =>
 				p._id === productId
 					? {
-							...p,
-							likes: liked
-								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id) => id !== userId),
-						}
+						...p,
+						likes: liked
+							? [...(p.likes || []), userId]
+							: (p.likes || []).filter((id) => id !== userId),
+					}
 					: p,
 			),
 		);
@@ -151,11 +151,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 			prev.map((p) =>
 				p._id === productId
 					? {
-							...p,
-							likes: liked
-								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id) => id !== userId),
-						}
+						...p,
+						likes: liked
+							? [...(p.likes || []), userId]
+							: (p.likes || []).filter((id) => id !== userId),
+					}
 					: p,
 			),
 		);
@@ -163,7 +163,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 	// Delete product
 	const handleDelete = (productId: string) => {
-		deleteProduct(productId)
+		deletePost(productId)
 			.then(() => {
 				setProducts((prevProducts) =>
 					prevProducts.filter((p) => p._id !== productId),
@@ -179,7 +179,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 	// Fetch products by category
 	useEffect(() => {
-		getProductsByCategory(category)
+		getpostsByCategory(category)
 			.then((res) => {
 				setProducts(res);
 				setVisibleProducts(res.slice(0, 12)); // Start with 12 products
@@ -213,8 +213,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	if (!loading && products.length === 0)
 		return (
 			<main>
-				<Container maxWidth='lg' sx={{textAlign: "center"}}>
-					<Typography variant='h5' color='text.secondary' sx={{mb: 3}}>
+				<Container maxWidth='lg' sx={{ textAlign: "center" }}>
+					<Typography variant='h5' color='text.secondary' sx={{ mb: 3 }}>
 						لم يتم العثور على أي منتجات في هذه الفئة
 					</Typography>
 					<Button
@@ -254,7 +254,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					borderBottom: "1px solid #2C3646",
 				}}
 			>
-				<Box sx={{flex: 1}}>
+				<Box sx={{ flex: 1 }}>
 					<SearchBox
 						searchQuery={searchQuery}
 						setSearchQuery={setSearchQuery}
@@ -274,7 +274,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 							sx={{
 								color: theme.palette.primary.main,
 								fontWeight: 600,
-								display: {xs: "none", md: "block"},
+								display: { xs: "none", md: "block" },
 							}}
 						>
 							{t(`categories.${category}.heading`)}
@@ -288,7 +288,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					<Typography
 						variant='body2'
 						color='text.secondary'
-						sx={{mb: 3, px: {xs: 2, md: 0}}}
+						sx={{ mb: 3, px: { xs: 2, md: 0 } }}
 					>
 						{t("common.viewOf")} {visibleProducts.length} {t("common.outOf")}{" "}
 						{filteredProducts.length} {t("common.countOfPosts")}
@@ -297,16 +297,16 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					{/* Products Grid */}
 					{filteredProducts.length > 0 ? (
 						<Grid container spacing={2}>
-							{visibleProducts.map((product: Posts) => {
-								const discountedPrice = product.sale
-									? product.price -
-										(product.price * (product.discount || 0)) / 100
-									: product.price;
+							{visibleProducts.map((post: Posts) => {
+								const discountedPrice = post.sale
+									? post.price -
+									(post.price * (post.discount || 0)) / 100
+									: post.price;
 
 								return (
 									<Grid
-										size={{xs: 12, sm: 4, lg: 3}}
-										key={product._id}
+										size={{ xs: 12, sm: 4, lg: 3 }}
+										key={post._id}
 										sx={{
 											display: "flex",
 											justifyContent: "center",
@@ -314,11 +314,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 									>
 										<Box ref={observerRef}>
 											<ProductCard
-												product={product}
+												post={post}
 												discountedPrice={discountedPrice}
 												canEdit={canEdit}
-												setProductIdToUpdate={
-													setProductIdToUpdate
+												setPostIdToUpdate={
+													setPostIdToUpdate
 												}
 												onShowUpdateProductModal={
 													onShowUpdateProductModal
@@ -328,18 +328,18 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 												loadedImages={loadedImages}
 												category={category}
 												onLikeToggle={handleToggleLike}
-												updateProductInList={(updatedProduct) => {
+												updateProductInList={(updatedPost) => {
 													setProducts((prev) =>
 														prev.map((p) =>
-															p._id === updatedProduct._id
-																? updatedProduct
+															p._id === updatedPost._id
+																? updatedPost
 																: p,
 														),
 													);
 													setVisibleProducts((prev) =>
 														prev.map((p) =>
-															p._id === updatedProduct._id
-																? updatedProduct
+															p._id === updatedPost._id
+																? updatedPost
 																: p,
 														),
 													);
@@ -361,7 +361,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 								mt: 3,
 							}}
 						>
-							<Typography variant='h6' color='primary.main' sx={{mb: 2}}>
+							<Typography variant='h6' color='primary.main' sx={{ mb: 2 }}>
 								لم يتم العثور على منتجات مطابقة لمعايير البحث
 							</Typography>
 							<Typography variant='body2' color='primary.main'>
@@ -380,7 +380,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 							}}
 						>
 							{isLoadingMore ? (
-								<Box sx={{display: "flex", justifyContent: "center"}}>
+								<Box sx={{ display: "flex", justifyContent: "center" }}>
 									<Loader />
 								</Box>
 							) : (
@@ -411,7 +411,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					{/* End of Results */}
 					{visibleProducts.length === filteredProducts.length &&
 						filteredProducts.length > 0 && (
-							<Box sx={{py: 4, textAlign: "center"}}>
+							<Box sx={{ py: 4, textAlign: "center" }}>
 								<Typography variant='body2' color='text.secondary'>
 									🎉 {t("common.endOfPosts")}
 								</Typography>
@@ -421,7 +421,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 				<UpdateProductModal
 					refresh={refreshAfterChange}
-					productId={productIdToUpdate}
+					postId={postIdToUpdate}
 					show={showUpdateProductModal}
 					onHide={() => onHideUpdateProductModal()}
 				/>

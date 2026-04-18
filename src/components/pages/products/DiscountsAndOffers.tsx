@@ -1,18 +1,18 @@
-import {FunctionComponent, useEffect, useState, useCallback} from "react";
-import {getProductsInDiscount} from "../../../services/postsServices";
-import {Link} from "react-router-dom";
+import { FunctionComponent, useEffect, useState, useCallback } from "react";
+import { getPostsInDiscount } from "../../../services/postsServices";
+import { Link } from "react-router-dom";
 import Loader from "../../../atoms/loader/Loader";
-import {Skeleton, Box, Typography, useTheme, useMediaQuery} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { Skeleton, Box, Typography, useTheme, useMediaQuery } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import "swiper/css";
-import {Swiper, SwiperSlide} from "swiper/react";
-import {Autoplay, Navigation, EffectCoverflow} from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, EffectCoverflow } from "swiper/modules";
 import "swiper/css";
 import JsonLd from "../../../../utils/JsonLd";
-import {formatPrice} from "../../../helpers/dateAndPriceFormat";
-import {generateDiscountsJsonLd} from "../../../../utils/structuredData";
-import {path} from "../../../routes/routes";
+import { formatPrice } from "../../../helpers/dateAndPriceFormat";
+import { generateDiscountsJsonLd } from "../../../../utils/structuredData";
+import { path } from "../../../routes/routes";
 import { Posts } from "../../../interfaces/Posts";
 
 
@@ -21,7 +21,7 @@ import { Posts } from "../../../interfaces/Posts";
  * @returns Products in discount section with swiper carousel
  */
 const DiscountsAndOffers: FunctionComponent = () => {
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 	const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
@@ -32,11 +32,11 @@ const DiscountsAndOffers: FunctionComponent = () => {
 	const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
 	useEffect(() => {
-		const fetchProducts = async () => {
+		const fetchPosts = async () => {
 			try {
 				setLoading(true);
 				setError(null);
-				const data = await getProductsInDiscount();
+				const data = await getPostsInDiscount();
 				setPostsInDiscount(data);
 			} catch (err) {
 				console.error("Failed to fetch discounted products:", err);
@@ -46,7 +46,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 			}
 		};
 
-		fetchProducts();
+		fetchPosts();
 	}, [t]);
 
 	const setImageLoaded = useCallback((id: string) => {
@@ -146,12 +146,12 @@ const DiscountsAndOffers: FunctionComponent = () => {
 				component='section'
 				aria-labelledby='discounts-heading'
 				sx={{
-					py: {xs: 3, md: 5},
-					px: {xs: 2, sm: 3, md: 4},
+					py: { xs: 3, md: 5 },
+					px: { xs: 2, sm: 3, md: 4 },
 				}}
 			>
 				{/* Header Section */}
-				<Box textAlign='center' mb={{xs: 3, md: 5}}>
+				<Box textAlign='center' mb={{ xs: 3, md: 5 }}>
 					<Typography
 						variant='h4'
 						component='h2'
@@ -168,13 +168,13 @@ const DiscountsAndOffers: FunctionComponent = () => {
 						)}
 					</Typography>
 
-					<Box sx={{maxWidth: "800px", margin: "0 auto", px: 2}}>
+					<Box sx={{ maxWidth: "800px", margin: "0 auto", px: 2 }}>
 						<Typography
 							variant='h6'
 							component='p'
 							color='text.secondary'
 							sx={{
-								fontSize: {xs: "1rem", md: "1.25rem"},
+								fontSize: { xs: "1rem", md: "1.25rem" },
 								lineHeight: 1.6,
 								mb: 2,
 							}}
@@ -187,7 +187,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 						<Typography
 							variant='body1'
 							color='text.secondary'
-							sx={{opacity: 0.8}}
+							sx={{ opacity: 0.8 }}
 						>
 							{t(
 								"categories.discountsAndOffers.categories.discountsAndOffers.subtitle",
@@ -197,7 +197,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 				</Box>
 
 				{/* Products Slider */}
-				<Box sx={{position: "relative"}}>
+				<Box sx={{ position: "relative" }}>
 					<Swiper
 						modules={[Autoplay, Navigation, EffectCoverflow]}
 						autoplay={{
@@ -213,12 +213,12 @@ const DiscountsAndOffers: FunctionComponent = () => {
 						coverflowEffect={
 							swiperParams.effect === "coverflow"
 								? {
-										rotate: 20,
-										stretch: 0,
-										depth: 100,
-										modifier: 1,
-										slideShadows: true,
-									}
+									rotate: 20,
+									stretch: 0,
+									depth: 100,
+									modifier: 1,
+									slideShadows: true,
+								}
 								: undefined
 						}
 						className='discounts-swiper'
@@ -274,7 +274,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 														variant='rectangular'
 														width='100%'
 														height='100%'
-														sx={{bgcolor: "grey.200"}}
+														sx={{ bgcolor: "grey.200" }}
 													/>
 												)}
 
@@ -322,7 +322,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 											</Box>
 
 											{/* Product Info */}
-											<Box sx={{p: 3}}>
+											<Box sx={{ p: 3 }}>
 												{/* Product Name */}
 												<Typography
 													variant='h6'
@@ -345,7 +345,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 												<Typography
 													variant='body2'
 													color='text.secondary'
-													sx={{mb: 2, fontSize: "0.875rem"}}
+													sx={{ mb: 2, fontSize: "0.875rem" }}
 												>
 													{product.category}
 												</Typography>
@@ -397,7 +397,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
 														)}{" "}
 														{formatPrice(
 															product.price -
-																discountedPrice,
+															discountedPrice,
 														)}
 													</Box>
 												</Box>

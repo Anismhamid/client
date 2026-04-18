@@ -1,11 +1,11 @@
-import {FunctionComponent} from "react";
+import { FunctionComponent } from "react";
 import ProductCategory from "./PostsCategory";
-import {useTranslation} from "react-i18next";
-import {useParams} from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import JsonLd from "../../../../utils/JsonLd";
-import {generateCategoryJsonLd} from "../../../../utils/structuredData";
-import {Box, Typography} from "@mui/material";
-import {motion} from "framer-motion";
+import { generateCategoryJsonLd } from "../../../../utils/structuredData";
+import { Box, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 import ChepNavigation from "../../navbar/ChepNavigation";
 
 /**
@@ -13,8 +13,8 @@ import ChepNavigation from "../../navbar/ChepNavigation";
  * @returns products
  */
 const Posts: FunctionComponent = () => {
-	const {t} = useTranslation();
-	const {category} = useParams<{category: string}>();
+	const { t } = useTranslation();
+	const { category } = useParams<{ category: string }>();
 
 	if (!category) {
 		return <div className='text-center mt-4'>Category not found</div>;
@@ -26,16 +26,16 @@ const Posts: FunctionComponent = () => {
 
 	return (
 		<>
-				<JsonLd data={categoryData} />
-				<title>{pageTitle}</title>
-				<meta
-					name='description'
-					content={t(`categories.${category}.description`)}
-				/>
+			<JsonLd data={categoryData} />
+			<title>{pageTitle}</title>
+			<meta
+				name='description'
+				content={t(`categories.${category}.description`)}
+			/>
 			<Box
 				className='container-fluid'
 				sx={{
-					py: {xs: 4, md: 6},
+					py: { xs: 4, md: 6 },
 					position: "relative",
 					overflow: "hidden",
 				}}
@@ -82,9 +82,9 @@ const Posts: FunctionComponent = () => {
 					}}
 				>
 					<motion.div
-						initial={{opacity: 0, y: 30}}
-						animate={{opacity: 1, y: 0}}
-						transition={{duration: 0.8}}
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
 					>
 						<Typography
 							variant='h1'
@@ -93,7 +93,7 @@ const Posts: FunctionComponent = () => {
 								color: "text.secondary",
 								maxWidth: "600px",
 								margin: "0 auto",
-								fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
+								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
 							}}
 						>
 							{t(`categories.${category}.heading`)}
@@ -105,7 +105,7 @@ const Posts: FunctionComponent = () => {
 								maxWidth: "800px",
 								margin: "0 auto",
 								mt: 4,
-								fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
+								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
 							}}
 						>
 							{t(`categories.${category}.description`)}
