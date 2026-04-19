@@ -20,7 +20,7 @@ const RelatedProductCard = memo(({ product }: { product: Posts }) => {
 
 
     const handleProductClick = useCallback(() => {
-        navigate(`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`);
+        navigate(`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`);
     }, [navigate, product]);
 
     return (

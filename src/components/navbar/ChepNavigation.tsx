@@ -1,14 +1,14 @@
-import {useRef} from "react"; // Add useCallback
-import {Box, Chip, IconButton, Typography, useTheme} from "@mui/material";
-import {ChevronLeftTwoTone, ChevronRightTwoTone} from "@mui/icons-material";
-import {NavLink} from "react-router-dom";
-import {productsAndCategories} from "./navCategoryies";
-import {useTranslation} from "react-i18next";
+import { useRef } from "react"; // Add useCallback
+import { Box, IconButton, Typography, useTheme } from "@mui/material";
+import { ChevronLeftTwoTone, ChevronRightTwoTone } from "@mui/icons-material";
+import { NavLink } from "react-router-dom";
+import { productsAndCategories } from "./navCategoryies";
+import { useTranslation } from "react-i18next";
 import JsonLd from "../../../utils/JsonLd";
 
 const ChipNavigation = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const theme = useTheme();
 	const scroll = (direction: "left" | "right") => {
 		const container = containerRef.current;
@@ -34,10 +34,10 @@ const ChipNavigation = () => {
 				top: 0,
 				zIndex: 200,
 				backgroundColor: `${theme.palette.primary}`,
-				backdropFilter: "blur(90px)",
+				backdropFilter: "blur(5px)",
 				borderRadius: "0 0 20px 20px",
-				py: 1,
-				boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
+				py: 0.3,
+				// boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
 			}}
 		>
 			<JsonLd
@@ -83,12 +83,12 @@ const ChipNavigation = () => {
 				sx={{
 					display: "flex",
 					alignItems: "center",
-justifyContent:"space-around",
+					justifyContent: "space-around",
 					listStyle: "none",
 					overflowX: "auto",
 					scrollbarWidth: "none",
 
-					"&::-webkit-scrollbar": {display: "none"},
+					"&::-webkit-scrollbar": { display: "none" },
 					maskImage:
 						"linear-gradient(to right, transparent, #fff 30px, #fff calc(100% - 30px), transparent)",
 					WebkitMaskImage:
@@ -110,45 +110,42 @@ justifyContent:"space-around",
 						<NavLink
 							title={`${t("links.products")} - ${t(category.labelKey)}`}
 							to={category.path}
-							style={{textDecoration: "none"}}
+							style={{ textDecoration: "none" }}
 						>
-							{({isActive}) => (
-								<Chip
-									clickable
+							{({ isActive }) => (
+								<Box
 									sx={{
-										width: 70,
-										height: 70,
+										width: 50,
+										height: 50,
 										borderRadius: "50%",
-										backgroundColor: isActive
-											? "primary.main"
-											: "background.paper",
-										boxShadow: isActive ? 8 : 3,
-										border: "1px solid",
-										borderColor: isActive
-											? "primary.main"
-											: "divider",
-										transition: "all 0.3s ease",
+										cursor: "pointer",
+										backgroundColor: isActive ? "primary.main" : "transparent",
+										boxShadow: isActive ? 8 : 2,
+										border: "2px solid",
+										borderColor: isActive ? "primary.main" : "divider",
 										display: "flex",
 										justifyContent: "center",
 										alignItems: "center",
+										transition: "all 0.3s ease",
 										mt: 1,
+
 										"&:hover": {
 											transform: "scale(1.1)",
-											boxShadow: 5,
+											boxShadow: 6,
 										},
 									}}
-									label={
-										<Box
-											component='img'
-											src={category.icon}
-											alt={`${t(category.labelKey)} - تصنيف`}
-											sx={{
-												width: 43,
-												objectFit: "cover",
-											}}
-										/>
-									}
-								/>
+								>
+									<Box
+										component='img'
+										src={category.icon}
+										alt={`${t(category.labelKey)} - تصنيف`}
+										sx={{
+											width: 36,
+											height: 36,
+											objectFit: "contain",
+										}}
+									/>
+								</Box>
 							)}
 						</NavLink>
 

@@ -115,9 +115,9 @@ const PostDetails: FunctionComponent = () => {
 	const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 	const [isSharing, setIsSharing] = useState<boolean>(false);
 
-
 	const sellerDisplayName =
-		post?.userData?.name?.first || post.userData?.name?.last || t("product.seller") || "بائع";
+		post.seller?.name || "user";
+
 	const categoryLabel = post.category
 		? categoryLabels[post.category] || t(post.category)
 		: t("product.category") || "التصنيف";
@@ -230,27 +230,24 @@ const PostDetails: FunctionComponent = () => {
 		setShowUpdateModal(false);
 	}, []);
 
-	const handleRefreshPost = useCallback(() => {
+	const handleRefreshPost = () => {
 		if (!postId) return;
 
 		setLoading(true);
 		getPostById(postId)
 			.then((res) => {
 				setPost(res);
+
 				setRating(res.rating || 0);
 			})
 			.catch(() => setError("حدث خطأ أثناء تحميل المنتج"))
 			.finally(() => setLoading(false));
-	}, [postId]);
+	}
 
 	useEffect(() => {
-		// if (!postId) {
-		// 	navigate(path.Home);
-		// 	return;
-		// }
-
 		setLoading(true);
 		setError("");
+
 
 		getPostById(postId as string)
 			.then((res) => {

@@ -74,6 +74,7 @@ const CustomerProfile: FunctionComponent = () => {
 
 	useEffect(() => {
 		if (!slug) return;
+		const abortController = new AbortController();
 
 		const fetchData = async () => {
 			try {
@@ -108,9 +109,9 @@ const CustomerProfile: FunctionComponent = () => {
 				setLoading(false);
 			}
 		};
-
-		fetchData();
-	}, [slug,posts]);
+		fetchData()
+		return () => abortController.abort();
+	}, [slug]);
 
 	const handleShareProfile = () => {
 		if (navigator.share) {
@@ -136,10 +137,13 @@ const CustomerProfile: FunctionComponent = () => {
 
 	const handleWhatsApp = () => {
 		if (user?.phone?.phone_1) {
+			const cleanNumber = user.phone.phone_1;
+
 			const message = `مرحباً ${user?.name?.first}، أنا مهتم بمنتجاتك على موقع صفقه`;
 			window.open(
-				`https://wa.me/${user.phone.phone_1}?text=${encodeURIComponent(message)}`,
-				"_blank",
+				`https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`,
+				"_blank noopener noreferrer",
+
 			);
 		}
 	};
@@ -332,17 +336,17 @@ const CustomerProfile: FunctionComponent = () => {
 						<UserInformation user={user as unknown as AuthValues} />
 					</TabPanel>
 
-					<TabPanel value={tabValue} index={1}>
+					<TabPanel value={tabValue} index={2}>
 						<ContactInfoTab user={user} />
 					</TabPanel>
 
 					{/* Ratings Tab */}
-					<TabPanel value={tabValue} index={2}>
+					<TabPanel value={tabValue} index={3}>
 						<RatingsTab stats={stats} />
 					</TabPanel>
 
 					{/* Contact */}
-					<TabPanel value={tabValue} index={3}>
+					<TabPanel value={tabValue} index={4}>
 						<ContactTab
 							user={user}
 							handleWhatsApp={handleWhatsApp}
