@@ -34,6 +34,7 @@ import { Stats } from "./types/states";
 import { Posts } from "../../../interfaces/Posts";
 import ChatBoxWrapper from "../../pages/chatBox/ChatBoxWrapper";
 import { useUser } from "../../../context/useUSer";
+import RoleType from "../../../interfaces/UserType";
 
 interface CustomerProfileHeaderProps {
 	handleShareProfile: () => void;
@@ -187,7 +188,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 										sx={{ p: 2 }}
 										variant='outlined'
 									/>
-									{user.role === "Admin" && (
+									{user.role === RoleType.Admin && (
 										<Chip
 											label='مدير'
 											size='small'

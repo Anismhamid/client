@@ -24,7 +24,7 @@ import {
 	Share,
 	Storefront,
 } from "@mui/icons-material";
-import {Products} from "../../../../interfaces/Posts";
+import {Posts} from "../../../../interfaces/Posts";
 import {User} from "../../../../interfaces/usersMessages";
 import {productsPathes} from "../../../../routes/routes";
 import {useTranslation} from "react-i18next";
@@ -35,7 +35,7 @@ import PromotionCard from "../../../pages/products/PromotionCard";
 
 interface ProductsTabProps {
 	tabValue: number;
-	products: Products[];
+	products: Posts[];
 	user: User;
 	wishlist: Set<string>;
 	toggleWishlist: (id: string) => void;
@@ -171,7 +171,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 												}}
 												onClick={() =>
 													navigate(
-														`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`,
+														`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
 													)
 												}
 											/>
@@ -184,7 +184,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 												fontWeight='bold'
 												component={Link}
 												gutterBottom
-												to={`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`}
+												to={`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`}
 												sx={{
 													textDecoration: "none",
 													textOverflow: "ellipsis",
@@ -318,7 +318,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 													category={product.category}
 													onViewPost={() =>
 														navigate(
-															`${productsPathes.productDetails}/${product.category}/${product.brand}/${product._id}`,
+															`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
 														)
 													}
 													imageUrl={product.image.url}
