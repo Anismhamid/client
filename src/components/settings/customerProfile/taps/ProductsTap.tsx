@@ -10,28 +10,29 @@ import {
 	Typography,
 	useTheme,
 	Button,
+	Rating,
 } from "@mui/material";
-import {FunctionComponent, useState} from "react";
+import { FunctionComponent, useState } from "react";
 import TabPanel from "./TabPanel";
-import {} from "@mui/material";
-import {Link, useNavigate} from "react-router-dom";
-import {motion} from "framer-motion";
+import { } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
 	LocalOffer,
-	Star,
 	Favorite,
 	FavoriteBorder,
 	Share,
 	Storefront,
 } from "@mui/icons-material";
-import {Posts} from "../../../../interfaces/Posts";
-import {User} from "../../../../interfaces/usersMessages";
-import {productsPathes} from "../../../../routes/routes";
-import {useTranslation} from "react-i18next";
-import {formatPrice} from "../../../../helpers/dateAndPriceFormat";
+import { Posts } from "../../../../interfaces/Posts";
+import { User } from "../../../../interfaces/usersMessages";
+import { productsPathes } from "../../../../routes/routes";
+import { useTranslation } from "react-i18next";
+import { formatPrice } from "../../../../helpers/dateAndPriceFormat";
 import LikeButton from "../../../../atoms/like/LikeButton";
-import {showSuccess} from "../../../../atoms/toasts/ReactToast";
+import { showSuccess } from "../../../../atoms/toasts/ReactToast";
 import PromotionCard from "../../../pages/products/PromotionCard";
+import { getAverageRating } from "../../../pages/products/helpers/helperFunctions";
 
 interface ProductsTabProps {
 	tabValue: number;
@@ -49,9 +50,10 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 	wishlist,
 }) => {
 	const theme = useTheme();
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [open, setOpen] = useState(false);
+
 	return (
 		<TabPanel value={tabValue} index={0}>
 			<Box mb={4}>
@@ -64,7 +66,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 					<Typography
 						variant='h5'
 						fontWeight='bold'
-						sx={{position: "relative"}}
+						sx={{ position: "relative" }}
 					>
 						{t("shares")} {user.name?.first}
 						<Box
@@ -90,10 +92,10 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 				{products.length > 0 ? (
 					<Grid container spacing={3}>
 						{products.map((product, index) => (
-							<Grid size={{xs: 12, sm: 6, md: 4}} key={product._id}>
+							<Grid size={{ xs: 12, sm: 6, md: 4 }} key={product._id}>
 								<motion.div
-									initial={{opacity: 0, y: 20}}
-									animate={{opacity: 1, y: 0}}
+									initial={{ opacity: 0, y: 20 }}
+									animate={{ opacity: 1, y: 0 }}
 									transition={{
 										duration: 0.3,
 										delay: index * 0.05,
@@ -177,7 +179,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 											/>
 										</Box>
 
-										<CardContent sx={{p: 2.5}}>
+										<CardContent sx={{ p: 2.5 }}>
 											{/* Product Name and Category */}
 											<Typography
 												variant='subtitle1'
@@ -218,10 +220,10 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 															>
 																{formatPrice(
 																	product.price -
-																		(product.price *
-																			(product.discount ||
-																				0)) /
-																			100,
+																	(product.price *
+																		(product.discount ||
+																			0)) /
+																	100,
 																)}
 															</Typography>
 															<Typography
@@ -247,21 +249,17 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 														</Typography>
 													)}
 												</Box>
-												<Box display='flex' alignItems='center'>
-													<Star
-														sx={{
-															color: "warning.main",
-															fontSize: 18,
-															mr: 0.5,
-														}}
+
+												<Box display="flex" alignItems="center">
+													<Rating
+														value={getAverageRating(product)}
+														precision={1}
+														readOnly
+														size="small"
 													/>
-													<Typography
-														variant='body2'
-														fontWeight='bold'
-													>
-														{product.rating || "4.5"}
-													</Typography>
 												</Box>
+
+
 											</Box>
 
 											{/* Like and Action Buttons */}
@@ -270,7 +268,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 												spacing={1}
 												alignItems='center'
 											>
-												<Box sx={{flex: 1}}>
+												<Box sx={{ flex: 1 }}>
 													<LikeButton product={product} />
 												</Box>
 												<IconButton

@@ -1,14 +1,8 @@
-export type LocalMessage = {
-	text?: string | undefined;
-	fileType: any;
-	fileUrl: any;
-	_id: string;
-	from: {_id: string; name: string; email: string; role: string};
-	to: {_id: string};
-	message: string;
-	warning: boolean;
-	isImportant: boolean;
-	replyTo?: LocalMessage | null;
+import { BaseMessage } from "./chatUser";
+
+export interface LocalMessage extends BaseMessage {
 	status: "pending" | "sent" | "delivered" | "seen" | "error";
-	createdAt: string;
-};
+	fileType?: string;
+	fileUrl?: string;
+	tempId?: string;
+}

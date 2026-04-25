@@ -78,12 +78,6 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 			location: product.location || "",
 			in_stock: product.in_stock,
 			...initialDynamicValues,
-			seller: {
-				name: "",
-				slug: undefined,
-				user: "",
-				imageUrl: ""
-			},
 		},
 		validationSchema: yup.object({
 			product_name: yup.string().min(2).required(),

@@ -63,7 +63,7 @@ import LikeButton from "../../../atoms/like/LikeButton";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
-import { formatTimeAgo, generatePath } from "./helpers/helperFunctions";
+import { formatTimeAgo, generatePath, getAverageRating } from "./helpers/helperFunctions";
 import RelatedProductCard from "./RelatedProductCard";
 import { deletePost, getPostById, getRelatedPosts } from "../../../services/postsServices";
 
@@ -138,6 +138,8 @@ const PostDetails: FunctionComponent = () => {
 			return nextZoom;
 		});
 	}, []);
+
+	const averageRating = useMemo(() => getAverageRating(post), [post]);
 
 	const handleResetZoom = useCallback(() => {
 		setZoomLevel(1);
@@ -617,9 +619,31 @@ const PostDetails: FunctionComponent = () => {
 											subtitle='شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء.'
 										/>
 
-										<Alert severity='info' sx={{ mb: 3, borderRadius: 2 }}>
-											لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً.
-										</Alert>
+
+										{post.reviews?.length === 0 ?
+											<Alert severity='info' sx={{ mb: 3, borderRadius: 2 }}>
+												لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً.
+											</Alert>
+											:
+											<Box sx={{ color: "primary", p: 3,border: "1px solid #000000",borderRadius:2 }} display="flex" flexDirection="column" gap={1.5} mb={3}>
+												<Typography>التعليقات</Typography>
+												<Divider sx={{border:1}}/>
+												{post.reviews?.map((review, index) => (
+													<Box key={index} display="flex" flexDirection="column" gap={0.5}>
+														<Typography variant="body2" color="">
+															{review.userId}
+														</Typography>
+														<Rating value={averageRating} readOnly size="small" />
+														<Typography variant="body2" color="">
+															{review.comment}
+														</Typography>
+													</Box>
+												))}
+											</Box>
+
+
+										}
+
 
 										<Stack spacing={2.5}>
 											<TextField
@@ -631,6 +655,7 @@ const PostDetails: FunctionComponent = () => {
 												placeholder='اكتب تعليقك أو سؤالك عن المنتج هنا...'
 												variant='outlined'
 											/>
+
 
 											<Stack
 												direction={{ xs: "column", sm: "row" }}

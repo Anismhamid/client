@@ -1,12 +1,12 @@
 import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
-import {Dispatch, RefObject, SetStateAction} from "react";
-import {LocalMessage} from "../../../../interfaces/chat/localMessage";
-import {ChatUser} from "../../../../interfaces/chat/chatUser";
+import { Dispatch, RefObject, SetStateAction } from "react";
+import { LocalMessage } from "../../../../interfaces/chat/localMessage";
+import { BaseUser } from "../../../../interfaces/chat/chatUser";
 import AccessTimeIcon from "@mui/icons-material/AccessTime"; // אופציונלי להודעה בשליחה
 import socket from "../../../../socket/globalSocket";
 import axios from "axios";
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -15,17 +15,17 @@ export const getStatusIcon = (
 ) => {
 	switch (status) {
 		case "seen":
-			return <DoneAllIcon sx={{fontSize: 14, color: "#2196f3"}} />; // כחול (נקרא)
+			return <DoneAllIcon sx={{ fontSize: 14, color: "#2196f3" }} />; // כחול (נקרא)
 		case "delivered":
-			return <DoneAllIcon sx={{fontSize: 14, color: "#9e9e9e"}} />; // אפור כפול (הגיע ליעד)
+			return <DoneAllIcon sx={{ fontSize: 14, color: "#9e9e9e" }} />; // אפור כפול (הגיע ליעד)
 		case "sent":
-			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />; // אפור יחיד (נשלח מהטלפון)
+			return <CheckIcon sx={{ fontSize: 14, color: "#9e9e9e" }} />; // אפור יחיד (נשלח מהטלפון)
 		case "pending":
-			return <AccessTimeIcon sx={{fontSize: 12, color: "#9e9e9e"}} />; // שעון (בטעינה)
-		default:
-			return <CheckIcon sx={{fontSize: 14, color: "#9e9e9e"}} />;
+			return <AccessTimeIcon sx={{ fontSize: 12, color: "#9e9e9e" }} />; // שעון (בטעינה)
 		case "error":
-			return <Typography sx={{color: "error.main", fontSize: 12}}>⚠</Typography>;
+			return <Typography sx={{ color: "error.main", fontSize: 12 }}>⚠</Typography>;
+		default:
+			return <CheckIcon sx={{ fontSize: 14, color: "#9e9e9e" }} />;
 	}
 };
 
@@ -43,8 +43,8 @@ export const scrollToBottom = (
 
 export const sendMessage = async (
 	text: string,
-	currentUser: {_id: string; name: string; email: string; role: string; image?: string},
-	otherUser: ChatUser,
+	currentUser: BaseUser,
+	otherUser: BaseUser,
 	setInput: Dispatch<SetStateAction<string>>,
 	chatContainerRef: RefObject<HTMLDivElement | null>,
 	addMessageForUser: (userId: string, msg: LocalMessage) => void,
@@ -52,32 +52,35 @@ export const sendMessage = async (
 ) => {
 	if (!text.trim()) return;
 	const messageText = text.trim();
-	const tempId = `temp-${Date.now()}`;
+	const tempId = `temp-${Date.now()}-${Math.random()}`;
 
 	const tempMessage: LocalMessage = {
 		_id: tempId,
 		from: currentUser,
 		to: otherUser,
 		message: messageText,
-		status: "sent",
+		status: "pending",
 		createdAt: new Date().toISOString(),
-		fileType: null,
-		fileUrl: null,
+		fileType: undefined,
+		fileUrl: undefined,
 		warning: false,
+		tempId,
 		isImportant: false,
 	};
 
+	
 	addMessageForUser(otherUser._id, tempMessage);
 	setInput("");
-	socket.emit("user:stopTyping", {to: otherUser._id, from: currentUser._id});
+	socket.emit("user:stopTyping", { to: otherUser._id, from: currentUser._id });
 	setTimeout(() => scrollToBottom("smooth", chatContainerRef), 50);
 
 	try {
 		await axios.post(
 			`${api}/messages`,
-			{toUserId: otherUser._id, message: messageText},
-			{headers: {Authorization: token}},
+			{ toUserId: otherUser._id, message: messageText, tempId },
+			{ headers: { Authorization: token } },
 		);
+		
 	} catch (err) {
 		console.error("Failed to send:", err);
 	}

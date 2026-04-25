@@ -18,7 +18,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import socket from "../../../socket/globalSocket";
 import { useChat } from "../../../hooks/useChat";
-import { ChatUser } from "../../../interfaces/chat/chatUser";
+import { BaseUser } from "../../../interfaces/chat/chatUser";
 import { LocalMessage } from "../../../interfaces/chat/localMessage";
 import Linkify from "./Linkify";
 import handleRTL from "../../../locales/handleRTL";
@@ -38,12 +38,15 @@ const api = import.meta.env.VITE_API_URL;
 interface ChatBoxProps {
 	currentUser: {
 		_id: string;
-		name: string;
+		name: {
+			first: string;
+			last: string;
+		};
 		email: string;
 		role: string;
-		image?: string;
-	};
-	otherUser: ChatUser;
+		image?: { url: string };
+	}
+	otherUser: BaseUser;
 	token: string;
 }
 
@@ -64,8 +67,17 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 	const { t } = useTranslation();
 
 	const lastScrollHeightRef = useRef<number>(0);
-
+	const lastSeenRef = useRef<string | null>(null);
 	const [showScrollBtn, setShowScrollBtn] = useState(false);
+
+	const getUserFullName = (user?: BaseUser) => {
+		if (!user) return "";
+
+		if (typeof user.name === "string") return user.name;
+
+		return `${user.name?.first ?? ""} ${user.name?.last ?? ""}`.trim();
+	};
+
 
 	// עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
 	const markAsSeen = () => {
@@ -109,48 +121,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		}, 1500);
 	};
 
-	// const loadConversation = async (isInitial = true) => {
-	// 	if (isInitial) setIsLoading(true);
-	// 	else {
-	// 		setIsFetchingMore(true);
-	// 		if (chatContainerRef.current) {
-	// 			lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
-	// 		}
-	// 	};
-
-	// 	try {
-	// 		const skip = isInitial ? 0 : userMessages.length;
-	// 		const res = await axios.get(
-	// 			`${api}/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
-	// 			{
-	// 				headers: { Authorization: token },
-	// 			},
-	// 		);
-
-	// 		const fetchedMessages = res.data.messages;
-
-	// 		if (isInitial) {
-	// 			setMessagesForUser(otherUser._id, fetchedMessages);
-	// 			setTimeout(() => scrollToBottom("smooth", chatContainerRef), 1000);
-	// 		} else {
-
-
-	// 			// Prepend old messages to the top
-	// 			setMessagesForUser(otherUser._id, (prev) => [
-	// 				...fetchedMessages,
-	// 				...prev,
-	// 			]);
-	// 		}
-
-	// 		setHasMore(res.data.hasMore);
-	// 	} catch (err) {
-	// 		console.error("Pagination error:", err);
-	// 	} finally {
-	// 		setIsLoading(false);
-	// 		setIsFetchingMore(false);
-	// 	}
-	// };
-
 	const loadConversation = async (isInitial = true) => {
 		if (isInitial) setIsLoading(true);
 		else {
@@ -172,7 +142,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 
 			if (isInitial) {
 				setMessagesForUser(otherUser._id, fetchedMessages);
-				setTimeout(() => scrollToBottom("smooth", chatContainerRef), 100);
+				setTimeout(() => scrollToBottom("auto", chatContainerRef), 0);
 			} else {
 				// تحديث الرسائل
 				setMessagesForUser(otherUser._id, (prev) => [
@@ -215,16 +185,26 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		socket.on("message:received", (message: LocalMessage) => {
 			if (message.from._id === otherUser._id) {
 				addMessageForUser(otherUser._id, message);
-				scrollToBottom("smooth", chatContainerRef);
+				if (isNearBottom()) {
+					scrollToBottom("smooth", chatContainerRef);
+				}
 			}
 		});
 
 		socket.on("message:sent", (message: LocalMessage) => {
 			if (message.to._id === otherUser._id) {
 				setMessagesForUser(otherUser._id, (prev) =>
-					prev.map((m) =>
-						m._id.startsWith("temp-") ? { ...message, status: "delivered" } : m,
-					),
+					prev.map((m) => {
+						if (m.tempId && message.tempId && m.tempId === message.tempId) {
+							return { ...message };
+						}
+
+						if (m._id === message._id) {
+							return { ...m, status: message.status };
+						}
+
+						return m;
+					})
 				);
 			}
 		});
@@ -239,6 +219,24 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			if (from === otherUser._id) setTyping(false);
 		});
 
+		socket.on("message:delivered", (message: LocalMessage) => {
+			if (message.to._id === otherUser._id) {
+				setMessagesForUser(otherUser._id, (prev) =>
+					prev.map((m) => {
+						if (m.tempId && message.tempId && m.tempId === message.tempId) {
+							return { ...message };
+						}
+
+						if (m._id === message._id) {
+							return { ...m, status: message.status };
+						}
+
+						return m;
+					})
+				);
+			}
+		});
+
 		// האזנה לעדכון סטטוס "נקרא" מהצד השני
 		socket.on("message:seen", ({ by }: { by: string }) => {
 			if (by === otherUser._id) {
@@ -250,7 +248,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			}
 		});
 
+
+
 		return () => {
+			socket.off("message:delivered");
 			socket.off("message:received");
 			socket.off("message:sent");
 			socket.off("message:seen");
@@ -268,6 +269,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 				lastMessage.status !== "seen" &&
 				isNearBottom()
 			) {
+				lastSeenRef.current = lastMessage._id;
 				// Also call the API to persist this in the DB
 				axios.patch(
 					`${api}/messages/mark-as-seen/${otherUser._id}`,
@@ -317,9 +319,16 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 	const isNearBottom = () => {
 		if (!chatContainerRef.current) return false;
 		const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-		return scrollHeight - scrollTop - clientHeight < 300; // 300px من الأسفل
+		return scrollHeight - scrollTop - clientHeight < 200;
 	};
 
+	useEffect(() => {
+		return () => {
+			if (typingTimeoutRef.current) {
+				clearTimeout(typingTimeoutRef.current);
+			}
+		};
+	}, []);
 
 	return (
 		<Box
@@ -328,6 +337,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 				display: "flex",
 				flexDirection: "column",
 				bgcolor: "background.paper",
+
 			}}
 		>
 			<Box
@@ -344,6 +354,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 					flexGrow: 1,
 					overflowY: "auto",
 					p: 2,
+					pb: 10,
 					display: "flex",
 					flexDirection: "column",
 					gap: 1.5,
@@ -380,7 +391,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 								<Box sx={{ display: "flex", mb: 1 }}>
 									{!isMe && (
 										<Avatar
-											src={otherUser.from.image?.url || "/user.png"}
+											src={otherUser.image?.url || "/user.png"}
 											sx={{
 												width: 30,
 												height: 30,
@@ -513,7 +524,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 								variant='caption'
 								sx={{ fontStyle: "italic", color: "text.secondary" }}
 							>
-								{otherUser.from.name.first} {t("common.typing")}
+								{getUserFullName(otherUser)} {t("common.typing")}
 							</Typography>
 						</Box>
 					</Fade>
