@@ -1,6 +1,6 @@
 import ChatBox from "./ChatBox";
-import {FunctionComponent} from "react";
-import {UserMessage} from "../../../interfaces/usersMessages";
+import { FunctionComponent } from "react";
+import { UserMessage } from "../../../interfaces/usersMessages";
 import { mapUserMessageToChatBox } from "./MessagesPage";
 import { useUser } from "../../../context/useUSer";
 
@@ -8,8 +8,8 @@ interface ChatBoxWrapperProps {
 	user: UserMessage;
 }
 
-const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({user}) => {
-	const {auth} = useUser();
+const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({ user }) => {
+	const { auth } = useUser();
 	const token = localStorage.getItem("token");
 
 	if (!auth || !auth._id) {
@@ -20,7 +20,7 @@ const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({user}) => {
 		<ChatBox
 			currentUser={{
 				_id: auth._id,
-				name: auth.name.first,
+				name: { first: auth.name.first, last: auth.name.last },
 				email: auth.email ?? "",
 				role: auth.role ?? "Client",
 			}}

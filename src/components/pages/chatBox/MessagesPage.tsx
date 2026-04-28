@@ -64,7 +64,7 @@ const MessagesPage = () => {
 
 	const currentUser = {
 		_id: auth._id as string,
-		name: auth.name.first,
+		name: { first: auth.name.first, last: auth.name.last },
 		email: auth.email as string,
 		role: auth.role as string,
 	};

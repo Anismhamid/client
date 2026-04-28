@@ -7,9 +7,9 @@ import {
 	useEffect,
 	useCallback,
 } from "react";
-import {LocalMessage} from "../interfaces/chat/localMessage";
+import { LocalMessage } from "../interfaces/chat/localMessage";
 import socket from "../socket/globalSocket";
-import {useUser} from "../context/useUSer";
+// import { useUser } from "../context/useUSer";
 
 interface ChatContextType {
 	messages: Record<string, LocalMessage[]>;
@@ -37,11 +37,11 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | null>(null);
 
-export const ChatProvider = ({children}: {children: ReactNode}) => {
+export const ChatProvider = ({ children }: { children: ReactNode }) => {
 	const [messages, setMessages] = useState<Record<string, LocalMessage[]>>({});
 	const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 	const [currentChatId, setCurrentChatId] = useState<string | null>(null);
-	const {auth} = useUser();
+	// const { auth } = useUser();
 
 	const setMessagesForUser = useCallback(
 		(
@@ -86,30 +86,36 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
 			setMessages((prev) => {
 				const userMessages = prev[userId] || [];
 				const updatedMessages = userMessages.map((msg) =>
-					msg._id === messageId ? {...msg, status} : msg,
+					msg._id === messageId ? { ...msg, status } : msg,
 				);
-				return {...prev, [userId]: updatedMessages};
+				return { ...prev, [userId]: updatedMessages };
 			});
 		},
 		[],
 	);
 
 	useEffect(() => {
-		const handleUnread = ({userId, count}: {userId: string; count: number}) => {
+		const handleUnread = ({ userId, count }: { userId: string; count: number }) => {
 			setUnreadForUser(userId, count);
 		};
 
-		const handleIncomingMessage = (msg: LocalMessage) => {
-			const otherUserId = msg.from._id === auth._id ? msg.to._id : msg.from._id;
-			addMessageForUser(otherUserId, msg);
-		};
+		// const handleIncomingMessage = (msg: LocalMessage) => {
+		// 	if (!msg?.from?._id || !msg?.to?._id) return; // 🔥 حماية
+
+		// 	const otherUserId =
+		// 		msg.from._id === auth._id ? msg.to._id : msg.from._id;
+
+		// 	if (otherUserId === "unknown") return; // 🔥 حماية
+
+		// 	addMessageForUser(otherUserId, msg);
+		// };
 
 		socket.on("message:unreadCount", handleUnread);
-		socket.on("message:received", handleIncomingMessage);
+		// socket.on("message:received", handleIncomingMessage);
 
 		return () => {
 			socket.off("message:unreadCount", handleUnread);
-			socket.off("message:received", handleIncomingMessage);
+			// socket.off("message:received", handleIncomingMessage);
 		};
 	}, [addMessageForUser, setUnreadForUser]);
 
@@ -131,6 +137,7 @@ export const ChatProvider = ({children}: {children: ReactNode}) => {
 	);
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useChat = () => {
 	const ctx = useContext(ChatContext);
 	if (!ctx) throw new Error("useChat must be used inside ChatProvider");

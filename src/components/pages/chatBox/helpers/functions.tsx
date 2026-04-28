@@ -2,7 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { LocalMessage } from "../../../../interfaces/chat/localMessage";
-import { BaseUser } from "../../../../interfaces/chat/chatUser";
+import { BaseMessage, BaseUser } from "../../../../interfaces/chat/chatUser";
 import AccessTimeIcon from "@mui/icons-material/AccessTime"; // אופציונלי להודעה בשליחה
 import socket from "../../../../socket/globalSocket";
 import axios from "axios";
@@ -33,18 +33,19 @@ export const scrollToBottom = (
 	behavior: ScrollBehavior = "smooth",
 	chatContainerRef: RefObject<HTMLDivElement | null>,
 ) => {
-	if (chatContainerRef.current) {
-		chatContainerRef.current.scrollTo({
-			top: chatContainerRef.current.scrollHeight,
-			behavior,
-		});
-	}
+	if (!chatContainerRef.current) return;
+
+	chatContainerRef.current.scrollTo({
+		top: chatContainerRef.current.scrollHeight,
+		behavior,
+	});
+
 };
 
 export const sendMessage = async (
 	text: string,
 	currentUser: BaseUser,
-	otherUser: BaseUser,
+	otherUser: BaseMessage,
 	setInput: Dispatch<SetStateAction<string>>,
 	chatContainerRef: RefObject<HTMLDivElement | null>,
 	addMessageForUser: (userId: string, msg: LocalMessage) => void,
@@ -60,7 +61,7 @@ export const sendMessage = async (
 		to: otherUser,
 		message: messageText,
 		status: "pending",
-		createdAt: new Date().toISOString(),
+		createdAt: new Date(),
 		fileType: undefined,
 		fileUrl: undefined,
 		warning: false,
@@ -68,11 +69,11 @@ export const sendMessage = async (
 		isImportant: false,
 	};
 
-	
-	addMessageForUser(otherUser._id, tempMessage);
+
+	addMessageForUser(otherUser?._id ?? "", tempMessage);
 	setInput("");
 	socket.emit("user:stopTyping", { to: otherUser._id, from: currentUser._id });
-	setTimeout(() => scrollToBottom("smooth", chatContainerRef), 50);
+	setTimeout(() => scrollToBottom("smooth", chatContainerRef), 0);
 
 	try {
 		await axios.post(
@@ -80,14 +81,14 @@ export const sendMessage = async (
 			{ toUserId: otherUser._id, message: messageText, tempId },
 			{ headers: { Authorization: token } },
 		);
-		
+
 	} catch (err) {
 		console.error("Failed to send:", err);
 	}
 };
 
 
-export const formatMessageTime = (dateString: string) => {
+export const formatMessageTime = (dateString: Date) => {
 	try {
 		return new Date(dateString).toLocaleTimeString([], {
 			hour: "2-digit",

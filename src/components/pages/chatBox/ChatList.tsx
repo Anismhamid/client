@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatListProps {
-	currentUser: { _id: string; name: string; email: string; role: string };
+	currentUser: { _id: string; name: { first: string; last: string }; email: string; role: string };
 	token: string;
 	onSelectChat: (user: UserMessage) => void;
 	selectedUserId?: string;

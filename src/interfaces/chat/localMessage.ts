@@ -5,4 +5,5 @@ export interface LocalMessage extends BaseMessage {
 	fileType?: string;
 	fileUrl?: string;
 	tempId?: string;
+	date?: Date;
 }

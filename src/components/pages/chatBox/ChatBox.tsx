@@ -18,7 +18,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import socket from "../../../socket/globalSocket";
 import { useChat } from "../../../hooks/useChat";
-import { BaseUser } from "../../../interfaces/chat/chatUser";
+import { BaseMessage, BaseUser } from "../../../interfaces/chat/chatUser";
 import { LocalMessage } from "../../../interfaces/chat/localMessage";
 import Linkify from "./Linkify";
 import handleRTL from "../../../locales/handleRTL";
@@ -36,17 +36,8 @@ import {
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatBoxProps {
-	currentUser: {
-		_id: string;
-		name: {
-			first: string;
-			last: string;
-		};
-		email: string;
-		role: string;
-		image?: { url: string };
-	}
-	otherUser: BaseUser;
+	currentUser: BaseMessage;
+	otherUser: BaseMessage;
 	token: string;
 }
 
@@ -62,7 +53,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 	const isTypingRef = useRef(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const chatContainerRef = useRef<HTMLDivElement | null>(null);
-	const userMessages = messages[otherUser._id] || [];
+	const userMessages = messages[otherUser?._id ?? ""] || [];
 	const dir = handleRTL();
 	const { t } = useTranslation();
 
@@ -73,9 +64,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 	const getUserFullName = (user?: BaseUser) => {
 		if (!user) return "";
 
-		if (typeof user.name === "string") return user.name;
-
-		return `${user.name?.first ?? ""} ${user.name?.last ?? ""}`.trim();
+		return `${user.name?.first?.toUpperCase() ?? "user"} ${user.name?.last?.toUpperCase() ?? ""}`.trim();
 	};
 
 
@@ -141,11 +130,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			const fetchedMessages = res.data.messages;
 
 			if (isInitial) {
-				setMessagesForUser(otherUser._id, fetchedMessages);
+				setMessagesForUser(otherUser._id ?? "", fetchedMessages);
 				setTimeout(() => scrollToBottom("auto", chatContainerRef), 0);
 			} else {
 				// تحديث الرسائل
-				setMessagesForUser(otherUser._id, (prev) => [
+				setMessagesForUser(otherUser._id ?? "", (prev) => [
 					...fetchedMessages,
 					...prev,
 				]);
@@ -172,10 +161,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			// تثبيت السكرول: الارتفاع الجديد ناقص القديم يعطيك نفس المكان الذي كنت تقف عنده
 			container.scrollTo({
 				top: heightDifference,
-				behavior: 'auto'
+				behavior: 'smooth'
 			});
 
-			lastScrollHeightRef.current = 0;
+			lastScrollHeightRef.current = 0; // إعادة تعيين بعد الاستخدام
 		}
 	}, [userMessages.length]);
 
@@ -183,8 +172,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		loadConversation();
 
 		socket.on("message:received", (message: LocalMessage) => {
-			if (message.from._id === otherUser._id) {
-				addMessageForUser(otherUser._id, message);
+			if (message?.from?._id === otherUser?._id) {
+				addMessageForUser(otherUser?._id ?? "", message);
 				if (isNearBottom()) {
 					scrollToBottom("smooth", chatContainerRef);
 				}
@@ -192,8 +181,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		});
 
 		socket.on("message:sent", (message: LocalMessage) => {
-			if (message.to._id === otherUser._id) {
-				setMessagesForUser(otherUser._id, (prev) =>
+			if (message?.to?._id === otherUser?._id) {
+				setMessagesForUser(otherUser?._id ?? "", (prev) =>
 					prev.map((m) => {
 						if (m.tempId && message.tempId && m.tempId === message.tempId) {
 							return { ...message };
@@ -220,8 +209,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		});
 
 		socket.on("message:delivered", (message: LocalMessage) => {
-			if (message.to._id === otherUser._id) {
-				setMessagesForUser(otherUser._id, (prev) =>
+			if (message?.to?._id === otherUser?._id) {
+				setMessagesForUser(otherUser?._id ?? "", (prev) =>
 					prev.map((m) => {
 						if (m.tempId && message.tempId && m.tempId === message.tempId) {
 							return { ...message };
@@ -240,14 +229,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 		// האזנה לעדכון סטטוס "נקרא" מהצד השני
 		socket.on("message:seen", ({ by }: { by: string }) => {
 			if (by === otherUser._id) {
-				setMessagesForUser(otherUser._id, (prev) =>
+				setMessagesForUser(otherUser?._id ?? "", (prev) =>
 					prev.map((m) =>
-						m.from._id === currentUser._id ? { ...m, status: "seen" } : m,
+						m?.from?._id === currentUser._id ? { ...m, status: "seen" } : m,
 					),
 				);
 			}
 		});
 
+		console.log(otherUser);
 
 
 		return () => {
@@ -265,7 +255,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			const lastMessage = userMessages[userMessages.length - 1];
 			// If the last message is from the OTHER user and I am currently looking at the chat
 			if (
-				lastMessage.from._id === otherUser._id &&
+				lastMessage?.from?._id === otherUser?._id &&
 				lastMessage.status !== "seen" &&
 				isNearBottom()
 			) {
@@ -295,7 +285,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 
 		const formData = new FormData();
 		formData.append("file", file);
-		formData.append("toUserId", otherUser._id);
+		formData.append("toUserId", otherUser?._id ?? "");
 
 		try {
 			// שליחה לשרת (Endpoint ייעודי לקבצים)
@@ -308,7 +298,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 
 			// הוספת הודעה זמנית או רענון צ'אט
 			if (res.data.message) {
-				addMessageForUser(otherUser._id, res.data.message);
+				addMessageForUser(otherUser?._id ?? "", res.data.message);
 				scrollToBottom("smooth", chatContainerRef);
 			}
 		} catch (err) {
@@ -329,6 +319,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			}
 		};
 	}, []);
+
+
 
 	return (
 		<Box
@@ -354,7 +346,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 					flexGrow: 1,
 					overflowY: "auto",
 					p: 2,
-					pb: 10,
+					pb: 15,
 					display: "flex",
 					flexDirection: "column",
 					gap: 1.5,
@@ -376,47 +368,70 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 					</Box>
 				) : (
 					userMessages.map((msg) => {
-						const isMe = msg.from._id === currentUser._id;
+						const isMe = msg?.from?._id === currentUser._id;
 						const isFile = msg.fileUrl;
 						return (
 							<Box
 								key={msg._id}
 								sx={{
-									alignSelf: isMe ? "flex-end" : "flex-start",
-									maxWidth: "100%",
-									display: "flex",
-									flexDirection: "column",
+									alignSelf: isMe ? "flex-start" : "flex-end",
 								}}
 							>
-								<Box sx={{ display: "flex", mb: 1 }}>
-									{!isMe && (
+								{!isMe && (
+									<Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 0.5 }}>
+										<Typography variant="caption" color="text.secondary">
+											{getUserFullName(otherUser.from)}
+										</Typography>
 										<Avatar
-											src={otherUser.image?.url || "/user.png"}
+											src={otherUser.from?.image?.url}
 											sx={{
-												width: 30,
-												height: 30,
-												fontSize: "0.9rem",
+												width: 32,
+												height: 32,
+												fontSize: "0.875rem",
 												bgcolor: "primary.main",
 											}}
 										>
-											{/* {`${otherUser?.from.name?.first?.[0] || ""}.${otherUser?.from?.name.last?.[0] || ""}`} */}
+											{`${getUserFullName(otherUser.from)?.[0]}${getUserFullName(otherUser.from)?.split(" ")[1]?.[0] || ""}`}
 										</Avatar>
-									)}
-								</Box>
+									</Box>
+								)}
 								<Paper
-									elevation={1}
+									elevation={isMe ? 0 : 1}  // Flat for my messages, elevated for received
 									sx={{
-										p: "8px 12px",
+										p: "10px 14px",
 										minWidth: "80px",
+										maxWidth: "maxContent",
+										display: "flex",
+										gap: 1.5,
+										flexDirection: isMe ? "" : "row-reverse",
 										borderRadius: isMe
-											? "12px 0px 12px 12px"
-											: "0px 12px 12px 12px",
+											? "12px 4px 18px 18px"
+											: "4px 12px 18px 18px",
 										bgcolor: isMe
-											? "primary.main"
+											? (theme) => `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
 											: "background.paper",
-										color: isMe ? "white" : "success",
+										border: !isMe ? "1px solid" : "none",
+										borderColor: "divider",
+										wordBreak: "break-word",
+
 									}}
 								>
+
+
+									{/* <Avatar
+										src={otherUser.from?.image?.url}
+										sx={{
+											width: 40,
+											height: 40,
+											fontSize: "1.10rem",
+											bgcolor: "primary.main",
+											zIndex: 0
+										}}
+									>
+										{`${getUserFullName(otherUser.from)?.[0]}.${getUserFullName(otherUser.from)?.split(" ")[1]?.[0]}`}
+									</Avatar>
+ */}
+
 									{isFile ? (
 										<Box
 											sx={{
@@ -474,7 +489,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 												whiteSpace: "pre-wrap",
 											}}
 										>
-											<Linkify text={msg.message} />
+											<Linkify text={msg?.message ?? ""} />
 										</Typography>
 									)}
 
@@ -487,23 +502,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 											mt: 0.3,
 										}}
 									>
-										<Typography variant='caption'>
-											{String(formatMessageTime(msg.createdAt))}
-										</Typography>
+
 										{isMe && getStatusIcon(msg.status)}
 									</Box>
-
-									{/* {msg.fileUrl && (
-										<img
-											src={msg.fileUrl}
-											style={{
-												minHeight: "70px",
-												width: "70px",
-												objectFit: "cover",
-											}}
-										/>
-									)} */}
 								</Paper>
+								<Typography variant='caption' sx={{ color: "text.secondary", flex: "flex-start" }}>
+									{String(formatMessageTime(msg?.createdAt ?? new Date()))}
+								</Typography>
 							</Box>
 						);
 					})
