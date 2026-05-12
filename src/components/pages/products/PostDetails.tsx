@@ -65,7 +65,7 @@ import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
 import { formatTimeAgo, generatePath, getAverageRating } from "./helpers/helperFunctions";
 import RelatedProductCard from "./RelatedProductCard";
-import { deletePost, getPostById, getRelatedPosts } from "../../../services/postsServices";
+import { deletePost, getPostById, getRelatedPosts, submitReview } from "../../../services/postsServices";
 
 const MemoizedPostDetailsTable = memo(PostDetailsTable);
 
@@ -326,6 +326,15 @@ const PostDetails: FunctionComponent = () => {
 
 	const productJsonLd = generateSingleProductJsonLd(post);
 	const currentUrl = `https://client-qqq1.vercel.app/product/${post.category}/${post._id}`;
+
+
+	// const postReviews = useMemo(() => {
+	// 	submitReview().then((res) => {
+	// 		if (res && res.review) {
+	// 			const newReview = res.review;
+	// 		}
+	// 	}).catch((err) => console.log(err));
+	// }, [post.reviews]);
 
 	return (
 		<>
@@ -670,7 +679,9 @@ const PostDetails: FunctionComponent = () => {
 													<Rating value={rating} onChange={(_, newValue) => setRating(newValue ?? 0)} precision={0.5} />
 												</Stack>
 
-												<Button variant='contained' disabled={!comment.trim()}>
+												<Button variant='contained' disabled={!comment.trim()} onClick={() => {
+													submitReview(post._id!, { userId: auth._id!, rating, comment })
+												}}>
 													نشر التعليق
 												</Button>
 											</Stack>

@@ -228,3 +228,29 @@ export const toggleLike = async (postId: string) => {
         return [];
     }
 };
+
+// Review submission
+export const submitReview = async (
+    postId: string,
+    review: { userId: string; rating: number; comment: string },
+) => {
+    const token = localStorage.getItem('token');
+
+    try {
+        const res = await axios.patch(
+            `${api}/posts/${postId}/reviews`,
+            review,
+            {
+                headers: {
+                    Authorization: token,
+                },
+            },
+        );
+
+        console.log('Review submitted:', res.data);
+        return res.data;
+    } catch (error: any) {
+        console.log(error.response?.data || error.message);
+        throw error;
+    }
+};
