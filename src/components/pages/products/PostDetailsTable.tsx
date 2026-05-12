@@ -1,5 +1,5 @@
-import {FunctionComponent, useMemo} from "react";
-import {useTranslation} from "react-i18next";
+import { FunctionComponent, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
 	Table,
 	TableBody,
@@ -14,8 +14,8 @@ import {
 	alpha,
 	Divider,
 } from "@mui/material";
-import {categoriesLogic} from "../../../atoms/productsManage/postLogicMap";
-import {getColorHex} from "../../../atoms/colorsSettings/carsColors";
+import { categoriesLogic } from "../../../atoms/productsManage/postLogicMap";
+import { getColorHex } from "../../../atoms/colorsSettings/carsColors";
 import { Posts as PostType } from "../../../interfaces/Posts";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
@@ -31,8 +31,8 @@ interface PostDetailsTableProps {
 	Posts: PostType;
 }
 
-const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => {
-	const {t} = useTranslation();
+const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({ Posts }) => {
+	const { t } = useTranslation();
 	const theme = useTheme();
 
 	const fields: Field[] = useMemo(() => {
@@ -40,7 +40,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 
 		const categoryFields =
 			categoriesLogic[Posts.category]?.[
-				Posts.subcategory as keyof (typeof categoriesLogic)[typeof Posts.category]
+			Posts.subcategory as keyof (typeof categoriesLogic)[typeof Posts.category]
 			];
 
 		return (categoryFields as Field[]) || [];
@@ -81,7 +81,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 		if (field.name === "color" && typeof value === "string") {
 			const colorHex = getColorHex(value);
 			return (
-				<Box sx={{display: "flex", alignItems: "center", gap: 1.5}}>
+				<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
 					<Box
 						sx={{
 							width: 20,
@@ -106,7 +106,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 
 		if (Array.isArray(value) && value.length > 0) {
 			return (
-				<Box sx={{display: "flex", gap: 0.5, flexWrap: "wrap"}}>
+				<Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
 					{value.map((item, index) => (
 						<Chip
 							key={index}
@@ -152,14 +152,14 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 					sx={{
 						minWidth: 60,
 						fontWeight: 500,
-						"& .MuiChip-label": {px: 2},
+						"& .MuiChip-label": { px: 2 },
 					}}
 				/>
 			);
 		}
 
 		if (typeof value === "string" && value) {
-			const translatedValue = t(`common.${value}`, {defaultValue: value});
+			const translatedValue = t(`common.${value}`, { defaultValue: value });
 			return <Typography variant='body2'>{translatedValue}</Typography>;
 		}
 
@@ -201,38 +201,20 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 								py: 2.5,
 							}}
 						>
-							<Box sx={{display: "flex", alignItems: "center", gap: 1}}>
+							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
 								<CategoryOutlinedIcon
-									sx={{fontSize: 20, color: "primary.main"}}
+									sx={{ fontSize: 20, color: "primary.main" }}
 								/>
 								<Typography variant='body2' fontWeight={600}>
 									{t("modals.updateProductModal.category")}
 								</Typography>
 							</Box>
 						</TableCell>
-						<TableCell sx={{borderBottom: "none", py: 2.5}}>
-							<Box sx={{display: "flex", gap: 1, flexWrap: "wrap"}}>
-								{Posts.subcategory && (
-									<Chip
-										label={t(
-											`categories.${Posts.category.toLocaleLowerCase()}.subCategories.${Posts.subcategory.toLocaleLowerCase()}`,
-										)}
-										variant='filled'
-										size='small'
-										sx={{
-											bgcolor: alpha(
-												theme.palette.primary.main,
-												0.1,
-											),
-											color: "primary.main",
-											fontWeight: 500,
-											borderRadius: 1.5,
-										}}
-									/>
-								)}
-								<Chip
+						<TableCell sx={{ borderBottom: "none", py: 2.5 }}>
+							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+								{/* <Chip
 									label={t(
-										`categories.${t(Posts.category.toLocaleLowerCase())}.label`,
+										`categories.${t(Posts.category)}.label`,
 									)}
 									color='primary'
 									size='small'
@@ -240,14 +222,31 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({Posts}) => 
 										borderRadius: 1.5,
 										fontWeight: 500,
 									}}
-								/>
+								/> */}
+								{Posts.subcategory && (
+									<Chip
+										label={t(
+											`categories.${Posts.category}.subCategories.${Posts.subcategory.toLocaleLowerCase()}`,
+										)}
+										variant='filled'
+										size='medium'
+										color="primary"
+										sx={{
+											fontWeight: 700,
+											borderRadius: 1.5,
+											fontSize: 18,
+											letterSpacing: 2,
+										}}
+									/>
+								)}
+
 							</Box>
 						</TableCell>
 					</TableRow>
 					{/* Divider */}
 					<TableRow>
-						<TableCell colSpan={2} sx={{p: 0, borderBottom: "none"}}>
-							<Divider sx={{borderStyle: "dashed"}} />
+						<TableCell colSpan={2} sx={{ p: 0, borderBottom: "none" }}>
+							<Divider sx={{ borderStyle: "dashed" }} />
 						</TableCell>
 					</TableRow>
 

@@ -24,7 +24,12 @@ export interface Posts {
     sale: boolean;
     discount: number;
     reviews?: {
-        user: { _id?: string; name: { first: string; last: string } };
+		createdAt: Date | string;
+        user: {
+            _id?: string;
+            name: { first: string; last: string };
+            image: string ;
+        };
         rating: number;
         comment: string;
     }[];

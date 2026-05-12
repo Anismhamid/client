@@ -63,7 +63,7 @@ import LikeButton from "../../../atoms/like/LikeButton";
 import UpdateProductModal from "../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import PostDetailsTable from "./PostDetailsTable";
-import { formatTimeAgo, generatePath, getAverageRating } from "./helpers/helperFunctions";
+import { formatTimeAgo, generatePath } from "./helpers/helperFunctions";
 import RelatedProductCard from "./RelatedProductCard";
 import { deletePost, getPostById, getRelatedPosts, submitReview } from "../../../services/postsServices";
 
@@ -101,6 +101,7 @@ const PostDetails: FunctionComponent = () => {
 	const { isLoggedIn, auth } = useUser();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+	const [isSubmittingReview, setIsSubmittingReview] = useState<boolean>(false);
 
 	const [zoomLevel, setZoomLevel] = useState<number>(1);
 	const [isZoomed, setIsZoomed] = useState<boolean>(false);
@@ -139,7 +140,6 @@ const PostDetails: FunctionComponent = () => {
 		});
 	}, []);
 
-	const averageRating = useMemo(() => getAverageRating(post), [post]);
 
 	const handleResetZoom = useCallback(() => {
 		setZoomLevel(1);
@@ -391,7 +391,7 @@ const PostDetails: FunctionComponent = () => {
 													@{post.seller?.slug || "seller"}
 												</Typography>
 												<Typography variant='body2' color='text.secondary'>
-													منشور منذ {formatTimeAgo(String(post.createdAt || ""))}
+													منشور منذ {formatTimeAgo(String(post.createdAt || ''), t)}
 												</Typography>
 											</Stack>
 										</Box>
@@ -624,27 +624,31 @@ const PostDetails: FunctionComponent = () => {
 
 									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
 										<SectionTitle
-											title='الأسئلة والتقييمات'
-											subtitle='شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء.'
+											title={t("review.questionsAndReviews")}
+											subtitle={t("review.questionsAndReviewsSubtitle")}
 										/>
 
 
 										{post.reviews?.length === 0 ?
 											<Alert severity='info' sx={{ mb: 3, borderRadius: 2 }}>
-												لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً.
+												{t("review.noReviewsYet")}
 											</Alert>
 											:
 											<Box sx={{ color: "primary", p: 3, border: "1px solid #000000", borderRadius: 2 }} display="flex" flexDirection="column" gap={1.5} mb={3}>
-												<Typography>التعليقات</Typography>
+												<Typography>{t("review.comments")}</Typography>
 												<Divider sx={{ border: 1 }} />
 												{post.reviews?.map((review, index) => (
 													<Box key={index} display="flex" flexDirection="column" gap={0.5}>
+														<Avatar src={review.user?.image || "/user.png"} alt={review.user ? `${review.user.name.first} ${review.user.name.last}` : "مستخدم مجهول"} sx={{ width: 32, height: 32 }} />
 														<Typography variant="body2" color="green" sx={{ fontWeight: 700 }}>
 															{review.user?._id === auth?._id ? t("you") : `${review.user?.name.first} ${review.user?.name.last || "مستخدم مجهول"} `}
 														</Typography>
-														<Rating value={averageRating} readOnly size="small" />
+														<Rating value={review.rating || 0} readOnly size="small" />
 														<Typography variant="body2" color="">
 															{review.comment}
+														</Typography>
+														<Typography variant="body2" color="">
+															{review.createdAt ? formatTimeAgo(String(review.createdAt), t) : ""}
 														</Typography>
 													</Box>
 												))}
@@ -661,7 +665,7 @@ const PostDetails: FunctionComponent = () => {
 												fullWidth
 												value={comment}
 												onChange={(event) => setComment(event.target.value)}
-												placeholder='اكتب تعليقك أو سؤالك عن المنتج هنا...'
+												placeholder={t("review.reviewPlaceholder")}
 												variant='outlined'
 											/>
 
@@ -674,17 +678,59 @@ const PostDetails: FunctionComponent = () => {
 											>
 												<Stack spacing={0.75}>
 													<Typography variant='body2' color='text.secondary'>
-														قيّم تجربتك أو توقّعاتك من هذا المنتج.
+														{t("review.reviewExperience")}
 													</Typography>
 													<Rating value={rating} onChange={(_, newValue) => setRating(newValue ?? 0)} precision={0.5} />
 												</Stack>
+												{/* // submitReview call in the rating section: */}
+												<Button
+													variant='contained'
+													disabled={!comment.trim() || isSubmittingReview || !isLoggedIn}
+													onClick={async () => {
+														if (!isLoggedIn) {
+															navigate(path.Login);
+															return;
+														}
 
-												<Button variant='contained' disabled={!comment.trim()} onClick={() => {
-													submitReview(post._id!, { userId: auth._id!, rating, comment })
-												}}>
-													نشر التعليق
+														setIsSubmittingReview(true);
+														try {
+															const response = await submitReview(post._id!, {
+																userId: auth._id!,
+																rating,
+																comment
+															});
+
+															if (response && response.review) {
+																// Update the post with the new review
+																setPost(prevPost => ({
+																	...prevPost,
+																	reviews: [response.review, ...(prevPost.reviews || [])],
+																	reviewCount: Number(prevPost.reviewCount || 0) + 1
+																}));
+
+																// Clear the form
+																setComment('');
+																setRating(0);
+																showSuccess(t("review.submitted"));
+															}
+														} catch {
+															if (!rating) {
+																showError(t("review.submitError"));
+																return;
+															}
+														} finally {
+															setIsSubmittingReview(false);
+														}
+													}}
+												>
+													{isSubmittingReview ? t("review.submitting") || "review.submitting" : t("review.publish") || "نشر التعليق"}
 												</Button>
 											</Stack>
+											{!isLoggedIn && (
+												<Alert severity="warning" sx={{ mt: 1 }}>
+													{t("review.loginToReview")}
+												</Alert>
+											)}
 										</Stack>
 									</Card>
 								</Stack>
@@ -705,7 +751,7 @@ const PostDetails: FunctionComponent = () => {
 												<Stack direction='row' spacing={1.25} alignItems='center' flexWrap='wrap'>
 													<Rating value={rating} precision={0.5} onChange={(_, newValue) => setRating(newValue ?? 0)} />
 													<Typography variant='body2' color='text.secondary'>
-														{typeof post.reviewCount === "number" ? post.reviewCount : 0} تقييم
+														{post.reviews?.length || 0} {t("reviews") || "تقييم"}
 													</Typography>
 												</Stack>
 											</Box>
@@ -735,7 +781,6 @@ const PostDetails: FunctionComponent = () => {
 											</Box>
 
 											<Divider />
-
 											<Box>
 												<Typography variant='h6' sx={{ fontWeight: 700, mb: 1.5 }}>
 													وصف المنتج

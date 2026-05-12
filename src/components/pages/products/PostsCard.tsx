@@ -229,7 +229,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 											fontSize: "0.8125rem",
 										}}
 									>
-										{formatTimeAgo(String(post.createdAt) || "")}
+										{formatTimeAgo(String(post.createdAt), t) || ""}
 									</Typography>
 									<Typography
 										variant='caption'

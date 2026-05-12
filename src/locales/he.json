@@ -1,727 +1,745 @@
 {
-	"you": "אתה",
-	"home": "בית",
-	"navigationMenu": "תפריט ניווט",
-	"webPageName": "ספקה",
-	"bestOffers": "העסקות הטובים ביותר במקום אחד",
-	"browse-posts": "עיין בפוסטים",
-	"create-post": "צור פוסט",
-	"allRightsReserved": "כל הזכויות שמורות.",
-	"help": "עזרה",
-	"favorites": "מועדפים",
-	"startFree": "התחל עכשיו בחינם",
-	"joinUs": "הצטרפו אלינו בחינם",
-	"product": "מוצר",
-	"was-found": "נמצא",
-	"search": "דוגמה: מאזדה 3 | ביגוד",
-	"callUs": "צור קשר",
-	"team": "צוות ספקה",
-	"faq": "שאלות נפוצות",
-	"shares": "מודעות",
-	"seller": "פורסם ע'י",
-	"member_since": "חבר מאז",
-	"status": {
-		"title": "סטטוס",
-		"active": "פעיל",
-		"inactive": "לא פעיל",
-		"lastActivity": "פעילות אחרונה"
-	},
-	"messages": {
-		"main": "הודעות",
-		"search": "חפש הודעות",
-		"all": "הכל",
-		"unread": "הודעות שלא נקראו",
-		"directMessage": "הודעה ישירה",
-		"contactWith": "צור קשר עם "
-	},
-	"roles": {
-		"title": "תפקיד",
-		"admin": "מנהל",
-		"client": "משתמש",
-		"moderator": "מפקח אתר"
-	},
-	"login": {
-		"lastLogin": "כניסה אחרונה",
-		"email": "דואר אלקטרוני",
-		"password": "סיסמה",
-		"loginButton": "התחברות",
-		"googleLoginError": "התחברות עם Google נכשלה",
-		"noAccount": "אין לך חשבון עדיין?",
-		"register": "לחץ להרשמה",
-		"privacyPolicy": "מדיניות פרטיות",
-		"termsOfUse": "תנאי שימוש",
-		"validation": {
-			"emailInvalid": "דואר אלקטרוני לא חוקי",
-			"emailRequired": "דואר אלקטרוני נדרש",
-			"passwordMin": "הסיסמה חייבת להכיל לפחות 8 תווים ועד 60 תווים",
-			"passwordMax": "הסיסמה ארוכה מדי",
-			"passwordRequired": "סיסמה נדרשת"
-		},
-		"success": "התחברות בוצעה בהצלחה!",
-		"error": "התחברות נכשלה",
-		"googleError": "שגיאה בהתחברות עם Google: {{message}}"
-	},
+    "you": "אתה",
+    "review": {
+        "questionsAndReviews": "שאלות ודירוגים",
+        "questionsAndReviewsSubtitle": "עודד מבקרים לשתף את ההתרשמות שלהם ולשאול שאלות לפני הרכישה",
+        "comments": "תגובות",
+        "noReviewsYet": "עדיין אין תגובות שפורסמו. אתה יכול להיות הראשון שמוסיף חוות דעת ברורה ומועילה",
+        "reviewPlaceholder": "כתוב כאן את התגובה או השאלה שלך על המוצר...",
+        "reviewExperience": "דרג את החוויה שלך או את הציפיות שלך מהמוצר הזה",
+        "submitting": "התגובה מתפרסמת...",
+        "publish": "פרסם ביקורת",
+        "submitted": "התגובה שלך פורסמה בהצלחה",
+        "submitError": "יש לבחור דירוג לפני שליחת הביקורת",
+        "loginToReview": "אנא התחבר כדי להוסיף דירוג או תגובה"
+    },
+    "minutesAgo": "לפני {{count}} דקות",
+    "hoursAgo": "לפני {{count}} שעות",
+    "daysAgo": "לפני {{count}} ימים",
+    "weeksAgo": "לפני {{count}} שבועות",
+    "justNow": "הרגע",
+    "home": "בית",
+    "navigationMenu": "תפריט ניווט",
+    "webPageName": "ספקה",
+    "bestOffers": "העסקות הטובים ביותר במקום אחד",
+    "browse-posts": "עיין בפוסטים",
+    "create-post": "צור פוסט",
+    "allRightsReserved": "כל הזכויות שמורות.",
+    "help": "עזרה",
+    "favorites": "מועדפים",
+    "startFree": "התחל עכשיו בחינם",
+    "joinUs": "הצטרפו אלינו בחינם",
+    "product": "מוצר",
+    "was-found": "נמצא",
+    "search": "דוגמה: מאזדה 3 | ביגוד",
+    "callUs": "צור קשר",
+    "team": "צוות ספקה",
+    "faq": "שאלות נפוצות",
+    "shares": "מודעות",
+    "seller": "פורסם ע'י",
+    "member_since": "חבר מאז",
+    "status": {
+        "title": "סטטוס",
+        "active": "פעיל",
+        "inactive": "לא פעיל",
+        "lastActivity": "פעילות אחרונה"
+    },
+    "messages": {
+        "main": "הודעות",
+        "search": "חפש הודעות",
+        "all": "הכל",
+        "unread": "הודעות שלא נקראו",
+        "directMessage": "הודעה ישירה",
+        "contactWith": "צור קשר עם "
+    },
+    "roles": {
+        "title": "תפקיד",
+        "admin": "מנהל",
+        "client": "משתמש",
+        "moderator": "מפקח אתר"
+    },
+    "login": {
+        "lastLogin": "כניסה אחרונה",
+        "email": "דואר אלקטרוני",
+        "password": "סיסמה",
+        "loginButton": "התחברות",
+        "googleLoginError": "התחברות עם Google נכשלה",
+        "noAccount": "אין לך חשבון עדיין?",
+        "register": "לחץ להרשמה",
+        "privacyPolicy": "מדיניות פרטיות",
+        "termsOfUse": "תנאי שימוש",
+        "validation": {
+            "emailInvalid": "דואר אלקטרוני לא חוקי",
+            "emailRequired": "דואר אלקטרוני נדרש",
+            "passwordMin": "הסיסמה חייבת להכיל לפחות 8 תווים ועד 60 תווים",
+            "passwordMax": "הסיסמה ארוכה מדי",
+            "passwordRequired": "סיסמה נדרשת"
+        },
+        "success": "התחברות בוצעה בהצלחה!",
+        "error": "התחברות נכשלה",
+        "googleError": "שגיאה בהתחברות עם Google: {{message}}"
+    },
 
-	"register": {
-		"title": "יצירת חשבון חדש",
-		"subtitle": "הצטרפו לקהילת סַפְקָה והתחילו את המסע המסחרי שלכם עוד היום",
-		"steps": {
-			"personalInfo": "פרטים אישיים",
-			"contactInfo": "פרטי התקשרות",
-			"security": "אבטחה",
-			"agreements": "הסכמים"
-		},
-		"slug": "שם משתמש",
-		"slugHint": "שם ייחודי שיופיע בקישור לפרופיל שלך",
-		"slugExample": "דוגמה: john-doe או ahmad-saleh",
-		"generateSlug": "יצירה אוטומטית מהשם",
-		"checkingSlug": "בודקים זמינות שם...",
-		"slugAvailable": "השם זמין ✓",
-		"slugTaken": "השם כבר תפוס ✗",
-		"profilePreview": "תצוגה מקדימה של הפרופיל",
-		"profileLink": "קישור לפרופיל שלך",
-		"passwordStrength": {
-			"veryWeak": "חלש מאוד",
-			"weak": "חלש",
-			"fair": "בינוני",
-			"good": "טוב",
-			"strong": "חזק",
-			"veryStrong": "חזק מאוד"
-		},
-		"agreeTo": "אני מסכים ל־",
-		"termsOfService": "תנאי השימוש",
-		"and": "ו־",
-		"privacyPolicy": "מדיניות הפרטיות",
-		"privacyNote": "אנו מכבדים את פרטיותך ומתחייבים להגן על המידע האישי שלך בהתאם למדיניות הפרטיות שלנו.",
-		"creatingAccount": "יוצר חשבון...",
-		"completeRegistration": "השלמת הרשמה",
-		"success": {
-			"title": "ההרשמה בוצעה בהצלחה!",
-			"message": "החשבון שלך נוצר בהצלחה. כעת ניתן להתחבר ולהתחיל להשתמש בשירותי סַפְקָה.",
-			"description": "החשבון נוצר בהצלחה",
-			"redirect": "מעבירים אותך אוטומטית לדף ההתחברות..."
-		},
-		"errors": {
-			"serverError": "אירעה שגיאה בשרת. אנא נסה שוב.",
-			"networkError": "שגיאת רשת. אנא בדוק את חיבור האינטרנט שלך.",
-			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
-			"createPostFailed": "אירעה שגיאה בפרסום המוצר, נסה שוב"
-		},
-		"validation": {
-			"nameLettersOnly": "השם חייב להכיל אותיות בלבד",
-			"phone1Format": "המספר חייב להתחיל ב־05 ולהכיל 9–10 ספרות",
-			"phone2Format": "המספר חייב להתחיל ב־05 ולהכיל 9–10 ספרות או להיות ריק",
-			"houseNumberDigits": "מספר הבית חייב להכיל ספרות בלבד",
-			"passwordLowercase": "חייב להכיל לפחות אות קטנה אחת",
-			"passwordUppercase": "חייב להכיל לפחות אות גדולה אחת",
-			"passwordNumber": "חייב להכיל לפחות ספרה אחת",
-			"passwordSpecial": "חייב להכיל לפחות תו מיוחד אחד (!@#$%^&*(),.?\":{}|<>)",
-			"slugRequired": "שם משתמש הוא שדה חובה",
-			"slugMin": "שם המשתמש חייב להכיל לפחות 3 תווים",
-			"slugMax": "שם המשתמש לא יכול לעלות על 30 תווים",
-			"slugFormat": "שם המשתמש יכול להכיל אותיות באנגלית קטנות, מספרים ומקפים בלבד",
-			"slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
-			"slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים",
-			"termsRequired": "אנא אשר את תנאי השימוש ואת מדיניות הפרטיות כדי להמשיך",
-			"emailNotValid": "יש להשתמש בדוא'ל"
-		},
-		"selectGender": "בחר מין",
-		"gender": "מין",
-		"male": "זכר",
-		"female": "נקבה"
-	},
-	"common": {
-		"typing": "מקליד/ה...",
-		"viewOf": "מציג",
-		"outOf": "מתוך",
-		"countOfPosts": "מודעות זמינות",
-		"endOfPosts": "הגעת לסוף המודעות",
-		"back": "הקודם",
-		"next": "הבא",
-		"faq": "שאלות נפוצות",
-		"contact": "צור קשר",
-		"about": "אודותינו",
-		"businessName": "שם מסחרי",
-		"gasoline": "בנזין",
-		"brand": "יצרן",
-		"year": "שנת ייצור",
-		"fuel": "סוג דלק",
-		"mileage": "קילומטר'ז'",
-		"color": "צבע חיצוני"
-	},
+    "register": {
+        "title": "יצירת חשבון חדש",
+        "subtitle": "הצטרפו לקהילת סַפְקָה והתחילו את המסע המסחרי שלכם עוד היום",
+        "steps": {
+            "personalInfo": "פרטים אישיים",
+            "contactInfo": "פרטי התקשרות",
+            "security": "אבטחה",
+            "agreements": "הסכמים"
+        },
+        "slug": "שם משתמש",
+        "slugHint": "שם ייחודי שיופיע בקישור לפרופיל שלך",
+        "slugExample": "דוגמה: john-doe או ahmad-saleh",
+        "generateSlug": "יצירה אוטומטית מהשם",
+        "checkingSlug": "בודקים זמינות שם...",
+        "slugAvailable": "השם זמין ✓",
+        "slugTaken": "השם כבר תפוס ✗",
+        "profilePreview": "תצוגה מקדימה של הפרופיל",
+        "profileLink": "קישור לפרופיל שלך",
+        "passwordStrength": {
+            "veryWeak": "חלש מאוד",
+            "weak": "חלש",
+            "fair": "בינוני",
+            "good": "טוב",
+            "strong": "חזק",
+            "veryStrong": "חזק מאוד"
+        },
+        "agreeTo": "אני מסכים ל־",
+        "termsOfService": "תנאי השימוש",
+        "and": "ו־",
+        "privacyPolicy": "מדיניות הפרטיות",
+        "privacyNote": "אנו מכבדים את פרטיותך ומתחייבים להגן על המידע האישי שלך בהתאם למדיניות הפרטיות שלנו.",
+        "creatingAccount": "יוצר חשבון...",
+        "completeRegistration": "השלמת הרשמה",
+        "success": {
+            "title": "ההרשמה בוצעה בהצלחה!",
+            "message": "החשבון שלך נוצר בהצלחה. כעת ניתן להתחבר ולהתחיל להשתמש בשירותי סַפְקָה.",
+            "description": "החשבון נוצר בהצלחה",
+            "redirect": "מעבירים אותך אוטומטית לדף ההתחברות..."
+        },
+        "errors": {
+            "serverError": "אירעה שגיאה בשרת. אנא נסה שוב.",
+            "networkError": "שגיאת רשת. אנא בדוק את חיבור האינטרנט שלך.",
+            "slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
+            "createPostFailed": "אירעה שגיאה בפרסום המוצר, נסה שוב"
+        },
+        "validation": {
+            "nameLettersOnly": "השם חייב להכיל אותיות בלבד",
+            "phone1Format": "המספר חייב להתחיל ב־05 ולהכיל 9–10 ספרות",
+            "phone2Format": "המספר חייב להתחיל ב־05 ולהכיל 9–10 ספרות או להיות ריק",
+            "houseNumberDigits": "מספר הבית חייב להכיל ספרות בלבד",
+            "passwordLowercase": "חייב להכיל לפחות אות קטנה אחת",
+            "passwordUppercase": "חייב להכיל לפחות אות גדולה אחת",
+            "passwordNumber": "חייב להכיל לפחות ספרה אחת",
+            "passwordSpecial": "חייב להכיל לפחות תו מיוחד אחד (!@#$%^&*(),.?\":{}|<>)",
+            "slugRequired": "שם משתמש הוא שדה חובה",
+            "slugMin": "שם המשתמש חייב להכיל לפחות 3 תווים",
+            "slugMax": "שם המשתמש לא יכול לעלות על 30 תווים",
+            "slugFormat": "שם המשתמש יכול להכיל אותיות באנגלית קטנות, מספרים ומקפים בלבד",
+            "slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
+            "slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים",
+            "termsRequired": "אנא אשר את תנאי השימוש ואת מדיניות הפרטיות כדי להמשיך",
+            "emailNotValid": "יש להשתמש בדוא'ל"
+        },
+        "selectGender": "בחר מין",
+        "gender": "מין",
+        "male": "זכר",
+        "female": "נקבה"
+    },
+    "common": {
+        "typing": "מקליד/ה...",
+        "viewOf": "מציג",
+        "outOf": "מתוך",
+        "countOfPosts": "מודעות זמינות",
+        "endOfPosts": "הגעת לסוף המודעות",
+        "back": "הקודם",
+        "next": "הבא",
+        "faq": "שאלות נפוצות",
+        "contact": "צור קשר",
+        "about": "אודותינו",
+        "businessName": "שם מסחרי",
+        "gasoline": "בנזין",
+        "brand": "יצרן",
+        "year": "שנת ייצור",
+        "fuel": "סוג דלק",
+        "mileage": "קילומטר'ז'",
+        "color": "צבע חיצוני"
+    },
 
-	"price": "מחיר",
-	"quantity": "כמות",
-	"currentStatus": "סטטוס",
-	"priceAfterDiscount": "מחיר לאחר הנחה",
-	"totalOrderPrice": "סך הכל להזמנה",
-	"collectionMethod": "אופן איסוף",
-	"paymentMethod": "אמצעי תשלום",
-	"creditCard": "כרטיס אשראי",
-	"selfPickup": "איסוף עצמי",
-	"delivery": "משלוח",
-	"cash": "מזומן",
-	"orderNumber": "מספר הזמנה",
-	"UserId": "מזהה משתמש",
-	"users-management": "ניהול משתמשים",
-	"account-management": "ניהול חשבון",
-	"date": "תאריך",
-	"phone": "טלפון",
-	"customerInfo": "פרטי לקוח",
-	"customer": "לקוח",
-	"email": "אימייל",
-	"address": "כתובת",
-	"searchin": "חפש שם מוצר",
-	"SpeedDial": {
-		"actions": {
-			"addProduct": "הוסף מוצר",
-			"cart": "סל קניות",
-			"backToTop": "חזרה למעלה"
-		}
-	},
-	"modals": {
-		"addProductModal": {
-			"title": "יצירת מודעה חדשה",
-			"subtitle": "הזן פרטים מדויקים כדי לשפר את החשיפה",
-			"sectionBasicInfo": "מידע בסיסי",
-			"specifications": "פרטים נוספים",
-			"productName": "כותרת",
-			"selectSubcategory": "בחר תת-קטגוריה",
-			"openCamera": "פתיחת מצלמה",
-			"chooseFromGallery": "בחירה מהגלריה",
-			"subcategory": "תת-קטגוריה",
-			"selectColor": "בחר צבע",
-			"color": "צבע",
-			"image": "תמונה",
-			"in_stock": "במלאי",
-			"not_in_stock": "אזל מהמלאי",
-			"year": "שנה",
-			"brand": "מותג",
-			"mileage": "קילומטראז'",
-			"productNamePlaceholder": "הזן כותרת למודעה",
-			"category": "קטגוריה",
-			"selectCategory": "בחר קטגוריה",
-			"price": "מחיר",
-			"description": "תיאור המוצר",
-			"descriptionPlaceholder": "כתוב תיאור ברור הכולל מאפיינים ומפרטים עיקריים",
-			"imageUrl": "קישור לתמונה",
-			"sale": "במבצע",
-			"discount": "אחוז הנחה",
-			"addProduct": "פרסם מודעה",
-			"cancel": "ביטול",
-			"saving": "המודעה מתפרסמת...",
-			"footerNote": "בדוק את הפרטים לפני הפרסום",
-			"validation": {
-				"productNameRequired": "כותרת המוצר היא שדה חובה",
-				"productNameMin": "כותרת המוצר חייבת להכיל לפחות 2 תווים",
-				"categoryRequired": "קטגוריה היא שדה חובה",
-				"priceRequired": "מחיר הוא שדה חובה",
-				"quantityRequired": "כמות במלאי היא שדה חובה",
-				"quantityMin": "הכמות במלאי חייבת להיות לפחות 1",
-				"descriptionMin": "התיאור חייב להכיל לפחות 2 תווים",
-				"descriptionMax": "התיאור לא יכול לעלות על 500 תווים",
-				"imageUrlRequired": "קישור לתמונה הוא שדה חובה",
-				"imageUrlInvalid": "יש להזין קישור תקין לתמונה"
-			}
-		},
-		"updateProductModal": {
-			"title": "עדכון מוצר",
-			"productName": "שם מוצר (ייחודי)",
-			"productNamePlaceholder": "שם מוצר",
-			"category": "קטגוריה",
-			"selectCategory": "בחר קטגוריה",
-			"price": "מחיר",
-			"quantity": "כמות במלאי",
-			"description": "תיאור מוצר",
-			"descriptionPlaceholder": "הכנס תיאור מוצר",
-			"imageUrl": "קישור לתמונה",
-			"sale": "במבצע",
-			"discount": "אחוז הנחה",
-			"updateButton": "עדכן",
-			"closeButton": "סגור",
-			"location": "עיר מוצא",
+    "price": "מחיר",
+    "quantity": "כמות",
+    "currentStatus": "סטטוס",
+    "priceAfterDiscount": "מחיר לאחר הנחה",
+    "totalOrderPrice": "סך הכל להזמנה",
+    "collectionMethod": "אופן איסוף",
+    "paymentMethod": "אמצעי תשלום",
+    "creditCard": "כרטיס אשראי",
+    "selfPickup": "איסוף עצמי",
+    "delivery": "משלוח",
+    "cash": "מזומן",
+    "orderNumber": "מספר הזמנה",
+    "UserId": "מזהה משתמש",
+    "users-management": "ניהול משתמשים",
+    "account-management": "ניהול חשבון",
+    "date": "תאריך",
+    "phone": "טלפון",
+    "customerInfo": "פרטי לקוח",
+    "customer": "לקוח",
+    "email": "אימייל",
+    "address": "כתובת",
+    "searchin": "חפש שם מוצר",
+    "SpeedDial": {
+        "actions": {
+            "addProduct": "הוסף מוצר",
+            "cart": "סל קניות",
+            "backToTop": "חזרה למעלה"
+        }
+    },
+    "modals": {
+        "addProductModal": {
+            "title": "יצירת מודעה חדשה",
+            "subtitle": "הזן פרטים מדויקים כדי לשפר את החשיפה",
+            "sectionBasicInfo": "מידע בסיסי",
+            "specifications": "פרטים נוספים",
+            "productName": "כותרת",
+            "selectSubcategory": "בחר תת-קטגוריה",
+            "openCamera": "פתיחת מצלמה",
+            "chooseFromGallery": "בחירה מהגלריה",
+            "subcategory": "תת-קטגוריה",
+            "selectColor": "בחר צבע",
+            "color": "צבע",
+            "image": "תמונה",
+            "in_stock": "במלאי",
+            "not_in_stock": "אזל מהמלאי",
+            "year": "שנה",
+            "brand": "מותג",
+            "mileage": "קילומטראז'",
+            "productNamePlaceholder": "הזן כותרת למודעה",
+            "category": "קטגוריה",
+            "selectCategory": "בחר קטגוריה",
+            "price": "מחיר",
+            "description": "תיאור המוצר",
+            "descriptionPlaceholder": "כתוב תיאור ברור הכולל מאפיינים ומפרטים עיקריים",
+            "imageUrl": "קישור לתמונה",
+            "sale": "במבצע",
+            "discount": "אחוז הנחה",
+            "addProduct": "פרסם מודעה",
+            "cancel": "ביטול",
+            "saving": "המודעה מתפרסמת...",
+            "footerNote": "בדוק את הפרטים לפני הפרסום",
+            "validation": {
+                "productNameRequired": "כותרת המוצר היא שדה חובה",
+                "productNameMin": "כותרת המוצר חייבת להכיל לפחות 2 תווים",
+                "categoryRequired": "קטגוריה היא שדה חובה",
+                "priceRequired": "מחיר הוא שדה חובה",
+                "quantityRequired": "כמות במלאי היא שדה חובה",
+                "quantityMin": "הכמות במלאי חייבת להיות לפחות 1",
+                "descriptionMin": "התיאור חייב להכיל לפחות 2 תווים",
+                "descriptionMax": "התיאור לא יכול לעלות על 500 תווים",
+                "imageUrlRequired": "קישור לתמונה הוא שדה חובה",
+                "imageUrlInvalid": "יש להזין קישור תקין לתמונה"
+            }
+        },
+        "updateProductModal": {
+            "title": "עדכון מוצר",
+            "productName": "שם מוצר (ייחודי)",
+            "productNamePlaceholder": "שם מוצר",
+            "category": "קטגוריה",
+            "selectCategory": "בחר קטגוריה",
+            "price": "מחיר",
+            "quantity": "כמות במלאי",
+            "description": "תיאור מוצר",
+            "descriptionPlaceholder": "הכנס תיאור מוצר",
+            "imageUrl": "קישור לתמונה",
+            "sale": "במבצע",
+            "discount": "אחוז הנחה",
+            "updateButton": "עדכן",
+            "closeButton": "סגור",
+            "location": "עיר מוצא",
 
-			"validation": {
-				"productNameRequired": "שם מוצר נדרש",
-				"productNameMin": "שם מוצר חייב להכיל לפחות 2 תווים",
-				"categoryRequired": "קטגוריה נדרשת",
-				"priceRequired": "מחיר נדרש",
-				"quantityRequired": "כמות במלאי נדרשת",
-				"quantityMin": "הכמות חייבת להיות לפחות 1",
-				"descriptionMin": "תיאור חייב להכיל לפחות 2 תווים",
-				"descriptionMax": "תיאור לא יכול לעלות על 500 תווים",
-				"imageUrlRequired": "קישור לתמונה נדרש",
-				"imageUrlInvalid": "קישור חייב להיות תקין"
-			}
-		}
-	},
-	"loader": {
-		"welcome": "ברוכים הבאים לאתרספקה",
-		"message": "הטענה ראשונית עשויה לקחת עד 50 שניות מכיוון שהשרת חינמי. אנא סבלנות."
-	},
+            "validation": {
+                "productNameRequired": "שם מוצר נדרש",
+                "productNameMin": "שם מוצר חייב להכיל לפחות 2 תווים",
+                "categoryRequired": "קטגוריה נדרשת",
+                "priceRequired": "מחיר נדרש",
+                "quantityRequired": "כמות במלאי נדרשת",
+                "quantityMin": "הכמות חייבת להיות לפחות 1",
+                "descriptionMin": "תיאור חייב להכיל לפחות 2 תווים",
+                "descriptionMax": "תיאור לא יכול לעלות על 500 תווים",
+                "imageUrlRequired": "קישור לתמונה נדרש",
+                "imageUrlInvalid": "קישור חייב להיות תקין"
+            }
+        }
+    },
+    "loader": {
+        "welcome": "ברוכים הבאים לאתרספקה",
+        "message": "הטענה ראשונית עשויה לקחת עד 50 שניות מכיוון שהשרת חינמי. אנא סבלנות."
+    },
 
-	"categories": {
-		"House": {
-			"label": "מוצרי בית",
-			"heading": "מוצרי בית",
-			"description": "קטגוריה למכירה וקנייה של מוצרי בית שונים כמו כלי מטבח, אחסון וארגון.",
-			"subCategories": {
-				"kitchen": "כלי מטבח",
-				"storage": "אחסון וארגון",
-				"decor": "עיצוב הבית",
-				"maintenance": "כלי עבודה ותחזוקה"
-			}
-		},
-		"Garden": {
-			"label": "גינה",
-			"heading": "מוצרי גינה",
-			"description": "כוללת מוצרים הקשורים לגינה כמו כלי עבודה, השקיה וצמחייה.",
-			"subCategories": {
-				"plants": "צמחים",
-				"watering": "ציוד השקיה",
-				"tools": "כלי גינון",
-				"outdoorDecor": "עיצוב חוץ"
-			}
-		},
-		"Electronics": {
-			"label": "אלקטרוניקה",
-			"heading": "אלקטרוניקה",
-			"description": "מכשירים ומוצרים אלקטרוניים שונים כגון טלפונים, אביזרים ומוצרי טכנולוגיה.",
-			"subCategories": {
-				"phones": "טלפונים",
-				"laptops": "מחשבים ניידים",
-				"accessories": "אביזרים",
-				"gaming": "גיימינג"
-			}
-		},
-		"Kids": {
-			"label": "צעצועים לילדים",
-			"heading": "צעצועים לילדים",
-			"description": "צעצועים ומוצרים המיועדים לילדים בגילאים שונים.",
-			"subCategories": {
-				"educational": "צעצועים חינוכיים",
-				"toys": "צעצועים",
-				"outdoor": "משחקי חוץ"
-			}
-		},
-		"Baby": {
-			"label": "מוצרי תינוקות",
-			"heading": "מוצרי תינוקות",
-			"description": "מוצרים לתינוקות כגון בגדים, מוצרי טיפוח וצרכים יומיומיים.",
-			"subCategories": {
-				"clothes": "בגדי תינוקות",
-				"care": "טיפוח",
-				"feeding": "האכלה"
-			}
-		},
-		"Beauty": {
-			"label": "טיפוח ויופי",
-			"heading": "טיפוח ויופי",
-			"description": "מוצרי טיפוח וקוסמטיקה המוצעים על ידי משתמשים.",
-			"subCategories": {
-				"makeup": "איפור",
-				"skincare": "טיפוח עור",
-				"hair": "טיפוח שיער"
-			}
-		},
-		"Cleaning": {
-			"label": "מוצרי ניקיון",
-			"heading": "מוצרי ניקיון",
-			"description": "מוצרי וכלי ניקיון לשימוש ביתי.",
-			"subCategories": {
-				"detergents": "חומרי ניקוי",
-				"tools": "כלי ניקיון",
-				"disinfection": "חיטוי"
-			}
-		},
-		"Health": {
-			"label": "בריאות וטיפוח",
-			"heading": "בריאות וטיפוח",
-			"description": "מוצרים הקשורים לבריאות ולטיפוח אישי.",
-			"subCategories": {
-				"personalCare": "טיפוח אישי",
-				"medical": "ציוד רפואי",
-				"fitness": "ציוד כושר"
-			}
-		},
-		"Watches": {
-			"label": "שעונים",
-			"heading": "שעונים",
-			"description": "שעונים מסוגים ועיצובים שונים.",
-			"subCategories": {
-				"classic": "שעונים קלאסיים",
-				"smart": "שעונים חכמים",
-				"hand": "שעוני יד"
-			}
-		},
-		"MenClothes": {
-			"label": "ביגוד גברים",
-			"heading": "ביגוד גברים",
-			"description": "ביגוד לגברים לשימושים שונים.",
-			"subCategories": {
-				"casual": "ביגוד יומיומי",
-				"formal": "ביגוד רשמי",
-				"shoes": "נעליים"
-			}
-		},
-		"WomenClothes": {
-			"label": "ביגוד נשים",
-			"heading": "ביגוד נשים",
-			"description": "ביגוד לנשים בסגנונות שונים.",
-			"subCategories": {
-				"casual": "ביגוד יומיומי",
-				"dresses": "שמלות",
-				"shoes": "נעליים"
-			}
-		},
-		"WomenBags": {
-			"label": "תיקים לנשים",
-			"heading": "תיקים לנשים",
-			"description": "תיקים לנשים בגדלים ושימושים שונים.",
-			"subCategories": {
-				"handbags": "תיקי יד",
-				"backpacks": "תרמילים",
-				"travel": "תיקי נסיעות"
-			}
-		},
-		"Cars": {
-			"label": "רכבים",
-			"heading": "רכבים",
-			"description": "רכבים למכירה ממשתמשים פרטיים, חדשים או משומשים.",
-			"subCategories": {
-				"private": "רכבים פרטיים",
-				"electric": "רכבים חשמליים",
-				"parts": "חלפים",
-				"accessories": "אביזרי רכב"
-			},
-			"fuel": {
-				"label": "צריכה",
-				"settings": {
-					"gasoline": "דלק",
-					"diesel": "דיזל",
-					"electric": "חשמלי"
-				}
-			},
-			"year": "שנה",
-			"brand": "יצרן",
-			"mileage": "קילומטרים"
-		},
-		"Motorcycles": {
-			"label": "אופנועים",
-			"heading": "אופנועים",
-			"description": "אופנועים מדגמים שונים.",
-			"subCategories": {
-				"sport": "אופנועי ספורט",
-				"scooters": "קטנועים",
-				"parts": "חלפים"
-			},
-			"year": "שנה",
-			"brand": "יצרן",
-			"mileage": "קילומטרים"
-		},
-		"Trucks": {
-			"label": "משאיות",
-			"heading": "משאיות",
-			"description": "משאיות לשימוש פרטי או מסחרי.",
-			"subCategories": {
-				"light": "משאיות קלות",
-				"heavy": "משאיות כבדות"
-			},
-			"year": "שנה",
-			"brand": "יצרן",
-			"mileage": "קילומטרים"
-		},
-		"Bikes": {
-			"label": "אופניים",
-			"heading": "אופניים",
-			"description": "אופניים בגדלים וסוגים שונים.",
-			"subCategories": {
-				"kids": "אופני ילדים",
-				"mountain": "אופני הרים",
-				"road": "אופני כביש"
-			},
-			"year": "שנה",
-			"brand": "יצרן",
-			"mileage": "קילומטרים"
-		},
-		"ElectricVehicles": {
-			"label": "כלי רכב חשמליים",
-			"heading": "כלי רכב חשמליים",
-			"description": "כלי רכב הפועלים באמצעות חשמל.",
-			"subCategories": {
-				"cars": "רכבים חשמליים",
-				"scooters": "קורקינטים חשמליים"
-			},
-			"year": "שנה",
-			"brand": "יצרן",
-			"mileage": "קילומטרים"
-		},
-		"discountsAndOffers": {
-			"common": {
-				"discount": "הנחה",
-				"save": "חסכו",
-				"errors": {
-					"fetchFailed": "טעינת המוצרים בהנחה נכשלה. אנא נסו שוב מאוחר יותר."
-				}
-			},
-			"categories": {
-				"discountsAndOffers": {
-					"title": "מבצעים חמים והנחות",
-					"description": "גלו הנחות מדהימות על המוצרים היוקרתיים שלנו. מבצעים לזמן מוגבל עם חיסכון גדול!",
-					"subtitle": "קנו עכשיו וחסכו המון על פריטים נבחרים",
-					"text1": "מבצעים בלעדיים",
-					"text2": "הנחות לזמן מוגבל על המוצרים הנמכרים ביותר",
-					"noProducts": "אין מוצרים בהנחה זמינים כרגע. בדקו שוב בקרוב למבצעים חדשים!",
-					"viewAll": "צפו בכל המבצעים",
-					"ariaLabel": "קרוסלת מוצרים בהנחה"
-				}
-			}
-		}
-	},
-	"seo": {
-		"categoryTitle": "קטגוריה {{category}} | אתר ספקה",
-		"categoryDescription": "גלו מגוון רחב של {{category}} טריים ובאיכות גבוהה באתר שלנו!"
-	},
-	"links": {
-		"home": "בית",
-		"products": "מוצרים",
-		"noProducts": "לא נמצאו מוצרים בחנות",
-		"new": "חדש",
-		"cart": "עגלת קניות",
-		"about": "אודות",
-		"contact": "צור קשר",
-		"login": "התחברות",
-		"logout": "התנתקות",
-		"orders": "הזמנות",
-		"receipts": "קבלות"
-	},
-	"orders": {
-		"status": {
-			"pending": "בהמתנה",
-			"preparing": "בהכנה",
-			"delivered": "נשלח",
-			"shipped": "סופק",
-			"cancelled": "בוטל"
-		}
-	},
-	"pages": {
-		"receipts": {
-			"receiptSearchTitle": "חיפוש קבלות",
-			"receiptSearch_1": "שם / אימייל / מספר הזמנה",
-			"receiptSearch_2": "חיפוש לפי מוצר",
-			"receiptSearchFromDate": "מתאריך",
-			"receiptSearchToDate": "עד תאריך",
-			"noReceiptsFound": "לא נמצאו קבלות",
-			"receiptListTitle": "קבלות 🧾",
-			"receiptNumber": "קבלה מספר {{orderNumber}}",
-			"date": "תאריך",
-			"customer": "לקוח",
-			"phone": "טלפון",
-			"email": "אימייל",
-			"address": "כתובת",
-			"paymentMethod": "אמצעי תשלום",
-			"creditCard": "כרטיס אשראי",
-			"cash": "מזומן",
-			"deliveryMethod": "אופן קבלה",
-			"delivery": "משלוח עד הבית",
-			"pickup": "איסוף עצמי",
-			"totalAmount": "סכום כולל",
-			"products": "מוצרים",
-			"productName": "מוצר",
-			"quantity": "כמות",
-			"pricePerUnit": "מחיר ליחידה",
-			"total": "סה\"כ",
-			"businessName": "שם החנות",
-			"businessPhone": "טלפון החנות",
-			"businessEmail": "אימייל החנות",
-			"businessAddress": "כתובת החנות",
-			"download": "הורדה"
-		},
-		"contact": {
-			"title": "ספקה – צור קשר",
-			"subtitle": "פלטפורמה בטוחה ומהירה לקנייה ומכירה בין משתמשים, עם המגוון הרחב ביותר של קטגוריות",
+    "categories": {
+        "House": {
+            "label": "מוצרי בית",
+            "heading": "מוצרי בית",
+            "description": "קטגוריה למכירה וקנייה של מוצרי בית שונים כמו כלי מטבח, אחסון וארגון.",
+            "subCategories": {
+                "kitchen": "כלי מטבח",
+                "storage": "אחסון וארגון",
+                "decor": "עיצוב הבית",
+                "maintenance": "כלי עבודה ותחזוקה"
+            }
+        },
+        "Garden": {
+            "label": "גינה",
+            "heading": "מוצרי גינה",
+            "description": "כוללת מוצרים הקשורים לגינה כמו כלי עבודה, השקיה וצמחייה.",
+            "subCategories": {
+                "plants": "צמחים",
+                "watering": "ציוד השקיה",
+                "tools": "כלי גינון",
+                "outdoorDecor": "עיצוב חוץ"
+            }
+        },
+        "Electronics": {
+            "label": "אלקטרוניקה",
+            "heading": "אלקטרוניקה",
+            "description": "מכשירים ומוצרים אלקטרוניים שונים כגון טלפונים, אביזרים ומוצרי טכנולוגיה.",
+            "subCategories": {
+                "phones": "טלפונים",
+                "laptops": "מחשבים ניידים",
+                "accessories": "אביזרים",
+                "gaming": "גיימינג"
+            }
+        },
+        "Kids": {
+            "label": "צעצועים לילדים",
+            "heading": "צעצועים לילדים",
+            "description": "צעצועים ומוצרים המיועדים לילדים בגילאים שונים.",
+            "subCategories": {
+                "educational": "צעצועים חינוכיים",
+                "toys": "צעצועים",
+                "outdoor": "משחקי חוץ"
+            }
+        },
+        "Baby": {
+            "label": "מוצרי תינוקות",
+            "heading": "מוצרי תינוקות",
+            "description": "מוצרים לתינוקות כגון בגדים, מוצרי טיפוח וצרכים יומיומיים.",
+            "subCategories": {
+                "clothes": "בגדי תינוקות",
+                "care": "טיפוח",
+                "feeding": "האכלה"
+            }
+        },
+        "Beauty": {
+            "label": "טיפוח ויופי",
+            "heading": "טיפוח ויופי",
+            "description": "מוצרי טיפוח וקוסמטיקה המוצעים על ידי משתמשים.",
+            "subCategories": {
+                "makeup": "איפור",
+                "skincare": "טיפוח עור",
+                "hair": "טיפוח שיער"
+            }
+        },
+        "Cleaning": {
+            "label": "מוצרי ניקיון",
+            "heading": "מוצרי ניקיון",
+            "description": "מוצרי וכלי ניקיון לשימוש ביתי.",
+            "subCategories": {
+                "detergents": "חומרי ניקוי",
+                "tools": "כלי ניקיון",
+                "disinfection": "חיטוי"
+            }
+        },
+        "Health": {
+            "label": "בריאות וטיפוח",
+            "heading": "בריאות וטיפוח",
+            "description": "מוצרים הקשורים לבריאות ולטיפוח אישי.",
+            "subCategories": {
+                "personalCare": "טיפוח אישי",
+                "medical": "ציוד רפואי",
+                "fitness": "ציוד כושר"
+            }
+        },
+        "Watches": {
+            "label": "שעונים",
+            "heading": "שעונים",
+            "description": "שעונים מסוגים ועיצובים שונים.",
+            "subCategories": {
+                "classic": "שעונים קלאסיים",
+                "smart": "שעונים חכמים",
+                "hand": "שעוני יד"
+            }
+        },
+        "MenClothes": {
+            "label": "ביגוד גברים",
+            "heading": "ביגוד גברים",
+            "description": "ביגוד לגברים לשימושים שונים.",
+            "subCategories": {
+                "casual": "ביגוד יומיומי",
+                "formal": "ביגוד רשמי",
+                "shoes": "נעליים"
+            }
+        },
+        "WomenClothes": {
+            "label": "ביגוד נשים",
+            "heading": "ביגוד נשים",
+            "description": "ביגוד לנשים בסגנונות שונים.",
+            "subCategories": {
+                "casual": "ביגוד יומיומי",
+                "dresses": "שמלות",
+                "shoes": "נעליים"
+            }
+        },
+        "WomenBags": {
+            "label": "תיקים לנשים",
+            "heading": "תיקים לנשים",
+            "description": "תיקים לנשים בגדלים ושימושים שונים.",
+            "subCategories": {
+                "handbags": "תיקי יד",
+                "backpacks": "תרמילים",
+                "travel": "תיקי נסיעות"
+            }
+        },
+        "Cars": {
+            "label": "רכבים",
+            "heading": "רכבים",
+            "description": "רכבים למכירה ממשתמשים פרטיים, חדשים או משומשים.",
+            "subCategories": {
+                "private": "רכבים פרטיים",
+                "electric": "רכבים חשמליים",
+                "parts": "חלפים",
+                "accessories": "אביזרי רכב"
+            },
+            "fuel": {
+                "label": "צריכה",
+                "settings": {
+                    "gasoline": "דלק",
+                    "diesel": "דיזל",
+                    "electric": "חשמלי"
+                }
+            },
+            "year": "שנה",
+            "brand": "יצרן",
+            "mileage": "קילומטרים"
+        },
+        "Motorcycles": {
+            "label": "אופנועים",
+            "heading": "אופנועים",
+            "description": "אופנועים מדגמים שונים.",
+            "subCategories": {
+                "sport": "אופנועי ספורט",
+                "scooters": "קטנועים",
+                "parts": "חלפים"
+            },
+            "year": "שנה",
+            "brand": "יצרן",
+            "mileage": "קילומטרים"
+        },
+        "Trucks": {
+            "label": "משאיות",
+            "heading": "משאיות",
+            "description": "משאיות לשימוש פרטי או מסחרי.",
+            "subCategories": {
+                "light": "משאיות קלות",
+                "heavy": "משאיות כבדות"
+            },
+            "year": "שנה",
+            "brand": "יצרן",
+            "mileage": "קילומטרים"
+        },
+        "Bikes": {
+            "label": "אופניים",
+            "heading": "אופניים",
+            "description": "אופניים בגדלים וסוגים שונים.",
+            "subCategories": {
+                "kids": "אופני ילדים",
+                "mountain": "אופני הרים",
+                "road": "אופני כביש"
+            },
+            "year": "שנה",
+            "brand": "יצרן",
+            "mileage": "קילומטרים"
+        },
+        "ElectricVehicles": {
+            "label": "כלי רכב חשמליים",
+            "heading": "כלי רכב חשמליים",
+            "description": "כלי רכב הפועלים באמצעות חשמל.",
+            "subCategories": {
+                "cars": "רכבים חשמליים",
+                "scooters": "קורקינטים חשמליים"
+            },
+            "year": "שנה",
+            "brand": "יצרן",
+            "mileage": "קילומטרים"
+        },
+        "discountsAndOffers": {
+            "common": {
+                "discount": "הנחה",
+                "save": "חסכו",
+                "errors": {
+                    "fetchFailed": "טעינת המוצרים בהנחה נכשלה. אנא נסו שוב מאוחר יותר."
+                }
+            },
+            "categories": {
+                "discountsAndOffers": {
+                    "title": "מבצעים חמים והנחות",
+                    "description": "גלו הנחות מדהימות על המוצרים היוקרתיים שלנו. מבצעים לזמן מוגבל עם חיסכון גדול!",
+                    "subtitle": "קנו עכשיו וחסכו המון על פריטים נבחרים",
+                    "text1": "מבצעים בלעדיים",
+                    "text2": "הנחות לזמן מוגבל על המוצרים הנמכרים ביותר",
+                    "noProducts": "אין מוצרים בהנחה זמינים כרגע. בדקו שוב בקרוב למבצעים חדשים!",
+                    "viewAll": "צפו בכל המבצעים",
+                    "ariaLabel": "קרוסלת מוצרים בהנחה"
+                }
+            }
+        }
+    },
+    "seo": {
+        "categoryTitle": "קטגוריה {{category}} | אתר ספקה",
+        "categoryDescription": "גלו מגוון רחב של {{category}} טריים ובאיכות גבוהה באתר שלנו!"
+    },
+    "links": {
+        "home": "בית",
+        "products": "מוצרים",
+        "noProducts": "לא נמצאו מוצרים בחנות",
+        "new": "חדש",
+        "cart": "עגלת קניות",
+        "about": "אודות",
+        "contact": "צור קשר",
+        "login": "התחברות",
+        "logout": "התנתקות",
+        "orders": "הזמנות",
+        "receipts": "קבלות"
+    },
+    "orders": {
+        "status": {
+            "pending": "בהמתנה",
+            "preparing": "בהכנה",
+            "delivered": "נשלח",
+            "shipped": "סופק",
+            "cancelled": "בוטל"
+        }
+    },
+    "pages": {
+        "receipts": {
+            "receiptSearchTitle": "חיפוש קבלות",
+            "receiptSearch_1": "שם / אימייל / מספר הזמנה",
+            "receiptSearch_2": "חיפוש לפי מוצר",
+            "receiptSearchFromDate": "מתאריך",
+            "receiptSearchToDate": "עד תאריך",
+            "noReceiptsFound": "לא נמצאו קבלות",
+            "receiptListTitle": "קבלות 🧾",
+            "receiptNumber": "קבלה מספר {{orderNumber}}",
+            "date": "תאריך",
+            "customer": "לקוח",
+            "phone": "טלפון",
+            "email": "אימייל",
+            "address": "כתובת",
+            "paymentMethod": "אמצעי תשלום",
+            "creditCard": "כרטיס אשראי",
+            "cash": "מזומן",
+            "deliveryMethod": "אופן קבלה",
+            "delivery": "משלוח עד הבית",
+            "pickup": "איסוף עצמי",
+            "totalAmount": "סכום כולל",
+            "products": "מוצרים",
+            "productName": "מוצר",
+            "quantity": "כמות",
+            "pricePerUnit": "מחיר ליחידה",
+            "total": "סה\"כ",
+            "businessName": "שם החנות",
+            "businessPhone": "טלפון החנות",
+            "businessEmail": "אימייל החנות",
+            "businessAddress": "כתובת החנות",
+            "download": "הורדה"
+        },
+        "contact": {
+            "title": "ספקה – צור קשר",
+            "subtitle": "פלטפורמה בטוחה ומהירה לקנייה ומכירה בין משתמשים, עם המגוון הרחב ביותר של קטגוריות",
 
-			"supportTitle": "תמיכת ספקה 24/7",
-			"intro": "בפלטפורמת ספַקה, כל עסקה היא הזדמנות. צוות התמיכה שלנו זמין תמיד להבטיח חוויית קנייה ומכירה בטוחה, פשוטה ומהירה לכל המשתמשים.",
+            "supportTitle": "תמיכת ספקה 24/7",
+            "intro": "בפלטפורמת ספַקה, כל עסקה היא הזדמנות. צוות התמיכה שלנו זמין תמיד להבטיח חוויית קנייה ומכירה בטוחה, פשוטה ומהירה לכל המשתמשים.",
 
-			"securityTitle": "בטיחות מקסימלית",
-			"securityDesc": "הגנו על המידע שלכם! אנו משתמשים בטכנולוגיות מתקדמות ומעקב צמוד כדי שכל עסקה תהיה מאובטחת ובטוחה.",
+            "securityTitle": "בטיחות מקסימלית",
+            "securityDesc": "הגנו על המידע שלכם! אנו משתמשים בטכנולוגיות מתקדמות ומעקב צמוד כדי שכל עסקה תהיה מאובטחת ובטוחה.",
 
-			"dealsTitle": "עסקאות מוצלחות בכל פעם",
-			"dealsDesc": "ספַקה מספקת כלים ייחודיים והנחיות חכמות שיאפשרו לכם להשלים עסקאות במהירות, בביטחון ובנוחות.",
+            "dealsTitle": "עסקאות מוצלחות בכל פעם",
+            "dealsDesc": "ספַקה מספקת כלים ייחודיים והנחיות חכמות שיאפשרו לכם להשלים עסקאות במהירות, בביטחון ובנוחות.",
 
-			"contactChannels": "ערוצי יצירת קשר",
+            "contactChannels": "ערוצי יצירת קשר",
 
-			"supportEmail": "תמיכה ללקוחות",
-			"salesEmail": "שותפויות והזדמנויות עסקיות",
+            "supportEmail": "תמיכה ללקוחות",
+            "salesEmail": "שותפויות והזדמנויות עסקיות",
 
-			"phone": "מרכז שירות",
-			"phoneHours": "זמין בין השעות 08:00–00:00",
+            "phone": "מרכז שירות",
+            "phoneHours": "זמין בין השעות 08:00–00:00",
 
-			"addressTitle": "מידע על הפלטפורמה",
-			"address": "ספַקה היא פלטפורמה דיגיטלית חדשנית לקנייה ומכירה — אין צורך במשרד פיזי",
+            "addressTitle": "מידע על הפלטפורמה",
+            "address": "ספַקה היא פלטפורמה דיגיטלית חדשנית לקנייה ומכירה — אין צורך במשרד פיזי",
 
-			"startSelling": "התחל למכור עכשיו",
-			"browseCategories": "גלוש בקטגוריות המובילות",
+            "startSelling": "התחל למכור עכשיו",
+            "browseCategories": "גלוש בקטגוריות המובילות",
 
-			"workingHours": "שעות פעילות",
+            "workingHours": "שעות פעילות",
 
-			"customerSupport": "תמיכת לקוחות",
-			"supportHours": "זמין 24/7 בכל ימות השבוע",
+            "customerSupport": "תמיכת לקוחות",
+            "supportHours": "זמין 24/7 בכל ימות השבוע",
 
-			"salesTeam": "צוות מכירות מקצועי",
-			"salesHours": "08:00–20:00",
+            "salesTeam": "צוות מכירות מקצועי",
+            "salesHours": "08:00–20:00",
 
-			"disputeResolution": "פתרון מחלוקות מהיר",
-			"disputeHours": "09:00–18:00 (ימי עבודה)",
+            "disputeResolution": "פתרון מחלוקות מהיר",
+            "disputeHours": "09:00–18:00 (ימי עבודה)",
 
-			"technicalSupport": "תמיכה טכנית חכמה",
-			"techHours": "10:00–22:00 (כל ימות השבוע)",
+            "technicalSupport": "תמיכה טכנית חכמה",
+            "techHours": "10:00–22:00 (כל ימות השבוע)",
 
-			"followUs": "עקבו אחרי ההצעות והמבצעים החמים",
-			"socialDesc": "היו הראשונים לדעת על עסקאות בלעדיות, מבצעים והטבות מיוחדות בספקה",
+            "followUs": "עקבו אחרי ההצעות והמבצעים החמים",
+            "socialDesc": "היו הראשונים לדעת על עסקאות בלעדיות, מבצעים והטבות מיוחדות בספקה",
 
-			"quickHelp": "מדריך מהיר לספקה",
+            "quickHelp": "מדריך מהיר לספקה",
 
-			"howToSell": "למכור בקלות ובמהירות",
-			"safetyTips": "טיפים להבטחת עסקאות בטוחות",
-			"resolveDisputes": "פתרון מחלוקות בצורה חכמה",
+            "howToSell": "למכור בקלות ובמהירות",
+            "safetyTips": "טיפים להבטחת עסקאות בטוחות",
+            "resolveDisputes": "פתרון מחלוקות בצורה חכמה",
 
-			"note": "אנו מתחייבים למענה מהיר — תוך 4 שעות לכל פנייה",
-			"thanks": "תודה שאתם חלק מהקהילה שלנו! בספַקה, כל מוצר הוא הזדמנות חדשה להצלחה",
+            "note": "אנו מתחייבים למענה מהיר — תוך 4 שעות לכל פנייה",
+            "thanks": "תודה שאתם חלק מהקהילה שלנו! בספַקה, כל מוצר הוא הזדמנות חדשה להצלחה",
 
-			"backToHome": "חזרה לעמוד הבית"
-		},
-		"privacy": {
-			"title": "מדיניות פרטיות",
-			"lastUpdated": "עדכון אחרון {{date}}",
-			"intro": {
-				"title": "מבוא",
-				"text": "באפליקציית שוק הזווית אנו מכבדים את פרטיותכם ומבינים את חשיבות הגנה על המידע האישי שלכם. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על המידע שלכם, כולל בעת התחברות עם Google."
-			},
-			"collectedInfo": {
-				"title": "אילו מידע אנו אוספים?",
-				"text": "בעת התחברות באמצעות Google, אנו מקבלים את המידע הבא מחשבונכם:",
-				"info": {
-					"name": "שם פרטי ושם משפחה – כפי שמופיע בפרופיל Google שלכם.",
-					"email": "דוא\"ל – כתובת האימייל שלכם המשמשת להרשמה.",
-					"image": "תמונת פרופיל – אם קיימת, תוצג בפרופיל שלכם באפליקציה."
-				},
-				"technical": "בנוסף, ייתכן שנאחסן מידע טכני כגון כתובת IP, סוג הדפדפן ומערכת ההפעלה לצורכי אבטחה ושיפור השירות."
-			},
-			"usage": {
-				"title": "כיצד אנו משתמשים במידע?",
-				"points": {
-					"p1": "להרשמת משתמש ואימות זהות.",
-					"p2": "לשיפור חוויית השימוש באפליקציה.",
-					"p3": "לשליחת הודעות, עדכונים או תזכורות רלוונטיות.",
-					"p4": "להגנה על המערכת ואבטחת חשבונכם."
-				}
-			},
-			"consent": {
-				"title": "שקיפות והסכמה",
-				"text": "בעת התחברות עם Google, תתבקשו להסכים לשיתוף המידע שלכם. אנו מבקשים רק את ההרשאות הנחוצות להפעלת השירות, תוך שמירה מלאה על שקיפות."
-			},
-			"sharing": {
-				"title": "שיתוף מידע עם צד שלישי",
-				"points": {
-					"external": "שירותים חיצוניים: המידע מועבר רק לספקים הנחוצים להפעלת האפליקציה.",
-					"law": "ציות לחוק: אנו משתפים מידע רק אם נדרש לפי החוק."
-				}
-			},
-			"protection": {
-				"title": "הגנה על מידע",
-				"text": "אנו נוקטים אמצעים טכנולוגיים וארגוניים מתקדמים כדי להגן על המידע שלכם. עם זאת, אין הגנה מוחלטת, ולכן מומלץ לא לשתף סיסמאות ולבחור סיסמה חזקה."
-			},
-			"updates": {
-				"title": "עדכונים במדיניות",
-				"text": "מדיניות זו עשויה להשתנות מדי פעם. נודיע לכם באפליקציה או בהודעה ישירה. שימושכם המתמשך באפליקציה מהווה הסכמה לשינויים."
-			},
-			"rights": {
-				"title": "זכויותיכם",
-				"points": {
-					"p1": "זכות לגשת למידע האישי שמאוחסן אודותיכם.",
-					"p2": "זכות לתקן מידע שגוי או חסר.",
-					"p3": "זכות לבקש מחיקת מידע – כל עוד אין חובה חוקית לשמור אותו."
-				}
-			},
-			"contact": {
-				"title": "פרטי התקשרות",
-				"text": "לכל שאלה או בקשה בנוגע לפרטיות, ניתן לפנות בטלפון:",
-				"phone": "053-834-6915"
-			},
-			"userConsent": {
-				"title": "הסכמת המשתמש",
-				"text": "בשימוש באפליקציה, אתם מסכימים שקראתם, הבנתם והסכמתם למדיניות פרטיות זו. אם אינכם מסכימים, נא לא להשתמש באפליקציה."
-			}
-		}
-	},
-	"accountMenu": {
-		"messages": "הודעות",
-		"account": "החשבון שלי",
-		"profile": "הפרופיל שלי",
-		"settings": "הגדרות",
-		"logout": "התנתקות",
-		"admin": "מנהל האתר",
-		"siteModerator": "מפקח האתר"
-	},
-	"about": {
-		"title": "מי אנחנו",
-		"subtitle": "Safqa — פלטפורמה פשוטה ובטוחה לקנייה ומכירה בין אנשים",
+            "backToHome": "חזרה לעמוד הבית"
+        },
+        "privacy": {
+            "title": "מדיניות פרטיות",
+            "lastUpdated": "עדכון אחרון {{date}}",
+            "intro": {
+                "title": "מבוא",
+                "text": "באפליקציית שוק הזווית אנו מכבדים את פרטיותכם ומבינים את חשיבות הגנה על המידע האישי שלכם. מדיניות זו מסבירה כיצד אנו אוספים, משתמשים ומגנים על המידע שלכם, כולל בעת התחברות עם Google."
+            },
+            "collectedInfo": {
+                "title": "אילו מידע אנו אוספים?",
+                "text": "בעת התחברות באמצעות Google, אנו מקבלים את המידע הבא מחשבונכם:",
+                "info": {
+                    "name": "שם פרטי ושם משפחה – כפי שמופיע בפרופיל Google שלכם.",
+                    "email": "דוא\"ל – כתובת האימייל שלכם המשמשת להרשמה.",
+                    "image": "תמונת פרופיל – אם קיימת, תוצג בפרופיל שלכם באפליקציה."
+                },
+                "technical": "בנוסף, ייתכן שנאחסן מידע טכני כגון כתובת IP, סוג הדפדפן ומערכת ההפעלה לצורכי אבטחה ושיפור השירות."
+            },
+            "usage": {
+                "title": "כיצד אנו משתמשים במידע?",
+                "points": {
+                    "p1": "להרשמת משתמש ואימות זהות.",
+                    "p2": "לשיפור חוויית השימוש באפליקציה.",
+                    "p3": "לשליחת הודעות, עדכונים או תזכורות רלוונטיות.",
+                    "p4": "להגנה על המערכת ואבטחת חשבונכם."
+                }
+            },
+            "consent": {
+                "title": "שקיפות והסכמה",
+                "text": "בעת התחברות עם Google, תתבקשו להסכים לשיתוף המידע שלכם. אנו מבקשים רק את ההרשאות הנחוצות להפעלת השירות, תוך שמירה מלאה על שקיפות."
+            },
+            "sharing": {
+                "title": "שיתוף מידע עם צד שלישי",
+                "points": {
+                    "external": "שירותים חיצוניים: המידע מועבר רק לספקים הנחוצים להפעלת האפליקציה.",
+                    "law": "ציות לחוק: אנו משתפים מידע רק אם נדרש לפי החוק."
+                }
+            },
+            "protection": {
+                "title": "הגנה על מידע",
+                "text": "אנו נוקטים אמצעים טכנולוגיים וארגוניים מתקדמים כדי להגן על המידע שלכם. עם זאת, אין הגנה מוחלטת, ולכן מומלץ לא לשתף סיסמאות ולבחור סיסמה חזקה."
+            },
+            "updates": {
+                "title": "עדכונים במדיניות",
+                "text": "מדיניות זו עשויה להשתנות מדי פעם. נודיע לכם באפליקציה או בהודעה ישירה. שימושכם המתמשך באפליקציה מהווה הסכמה לשינויים."
+            },
+            "rights": {
+                "title": "זכויותיכם",
+                "points": {
+                    "p1": "זכות לגשת למידע האישי שמאוחסן אודותיכם.",
+                    "p2": "זכות לתקן מידע שגוי או חסר.",
+                    "p3": "זכות לבקש מחיקת מידע – כל עוד אין חובה חוקית לשמור אותו."
+                }
+            },
+            "contact": {
+                "title": "פרטי התקשרות",
+                "text": "לכל שאלה או בקשה בנוגע לפרטיות, ניתן לפנות בטלפון:",
+                "phone": "053-834-6915"
+            },
+            "userConsent": {
+                "title": "הסכמת המשתמש",
+                "text": "בשימוש באפליקציה, אתם מסכימים שקראתם, הבנתם והסכמתם למדיניות פרטיות זו. אם אינכם מסכימים, נא לא להשתמש באפליקציה."
+            }
+        }
+    },
+    "accountMenu": {
+        "messages": "הודעות",
+        "account": "החשבון שלי",
+        "profile": "הפרופיל שלי",
+        "settings": "הגדרות",
+        "logout": "התנתקות",
+        "admin": "מנהל האתר",
+        "siteModerator": "מפקח האתר"
+    },
+    "about": {
+        "title": "מי אנחנו",
+        "subtitle": "Safqa — פלטפורמה פשוטה ובטוחה לקנייה ומכירה בין אנשים",
 
-		"what-we-are": {
-			"safqa": "הרעיון שלנו",
-			"title": "קנייה ומכירה בלי סיבוכים",
-			"subtitle": "הקמנו את Safqa כדי ליצור מרחב מסודר שמחבר בין מוכרים לקונים ישירות, בלי כאוס ובלי מתווכים"
-		},
+        "what-we-are": {
+            "safqa": "הרעיון שלנו",
+            "title": "קנייה ומכירה בלי סיבוכים",
+            "subtitle": "הקמנו את Safqa כדי ליצור מרחב מסודר שמחבר בין מוכרים לקונים ישירות, בלי כאוס ובלי מתווכים"
+        },
 
-		"buy-and-sell": {
-			"title": "איך זה עובד",
-			"subtitle": "ממשק נוח, שלבים ברורים ותקשורת ישירה שעוזרים להשלים עסקאות בקלות ובנוחות"
-		},
+        "buy-and-sell": {
+            "title": "איך זה עובד",
+            "subtitle": "ממשק נוח, שלבים ברורים ותקשורת ישירה שעוזרים להשלים עסקאות בקלות ובנוחות"
+        },
 
-		"what-we-have": {
-			"title": "מה תמצאו ב-Safqa",
-			"subtitle": "מגוון מוצרים ממשתמשים אמיתיים — מפריטים יומיומיים ועד פריטים ייחודיים"
-		},
+        "what-we-have": {
+            "title": "מה תמצאו ב-Safqa",
+            "subtitle": "מגוון מוצרים ממשתמשים אמיתיים — מפריטים יומיומיים ועד פריטים ייחודיים"
+        },
 
-		"control": {
-			"title": "השליטה בידיים שלך",
-			"subtitle": "אתה קובע את המחיר, אופן ההצגה והתקשורת — אנחנו רק מפשטים את הדרך"
-		},
+        "control": {
+            "title": "השליטה בידיים שלך",
+            "subtitle": "אתה קובע את המחיר, אופן ההצגה והתקשורת — אנחנו רק מפשטים את הדרך"
+        },
 
-		"trust": {
-			"title": "בונים אמון צעד אחר צעד",
-			"subtitle": "אנחנו מספקים כלים שעוזרים לצמצם מודעות מזויפות ולשפר את חוויית הקנייה והמכירה"
-		},
+        "trust": {
+            "title": "בונים אמון צעד אחר צעד",
+            "subtitle": "אנחנו מספקים כלים שעוזרים לצמצם מודעות מזויפות ולשפר את חוויית הקנייה והמכירה"
+        },
 
-		"why-register": {
-			"title": "מתחילים בקלות",
-			"subtitle": "הרשמה מהירה פותחת את הדלת לקנייה או מכירה תוך דקות"
-		},
+        "why-register": {
+            "title": "מתחילים בקלות",
+            "subtitle": "הרשמה מהירה פותחת את הדלת לקנייה או מכירה תוך דקות"
+        },
 
-		"locations": {
-			"title": "קרוב אליך",
-			"subtitle": "מצא עסקאות באזור שלך או גלה הצעות מאזורים אחרים בקלות"
-		}
-	},
-	"footer": {
-		"siteName": "אתר ספקה",
-		"quickLinks": "קישורים מהירים",
-		"myAccount": "החשבון שלי",
-		"myListings": "המודעות שלי",
-		"postListing": "הוסף מודעה חדשה",
-		"marketplace": "החנות",
-		"descriptionC2C": "קנה ומכור ישירות עם משתמשים אחרים בקלות ובבטחה.",
-		"contact": "צור קשר",
-		"phone": "טלפון",
-		"followUs": "עקוב אחרינו",
-		"version": "גרסה 1.0.0"
-	},
-	"color": "צבע",
-	"removeAccount": {
-		"heading": "מחיקת חשבון",
-		"description": "אם תמחוק את החשבון, לא ניתן יהיה לבטל פעולה זו",
-		"buttonText": "מחיקה סופית"
-	}
+        "locations": {
+            "title": "קרוב אליך",
+            "subtitle": "מצא עסקאות באזור שלך או גלה הצעות מאזורים אחרים בקלות"
+        }
+    },
+    "footer": {
+        "siteName": "אתר ספקה",
+        "quickLinks": "קישורים מהירים",
+        "myAccount": "החשבון שלי",
+        "myListings": "המודעות שלי",
+        "postListing": "הוסף מודעה חדשה",
+        "marketplace": "החנות",
+        "descriptionC2C": "קנה ומכור ישירות עם משתמשים אחרים בקלות ובבטחה.",
+        "contact": "צור קשר",
+        "phone": "טלפון",
+        "followUs": "עקוב אחרינו",
+        "version": "גרסה 1.0.0"
+    },
+    "color": "צבע",
+    "removeAccount": {
+        "heading": "מחיקת חשבון",
+        "description": "אם תמחוק את החשבון, לא ניתן יהיה לבטל פעולה זו",
+        "buttonText": "מחיקה סופית"
+    }
 }

@@ -1,5 +1,23 @@
 {
     "you": "انت",
+    "review": {
+        "questionsAndReviews": "الأسئلة والتقييمات",
+        "questionsAndReviewsSubtitle": "شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء",
+        "comments": "التعليقات",
+        "noReviewsYet": "لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً",
+        "reviewPlaceholder": "اكتب تعليقك أو سؤالك عن المنتج هنا...",
+        "reviewExperience": "قيّم تجربتك أو توقّعاتك من هذا المنتج",
+        "submitting": "جاري النشر...",
+        "publish": "نشر التعليق",
+        "submitted": "تم نشر تعليقك بنجاح",
+        "submitError": "يرجى اختيار تقييم قبل إرسال التعليق",
+        "loginToReview": "يرجى تسجيل الدخول لإضافة تقييم أو تعليق"
+    },
+    "minutesAgo": "{{count}} دقائق مضت",
+    "hoursAgo": "{{count}} ساعة مضت",
+    "daysAgo": "{{count}} يوم مضى",
+    "weeksAgo": "{{count}} أسبوع مضى",
+    "justNow": "الآن",
     "home": "الرئيسيه",
     "navigationMenu": "قائمة التنقل",
     "House": "مستلزمات البيت",

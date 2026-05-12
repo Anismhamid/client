@@ -1,5 +1,5 @@
 import { showError } from '../../../../atoms/toasts/ReactToast';
-import { Posts } from '../../../../interfaces/Posts';
+import { TFunction } from 'i18next';
 
 export const generatePath = (path: string, params: Record<string, string>) => {
     let newPath = path;
@@ -9,16 +9,20 @@ export const generatePath = (path: string, params: Record<string, string>) => {
     return newPath;
 };
 
-export const formatTimeAgo = (createdAt: string) => {
+export const formatTimeAgo = (createdAt: string, t: TFunction) => {
     const now = new Date();
     const productDate = new Date(createdAt || now);
     const diffMs = now.getTime() - productDate.getTime();
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+    const diffWeeks = Math.floor(diffDays / 7);
 
-    if (diffHours < 1) return 'منذ دقائق';
-    if (diffHours < 24) return `منذ ${diffHours} ساعة`;
-    if (diffHours < 168) return `منذ ${Math.floor(diffHours / 24)} يوم`;
-    return `منذ ${Math.floor(diffHours / 168)} أسبوع`;
+    if (diffMinutes < 1) return t?.('justNow');
+    if (diffMinutes < 60) return t?.('minutesAgo', { count: diffMinutes });
+    if (diffHours < 24) return t?.('hoursAgo', { count: diffHours });
+    if (diffDays < 7) return t?.('daysAgo', { count: diffDays });
+    return t?.('weeksAgo', { count: diffWeeks });
 };
 
 // ----- Memoized handlers -----
@@ -29,13 +33,3 @@ export const handleShare = async () => {
     }
 };
 
-export const getAverageRating = (product: Posts) => {
-    const reviews = product.reviews || [];
-
-    if (reviews.length === 0) return 0; // fallback
-
-    const avg =
-        reviews.reduce((acc, r) => acc + (r.rating || 0), 0) / reviews.length;
-
-    return Number(avg.toFixed(1));
-};

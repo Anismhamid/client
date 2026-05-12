@@ -1,770 +1,788 @@
 {
-	"you": "You",
-	"home": "Home",
-	"navigationMenu": "Navigation menu",
-	"webPageName": "safqa",
-	"bestOffers": "The best deals in one place",
-	"browse-posts": "Browse posts",
-	"create-post": "Create post",
-	"allRightsReserved": "All rights reserved.",
-	"help": "Help",
-	"favorites": "favorites",
-	"startFree": "Start now for free",
-	"joinUs": "Join us for free",
-	"was-found": "Was Found",
-	"search": "Example: mazda 3 | clothing",
-	"callUs": "Contact Us",
-	"team": "Safqa team",
-	"faq": "FAQ",
-	"shares": "Posts",
-	"seller": "Published by",
-	"member_since": "Member since",
-	"status": {
-		"title": "Status",
-		"active": "Active",
-		"inactive": "Inactive",
-		"lastActivity": "Last activity"
-	},
-	"messages": {
-		"main": "Messages",
-		"search": "Search messages",
-		"all": "All",
-		"unread": "Unread",
-		"directMessage": "Direct message",
-		"contactWith": "Contact with "
-	},
-	"roles": {
-		"title": "Role",
-		"admin": "Admin",
-		"client": "Customer",
-		"moderator": "Site Moderator"
-	},
-	"login": {
-		"lastLogin": "Last login",
-		"email": "Email",
-		"password": "Password",
-		"loginButton": "Login",
-		"googleLoginError": "Google login failed",
-		"noAccount": "Don't have an account yet?",
-		"register": "Click to register",
-		"privacyPolicy": "Privacy Policy",
-		"termsOfUse": "Terms of Use",
-		"validation": {
-			"emailInvalid": "Invalid email",
-			"emailRequired": "Email is required",
-			"passwordMin": "Password must be at least 8 characters and up to 60 characters",
-			"passwordMax": "Password is too long",
-			"passwordRequired": "Password is required"
-		},
-		"success": "Login successful!",
-		"error": "Login failed",
-		"googleError": "Google login error: {{message}}"
-	},
-	"register": {
-		"title": "יצירת חשבון חדש",
-		"subtitle": "הצטרפו לקהילת ספכה והתחילו את המסע העסקי שלכם היום",
-		"steps": {
-			"personalInfo": "פרטים אישיים",
-			"contactInfo": "פרטי התקשרות",
-			"security": "אבטחה",
-			"agreements": "הסכמים"
-		},
-		"firstName": "שם פרטי",
-		"lastName": "שם משפחה",
-		"email": "דואר אלקטרוני",
-		"phone1": "טלפון",
-		"phone2": "טלפון נוסף (אופציונלי)",
-		"city": "מדינה",
-		"street": "רחוב",
-		"houseNumber": "מספר בית (אופציונלי)",
-		"imageUrl": "תמונה",
-		"password": "סיסמה",
-		"confirmPassword": "אימות סיסמה",
-		"haveAccount": "כבר יש לך חשבון?",
-		"loginHere": "התחבר עכשיו",
-		"slug": "שם משתמש",
-		"slugHint": "שם ייחודי שיופיע בקישור לפרופיל שלך",
-		"slugExample": "דוגמה: john-doe או ahmad-saleh",
-		"generateSlug": "יצירה מהשם",
-		"checkingSlug": "בודק זמינות שם משתמש...",
-		"slugAvailable": "שם המשתמש זמין ✓",
-		"slugTaken": "שם המשתמש כבר תפוס ✗",
-		"profilePreview": "תצוגה מקדימה של הפרופיל",
-		"profileLink": "קישור לפרופיל שלך",
-		"passwordStrength": {
-			"veryWeak": "חלש מאוד",
-			"weak": "חלש",
-			"fair": "בינוני",
-			"good": "טוב",
-			"strong": "חזק",
-			"veryStrong": "חזק מאוד"
-		},
-		"agreeTo": "אני מסכים ל",
-		"termsOfService": "תנאי השימוש",
-		"and": "ו",
-		"privacyPolicy": "מדיניות פרטיות",
-		"privacyNote": "אנו מכבדים את פרטיותך ומתחייבים להגן על המידע האישי שלך בהתאם למדיניות הפרטיות שלנו.",
-		"creatingAccount": "יוצר חשבון...",
-		"completeRegistration": "השלם הרשמה",
-		"success": {
-			"title": "ההרשמה בוצעה בהצלחה!",
-			"message": "החשבון שלך נוצר בהצלחה. כעת ניתן להתחבר ולהתחיל להשתמש בשירותי ספכה.",
-			"description": "החשבון נוצר בהצלחה",
-			"redirect": "תועבר אוטומטית לדף ההתחברות..."
-		},
-		"errors": {
-			"serverError": "אירעה שגיאת שרת. אנא נסה שוב.",
-			"networkError": "שגיאת חיבור לרשת. אנא בדוק את חיבור האינטרנט שלך.",
-			"slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
-			"createPostFailed": "Failed to create post, please try again"
-		},
-		"validation": {
-			"firstNameRequired": "שם פרטי הוא שדה חובה",
-			"firstNameMin": "שם פרטי חייב להכיל לפחות 2 תווים",
-			"lastNameRequired": "שם משפחה הוא שדה חובה",
-			"lastNameMin": "שם משפחה חייב להכיל לפחות 2 תווים",
-			"emailRequired": "דואר אלקטרוני הוא שדה חובה",
-			"emailMin": "דואר אלקטרוני קצר מדי",
-			"emailInvalid": "כתובת דואר אלקטרוני לא תקינה",
-			"genderRequired": "יש לבחור מין",
-			"cityRequired": "עיר היא שדה חובה",
-			"streetRequired": "רחוב הוא שדה חובה",
-			"passwordRequired": "סיסמה היא שדה חובה",
-			"passwordMin": "הסיסמה חייבת להכיל לפחות 8 תווים",
-			"confirmPasswordRequired": "אימות סיסמה הוא שדה חובה",
-			"confirmPasswordMatch": "הסיסמאות אינן תואמות",
-			"nameLettersOnly": "השם חייב להכיל אותיות בלבד",
-			"phone1Format": "מספר הטלפון חייב להתחיל ב־05 ולהכיל 9–10 ספרות",
-			"phone2Format": "מספר הטלפון חייב להתחיל ב־05 ולהכיל 9–10 ספרות או להיות ריק",
-			"houseNumberDigits": "מספר הבית חייב להכיל ספרות בלבד",
-			"passwordLowercase": "חייב להכיל לפחות אות קטנה אחת",
-			"passwordUppercase": "חייב להכיל לפחות אות גדולה אחת",
-			"passwordNumber": "חייב להכיל לפחות ספרה אחת",
-			"passwordSpecial": "חייב להכיל לפחות תו מיוחד אחד (!@#$%^&*(),.?\":{}|<>)",
-			"slugRequired": "שם משתמש הוא שדה חובה באנגלית",
-			"slugMin": "שם המשתמש חייב להכיל לפחות 3 תווים",
-			"slugMax": "שם המשתמש לא יכול לעלות על 30 תווים",
-			"slugFormat": "שם המשתמש יכול להכיל אותיות באנגלית קטנות, מספרים ומקפים בלבד",
-			"slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
-			"slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים",
-			"termsRequired": "Please agree to the Terms of Service and Privacy Policy to continue",
-			"emailExists": "Please try another email"
-		},
-		"gender": "מין",
-		"selectGender": "בחר מין",
-		"male": "זכר",
-		"female": "נקבה"
-	},
-	"common": {
-		"typing": "Typing...",
-		"outOf": "of",
-		"viewOf": "View",
-		"countOfPosts": "listings available",
-		"endOfPosts": "You have reached the end of the listings",
-		"back": "Previous",
-		"next": "Next",
-		"faq": "Frequently Asked Questions",
-		"contact": "Contact Us",
-		"about": "About Us",
-		"businessName": "Business Name",
-		"gasoline": "Petrol",
-		"brand": "Make",
-		"year": "Model Year",
-		"fuel": "Fuel Type",
-		"mileage": "Mileage",
-		"color": "Exterior Color"
-	},
-	"price": "Price",
-	"quantity": "Quantity",
-	"currentStatus": "Status",
-	"priceAfterDiscount": "Price after discount",
-	"totalOrderPrice": "Total order price",
-	"collectionMethod": "Collection Method",
-	"paymentMethod": "Payment Method",
-	"creditCard": "Credit Card",
-	"selfPickup": "Self Pickup",
-	"delivery": "Delivery",
-	"cash": "Cash",
-	"orderNumber": "Order Number",
-	"UserId": "User ID",
-	"users-management": "Asers managment",
-	"account-management": "Account managment",
-	"date": "Date",
-	"phone": "Phone",
-	"customerInfo": "Customer Details",
-	"customer": "Customer",
-	"email": "Email",
-	"address": "Address",
-	"searchin": "Search for product name",
-	"SpeedDial": {
-		"actions": {
-			"addProduct": "Add Product",
-			"cart": "Shopping Cart",
-			"backToTop": "Back to Top"
-		}
-	},
-	"modals": {
-		"addProductModal": {
-			"title": "Create New Listing",
-			"subtitle": "Provide accurate details to improve visibility",
-			"sectionBasicInfo": "Basic Information",
-			"specifications": "Additional Details",
-			"productName": "Title",
-			"selectSubcategory": "Select Subcategory",
-			"openCamera": "Open Camera",
-			"chooseFromGallery": "Choose from Gallery",
-			"subcategory": "Subcategory",
-			"selectColor": "Select Color",
-			"color": "Color",
-			"image": "Image",
-			"in_stock": "In Stock",
-			"not_in_stock": "Out of Stock",
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage",
-			"productNamePlaceholder": "Enter listing title",
-			"category": "Category",
-			"selectCategory": "Select Category",
-			"price": "Price",
-			"description": "Product Description",
-			"descriptionPlaceholder": "Write a clear description including key features and specifications",
-			"imageUrl": "Image URL",
-			"sale": "On Sale",
-			"discount": "Discount Percentage",
-			"addProduct": "Publish Listing",
-			"cancel": "Cancel",
-			"saving": "Publishing listing...",
-			"footerNote": "Review your information carefully before publishing",
-			"validation": {
-				"productNameRequired": "Product title is required",
-				"productNameMin": "Product title must be at least 2 characters",
-				"categoryRequired": "Category is required",
-				"priceRequired": "Price is required",
-				"quantityRequired": "Stock quantity is required",
-				"quantityMin": "Stock quantity must be at least 1",
-				"descriptionMin": "Description must be at least 2 characters",
-				"descriptionMax": "Description must not exceed 500 characters",
-				"imageUrlRequired": "Image URL is required",
-				"imageUrlInvalid": "Please enter a valid image URL"
-			}
-		},
-		"updateProductModal": {
-			"title": "Update Product",
-			"productName": "Product Name (Unique)",
-			"productNamePlaceholder": "Product Name",
-			"category": "Category",
-			"selectCategory": "Select Category",
-			"price": "Price",
-			"quantity": "Stock Quantity",
-			"description": "Product Description",
-			"descriptionPlaceholder": "Enter product description",
-			"imageUrl": "Image URL",
-			"sale": "On Sale",
-			"discount": "Discount Percentage",
-			"updateButton": "Update",
-			"closeButton": "Close",
-			"location": "Location",
-			"validation": {
-				"productNameRequired": "Product name is required",
-				"productNameMin": "Product name must be at least 2 characters",
-				"categoryRequired": "Category is required",
-				"priceRequired": "Price is required",
-				"quantityRequired": "Stock quantity is required",
-				"quantityMin": "Stock quantity must be at least 1",
-				"descriptionMin": "Description must be at least 2 characters",
-				"descriptionMax": "Description cannot exceed 500 characters",
-				"imageUrlRequired": "Image URL is required",
-				"imageUrlInvalid": "Image URL must be valid"
-			}
-		}
-	},
+    "you": "You",
+    "review": {
+        "questionsAndReviews": "Questions & Reviews",
+        "questionsAndReviewsSubtitle": "Encourage visitors to share their impressions and ask questions before purchasing",
+        "comments": "Comments",
+        "noReviewsYet": "No reviews have been posted yet. You can be the first to add a clear and helpful review",
+        "reviewPlaceholder": "Write your comment or question about the product here...",
+        "reviewExperience": "Rate your experience or expectations with this product",
+        "publish": "Publish Review",
+        "submitted": "Your review has been submitted successfully",
+        "submitError": "Please select a rating before submitting the review",
+        "loginToReview": "Please log in to add a rating or comment",
+        "submitting": "Submitting review..."
+    },
+    "minutesAgo": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hours ago",
+    "daysAgo": "{{count}} days ago",
+    "weeksAgo": "{{count}} weeks ago",
+    "justNow": "just now",
+    "home": "Home",
+    "navigationMenu": "Navigation menu",
+    "webPageName": "safqa",
+    "bestOffers": "The best deals in one place",
+    "browse-posts": "Browse posts",
+    "create-post": "Create post",
+    "allRightsReserved": "All rights reserved.",
+    "help": "Help",
+    "favorites": "favorites",
+    "startFree": "Start now for free",
+    "joinUs": "Join us for free",
+    "was-found": "Was Found",
+    "search": "Example: mazda 3 | clothing",
+    "callUs": "Contact Us",
+    "team": "Safqa team",
+    "faq": "FAQ",
+    "shares": "Posts",
+    "seller": "Published by",
+    "member_since": "Member since",
+    "status": {
+        "title": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "lastActivity": "Last activity"
+    },
+    "messages": {
+        "main": "Messages",
+        "search": "Search messages",
+        "all": "All",
+        "unread": "Unread",
+        "directMessage": "Direct message",
+        "contactWith": "Contact with "
+    },
+    "roles": {
+        "title": "Role",
+        "admin": "Admin",
+        "client": "Customer",
+        "moderator": "Site Moderator"
+    },
+    "login": {
+        "lastLogin": "Last login",
+        "email": "Email",
+        "password": "Password",
+        "loginButton": "Login",
+        "googleLoginError": "Google login failed",
+        "noAccount": "Don't have an account yet?",
+        "register": "Click to register",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfUse": "Terms of Use",
+        "validation": {
+            "emailInvalid": "Invalid email",
+            "emailRequired": "Email is required",
+            "passwordMin": "Password must be at least 8 characters and up to 60 characters",
+            "passwordMax": "Password is too long",
+            "passwordRequired": "Password is required"
+        },
+        "success": "Login successful!",
+        "error": "Login failed",
+        "googleError": "Google login error: {{message}}"
+    },
+    "register": {
+        "title": "יצירת חשבון חדש",
+        "subtitle": "הצטרפו לקהילת ספכה והתחילו את המסע העסקי שלכם היום",
+        "steps": {
+            "personalInfo": "פרטים אישיים",
+            "contactInfo": "פרטי התקשרות",
+            "security": "אבטחה",
+            "agreements": "הסכמים"
+        },
+        "firstName": "שם פרטי",
+        "lastName": "שם משפחה",
+        "email": "דואר אלקטרוני",
+        "phone1": "טלפון",
+        "phone2": "טלפון נוסף (אופציונלי)",
+        "city": "מדינה",
+        "street": "רחוב",
+        "houseNumber": "מספר בית (אופציונלי)",
+        "imageUrl": "תמונה",
+        "password": "סיסמה",
+        "confirmPassword": "אימות סיסמה",
+        "haveAccount": "כבר יש לך חשבון?",
+        "loginHere": "התחבר עכשיו",
+        "slug": "שם משתמש",
+        "slugHint": "שם ייחודי שיופיע בקישור לפרופיל שלך",
+        "slugExample": "דוגמה: john-doe או ahmad-saleh",
+        "generateSlug": "יצירה מהשם",
+        "checkingSlug": "בודק זמינות שם משתמש...",
+        "slugAvailable": "שם המשתמש זמין ✓",
+        "slugTaken": "שם המשתמש כבר תפוס ✗",
+        "profilePreview": "תצוגה מקדימה של הפרופיל",
+        "profileLink": "קישור לפרופיל שלך",
+        "passwordStrength": {
+            "veryWeak": "חלש מאוד",
+            "weak": "חלש",
+            "fair": "בינוני",
+            "good": "טוב",
+            "strong": "חזק",
+            "veryStrong": "חזק מאוד"
+        },
+        "agreeTo": "אני מסכים ל",
+        "termsOfService": "תנאי השימוש",
+        "and": "ו",
+        "privacyPolicy": "מדיניות פרטיות",
+        "privacyNote": "אנו מכבדים את פרטיותך ומתחייבים להגן על המידע האישי שלך בהתאם למדיניות הפרטיות שלנו.",
+        "creatingAccount": "יוצר חשבון...",
+        "completeRegistration": "השלם הרשמה",
+        "success": {
+            "title": "ההרשמה בוצעה בהצלחה!",
+            "message": "החשבון שלך נוצר בהצלחה. כעת ניתן להתחבר ולהתחיל להשתמש בשירותי ספכה.",
+            "description": "החשבון נוצר בהצלחה",
+            "redirect": "תועבר אוטומטית לדף ההתחברות..."
+        },
+        "errors": {
+            "serverError": "אירעה שגיאת שרת. אנא נסה שוב.",
+            "networkError": "שגיאת חיבור לרשת. אנא בדוק את חיבור האינטרנט שלך.",
+            "slugUnavailable": "שם המשתמש אינו זמין. אנא בחר שם אחר.",
+            "createPostFailed": "Failed to create post, please try again"
+        },
+        "validation": {
+            "firstNameRequired": "שם פרטי הוא שדה חובה",
+            "firstNameMin": "שם פרטי חייב להכיל לפחות 2 תווים",
+            "lastNameRequired": "שם משפחה הוא שדה חובה",
+            "lastNameMin": "שם משפחה חייב להכיל לפחות 2 תווים",
+            "emailRequired": "דואר אלקטרוני הוא שדה חובה",
+            "emailMin": "דואר אלקטרוני קצר מדי",
+            "emailInvalid": "כתובת דואר אלקטרוני לא תקינה",
+            "genderRequired": "יש לבחור מין",
+            "cityRequired": "עיר היא שדה חובה",
+            "streetRequired": "רחוב הוא שדה חובה",
+            "passwordRequired": "סיסמה היא שדה חובה",
+            "passwordMin": "הסיסמה חייבת להכיל לפחות 8 תווים",
+            "confirmPasswordRequired": "אימות סיסמה הוא שדה חובה",
+            "confirmPasswordMatch": "הסיסמאות אינן תואמות",
+            "nameLettersOnly": "השם חייב להכיל אותיות בלבד",
+            "phone1Format": "מספר הטלפון חייב להתחיל ב־05 ולהכיל 9–10 ספרות",
+            "phone2Format": "מספר הטלפון חייב להתחיל ב־05 ולהכיל 9–10 ספרות או להיות ריק",
+            "houseNumberDigits": "מספר הבית חייב להכיל ספרות בלבד",
+            "passwordLowercase": "חייב להכיל לפחות אות קטנה אחת",
+            "passwordUppercase": "חייב להכיל לפחות אות גדולה אחת",
+            "passwordNumber": "חייב להכיל לפחות ספרה אחת",
+            "passwordSpecial": "חייב להכיל לפחות תו מיוחד אחד (!@#$%^&*(),.?\":{}|<>)",
+            "slugRequired": "שם משתמש הוא שדה חובה באנגלית",
+            "slugMin": "שם המשתמש חייב להכיל לפחות 3 תווים",
+            "slugMax": "שם המשתמש לא יכול לעלות על 30 תווים",
+            "slugFormat": "שם המשתמש יכול להכיל אותיות באנגלית קטנות, מספרים ומקפים בלבד",
+            "slugNoSpaces": "שם המשתמש לא יכול להכיל רווחים",
+            "slugNoSpecial": "שם המשתמש לא יכול להכיל תווים מיוחדים",
+            "termsRequired": "Please agree to the Terms of Service and Privacy Policy to continue",
+            "emailExists": "Please try another email"
+        },
+        "gender": "מין",
+        "selectGender": "בחר מין",
+        "male": "זכר",
+        "female": "נקבה"
+    },
+    "common": {
+        "typing": "Typing...",
+        "outOf": "of",
+        "viewOf": "View",
+        "countOfPosts": "listings available",
+        "endOfPosts": "You have reached the end of the listings",
+        "back": "Previous",
+        "next": "Next",
+        "faq": "Frequently Asked Questions",
+        "contact": "Contact Us",
+        "about": "About Us",
+        "businessName": "Business Name",
+        "gasoline": "Petrol",
+        "brand": "Make",
+        "year": "Model Year",
+        "fuel": "Fuel Type",
+        "mileage": "Mileage",
+        "color": "Exterior Color"
+    },
+    "price": "Price",
+    "quantity": "Quantity",
+    "currentStatus": "Status",
+    "priceAfterDiscount": "Price after discount",
+    "totalOrderPrice": "Total order price",
+    "collectionMethod": "Collection Method",
+    "paymentMethod": "Payment Method",
+    "creditCard": "Credit Card",
+    "selfPickup": "Self Pickup",
+    "delivery": "Delivery",
+    "cash": "Cash",
+    "orderNumber": "Order Number",
+    "UserId": "User ID",
+    "users-management": "Asers managment",
+    "account-management": "Account managment",
+    "date": "Date",
+    "phone": "Phone",
+    "customerInfo": "Customer Details",
+    "customer": "Customer",
+    "email": "Email",
+    "address": "Address",
+    "searchin": "Search for product name",
+    "SpeedDial": {
+        "actions": {
+            "addProduct": "Add Product",
+            "cart": "Shopping Cart",
+            "backToTop": "Back to Top"
+        }
+    },
+    "modals": {
+        "addProductModal": {
+            "title": "Create New Listing",
+            "subtitle": "Provide accurate details to improve visibility",
+            "sectionBasicInfo": "Basic Information",
+            "specifications": "Additional Details",
+            "productName": "Title",
+            "selectSubcategory": "Select Subcategory",
+            "openCamera": "Open Camera",
+            "chooseFromGallery": "Choose from Gallery",
+            "subcategory": "Subcategory",
+            "selectColor": "Select Color",
+            "color": "Color",
+            "image": "Image",
+            "in_stock": "In Stock",
+            "not_in_stock": "Out of Stock",
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage",
+            "productNamePlaceholder": "Enter listing title",
+            "category": "Category",
+            "selectCategory": "Select Category",
+            "price": "Price",
+            "description": "Product Description",
+            "descriptionPlaceholder": "Write a clear description including key features and specifications",
+            "imageUrl": "Image URL",
+            "sale": "On Sale",
+            "discount": "Discount Percentage",
+            "addProduct": "Publish Listing",
+            "cancel": "Cancel",
+            "saving": "Publishing listing...",
+            "footerNote": "Review your information carefully before publishing",
+            "validation": {
+                "productNameRequired": "Product title is required",
+                "productNameMin": "Product title must be at least 2 characters",
+                "categoryRequired": "Category is required",
+                "priceRequired": "Price is required",
+                "quantityRequired": "Stock quantity is required",
+                "quantityMin": "Stock quantity must be at least 1",
+                "descriptionMin": "Description must be at least 2 characters",
+                "descriptionMax": "Description must not exceed 500 characters",
+                "imageUrlRequired": "Image URL is required",
+                "imageUrlInvalid": "Please enter a valid image URL"
+            }
+        },
+        "updateProductModal": {
+            "title": "Update Product",
+            "productName": "Product Name (Unique)",
+            "productNamePlaceholder": "Product Name",
+            "category": "Category",
+            "selectCategory": "Select Category",
+            "price": "Price",
+            "quantity": "Stock Quantity",
+            "description": "Product Description",
+            "descriptionPlaceholder": "Enter product description",
+            "imageUrl": "Image URL",
+            "sale": "On Sale",
+            "discount": "Discount Percentage",
+            "updateButton": "Update",
+            "closeButton": "Close",
+            "location": "Location",
+            "validation": {
+                "productNameRequired": "Product name is required",
+                "productNameMin": "Product name must be at least 2 characters",
+                "categoryRequired": "Category is required",
+                "priceRequired": "Price is required",
+                "quantityRequired": "Stock quantity is required",
+                "quantityMin": "Stock quantity must be at least 1",
+                "descriptionMin": "Description must be at least 2 characters",
+                "descriptionMax": "Description cannot exceed 500 characters",
+                "imageUrlRequired": "Image URL is required",
+                "imageUrlInvalid": "Image URL must be valid"
+            }
+        }
+    },
 
-	"loader": {
-		"welcome": "Welcome to Safqa Marketplace",
-		"message": "The first load may take up to 50 seconds because the server is free. Please be patient."
-	},
+    "loader": {
+        "welcome": "Welcome to Safqa Marketplace",
+        "message": "The first load may take up to 50 seconds because the server is free. Please be patient."
+    },
 
-	"categories": {
-		"House": {
-			"label": "Home Supplies",
-			"heading": "Home Supplies",
-			"description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
-			"subCategories": {
-				"kitchen": "Kitchen Tools",
-				"storage": "Storage & Organization",
-				"decor": "Home Decor",
-				"maintenance": "Tools & Maintenance"
-			}
-		},
-		"Garden": {
-			"label": "Garden",
-			"heading": "Garden Supplies",
-			"description": "Includes products related to gardening such as care tools, watering, and plants.",
-			"subCategories": {
-				"plants": "Plants",
-				"watering": "Watering Supplies",
-				"tools": "Garden Tools",
-				"outdoorDecor": "Outdoor Decor"
-			}
-		},
-		"Electronics": {
-			"label": "Electronics",
-			"heading": "Electronics",
-			"description": "Various electronic devices and products such as phones, accessories, and tech gadgets.",
-			"subCategories": {
-				"phones": "Phones",
-				"laptops": "Computers & Laptops",
-				"accessories": "Accessories",
-				"gaming": "Gaming"
-			}
-		},
-		"Baby": {
-			"label": "Baby Supplies",
-			"heading": "Baby Supplies",
-			"description": "Products for children such as clothing, care items, and daily essentials.",
-			"subCategories": {
-				"clothes": "Baby Clothing",
-				"care": "Daily Care",
-				"feeding": "Feeding Supplies"
-			}
-		},
-		"Kids": {
-			"label": "Kids Toys",
-			"heading": "Kids Toys",
-			"description": "Toys and products dedicated to children of different ages.",
-			"subCategories": {
-				"educational": "Educational Toys",
-				"toys": "Entertainment Toys",
-				"outdoor": "Outdoor Toys"
-			}
-		},
-		"Cleaning": {
-			"label": "Cleaning Supplies",
-			"heading": "Cleaning Supplies",
-			"description": "Products and tools for home cleaning.",
-			"subCategories": {
-				"detergents": "Detergents",
-				"tools": "Cleaning Tools",
-				"disinfection": "Disinfection"
-			}
-		},
-		"Health": {
-			"label": "Health & Care",
-			"heading": "Health & Care",
-			"description": "Products related to personal health and care.",
-			"subCategories": {
-				"personalCare": "Personal Care",
-				"medical": "Medical Supplies",
-				"fitness": "Fitness Equipment"
-			}
-		},
-		"Watches": {
-			"label": "Watches",
-			"heading": "Watches",
-			"description": "Watches of various types and designs.",
-			"subCategories": {
-				"classic": "Classic Watches",
-				"smart": "Smart Watches",
-				"hand": "hand Watches"
-			}
-		},
-		"Beauty": {
-			"label": "Beauty",
-			"heading": "Beauty Products",
-			"description": "Cosmetics and personal care products offered by users.",
-			"subCategories": {
-				"makeup": "Makeup",
-				"skincare": "Skincare",
-				"hair": "Hair Care"
-			}
-		},
-		"WomenClothes": {
-			"label": "Women's Clothing",
-			"heading": "Women's Clothing",
-			"description": "Clothing for women of various styles.",
-			"subCategories": {
-				"casual": "Casual Wear",
-				"dresses": "Dresses",
-				"shoes": "Shoes"
-			}
-		},
-		"WomenBags": {
-			"label": "Women's Bags",
-			"heading": "Women's Bags",
-			"description": "Bags for women of different sizes and uses",
-			"subCategories": {
-				"handbags": "Handbags",
-				"backpacks": "Backpacks",
-				"travel": "Travel Bags"
-			}
-		},
-		"MenClothes": {
-			"label": "Men's Clothing",
-			"heading": "Men's Clothing",
-			"description": "Clothing for men for various uses.",
-			"subCategories": {
-				"casual": "Casual Wear",
-				"formal": "Formal Wear",
-				"shoes": "Shoes"
-			}
-		},
-		"Cars": {
-			"label": "Cars",
-			"heading": "Cars",
-			"description": "Cars for sale by users, new or used.",
-			"subCategories": {
-				"private": "Private Cars",
-				"electric": "Electric Cars",
-				"parts": "Spare Parts",
-				"accessories": "Car Accessories"
-			},
-			"fuel": {
-				"label": "fuel",
-				"settings": {
-					"gasoline": "Gasoline",
-					"diesel": "Diesel",
-					"electric": "Full electric"
-				}
-			},
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage"
-		},
-		"Motorcycles": {
-			"label": "Motorcycles",
-			"heading": "Motorcycles",
-			"description": "Motorcycles of different models.",
-			"subCategories": {
-				"sport": "Sport Bikes",
-				"scooters": "Scooters",
-				"parts": "Spare Parts"
-			},
-			"fuel": {
-				"label": "fuel",
-				"settings": {
-					"gasoline": "Gasoline",
-					"diesel": "Diesel",
-					"electric": "Full electric"
-				}
-			},
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage"
-		},
-		"Trucks": {
-			"label": "Trucks",
-			"heading": "Trucks",
-			"description": "Trucks for personal or commercial use.",
-			"subCategories": {
-				"light": "Light Trucks",
-				"heavy": "Heavy Trucks"
-			},
-			"fuel": {
-				"label": "fuel",
-				"settings": {
-					"gasoline": "Gasoline",
-					"diesel": "Diesel",
-					"electric": "Full electric"
-				}
-			},
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage"
-		},
-		"Bikes": {
-			"label": "Bicycles",
-			"heading": "Bicycles",
-			"description": "Bicycles of various sizes.",
-			"subCategories": {
-				"kids": "Kids Bikes",
-				"mountain": "Mountain Bikes",
-				"road": "Road Bikes"
-			},
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage"
-		},
-		"ElectricVehicles": {
-			"label": "Electric Vehicles",
-			"heading": "Electric Vehicles",
-			"description": "Vehicles powered by electricity.",
-			"subCategories": {
-				"cars": "Electric Cars",
-				"scooters": "Electric Scooters"
-			},
-			"year": "Year",
-			"brand": "Brand",
-			"mileage": "Mileage"
-		},
-		"discountsAndOffers": {
-			"common": {
-				"discount": "OFF",
-				"save": "Save",
-				"errors": {
-					"fetchFailed": "Failed to load discounted products. Please try again later."
-				}
-			},
-			"categories": {
-				"discountsAndOffers": {
-					"title": "Hot Deals & Discounts",
-					"description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
-					"subtitle": "Shop now and save big on selected items",
-					"text1": "Exclusive Offers",
-					"text2": "Limited time discounts on best-selling products",
-					"noProducts": "No discounted products available at the moment. Check back soon for new offers!",
-					"viewAll": "View All Offers",
-					"ariaLabel": "Discounted products carousel"
-				}
-			}
-		}
-	},
-	"seo": {
-		"categoryTitle": "Category {{category}} | Corner Market",
-		"categoryDescription": "Browse a wide variety of fresh and high-quality {{category}} on our website!"
-	},
-	"links": {
-		"home": "Home",
-		"products": "Products",
-		"noProducts": "No products are avalible, please try again later",
-		"new": "new",
-		"cart": "Cart",
-		"about": "About",
-		"contact": "Contact",
-		"login": "Login",
-		"logout": "Logout",
-		"orders": "Orders",
-		"receipts": "Receipts"
-	},
-	"orders": {
-		"status": {
-			"pending": "Pending",
-			"preparing": "Preparing",
-			"delivered": "Sent",
-			"shipped": "Delivered",
-			"cancelled": "Cancelled"
-		}
-	},
-	"pages": {
-		"receipts": {
-			"receiptSearchTitle": "Search Receipts",
-			"receiptSearch_1": "Name / Email / Order Number",
-			"receiptSearch_2": "Search by Product",
-			"receiptSearchFromDate": "From Date",
-			"receiptSearchToDate": "To Date",
-			"noReceiptsFound": "No receipts found",
-			"receiptListTitle": "Receipts 🧾",
-			"receiptNumber": "Receipt #{{orderNumber}}",
-			"date": "Date",
-			"customer": "Customer",
-			"phone": "Phone",
-			"email": "Email",
-			"address": "Address",
-			"paymentMethod": "Payment Method",
-			"creditCard": "Credit Card",
-			"cash": "Cash",
-			"deliveryMethod": "Delivery Method",
-			"delivery": "Home Delivery",
-			"pickup": "Pickup",
-			"totalAmount": "Total Amount",
-			"products": "Products",
-			"product": "Product",
+    "categories": {
+        "House": {
+            "label": "Home Supplies",
+            "heading": "Home Supplies",
+            "description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
+            "subCategories": {
+                "kitchen": "Kitchen Tools",
+                "storage": "Storage & Organization",
+                "decor": "Home Decor",
+                "maintenance": "Tools & Maintenance"
+            }
+        },
+        "Garden": {
+            "label": "Garden",
+            "heading": "Garden Supplies",
+            "description": "Includes products related to gardening such as care tools, watering, and plants.",
+            "subCategories": {
+                "plants": "Plants",
+                "watering": "Watering Supplies",
+                "tools": "Garden Tools",
+                "outdoorDecor": "Outdoor Decor"
+            }
+        },
+        "Electronics": {
+            "label": "Electronics",
+            "heading": "Electronics",
+            "description": "Various electronic devices and products such as phones, accessories, and tech gadgets.",
+            "subCategories": {
+                "phones": "Phones",
+                "laptops": "Computers & Laptops",
+                "accessories": "Accessories",
+                "gaming": "Gaming"
+            }
+        },
+        "Baby": {
+            "label": "Baby Supplies",
+            "heading": "Baby Supplies",
+            "description": "Products for children such as clothing, care items, and daily essentials.",
+            "subCategories": {
+                "clothes": "Baby Clothing",
+                "care": "Daily Care",
+                "feeding": "Feeding Supplies"
+            }
+        },
+        "Kids": {
+            "label": "Kids Toys",
+            "heading": "Kids Toys",
+            "description": "Toys and products dedicated to children of different ages.",
+            "subCategories": {
+                "educational": "Educational Toys",
+                "toys": "Entertainment Toys",
+                "outdoor": "Outdoor Toys"
+            }
+        },
+        "Cleaning": {
+            "label": "Cleaning Supplies",
+            "heading": "Cleaning Supplies",
+            "description": "Products and tools for home cleaning.",
+            "subCategories": {
+                "detergents": "Detergents",
+                "tools": "Cleaning Tools",
+                "disinfection": "Disinfection"
+            }
+        },
+        "Health": {
+            "label": "Health & Care",
+            "heading": "Health & Care",
+            "description": "Products related to personal health and care.",
+            "subCategories": {
+                "personalCare": "Personal Care",
+                "medical": "Medical Supplies",
+                "fitness": "Fitness Equipment"
+            }
+        },
+        "Watches": {
+            "label": "Watches",
+            "heading": "Watches",
+            "description": "Watches of various types and designs.",
+            "subCategories": {
+                "classic": "Classic Watches",
+                "smart": "Smart Watches",
+                "hand": "hand Watches"
+            }
+        },
+        "Beauty": {
+            "label": "Beauty",
+            "heading": "Beauty Products",
+            "description": "Cosmetics and personal care products offered by users.",
+            "subCategories": {
+                "makeup": "Makeup",
+                "skincare": "Skincare",
+                "hair": "Hair Care"
+            }
+        },
+        "WomenClothes": {
+            "label": "Women's Clothing",
+            "heading": "Women's Clothing",
+            "description": "Clothing for women of various styles.",
+            "subCategories": {
+                "casual": "Casual Wear",
+                "dresses": "Dresses",
+                "shoes": "Shoes"
+            }
+        },
+        "WomenBags": {
+            "label": "Women's Bags",
+            "heading": "Women's Bags",
+            "description": "Bags for women of different sizes and uses",
+            "subCategories": {
+                "handbags": "Handbags",
+                "backpacks": "Backpacks",
+                "travel": "Travel Bags"
+            }
+        },
+        "MenClothes": {
+            "label": "Men's Clothing",
+            "heading": "Men's Clothing",
+            "description": "Clothing for men for various uses.",
+            "subCategories": {
+                "casual": "Casual Wear",
+                "formal": "Formal Wear",
+                "shoes": "Shoes"
+            }
+        },
+        "Cars": {
+            "label": "Cars",
+            "heading": "Cars",
+            "description": "Cars for sale by users, new or used.",
+            "subCategories": {
+                "private": "Private Cars",
+                "electric": "Electric Cars",
+                "parts": "Spare Parts",
+                "accessories": "Car Accessories"
+            },
+            "fuel": {
+                "label": "fuel",
+                "settings": {
+                    "gasoline": "Gasoline",
+                    "diesel": "Diesel",
+                    "electric": "Full electric"
+                }
+            },
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage"
+        },
+        "Motorcycles": {
+            "label": "Motorcycles",
+            "heading": "Motorcycles",
+            "description": "Motorcycles of different models.",
+            "subCategories": {
+                "sport": "Sport Bikes",
+                "scooters": "Scooters",
+                "parts": "Spare Parts"
+            },
+            "fuel": {
+                "label": "fuel",
+                "settings": {
+                    "gasoline": "Gasoline",
+                    "diesel": "Diesel",
+                    "electric": "Full electric"
+                }
+            },
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage"
+        },
+        "Trucks": {
+            "label": "Trucks",
+            "heading": "Trucks",
+            "description": "Trucks for personal or commercial use.",
+            "subCategories": {
+                "light": "Light Trucks",
+                "heavy": "Heavy Trucks"
+            },
+            "fuel": {
+                "label": "fuel",
+                "settings": {
+                    "gasoline": "Gasoline",
+                    "diesel": "Diesel",
+                    "electric": "Full electric"
+                }
+            },
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage"
+        },
+        "Bikes": {
+            "label": "Bicycles",
+            "heading": "Bicycles",
+            "description": "Bicycles of various sizes.",
+            "subCategories": {
+                "kids": "Kids Bikes",
+                "mountain": "Mountain Bikes",
+                "road": "Road Bikes"
+            },
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage"
+        },
+        "ElectricVehicles": {
+            "label": "Electric Vehicles",
+            "heading": "Electric Vehicles",
+            "description": "Vehicles powered by electricity.",
+            "subCategories": {
+                "cars": "Electric Cars",
+                "scooters": "Electric Scooters"
+            },
+            "year": "Year",
+            "brand": "Brand",
+            "mileage": "Mileage"
+        },
+        "discountsAndOffers": {
+            "common": {
+                "discount": "OFF",
+                "save": "Save",
+                "errors": {
+                    "fetchFailed": "Failed to load discounted products. Please try again later."
+                }
+            },
+            "categories": {
+                "discountsAndOffers": {
+                    "title": "Hot Deals & Discounts",
+                    "description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
+                    "subtitle": "Shop now and save big on selected items",
+                    "text1": "Exclusive Offers",
+                    "text2": "Limited time discounts on best-selling products",
+                    "noProducts": "No discounted products available at the moment. Check back soon for new offers!",
+                    "viewAll": "View All Offers",
+                    "ariaLabel": "Discounted products carousel"
+                }
+            }
+        }
+    },
+    "seo": {
+        "categoryTitle": "Category {{category}} | Corner Market",
+        "categoryDescription": "Browse a wide variety of fresh and high-quality {{category}} on our website!"
+    },
+    "links": {
+        "home": "Home",
+        "products": "Products",
+        "noProducts": "No products are avalible, please try again later",
+        "new": "new",
+        "cart": "Cart",
+        "about": "About",
+        "contact": "Contact",
+        "login": "Login",
+        "logout": "Logout",
+        "orders": "Orders",
+        "receipts": "Receipts"
+    },
+    "orders": {
+        "status": {
+            "pending": "Pending",
+            "preparing": "Preparing",
+            "delivered": "Sent",
+            "shipped": "Delivered",
+            "cancelled": "Cancelled"
+        }
+    },
+    "pages": {
+        "receipts": {
+            "receiptSearchTitle": "Search Receipts",
+            "receiptSearch_1": "Name / Email / Order Number",
+            "receiptSearch_2": "Search by Product",
+            "receiptSearchFromDate": "From Date",
+            "receiptSearchToDate": "To Date",
+            "noReceiptsFound": "No receipts found",
+            "receiptListTitle": "Receipts 🧾",
+            "receiptNumber": "Receipt #{{orderNumber}}",
+            "date": "Date",
+            "customer": "Customer",
+            "phone": "Phone",
+            "email": "Email",
+            "address": "Address",
+            "paymentMethod": "Payment Method",
+            "creditCard": "Credit Card",
+            "cash": "Cash",
+            "deliveryMethod": "Delivery Method",
+            "delivery": "Home Delivery",
+            "pickup": "Pickup",
+            "totalAmount": "Total Amount",
+            "products": "Products",
+            "product": "Product",
 
-			"productName": "Product",
-			"quantity": "Quantity",
-			"pricePerUnit": "Price per Unit",
-			"total": "Total",
-			"businessName": "Store Name",
-			"businessPhone": "Store Phone",
-			"businessEmail": "Store Email",
-			"businessAddress": "Store Address",
-			"download": "Download"
-		},
-		"contact": {
-			"title": "Safqa – Contact Us",
-			"subtitle": "Safe, fast, and reliable platform to buy and sell with confidence across all categories",
+            "productName": "Product",
+            "quantity": "Quantity",
+            "pricePerUnit": "Price per Unit",
+            "total": "Total",
+            "businessName": "Store Name",
+            "businessPhone": "Store Phone",
+            "businessEmail": "Store Email",
+            "businessAddress": "Store Address",
+            "download": "Download"
+        },
+        "contact": {
+            "title": "Safqa – Contact Us",
+            "subtitle": "Safe, fast, and reliable platform to buy and sell with confidence across all categories",
 
-			"supportTitle": "Safqa Support 24/7",
-			"intro": "At Safqa, every buy and sell is a new opportunity. Our team is always ready to ensure a smooth, secure, and seamless experience for every user.",
+            "supportTitle": "Safqa Support 24/7",
+            "intro": "At Safqa, every buy and sell is a new opportunity. Our team is always ready to ensure a smooth, secure, and seamless experience for every user.",
 
-			"securityTitle": "Top-Level Security",
-			"securityDesc": "Your data is our priority! We use advanced tech and monitoring systems to keep every transaction fully secure.",
+            "securityTitle": "Top-Level Security",
+            "securityDesc": "Your data is our priority! We use advanced tech and monitoring systems to keep every transaction fully secure.",
 
-			"dealsTitle": "Successful Deals Every Time",
-			"dealsDesc": "Smart tools and expert guidance to help you close deals quickly, confidently, and stress-free.",
+            "dealsTitle": "Successful Deals Every Time",
+            "dealsDesc": "Smart tools and expert guidance to help you close deals quickly, confidently, and stress-free.",
 
-			"contactChannels": "Contact Channels",
+            "contactChannels": "Contact Channels",
 
-			"supportEmail": "Customer Support",
-			"salesEmail": "Partnerships & Business Inquiries",
+            "supportEmail": "Customer Support",
+            "salesEmail": "Partnerships & Business Inquiries",
 
-			"phone": "Call Center",
-			"phoneHours": "Available 8 AM – 12 Midnight",
+            "phone": "Call Center",
+            "phoneHours": "Available 8 AM – 12 Midnight",
 
-			"addressTitle": "Platform Info",
-			"address": "Safqa is a fully digital marketplace—no physical office required",
+            "addressTitle": "Platform Info",
+            "address": "Safqa is a fully digital marketplace—no physical office required",
 
-			"startSelling": "Start Selling Now",
-			"browseCategories": "Explore Top Categories",
+            "startSelling": "Start Selling Now",
+            "browseCategories": "Explore Top Categories",
 
-			"workingHours": "Operating Hours",
+            "workingHours": "Operating Hours",
 
-			"customerSupport": "Customer Support",
-			"supportHours": "24/7 All Week",
+            "customerSupport": "Customer Support",
+            "supportHours": "24/7 All Week",
 
-			"salesTeam": "Professional Sales Team",
-			"salesHours": "8 AM – 8 PM",
+            "salesTeam": "Professional Sales Team",
+            "salesHours": "8 AM – 8 PM",
 
-			"disputeResolution": "Fast Dispute Resolution",
-			"disputeHours": "9 AM – 6 PM (Working Days)",
+            "disputeResolution": "Fast Dispute Resolution",
+            "disputeHours": "9 AM – 6 PM (Working Days)",
 
-			"technicalSupport": "Smart Technical Support",
-			"techHours": "10 AM – 10 PM (Daily)",
+            "technicalSupport": "Smart Technical Support",
+            "techHours": "10 AM – 10 PM (Daily)",
 
-			"followUs": "Follow the Latest Deals & Offers",
-			"socialDesc": "Be the first to know about exclusive offers and hot deals on Safqa",
+            "followUs": "Follow the Latest Deals & Offers",
+            "socialDesc": "Be the first to know about exclusive offers and hot deals on Safqa",
 
-			"quickHelp": "Quick Help with Safqa",
+            "quickHelp": "Quick Help with Safqa",
 
-			"howToSell": "How to Sell Quickly & Easily",
-			"safetyTips": "Tips for Safe & Secure Transactions",
-			"resolveDisputes": "Resolve Disputes Smartly",
+            "howToSell": "How to Sell Quickly & Easily",
+            "safetyTips": "Tips for Safe & Secure Transactions",
+            "resolveDisputes": "Resolve Disputes Smartly",
 
-			"note": "We commit to responding to every inquiry within 4 working hours",
-			"thanks": "Thanks for being part of the Safqa community! Here, used products turn into new opportunities for success",
+            "note": "We commit to responding to every inquiry within 4 working hours",
+            "thanks": "Thanks for being part of the Safqa community! Here, used products turn into new opportunities for success",
 
-			"backToHome": "Back to Home"
-		},
-		"privacy": {
-			"title": "Privacy Policy",
-			"lastUpdated": "Last updated {{date}}",
-			"intro": {
-				"title": "Introduction",
-				"text": "In our Corner Market app, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when you log in using Google."
-			},
-			"collectedInfo": {
-				"title": "What Information Do We Collect?",
-				"text": "When logging in via Google, we obtain the following information from your account:",
-				"info": {
-					"name": "First and last name – as specified in your Google profile.",
-					"email": "Email – your address used for registration.",
-					"image": "Profile picture – if available, it will be displayed in your profile inside the app."
-				},
-				"technical": "Additionally, we may store technical information such as IP address, browser type, and operating system for security and service improvement purposes."
-			},
-			"usage": {
-				"title": "How Do We Use the Information?",
-				"points": {
-					"p1": "To register the user and verify identity.",
-					"p2": "To improve the in-app user experience.",
-					"p3": "To send notifications, updates, or relevant reminders.",
-					"p4": "To protect the system and secure your account."
-				}
-			},
-			"consent": {
-				"title": "Transparency & Consent",
-				"text": "When logging in via Google, you will be asked to consent to sharing your information. We request only the necessary permissions to operate the service, with full transparency."
-			},
-			"sharing": {
-				"title": "Sharing Information with Third Parties",
-				"points": {
-					"external": "External services: Information is transferred only to providers necessary for app operation.",
-					"law": "Legal compliance: We share information only if legally required."
-				}
-			},
-			"protection": {
-				"title": "Information Protection",
-				"text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend not sharing passwords and choosing a strong password."
-			},
-			"updates": {
-				"title": "Policy Updates",
-				"text": "This policy may be amended from time to time. We will notify you in-app or via direct notification. Continued use of the app constitutes acceptance of the changes."
-			},
-			"rights": {
-				"title": "Your Rights",
-				"points": {
-					"p1": "The right to access personal information stored about you.",
-					"p2": "The right to correct incorrect or incomplete information.",
-					"p3": "The right to request deletion of information – as long as there is no legal obligation to retain it."
-				}
-			},
-			"contact": {
-				"title": "Contact Information",
-				"text": "For any inquiry or request regarding privacy, you can contact via phone:",
-				"phone": "053-834-6915"
-			},
-			"userConsent": {
-				"title": "User Consent",
-				"text": "By using the app, you agree that you have read, understood, and accepted this privacy policy. If you do not agree, please do not use the app."
-			}
-		}
-	},
-	"accountMenu": {
-		"messages": "Messages",
-		"account": "My Account",
-		"profile": "My Profile",
-		"settings": "Settings",
-		"logout": "Logout",
-		"admin": "Site Admin",
-		"siteModerator": "Site Moderator"
-	},
+            "backToHome": "Back to Home"
+        },
+        "privacy": {
+            "title": "Privacy Policy",
+            "lastUpdated": "Last updated {{date}}",
+            "intro": {
+                "title": "Introduction",
+                "text": "In our Corner Market app, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when you log in using Google."
+            },
+            "collectedInfo": {
+                "title": "What Information Do We Collect?",
+                "text": "When logging in via Google, we obtain the following information from your account:",
+                "info": {
+                    "name": "First and last name – as specified in your Google profile.",
+                    "email": "Email – your address used for registration.",
+                    "image": "Profile picture – if available, it will be displayed in your profile inside the app."
+                },
+                "technical": "Additionally, we may store technical information such as IP address, browser type, and operating system for security and service improvement purposes."
+            },
+            "usage": {
+                "title": "How Do We Use the Information?",
+                "points": {
+                    "p1": "To register the user and verify identity.",
+                    "p2": "To improve the in-app user experience.",
+                    "p3": "To send notifications, updates, or relevant reminders.",
+                    "p4": "To protect the system and secure your account."
+                }
+            },
+            "consent": {
+                "title": "Transparency & Consent",
+                "text": "When logging in via Google, you will be asked to consent to sharing your information. We request only the necessary permissions to operate the service, with full transparency."
+            },
+            "sharing": {
+                "title": "Sharing Information with Third Parties",
+                "points": {
+                    "external": "External services: Information is transferred only to providers necessary for app operation.",
+                    "law": "Legal compliance: We share information only if legally required."
+                }
+            },
+            "protection": {
+                "title": "Information Protection",
+                "text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend not sharing passwords and choosing a strong password."
+            },
+            "updates": {
+                "title": "Policy Updates",
+                "text": "This policy may be amended from time to time. We will notify you in-app or via direct notification. Continued use of the app constitutes acceptance of the changes."
+            },
+            "rights": {
+                "title": "Your Rights",
+                "points": {
+                    "p1": "The right to access personal information stored about you.",
+                    "p2": "The right to correct incorrect or incomplete information.",
+                    "p3": "The right to request deletion of information – as long as there is no legal obligation to retain it."
+                }
+            },
+            "contact": {
+                "title": "Contact Information",
+                "text": "For any inquiry or request regarding privacy, you can contact via phone:",
+                "phone": "053-834-6915"
+            },
+            "userConsent": {
+                "title": "User Consent",
+                "text": "By using the app, you agree that you have read, understood, and accepted this privacy policy. If you do not agree, please do not use the app."
+            }
+        }
+    },
+    "accountMenu": {
+        "messages": "Messages",
+        "account": "My Account",
+        "profile": "My Profile",
+        "settings": "Settings",
+        "logout": "Logout",
+        "admin": "Site Admin",
+        "siteModerator": "Site Moderator"
+    },
 
-	"about": {
-		"title": "About Us",
-		"subtitle": "Safqa — a simple and secure platform for buying and selling between individuals",
+    "about": {
+        "title": "About Us",
+        "subtitle": "Safqa — a simple and secure platform for buying and selling between individuals",
 
-		"what-we-are": {
-			"safqa": "Our Idea",
-			"title": "Buy and Sell Without Complication",
-			"subtitle": "We created Safqa to provide an organized space that connects sellers and buyers directly, without chaos or middlemen"
-		},
+        "what-we-are": {
+            "safqa": "Our Idea",
+            "title": "Buy and Sell Without Complication",
+            "subtitle": "We created Safqa to provide an organized space that connects sellers and buyers directly, without chaos or middlemen"
+        },
 
-		"buy-and-sell": {
-			"title": "How It Works",
-			"subtitle": "An easy interface, clear steps, and direct communication to help you complete deals quickly and comfortably"
-		},
+        "buy-and-sell": {
+            "title": "How It Works",
+            "subtitle": "An easy interface, clear steps, and direct communication to help you complete deals quickly and comfortably"
+        },
 
-		"what-we-have": {
-			"title": "What You’ll Find on Safqa",
-			"subtitle": "A variety of products from real users — from everyday items to unique pieces"
-		},
+        "what-we-have": {
+            "title": "What You’ll Find on Safqa",
+            "subtitle": "A variety of products from real users — from everyday items to unique pieces"
+        },
 
-		"control": {
-			"title": "You’re in Control",
-			"subtitle": "You decide the price, presentation, and communication — we simply make the process easier"
-		},
+        "control": {
+            "title": "You’re in Control",
+            "subtitle": "You decide the price, presentation, and communication — we simply make the process easier"
+        },
 
-		"trust": {
-			"title": "Building Trust Step by Step",
-			"subtitle": "We provide tools that help reduce fake listings and improve the buying and selling experience"
-		},
+        "trust": {
+            "title": "Building Trust Step by Step",
+            "subtitle": "We provide tools that help reduce fake listings and improve the buying and selling experience"
+        },
 
-		"why-register": {
-			"title": "Get Started Easily",
-			"subtitle": "A quick account setup opens the door to buying or selling within minutes"
-		},
+        "why-register": {
+            "title": "Get Started Easily",
+            "subtitle": "A quick account setup opens the door to buying or selling within minutes"
+        },
 
-		"locations": {
-			"title": "Close to You",
-			"subtitle": "Find deals in your area or explore offers from other locations with ease"
-		}
-	},
-	"footer": {
-		"siteName": "Sfqa Website",
-		"quickLinks": "Quick Links",
-		"myAccount": "My Account",
-		"myListings": "My Listings",
-		"postListing": "Post a Listing",
-		"marketplace": "Marketplace",
-		"descriptionC2C": "Buy and sell directly with other users easily and safely.",
-		"contact": "Contact Us",
-		"phone": "Phone",
-		"followUs": "Follow Us",
-		"version": "Version 1.0.0"
-	},
-	"color": "Color",
-	"removeAccount": {
-		"heading": "Delete Account",
-		"description": "If you delete your account, this action cannot be undone",
-		"buttonText": "Delete Permanently"
-	}
+        "locations": {
+            "title": "Close to You",
+            "subtitle": "Find deals in your area or explore offers from other locations with ease"
+        }
+    },
+    "footer": {
+        "siteName": "Sfqa Website",
+        "quickLinks": "Quick Links",
+        "myAccount": "My Account",
+        "myListings": "My Listings",
+        "postListing": "Post a Listing",
+        "marketplace": "Marketplace",
+        "descriptionC2C": "Buy and sell directly with other users easily and safely.",
+        "contact": "Contact Us",
+        "phone": "Phone",
+        "followUs": "Follow Us",
+        "version": "Version 1.0.0"
+    },
+    "color": "Color",
+    "removeAccount": {
+        "heading": "Delete Account",
+        "description": "If you delete your account, this action cannot be undone",
+        "buttonText": "Delete Permanently"
+    }
 }
