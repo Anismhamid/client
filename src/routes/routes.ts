@@ -15,9 +15,9 @@ export const productsPathes = {
     cleaning: '/category/cleaning',
     health: '/category/health',
     watches: '/category/watches',
-    womenClothes: '/category/WomenClothes',
-    menClothes: '/category/MenClothes',
-    womenBags: '/category/WomenBags',
+    WomenClothes: '/category/WomenClothes',
+    MenClothes: '/category/MenClothes',
+    WomenBags: '/category/WomenBags',
 
     blog: '/blog',
     brand: '/brands/:brand',

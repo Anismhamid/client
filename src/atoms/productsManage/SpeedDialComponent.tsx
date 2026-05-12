@@ -1,26 +1,25 @@
-import {Fab, SpeedDial, SpeedDialAction, Zoom} from "@mui/material";
-import {FunctionComponent, useEffect, useState} from "react";
+import { Fab, SpeedDial, SpeedDialAction, Zoom } from "@mui/material";
+import { FunctionComponent, useEffect, useState } from "react";
 import AddSharpIcon from "@mui/icons-material/AddSharp";
 import AddProductModal from "./addAndUpdateProduct/CreatePostModal";
 import SettingsIcon from "@mui/icons-material/Settings";
-import {useUser} from "../../context/useUSer";
+import { useUser } from "../../context/useUSer";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
-interface SpeedDialComponentProps {}
 
-const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
+const SpeedDialComponent: FunctionComponent = () => {
 	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
-	const {auth, isLoggedIn} = useUser();
+	const { auth, isLoggedIn } = useUser();
 	const [visible, setVisible] = useState(false);
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 
 	const handleScroll = () => {
 		setVisible(window.scrollY > 300);
 	};
 
 	const handleClick = () => {
-		window.scrollTo({top: 0, behavior: "smooth"});
+		window.scrollTo({ top: 0, behavior: "smooth" });
 	};
 
 	// const isAdminAndModerator = auth && auth._id
@@ -47,7 +46,7 @@ const SpeedDialComponent: FunctionComponent<SpeedDialComponentProps> = () => {
 			{auth && isLoggedIn && (
 				<SpeedDial
 					ariaLabel='SpeedDial basic example'
-					sx={{position: "fixed", bottom: 10, right: 10, zIndex: 1100}}
+					sx={{ position: "fixed", bottom: 10, right: 10, zIndex: 1100 }}
 					icon={<SettingsIcon />}
 				>
 					{actions.map((action) => (

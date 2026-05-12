@@ -96,7 +96,7 @@ const Posts: FunctionComponent = () => {
 								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
 							}}
 						>
-							{t(`categories.${category}.heading`)}
+							{t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.heading`)}
 						</Typography>
 						<Typography
 							variant='body1'
@@ -108,7 +108,7 @@ const Posts: FunctionComponent = () => {
 								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
 							}}
 						>
-							{t(`categories.${category}.description`)}
+							{t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`)}
 						</Typography>
 					</motion.div>
 				</Box>

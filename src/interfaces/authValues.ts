@@ -29,7 +29,7 @@ export const emptyAuthValues = {
 
 export interface AuthValues {
 	status: ReactNode;
-	createdAt: any;
+	createdAt: Date | string;
 	exp?: number;
 	_id?: string;
 	name: {

@@ -345,7 +345,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
 						.filter((cat) => Object.keys(categoriesLogic).includes(cat.id))
 						.map((category) => {
 							const categoryLabel = t(
-								`categories.${category.id.toLocaleLowerCase()}.label`,
+								`categories.${category.id}.label`,
 							);
 
 							return (

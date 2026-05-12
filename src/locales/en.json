@@ -284,7 +284,7 @@
 	},
 
 	"categories": {
-		"house": {
+		"House": {
 			"label": "Home Supplies",
 			"heading": "Home Supplies",
 			"description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
@@ -295,7 +295,7 @@
 				"maintenance": "Tools & Maintenance"
 			}
 		},
-		"garden": {
+		"Garden": {
 			"label": "Garden",
 			"heading": "Garden Supplies",
 			"description": "Includes products related to gardening such as care tools, watering, and plants.",
@@ -306,7 +306,7 @@
 				"outdoorDecor": "Outdoor Decor"
 			}
 		},
-		"electronics": {
+		"Electronics": {
 			"label": "Electronics",
 			"heading": "Electronics",
 			"description": "Various electronic devices and products such as phones, accessories, and tech gadgets.",
@@ -317,7 +317,7 @@
 				"gaming": "Gaming"
 			}
 		},
-		"baby": {
+		"Baby": {
 			"label": "Baby Supplies",
 			"heading": "Baby Supplies",
 			"description": "Products for children such as clothing, care items, and daily essentials.",
@@ -327,7 +327,7 @@
 				"feeding": "Feeding Supplies"
 			}
 		},
-		"kids": {
+		"Kids": {
 			"label": "Kids Toys",
 			"heading": "Kids Toys",
 			"description": "Toys and products dedicated to children of different ages.",
@@ -337,7 +337,7 @@
 				"outdoor": "Outdoor Toys"
 			}
 		},
-		"cleaning": {
+		"Cleaning": {
 			"label": "Cleaning Supplies",
 			"heading": "Cleaning Supplies",
 			"description": "Products and tools for home cleaning.",
@@ -347,7 +347,7 @@
 				"disinfection": "Disinfection"
 			}
 		},
-		"health": {
+		"Health": {
 			"label": "Health & Care",
 			"heading": "Health & Care",
 			"description": "Products related to personal health and care.",
@@ -357,7 +357,7 @@
 				"fitness": "Fitness Equipment"
 			}
 		},
-		"watches": {
+		"Watches": {
 			"label": "Watches",
 			"heading": "Watches",
 			"description": "Watches of various types and designs.",
@@ -367,7 +367,7 @@
 				"hand": "hand Watches"
 			}
 		},
-		"beauty": {
+		"Beauty": {
 			"label": "Beauty",
 			"heading": "Beauty Products",
 			"description": "Cosmetics and personal care products offered by users.",
@@ -377,7 +377,7 @@
 				"hair": "Hair Care"
 			}
 		},
-		"womenclothes": {
+		"WomenClothes": {
 			"label": "Women's Clothing",
 			"heading": "Women's Clothing",
 			"description": "Clothing for women of various styles.",
@@ -387,17 +387,17 @@
 				"shoes": "Shoes"
 			}
 		},
-		"womenbags": {
+		"WomenBags": {
 			"label": "Women's Bags",
 			"heading": "Women's Bags",
-			"description": "Bags for women of different sizes and uses.",
+			"description": "Bags for women of different sizes and uses",
 			"subCategories": {
 				"handbags": "Handbags",
 				"backpacks": "Backpacks",
 				"travel": "Travel Bags"
 			}
 		},
-		"menclothes": {
+		"MenClothes": {
 			"label": "Men's Clothing",
 			"heading": "Men's Clothing",
 			"description": "Clothing for men for various uses.",
@@ -407,7 +407,7 @@
 				"shoes": "Shoes"
 			}
 		},
-		"cars": {
+		"Cars": {
 			"label": "Cars",
 			"heading": "Cars",
 			"description": "Cars for sale by users, new or used.",
@@ -429,7 +429,7 @@
 			"brand": "Brand",
 			"mileage": "Mileage"
 		},
-		"motorcycles": {
+		"Motorcycles": {
 			"label": "Motorcycles",
 			"heading": "Motorcycles",
 			"description": "Motorcycles of different models.",
@@ -450,7 +450,7 @@
 			"brand": "Brand",
 			"mileage": "Mileage"
 		},
-		"trucks": {
+		"Trucks": {
 			"label": "Trucks",
 			"heading": "Trucks",
 			"description": "Trucks for personal or commercial use.",
@@ -470,7 +470,7 @@
 			"brand": "Brand",
 			"mileage": "Mileage"
 		},
-		"bikes": {
+		"Bikes": {
 			"label": "Bicycles",
 			"heading": "Bicycles",
 			"description": "Bicycles of various sizes.",
@@ -483,7 +483,7 @@
 			"brand": "Brand",
 			"mileage": "Mileage"
 		},
-		"electricvehicles": {
+		"ElectricVehicles": {
 			"label": "Electric Vehicles",
 			"heading": "Electric Vehicles",
 			"description": "Vehicles powered by electricity.",
