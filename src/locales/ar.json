@@ -1,735 +1,736 @@
 {
-	"home": "الرئيسيه",
-	"navigationMenu":"قائمة التنقل",
-	"House": "مستلزمات البيت",
-	"webPageName": "صفقة",
-	"browse-posts": "تصفح المنشورات",
-	"create-post": "اضافة منشور",
-	"help": "مساعده",
-	"favorites": "المفضله",
-	"startFree": "ابدأ الآن مجاناً",
-	"joinUs": "انضم إلينا مجاناً",
-	"was-found": "تم العثول على",
-	"search": "مثال: mazda 3 | ملابس",
-	"callUs": "تواصل معنا",
-	"bestOffers": "أفضل العروض والصفقات في مكان واحد",
-	"allRightsReserved": "جميع الحقوق محفوظة.",
-	"team": "فريق صفقه",
-	"faq": "الأسئلة الشائعة",
-	"shares": "منشورات",
-	"seller": "نشر بواسطة",
-	"member_since": "تاريخ الانضمام",
-	"status": {
-		"title": "الحاله",
-		"active": "نشط",
-		"inactive": "غير نشط",
-		"lastActivity": "اخر ظهور"
-	},
-	"messages": {
-		"main": "رسائل",
-		"search": "بحث عن رسائل",
-		"all": "الكل",
-		"unread": "الرسائل الغير مقروئه",
-		"directMessage": "مراسلة مباشرة",
-		"contactWith": "تواصل مع "
-	},
-	"roles": {
-		"title": "الدور",
-		"admin": "مدير",
-		"client": "مستخدم",
-		"moderator": "مشرف الموقع"
-	},
-	"login": {
-		"welcome":"صفقة",
-		"lastLogin": "آخر تسجيل دخول",
-		"email": "البريد الإلكتروني",
-		"password": "كلمة المرور",
-		"loginButton": "تسجيل الدخول",
-		"googleLoginError": "فشل تسجيل الدخول بواسطة Google",
-		"noAccount": "ليس لديك حساب بعد؟",
-		"register": "اضغط للتسجيل",
-		"privacyPolicy": "سياسة الخصوصية",
-		"termsOfUse": "شروط الاستخدام",
-		"validation": {
-			"emailInvalid": "البريد الإلكتروني غير صالح",
-			"emailRequired": "البريد الإلكتروني مطلوب",
-			"passwordMin": "كلمة المرور يجب أن تتكون من 8 أحرف على الأقل وحتى 60 حرفاً",
-			"passwordMax": "كلمة المرور طويلة جداً",
-			"passwordRequired": "كلمة المرور مطلوبة"
-		},
-		"success": "تم تسجيل الدخول بنجاح!",
-		"error": "فشل تسجيل الدخول",
-		"googleError": "خطأ في تسجيل الدخول باستخدام Google: {{message}}"
-	},
+    "you": "انت",
+    "home": "الرئيسيه",
+    "navigationMenu": "قائمة التنقل",
+    "House": "مستلزمات البيت",
+    "webPageName": "صفقة",
+    "browse-posts": "تصفح المنشورات",
+    "create-post": "اضافة منشور",
+    "help": "مساعده",
+    "favorites": "المفضله",
+    "startFree": "ابدأ الآن مجاناً",
+    "joinUs": "انضم إلينا مجاناً",
+    "was-found": "تم العثول على",
+    "search": "مثال: mazda 3 | ملابس",
+    "callUs": "تواصل معنا",
+    "bestOffers": "أفضل العروض والصفقات في مكان واحد",
+    "allRightsReserved": "جميع الحقوق محفوظة.",
+    "team": "فريق صفقه",
+    "faq": "الأسئلة الشائعة",
+    "shares": "منشورات",
+    "seller": "نشر بواسطة",
+    "member_since": "تاريخ الانضمام",
+    "status": {
+        "title": "الحاله",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "lastActivity": "اخر ظهور"
+    },
+    "messages": {
+        "main": "رسائل",
+        "search": "بحث عن رسائل",
+        "all": "الكل",
+        "unread": "الرسائل الغير مقروئه",
+        "directMessage": "مراسلة مباشرة",
+        "contactWith": "تواصل مع "
+    },
+    "roles": {
+        "title": "الدور",
+        "admin": "مدير",
+        "client": "مستخدم",
+        "moderator": "مشرف الموقع"
+    },
+    "login": {
+        "welcome": "صفقة",
+        "lastLogin": "آخر تسجيل دخول",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "loginButton": "تسجيل الدخول",
+        "googleLoginError": "فشل تسجيل الدخول بواسطة Google",
+        "noAccount": "ليس لديك حساب بعد؟",
+        "register": "اضغط للتسجيل",
+        "privacyPolicy": "سياسة الخصوصية",
+        "termsOfUse": "شروط الاستخدام",
+        "validation": {
+            "emailInvalid": "البريد الإلكتروني غير صالح",
+            "emailRequired": "البريد الإلكتروني مطلوب",
+            "passwordMin": "كلمة المرور يجب أن تتكون من 8 أحرف على الأقل وحتى 60 حرفاً",
+            "passwordMax": "كلمة المرور طويلة جداً",
+            "passwordRequired": "كلمة المرور مطلوبة"
+        },
+        "success": "تم تسجيل الدخول بنجاح!",
+        "error": "فشل تسجيل الدخول",
+        "googleError": "خطأ في تسجيل الدخول باستخدام Google: {{message}}"
+    },
 
-	"register": {
-		"title": "إنشاء حساب جديد",
-		"subtitle": "انضم إلى مجتمع صفقه وابدأ رحلتك التجارية اليوم",
-		"steps": {
-			"personalInfo": "المعلومات الشخصية",
-			"contactInfo": "معلومات التواصل",
-			"security": "الأمان",
-			"agreements": "الاتفاقيات"
-		},
-		"firstName": "الاسم الاول",
-		"lastName": "اسم العائلة",
-		"email": "البريد الالكتروني",
-		"phone1": "هاتف",
-		"phone2": "هاتف اضافي (اختياري)",
-		"city": "البلد",
-		"street": "الشارع",
-		"houseNumber": "رقم البيت (اختياري)",
-		"imageUrl": "صوره",
-		"password": "كلمه السر",
-		"confirmPassword": "تأكيد كلمه السر",
-		"haveAccount": "لديك حساب ؟",
-		"loginHere": "سجل دخولك الان",
-		"slug": "اسم-المستخدم",
-		"slugHint": "اسم فريد يظهر في رابط ملفك الشخصي",
-		"slugExample": "مثال: john-doe أو ahmad-saleh",
-		"generateSlug": "توليد من الاسم",
-		"checkingSlug": "جارٍ التحقق من توفر الاسم...",
-		"slugAvailable": "هذا الاسم متاح ✓",
-		"slugTaken": "هذا الاسم محجوز بالفعل ✗",
-		"profilePreview": "معاينة الملف الشخصي",
-		"profileLink": "رابط ملفك الشخصي",
-		"passwordStrength": {
-			"veryWeak": "ضعيف جداً",
-			"weak": "ضعيف",
-			"fair": "متوسط",
-			"good": "جيد",
-			"strong": "قوي",
-			"veryStrong": "قوي جداً"
-		},
-		"agreeTo": "أوافق على",
-		"termsOfService": "شروط الخدمة",
-		"and": "و",
-		"privacyPolicy": "سياسة الخصوصية",
-		"privacyNote": "نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا.",
-		"creatingAccount": "جارٍ إنشاء الحساب...",
-		"completeRegistration": "أكمل التسجيل",
-		"success": {
-			"title": "تم التسجيل بنجاح!",
-			"message": "تم إنشاء حسابك بنجاح. يمكنك الآن تسجيل الدخول والبدء في استخدام خدمات صفقه.",
-			"description": "تم إنشاء الحساب بنجاح",
-			"redirect": "سيتم تحويلك تلقائياً إلى صفحة تسجيل الدخول..."
-		},
-		"errors": {
-			"EMAIL_EXISTS": "الرجاء استعمال بريد الكتروني اخر",
-			"serverError": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى.",
-			"networkError": "خطأ في الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت الخاص بك.",
-			"slugUnavailable": "اسم المستخدم غير متاح. يرجى اختيار اسم آخر.",
-			"createPostFailed": "حدث خطأ أثناء نشر المنتج، حاول مجدداً"
-		},
-		"validation": {
-			"firstNameRequired": "الاسم الأول مطلوب",
-			"firstNameMin": "الاسم الأول يجب أن يكون على الأقل حرفين",
-			"lastNameRequired": "اسم العائلة مطلوب",
-			"lastNameMin": "اسم العائلة يجب أن يكون على الأقل حرفين",
+    "register": {
+        "title": "إنشاء حساب جديد",
+        "subtitle": "انضم إلى مجتمع صفقه وابدأ رحلتك التجارية اليوم",
+        "steps": {
+            "personalInfo": "المعلومات الشخصية",
+            "contactInfo": "معلومات التواصل",
+            "security": "الأمان",
+            "agreements": "الاتفاقيات"
+        },
+        "firstName": "الاسم الاول",
+        "lastName": "اسم العائلة",
+        "email": "البريد الالكتروني",
+        "phone1": "هاتف",
+        "phone2": "هاتف اضافي (اختياري)",
+        "city": "البلد",
+        "street": "الشارع",
+        "houseNumber": "رقم البيت (اختياري)",
+        "imageUrl": "صوره",
+        "password": "كلمه السر",
+        "confirmPassword": "تأكيد كلمه السر",
+        "haveAccount": "لديك حساب ؟",
+        "loginHere": "سجل دخولك الان",
+        "slug": "اسم-المستخدم",
+        "slugHint": "اسم فريد يظهر في رابط ملفك الشخصي",
+        "slugExample": "مثال: john-doe أو ahmad-saleh",
+        "generateSlug": "توليد من الاسم",
+        "checkingSlug": "جارٍ التحقق من توفر الاسم...",
+        "slugAvailable": "هذا الاسم متاح ✓",
+        "slugTaken": "هذا الاسم محجوز بالفعل ✗",
+        "profilePreview": "معاينة الملف الشخصي",
+        "profileLink": "رابط ملفك الشخصي",
+        "passwordStrength": {
+            "veryWeak": "ضعيف جداً",
+            "weak": "ضعيف",
+            "fair": "متوسط",
+            "good": "جيد",
+            "strong": "قوي",
+            "veryStrong": "قوي جداً"
+        },
+        "agreeTo": "أوافق على",
+        "termsOfService": "شروط الخدمة",
+        "and": "و",
+        "privacyPolicy": "سياسة الخصوصية",
+        "privacyNote": "نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية وفقاً لسياسة الخصوصية الخاصة بنا.",
+        "creatingAccount": "جارٍ إنشاء الحساب...",
+        "completeRegistration": "أكمل التسجيل",
+        "success": {
+            "title": "تم التسجيل بنجاح!",
+            "message": "تم إنشاء حسابك بنجاح. يمكنك الآن تسجيل الدخول والبدء في استخدام خدمات صفقه.",
+            "description": "تم إنشاء الحساب بنجاح",
+            "redirect": "سيتم تحويلك تلقائياً إلى صفحة تسجيل الدخول..."
+        },
+        "errors": {
+            "EMAIL_EXISTS": "الرجاء استعمال بريد الكتروني اخر",
+            "serverError": "حدث خطأ في الخادم. يرجى المحاولة مرة أخرى.",
+            "networkError": "خطأ في الاتصال بالشبكة. يرجى التحقق من اتصال الإنترنت الخاص بك.",
+            "slugUnavailable": "اسم المستخدم غير متاح. يرجى اختيار اسم آخر.",
+            "createPostFailed": "حدث خطأ أثناء نشر المنتج، حاول مجدداً"
+        },
+        "validation": {
+            "firstNameRequired": "الاسم الأول مطلوب",
+            "firstNameMin": "الاسم الأول يجب أن يكون على الأقل حرفين",
+            "lastNameRequired": "اسم العائلة مطلوب",
+            "lastNameMin": "اسم العائلة يجب أن يكون على الأقل حرفين",
 
-			"emailRequired": "البريد الإلكتروني مطلوب",
-			"emailMin": "البريد الإلكتروني قصير جداً",
-			"emailInvalid": "بريد إلكتروني غير صالح",
+            "emailRequired": "البريد الإلكتروني مطلوب",
+            "emailMin": "البريد الإلكتروني قصير جداً",
+            "emailInvalid": "بريد إلكتروني غير صالح",
 
-			"genderRequired": "الجنس مطلوب",
+            "genderRequired": "الجنس مطلوب",
 
-			"cityRequired": "المدينة مطلوبة",
-			"streetRequired": "الشارع مطلوب",
+            "cityRequired": "المدينة مطلوبة",
+            "streetRequired": "الشارع مطلوب",
 
-			"passwordRequired": "كلمة المرور مطلوبة",
-			"passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+            "passwordRequired": "كلمة المرور مطلوبة",
+            "passwordMin": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
 
-			"confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
-			"confirmPasswordMatch": "كلمة المرور غير متطابقة",
+            "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+            "confirmPasswordMatch": "كلمة المرور غير متطابقة",
 
-			"nameLettersOnly": "يجب أن يحتوي الاسم على أحرف فقط",
-			"phone1Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام",
-			"phone2Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام أو يكون فارغاً",
-			"houseNumberDigits": "يجب أن يحتوي رقم المنزل على أرقام فقط",
-			"passwordLowercase": "يجب أن تحتوي على حرف صغير واحد على الأقل",
-			"passwordUppercase": "يجب أن تحتوي على حرف كبير واحد على الأقل",
-			"passwordNumber": "يجب أن تحتوي على رقم واحد على الأقل",
-			"passwordSpecial": "يجب أن تحتوي على رمز خاص واحد على الأقل (!@#$%^&*(),.?\":{}|<>)",
-			"slugRequired": "اسم المستخدم مطلوب بالانجليزيه",
-			"slugMin": "يجب أن يحتوي اسم المستخدم على 3 أحرف على الأقل",
-			"slugMax": "يجب ألا يتجاوز اسم المستخدم 30 حرفاً",
-			"slugFormat": "يجب أن يحتوي اسم المستخدم على أحرف إنجليزية صغيرة وأرقام وشرطات فقط",
-			"slugNoSpaces": "يجب ألا يحتوي اسم المستخدم على مسافات",
-			"slugNoSpecial": "يجب ألا يحتوي اسم المستخدم على رموز خاصة",
-			"termsRequired": "يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة",
-			"emailNotValid": "من فظلك الرجاء استعمال بريد الكتروني اخر"
-		},
-		"gender": "الجنس",
-		"selectGender": "اختر الجنس",
-		"male": "ذكر",
-		"female": "انثى"
-	},
-	"common": {
-		"typing": "يكتب...",
-		"outOf": "من",
-		"viewOf": "عرض",
-		"countOfPosts": "المنشورات على الموقع",
-		"endOfPosts": "لقد وصلت إلى نهاية النتائج",
-		"back": "خلف",
-		"next": "التالي",
-		"faq": "الأسئلة الشائعة",
-		"contact": "اتصل بنا",
-		"about": "من نحن",
-		"businessName": "الاسم التجاري",
-		"gasoline": "بانزين",
-		"brand": "العلامه التجاريه",
-		"year": "سنة الاصدار",
-		"fuel": "نوع الماطور",
-		"mileage": "كيلو مترات",
-		"color": "اللون"
-	},
-	"backOneStep": "العودة إلى الصفحة السابقة",
-	"products": "منتجات",
-	"product": "منتج",
+            "nameLettersOnly": "يجب أن يحتوي الاسم على أحرف فقط",
+            "phone1Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام",
+            "phone2Format": "يجب أن يبدأ الرقم بـ 05 ويتكون من 9-10 أرقام أو يكون فارغاً",
+            "houseNumberDigits": "يجب أن يحتوي رقم المنزل على أرقام فقط",
+            "passwordLowercase": "يجب أن تحتوي على حرف صغير واحد على الأقل",
+            "passwordUppercase": "يجب أن تحتوي على حرف كبير واحد على الأقل",
+            "passwordNumber": "يجب أن تحتوي على رقم واحد على الأقل",
+            "passwordSpecial": "يجب أن تحتوي على رمز خاص واحد على الأقل (!@#$%^&*(),.?\":{}|<>)",
+            "slugRequired": "اسم المستخدم مطلوب بالانجليزيه",
+            "slugMin": "يجب أن يحتوي اسم المستخدم على 3 أحرف على الأقل",
+            "slugMax": "يجب ألا يتجاوز اسم المستخدم 30 حرفاً",
+            "slugFormat": "يجب أن يحتوي اسم المستخدم على أحرف إنجليزية صغيرة وأرقام وشرطات فقط",
+            "slugNoSpaces": "يجب ألا يحتوي اسم المستخدم على مسافات",
+            "slugNoSpecial": "يجب ألا يحتوي اسم المستخدم على رموز خاصة",
+            "termsRequired": "يرجى الموافقة على شروط الخدمة وسياسة الخصوصية للمتابعة",
+            "emailNotValid": "من فظلك الرجاء استعمال بريد الكتروني اخر"
+        },
+        "gender": "الجنس",
+        "selectGender": "اختر الجنس",
+        "male": "ذكر",
+        "female": "انثى"
+    },
+    "common": {
+        "typing": "يكتب...",
+        "outOf": "من",
+        "viewOf": "عرض",
+        "countOfPosts": "المنشورات على الموقع",
+        "endOfPosts": "لقد وصلت إلى نهاية النتائج",
+        "back": "خلف",
+        "next": "التالي",
+        "faq": "الأسئلة الشائعة",
+        "contact": "اتصل بنا",
+        "about": "من نحن",
+        "businessName": "الاسم التجاري",
+        "gasoline": "بانزين",
+        "brand": "العلامه التجاريه",
+        "year": "سنة الاصدار",
+        "fuel": "نوع الماطور",
+        "mileage": "كيلو مترات",
+        "color": "اللون"
+    },
+    "backOneStep": "العودة إلى الصفحة السابقة",
+    "products": "منتجات",
+    "product": "منتج",
 
-	"noProducts": "لم يتم العثور على أي منتجات في المتجر",
-	"price": "السعر",
-	"quantity": "العدد",
-	"currentStatus": "الحالة",
-	"priceAfterDiscount": "السعر بعد التخفيض",
-	"totalOrderPrice": "إجمالي سعر الطلب",
-	"collectionMethod": "طريقة الاستلام",
-	"paymentMethod": "طريقة الدفع",
-	"creditCard": "بطاقة إئتمان",
-	"selfPickup": "استلام ذاتي",
-	"delivery": "توصيل",
-	"cash": "نقدي",
-	"orderNumber": "رقم الطلب",
-	"UserId": "ID المستخدم",
-	"users-management": "ادارة المستخدمين",
-	"account-management": "ادارة الحساب",
-	"date": "تاريخ",
-	"phone": "هاتف",
-	"customerInfo": "تفاصيل العميل",
-	"customer": "العميل",
-	"email": "ايميل",
-	"address": "العنوان",
-	"searchin": "ابحث عن اسم المنتج",
-	"SpeedDial": {
-		"actions": {
-			"addProduct": "إضافة منتج",
-			"cart": "سلة المشتريات",
-			"backToTop": "العودة للأعلى"
-		}
-	},
-	"modals": {
-		"addProductModal": {
-			"title": "إضافة إعلان جديد",
-			"subtitle": "أدخل تفاصيل الإعلان بدقة لزيادة فرص ظهوره",
-			"sectionBasicInfo": "المعلومات الأساسية",
-			"specifications": "تفاصيل إضافية",
-			"productName": "عنوان",
-			"selectSubcategory": "اختر فئة فرعية",
-			"openCamera": "فتح الكاميرا",
-			"chooseFromGallery": "اختيار من المعرض",
-			"subcategory": "فئة فرعية",
-			"selectColor": "اختر اللون",
-			"color": "اللون",
-			"image": "صورة",
-			"in_stock": "المنتج متوفر حاليا",
-			"not_in_stock": "المنتج غير متوفر حاليا",
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات",
-			"productNamePlaceholder": "العنوان",
-			"category": "الفئة",
-			"selectCategory": "اختر الفئة",
-			"price": "السعر",
-			"description": "وصف المنتج",
-			"descriptionPlaceholder": "اكتب وصفاً واضحاً يتضمن أهم التفاصيل والمواصفات",
-			"imageUrl": "رابط الصورة",
-			"sale": "في العرض",
-			"discount": "نسبة الخصم",
-			"addProduct": "نشر الإعلان",
-			"cancel": "إلغاء",
-			"saving": "جاري حفظ الإعلان...",
-			 "footerNote": "تأكد من صحة المعلومات قبل نشر الإعلان",
-			"validation": {
-				"productNameRequired": "اسم المنتج حقل مطلوب",
-				"productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
-				"categoryRequired": "حقل الفئة مطلوب",
-				"priceRequired": "السعر حقل مطلوب",
-				"quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
-				"quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
-				"descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
-				"descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
-				"imageUrlRequired": "رابط الصورة حقل مطلوب",
-				"imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
-			}
-		},
-		"updateProductModal": {
-			"title": "تحديث المنتج",
-			"productName": "اسم المنتج (فريد)",
-			"productNamePlaceholder": "اسم المنتج",
-			"category": "الفئة",
-			"selectCategory": "اختر الفئة",
-			"price": "السعر",
-			"quantity": "الكمية في المخزون",
-			"description": "وصف المنتج",
-			"descriptionPlaceholder": "أدخل وصف المنتج",
-			"imageUrl": "رابط الصورة",
-			"sale": "في العرض",
-			"discount": "نسبة الخصم",
-			"location": "البلد",
-			"updateButton": "تحديث",
-			"closeButton": "إغلاق",
-			"validation": {
-				"productNameRequired": "اسم المنتج حقل مطلوب",
-				"productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
-				"categoryRequired": "حقل الفئة مطلوب",
-				"priceRequired": "السعر حقل مطلوب",
-				"quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
-				"quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
-				"descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
-				"descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
-				"imageUrlRequired": "رابط الصورة حقل مطلوب",
-				"imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
-			}
-		}
-	},
-	"loader": {
-		"welcome": "مرحبًا بكم في موقع صفقه",
-		"message": "قد تستغرق عملية التحميل الأولى حتى 50 ثانية لأن الخادم مجاني. يرجى التحلي بالصبر"
-	},
+    "noProducts": "لم يتم العثور على أي منتجات في المتجر",
+    "price": "السعر",
+    "quantity": "العدد",
+    "currentStatus": "الحالة",
+    "priceAfterDiscount": "السعر بعد التخفيض",
+    "totalOrderPrice": "إجمالي سعر الطلب",
+    "collectionMethod": "طريقة الاستلام",
+    "paymentMethod": "طريقة الدفع",
+    "creditCard": "بطاقة إئتمان",
+    "selfPickup": "استلام ذاتي",
+    "delivery": "توصيل",
+    "cash": "نقدي",
+    "orderNumber": "رقم الطلب",
+    "UserId": "ID المستخدم",
+    "users-management": "ادارة المستخدمين",
+    "account-management": "ادارة الحساب",
+    "date": "تاريخ",
+    "phone": "هاتف",
+    "customerInfo": "تفاصيل العميل",
+    "customer": "العميل",
+    "email": "ايميل",
+    "address": "العنوان",
+    "searchin": "ابحث عن اسم المنتج",
+    "SpeedDial": {
+        "actions": {
+            "addProduct": "إضافة منتج",
+            "cart": "سلة المشتريات",
+            "backToTop": "العودة للأعلى"
+        }
+    },
+    "modals": {
+        "addProductModal": {
+            "title": "إضافة إعلان جديد",
+            "subtitle": "أدخل تفاصيل الإعلان بدقة لزيادة فرص ظهوره",
+            "sectionBasicInfo": "المعلومات الأساسية",
+            "specifications": "تفاصيل إضافية",
+            "productName": "عنوان",
+            "selectSubcategory": "اختر فئة فرعية",
+            "openCamera": "فتح الكاميرا",
+            "chooseFromGallery": "اختيار من المعرض",
+            "subcategory": "فئة فرعية",
+            "selectColor": "اختر اللون",
+            "color": "اللون",
+            "image": "صورة",
+            "in_stock": "المنتج متوفر حاليا",
+            "not_in_stock": "المنتج غير متوفر حاليا",
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات",
+            "productNamePlaceholder": "العنوان",
+            "category": "الفئة",
+            "selectCategory": "اختر الفئة",
+            "price": "السعر",
+            "description": "وصف المنتج",
+            "descriptionPlaceholder": "اكتب وصفاً واضحاً يتضمن أهم التفاصيل والمواصفات",
+            "imageUrl": "رابط الصورة",
+            "sale": "في العرض",
+            "discount": "نسبة الخصم",
+            "addProduct": "نشر الإعلان",
+            "cancel": "إلغاء",
+            "saving": "جاري حفظ الإعلان...",
+            "footerNote": "تأكد من صحة المعلومات قبل نشر الإعلان",
+            "validation": {
+                "productNameRequired": "اسم المنتج حقل مطلوب",
+                "productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
+                "categoryRequired": "حقل الفئة مطلوب",
+                "priceRequired": "السعر حقل مطلوب",
+                "quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
+                "quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
+                "descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
+                "descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
+                "imageUrlRequired": "رابط الصورة حقل مطلوب",
+                "imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
+            }
+        },
+        "updateProductModal": {
+            "title": "تحديث المنتج",
+            "productName": "اسم المنتج (فريد)",
+            "productNamePlaceholder": "اسم المنتج",
+            "category": "الفئة",
+            "selectCategory": "اختر الفئة",
+            "price": "السعر",
+            "quantity": "الكمية في المخزون",
+            "description": "وصف المنتج",
+            "descriptionPlaceholder": "أدخل وصف المنتج",
+            "imageUrl": "رابط الصورة",
+            "sale": "في العرض",
+            "discount": "نسبة الخصم",
+            "location": "البلد",
+            "updateButton": "تحديث",
+            "closeButton": "إغلاق",
+            "validation": {
+                "productNameRequired": "اسم المنتج حقل مطلوب",
+                "productNameMin": "اسم المنتج يجب أن يكون على الأقل حرفين",
+                "categoryRequired": "حقل الفئة مطلوب",
+                "priceRequired": "السعر حقل مطلوب",
+                "quantityRequired": "كمية المنتج في المخزون حقل مطلوب",
+                "quantityMin": "كمية المنتج في المخزون يجب أن تكون 1 على الأقل",
+                "descriptionMin": "الوصف يجب أن يكون على الأقل حرفين",
+                "descriptionMax": "الوصف يجب أن لا يزيد عن 500 حرف",
+                "imageUrlRequired": "رابط الصورة حقل مطلوب",
+                "imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
+            }
+        }
+    },
+    "loader": {
+        "welcome": "مرحبًا بكم في موقع صفقه",
+        "message": "قد تستغرق عملية التحميل الأولى حتى 50 ثانية لأن الخادم مجاني. يرجى التحلي بالصبر"
+    },
 
-	"categories": {
-		"House": {
-			"label": "مستلزمات البيت",
-			"heading": "مستلزمات البيت",
-			"description": "فئة مخصّصة لعرض وبيع مستلزمات البيت المختلفة مثل أدوات المطبخ، التخزين، والتنظيم.",
-			"subCategories": {
-				"kitchen": "أدوات مطبخ",
-				"storage": "تخزين وتنظيم",
-				"decor": "ديكور منزلي",
-				"maintenance": "أدوات وصيانة"
-			}
-		},
-		"Garden": {
-			"label": "الحديقة",
-			"heading": "مستلزمات الحديقة",
-			"description": "تشمل هذه الفئة منتجات مرتبطة بالحديقة مثل أدوات العناية، الري، والنباتات.",
-			"subCategories": {
-				"plants": "نباتات",
-				"watering": "مستلزمات ري",
-				"tools": "أدوات حديقة",
-				"outdoorDecor": "ديكور خارجي"
-			}
-		},
-		"Electronics": {
-			"label": "إلكترونيات",
-			"heading": "إلكترونيات",
-			"description": "أجهزة ومنتجات إلكترونية متنوعة مثل الهواتف، الإكسسوارات، والأدوات التقنية.",
-			"subCategories": {
-				"phones": "هواتف",
-				"laptops": "حواسيب ولابتوبات",
-				"accessories": "إكسسوارات",
-				"gaming": "ألعاب إلكترونية"
-			}
-		},
-		"Kids": {
-			"label": "ألعاب الأطفال",
-			"heading": "ألعاب الأطفال",
-			"description": "ألعاب ومنتجات مخصّصة للأطفال بمختلف الأعمار.",
-			"subCategories": {
-				"educational": "ألعاب تعليمية",
-				"toys": "ألعاب ترفيهية",
-				"outdoor": "ألعاب خارجية"
-			}
-		},
-		"Baby": {
-			"label": "مستلزمات الأطفال",
-			"heading": "مستلزمات الأطفال",
-			"description": "منتجات خاصة بالأطفال مثل الملابس، أدوات العناية، والاحتياجات اليومية.",
-			"subCategories": {
-				"clothes": "ملابس أطفال",
-				"care": "عناية يومية",
-				"feeding": "مستلزمات إطعام"
-			}
-		},
-		"Beauty": {
-			"label": "مستحضرات التجميل",
-			"heading": "مستحضرات التجميل",
-			"description": "منتجات تجميل وعناية شخصية معروضة من مستخدمين.",
-			"subCategories": {
-				"makeup": "مكياج",
-				"skincare": "عناية بالبشرة",
-				"hair": "العناية بالشعر"
-			}
-		},
-		"Cleaning": {
-			"label": "مواد التنظيف",
-			"heading": "مواد التنظيف",
-			"description": "منتجات وأدوات تنظيف للاستخدام المنزلي.",
-			"subCategories": {
-				"detergents": "منظفات",
-				"tools": "أدوات تنظيف",
-				"disinfection": "تعقيم"
-			}
-		},
-		"Health": {
-			"label": "الصحة والعناية",
-			"heading": "الصحة والعناية",
-			"description": "منتجات متعلقة بالصحة والعناية الشخصية.",
-			"subCategories": {
-				"personalCare": "عناية شخصية",
-				"medical": "مستلزمات طبية",
-				"fitness": "معدات رياضية"
-			}
-		},
-		"Watches": {
-			"label": "ساعات",
-			"heading": "ساعات",
-			"description": "ساعات بمختلف الأنواع والتصاميم.",
-			"subCategories": {
-				"classic": "ساعات كلاسيكية",
-				"smart": "ساعات ذكية",
-				"hand": "ساعات اليد"
-			}
-		},
-		"MenClothes": {
-			"label": "ملابس رجالية",
-			"heading": "ملابس رجالية",
-			"description": "ملابس مخصّصة للرجال بمختلف الاستخدامات.",
-			"subCategories": {
-				"casual": "ملابس يومية",
-				"formal": "ملابس رسمية",
-				"shoes": "أحذية"
-			}
-		},
-		"WomenClothes": {
-			"label": "ملابس نسائية",
-			"heading": "ملابس نسائية",
-			"description": "ملابس مخصّصة للنساء بمختلف الأنماط.",
-			"subCategories": {
-				"casual": "ملابس يومية",
-				"dresses": "فساتين",
-				"shoes": "أحذية"
-			}
-		},
-		"WomenBags": {
-			"label": "حقائب نسائية",
-			"heading": "حقائب نسائية",
-			"description": "حقائب نسائية بمختلف الأحجام والاستخدامات.",
-			"subCategories": {
-				"handbags": "حقائب يد",
-				"backpacks": "حقائب ظهر",
-				"travel": "حقائب سفر"
-			}
-		},
-		"Cars": {
-			"label": "سيارات",
-			"heading": "سيارات",
-			"description": "سيارات معروضة للبيع من مستخدمين، جديدة أو مستعملة.",
-			"subCategories": {
-				"private": "سيارات خاصة",
-				"electric": "سيارات كهربائية",
-				"parts": "قطع غيار",
-				"accessories": "إكسسوارات سيارات"
-			},
-			"fuel": {
-				"label": "دعم",
-				"settings": {
-					"gasoline": "بنزين",
-					"diesel": "ديزل",
-					"electric": "كهربائيه"
-				}
-			},
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات"
-		},
-		"Motorcycles": {
-			"label": "دراجات نارية",
-			"heading": "دراجات نارية",
-			"description": "دراجات نارية بموديلات مختلفة.",
-			"subCategories": {
-				"sport": "رياضية",
-				"scooters": "سكوترات",
-				"parts": "قطع غيار"
-			},
-			"fuel": {
-				"label": "دعم",
-				"settings": {
-					"gasoline": "بنزين",
-					"diesel": "ديزل",
-					"electric": "كهربائيه"
-				}
-			},
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات"
-		},
-		"Trucks": {
-			"label": "شاحنات",
-			"heading": "شاحنات",
-			"description": "شاحنات للاستخدام الشخصي أو التجاري.",
-			"subCategories": {
-				"light": "شاحنات خفيفة",
-				"heavy": "شاحنات ثقيلة"
-			},
-			"fuel": {
-				"label": "دعم",
-				"settings": {
-					"gasoline": "بنزين",
-					"diesel": "ديزل",
-					"electric": "كهربائيه"
-				}
-			},
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات"
-		},
-		"Bikes": {
-			"label": "دراجات هوائية",
-			"heading": "دراجات هوائية",
-			"description": "دراجات هوائية بمختلف الأحجام.",
-			"subCategories": {
-				"kids": "دراجات أطفال",
-				"mountain": "دراجات جبلية",
-				"road": "دراجات طرق"
-			},
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات"
-		},
-		"ElectricVehicles": {
-			"label": "مركبات كهربائية",
-			"heading": "مركبات كهربائية",
-			"description": "مركبات تعمل بالطاقة الكهربائية.",
-			"subCategories": {
-				"cars": "سيارات كهربائية",
-				"scooters": "سكوترات كهربائية"
-			},
-			"year": "السنه",
-			"brand": "العلامه التجاريه",
-			"mileage": "كيلومترات"
-		},
-		"discountsAndOffers": {
-			"common": {
-				"discount": "خصم",
-				"save": "وفر",
-				"errors": {
-					"fetchFailed": "فشل تحميل المنتجات المخفضة. يرجى المحاولة مرة أخرى لاحقًا."
-				}
-			},
-			"categories": {
-				"discountsAndOffers": {
-					"title": "العروض الساخنة والخصومات",
-					"description": "اكتشف خصومات مذهلة على منتجاتنا المميزة. عروض لفترة محدودة مع توفير كبير!",
-					"subtitle": "تسوق الآن ووفر الكثير على المنتجات المحددة",
-					"text1": "عروض حصرية",
-					"text2": "خصومات لفترة محدودة على المنتجات الأكثر مبيعًا",
-					"noProducts": "لا توجد منتجات مخفضة متاحة حاليًا. تابعنا قريبًا للحصول على عروض جديدة!",
-					"viewAll": "عرض جميع العروض",
-					"ariaLabel": "عارض المنتجات المخفضة"
-				}
-			}
-		}
-	},
-	"seo": {
-		"categoryTitle": "{{category}}",
-		"categoryDescription": "تصفح مجموعة متنوعة من {{category}} للبيع على موقع صفقه {{location}} والمناطق القريبة. أسعار منافسة وتواصل مباشر مع البائعين."
-	},
-	"links": {
-		"home": "الرئيسية",
-		"products": "المنتجات",
-		"new": "جديد",
-		"cart": "السلة",
-		"about": "من نحن",
-		"contact": "اتصل بنا",
-		"login": "دخول",
-		"logout": "تسجيل الخروج"
-	},
-	"pages": {
-		"contact": {
-			"title": "اتصل بنا",
-			"subtitle": "منصة آمنة وسريعة للبيع والشراء بين المستخدمين، مع أكبر تشكيلة من التصنيفات",
+    "categories": {
+        "House": {
+            "label": "مستلزمات البيت",
+            "heading": "مستلزمات البيت",
+            "description": "فئة مخصّصة لعرض وبيع مستلزمات البيت المختلفة مثل أدوات المطبخ، التخزين، والتنظيم.",
+            "subCategories": {
+                "kitchen": "أدوات مطبخ",
+                "storage": "تخزين وتنظيم",
+                "decor": "ديكور منزلي",
+                "maintenance": "أدوات وصيانة"
+            }
+        },
+        "Garden": {
+            "label": "الحديقة",
+            "heading": "مستلزمات الحديقة",
+            "description": "تشمل هذه الفئة منتجات مرتبطة بالحديقة مثل أدوات العناية، الري، والنباتات.",
+            "subCategories": {
+                "plants": "نباتات",
+                "watering": "مستلزمات ري",
+                "tools": "أدوات حديقة",
+                "outdoorDecor": "ديكور خارجي"
+            }
+        },
+        "Electronics": {
+            "label": "إلكترونيات",
+            "heading": "إلكترونيات",
+            "description": "أجهزة ومنتجات إلكترونية متنوعة مثل الهواتف، الإكسسوارات، والأدوات التقنية.",
+            "subCategories": {
+                "phones": "هواتف",
+                "laptops": "حواسيب ولابتوبات",
+                "accessories": "إكسسوارات",
+                "gaming": "ألعاب إلكترونية"
+            }
+        },
+        "Kids": {
+            "label": "ألعاب الأطفال",
+            "heading": "ألعاب الأطفال",
+            "description": "ألعاب ومنتجات مخصّصة للأطفال بمختلف الأعمار.",
+            "subCategories": {
+                "educational": "ألعاب تعليمية",
+                "toys": "ألعاب ترفيهية",
+                "outdoor": "ألعاب خارجية"
+            }
+        },
+        "Baby": {
+            "label": "مستلزمات الأطفال",
+            "heading": "مستلزمات الأطفال",
+            "description": "منتجات خاصة بالأطفال مثل الملابس، أدوات العناية، والاحتياجات اليومية.",
+            "subCategories": {
+                "clothes": "ملابس أطفال",
+                "care": "عناية يومية",
+                "feeding": "مستلزمات إطعام"
+            }
+        },
+        "Beauty": {
+            "label": "مستحضرات التجميل",
+            "heading": "مستحضرات التجميل",
+            "description": "منتجات تجميل وعناية شخصية معروضة من مستخدمين.",
+            "subCategories": {
+                "makeup": "مكياج",
+                "skincare": "عناية بالبشرة",
+                "hair": "العناية بالشعر"
+            }
+        },
+        "Cleaning": {
+            "label": "مواد التنظيف",
+            "heading": "مواد التنظيف",
+            "description": "منتجات وأدوات تنظيف للاستخدام المنزلي.",
+            "subCategories": {
+                "detergents": "منظفات",
+                "tools": "أدوات تنظيف",
+                "disinfection": "تعقيم"
+            }
+        },
+        "Health": {
+            "label": "الصحة والعناية",
+            "heading": "الصحة والعناية",
+            "description": "منتجات متعلقة بالصحة والعناية الشخصية.",
+            "subCategories": {
+                "personalCare": "عناية شخصية",
+                "medical": "مستلزمات طبية",
+                "fitness": "معدات رياضية"
+            }
+        },
+        "Watches": {
+            "label": "ساعات",
+            "heading": "ساعات",
+            "description": "ساعات بمختلف الأنواع والتصاميم.",
+            "subCategories": {
+                "classic": "ساعات كلاسيكية",
+                "smart": "ساعات ذكية",
+                "hand": "ساعات اليد"
+            }
+        },
+        "MenClothes": {
+            "label": "ملابس رجالية",
+            "heading": "ملابس رجالية",
+            "description": "ملابس مخصّصة للرجال بمختلف الاستخدامات.",
+            "subCategories": {
+                "casual": "ملابس يومية",
+                "formal": "ملابس رسمية",
+                "shoes": "أحذية"
+            }
+        },
+        "WomenClothes": {
+            "label": "ملابس نسائية",
+            "heading": "ملابس نسائية",
+            "description": "ملابس مخصّصة للنساء بمختلف الأنماط.",
+            "subCategories": {
+                "casual": "ملابس يومية",
+                "dresses": "فساتين",
+                "shoes": "أحذية"
+            }
+        },
+        "WomenBags": {
+            "label": "حقائب نسائية",
+            "heading": "حقائب نسائية",
+            "description": "حقائب نسائية بمختلف الأحجام والاستخدامات.",
+            "subCategories": {
+                "handbags": "حقائب يد",
+                "backpacks": "حقائب ظهر",
+                "travel": "حقائب سفر"
+            }
+        },
+        "Cars": {
+            "label": "سيارات",
+            "heading": "سيارات",
+            "description": "سيارات معروضة للبيع من مستخدمين، جديدة أو مستعملة.",
+            "subCategories": {
+                "private": "سيارات خاصة",
+                "electric": "سيارات كهربائية",
+                "parts": "قطع غيار",
+                "accessories": "إكسسوارات سيارات"
+            },
+            "fuel": {
+                "label": "دعم",
+                "settings": {
+                    "gasoline": "بنزين",
+                    "diesel": "ديزل",
+                    "electric": "كهربائيه"
+                }
+            },
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات"
+        },
+        "Motorcycles": {
+            "label": "دراجات نارية",
+            "heading": "دراجات نارية",
+            "description": "دراجات نارية بموديلات مختلفة.",
+            "subCategories": {
+                "sport": "رياضية",
+                "scooters": "سكوترات",
+                "parts": "قطع غيار"
+            },
+            "fuel": {
+                "label": "دعم",
+                "settings": {
+                    "gasoline": "بنزين",
+                    "diesel": "ديزل",
+                    "electric": "كهربائيه"
+                }
+            },
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات"
+        },
+        "Trucks": {
+            "label": "شاحنات",
+            "heading": "شاحنات",
+            "description": "شاحنات للاستخدام الشخصي أو التجاري.",
+            "subCategories": {
+                "light": "شاحنات خفيفة",
+                "heavy": "شاحنات ثقيلة"
+            },
+            "fuel": {
+                "label": "دعم",
+                "settings": {
+                    "gasoline": "بنزين",
+                    "diesel": "ديزل",
+                    "electric": "كهربائيه"
+                }
+            },
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات"
+        },
+        "Bikes": {
+            "label": "دراجات هوائية",
+            "heading": "دراجات هوائية",
+            "description": "دراجات هوائية بمختلف الأحجام.",
+            "subCategories": {
+                "kids": "دراجات أطفال",
+                "mountain": "دراجات جبلية",
+                "road": "دراجات طرق"
+            },
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات"
+        },
+        "ElectricVehicles": {
+            "label": "مركبات كهربائية",
+            "heading": "مركبات كهربائية",
+            "description": "مركبات تعمل بالطاقة الكهربائية.",
+            "subCategories": {
+                "cars": "سيارات كهربائية",
+                "scooters": "سكوترات كهربائية"
+            },
+            "year": "السنه",
+            "brand": "العلامه التجاريه",
+            "mileage": "كيلومترات"
+        },
+        "discountsAndOffers": {
+            "common": {
+                "discount": "خصم",
+                "save": "وفر",
+                "errors": {
+                    "fetchFailed": "فشل تحميل المنتجات المخفضة. يرجى المحاولة مرة أخرى لاحقًا."
+                }
+            },
+            "categories": {
+                "discountsAndOffers": {
+                    "title": "العروض الساخنة والخصومات",
+                    "description": "اكتشف خصومات مذهلة على منتجاتنا المميزة. عروض لفترة محدودة مع توفير كبير!",
+                    "subtitle": "تسوق الآن ووفر الكثير على المنتجات المحددة",
+                    "text1": "عروض حصرية",
+                    "text2": "خصومات لفترة محدودة على المنتجات الأكثر مبيعًا",
+                    "noProducts": "لا توجد منتجات مخفضة متاحة حاليًا. تابعنا قريبًا للحصول على عروض جديدة!",
+                    "viewAll": "عرض جميع العروض",
+                    "ariaLabel": "عارض المنتجات المخفضة"
+                }
+            }
+        }
+    },
+    "seo": {
+        "categoryTitle": "{{category}}",
+        "categoryDescription": "تصفح مجموعة متنوعة من {{category}} للبيع على موقع صفقه {{location}} والمناطق القريبة. أسعار منافسة وتواصل مباشر مع البائعين."
+    },
+    "links": {
+        "home": "الرئيسية",
+        "products": "المنتجات",
+        "new": "جديد",
+        "cart": "السلة",
+        "about": "من نحن",
+        "contact": "اتصل بنا",
+        "login": "دخول",
+        "logout": "تسجيل الخروج"
+    },
+    "pages": {
+        "contact": {
+            "title": "اتصل بنا",
+            "subtitle": "منصة آمنة وسريعة للبيع والشراء بين المستخدمين، مع أكبر تشكيلة من التصنيفات",
 
-			"supportTitle": "دعم صفقة 24/7",
-			"intro": "في منصة صفقة، كل عملية بيع وشراء هي فرصة جديدة. فريقنا متواجد دائمًا لضمان تجربة سلسة، آمنة وسريعة لجميع المستخدمين.",
+            "supportTitle": "دعم صفقة 24/7",
+            "intro": "في منصة صفقة، كل عملية بيع وشراء هي فرصة جديدة. فريقنا متواجد دائمًا لضمان تجربة سلسة، آمنة وسريعة لجميع المستخدمين.",
 
-			"securityTitle": "أقصى درجات الأمان",
-			"securityDesc": "حماية بياناتك هي أولويتنا! نستخدم أحدث التقنيات وأنظمة المراقبة لضمان معاملاتك بأمان كامل.",
+            "securityTitle": "أقصى درجات الأمان",
+            "securityDesc": "حماية بياناتك هي أولويتنا! نستخدم أحدث التقنيات وأنظمة المراقبة لضمان معاملاتك بأمان كامل.",
 
-			"dealsTitle": "صفقات ناجحة في كل مرة",
-			"dealsDesc": "نوفر أدوات ذكية وإرشادات تساعدك على إتمام صفقاتك بسرعة وثقة وراحة تامة.",
+            "dealsTitle": "صفقات ناجحة في كل مرة",
+            "dealsDesc": "نوفر أدوات ذكية وإرشادات تساعدك على إتمام صفقاتك بسرعة وثقة وراحة تامة.",
 
-			"contactChannels": "قنوات الاتصال",
+            "contactChannels": "قنوات الاتصال",
 
-			"supportEmail": "دعم العملاء",
-			"salesEmail": "شراكات وفرص تجارية",
+            "supportEmail": "دعم العملاء",
+            "salesEmail": "شراكات وفرص تجارية",
 
-			"phone": "مركز الاتصال",
-			"phoneHours": "متاح من 8 صباحاً إلى 12 منتصف الليل",
+            "phone": "مركز الاتصال",
+            "phoneHours": "متاح من 8 صباحاً إلى 12 منتصف الليل",
 
-			"addressTitle": "معلومات عن المنصة",
-			"address": "صفقة منصة رقمية مبتكرة للبيع والشراء — لا حاجة لمكتب فعلي",
+            "addressTitle": "معلومات عن المنصة",
+            "address": "صفقة منصة رقمية مبتكرة للبيع والشراء — لا حاجة لمكتب فعلي",
 
-			"startSelling": "ابدأ البيع الآن",
-			"browseCategories": "تصفح أفضل التصنيفات",
+            "startSelling": "ابدأ البيع الآن",
+            "browseCategories": "تصفح أفضل التصنيفات",
 
-			"workingHours": "ساعات العمل",
+            "workingHours": "ساعات العمل",
 
-			"customerSupport": "دعم العملاء",
-			"supportHours": "متاح 24/7 طوال الأسبوع",
+            "customerSupport": "دعم العملاء",
+            "supportHours": "متاح 24/7 طوال الأسبوع",
 
-			"salesTeam": "فريق المبيعات المحترف",
-			"salesHours": "8 ص – 8 م",
+            "salesTeam": "فريق المبيعات المحترف",
+            "salesHours": "8 ص – 8 م",
 
-			"disputeResolution": "حل النزاعات بسرعة",
-			"disputeHours": "9 ص – 6 م (أيام العمل)",
+            "disputeResolution": "حل النزاعات بسرعة",
+            "disputeHours": "9 ص – 6 م (أيام العمل)",
 
-			"technicalSupport": "الدعم الفني الذكي",
-			"techHours": "10 ص – 10 م (كل الأيام)",
+            "technicalSupport": "الدعم الفني الذكي",
+            "techHours": "10 ص – 10 م (كل الأيام)",
 
-			"followUs": "تابع أحدث الصفقات والعروض",
-			"socialDesc": "كن أول من يعرف عن العروض الحصرية والصفقات المميزة في صفقة",
+            "followUs": "تابع أحدث الصفقات والعروض",
+            "socialDesc": "كن أول من يعرف عن العروض الحصرية والصفقات المميزة في صفقة",
 
-			"quickHelp": "مساعدتك السريعة مع صفقة",
+            "quickHelp": "مساعدتك السريعة مع صفقة",
 
-			"howToSell": "كيفية البيع بسرعة وسهولة",
-			"safetyTips": "نصائح لضمان صفقات آمنة",
-			"resolveDisputes": "حل النزاعات بذكاء",
+            "howToSell": "كيفية البيع بسرعة وسهولة",
+            "safetyTips": "نصائح لضمان صفقات آمنة",
+            "resolveDisputes": "حل النزاعات بذكاء",
 
-			"note": "نلتزم بالرد السريع خلال 4 ساعات لكل استفسار",
-			"thanks": "شكرًا لكونك جزءًا من مجتمع صفقة! هنا تتحول المنتجات المستعملة إلى فرص جديدة للنجاح",
+            "note": "نلتزم بالرد السريع خلال 4 ساعات لكل استفسار",
+            "thanks": "شكرًا لكونك جزءًا من مجتمع صفقة! هنا تتحول المنتجات المستعملة إلى فرص جديدة للنجاح",
 
-			"backToHome": "العودة للرئيسية"
-		},
-		"privacy": {
-			"title": "سياسة الخصوصية",
-			"lastUpdated": "آخر تحديث {{date}}",
-			"intro": {
-				"title": "مقدمة",
-				"text": "في تطبيقنا سوق الزاوية، نحترم خصوصيتك وندرك أهمية حماية معلوماتك الشخصية. توضح هذه السياسة كيف نقوم بجمع واستخدام وحماية معلوماتك، بما في ذلك عند تسجيل الدخول باستخدام Google."
-			},
-			"collectedInfo": {
-				"title": "ما المعلومات التي نجمعها؟",
-				"text": "عند تسجيل الدخول عبر Google، نحصل على المعلومات التالية من حسابك:",
-				"info": {
-					"name": "الاسم الأول واسم العائلة – كما هو محدد في ملفك على Google.",
-					"email": "البريد الإلكتروني – عنوان بريدك الذي يُستخدم للتسجيل.",
-					"image": "صورة الملف الشخصي – إن وُجدت، ستُعرض في ملفك الشخصي داخل التطبيق."
-				},
-				"technical": "بالإضافة إلى ذلك، قد نقوم بتخزين معلومات تقنية مثل عنوان IP، نوع المتصفح، ونظام التشغيل لأغراض الأمان وتحسين الخدمة."
-			},
-			"usage": {
-				"title": "كيف نستخدم المعلومات؟",
-				"points": {
-					"p1": "لتسجيل المستخدم والتحقق من الهوية.",
-					"p2": "لتحسين تجربة الاستخدام داخل التطبيق.",
-					"p3": "لإرسال إشعارات وتحديثات أو تذكيرات ذات صلة.",
-					"p4": "لحماية النظام وتأمين حسابك."
-				}
-			},
-			"consent": {
-				"title": "الشفافية والموافقة",
-				"text": "عند تسجيل الدخول عبر Google، ستُطلب منك الموافقة على مشاركة معلوماتك. نحن نطلب فقط الأذونات الضرورية لتشغيل الخدمة، مع التزام كامل بالشفافية."
-			},
-			"sharing": {
-				"title": "مشاركة المعلومات مع أطراف ثالثة",
-				"points": {
-					"external": "الخدمات الخارجية: يتم نقل المعلومات فقط إلى المزودين اللازمين لتشغيل التطبيق.",
-					"law": "الامتثال للقانون: نشارك المعلومات فقط إذا طُلب منا قانونيًا."
-				}
-			},
-			"protection": {
-				"title": "حماية المعلومات",
-				"text": "نتخذ تدابير تقنية وتنظيمية متقدمة لحماية معلوماتك. ومع ذلك، لا توجد حماية مطلقة، لذا نوصي بعدم مشاركة كلمات المرور واختيار كلمة مرور قوية."
-			},
-			"updates": {
-				"title": "تحديثات على السياسة",
-				"text": "قد يتم تعديل هذه السياسة من وقت لآخر. سنبلغك داخل التطبيق أو عبر إشعار مباشر. استمرار استخدامك للتطبيق يُعد موافقة على التعديلات."
-			},
-			"rights": {
-				"title": "حقوقك",
-				"points": {
-					"p1": "الحق في الاطلاع على المعلومات الشخصية المخزنة عنك.",
-					"p2": "الحق في تصحيح معلومات خاطئة أو ناقصة.",
-					"p3": "الحق في طلب حذف المعلومات – طالما لا يوجد التزام قانوني بالاحتفاظ بها."
-				}
-			},
-			"contact": {
-				"title": "معومات الاتصال",
-				"text": "لأي استفسار أو طلب بخصوص الخصوصية، يمكن التواصل عبر الهاتف:",
-				"phone": "053-834-6915"
-			},
-			"userConsent": {
-				"title": "موافقة المستخدم",
-				"text": "باستخدام التطبيق، فإنك توافق على أنك قرأت وفهمت ووافقت على سياسة الخصوصية هذه. إذا لم توافق، يرجى عدم استخدام التطبيق."
-			}
-		}
-	},
-	"accountMenu": {
-		"profile": "حسابي",
-		"messages": "الرسائل",
-		"settings": "الإعدادات",
-		"logout": "تسجيل الخروج",
-		"admin": "مدير الموقع",
-		"siteModerator": "مشرف الموقع"
-	},
-	"about": {
-		"title": "من نحن",
-		"subtitle": "صفقة — منصة بسيطة وآمنة للبيع والشراء بين الأفراد",
+            "backToHome": "العودة للرئيسية"
+        },
+        "privacy": {
+            "title": "سياسة الخصوصية",
+            "lastUpdated": "آخر تحديث {{date}}",
+            "intro": {
+                "title": "مقدمة",
+                "text": "في تطبيقنا سوق الزاوية، نحترم خصوصيتك وندرك أهمية حماية معلوماتك الشخصية. توضح هذه السياسة كيف نقوم بجمع واستخدام وحماية معلوماتك، بما في ذلك عند تسجيل الدخول باستخدام Google."
+            },
+            "collectedInfo": {
+                "title": "ما المعلومات التي نجمعها؟",
+                "text": "عند تسجيل الدخول عبر Google، نحصل على المعلومات التالية من حسابك:",
+                "info": {
+                    "name": "الاسم الأول واسم العائلة – كما هو محدد في ملفك على Google.",
+                    "email": "البريد الإلكتروني – عنوان بريدك الذي يُستخدم للتسجيل.",
+                    "image": "صورة الملف الشخصي – إن وُجدت، ستُعرض في ملفك الشخصي داخل التطبيق."
+                },
+                "technical": "بالإضافة إلى ذلك، قد نقوم بتخزين معلومات تقنية مثل عنوان IP، نوع المتصفح، ونظام التشغيل لأغراض الأمان وتحسين الخدمة."
+            },
+            "usage": {
+                "title": "كيف نستخدم المعلومات؟",
+                "points": {
+                    "p1": "لتسجيل المستخدم والتحقق من الهوية.",
+                    "p2": "لتحسين تجربة الاستخدام داخل التطبيق.",
+                    "p3": "لإرسال إشعارات وتحديثات أو تذكيرات ذات صلة.",
+                    "p4": "لحماية النظام وتأمين حسابك."
+                }
+            },
+            "consent": {
+                "title": "الشفافية والموافقة",
+                "text": "عند تسجيل الدخول عبر Google، ستُطلب منك الموافقة على مشاركة معلوماتك. نحن نطلب فقط الأذونات الضرورية لتشغيل الخدمة، مع التزام كامل بالشفافية."
+            },
+            "sharing": {
+                "title": "مشاركة المعلومات مع أطراف ثالثة",
+                "points": {
+                    "external": "الخدمات الخارجية: يتم نقل المعلومات فقط إلى المزودين اللازمين لتشغيل التطبيق.",
+                    "law": "الامتثال للقانون: نشارك المعلومات فقط إذا طُلب منا قانونيًا."
+                }
+            },
+            "protection": {
+                "title": "حماية المعلومات",
+                "text": "نتخذ تدابير تقنية وتنظيمية متقدمة لحماية معلوماتك. ومع ذلك، لا توجد حماية مطلقة، لذا نوصي بعدم مشاركة كلمات المرور واختيار كلمة مرور قوية."
+            },
+            "updates": {
+                "title": "تحديثات على السياسة",
+                "text": "قد يتم تعديل هذه السياسة من وقت لآخر. سنبلغك داخل التطبيق أو عبر إشعار مباشر. استمرار استخدامك للتطبيق يُعد موافقة على التعديلات."
+            },
+            "rights": {
+                "title": "حقوقك",
+                "points": {
+                    "p1": "الحق في الاطلاع على المعلومات الشخصية المخزنة عنك.",
+                    "p2": "الحق في تصحيح معلومات خاطئة أو ناقصة.",
+                    "p3": "الحق في طلب حذف المعلومات – طالما لا يوجد التزام قانوني بالاحتفاظ بها."
+                }
+            },
+            "contact": {
+                "title": "معومات الاتصال",
+                "text": "لأي استفسار أو طلب بخصوص الخصوصية، يمكن التواصل عبر الهاتف:",
+                "phone": "053-834-6915"
+            },
+            "userConsent": {
+                "title": "موافقة المستخدم",
+                "text": "باستخدام التطبيق، فإنك توافق على أنك قرأت وفهمت ووافقت على سياسة الخصوصية هذه. إذا لم توافق، يرجى عدم استخدام التطبيق."
+            }
+        }
+    },
+    "accountMenu": {
+        "profile": "حسابي",
+        "messages": "الرسائل",
+        "settings": "الإعدادات",
+        "logout": "تسجيل الخروج",
+        "admin": "مدير الموقع",
+        "siteModerator": "مشرف الموقع"
+    },
+    "about": {
+        "title": "من نحن",
+        "subtitle": "صفقة — منصة بسيطة وآمنة للبيع والشراء بين الأفراد",
 
-		"what-we-are": {
-			"safqa": "فكرتنا",
-			"title": "بيع وشراء بدون تعقيد",
-			"subtitle": "أنشأنا صفقة لنوفّر مكانًا منظمًا يربط البائع بالمشتري مباشرة، بدون فوضى وبدون وسطاء"
-		},
+        "what-we-are": {
+            "safqa": "فكرتنا",
+            "title": "بيع وشراء بدون تعقيد",
+            "subtitle": "أنشأنا صفقة لنوفّر مكانًا منظمًا يربط البائع بالمشتري مباشرة، بدون فوضى وبدون وسطاء"
+        },
 
-		"buy-and-sell": {
-			"title": "كيف نعمل",
-			"subtitle": "واجهة سهلة، خطوات واضحة، وتواصل مباشر يساعدك تتم الصفقة بسرعة وراحة"
-		},
+        "buy-and-sell": {
+            "title": "كيف نعمل",
+            "subtitle": "واجهة سهلة، خطوات واضحة، وتواصل مباشر يساعدك تتم الصفقة بسرعة وراحة"
+        },
 
-		"what-we-have": {
-			"title": "ماذا ستجد في صفقة",
-			"subtitle": "منتجات متنوعة من مستخدمين حقيقيين — من أغراض يومية إلى قطع مميزة"
-		},
+        "what-we-have": {
+            "title": "ماذا ستجد في صفقة",
+            "subtitle": "منتجات متنوعة من مستخدمين حقيقيين — من أغراض يومية إلى قطع مميزة"
+        },
 
-		"control": {
-			"title": "التحكم بيدك",
-			"subtitle": "أنت من يحدد السعر، طريقة العرض، وطريقة التواصل — نحن فقط نسهّل الطريق"
-		},
+        "control": {
+            "title": "التحكم بيدك",
+            "subtitle": "أنت من يحدد السعر، طريقة العرض، وطريقة التواصل — نحن فقط نسهّل الطريق"
+        },
 
-		"trust": {
-			"title": "نبني الثقة خطوة بخطوة",
-			"subtitle": "نوفر أدوات تساعد على تقليل الإعلانات الوهمية وتحسين تجربة البيع والشراء"
-		},
+        "trust": {
+            "title": "نبني الثقة خطوة بخطوة",
+            "subtitle": "نوفر أدوات تساعد على تقليل الإعلانات الوهمية وتحسين تجربة البيع والشراء"
+        },
 
-		"why-register": {
-			"title": "ابدأ بسهولة",
-			"subtitle": "إنشاء حساب سريع يفتح لك الباب للبيع أو الشراء خلال دقائق"
-		},
+        "why-register": {
+            "title": "ابدأ بسهولة",
+            "subtitle": "إنشاء حساب سريع يفتح لك الباب للبيع أو الشراء خلال دقائق"
+        },
 
-		"locations": {
-			"title": "قريب منك",
-			"subtitle": "اعثر على صفقات في منطقتك أو استكشف عروضًا من أماكن أخرى بكل سهولة"
-		}
-	},
-	"footer": {
-		"siteName": "موقع صفقه",
-		"quickLinks": "روابط سريعة",
-		"myAccount": "حسابي",
-		"myListings": "إعلاناتي",
-		"postListing": "إضافة إعلان جديد",
-		"marketplace": "السوق العام",
-		"descriptionC2C": "اشترِ وبِع مباشرة مع مستخدمين آخرين بكل سهولة وأمان.",
-		"contact": "اتصل بنا",
-		"phone": "هاتف",
-		"followUs": "تابعنا",
-		"version": "الإصدار 1.0.0"
-	},
-	"color": "اللون",
-	"removeAccount": {
-		"heading": "حذف الحساب",
-		"description": "اذا قمت بحذف الحساب لا يمكن التراجع عن هذا الإجراء",
-		"buttonText": "حذف نهائي"
-	}
+        "locations": {
+            "title": "قريب منك",
+            "subtitle": "اعثر على صفقات في منطقتك أو استكشف عروضًا من أماكن أخرى بكل سهولة"
+        }
+    },
+    "footer": {
+        "siteName": "موقع صفقه",
+        "quickLinks": "روابط سريعة",
+        "myAccount": "حسابي",
+        "myListings": "إعلاناتي",
+        "postListing": "إضافة إعلان جديد",
+        "marketplace": "السوق العام",
+        "descriptionC2C": "اشترِ وبِع مباشرة مع مستخدمين آخرين بكل سهولة وأمان.",
+        "contact": "اتصل بنا",
+        "phone": "هاتف",
+        "followUs": "تابعنا",
+        "version": "الإصدار 1.0.0"
+    },
+    "color": "اللون",
+    "removeAccount": {
+        "heading": "حذف الحساب",
+        "description": "اذا قمت بحذف الحساب لا يمكن التراجع عن هذا الإجراء",
+        "buttonText": "حذف نهائي"
+    }
 }

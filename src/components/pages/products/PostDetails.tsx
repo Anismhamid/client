@@ -625,13 +625,13 @@ const PostDetails: FunctionComponent = () => {
 												لا توجد تعليقات منشورة حتى الآن. يمكنك أن تكون أول من يضيف رأياً واضحاً ومفيداً.
 											</Alert>
 											:
-											<Box sx={{ color: "primary", p: 3,border: "1px solid #000000",borderRadius:2 }} display="flex" flexDirection="column" gap={1.5} mb={3}>
+											<Box sx={{ color: "primary", p: 3, border: "1px solid #000000", borderRadius: 2 }} display="flex" flexDirection="column" gap={1.5} mb={3}>
 												<Typography>التعليقات</Typography>
-												<Divider sx={{border:1}}/>
+												<Divider sx={{ border: 1 }} />
 												{post.reviews?.map((review, index) => (
 													<Box key={index} display="flex" flexDirection="column" gap={0.5}>
-														<Typography variant="body2" color="">
-															{review.userId}
+														<Typography variant="body2" color="green" sx={{ fontWeight: 700 }}>
+															{review.user?._id === auth?._id ? t("you") : `${review.user?.name.first} ${review.user?.name.last || "مستخدم مجهول"} `}
 														</Typography>
 														<Rating value={averageRating} readOnly size="small" />
 														<Typography variant="body2" color="">

@@ -561,11 +561,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							rowGap={1}
 						>
 							<Link
-								to={`/category/${post.category.toLocaleLowerCase()}`}
+								to={`/category/${post.category}`}
 								style={{ textDecoration: "none" }}
 							>
 								<Chip
-									label={`${t(`categories.${post.category.toLocaleLowerCase()}.label`)}`}
+									label={`${t(`categories.${post.category}.label`)}`}
 									size='small'
 									variant='filled'
 									sx={{
@@ -581,11 +581,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							</Link>
 							-
 							<Link
-								to={`/category/${post.category.toLocaleLowerCase()}/${post.subcategory}`}
+								to={`/category/${post.category}/${post.subcategory}`}
 								style={{ textDecoration: "none" }}
 							>
 								<Chip
-									label={`${t(`categories.${post.category.toLocaleLowerCase()}.subCategories.${post.subcategory}`)}`}
+									label={`${t(`categories.${post.category}.subCategories.${post.subcategory}`)}`}
 									size='small'
 									sx={{
 										color: "#e8f0fe",

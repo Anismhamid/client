@@ -1,6 +1,6 @@
 export interface User {
     _id?: string;
-    name: { _id?: string; email?: string; first: string; last: string };
+    name: { first: string; last: string };
     phone?: { phone_1: string; phone_2?: string };
     image?: { url: string; alt: string };
     address?: { city: string; street: string; houseNumber: number };

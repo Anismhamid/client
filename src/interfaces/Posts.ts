@@ -24,7 +24,7 @@ export interface Posts {
     sale: boolean;
     discount: number;
     reviews?: {
-        user: User
+        user: { _id?: string; name: { first: string; last: string } };
         rating: number;
         comment: string;
     }[];
