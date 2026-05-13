@@ -325,16 +325,7 @@ const PostDetails: FunctionComponent = () => {
 
 
 	const productJsonLd = generateSingleProductJsonLd(post);
-	const currentUrl = `https://client-qqq1.vercel.app/product/${post.category}/${post._id}`;
-
-
-	// const postReviews = useMemo(() => {
-	// 	submitReview().then((res) => {
-	// 		if (res && res.review) {
-	// 			const newReview = res.review;
-	// 		}
-	// 	}).catch((err) => console.log(err));
-	// }, [post.reviews]);
+	const currentUrl = `${window.location.origin}/product/${post.category}/${post._id}`;
 
 	return (
 		<>
