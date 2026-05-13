@@ -1,5 +1,9 @@
 {
     "you": "You",
+    "personalInformation": "Personal Information",
+    "fullName": "Full Name",
+    "secondaryPhone": "Secondary Phone",
+    "userType": "User Type",
     "review": {
         "questionsAndReviews": "Questions & Reviews",
         "questionsAndReviewsSubtitle": "Encourage visitors to share their impressions and ask questions before purchasing",

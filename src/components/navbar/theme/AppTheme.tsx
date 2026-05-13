@@ -1,4 +1,4 @@
-import {FunctionComponent, useCallback, useEffect, useState} from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import {
 	FormControlLabel,
 	PaletteMode,
@@ -15,9 +15,9 @@ import {
 	useTheme,
 	AppBar,
 } from "@mui/material";
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import LanguageSwitcher from "../../../locales/languageSwich";
-import {Link, NavLink, useLocation, useNavigate} from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import handleRTL from "../../../locales/handleRTL";
 import {
 	Brightness4,
@@ -33,21 +33,21 @@ import {
 	Dashboard as DashboardIcon,
 	ChatBubble,
 } from "@mui/icons-material";
-import {motion, AnimatePresence} from "framer-motion";
-import {path} from "../../../routes/routes";
-import {emptyAuthValues} from "../../../interfaces/authValues";
+import { motion, AnimatePresence } from "framer-motion";
+import { path } from "../../../routes/routes";
+import { emptyAuthValues } from "../../../interfaces/authValues";
 import socket from "../../../socket/globalSocket";
-import {patchUserStatus} from "../../../services/usersServices";
+import { patchUserStatus } from "../../../services/usersServices";
 import RoleType from "../../../interfaces/UserType";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import useToken from "../../../hooks/useToken";
 import MegaMenu from "../NavItem";
 import AccountMenu from "../../../atoms/userManage/AccountMenu";
-import {useUser} from "../../../context/useUSer";
+import { useUser } from "../../../context/useUSer";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import {productsAndCategories} from "../navCategoryies";
+import { productsAndCategories } from "../navCategoryies";
 import JsonLd from "../../../../utils/JsonLd";
-import {GradientSwitch} from "./GradientSwitch";
+import { GradientSwitch } from "./GradientSwitch";
 import MobileDrawer from "./MobileDrawer";
 
 interface ThemeProps {
@@ -57,7 +57,7 @@ interface ThemeProps {
 
 
 // Styled NavLink for better SEO and accessibility
-const StyledNavLink = styled(NavLink)(({theme}) => ({
+const StyledNavLink = styled(NavLink)(({ theme }) => ({
 	textDecoration: "none",
 	color: theme.palette.mode === "dark" ? "#e2e8f0" : "#4a5568",
 	padding: "8px 16px",
@@ -84,7 +84,7 @@ const StyledNavLink = styled(NavLink)(({theme}) => ({
 	},
 }));
 
-const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
+const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 	const handleThemeChange = (
 		_: React.SyntheticEvent<Element, Event>,
 		checked: boolean,
@@ -96,8 +96,8 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 	const dir = handleRTL();
 
-	const {decodedToken, setAfterDecode} = useToken();
-	const {auth, setAuth, isLoggedIn, setIsLoggedIn} = useUser();
+	const { decodedToken, setAfterDecode } = useToken();
+	const { auth, setAuth, isLoggedIn, setIsLoggedIn } = useUser();
 	const [megaAnchor, setMegaAnchor] = useState<HTMLElement | null>(null);
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const [expandedMobileMenu, setExpandedMobileMenu] = useState<string | false>(false);
@@ -107,7 +107,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 
 	const navigate = useNavigate();
 
@@ -117,11 +117,11 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 			setAuth(decodedToken);
 			setIsLoggedIn(true);
 		}
-	}, [decodedToken]);
+	}, [decodedToken, setAuth, setIsLoggedIn]);
 
 	const isAdmin = auth?.role === RoleType.Admin;
 
-	const {pathname} = useLocation();
+	const { pathname } = useLocation();
 
 	useEffect(() => {
 		window.scrollTo(0, 0);
@@ -140,7 +140,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 		setAfterDecode(null);
 		navigate(path.Home);
 		setMobileOpen(false);
-	}, [auth?._id]);
+	}, [navigate, setAuth, setIsLoggedIn, setAfterDecode, auth._id]);
 
 	const handleDrawerToggle = () => {
 		setMobileOpen(!mobileOpen);
@@ -178,8 +178,8 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				sx={{
 					background:
 						mode === "dark"
-							? "linear-gradient(135deg, #1a202c 0%, #2d3748 100%)"
-							: theme.palette.background.paper,
+							? "linear-gradient(135deg, #0e121a 0%, #2d3748 100%)"
+							: "linear-gradient(135deg, #E5ECFC 0%, #ffffff 100%)",
 					boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
 					zIndex: 1100, // Increased for better layering
 					overflow: "hidden",
@@ -188,7 +188,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 				aria-label='رأس الصفحة'
 				title='رأس الصفحة'
 			>
-				<Container maxWidth='xl' sx={{px: {xs: 1, sm: 0, md: 0}}}>
+				<Container maxWidth='xl' sx={{ px: { xs: 1, sm: 0, md: 0 } }}>
 					<Toolbar
 						component='nav'
 						aria-label='القائمة الرئيسية'
@@ -198,7 +198,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							justifyContent: "space-between",
 							alignItems: "center",
 							p: 0,
-							minHeight: {xs: "64px", md: "72px"},
+							minHeight: { xs: "64px", md: "72px" },
 							flexWrap: "nowrap",
 						}}
 					>
@@ -219,7 +219,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								title='فتح القائمة'
 								onClick={handleDrawerToggle}
 								sx={{
-									display: {xs: "flex", md: "none"},
+									display: { xs: "flex", md: "none" },
 									color: mode === "dark" ? "#e2e8f0" : "#4a5568",
 									flexShrink: 0,
 								}}
@@ -229,12 +229,12 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 							{/* Logo */}
 							<motion.div
-								whileHover={{scale: 1.05}}
-								whileTap={{scale: 0.95}}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
 							>
 								<Link
 									to={path.Home}
-									style={{textDecoration: "none"}}
+									style={{ textDecoration: "none" }}
 									aria-label='الرئيسية - موقع صفقة'
 									title='الرئيسية - موقع صفقة'
 									onClick={() => {
@@ -245,7 +245,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 									<img
 										src='/d3.png'
 										alt='Safqa Logo'
-										style={{width: "80px"}}
+										style={{ width: "80px" }}
 									/>
 									{/* <LogoText variant='h1'>{t("webPageName")}</LogoText> */}
 								</Link>
@@ -255,7 +255,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							<Box
 								component='ul'
 								sx={{
-									display: {xs: "none", md: "flex"},
+									display: { xs: "none", md: "flex" },
 									listStyle: "none",
 									m: 0,
 									p: 0,
@@ -265,20 +265,20 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 									flexShrink: 1,
 									flexWrap: "nowrap",
 									overflowX: "auto",
-									"&::-webkit-scrollbar": {display: "none"}, // إخفاء شريط التمرير
+									"&::-webkit-scrollbar": { display: "none" }, // إخفاء شريط التمرير
 									scrollbarWidth: "none",
 								}}
 								aria-label='روابط التنقل الرئيسية'
 								title='روابط التنقل الرئيسية'
 							>
 								{/* Home */}
-								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
+								<Box component='li' role='listitem' sx={{ flexShrink: 0 }}>
 									<StyledNavLink
 										to={path.Home}
 										aria-label={`${t("home")} - صفقة`}
 										title={`${t("home")} - صفقة`}
 									>
-										<HomeIcon sx={{fontSize: 20}} />
+										<HomeIcon sx={{ fontSize: 20 }} />
 									</StyledNavLink>
 								</Box>
 
@@ -287,14 +287,14 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 									<Box
 										component='li'
 										role='listitem'
-										sx={{flexShrink: 0}}
+										sx={{ flexShrink: 0 }}
 									>
 										<StyledNavLink
 											to={path.Favorite}
 											aria-label={t("favorites") || "المفضلة"}
 											title={t("favorites") || "المفضلة"}
 										>
-											<FavoriteIcon sx={{fontSize: 20}} />
+											<FavoriteIcon sx={{ fontSize: 20 }} />
 										</StyledNavLink>
 									</Box>
 								)}
@@ -303,7 +303,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								<Box
 									component='li'
 									role='listitem'
-									sx={{flexShrink: 0}}
+									sx={{ flexShrink: 0 }}
 									onMouseEnter={
 										!isMobile
 											? (e) => setMegaAnchor(e.currentTarget)
@@ -330,7 +330,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										aria-label='المنتجات والتصنيفات'
 										title={t("links.products")}
 									>
-										<CategoryIcon sx={{fontSize: 20}} />
+										<CategoryIcon sx={{ fontSize: 20 }} />
 
 										<KeyboardArrowDownIcon
 											sx={{
@@ -351,35 +351,35 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								</Box>
 
 								{/* About */}
-								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
+								<Box component='li' role='listitem' sx={{ flexShrink: 0 }}>
 									<StyledNavLink
 										to={path.About}
 										aria-label={`${t("links.about")} معلومات عن موقع صفقة`}
 										title={`${t("links.about")} معلومات عن موقع صفقة`}
 									>
-										<InfoIcon sx={{fontSize: 20}} />
+										<InfoIcon sx={{ fontSize: 20 }} />
 									</StyledNavLink>
 								</Box>
 
 								{/* Messages */}
-								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
+								<Box component='li' role='listitem' sx={{ flexShrink: 0 }}>
 									<StyledNavLink
 										to={path.MessagesPage}
 										aria-label={`${t("links.messages")} الرسائل موقع صفقة`}
 										title={`${t("links.Messages")} الرسائل موقع صفقة`}
 									>
-										<ChatBubble sx={{fontSize: 20}} />
+										<ChatBubble sx={{ fontSize: 20 }} />
 									</StyledNavLink>
 								</Box>
 
 								{/* Contact */}
-								<Box component='li' role='listitem' sx={{flexShrink: 0}}>
+								<Box component='li' role='listitem' sx={{ flexShrink: 0 }}>
 									<StyledNavLink
 										to={path.Contact}
 										aria-label={`${t("links.contact")} خدمة عملاء موقع صفقة`}
 										title={`${t("links.contact")} خدمة عملاء موقع صفقة`}
 									>
-										<ContactIcon sx={{fontSize: 18}} />
+										<ContactIcon sx={{ fontSize: 18 }} />
 										<Typography component='span'></Typography>
 									</StyledNavLink>
 								</Box>
@@ -392,7 +392,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 											aria-label={`${t("footer.myListings")}`}
 											title={`${t("footer.myListings")}`}
 										>
-											<ListIcon sx={{fontSize: 20}} />
+											<ListIcon sx={{ fontSize: 20 }} />
 										</StyledNavLink>
 									</Box>
 								)}
@@ -404,7 +404,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										// aria-label='صفحة مساعدة - '
 										aria-label={`${t("help")} مساعدة موقع صفقة`}
 									>
-										<HelpIcon sx={{fontSize: 20}} />
+										<HelpIcon sx={{ fontSize: 20 }} />
 									</StyledNavLink>
 								</Box>
 
@@ -429,7 +429,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 											}}
 										>
 											<DashboardIcon
-												sx={{fontSize: 20, color: "#2196f3"}}
+												sx={{ fontSize: 20, color: "#2196f3" }}
 											/>
 										</StyledNavLink>
 									</Box>
@@ -442,7 +442,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 							sx={{
 								display: "flex",
 								alignItems: "center",
-								gap: {xs: 1, sm: 2},
+								gap: { xs: 1, sm: 2 },
 								flexWrap: "nowrap",
 							}}
 						>
@@ -451,8 +451,8 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 								title={mode === "dark" ? "الوضع النهاري" : "الوضع الليلي"}
 							>
 								<motion.div
-									whileHover={{scale: 1.1}}
-									whileTap={{scale: 0.95}}
+									whileHover={{ scale: 1.1 }}
+									whileTap={{ scale: 0.95 }}
 								>
 									<Box
 										sx={{
@@ -465,7 +465,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 											<FormControlLabel
 												checked={mode === "dark"}
 												onChange={handleThemeChange}
-												control={<GradientSwitch sx={{m: 0}} />}
+												control={<GradientSwitch sx={{ m: 0 }} />}
 												label=''
 												aria-label='تبديل وضع السمة'
 											/>
@@ -474,16 +474,16 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 										<AnimatePresence mode='wait'>
 											<motion.div
 												key={mode}
-												initial={{opacity: 0, scale: 0.8}}
-												animate={{opacity: 1, scale: 1}}
-												exit={{opacity: 0, scale: 0.8}}
-												transition={{duration: 0.3}}
+												initial={{ opacity: 0, scale: 0.8 }}
+												animate={{ opacity: 1, scale: 1 }}
+												exit={{ opacity: 0, scale: 0.8 }}
+												transition={{ duration: 0.3 }}
 											>
 												{mode === "dark" ? (
 													<Brightness4
 														sx={{
 															color: "#ffffff",
-															fontSize: {xs: 24, md: 28},
+															fontSize: { xs: 24, md: 28 },
 															display: {
 																xs: "none",
 																sm: "block",
@@ -494,7 +494,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 													<Brightness7
 														sx={{
 															color: "#ffd000",
-															fontSize: {xs: 24, md: 28},
+															fontSize: { xs: 24, md: 28 },
 															display: {
 																xs: "none",
 																sm: "block",
@@ -510,14 +510,14 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 							{/* Language Switcher */}
 							<motion.div
-								whileHover={{scale: 1.05}}
-								whileTap={{scale: 0.95}}
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
 							>
 								<LanguageSwitcher />
 							</motion.div>
 
 							{/* Account Menu / Login Button - Desktop only */}
-							<Box sx={{display: {xs: "none", md: "block"}}}>
+							<Box sx={{ display: { xs: "none", md: "block" } }}>
 								{!isLoggedIn ? (
 									<Button
 										variant='contained'
@@ -544,11 +544,11 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 
 							{/* Mobile account icon */}
 							{isLoggedIn && (
-								<Box sx={{display: {xs: "block", md: "none"}}}>
+								<Box sx={{ display: { xs: "block", md: "none" } }}>
 									<AccountMenu
 										logout={logout}
-										// mobileView
-										// handleNavClick={handleDrawerToggle}
+									// mobileView
+									// handleNavClick={handleDrawerToggle}
 									/>
 								</Box>
 							)}
@@ -567,10 +567,10 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 					keepMounted: true, // Better mobile performance
 				}}
 				sx={{
-					display: {xs: "block", md: "none"},
+					display: { xs: "block", md: "none" },
 					"& .MuiDrawer-paper": {
 						boxSizing: "border-box",
-						width: {xs: "100%", sm: 320},
+						width: { xs: "100%", sm: 320 },
 						border: "none",
 						zIndex: 1200, // Higher than header
 					},
@@ -601,7 +601,7 @@ const Theme: FunctionComponent<ThemeProps> = ({mode, setMode}) => {
 						bottom: 0,
 						backgroundColor: "rgba(0,0,0,0.5)",
 						zIndex: 1199,
-						display: {xs: "block", md: "none"},
+						display: { xs: "block", md: "none" },
 					}}
 					onClick={handleDrawerToggle}
 				/>

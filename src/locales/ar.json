@@ -1,5 +1,12 @@
 {
     "you": "انت",
+    "personalInformation": "المعلومات الشخصية",
+    "fullName": "الاسم الكامل",
+    "phone": "الهاتف",
+    "secondaryPhone": "الهاتف الثانوي",
+    "address": "العنوان",
+    "userType": "نوع المستخدم",
+    "email": "البريد الإلكتروني",
     "review": {
         "questionsAndReviews": "الأسئلة والتقييمات",
         "questionsAndReviewsSubtitle": "شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء",
@@ -13,10 +20,10 @@
         "submitError": "يرجى اختيار تقييم قبل إرسال التعليق",
         "loginToReview": "يرجى تسجيل الدخول لإضافة تقييم أو تعليق"
     },
-    "minutesAgo": "{{count}} دقائق مضت",
-    "hoursAgo": "{{count}} ساعة مضت",
-    "daysAgo": "{{count}} يوم مضى",
-    "weeksAgo": "{{count}} أسبوع مضى",
+    "minutesAgo": "{{count}} دقائق",
+    "hoursAgo": "{{count}} ساعة",
+    "daysAgo": "{{count}} يوم",
+    "weeksAgo": "{{count}} أسابيع",
     "justNow": "الآن",
     "home": "الرئيسيه",
     "navigationMenu": "قائمة التنقل",
@@ -223,11 +230,8 @@
     "users-management": "ادارة المستخدمين",
     "account-management": "ادارة الحساب",
     "date": "تاريخ",
-    "phone": "هاتف",
     "customerInfo": "تفاصيل العميل",
     "customer": "العميل",
-    "email": "ايميل",
-    "address": "العنوان",
     "searchin": "ابحث عن اسم المنتج",
     "SpeedDial": {
         "actions": {

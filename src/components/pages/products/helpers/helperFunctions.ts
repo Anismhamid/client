@@ -1,5 +1,6 @@
 import { showError } from '../../../../atoms/toasts/ReactToast';
 import { TFunction } from 'i18next';
+import { Posts } from '../../../../interfaces/Posts';
 
 export const generatePath = (path: string, params: Record<string, string>) => {
     let newPath = path;
@@ -8,6 +9,13 @@ export const generatePath = (path: string, params: Record<string, string>) => {
     });
     return newPath;
 };
+
+export const getAverageRating = (post: Posts) => {
+  if (!post.reviews?.length) return 0;
+  const sum = post.reviews.reduce((acc, review) => acc + review.rating, 0);
+  return sum / post.reviews.length;
+}
+
 
 export const formatTimeAgo = (createdAt: string, t: TFunction) => {
     const now = new Date();

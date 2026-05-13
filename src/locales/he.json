@@ -1,5 +1,9 @@
 {
     "you": "אתה",
+    "personalInformation": "פרטים אישיים",
+    "fullName": "שם מלא",
+    "secondaryPhone": "טלפון משני",
+    "userType": "סוג משתמש",
     "review": {
         "questionsAndReviews": "שאלות ודירוגים",
         "questionsAndReviewsSubtitle": "עודד מבקרים לשתף את ההתרשמות שלהם ולשאול שאלות לפני הרכישה",

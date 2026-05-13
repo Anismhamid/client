@@ -9,10 +9,10 @@ import {
 import {useNavigate} from "react-router-dom";
 import {path} from "../../../../routes/routes";
 import {showSuccess} from "../../../../atoms/toasts/ReactToast";
-import {AuthValues} from "../../../../interfaces/authValues";
+import { User } from "../../../../interfaces/usersMessages";
 
 interface QuickActionsTabProps {
-	user: AuthValues;
+	user: User;
 }
 
 const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({user}) => {
@@ -87,7 +87,7 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({user}) => {
 							variant='outlined'
 							fullWidth
 							startIcon={<QrCode />}
-							onClick={() => navigate(`/users/customer/${user.slug}`)}
+							onClick={() => navigate(`/users/customer/${user?.slug}`)}
 							sx={{
 								py: 1.5,
 								justifyContent: "flex-center",

@@ -1,5 +1,5 @@
-import {FunctionComponent, useEffect, useMemo, useRef, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import { FunctionComponent, useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
 	Button,
 	Typography,
@@ -43,56 +43,56 @@ import {
 	ShoppingCart,
 	Star,
 } from "@mui/icons-material";
-import {useTranslation} from "react-i18next";
-import {motion} from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import PersonalInformation from "./tabs/PersonalInformationTab";
-import {useUserProducts} from "../../../hooks/useUserProducts";
+import { useUserProducts } from "../../../hooks/useUserProducts";
 import useToken from "../../../hooks/useToken";
-import {useUser} from "../../../context/useUSer";
-import {Products} from "../../../interfaces/Posts";
-import {path} from "../../../routes/routes";
-import {showSuccess} from "../../../atoms/toasts/ReactToast";
-import {AuthValues, emptyAuthValues} from "../../../interfaces/authValues";
-import {deleteUserById, getUserById} from "../../../services/usersServices";
-import {formatDate} from "../../../helpers/dateAndPriceFormat";
+import { useUser } from "../../../context/useUSer";
+import { Posts } from "../../../interfaces/Posts";
+import { path } from "../../../routes/routes";
+import { showSuccess } from "../../../atoms/toasts/ReactToast";
+import { emptyAuthValues } from "../../../interfaces/authValues";
+import { deleteUserById, getUserById } from "../../../services/usersServices";
+import { formatDate } from "../../../helpers/dateAndPriceFormat";
 import DeleteAccountBox from "../../../atoms/userManage/DeleteAccountBox";
 import EditUserData from "../../../atoms/userManage/EditUserData";
 import QuickActionsTab from "./tabs/QuickActionsTab";
 import FavoritesProducts from "../../pages/products/FavoritesPosts";
+import { User } from "../../../interfaces/usersMessages";
 
-interface ProfileProps {}
 
 /**
  * User Profile Component
  * @returns User profile with personal data and management options
  */
-const Profile: FunctionComponent<ProfileProps> = () => {
+const Profile: FunctionComponent = () => {
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState(0);
 	const navigate = useNavigate();
-	const {decodedToken, setAfterDecode} = useToken();
-	const {setAuth, setIsLoggedIn} = useUser();
+	const { decodedToken, setAfterDecode } = useToken();
+	const { setAuth, setIsLoggedIn } = useUser();
 	const detailsRef = useRef<HTMLDivElement>(null);
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const theme = useTheme();
 	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 	const [showEdit, setShowEdit] = useState<boolean>(false);
 
-	const {id} = useParams();
+	const { id } = useParams();
 	// Use the useUserProducts hook at the top level
 
 	const handleShowIdit = () => setShowEdit(!showEdit);
 
 	const [user, setUser] = useState<{
-		name: {first: string; last: string};
-		phone: {phone_1: string; phone_2: string};
+		name: { first: string; last: string };
+		phone: { phone_1: string; phone_2: string };
 		address: {
 			city: string;
 			street: string;
-			houseNumber: string;
+			houseNumber: number;
 		};
 		email: string;
-		image: {url: string; alt: string};
+		image: { url: string; alt: string };
 		role: string;
 		status: string;
 		activity: string[];
@@ -100,36 +100,38 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 		slug: string;
 		gender?: string; // Added gender to match User interface
 	}>({
-		name: {first: "", last: ""},
-		phone: {phone_1: "", phone_2: ""},
-		address: {city: "", street: "", houseNumber: ""},
+		name: { first: "", last: "" },
+		phone: { phone_1: "", phone_2: "" },
+		address: { city: "", street: "", houseNumber: 0 },
 		email: "",
-		image: {url: "", alt: ""},
+		image: { url: "", alt: "" },
 		role: "",
 		status: "",
 		activity: [],
+		gender: "male",
 		createdAt: "",
 		slug: "",
 	});
 
-	const {userProducts, loading: productsLoading} = useUserProducts(user.slug);
+	const { userProducts, loading: productsLoading } = useUserProducts(user.slug);
 
-	const calculateProfileCompletion = (user: any) => {
+	const calculateProfileCompletion = (user: User) => {
 		const fields = [
 			user.name?.first,
 			user.name?.last,
 			user.phone?.phone_1,
 			user.address?.city,
 			user.address?.street,
+			user.address?.houseNumber,
 			user.image?.url,
-			user.gender,
+			user.gender?.toString(),
 		];
 
 		const filled = fields.filter(Boolean).length;
 		return Math.round((filled / fields.length) * 100);
 	};
 
-	const calculateRating = (products: Products[]) => {
+	const calculateRating = (products: Posts[]) => {
 		if (!products.length) return 0;
 
 		const ratings = products.flatMap((p) => p.reviews?.map((r) => r.rating) || []);
@@ -233,8 +235,8 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 				}}
 			>
 				<motion.div
-					animate={{rotate: 360}}
-					transition={{duration: 2, repeat: Infinity, ease: "linear"}}
+					animate={{ rotate: 360 }}
+					transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
 				>
 					<CircularProgress size={60} />
 				</motion.div>
@@ -246,9 +248,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 	}
 
 	const tabs = [
-		{label: "الملف الشخصي", icon: <Person />},
-		{label: "المفضلة", icon: <Favorite />},
-		{label: "الإعدادات", icon: <Settings />},
+		{ label: "الملف الشخصي", icon: <Person /> },
+		{ label: "المفضلة", icon: <Favorite /> },
+		{ label: "الإعدادات", icon: <Settings /> },
 	];
 	const currentUrl = `https://client-qqq1.vercel.app/profile`;
 
@@ -277,13 +279,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 					minHeight: "100vh",
 					// background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
 					py: 4,
-					px: {xs: 2, sm: 3},
+					px: { xs: 2, sm: 3 },
 				}}
 			>
 				<motion.div
-					initial={{opacity: 0, y: 20}}
-					animate={{opacity: 1, y: 0}}
-					transition={{duration: 0.5}}
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.5 }}
 				>
 					<Container maxWidth='lg'>
 						{/* Profile Header */}
@@ -305,10 +307,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 								},
 							}}
 						>
-							<CardContent sx={{p: {xs: 2, md: 4}}}>
+							<CardContent sx={{ p: { xs: 2, md: 4 } }}>
 								<Grid container spacing={3} alignItems='center'>
 									{/* Avatar Section */}
-									<Grid size={{xs: 12, md: "auto"}}>
+									<Grid size={{ xs: 12, md: "auto" }}>
 										<Box
 											sx={{
 												position: "relative",
@@ -344,9 +346,9 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 														`${user.name.first}'s avatar`
 													}
 													sx={{
-														width: {xs: 120, md: 150},
-														height: {xs: 120, md: 150},
-														fontSize: {xs: 40, md: 50},
+														width: { xs: 120, md: 150 },
+														height: { xs: 120, md: 150 },
+														fontSize: { xs: 40, md: 50 },
 														border: `4px solid ${theme.palette.background.paper}`,
 														boxShadow: 6,
 														bgcolor:
@@ -362,7 +364,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Grid>
 
 									{/* User Info */}
-									<Grid size={{xs: 15, md: 6}}>
+									<Grid size={{ xs: 15, md: 6 }}>
 										<Typography
 											variant='h3'
 											fontWeight='bold'
@@ -477,13 +479,13 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Grid>
 
 									{/* Action Buttons */}
-									<Grid size={{xs: 12, md: 4}}>
+									<Grid size={{ xs: 12, md: 4 }}>
 										<Stack spacing={2}>
 											<Button
 												variant='outlined'
 												size='large'
 												fullWidth
-												sx={{gap: 2}}
+												sx={{ gap: 2 }}
 												startIcon={<Share />}
 												onClick={handleShareProfile}
 											>
@@ -493,7 +495,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												variant='outlined'
 												color='error'
 												size='large'
-												sx={{gap: 2}}
+												sx={{ gap: 2 }}
 												fullWidth
 												startIcon={<Logout />}
 												onClick={handleLogout}
@@ -507,10 +509,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						</Card>
 
 						{/* Stats Section */}
-						<Grid container spacing={3} sx={{mb: 4}}>
-							<Grid size={{xs: 6, sm: 3}}>
+						<Grid container spacing={3} sx={{ mb: 4 }}>
+							<Grid size={{ xs: 6, sm: 3 }}>
 								<Link
-									style={{textDecoration: "none"}}
+									style={{ textDecoration: "none" }}
 									to={`/users/customer/${user.slug}`}
 								>
 									<Paper
@@ -528,7 +530,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									>
 										<ShoppingCart
 											color='primary'
-											sx={{fontSize: 40, mb: 1}}
+											sx={{ fontSize: 40, mb: 1 }}
 										/>
 										<Typography variant='h4' fontWeight='bold'>
 											{userProducts.length || 0}
@@ -542,7 +544,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Paper>
 								</Link>
 							</Grid>
-							<Grid size={{xs: 6, sm: 3}}>
+							<Grid size={{ xs: 6, sm: 3 }}>
 								<Paper
 									sx={{
 										p: 2,
@@ -551,7 +553,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 										height: "100%",
 									}}
 								>
-									<Favorite color='error' sx={{fontSize: 40, mb: 1}} />
+									<Favorite color='error' sx={{ fontSize: 40, mb: 1 }} />
 									<Typography variant='h4' fontWeight='bold'>
 										{stats.totalFavorites}
 									</Typography>
@@ -560,7 +562,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Typography>
 								</Paper>
 							</Grid>
-							<Grid size={{xs: 6, sm: 3}}>
+							<Grid size={{ xs: 6, sm: 3 }}>
 								<Paper
 									sx={{
 										p: 2,
@@ -569,7 +571,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 										height: "100%",
 									}}
 								>
-									<Star color='warning' sx={{fontSize: 40, mb: 1}} />
+									<Star color='warning' sx={{ fontSize: 40, mb: 1 }} />
 									<Typography variant='h4' fontWeight='bold'>
 										{stats.rating.toFixed(1)}
 									</Typography>
@@ -578,7 +580,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									</Typography>
 								</Paper>
 							</Grid>
-							<Grid size={{xs: 6, sm: 3}}>
+							<Grid size={{ xs: 6, sm: 3 }}>
 								<Paper
 									sx={{
 										p: 2,
@@ -589,7 +591,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 								>
 									<VerifiedUser
 										color='success'
-										sx={{fontSize: 40, mb: 1}}
+										sx={{ fontSize: 40, mb: 1 }}
 									/>
 									<Typography variant='h4' fontWeight='bold'>
 										{stats.completionPercentage}%
@@ -600,14 +602,14 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 									<LinearProgress
 										variant='determinate'
 										value={stats.completionPercentage}
-										sx={{mt: 1, height: 8, borderRadius: 4}}
+										sx={{ mt: 1, height: 8, borderRadius: 4 }}
 									/>
 								</Paper>
 							</Grid>
 						</Grid>
 
 						{/* Tabs Navigation */}
-						<Paper sx={{mb: 4, borderRadius: 2}}>
+						<Paper sx={{ mb: 4, borderRadius: 2 }}>
 							<Tabs
 								value={activeTab}
 								onChange={handleTabChange}
@@ -636,22 +638,22 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						{/* Tab Content */}
 						{activeTab === 0 && (
 							<motion.div
-								initial={{opacity: 0}}
-								animate={{opacity: 1}}
-								transition={{duration: 0.3}}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={{ duration: 0.3 }}
 							>
 								<Grid container spacing={3}>
-									<Grid size={{xs: 12, lg: 8}}>
+									<Grid size={{ xs: 12, lg: 8 }}>
 										{/* Personal Information */}
-										<PersonalInformation user={user as AuthValues} />
+										<PersonalInformation user={user} />
 
 										{/* Quick Actions */}
-										<QuickActionsTab user={user as AuthValues} />
+										<QuickActionsTab user={user} />
 									</Grid>
 
 									{/* Activity History */}
-									<Grid size={{xs: 12, lg: 4}}>
-										<Card sx={{borderRadius: 3, height: "100%"}}>
+									<Grid size={{ xs: 12, lg: 4 }}>
+										<Card sx={{ borderRadius: 3, height: "100%" }}>
 											<CardContent>
 												<Typography
 													variant='h5'
@@ -697,14 +699,14 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 													</List>
 												) : (
 													<Typography
-														sx={{padding: 2}}
+														sx={{ padding: 2 }}
 														color='text.secondary'
 														textAlign='center'
 													>
 														لا يوجد نشاطات حديثة
 													</Typography>
 												)}
-												<Divider sx={{my: 2}} />
+												<Divider sx={{ my: 2 }} />
 												{/* <Button
 													fullWidth
 													variant='text'
@@ -726,7 +728,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						{activeTab === 1 && <FavoritesProducts />}
 
 						{activeTab === 2 && (
-							<Card sx={{borderRadius: 3}}>
+							<Card sx={{ borderRadius: 3 }}>
 								<CardContent>
 									<Typography
 										variant='h5'
@@ -737,10 +739,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 										إعدادات الحساب
 									</Typography>
 									<Grid container spacing={3}>
-										<Grid size={{xs: 12, md: 6}}>
+										<Grid size={{ xs: 12, md: 6 }}>
 											<Card
 												variant='outlined'
-												sx={{p: 2, borderRadius: 2}}
+												sx={{ p: 2, borderRadius: 2 }}
 											>
 												<Typography variant='h6' gutterBottom>
 													خصوصية البيانات
@@ -779,10 +781,10 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 												</Stack>
 											</Card>
 										</Grid>
-										<Grid size={{xs: 12, md: 6}}>
+										<Grid size={{ xs: 12, md: 6 }}>
 											<Card
 												variant='outlined'
-												sx={{p: 2, borderRadius: 2}}
+												sx={{ p: 2, borderRadius: 2 }}
 											>
 												<Typography variant='h6' gutterBottom>
 													معلومات الدفع
@@ -856,7 +858,7 @@ const Profile: FunctionComponent<ProfileProps> = () => {
 						{showEdit && <EditUserData userId={decodedToken?._id || ""} />}
 
 						{/* Delete Account Section */}
-						<Box sx={{mt: 4}}>
+						<Box sx={{ mt: 4 }}>
 							<DeleteAccountBox onDelete={handleDeleteAccount} />
 						</Box>
 					</Container>

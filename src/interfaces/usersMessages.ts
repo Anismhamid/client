@@ -6,7 +6,8 @@ export interface User {
     address?: { city: string; street: string; houseNumber: number };
     email: string;
     role: string;
-    gender: string;
+    slug?: string;
+    gender?: string;
     createdAt?: string;
 }
 

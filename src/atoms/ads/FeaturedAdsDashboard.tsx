@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
 	Box,
 	Typography,
@@ -16,19 +16,20 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import dayjs from "dayjs";
-import {FeaturedAd} from "../../interfaces/featuredAd";
+import { FeaturedAd } from "../../interfaces/featuredAd";
 import useSnackbar from "../../hooks/useSnackbar";
-import {Snackbar as MuiSnackbar, Alert} from "@mui/material";
+import { Snackbar as MuiSnackbar, Alert } from "@mui/material";
 import PaymentModal from "../pymentModal/PymentModal";
-import {getCustomerProfilePostsBySlug} from "../../services/postsServices";
-import {useUser} from "../../context/useUSer";
-import {Posts} from "../../interfaces/Posts";
+import { getCustomerProfilePostsBySlug } from "../../services/postsServices";
+import { useUser } from "../../context/useUSer";
+import { Posts } from "../../interfaces/Posts";
+import AlertDialogs from "../toasts/Sweetalert";
 
 const api = import.meta.env.VITE_API_URL;
 
 const FeaturedAdsDashboard = () => {
 	const [ads, setAds] = useState<FeaturedAd[]>([]);
-	const {auth} = useUser();
+	const { auth } = useUser();
 	const [loading, setLoading] = useState(true);
 	const [newAd, setNewAd] = useState({
 		listingId: "",
@@ -37,9 +38,11 @@ const FeaturedAdsDashboard = () => {
 		endDate: dayjs().add(7, "day").format("YYYY-MM-DD"),
 	});
 	const [saving, setSaving] = useState(false);
-	const {snackbar, showSnackbar, closeSnackbar} = useSnackbar();
+	const { snackbar, showSnackbar, closeSnackbar } = useSnackbar();
 	const [showPaymentModal, setShowPaymentModal] = useState(false);
 	const [userListings, setUserListings] = useState<Posts[]>([]);
+	const [deleteAdId, setDeleteAdId] = useState<string | null>(null);
+	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 	const handleOpenPayment = () => setShowPaymentModal(true);
 	const handleClosePayment = () => setShowPaymentModal(false);
@@ -58,8 +61,8 @@ const FeaturedAdsDashboard = () => {
 	const fetchAds = async () => {
 		setLoading(true);
 		try {
-			const {data} = await axios.get(`${api}/featured-ads/me`, {
-				headers: {Authorization: localStorage.getItem("token")},
+			const { data } = await axios.get(`${api}/featured-ads/me`, {
+				headers: { Authorization: localStorage.getItem("token") },
 			});
 			setAds(data?.ads || []);
 		} catch (err) {
@@ -76,11 +79,11 @@ const FeaturedAdsDashboard = () => {
 
 	const handleChange = (
 		e: React.ChangeEvent<
-			HTMLInputElement | HTMLTextAreaElement | {name?: string; value: unknown}
+			HTMLInputElement | HTMLTextAreaElement | { name?: string; value: unknown }
 		>,
 	) => {
 		const name = e.target.name!;
-		setNewAd((prev) => ({...prev, [name]: e.target.value}));
+		setNewAd((prev) => ({ ...prev, [name]: e.target.value }));
 	};
 
 	const handleSubmit = async () => {
@@ -100,7 +103,7 @@ const FeaturedAdsDashboard = () => {
 				startDate: dayjs().format("YYYY-MM-DD"),
 				endDate: dayjs().add(7, "day").format("YYYY-MM-DD"),
 			});
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			showSnackbar(err.response?.data?.message || "حدث خطأ", "error");
 		} finally {
@@ -112,7 +115,7 @@ const FeaturedAdsDashboard = () => {
 		if (!confirm("هل أنت متأكد من حذف الإعلان؟")) return;
 		try {
 			await axios.delete(`${api}/featured-ads/delete/${adId}`, {
-				headers: {Authorization: localStorage.getItem("token")},
+				headers: { Authorization: localStorage.getItem("token") },
 			});
 			await fetchAds();
 			showSnackbar("تم حذف الإعلان بنجاح!", "success");
@@ -134,7 +137,7 @@ const FeaturedAdsDashboard = () => {
 	);
 
 	return (
-		<Box sx={{p: 4}} component='main'>
+		<Box sx={{ p: 4 }} component='main'>
 			<Typography variant='h4' gutterBottom>
 				إدارة Featured Ads
 			</Typography>
@@ -142,23 +145,23 @@ const FeaturedAdsDashboard = () => {
 				open={snackbar.open}
 				autoHideDuration={6000}
 				onClose={closeSnackbar}
-				anchorOrigin={{vertical: "bottom", horizontal: "center"}}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
 			>
 				<Alert
 					onClose={closeSnackbar}
 					severity={snackbar.severity}
-					sx={{width: "100%"}}
+					sx={{ width: "100%" }}
 				>
 					{snackbar.message}
 				</Alert>
 			</MuiSnackbar>
 			{/* شراء إعلان جديد */}
-			<Paper sx={{p: 3, mb: 4}}>
+			<Paper sx={{ p: 3, mb: 4 }}>
 				<Typography variant='h6' gutterBottom>
 					شراء إعلان جديد
 				</Typography>
 				<Grid container spacing={2}>
-					<Grid size={{xs: 12, sm: 4}}>
+					<Grid size={{ xs: 12, sm: 4 }}>
 						<FormControl fullWidth>
 							<InputLabel>اختر الإعلان</InputLabel>
 							<Select
@@ -180,14 +183,14 @@ const FeaturedAdsDashboard = () => {
 						</FormControl>
 					</Grid>
 
-					<Grid size={{xs: 12, sm: 4}}>
+					<Grid size={{ xs: 12, sm: 4 }}>
 						<FormControl fullWidth>
 							<InputLabel>نوع الترويج</InputLabel>
 							<Select
 								name='type'
 								value={newAd.type}
 								onChange={(e) =>
-									setNewAd((prev) => ({...prev, type: e.target.value}))
+									setNewAd((prev) => ({ ...prev, type: e.target.value }))
 								}
 							>
 								<MenuItem value='homepage'>Homepage</MenuItem>
@@ -197,31 +200,31 @@ const FeaturedAdsDashboard = () => {
 						</FormControl>
 					</Grid>
 
-					<Grid size={{xs: 12, sm: 2}}>
+					<Grid size={{ xs: 12, sm: 2 }}>
 						<TextField
 							label='تاريخ البداية'
 							type='date'
 							name='startDate'
 							value={newAd.startDate}
 							onChange={handleChange}
-							InputLabelProps={{shrink: true}}
+							InputLabelProps={{ shrink: true }}
 							fullWidth
 						/>
 					</Grid>
 
-					<Grid size={{xs: 12, sm: 2}}>
+					<Grid size={{ xs: 12, sm: 2 }}>
 						<TextField
 							label='تاريخ النهاية'
 							type='date'
 							name='endDate'
 							value={newAd.endDate}
 							onChange={handleChange}
-							InputLabelProps={{shrink: true}}
+							InputLabelProps={{ shrink: true }}
 							fullWidth
 						/>
 					</Grid>
 
-					<Grid size={{xs: 12}}>
+					<Grid size={{ xs: 12 }}>
 						<Button
 							variant='contained'
 							disabled={!newAd.listingId || saving}
@@ -245,7 +248,7 @@ const FeaturedAdsDashboard = () => {
 			</Paper>
 
 			{/* إعلانات نشطة حسب النوع */}
-			<Paper sx={{p: 2, mb: 4}}>
+			<Paper sx={{ p: 2, mb: 4 }}>
 				<Typography variant='h6' gutterBottom>
 					الإعلانات النشطة حسب النوع
 				</Typography>
@@ -295,7 +298,7 @@ const FeaturedAdsDashboard = () => {
 						const isActive =
 							ad.isActive && dayjs().isBefore(dayjs(ad.endDate));
 						return (
-							<Grid size={{xs: 12, sm: 6, md: 4}} key={ad._id}>
+							<Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
 								<Paper
 									sx={{
 										p: 2,
@@ -326,15 +329,17 @@ const FeaturedAdsDashboard = () => {
 											/>
 										)}
 									</Typography>
-									<Button
-										variant='outlined'
-										color='error'
-										size='small'
-										sx={{mt: 1}}
-										onClick={() => handleDelete(ad._id)}
-									>
-										Delete
-									</Button>
+									<AlertDialogs
+										show={showDeleteModal}
+										onHide={() => setShowDeleteModal(false)}
+										title="حذف إعلان"
+										description="هل أنت متأكد من حذف هذا الإعلان؟"
+										handleDelete={() => {
+											setDeleteAdId(ad._id);
+											if (deleteAdId) handleDelete(deleteAdId);
+											setShowDeleteModal(false);
+										}}
+									/>
 								</Paper>
 							</Grid>
 						);

@@ -1,7 +1,7 @@
-import {FunctionComponent, useEffect, useMemo, useState} from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
-import {useUser} from "../../context/useUSer";
-import {deletePost, getAllPosts} from "../../services/postsServices";
+import { useUser } from "../../context/useUSer";
+import { deletePost, getAllPosts } from "../../services/postsServices";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
@@ -14,17 +14,17 @@ import {
 	Container,
 } from "@mui/material";
 import RoleType from "../../interfaces/UserType";
-import {showError} from "../../atoms/toasts/ReactToast";
+import { showError } from "../../atoms/toasts/ReactToast";
 import UpdateProductModal from "../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal";
 import AlertDialogs from "../../atoms/toasts/Sweetalert";
-import {useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
+import { useNavigate } from "react-router-dom";
+import { path } from "../../routes/routes";
 import SearchBox from "../../atoms/productsManage/SearchBox";
-import {useRef} from "react";
+import { useRef } from "react";
 import handleRTL from "../../locales/handleRTL";
-import {useTranslation} from "react-i18next";
-import {productsAndCategories} from "../navbar/navCategoryies";
-import {motion, AnimatePresence} from "framer-motion";
+import { useTranslation } from "react-i18next";
+import { productsAndCategories } from "../navbar/navCategoryies";
+import { motion, AnimatePresence } from "framer-motion";
 import ChepNavigation from "../navbar/ChepNavigation";
 import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/CreatePostModal";
 import PostCard from "./products/PostsCard";
@@ -37,8 +37,8 @@ import { Posts } from "../../interfaces/Posts";
  */
 
 const Home: FunctionComponent = () => {
-	const {auth} = useUser();
-	const {t} = useTranslation();
+	const { auth } = useUser();
+	const { t } = useTranslation();
 	const [posts, setPosts] = useState<Posts[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(true);
@@ -79,11 +79,11 @@ const Home: FunctionComponent = () => {
 			prev.map((p) =>
 				p._id === productId
 					? {
-							...p,
-							likes: liked
-								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id:string) => id !== userId),
-						}
+						...p,
+						likes: liked
+							? [...(p.likes || []), userId]
+							: (p.likes || []).filter((id: string) => id !== userId),
+					}
 					: p,
 			),
 		);
@@ -92,11 +92,11 @@ const Home: FunctionComponent = () => {
 			prev.map((p) =>
 				p._id === productId
 					? {
-							...p,
-							likes: liked
-								? [...(p.likes || []), userId]
-								: (p.likes || []).filter((id:string) => id !== userId),
-						}
+						...p,
+						likes: liked
+							? [...(p.likes || []), userId]
+							: (p.likes || []).filter((id: string) => id !== userId),
+					}
 					: p,
 			),
 		);
@@ -150,26 +150,17 @@ const Home: FunctionComponent = () => {
 
 	useEffect(() => {
 		if (!observerRef.current || searchQuery) return;
-
 		const observer = new IntersectionObserver(
 			(entries) => {
 				if (entries[0].isIntersecting && visibleCount < filteredProducts.length) {
-					setVisibleCount((prev) => prev + 12);
+					setVisibleCount(prev => prev + 12);
 				}
 			},
-			{threshold: 0.3},
+			{ threshold: 0.3, rootMargin: "100px" } // أضف rootMargin
 		);
-
 		observer.observe(observerRef.current);
-
-		return () => {
-			if (observer) observer.disconnect();
-		};
-	}, [filteredProducts.length, visibleCount, searchQuery, loading]);
-
-	useEffect(() => {
-		setVisibleProducts(filteredProducts.slice(0, visibleCount));
-	}, [filteredProducts, visibleCount]);
+		return () => observer.disconnect();
+	}, [filteredProducts.length, visibleCount, searchQuery]); // قلل dependencies
 
 	const handleDelete = (product_name: string) => {
 		deletePost(product_name)
@@ -187,7 +178,7 @@ const Home: FunctionComponent = () => {
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
-	const currentUrl = `https://client-qqq1.vercel.app/`;
+	const currentUrl = window.location.origin;
 
 	const diriction = handleRTL();
 
@@ -207,7 +198,7 @@ const Home: FunctionComponent = () => {
 			<Box
 				className='container-fluid'
 				sx={{
-					py: {xs: 4, md: 6},
+					py: { xs: 4, md: 6 },
 					position: "relative",
 					overflow: "hidden",
 				}}
@@ -254,27 +245,27 @@ const Home: FunctionComponent = () => {
 					}}
 				>
 					<motion.div
-						initial={{opacity: 0, y: 30}}
-						animate={{opacity: 1, y: 0}}
-						transition={{duration: 0.8}}
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.8 }}
 					>
 						<Typography
 							variant='h1'
 							sx={{
 								fontWeight: 800,
 								mb: 3,
-								fontSize: {xs: "2.5rem", sm: "3rem", md: "3.75rem"},
+								fontSize: { xs: "2.5rem", sm: "3rem", md: "3.75rem" },
 								textShadow: "0 4px 8px rgba(0,0,0,0.1)",
 								animation: "float 8s ease-in-out infinite 0.5s",
 								color: "#1a237e",
-								direction: {diriction},
+								direction: { diriction },
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "center",
 								gap: 1,
 							}}
 						>
-							<span style={{fontSize: "1.2em"}}>🛒</span>
+							<span style={{ fontSize: "1.2em" }}>🛒</span>
 							<span>{t("webPageName")}</span>
 						</Typography>
 
@@ -285,7 +276,7 @@ const Home: FunctionComponent = () => {
 								color: "text.secondary",
 								maxWidth: "600px",
 								margin: "0 auto",
-								fontSize: {xs: "1rem", sm: "1.25rem", md: "1.5rem"},
+								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
 							}}
 						>
 							{t("bestOffers")}
@@ -388,12 +379,12 @@ const Home: FunctionComponent = () => {
 					{/* Products Grid */}
 					<Box>
 						{/* Results Count */}
-						<Box sx={{mb: 3, textAlign: "center"}}>
+						<Box sx={{ mb: 3, textAlign: "center" }}>
 							{searchQuery && (
 								<motion.div
-									initial={{opacity: 0, y: -20}}
-									animate={{opacity: 1, y: 0}}
-									exit={{opacity: 0, y: -20}}
+									initial={{ opacity: 0, y: -20 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: -20 }}
 								>
 									<Typography
 										variant='h6'
@@ -431,27 +422,27 @@ const Home: FunctionComponent = () => {
 						<Container>
 							<AnimatePresence mode='wait'>
 								{visibleProducts.length > 0 ? (
-									<Grid container spacing={1} sx={{px: {xs: 1, md: 2}}}>
+									<Grid container spacing={1} sx={{ px: { xs: 1, md: 2 } }}>
 										{visibleProducts.map((product) => {
 											const discountedPrice = product.sale
 												? product.price -
-													(product.price *
-														(product.discount || 0)) /
-														100
+												(product.price *
+													(product.discount || 0)) /
+												100
 												: product.price;
 
 											return (
 												<Grid
-													size={{xs: 12, md: 4, lg: 3}}
+													size={{ xs: 12,sm:4, md: 6, lg: 3 }}
 													key={product._id}
 												>
 													<motion.div
-														initial={{opacity: 0, y: 20}}
-														animate={{opacity: 1, y: 0}}
-														transition={{duration: 0.3}}
+														initial={{ opacity: 0, y: 20 }}
+														animate={{ opacity: 1, y: 0 }}
+														transition={{ duration: 0.3 }}
 														whileHover={{
 															y: -3,
-															transition: {duration: 0.01},
+															transition: { duration: 0.01 },
 														}}
 													>
 														<PostCard
@@ -486,14 +477,14 @@ const Home: FunctionComponent = () => {
 								) : (
 									<motion.div
 										key='no-products'
-										initial={{opacity: 0, scale: 0.9}}
-										animate={{opacity: 1, scale: 1}}
-										exit={{opacity: 0, scale: 0.9}}
+										initial={{ opacity: 0, scale: 0.9 }}
+										animate={{ opacity: 1, scale: 1 }}
+										exit={{ opacity: 0, scale: 0.9 }}
 									>
 										<Box
 											sx={{
 												backgroundColor: "white",
-												p: {xs: 3, md: 5},
+												p: { xs: 3, md: 5 },
 												width: "100%",
 												maxWidth: "600px",
 												m: "auto",
@@ -560,15 +551,15 @@ const Home: FunctionComponent = () => {
 											>
 												{productsAndCategories
 													.slice(0, 4)
-													.map(({labelKey}) => (
+													.map(({ labelKey }) => (
 														<motion.div
 															key={labelKey}
 															whileHover={
 																!isMobile
-																	? {scale: 1.1}
+																	? { scale: 1.1 }
 																	: undefined
 															}
-															whileTap={{scale: 0.9}}
+															whileTap={{ scale: 0.9 }}
 														>
 															<Button
 																variant='contained'
@@ -601,9 +592,9 @@ const Home: FunctionComponent = () => {
 											</Box>
 											<motion.div
 												whileHover={
-													!isMobile ? {scale: 1.05} : undefined
+													!isMobile ? { scale: 1.05 } : undefined
 												}
-												whileTap={{scale: 0.95}}
+												whileTap={{ scale: 0.95 }}
 											>
 												<Button
 													variant='outlined'
@@ -663,9 +654,9 @@ const Home: FunctionComponent = () => {
 							/>
 						</motion.div>
 						<motion.div
-							initial={{opacity: 0}}
-							animate={{opacity: 1}}
-							transition={{delay: 0.5}}
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.5 }}
 						>
 							<Typography
 								variant='body1'
@@ -717,9 +708,9 @@ const Home: FunctionComponent = () => {
 						}}
 					>
 						<motion.div
-							initial={{opacity: 0, y: 30}}
-							whileInView={{opacity: 1, y: 0}}
-							viewport={{once: true}}
+							initial={{ opacity: 0, y: 30 }}
+							whileInView={{ opacity: 1, y: 0 }}
+							viewport={{ once: true }}
 						>
 							<Box
 								sx={{
@@ -767,8 +758,8 @@ const Home: FunctionComponent = () => {
 								ممكنة
 							</Typography>
 							<motion.div
-								whileHover={!isMobile ? {scale: 1.05} : undefined}
-								whileTap={{scale: 0.95}}
+								whileHover={!isMobile ? { scale: 1.05 } : undefined}
+								whileTap={{ scale: 0.95 }}
 							>
 								<Button
 									variant='contained'

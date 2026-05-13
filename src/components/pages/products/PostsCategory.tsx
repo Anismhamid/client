@@ -235,7 +235,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 		);
 
 	const generateCategory = generateCategoryJsonLd(category, products);
-	const currentUrl = `https://client-qqq1.vercel.app/category/${category}`;
+	const currentUrl = `${window.location.origin}/category/${category}`;
 
 	return (
 		<>
@@ -305,7 +305,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
 								return (
 									<Grid
-										size={{ xs: 12, sm: 4, lg: 3 }}
+										size={{ xs: 12, sm: 3, lg: 3 }}
 										key={post._id}
 										sx={{
 											display: "flex",

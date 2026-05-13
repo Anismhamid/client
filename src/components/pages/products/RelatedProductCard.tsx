@@ -6,6 +6,7 @@ import { Posts } from "../../../interfaces/Posts";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categoryLabels } from "../../../interfaces/postsCategoeis";
+import { getAverageRating } from "./helpers/helperFunctions";
 
 const RelatedProductCard = memo(({ product }: { product: Posts }) => {
     const navigate = useNavigate();
@@ -47,9 +48,9 @@ const RelatedProductCard = memo(({ product }: { product: Posts }) => {
                     {categoryLabels[product.category] || t(product.category)}
                 </Typography>
                 <Stack direction='row' alignItems='center' spacing={1} mt={1}>
-                    <Rating value={product.rating || 0} precision={0.5} readOnly size='small' />
+                    <Rating value={getAverageRating(product)} precision={0.5} readOnly size='small' />
                     <Typography variant='caption' color='text.secondary'>
-                        ({typeof product.reviewCount === 'number' ? product.reviewCount : 0})
+                        ({typeof product.reviews?.length === 'number' ? product.reviews.length : 0})
                     </Typography>
                 </Stack>
                 <Typography variant='h6' color='primary' fontWeight={700} mt={1}>
