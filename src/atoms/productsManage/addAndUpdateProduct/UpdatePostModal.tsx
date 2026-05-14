@@ -7,7 +7,7 @@ import { getPostById, updatePost } from "../../../services/postsServices";
 import { useTranslation } from "react-i18next";
 import handleRTL from "../../../locales/handleRTL";
 import ProductForm, { DynamicField } from "./PostForm";
-import { categoriesLogic } from "../postLogicMap";
+import { categoriesLogic } from "../../../interfaces/postLogicMap";
 
 interface UpdateProductModalProps {
 	show: boolean;

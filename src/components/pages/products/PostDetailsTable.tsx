@@ -14,7 +14,7 @@ import {
 	alpha,
 	Divider,
 } from "@mui/material";
-import { categoriesLogic } from "../../../atoms/productsManage/postLogicMap";
+import { categoriesLogic } from "../../../interfaces/postLogicMap";
 import { getColorHex } from "../../../atoms/colorsSettings/carsColors";
 import { Posts as PostType } from "../../../interfaces/Posts";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";

@@ -41,7 +41,7 @@ import { patchUserStatus } from "../../../services/usersServices";
 import RoleType from "../../../interfaces/UserType";
 import { useTranslation } from "react-i18next";
 import useToken from "../../../hooks/useToken";
-import MegaMenu from "../NavItem";
+import MegaMenu from "../MegaMenu";
 import AccountMenu from "../../../atoms/userManage/AccountMenu";
 import { useUser } from "../../../context/useUSer";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";

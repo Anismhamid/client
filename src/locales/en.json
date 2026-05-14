@@ -23,7 +23,7 @@
     "weeksAgo": "{{count}} weeks ago",
     "justNow": "just now",
     "home": "Home",
-    "navigationMenu": "Navigation menu",
+    "navigationMenu": "menu",
     "webPageName": "safqa",
     "bestOffers": "The best deals in one place",
     "browse-posts": "Browse posts",
@@ -308,7 +308,7 @@
 
     "categories": {
         "House": {
-            "label": "Home Supplies",
+            "label": "Home",
             "heading": "Home Supplies",
             "description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
             "subCategories": {
@@ -320,7 +320,7 @@
         },
         "Garden": {
             "label": "Garden",
-            "heading": "Garden Supplies",
+            "heading": "Garden",
             "description": "Includes products related to gardening such as care tools, watering, and plants.",
             "subCategories": {
                 "plants": "Plants",
@@ -341,7 +341,7 @@
             }
         },
         "Baby": {
-            "label": "Baby Supplies",
+            "label": "Baby",
             "heading": "Baby Supplies",
             "description": "Products for children such as clothing, care items, and daily essentials.",
             "subCategories": {
@@ -351,7 +351,7 @@
             }
         },
         "Kids": {
-            "label": "Kids Toys",
+            "label": "Toys",
             "heading": "Kids Toys",
             "description": "Toys and products dedicated to children of different ages.",
             "subCategories": {
@@ -361,7 +361,7 @@
             }
         },
         "Cleaning": {
-            "label": "Cleaning Supplies",
+            "label": "Cleaning",
             "heading": "Cleaning Supplies",
             "description": "Products and tools for home cleaning.",
             "subCategories": {
@@ -371,7 +371,7 @@
             }
         },
         "Health": {
-            "label": "Health & Care",
+            "label": "Health",
             "heading": "Health & Care",
             "description": "Products related to personal health and care.",
             "subCategories": {

@@ -1,4 +1,4 @@
-import { CategoryValue } from '../atoms/productsManage/postLogicMap';
+import { CategoryValue } from './postLogicMap';
 import { User } from './usersMessages';
 
 /**
@@ -24,11 +24,11 @@ export interface Posts {
     sale: boolean;
     discount: number;
     reviews?: {
-		createdAt: Date | string;
+        createdAt: Date | string;
         user: {
             _id?: string;
             name: { first: string; last: string };
-            image: string ;
+            image: string;
         };
         rating: number;
         comment: string;

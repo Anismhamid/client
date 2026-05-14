@@ -6,7 +6,7 @@ import { fontAwesomeIcon } from "../../../FontAwesome/Icons";
 import { CarColor, colors } from "../../colorsSettings/carsColors";
 import { Posts } from "../../../interfaces/Posts";
 import { deleteImage, uploadImage } from "../../../services/uploadImage";
-import { categoriesLogic, CategoryValue } from "../postLogicMap";
+import { categoriesLogic, CategoryValue } from "../../../interfaces/postLogicMap";
 import { postsCategory } from "../../../interfaces/postsCategoeis";
 import { LoadingButton } from "@mui/lab";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";

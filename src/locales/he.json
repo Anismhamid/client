@@ -23,7 +23,7 @@
     "weeksAgo": "לפני {{count}} שבועות",
     "justNow": "הרגע",
     "home": "בית",
-    "navigationMenu": "תפריט ניווט",
+    "navigationMenu": "תפריט",
     "webPageName": "ספקה",
     "bestOffers": "העסקות הטובים ביותר במקום אחד",
     "browse-posts": "עיין בפוסטים",
@@ -284,7 +284,7 @@
 
     "categories": {
         "House": {
-            "label": "מוצרי בית",
+            "label": "בית",
             "heading": "מוצרי בית",
             "description": "קטגוריה למכירה וקנייה של מוצרי בית שונים כמו כלי מטבח, אחסון וארגון.",
             "subCategories": {
@@ -317,7 +317,7 @@
             }
         },
         "Kids": {
-            "label": "צעצועים לילדים",
+            "label": "צעצועים",
             "heading": "צעצועים לילדים",
             "description": "צעצועים ומוצרים המיועדים לילדים בגילאים שונים.",
             "subCategories": {
@@ -327,7 +327,7 @@
             }
         },
         "Baby": {
-            "label": "מוצרי תינוקות",
+            "label": "תינוקות",
             "heading": "מוצרי תינוקות",
             "description": "מוצרים לתינוקות כגון בגדים, מוצרי טיפוח וצרכים יומיומיים.",
             "subCategories": {
@@ -337,7 +337,7 @@
             }
         },
         "Beauty": {
-            "label": "טיפוח ויופי",
+            "label": "טיפוח",
             "heading": "טיפוח ויופי",
             "description": "מוצרי טיפוח וקוסמטיקה המוצעים על ידי משתמשים.",
             "subCategories": {
@@ -347,7 +347,7 @@
             }
         },
         "Cleaning": {
-            "label": "מוצרי ניקיון",
+            "label": "ניקיון",
             "heading": "מוצרי ניקיון",
             "description": "מוצרי וכלי ניקיון לשימוש ביתי.",
             "subCategories": {
@@ -357,7 +357,7 @@
             }
         },
         "Health": {
-            "label": "בריאות וטיפוח",
+            "label": "בריאות",
             "heading": "בריאות וטיפוח",
             "description": "מוצרים הקשורים לבריאות ולטיפוח אישי.",
             "subCategories": {
@@ -467,7 +467,7 @@
             "mileage": "קילומטרים"
         },
         "ElectricVehicles": {
-            "label": "כלי רכב חשמליים",
+            "label": "רכבים חשמליים",
             "heading": "כלי רכב חשמליים",
             "description": "כלי רכב הפועלים באמצעות חשמל.",
             "subCategories": {
