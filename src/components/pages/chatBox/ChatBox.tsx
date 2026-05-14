@@ -18,7 +18,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 import socket from "../../../socket/globalSocket";
 import { useChat } from "../../../hooks/useChat";
-import { BaseMessage, BaseUser } from "../../../interfaces/chat/chatUser";
+import { BaseUser } from "../../../interfaces/chat/chatUser";
 import { LocalMessage } from "../../../interfaces/chat/localMessage";
 import Linkify from "./Linkify";
 import handleRTL from "../../../locales/handleRTL";
@@ -36,8 +36,8 @@ import {
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatBoxProps {
-	currentUser: BaseMessage;
-	otherUser: BaseMessage;
+	currentUser: BaseUser;
+	otherUser: BaseUser;
 	token: string;
 }
 
@@ -380,10 +380,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 								{!isMe && (
 									<Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 0.5 }}>
 										<Typography variant="caption" color="text.secondary">
-											{getUserFullName(otherUser.from)}
+											{getUserFullName(otherUser)}
 										</Typography>
 										<Avatar
-											src={otherUser.from?.image?.url}
+											src={otherUser.image?.url}
 											sx={{
 												width: 32,
 												height: 32,
@@ -391,7 +391,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 												bgcolor: "primary.main",
 											}}
 										>
-											{`${getUserFullName(otherUser.from)?.[0]}${getUserFullName(otherUser.from)?.split(" ")[1]?.[0] || ""}`}
+											{`${getUserFullName(otherUser)?.[0]}${getUserFullName(otherUser)?.split(" ")[1]?.[0] || ""}`}
 										</Avatar>
 									</Box>
 								)}

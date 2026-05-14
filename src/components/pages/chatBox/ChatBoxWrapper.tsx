@@ -15,19 +15,20 @@ const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({ user }) => {
 	if (!auth || !auth._id) {
 		return <div>⚠️ الرجاء تسجيل الدخول أولاً</div>;
 	}
-
 	return (
 		<ChatBox
 			currentUser={{
 				_id: auth._id,
-				name: { first: auth.name.first, last: auth.name.last },
+				name: {
+					first: auth.name.first ?? "",
+					last: auth.name.last ?? "",
+				},
 				email: auth.email ?? "",
 				role: auth.role ?? "Client",
 			}}
 			otherUser={mapUserMessageToChatBox(user)}
 			token={token || ""}
-		/>
-	);
+		/>)
 };
 
 export default ChatBoxWrapper;

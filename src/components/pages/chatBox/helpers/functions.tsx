@@ -2,7 +2,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import { Dispatch, RefObject, SetStateAction } from "react";
 import { LocalMessage } from "../../../../interfaces/chat/localMessage";
-import { BaseMessage, BaseUser } from "../../../../interfaces/chat/chatUser";
+import { BaseUser } from "../../../../interfaces/chat/chatUser";
 import AccessTimeIcon from "@mui/icons-material/AccessTime"; // אופציונלי להודעה בשליחה
 import socket from "../../../../socket/globalSocket";
 import axios from "axios";
@@ -45,7 +45,7 @@ export const scrollToBottom = (
 export const sendMessage = async (
 	text: string,
 	currentUser: BaseUser,
-	otherUser: BaseMessage,
+	otherUser: BaseUser,
 	setInput: Dispatch<SetStateAction<string>>,
 	chatContainerRef: RefObject<HTMLDivElement | null>,
 	addMessageForUser: (userId: string, msg: LocalMessage) => void,

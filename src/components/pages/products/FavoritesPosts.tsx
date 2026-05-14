@@ -98,9 +98,9 @@ const FavoritesPosts: FunctionComponent = () => {
 						<Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={Post._id}>
 							<ProductCard
 								key={Post._id}
-								product={Post}
+								post={Post}
 								discountedPrice={Post.discount || 0}
-								setProductIdToUpdate={() => { }}
+								setPostIdToUpdate={() => { }}
 								onShowUpdateProductModal={() => { }}
 								openDeleteModal={() => { }}
 								setLoadedImages={() =>

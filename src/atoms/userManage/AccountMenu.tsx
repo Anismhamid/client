@@ -6,11 +6,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import {FunctionComponent, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {path} from "../../routes/routes";
-import {Typography, alpha, useTheme} from "@mui/material";
-import {useTranslation} from "react-i18next";
+import { FunctionComponent, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { path } from "../../routes/routes";
+import { Typography, alpha, useTheme } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import RoleType from "../../interfaces/UserType";
 import handleRTL from "../../locales/handleRTL";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
@@ -18,18 +18,18 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import LogoutIcon from "@mui/icons-material/Logout";
 import EmailIcon from "@mui/icons-material/Email";
-import {useUser} from "../../context/useUSer";
+import { useUser } from "../../context/useUSer";
 
 interface AccountMenuProps {
-	logout: Function;
+	logout: () => void;
 }
 
-const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
+const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
-	const {auth} = useUser();
+	const { auth } = useUser();
 	const navigate = useNavigate();
-	const {t} = useTranslation();
+	const { t } = useTranslation();
 	const theme = useTheme();
 	const direction = handleRTL();
 
@@ -57,7 +57,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 
 	return (
 		<>
-			<Box sx={{display: "flex", alignItems: "center"}}>
+			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<Tooltip title={t("account-management") || "Account Settings"}>
 					<IconButton
 						onClick={handleClick}
@@ -120,8 +120,8 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						},
 					},
 				}}
-				transformOrigin={{horizontal: "right", vertical: "top"}}
-				anchorOrigin={{horizontal: "right", vertical: "bottom"}}
+				transformOrigin={{ horizontal: "right", vertical: "top" }}
+				anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
 			>
 				{/* User Profile Section */}
 				<MenuItem
@@ -147,7 +147,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					>
 						{!auth?.image?.url && getUserInitials()}
 					</Avatar>
-					<Box sx={{ml: 2, overflow: "hidden"}}>
+					<Box sx={{ ml: 2, overflow: "hidden" }}>
 						<Typography
 							variant='subtitle1'
 							fontWeight={600}
@@ -195,7 +195,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					</Box>
 				</MenuItem>
 
-				<Divider sx={{my: 1, borderColor: "divider"}} />
+				<Divider sx={{ my: 1, borderColor: "divider" }} />
 
 				{/* Profile Link */}
 				<MenuItem
@@ -213,10 +213,10 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						},
 					}}
 				>
-					<ListItemIcon sx={{minWidth: 40}}>
-						<PersonOutlineIcon sx={{fontSize: 20, color: "text.secondary"}} />
+					<ListItemIcon sx={{ minWidth: 40 }}>
+						<PersonOutlineIcon sx={{ fontSize: 20, color: "text.secondary" }} />
 					</ListItemIcon>
-					<Typography variant='body2' sx={{color: "text.primary"}}>
+					<Typography variant='body2' sx={{ color: "text.primary" }}>
 						{t("accountMenu.profile") || "Profile"}
 					</Typography>
 				</MenuItem>
@@ -224,7 +224,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				{/* Messages Link */}
 				<Link
 					to={path.Messages}
-					style={{textDecoration: "none", color: "inherit"}}
+					style={{ textDecoration: "none", color: "inherit" }}
 				>
 					<MenuItem
 						onClick={handleClose}
@@ -238,17 +238,17 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 							},
 						}}
 					>
-						<ListItemIcon sx={{minWidth: 40}}>
-							<EmailIcon sx={{fontSize: 20, color: "text.secondary"}} />
+						<ListItemIcon sx={{ minWidth: 40 }}>
+							<EmailIcon sx={{ fontSize: 20, color: "text.secondary" }} />
 						</ListItemIcon>
-						<Typography variant='body2' sx={{color: "text.primary"}}>
+						<Typography variant='body2' sx={{ color: "text.primary" }}>
 							{t("accountMenu.messages") || "Messages"}
 						</Typography>
 					</MenuItem>
 				</Link>
 
 				{/* Admin Links */}
-				{isAdmin && <Divider sx={{my: 1, borderColor: "divider"}} />}
+				{isAdmin && <Divider sx={{ my: 1, borderColor: "divider" }} />}
 				<Typography
 					variant='caption'
 					sx={{
@@ -278,14 +278,14 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					>
 						<Link
 							to={path.AdminSettings}
-							style={{textDecoration: "none", color: "inherit"}}
+							style={{ textDecoration: "none", color: "inherit" }}
 						>
-							<ListItemIcon sx={{minWidth: 40}}>
+							<ListItemIcon sx={{ minWidth: 40 }}>
 								<SettingsIcon
-									sx={{fontSize: 20, color: "text.secondary"}}
+									sx={{ fontSize: 20, color: "text.secondary" }}
 								/>
 							</ListItemIcon>
-							<Typography variant='body2' sx={{color: "text.primary"}}>
+							<Typography variant='body2' sx={{ color: "text.primary" }}>
 								{t("accountMenu.settings") || "Settings"}
 							</Typography>
 						</Link>
@@ -306,14 +306,14 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 					>
 						<Link
 							to={path.WebSiteAdmins}
-							style={{textDecoration: "none", color: "inherit"}}
+							style={{ textDecoration: "none", color: "inherit" }}
 						>
-							<ListItemIcon sx={{minWidth: 40}}>
+							<ListItemIcon sx={{ minWidth: 40 }}>
 								<DashboardIcon
-									sx={{fontSize: 20, color: "text.secondary"}}
+									sx={{ fontSize: 20, color: "text.secondary" }}
 								/>
 							</ListItemIcon>
-							<Typography variant='body2' sx={{color: "text.primary"}}>
+							<Typography variant='body2' sx={{ color: "text.primary" }}>
 								{t("إحصائيات المتجر") || "Store Statistics"}
 							</Typography>
 						</Link>
@@ -333,19 +333,19 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 				>
 					<Link
 						to={path.FeaturedAdsDashboard}
-						style={{textDecoration: "none", color: "inherit"}}
+						style={{ textDecoration: "none", color: "inherit" }}
 					>
-						<ListItemIcon sx={{minWidth: 40}}>
-							<DashboardIcon sx={{fontSize: 20, color: "text.secondary"}} />
+						<ListItemIcon sx={{ minWidth: 40 }}>
+							<DashboardIcon sx={{ fontSize: 20, color: "text.secondary" }} />
 						</ListItemIcon>
-						<Typography variant='body2' sx={{color: "text.primary"}}>
+						<Typography variant='body2' sx={{ color: "text.primary" }}>
 							{t("Ads Dashboard") || "Ads Dashboard"}
 						</Typography>
 					</Link>
 				</MenuItem>
 
 				{/* Logout */}
-				<Divider sx={{my: 1, borderColor: "divider"}} />
+				<Divider sx={{ my: 1, borderColor: "divider" }} />
 				<MenuItem
 					onClick={() => {
 						handleClose();
@@ -361,12 +361,12 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({logout}) => {
 						},
 					}}
 				>
-					<ListItemIcon sx={{minWidth: 40}}>
-						<LogoutIcon sx={{fontSize: 20, color: "error.main"}} />
+					<ListItemIcon sx={{ minWidth: 40 }}>
+						<LogoutIcon sx={{ fontSize: 20, color: "error.main" }} />
 					</ListItemIcon>
 					<Typography
 						variant='body2'
-						sx={{color: "error.main", fontWeight: 600}}
+						sx={{ color: "error.main", fontWeight: 600 }}
 					>
 						{t("accountMenu.logout") || "Logout"}
 					</Typography>
