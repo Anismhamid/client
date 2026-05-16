@@ -201,6 +201,8 @@ const Home: FunctionComponent = () => {
 					py: { xs: 4, md: 6 },
 					position: "relative",
 					overflow: "hidden",
+					background: "linear-gradient(135deg, #205fd3 0%, #09316d 100%)",
+
 				}}
 			>
 				{/* Animated Background Elements */}
@@ -242,6 +244,7 @@ const Home: FunctionComponent = () => {
 						width: "100%",
 						maxWidth: "100%",
 						margin: "0 auto",
+
 					}}
 				>
 					<motion.div
@@ -418,11 +421,10 @@ const Home: FunctionComponent = () => {
 								</motion.div>
 							)}
 						</Box>
-
 						<Container>
 							<AnimatePresence mode='wait'>
 								{visibleProducts.length > 0 ? (
-									<Grid container spacing={1} sx={{ px: { xs: 1, md: 2 } }}>
+									<Grid container spacing={3}>
 										{visibleProducts.map((product) => {
 											const discountedPrice = product.sale
 												? product.price -
@@ -431,9 +433,10 @@ const Home: FunctionComponent = () => {
 												100
 												: product.price;
 
-											return (
+											return (<>
 												<Grid
-													size={{ xs: 12,sm:4, md: 6, lg: 3 }}
+													sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50%", mx: "auto" }}
+													size={{ xs: 12 }}
 													key={product._id}
 												>
 													<motion.div
@@ -471,7 +474,8 @@ const Home: FunctionComponent = () => {
 														/>
 													</motion.div>
 												</Grid>
-											);
+
+											</>);
 										})}
 									</Grid>
 								) : (
@@ -802,19 +806,6 @@ const Home: FunctionComponent = () => {
 					description={`هل أنت متأكد من رغبتك في حذف المنتج "${productToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
 					handleDelete={() => handleDelete(productToDelete)}
 				/>
-
-				{/* Global Animations */}
-				<style>{`
-					@keyframes float {
-						0%, 100% { transform: translateY(0) rotate(0deg); }
-						50% { transform: translateY(-20px) rotate(5deg); }
-					}
-					
-					@keyframes shimmer {
-						0% { transform: translateX(-100%); }
-						100% { transform: translateX(100%); }
-					}
-				`}</style>
 			</Box>
 			<AddProductModal show={onShowAddModal} onHide={hideAddProductModal} />
 		</>
