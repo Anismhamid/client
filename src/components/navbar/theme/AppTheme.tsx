@@ -251,6 +251,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 								</Link>
 							</motion.div>
 
+
+
+
 							{/* Desktop Navigation */}
 							<Box
 								component='ul'

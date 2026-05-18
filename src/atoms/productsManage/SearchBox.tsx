@@ -44,7 +44,7 @@ const SearchBox: FunctionComponent<SearchBoxProps> = ({
 				onSubmit={(e) => e.preventDefault()}
 				sx={{
 					position: "sticky",
-					width: {xs: "85%", sm: 450}, // عرض أفضل للموبايل
+					width: {xs: "85%", sm: 300}, // عرض أفضل للموبايل
 					m: "auto",
 					mt: 5,
 					mb: 4,

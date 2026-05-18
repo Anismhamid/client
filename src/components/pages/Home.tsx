@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import DiscountsAndOffers from "./products/DiscountsAndOffers";
 import { useUser } from "../../context/useUSer";
-import { deletePost, getAllPosts } from "../../services/postsServices";
+import { deletePost } from "../../services/postsServices";
 import Loader from "../../atoms/loader/Loader";
 import {
 	Button,
@@ -9,7 +9,6 @@ import {
 	Box,
 	Typography,
 	useMediaQuery,
-	Alert,
 	Grid,
 	Container,
 } from "@mui/material";
@@ -29,6 +28,7 @@ import ChepNavigation from "../navbar/ChepNavigation";
 import AddProductModal from "../../atoms/productsManage/addAndUpdateProduct/CreatePostModal";
 import PostCard from "./products/PostsCard";
 import { Posts } from "../../interfaces/Posts";
+import { useProducts } from "../../hooks/useProducts";
 
 
 /**
@@ -39,7 +39,7 @@ import { Posts } from "../../interfaces/Posts";
 const Home: FunctionComponent = () => {
 	const { auth } = useUser();
 	const { t } = useTranslation();
-	const [posts, setPosts] = useState<Posts[]>([]);
+	// const [posts, setPosts] = useState<Posts[]>([]);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [loading, setLoading] = useState<boolean>(true);
 	const [visibleProducts, setVisibleProducts] = useState<Posts[]>([]);
@@ -55,7 +55,7 @@ const Home: FunctionComponent = () => {
 	const navigate = useNavigate();
 	const isMobile = useMediaQuery("(max-width:768px)");
 	const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
-
+	const { posts } = useProducts();
 	const showAddProductModal = () => setOnShowAddModal(true);
 	const hideAddProductModal = () => setOnShowAddModal(false);
 
@@ -65,57 +65,38 @@ const Home: FunctionComponent = () => {
 	};
 	const closeDeleteModal = () => setShowDeleteModal(false);
 
-	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
-	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
+	const openUpdatePostModal = () => setOnShowUpdateProductModal(true);
+	const closeUpdatePostModal = () => setOnShowUpdateProductModal(false);
 
 	const refreshAfterCange = () => setRefresh(!refresh);
 
-	const handleToggleLike = (productId: string, liked: boolean) => {
+	const handleToggleLike = (productId: string) => {
 		if (!auth?._id) return;
 
 		const userId = auth._id;
 
-		setPosts((prev) =>
-			prev.map((p) =>
-				p._id === productId
-					? {
-						...p,
-						likes: liked
-							? [...(p.likes || []), userId]
-							: (p.likes || []).filter((id: string) => id !== userId),
-					}
-					: p,
-			),
-		);
-
 		setVisibleProducts((prev) =>
-			prev.map((p) =>
-				p._id === productId
-					? {
-						...p,
-						likes: liked
-							? [...(p.likes || []), userId]
-							: (p.likes || []).filter((id: string) => id !== userId),
-					}
-					: p,
-			),
+			prev.map((p) => {
+				if (p._id !== productId) return p;
+
+				const isLiked = p.likes?.includes(userId);
+
+				return {
+					...p,
+					likes: isLiked
+						? p.likes?.filter((id) => id !== userId)
+						: [...(p.likes || []), userId],
+				};
+			})
 		);
 	};
 
+
 	useEffect(() => {
-		getAllPosts()
-			.then((products) => {
-				const safeProducts = Array.isArray(products) ? products : [];
-				setPosts(safeProducts);
-				setVisibleProducts(safeProducts.slice(0, 16));
-				window.scrollTo(0, 0);
-			})
-			.catch(() => {
-				setPosts([]);
-				setVisibleProducts([]);
-			})
-			.finally(() => setLoading(false));
-	}, [refresh]);
+		const safeProducts = posts;
+		setVisibleProducts(safeProducts.slice(0, visibleCount));
+		setLoading(false);
+	}, [visibleCount, posts]);
 
 	const filteredProducts = useMemo(() => {
 		if (!Array.isArray(posts)) return [];
@@ -129,8 +110,7 @@ const Home: FunctionComponent = () => {
 		const categoryKeys = productsAndCategories.map((cat) => t(cat.labelKey));
 		if (categoryKeys.includes(searchQuery)) {
 			return posts.filter((product) =>
-				product.category?.includes(searchQuery.toLowerCase()),
-			);
+				product.category?.toLowerCase().includes(searchQuery.toLowerCase()));
 		}
 
 		// بحث عام
@@ -140,10 +120,10 @@ const Home: FunctionComponent = () => {
 			const cartegory = product.category || "";
 
 			return (
-				productName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				productName.includes(searchQuery) ||
 				(searchQuery && productPrice.toString().includes(searchQuery)) ||
 				(searchQuery &&
-					cartegory.toLowerCase().includes(searchQuery.toLowerCase()))
+					cartegory.includes(searchQuery))
 			);
 		});
 	}, [posts, searchQuery, t]);
@@ -156,16 +136,26 @@ const Home: FunctionComponent = () => {
 					setVisibleCount(prev => prev + 12);
 				}
 			},
-			{ threshold: 0.3, rootMargin: "100px" } // أضف rootMargin
+			{ threshold: 0.3, rootMargin: "100px" }
 		);
 		observer.observe(observerRef.current);
 		return () => observer.disconnect();
-	}, [filteredProducts.length, visibleCount, searchQuery]); // قلل dependencies
+	}, [filteredProducts.length, visibleCount, searchQuery]);
+
+	useEffect(() => {
+		setVisibleProducts(filteredProducts.slice(0, visibleCount));
+	}, [filteredProducts, visibleCount]);
+
+	useEffect(() => {
+		setVisibleCount(16);
+	}, [searchQuery]);
 
 	const handleDelete = (product_name: string) => {
 		deletePost(product_name)
 			.then(() => {
-				setPosts((p) => p.filter((p) => p.product_name !== product_name));
+				// setPosts((prev) =>
+				// 	prev.filter((item) => item.product_name !== product_name)
+				// );
 			})
 			.catch((err) => {
 				console.error(err);
@@ -184,16 +174,6 @@ const Home: FunctionComponent = () => {
 
 	return (
 		<>
-			<title>
-				{t("home")} | {t("webPageName")}
-			</title>
-			<meta
-				name='description'
-				content={
-					"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
-				}
-			/>
-			<link rel='canonical' href={currentUrl} />
 
 			<Box
 				className='container-fluid'
@@ -204,7 +184,17 @@ const Home: FunctionComponent = () => {
 					background: "linear-gradient(135deg, #205fd3 0%, #09316d 100%)",
 
 				}}
-			>
+			>	<title>
+					{t("home")} | {t("webPageName")}
+				</title>
+				<meta
+					name='description'
+					content={
+						"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
+					}
+				/>
+				<link rel='canonical' href={currentUrl} />
+
 				{/* Animated Background Elements */}
 				<Box
 					sx={{
@@ -261,7 +251,7 @@ const Home: FunctionComponent = () => {
 								textShadow: "0 4px 8px rgba(0,0,0,0.1)",
 								animation: "float 8s ease-in-out infinite 0.5s",
 								color: "#1a237e",
-								direction: { diriction },
+								direction: diriction,
 								display: "flex",
 								alignItems: "center",
 								justifyContent: "center",
@@ -342,34 +332,7 @@ const Home: FunctionComponent = () => {
 
 			<Box dir={diriction} component='main'>
 				{/* Hero Section with Gradient */}
-				<Alert
-					component='section'
-					role='region'
-					aria-labelledby='products-search-info'
-					sx={{
-						textAlign: "center",
-						mt: 3,
-						p: 3,
-						borderRadius: 3,
-					}}
-					variant='standard'
-					color='warning'
-				>
-					<Typography
-						id='products-search-info'
-						component='h2'
-						variant='h6'
-						fontWeight='bold'
-						gutterBottom
-					>
-						ابحث عن أي منتج بسهولة
-					</Typography>
 
-					<Typography component='p' variant='body2'>
-						اكتب اسم المنتج الذي تبحث عنه، ودعنا نعرض لك أفضل العروض المتوفرة
-						من مستخدمين على موقع صفقة.
-					</Typography>
-				</Alert>
 				{!searchQuery && <DiscountsAndOffers />}
 				{/* Search and Filter Section */}
 				<SearchBox
@@ -433,12 +396,9 @@ const Home: FunctionComponent = () => {
 												100
 												: product.price;
 
-											return (<>
-												<Grid
-													sx={{ display: "flex", alignItems: "center", justifyContent: "center", width: "50%", mx: "auto" }}
-													size={{ xs: 12 }}
-													key={product._id}
-												>
+											return (
+												<Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product._id}>
+
 													<motion.div
 														initial={{ opacity: 0, y: 20 }}
 														animate={{ opacity: 1, y: 0 }}
@@ -458,7 +418,7 @@ const Home: FunctionComponent = () => {
 																setProductIdToUpdate
 															}
 															onShowUpdateProductModal={
-																onShowUpdateProductModal
+																openUpdatePostModal
 															}
 															openDeleteModal={
 																openDeleteModal
@@ -472,10 +432,10 @@ const Home: FunctionComponent = () => {
 																handleToggleLike
 															}
 														/>
+
 													</motion.div>
 												</Grid>
-
-											</>);
+											);
 										})}
 									</Grid>
 								) : (
@@ -769,7 +729,7 @@ const Home: FunctionComponent = () => {
 									variant='contained'
 									size='large'
 									onClick={() => navigate(path.Contact)}
-									startIcon='📞'
+									startIcon={<span>📞</span>}
 									sx={{
 										background: "white",
 										color: "#6a11cb",
@@ -797,7 +757,7 @@ const Home: FunctionComponent = () => {
 					refresh={refreshAfterCange}
 					postId={productIdToUpdate}
 					show={showUpdateProductModal}
-					onHide={() => onHideUpdateProductModal()}
+					onHide={() => closeUpdatePostModal()}
 				/>
 				<AlertDialogs
 					show={showDeleteModal}
