@@ -64,8 +64,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		setPostIdToUpdate,
 		onShowUpdateProductModal,
 		openDeleteModal,
-		// setLoadedImages,
-		// loadedImages,
 		onLikeToggle,
 		updateProductInList,
 	}) => {
@@ -187,17 +185,19 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 					>
 						<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
 							<Avatar
-								src={post.seller?.imageUrl}
+								src={post.seller?.user?.image?.url || "user.png" }
 								alt={post.seller?.name || "بائع"}
 								sx={{
 									width: 48,
 									height: 48,
 									border: "2px solid #e4e6eb",
 									"& img": {
-										objectFit: "cover",
-										transform: "scale(2)", // تكبير الصورة داخل الإطار
+										objectFit: "cover"
+
 									},
 									"&:hover": {
+										transform: "scale(1.05)",
+										transition: "transform 0.3s ease-in-out",
 										borderColor: theme.palette.primary.main,
 									},
 								}}
@@ -662,21 +662,21 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 							>
 								تواصل
 							</Button>
-							{post.condition && (
+							{post.isNew && (
 								<Chip
 									label={
-										post.condition === "new"
+										post.isNew === true
 											? "🆕 جديد"
 											: "🔄 مستعمل"
 									}
 									size='small'
 									sx={{
 										bgcolor:
-											post.condition === "new"
+											post.isNew === true
 												? "#e8f5e9"
 												: "#fff3e0",
 										color:
-											post.condition === "new"
+											post.isNew === true
 												? "#2e7d32"
 												: "#f57c00",
 										height: 24,

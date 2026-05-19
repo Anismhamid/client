@@ -174,7 +174,26 @@ const Home: FunctionComponent = () => {
 
 	return (
 		<>
+			<title>
+				{t("home")} | {t("webPageName")}
+			</title>
+			<meta
+				name='description'
+				content="صفقة منصة إلكترونية لبيع وشراء المنتجات الجديدة والمستعملة بسهولة وأمان"
 
+			/>
+
+			<link rel='canonical' href={currentUrl} />
+
+			<meta
+				property="og:title"
+				content="صفقة | سوق إلكتروني لبيع وشراء المنتجات"
+			/>
+
+			<meta
+				property="og:description"
+				content="بيع وشراء المنتجات بسهولة وأمان"
+			/>
 			<Box
 				className='container-fluid'
 				sx={{
@@ -184,16 +203,7 @@ const Home: FunctionComponent = () => {
 					background: "linear-gradient(135deg, #205fd3 0%, #09316d 100%)",
 
 				}}
-			>	<title>
-					{t("home")} | {t("webPageName")}
-				</title>
-				<meta
-					name='description'
-					content={
-						"تسوق جميع المنتجات وعروض خاصة مع موقع صفقه تجربة تسوق مريحة مناسبة"
-					}
-				/>
-				<link rel='canonical' href={currentUrl} />
+			>
 
 				{/* Animated Background Elements */}
 				<Box
@@ -342,8 +352,16 @@ const Home: FunctionComponent = () => {
 				/>
 
 				<main >
+					<Typography
+						component="h1"
+						variant="h1"
+						sx={{ marginBlock: 10, fontSize: 26, fontWeight: "bold", textAlign: "center", color: "primary.main", textShadow: "0 2px 4px rgba(0,0,0,0.1)", fontFamily: "Cairo, sans-serif" }}
+					>
+						صفقة - سوق إلكتروني لبيع وشراء المنتجات
+					</Typography>
 					{/* Products Grid */}
 					<Box>
+
 						{/* Results Count */}
 						<Box sx={{ mb: 3, textAlign: "center" }}>
 							{searchQuery && (
