@@ -15,7 +15,6 @@ import RoleType from "../../../interfaces/UserType";
 import { Box, Button, Container, Grid, Typography, useTheme, alpha } from "@mui/material";
 import AlertDialogs from "../../../atoms/toasts/Sweetalert";
 import { useTranslation } from "react-i18next";
-// import socket from "../../../socket/globalSocket";
 import ProductCard from "./PostsCard";
 import { generateCategoryJsonLd } from "../../../../utils/structuredData";
 import JsonLd from "../../../../utils/JsonLd";
@@ -50,13 +49,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	const { t } = useTranslation();
 	const theme = useTheme();
 
-	// Update product
 	const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
 	const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
 	const refreshAfterChange = () => setRefresh(!refresh);
 
-	// DeleteModal
 	const openDeleteModal = (productId: string) => {
 		setProductToDelete(productId);
 		setShowDeleteModal(true);
@@ -82,13 +79,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 		});
 	}, [products, searchQuery]);
 
-	// Infinite scroll with better UX
 	const handleShowMore = useCallback(() => {
 		if (isLoadingMore || visibleProducts.length >= filteredProducts.length) return;
 
 		setIsLoadingMore(true);
 
-		// Simulate loading delay for better UX
 		setTimeout(() => {
 			const nextVisibleCount = Math.min(
 				visibleProducts.length + 12,
@@ -100,7 +95,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 		}, 300);
 	}, [isLoadingMore, visibleProducts.length, filteredProducts]);
 
-	// Setup intersection observer
 	useEffect(() => {
 		if (!loadMoreRef.current || visibleProducts.length >= filteredProducts.length)
 			return;
@@ -161,7 +155,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 		);
 	};
 
-	// Delete product
 	const handleDelete = (productId: string) => {
 		deletePost(productId)
 			.then(() => {
@@ -169,7 +162,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					prevProducts.filter((p) => p._id !== productId),
 				);
 				setVisibleProducts((prev) => prev.filter((p) => p._id !== productId));
-				// refreshAfterChange();
 			})
 			.catch((err) => {
 				console.error(err);
@@ -177,12 +169,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 			});
 	};
 
-	// Fetch products by category
 	useEffect(() => {
 		getpostsByCategory(category)
 			.then((res) => {
 				setProducts(res);
-				setVisibleProducts(res.slice(0, 12)); // Start with 12 products
+				setVisibleProducts(res.slice(0, 12));
 			})
 			.catch((err) => {
 				console.error(err);
@@ -194,6 +185,11 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	const isAdmin = auth?.role === RoleType.Admin;
 	const isModerator = auth?.role === RoleType.Moderator;
 	const canEdit = isAdmin || isModerator;
+
+	// FIX: Consistent key casing — no more manual toUpperCase() hack
+	const categoryTitle = t(`categories.${category}.heading`);
+	const categoryDescription = t(`categories.${category}.description`);
+	const currentUrl = `${window.location.origin}/category/${category}`;
 
 	if (loading) {
 		return (
@@ -213,6 +209,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 	if (!loading && products.length === 0)
 		return (
 			<main>
+				{/* React 19: these tags are hoisted to <head> automatically */}
+				<title>{categoryTitle} | صفقة</title>
+				<link rel="canonical" href={currentUrl} />
+				<meta name="description" content={categoryDescription} />
 				<Container maxWidth='lg' sx={{ textAlign: "center" }}>
 					<Typography variant='h5' color='text.secondary' sx={{ mb: 3 }}>
 						لم يتم العثور على أي منتجات في هذه الفئة
@@ -235,17 +235,38 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 		);
 
 	const generateCategory = generateCategoryJsonLd(category, products);
-	const currentUrl = `${window.location.origin}/category/${category}`;
 
 	return (
 		<>
+			{/* FIX 1: React 19 hoists these to <head> natively — no library needed */}
+			<title>{categoryTitle} | صفقة</title>
+			<link rel="canonical" href={currentUrl} />
+			<meta name="description" content={categoryDescription} />
+
 			<JsonLd data={generateCategory} />
-			<title>{t(`categories.${category}.heading`)} | صفقة</title>
-			<link rel='canonical' href={currentUrl} />
-			<meta name='description' content={t(`categories.${category}.description`)} />
 
-			{/* Sticky Search Bar */}
+			{/* FIX 2: h1 always visible — visually hidden on mobile via clip trick,
+			    still readable by crawlers and screen readers */}
+			<Typography
+				component="h1"
+				sx={{
+					position: { xs: "absolute" },
+					width: { xs: "1px", md: "auto" },
+					height: { xs: "1px", md: "auto" },
+					overflow: { xs: "hidden", md: "visible" },
+					clip: { xs: "rect(0,0,0,0)", md: "unset" },
+					whiteSpace: { xs: "nowrap", md: "normal" },
+					color: theme.palette.primary.main,
+					fontWeight: 600,
+					fontSize: "1.25rem",
+					px: { md: 2 },
+					py: { md: 1 },
+				}}
+			>
+				{categoryTitle}
+			</Typography>
 
+			{/* Search Bar */}
 			<Box
 				sx={{
 					position: "static",
@@ -258,7 +279,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 					<SearchBox
 						searchQuery={searchQuery}
 						setSearchQuery={setSearchQuery}
-						text={t("")}
+						text={t(`categories.${category}.searchPlaceholder`)}
 					/>
 				</Box>
 				<Container maxWidth='lg'>
@@ -269,7 +290,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 							gap: 2,
 						}}
 					>
+						{/* Visible decorative heading (aria-hidden since real h1 is above) */}
 						<Typography
+							aria-hidden="true"
 							variant='h6'
 							sx={{
 								color: theme.palette.primary.main,
@@ -277,14 +300,14 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 								display: { xs: "none", md: "block" },
 							}}
 						>
-							{t(`categories.${category}.heading`)}
+							{categoryTitle}
 						</Typography>
 					</Box>
 				</Container>
 			</Box>
+
 			<Box component='main'>
 				<Container maxWidth='lg'>
-					{/* Results Count */}
 					<Typography
 						variant='body2'
 						color='text.secondary'
@@ -294,7 +317,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 						{filteredProducts.length} {t("common.countOfPosts")}
 					</Typography>
 
-					{/* Products Grid */}
 					{filteredProducts.length > 0 ? (
 						<Grid container spacing={2}>
 							{visibleProducts.map((post: Posts) => {
@@ -317,12 +339,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 												post={post}
 												discountedPrice={discountedPrice}
 												canEdit={canEdit}
-												setPostIdToUpdate={
-													setPostIdToUpdate
-												}
-												onShowUpdateProductModal={
-													onShowUpdateProductModal
-												}
+												setPostIdToUpdate={setPostIdToUpdate}
+												onShowUpdateProductModal={onShowUpdateProductModal}
 												openDeleteModal={openDeleteModal}
 												setLoadedImages={setLoadedImages}
 												loadedImages={loadedImages}
@@ -331,16 +349,12 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 												updateProductInList={(updatedPost) => {
 													setProducts((prev) =>
 														prev.map((p) =>
-															p._id === updatedPost._id
-																? updatedPost
-																: p,
+															p._id === updatedPost._id ? updatedPost : p,
 														),
 													);
 													setVisibleProducts((prev) =>
 														prev.map((p) =>
-															p._id === updatedPost._id
-																? updatedPost
-																: p,
+															p._id === updatedPost._id ? updatedPost : p,
 														),
 													);
 												}}
@@ -370,7 +384,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 						</Box>
 					)}
 
-					{/* Load More Area */}
 					{visibleProducts.length < filteredProducts.length && (
 						<Box
 							ref={loadMoreRef}
@@ -394,10 +407,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 										borderColor: theme.palette.primary.main,
 										color: theme.palette.primary.main,
 										"&:hover": {
-											bgcolor: alpha(
-												theme.palette.primary.main,
-												0.04,
-											),
+											bgcolor: alpha(theme.palette.primary.main, 0.04),
 											borderColor: theme.palette.primary.dark,
 										},
 									}}
@@ -408,7 +418,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 						</Box>
 					)}
 
-					{/* End of Results */}
 					{visibleProducts.length === filteredProducts.length &&
 						filteredProducts.length > 0 && (
 							<Box sx={{ py: 4, textAlign: "center" }}>

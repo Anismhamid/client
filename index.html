@@ -1,69 +1,94 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-	<head>
-		<meta charset="UTF-8" />
-		<meta
-			name="google-site-verification"
-			content="AegTwBInoiy2VjxNYwO2t5oPe-4gwrgZYiGyIVvqZUI"
-		/>
-		<link rel="icon" type="image/svg+xml" href="/d3.png" style="width:200px;" />
-		<link rel="apple-touch-icon" href="/myLogo2.png">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="author" content="صفقه" />
-		<meta name="robots" content="index, follow" />
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<!-- البيانات الوصفية الأساسية -->
-		<meta
-			name="description"
-			content="منصة بيع وشراء إلكترونية تربط بين المستخدمين لعرض وشراء المنتجات بسهولة وأمان، مع تواصل مباشر وتجربة استخدام مريحة."
-		/>
+        <!-- Verification -->
+        <meta
+            name="google-site-verification"
+            content="AegTwBInoiy2VjxNYwO2t5oPe-4gwrgZYiGyIVvqZUI"
+        />
 
-		<meta
-			name="keywords"
-			content="بيع وشراء, سوق إلكتروني, منصة بيع, بيع بين المستخدمين, شراء منتجات, Marketplace, أم الفحم, بيع مستعمل, بيع جديد, عروض مستخدمين"
-		/>
+        <!-- Icons -->
+        <link rel="icon" type="image/svg+xml" href="/d3.png" />
+        <link rel="apple-touch-icon" href="/myLogo2.png" />
 
-		<!-- Open Graph / Facebook -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://client-qqq1.vercel.app/" />
-		<meta property="og:title" content="صفقه | منصة بيع بين المستخدمين" />
-		<meta
-			property="og:description"
-			content="منصة إلكترونية تربط بين البائعين والمشترين لعرض وشراء المنتجات بسهولة وأمان، مع تواصل مباشر بين المستخدمين."
-		/>
-		<meta property="og:image" content="https://client-qqq1.vercel.app/myLogo2.png" />
-		<meta property="og:site_name" content="صفقة" />
+        <!-- FIX: theme-color for mobile browsers -->
+        <meta name="theme-color" content="#1976d2" />
 
-		<!-- Twitter -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:url" content="https://client-qqq1.vercel.app/" />
-		<meta name="twitter:title" content="صفقه | منصة بيع بين المستخدمين" />
-		<meta
-			name="twitter:description"
-			content="سوق إلكتروني يتيح للمستخدمين بيع وشراء المنتجات مباشرة، بسهولة وأمان."
-		/>
-		<meta name="twitter:image" content="https://client-qqq1.vercel.app/myLogo2.png" />
+        <!-- Core meta -->
+        <meta name="author" content="صفقة" />
+        <meta name="robots" content="index, follow" />
 
-		<title>صفقه | بيع وشراء بين المستخدمين</title>
-		<meta name="title" content=" صفقه " />
-	</head>
-	<body>
-		<div id="root" dir="rtl"></div>
-		<script type="module" src="/src/main.tsx"></script>
+        <!-- FIX: consistent brand spelling (صفقة everywhere) -->
+        <title>صفقة | بيع وشراء بين المستخدمين</title>
 
-		<!-- نص احتياطي لمحركات البحث عندما JavaScript معطل -->
-		<noscript>
-			<div
-				style="text-align: center; padding: 50px; font-family: Arial, sans-serif"
-			>
-				<h1>صفقة | منصة بيع وشراء بين المستخدمين</h1>
-				<h2>اشترِ وبِع المنتجات مباشرة مع مستخدمين آخرين</h2>
-				<p>
-					نحن منصة إلكترونية تربط بين البائعين والمشترين لعرض وشراء المنتجات
-					بسهولة وأمان.
-				</p>
-				<p>يرجى تفعيل JavaScript لتصفح الموقع.</p>
-			</div>
-		</noscript>
-	</body>
+        <meta
+            name="description"
+            content="منصة بيع وشراء إلكترونية تربط بين المستخدمين لعرض وشراء المنتجات بسهولة وأمان، مع تواصل مباشر وتجربة استخدام مريحة."
+        />
+
+        <meta
+            name="keywords"
+            content="بيع وشراء, سوق إلكتروني, منصة بيع, بيع بين المستخدمين, شراء منتجات, Marketplace, أم الفحم, بيع مستعمل, بيع جديد, عروض مستخدمين"
+        />
+
+        <!-- Open Graph / Facebook -->
+        <!-- FIX: update og:url to your real production domain before going live -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://client-qqq1.vercel.app/" />
+        <meta property="og:title" content="صفقة | منصة بيع بين المستخدمين" />
+        <meta
+            property="og:description"
+            content="منصة إلكترونية تربط بين البائعين والمشترين لعرض وشراء المنتجات بسهولة وأمان، مع تواصل مباشر بين المستخدمين."
+        />
+        <meta
+            property="og:image"
+            content="https://client-qqq1.vercel.app/myLogo2.png"
+        />
+        <meta property="og:site_name" content="صفقة" />
+        <!-- FIX: added missing og:locale for Arabic -->
+        <meta property="og:locale" content="ar_SA" />
+        <meta property="og:locale" content="he_IL" />
+        <meta property="og:locale" content="en_US" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://client-qqq1.vercel.app/" />
+        <meta name="twitter:title" content="صفقة | منصة بيع بين المستخدمين" />
+        <meta
+            name="twitter:description"
+            content="سوق إلكتروني يتيح للمستخدمين بيع وشراء المنتجات مباشرة، بسهولة وأمان."
+        />
+        <meta
+            name="twitter:image"
+            content="https://client-qqq1.vercel.app/myLogo2.png"
+        />
+
+        <!-- FIX: removed non-standard <meta name="title"> tag -->
+    </head>
+    <body>
+        <div id="root" dir="rtl"></div>
+        <script type="module" src="/src/main.tsx"></script>
+
+        <!-- نص احتياطي لمحركات البحث عندما JavaScript معطل -->
+        <noscript>
+            <div
+                style="
+                    text-align: center;
+                    padding: 50px;
+                    font-family: Arial, sans-serif;
+                "
+            >
+                <h1>صفقة | منصة بيع وشراء بين المستخدمين</h1>
+                <h2>اشترِ وبِع المنتجات مباشرة مع مستخدمين آخرين</h2>
+                <p>
+                    نحن منصة إلكترونية تربط بين البائعين والمشترين لعرض وشراء
+                    المنتجات بسهولة وأمان.
+                </p>
+                <p>يرجى تفعيل JavaScript لتصفح الموقع.</p>
+            </div>
+        </noscript>
+    </body>
 </html>
