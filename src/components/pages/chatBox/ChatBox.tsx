@@ -507,7 +507,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 									</Box>
 								</Paper>
 								<Typography variant='caption' sx={{ color: "text.secondary", flex: "flex-start" }}>
-									{String(formatMessageTime(msg?.createdAt ?? new Date()))}
+							{String(formatMessageTime(msg?.createdAt ? new Date(msg.createdAt) : new Date()))}
 								</Typography>
 							</Box>
 						);

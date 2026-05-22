@@ -23,34 +23,35 @@
 // }
 
 export interface BaseUser {
-	_id?: string;
-	name?: {
-		first?: string;
-		last?: string;
-	};
-	email?: string;
-	role?: string;
-	image?: { url: string };
+    _id?: string;
+    name?: {
+        first?: string;
+        last?: string;
+    };
+    email?: string;
+    role?: string;
+    image?: { url: string };
 }
 
 export interface BaseMessage {
-	_id: string;
-	message?: string;
+    _id: string;
+    message?: string;
 
-	from?: BaseUser;
-	to?: BaseUser;
+    from?: BaseUser;
+    to?: BaseUser;
 
-	createdAt?: Date;
+    createdAt: Date | string;
+    
 
-	status?: "sent" | "delivered" | "seen";
+    status?: 'sent' | 'delivered' | 'seen';
 
-	warning?: boolean;
-	isImportant?: boolean;
+    warning?: boolean;
+    isImportant?: boolean;
 
-	replyTo?: BaseMessage | null;
+    replyTo?: BaseMessage | null;
 
-	tempId?: string;
+    tempId?: string;
 
-	fileUrl?: string;
-	fileType?: string;
+    fileUrl?: string;
+    fileType?: string;
 }

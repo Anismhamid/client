@@ -27,7 +27,7 @@
     "webPageName": "safqa",
     "bestOffers": "The best deals in one place",
     "browse-posts": "Browse posts",
-    "create-post": "Create post",
+    "create-post": "New post",
     "allRightsReserved": "All rights reserved.",
     "help": "Help",
     "favorites": "favorites",
@@ -82,6 +82,8 @@
         "error": "Login failed",
         "googleError": "Google login error: {{message}}"
     },
+        "description": "Safqa - An online marketplace for buying and selling products",
+
     "register": {
         "title": "יצירת חשבון חדש",
         "subtitle": "הצטרפו לקהילת ספכה והתחילו את המסע העסקי שלכם היום",

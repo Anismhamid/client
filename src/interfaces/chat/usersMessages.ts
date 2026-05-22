@@ -12,6 +12,7 @@ export interface User {
 }
 
 export interface UserMessage {
+	updatedAt: Date | string;
     first: string;
     last: string;
     _id?: string;

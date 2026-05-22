@@ -1,354 +1,377 @@
 import {
-	Grid,
-	CardContent,
-	CardMedia,
-	Stack,
-	IconButton,
-	Box,
-	Card,
-	Chip,
-	Typography,
-	useTheme,
-	Button,
-	Rating,
-} from "@mui/material";
-import { FunctionComponent, useState } from "react";
-import TabPanel from "./TabPanel";
-import { } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+    Grid,
+    CardContent,
+    CardMedia,
+    Stack,
+    IconButton,
+    Box,
+    Card,
+    Chip,
+    Typography,
+    useTheme,
+    Button,
+    Rating,
+} from '@mui/material';
+import { FunctionComponent, useState } from 'react';
+import TabPanel from './TabPanel';
+import {} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
-	LocalOffer,
-	Favorite,
-	FavoriteBorder,
-	Share,
-	Storefront,
-} from "@mui/icons-material";
-import { Posts } from "../../../../interfaces/Posts";
-import { User } from "../../../../interfaces/usersMessages";
-import { productsPathes } from "../../../../routes/routes";
-import { useTranslation } from "react-i18next";
-import { formatPrice } from "../../../../helpers/dateAndPriceFormat";
-import LikeButton from "../../../../atoms/like/LikeButton";
-import { showSuccess } from "../../../../atoms/toasts/ReactToast";
-import PromotionCard from "../../../pages/products/PromotionCard";
-import { getAverageRating } from "../../../pages/products/helpers/helperFunctions";
+    LocalOffer,
+    Favorite,
+    FavoriteBorder,
+    Share,
+    Storefront,
+} from '@mui/icons-material';
+import { Posts } from '../../../../interfaces/Posts';
+import { User } from '../../../../interfaces/chat/usersMessages';
+import { productsPathes } from '../../../../routes/routes';
+import { useTranslation } from 'react-i18next';
+import { formatPrice } from '../../../../helpers/dateAndPriceFormat';
+import LikeButton from '../../../../atoms/like/LikeButton';
+import { showSuccess } from '../../../../atoms/toasts/ReactToast';
+import PromotionCard from '../../../pages/products/PromotionCard';
+import { getAverageRating } from '../../../pages/products/helpers/helperFunctions';
 
 interface ProductsTabProps {
-	tabValue: number;
-	products: Posts[];
-	user: User;
-	wishlist: Set<string>;
-	toggleWishlist: (id: string) => void;
+    tabValue: number;
+    products: Posts[];
+    user: User;
+    wishlist: Set<string>;
+    toggleWishlist: (id: string) => void;
 }
 
 const ProductsTab: FunctionComponent<ProductsTabProps> = ({
-	tabValue,
-	products,
-	user,
-	toggleWishlist,
-	wishlist,
+    tabValue,
+    products,
+    user,
+    toggleWishlist,
+    wishlist,
 }) => {
-	const theme = useTheme();
-	const { t } = useTranslation();
-	const navigate = useNavigate();
-	const [open, setOpen] = useState(false);
+    const theme = useTheme();
+    const { t } = useTranslation();
+    const navigate = useNavigate();
+    const [open, setOpen] = useState(false);
 
-	return (
-		<TabPanel value={tabValue} index={0}>
-			<Box mb={4}>
-				<Box
-					display='flex'
-					justifyContent='space-between'
-					alignItems='center'
-					m={3}
-				>
-					<Typography
-						variant='h5'
-						fontWeight='bold'
-						sx={{ position: "relative" }}
-					>
-						{t("shares")} {user.name?.first}
-						<Box
-							sx={{
-								position: "absolute",
-								bottom: -8,
-								left: 0,
-								width: 60,
-								height: 4,
-								background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-								borderRadius: 2,
-							}}
-						/>
-					</Typography>
-					<Chip
-						icon={<LocalOffer />}
-						label={`${products.length} منتج`}
-						color='primary'
-						variant='outlined'
-					/>
-				</Box>
+    return (
+        <TabPanel value={tabValue} index={0}>
+            <Box mb={4}>
+                <Box
+                    display='flex'
+                    justifyContent='space-between'
+                    alignItems='center'
+                    m={3}
+                >
+                    <Typography
+                        variant='h5'
+                        fontWeight='bold'
+                        sx={{ position: 'relative' }}
+                    >
+                        {t('shares')} {user.name?.first}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: -8,
+                                left: 0,
+                                width: 60,
+                                height: 4,
+                                background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                                borderRadius: 2,
+                            }}
+                        />
+                    </Typography>
+                    <Chip
+                        icon={<LocalOffer />}
+                        label={`${products.length} منتج`}
+                        color='primary'
+                        variant='outlined'
+                    />
+                </Box>
 
-				{products.length > 0 ? (
-					<Grid container spacing={3}>
-						{products.map((product, index) => (
-							<Grid size={{ xs: 12, sm: 6, md: 4 }} key={product._id}>
-								<motion.div
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{
-										duration: 0.3,
-										delay: index * 0.05,
-									}}
-								>
-									<Card
-										sx={{
-											height: "100%",
-											borderRadius: 3,
-											overflow: "hidden",
-											transition: "all 0.3s ease",
-											position: "relative",
-											"&:hover": {
-												transform: "translateY(-8px)",
-												boxShadow: theme.shadows[8],
-											},
-										}}
-									>
-										{/* Product Badges */}
-										<Box
-											position='absolute'
-											top={12}
-											left={12}
-											zIndex={1}
-										>
-											{product.isNew && (
-												<Chip
-													label='جديد'
-													color='success'
-													size='small'
-													sx={{
-														mr: 1,
-														fontWeight: "bold",
-													}}
-												/>
-											)}
-											{product.sale && product.discount && (
-												<Chip
-													label={`-${product.discount}%`}
-													color='error'
-													size='small'
-													sx={{
-														fontWeight: "bold",
-													}}
-												/>
-											)}
-										</Box>
+                {products.length > 0 ? (
+                    <Grid container spacing={3}>
+                        {products.map((product, index) => (
+                            <Grid
+                                size={{ xs: 12, sm: 6, md: 4 }}
+                                key={product._id}
+                            >
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                        duration: 0.3,
+                                        delay: index * 0.05,
+                                    }}
+                                >
+                                    <Card
+                                        sx={{
+                                            height: '100%',
+                                            borderRadius: 3,
+                                            overflow: 'hidden',
+                                            transition: 'all 0.3s ease',
+                                            position: 'relative',
+                                            '&:hover': {
+                                                transform: 'translateY(-8px)',
+                                                boxShadow: theme.shadows[8],
+                                            },
+                                        }}
+                                    >
+                                        {/* Product Badges */}
+                                        <Box
+                                            position='absolute'
+                                            top={12}
+                                            left={12}
+                                            zIndex={1}
+                                        >
+                                            {product.isNew && (
+                                                <Chip
+                                                    label='جديد'
+                                                    color='success'
+                                                    size='small'
+                                                    sx={{
+                                                        mr: 1,
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                />
+                                            )}
+                                            {product.sale &&
+                                                product.discount && (
+                                                    <Chip
+                                                        label={`-${product.discount}%`}
+                                                        color='error'
+                                                        size='small'
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    />
+                                                )}
+                                        </Box>
 
-										{/* Product Image */}
-										<Box
-											sx={{
-												position: "relative",
-												overflow: "hidden",
-												height: 200,
-												bgcolor: "grey.100",
-												cursor: "pointer",
-											}}
-										>
-											<CardMedia
-												component='img'
-												image={
-													product.image?.url ||
-													`${product.product_name} - بيع وشراء في ${product.category}`
-												}
-												alt={`${product.product_name} للبيع في ${user.address?.city} - متجر ${user.name?.first}`}
-												loading='lazy'
-												sx={{
-													height: "100%",
-													width: "100%",
-													objectFit: "cover",
-													transition: "transform 0.5s ease",
-													"&:hover": {
-														transform: "scale(1.05)",
-													},
-												}}
-												onClick={() =>
-													navigate(
-														`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
-													)
-												}
-											/>
-										</Box>
+                                        {/* Product Image */}
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                overflow: 'hidden',
+                                                height: 200,
+                                                bgcolor: 'grey.100',
+                                                cursor: 'pointer',
+                                            }}
+                                        >
+                                            <CardMedia
+                                                component='img'
+                                                image={
+                                                    product.image?.url ||
+                                                    `${product.product_name} - بيع وشراء في ${product.category}`
+                                                }
+                                                alt={`${product.product_name} للبيع في ${user.address?.city} - متجر ${user.name?.first}`}
+                                                loading='lazy'
+                                                sx={{
+                                                    height: '100%',
+                                                    width: '100%',
+                                                    objectFit: 'cover',
+                                                    transition:
+                                                        'transform 0.5s ease',
+                                                    '&:hover': {
+                                                        transform:
+                                                            'scale(1.05)',
+                                                    },
+                                                }}
+                                                onClick={() =>
+                                                    navigate(
+                                                        `${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
+                                                    )
+                                                }
+                                            />
+                                        </Box>
 
-										<CardContent sx={{ p: 2.5 }}>
-											{/* Product Name and Category */}
-											<Typography
-												variant='subtitle1'
-												fontWeight='bold'
-												component={Link}
-												gutterBottom
-												to={`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`}
-												sx={{
-													textDecoration: "none",
-													textOverflow: "ellipsis",
-													display: "-webkit-box",
-													WebkitLineClamp: 2,
-													WebkitBoxOrient: "vertical",
-													minHeight: 48,
-													color: "inherit",
-													"&:hover": {
-														color: "primary.main",
-													},
-												}}
-											>
-												{product.product_name}
-											</Typography>
+                                        <CardContent sx={{ p: 2.5 }}>
+                                            {/* Product Name and Category */}
+                                            <Typography
+                                                variant='subtitle1'
+                                                fontWeight='bold'
+                                                component={Link}
+                                                gutterBottom
+                                                to={`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`}
+                                                sx={{
+                                                    textDecoration: 'none',
+                                                    textOverflow: 'ellipsis',
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    minHeight: 48,
+                                                    color: 'inherit',
+                                                    '&:hover': {
+                                                        color: 'primary.main',
+                                                    },
+                                                }}
+                                            >
+                                                {product.product_name}
+                                            </Typography>
 
-											{/* Price and Rating */}
-											<Box
-												display='flex'
-												justifyContent='space-between'
-												alignItems='center'
-												mb={2}
-											>
-												<Box>
-													{product.sale ? (
-														<Box>
-															<Typography
-																variant='h6'
-																color='error'
-																fontWeight='bold'
-															>
-																{formatPrice(
-																	product.price -
-																	(product.price *
-																		(product.discount ||
-																			0)) /
-																	100,
-																)}
-															</Typography>
-															<Typography
-																variant='body2'
-																color='text.secondary'
-																sx={{
-																	textDecoration:
-																		"line-through",
-																}}
-															>
-																{formatPrice(
-																	product.price,
-																)}
-															</Typography>
-														</Box>
-													) : (
-														<Typography
-															variant='h6'
-															color='primary'
-															fontWeight='bold'
-														>
-															{formatPrice(product.price)}
-														</Typography>
-													)}
-												</Box>
+                                            {/* Price and Rating */}
+                                            <Box
+                                                display='flex'
+                                                justifyContent='space-between'
+                                                alignItems='center'
+                                                mb={2}
+                                            >
+                                                <Box>
+                                                    {product.sale ? (
+                                                        <Box>
+                                                            <Typography
+                                                                variant='h6'
+                                                                color='error'
+                                                                fontWeight='bold'
+                                                            >
+                                                                {formatPrice(
+                                                                    product.price -
+                                                                        (product.price *
+                                                                            (product.discount ||
+                                                                                0)) /
+                                                                            100,
+                                                                )}
+                                                            </Typography>
+                                                            <Typography
+                                                                variant='body2'
+                                                                color='text.secondary'
+                                                                sx={{
+                                                                    textDecoration:
+                                                                        'line-through',
+                                                                }}
+                                                            >
+                                                                {formatPrice(
+                                                                    product.price,
+                                                                )}
+                                                            </Typography>
+                                                        </Box>
+                                                    ) : (
+                                                        <Typography
+                                                            variant='h6'
+                                                            color='primary'
+                                                            fontWeight='bold'
+                                                        >
+                                                            {formatPrice(
+                                                                product.price,
+                                                            )}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
 
-												<Box display="flex" alignItems="center">
-													<Rating
-														value={getAverageRating(product)}
-														precision={1}
-														readOnly
-														size="small"
-													/>
-												</Box>
+                                                <Box
+                                                    display='flex'
+                                                    alignItems='center'
+                                                >
+                                                    <Rating
+                                                        value={getAverageRating(
+                                                            product,
+                                                        )}
+                                                        precision={1}
+                                                        readOnly
+                                                        size='small'
+                                                    />
+                                                </Box>
+                                            </Box>
 
-
-											</Box>
-
-											{/* Like and Action Buttons */}
-											<Stack
-												direction='row'
-												spacing={1}
-												alignItems='center'
-											>
-												<Box sx={{ flex: 1 }}>
-													<LikeButton product={product} />
-												</Box>
-												<IconButton
-													size='small'
-													onClick={() =>
-														toggleWishlist(product._id ?? "")
-													}
-												>
-													{wishlist.has(product._id ?? "") ? (
-														<Favorite color='error' />
-													) : (
-														<FavoriteBorder />
-													)}
-												</IconButton>
-												<IconButton
-													size='small'
-													onClick={() => {
-														if (navigator.share) {
-															navigator.share({
-																title: product.product_name,
-																text: `شاهد ${product.product_name} على موقع صفقه`,
-																url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
-															});
-														} else {
-															navigator.clipboard.writeText(
-																`${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
-															);
-															showSuccess(
-																"تم نسخ رابط المنتج",
-															);
-														}
-													}}
-												>
-													<Share />
-												</IconButton>
-											</Stack>
-										</CardContent>
-										<Stack>
-											<Button onClick={() => setOpen(!open)}>
-												Promotion
-											</Button>
-											{open && (
-												<PromotionCard
-													title='ترويج المنشور'
-													category={product.category}
-													onViewPost={() =>
-														navigate(
-															`${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
-														)
-													}
-													imageUrl={product.image.url}
-													sellerName={`${product.seller?.name}`}
-												/>
-											)}
-										</Stack>
-									</Card>
-								</motion.div>
-							</Grid>
-						))}
-					</Grid>
-				) : (
-					<Box textAlign='center' py={10}>
-						<Storefront
-							sx={{
-								fontSize: 80,
-								color: "text.secondary",
-								mb: 2,
-							}}
-						/>
-						<Typography variant='h6' color='text.secondary' gutterBottom>
-							لا توجد منتجات
-						</Typography>
-						<Typography variant='body2' color='text.secondary'>
-							{user.name?.first} لم يقم بإضافة أي منتجات بعد.
-						</Typography>
-					</Box>
-				)}
-			</Box>
-		</TabPanel>
-	);
+                                            {/* Like and Action Buttons */}
+                                            <Stack
+                                                direction='row'
+                                                spacing={1}
+                                                alignItems='center'
+                                            >
+                                                <Box sx={{ flex: 1 }}>
+                                                    <LikeButton
+                                                        product={product}
+                                                    />
+                                                </Box>
+                                                <IconButton
+                                                    size='small'
+                                                    onClick={() =>
+                                                        toggleWishlist(
+                                                            product._id ?? '',
+                                                        )
+                                                    }
+                                                >
+                                                    {wishlist.has(
+                                                        product._id ?? '',
+                                                    ) ? (
+                                                        <Favorite color='error' />
+                                                    ) : (
+                                                        <FavoriteBorder />
+                                                    )}
+                                                </IconButton>
+                                                <IconButton
+                                                    size='small'
+                                                    onClick={() => {
+                                                        if (navigator.share) {
+                                                            navigator.share({
+                                                                title: product.product_name,
+                                                                text: `شاهد ${product.product_name} على موقع صفقه`,
+                                                                url: `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
+                                                            });
+                                                        } else {
+                                                            navigator.clipboard.writeText(
+                                                                `${window.location.origin}/product-details/${product.category}/${product.brand}/${product._id}`,
+                                                            );
+                                                            showSuccess(
+                                                                'تم نسخ رابط المنتج',
+                                                            );
+                                                        }
+                                                    }}
+                                                >
+                                                    <Share />
+                                                </IconButton>
+                                            </Stack>
+                                        </CardContent>
+                                        <Stack>
+                                            <Button
+                                                onClick={() => setOpen(!open)}
+                                            >
+                                                Promotion
+                                            </Button>
+                                            {open && (
+                                                <PromotionCard
+                                                    title='ترويج المنشور'
+                                                    category={product.category}
+                                                    onViewPost={() =>
+                                                        navigate(
+                                                            `${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`,
+                                                        )
+                                                    }
+                                                    imageUrl={product.image.url}
+                                                    sellerName={`${product.seller?.name}`}
+                                                />
+                                            )}
+                                        </Stack>
+                                    </Card>
+                                </motion.div>
+                            </Grid>
+                        ))}
+                    </Grid>
+                ) : (
+                    <Box textAlign='center' py={10}>
+                        <Storefront
+                            sx={{
+                                fontSize: 80,
+                                color: 'text.secondary',
+                                mb: 2,
+                            }}
+                        />
+                        <Typography
+                            variant='h6'
+                            color='text.secondary'
+                            gutterBottom
+                        >
+                            لا توجد منتجات
+                        </Typography>
+                        <Typography variant='body2' color='text.secondary'>
+                            {user.name?.first} لم يقم بإضافة أي منتجات بعد.
+                        </Typography>
+                    </Box>
+                )}
+            </Box>
+        </TabPanel>
+    );
 };
 
 export default ProductsTab;

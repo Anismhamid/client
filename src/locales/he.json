@@ -27,7 +27,7 @@
     "webPageName": "ספקה",
     "bestOffers": "העסקות הטובים ביותר במקום אחד",
     "browse-posts": "עיין בפוסטים",
-    "create-post": "צור פוסט",
+    "create-post": "פוסט חדש",
     "allRightsReserved": "כל הזכויות שמורות.",
     "help": "עזרה",
     "favorites": "מועדפים",
@@ -48,6 +48,7 @@
         "inactive": "לא פעיל",
         "lastActivity": "פעילות אחרונה"
     },
+    "description": "אתר ספקה - זירת מסחר מקוונת לקנייה ומכירה של מוצרים",
     "messages": {
         "main": "הודעות",
         "search": "חפש הודעות",

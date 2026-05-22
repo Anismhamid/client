@@ -1,250 +1,397 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
-	Grid,
-	Box,
-	Paper,
-	Typography,
-	useMediaQuery,
-	useTheme,
-	IconButton,
-	Divider,
-	Fade,
-	Avatar,
-} from "@mui/material";
+    Grid,
+    Box,
+    Paper,
+    Typography,
+    useMediaQuery,
+    useTheme,
+    IconButton,
+    Avatar,
+    alpha,
+    Container,
+    Tooltip,
+} from '@mui/material';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ForumTwoToneIcon from '@mui/icons-material/ForumTwoTone';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { motion, AnimatePresence } from 'framer-motion';
+import ChatList from './ChatList';
+import { UserMessage } from '../../../interfaces/chat/usersMessages';
+import handleRTL from '../../../locales/handleRTL';
+import { useTranslation } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
+import { path } from '../../../routes/routes';
+import { ChatMessage } from '../../../interfaces/chat/chatMessage';
+import ChatBox from './ChatBox';
+import { useUser } from '../../../context/useUSer';
 
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ForumTwoToneIcon from "@mui/icons-material/ForumTwoTone";
-import ChatList from "./ChatList";
-import { UserMessage } from "../../../interfaces/usersMessages";
-import handleRTL from "../../../locales/handleRTL";
-import { useTranslation } from "react-i18next";
-import { Navigate } from "react-router-dom";
-import { path } from "../../../routes/routes";
-import { ChatMessage } from "../../../interfaces/chat/chatMessage";
-import ChatBox from "./ChatBox";
-import { useUser } from "../../../context/useUSer";
-
+// Fixed mapping function with proper type conversion
 // eslint-disable-next-line react-refresh/only-export-components
 export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
-	return {
-		_id: msg._id ?? `temp-${Date.now()}`,
-		from: {
-			_id: msg.from?._id ?? "unknown",
-			name: { first: msg.name?.first ?? "Unknown", last: msg.name?.last ?? "" },
-			email: msg.email,
-			role: msg.role,
-			status: msg.from?.status ?? false,
-		},
-		to: {
-			_id: msg.to?._id ?? "unknown",
-			name: { first: msg.to?.first ?? "Unknown", last: msg.to?.last ?? "" },
-			email: msg.to?.email ?? "",
-			role: msg.to?.role ?? "Client",
-		},
-		message: msg.message,
-		status: msg.status as "sent" | "delivered" | "seen",
-		createdAt: msg.createdAt,
-		warning: msg.warning ?? false,
-		isImportant: msg.isImportant ?? false,
-		replyTo: msg.replyTo
-			? mapUserMessageToChatBox(msg.replyTo as unknown as UserMessage)
-			: null,
-	} as ChatMessage;
+    const convertToDate = (dateValue: unknown): Date => {
+        if (!dateValue || typeof dateValue === 'function') return new Date();
+        if (dateValue instanceof Date) return dateValue;
+        return new Date(dateValue as string);
+    };
+
+    return {
+        _id: msg._id ?? `temp-${Date.now()}`,
+        from: {
+            _id: msg.from?._id ?? 'unknown',
+            name: {
+                first: msg.name?.first ?? 'Unknown',
+                last: msg.name?.last ?? '',
+            },
+            email: msg.email ?? '',
+            role: msg.role ?? 'Client',
+            status: msg.from?.status ?? false,
+        },
+        to: {
+            _id: msg.to?._id ?? 'unknown',
+            name: {
+                first: msg.to?.first ?? 'Unknown',
+                last: msg.to?.last ?? '',
+            },
+            email: msg.to?.email ?? '',
+            role: msg.to?.role ?? 'Client',
+            status: msg.to?.status ?? false,
+        },
+        message: msg.message,
+        status: (msg.status as 'sent' | 'delivered' | 'seen') ?? 'sent',
+        createdAt: convertToDate(msg.createdAt),
+        updatedAt: convertToDate(msg.updatedAt),
+        warning: msg.warning ?? false,
+        isImportant: msg.isImportant ?? false,
+        replyTo: msg.replyTo
+            ? mapUserMessageToChatBox(msg.replyTo as unknown as UserMessage)
+            : null,
+        tempId: msg._id,
+    } as ChatMessage;
 };
 
 const MessagesPage = () => {
-	const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-	const { auth } = useUser();
-	const dir = handleRTL();
+    const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
+    const { t } = useTranslation();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const { auth } = useUser();
+    const dir = handleRTL();
 
-	// הגנה על הנתיב - ב-React components משתמשים ב-Navigate ולא ב-redirect
+    if (!auth?._id) return <Navigate to={path.Login} replace />;
 
-	const currentUser = {
-		_id: auth._id as string,
-		name: { first: auth.name.first, last: auth.name.last },
-		email: auth.email as string,
-		role: auth.role as string,
-	};
+    const currentUser = {
+        _id: auth._id as string,
+        name: { first: auth.name.first, last: auth.name.last },
+        email: auth.email as string,
+        role: auth.role as string,
+    };
 
-	if (!auth?._id) return <Navigate to={path.Login} replace />;
+    const isOnline =
+        selectedUser?.from?._id === currentUser._id
+            ? selectedUser?.to?.status
+            : selectedUser?.from?.status;
 
-	const isOnline =
-		selectedUser?.from?._id === currentUser._id
-			? selectedUser?.to?.status
-			: selectedUser?.from?.status;
+    return (
+        <Box
+            dir={dir}
+            sx={{
+                height: '100vh',
+                width: '100vw',
+                overflow: 'hidden',
+                bgcolor: 'background.default',
+            }}
+        >
+            <Container
+                maxWidth={false}
+                disableGutters
+                sx={{
+                    height: '100%',
+                    py: { xs: 0, md: 2 },
+                    px: { xs: 0, md: 2 },
+                }}
+            >
+                <Paper
+                    elevation={isMobile ? 0 : 2}
+                    sx={{
+                        height: '100%',
+                        display: 'flex',
+                        borderRadius: isMobile ? 0 : 3,
+                        overflow: 'hidden',
+                        bgcolor: 'background.paper',
+                        transition: 'all 0.3s ease',
+                    }}
+                >
+                    <Grid container sx={{ height: '100%', width: '100%' }}>
+                        {/* Sidebar - Chat List */}
+                        <AnimatePresence mode='wait'>
+                            {(!isMobile || !selectedUser) && (
+                                <Grid
+                                    key='chat-list'
+                                    size={{
+                                        xs: 12,
+                                        sm: 12,
+                                        md: 4,
+                                        lg: 3.5,
+                                    }}
+                                    sx={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        borderRight: {
+                                            xs: 0,
+                                            md: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+                                        },
+                                        bgcolor: 'background.paper',
+                                        position: 'relative',
+                                    }}
+                                >
+                                    <ChatList
+                                        currentUser={currentUser}
+                                        token={
+                                            localStorage.getItem(
+                                                'token',
+                                            ) as string
+                                        }
+                                        onSelectChat={(user) =>
+                                            setSelectedUser(user)
+                                        }
+                                        selectedUserId={selectedUser?._id}
+                                    />
+                                </Grid>
+                            )}
+                        </AnimatePresence>
 
-	return (
-		<Box
-			sx={{
-				height: "100dvh",
-				bgcolor: theme.palette.mode === "light" ? "grey.100" : "background.default",
-				p: isMobile ? 0 : 3,
-				transition: "all 0.3s ease",
-				direction: dir,
-			}}
-		>
-			<Paper
-				elevation={isMobile ? 0 : 5}
-				sx={{
-					height: "100%",
-					display: "flex",
-					borderRadius: isMobile ? 0 : 5,
-					overflow: "hidden",
-					backdropFilter: "blur(20px)",
-					background:
-						theme.palette.mode === "light"
-							? "rgba(255,255,255,0.7)"
-							: "rgba(15,23,42,0.7)",
-					border: "1px solid rgba(255,255,255,0.1)",
-				}}
-			>
-				<Grid container sx={{ height: "100%" ,width:"100%",}}>
-					{/* SIDEBAR: Chat List */}
-					{(!isMobile || !selectedUser) && (
-						<Grid
-							size={{ xs: 12, md: 6, lg: 6 }}
+                        {/* Main Chat Area */}
+                        <Grid
+                            size={{
+                                xs: 12,
+                                sm: 12,
+                                md: 8,
+                                lg: 8.5,
+                            }}
+                            sx={{
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                bgcolor: alpha(
+                                    theme.palette.background.default,
+                                    0.4,
+                                ),
+                                position: 'relative',
+                            }}
+                        >
+                            {selectedUser ? (
+                                <AnimatePresence mode='wait'>
+                                    <motion.div
+                                        key='chat-active'
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{
+                                            height: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                        }}
+                                    >
+                                        {/* Chat Header */}
+                                        <Box
+                                            sx={{
+                                                p: 2,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                bgcolor: 'background.paper',
+                                                borderBottom: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+                                                flexShrink: 0,
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1.5,
+                                                }}
+                                            >
+                                                {isMobile && (
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            setSelectedUser(
+                                                                null,
+                                                            )
+                                                        }
+                                                        size='small'
+                                                    >
+                                                        <ArrowBackIosNewIcon />
+                                                    </IconButton>
+                                                )}
+                                                <Avatar
+                                                    sx={{
+                                                        width: 44,
+                                                        height: 44,
+                                                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                                                        boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
+                                                    }}
+                                                >
+                                                    {
+                                                        selectedUser.name
+                                                            ?.first?.[0]
+                                                    }
+                                                    {
+                                                        selectedUser.name
+                                                            ?.last?.[0]
+                                                    }
+                                                </Avatar>
+                                                <Box>
+                                                    <Typography
+                                                        variant='subtitle1'
+                                                        sx={{
+                                                            fontWeight: 600,
+                                                            lineHeight: 1.2,
+                                                        }}
+                                                    >
+                                                        {
+                                                            selectedUser.name
+                                                                ?.first
+                                                        }{' '}
+                                                        {
+                                                            selectedUser.name
+                                                                ?.last
+                                                        }
+                                                    </Typography>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            gap: 0.5,
+                                                            mt: 0.25,
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                width: 8,
+                                                                height: 8,
+                                                                borderRadius:
+                                                                    '50%',
+                                                                bgcolor:
+                                                                    isOnline
+                                                                        ? 'success.main'
+                                                                        : 'error.main',
+                                                            }}
+                                                        />
+                                                        <Typography
+                                                            variant='caption'
+                                                            sx={{
+                                                                color: isOnline
+                                                                    ? 'success.main'
+                                                                    : 'error.main',
+                                                            }}
+                                                        >
+                                                            {isOnline
+                                                                ? t(
+                                                                      'chat.online',
+                                                                  )
+                                                                : t(
+                                                                      'chat.offline',
+                                                                  )}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </Box>
+                                            <Tooltip title='More options'>
+                                                <IconButton size='small'>
+                                                    <MoreVertIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
 
-							sx={{
-								display: "flex",
-								flexDirection: "column",
-								bgcolor: "background.paper",
-								borderRight: dir === "ltr" ? "1px solid" : "none",
-								borderLeft: dir === "rtl" ? "1px solid" : "none",
-								borderColor: "divider",
-							}}
-						>
-							<Box sx={{ p: 3, pb: 2 }}>
-								<Typography variant="h5" fontWeight={900} color="primary.main" gutterBottom>
-									{t("messages.title") || "Chats"}
-								</Typography>
-								<Typography variant="body2" color="text.secondary">
-									{t("messages.subtitle") || "Recent conversations"}
-								</Typography>
-							</Box>
-
-							<Divider sx={{ mx: 2, mb: 1 }} />
-
-							<Box sx={{ flex: 1, overflowY: "auto", px: 1 }}>
-								<ChatList
-									currentUser={currentUser}
-									token={localStorage.getItem("token") as string}
-									onSelectChat={(user) => setSelectedUser(user)}
-									selectedUserId={selectedUser?._id}
-								/>
-							</Box>
-						</Grid>
-					)}
-
-					{/* MAIN: Chat Window */}
-					{(!isMobile || selectedUser) && (
-						<Grid
-							size={{ xs: 12, md: 6, lg: 6 }}
-
-							sx={{
-								height: "100%",
-								bgcolor:
-									theme.palette.mode === "light"
-										? "linear-gradient(135deg, #f5f7fa 0%, #e4ecf7 100%)"
-										: "linear-gradient(135deg, #0f172a 0%, #020617 100%)", position: "relative",
-							}}
-						>
-							{selectedUser ? (
-								<Fade in={!!selectedUser} timeout={400}>
-									<Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
-										{/* Dynamic Header */}
-										<Box
-											sx={{
-												p: 2,
-												display: "flex",
-												alignItems: "center",
-												bgcolor: "background.paper",
-												boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-												zIndex: 2,
-											}}
-										>
-											{isMobile && (
-												<IconButton onClick={() => setSelectedUser(null)} sx={{ mr: 1 }}>
-													<ArrowBackIosNewIcon fontSize="small" />
-												</IconButton>
-											)}
-											<Avatar
-												sx={{
-													width: 40,
-													height: 40,
-													bgcolor: "secondary.main",
-													fontSize: "1rem"
-												}}
-											>
-												{selectedUser.name?.first?.[0]}
-											</Avatar>
-											<Box sx={{ ml: 2 }}>
-												<Typography variant="subtitle1" fontWeight={700}>
-													{selectedUser.name?.first} {selectedUser.name?.last}
-												</Typography>
-												{isOnline ? (
-
-													<Typography variant="caption" color="success.main">
-														● Online
-													</Typography>
-												) : <Typography variant="caption" color="error.main">
-													● Offline
-												</Typography>}
-											</Box>
-										</Box>
-
-										{/* Chat Area */}
-										<Box sx={{ flex: 1, overflow: "hidden", position: "relative" }}>
-											<ChatBox
-												currentUser={currentUser}
-												otherUser={mapUserMessageToChatBox(selectedUser)}
-												token={localStorage.getItem("token") as string}
-											/>
-										</Box>
-									</Box>
-								</Fade>
-							) : (
-								/* Empty State */
-								<Box
-									sx={{
-										height: "100%",
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										flexDirection: "column",
-										textAlign: "center",
-										p: 3,
-									}}
-								>
-									<Box
-										sx={{
-											bgcolor: "primary.light",
-											background: "linear-gradient(135deg, #6366f1, #8b5cf6)",
-											p: 4,
-											borderRadius: "50%",
-											mb: 3,
-											color: "white",
-											boxShadow: "0 10px 30px rgba(99,102,241,0.3)",
-										}}
-									>
-										<ForumTwoToneIcon sx={{ fontSize: 60, color: "primary.main" }} />
-									</Box>
-									<Typography variant="h5" fontWeight={700} gutterBottom>
-										{t("messages.welcome") || "Your Inbox"}
-									</Typography>
-									<Typography variant="body2" color="text.secondary" sx={{ maxWidth: 300 }}>
-										{t("messages.chooseChat") || "Select a conversation from the list to start messaging."}
-									</Typography>
-								</Box>
-							)}
-						</Grid>
-					)}
-				</Grid>
-			</Paper>
-		</Box>
-	);
+                                        {/* Chat Messages */}
+                                        <Box
+                                            sx={{ flex: 1, overflow: 'hidden' }}
+                                        >
+                                            <ChatBox
+                                                currentUser={currentUser}
+                                                otherUser={mapUserMessageToChatBox(
+                                                    selectedUser,
+                                                )}
+                                                token={
+                                                    localStorage.getItem(
+                                                        'token',
+                                                    ) as string
+                                                }
+                                            />
+                                        </Box>
+                                    </motion.div>
+                                </AnimatePresence>
+                            ) : (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.3 }}
+                                    style={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            textAlign: 'center',
+                                            maxWidth: 320,
+                                            px: 3,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: 80,
+                                                height: 80,
+                                                mx: 'auto',
+                                                mb: 2,
+                                                borderRadius: '50%',
+                                                bgcolor: alpha(
+                                                    theme.palette.primary.main,
+                                                    0.08,
+                                                ),
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                            }}
+                                        >
+                                            <ForumTwoToneIcon
+                                                sx={{
+                                                    fontSize: 40,
+                                                    color: theme.palette.primary
+                                                        .main,
+                                                    opacity: 0.6,
+                                                }}
+                                            />
+                                        </Box>
+                                        <Typography
+                                            variant='h6'
+                                            sx={{ fontWeight: 600, mb: 1 }}
+                                        >
+                                            {t('messages.welcome') ||
+                                                'مرحباً بك في الرسائل'}
+                                        </Typography>
+                                        <Typography
+                                            variant='body2'
+                                            sx={{ color: 'text.secondary' }}
+                                        >
+                                            {t('messages.chooseChat') ||
+                                                'اختر محادثة من القائمة للبدء'}
+                                        </Typography>
+                                    </Box>
+                                </motion.div>
+                            )}
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </Container>
+        </Box>
+    );
 };
 
 export default MessagesPage;

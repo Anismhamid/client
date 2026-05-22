@@ -30,7 +30,7 @@
     "House": "مستلزمات البيت",
     "webPageName": "صفقة",
     "browse-posts": "تصفح المنشورات",
-    "create-post": "اضافة منشور",
+    "create-post": "إنشاء منشور",
     "help": "مساعده",
     "favorites": "المفضله",
     "startFree": "ابدأ الآن مجاناً",
@@ -45,6 +45,8 @@
     "shares": "منشورات",
     "seller": "نشر بواسطة",
     "member_since": "تاريخ الانضمام",
+    "description": "صفقة - سوق إلكتروني لبيع وشراء المنتجات",
+
     "status": {
         "title": "الحاله",
         "active": "نشط",

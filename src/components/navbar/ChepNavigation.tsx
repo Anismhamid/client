@@ -1,194 +1,204 @@
-import { useRef } from "react"; // Add useCallback
-import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { ChevronLeftTwoTone, ChevronRightTwoTone } from "@mui/icons-material";
-import { NavLink } from "react-router-dom";
-import { productsAndCategories } from "./navCategoryies";
-import { useTranslation } from "react-i18next";
-import JsonLd from "../../../utils/JsonLd";
+import { useRef } from 'react';
+import { Box, IconButton, Typography } from '@mui/material';
+import { ChevronLeftTwoTone, ChevronRightTwoTone } from '@mui/icons-material';
+import { NavLink } from 'react-router-dom';
+import { productsAndCategories } from './navCategoryies';
+import { useTranslation } from 'react-i18next';
+import JsonLd from '../../../utils/JsonLd';
 
 const ChipNavigation = () => {
-	const containerRef = useRef<HTMLDivElement>(null);
-	const { t } = useTranslation();
-	const theme = useTheme();
-	const scroll = (direction: "left" | "right") => {
-		const container = containerRef.current;
-		if (!container) return;
-		const scrollAmount = container.clientWidth * 0.8;
-		const newScrollLeft =
-			direction === "left"
-				? container.scrollLeft - scrollAmount
-				: container.scrollLeft + scrollAmount;
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { t } = useTranslation();
 
-		container.scrollTo({
-			left: newScrollLeft,
-			behavior: "smooth",
-		});
-	};
+    const scroll = (direction: 'left' | 'right') => {
+        const container = containerRef.current;
+        if (!container) return;
+        const scrollAmount = container.clientWidth * 0.8;
+        const newScrollLeft =
+            direction === 'left'
+                ? container.scrollLeft - scrollAmount
+                : container.scrollLeft + scrollAmount;
+        container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
+    };
 
-	return (
-		<Box
-			component='nav'
-			aria-label='Main Categories'
-			sx={{
-				position: "sticky",
-				top: 0,
-				zIndex: 200,
-				backgroundColor: `${theme.palette.primary}`,
-				backdropFilter: "blur(5px)",
-				borderRadius: "0 0 20px 20px",
-				py: 0.3,
-				// boxShadow: "0px 5px 5px rgba(59, 59, 59, 0.308)",
-			}}
-		>
-			<JsonLd
-				data={{
-					"@context": "https://schema.org",
-					"@type": "ItemList",
-					name: "تصنيفات المنتجات",
-					itemListElement: productsAndCategories.map((category, index) => ({
-						"@type": "SiteNavigationElement",
-						position: index + 1,
-						name: t(category.labelKey),
-						url: `${window.location.origin}${category.path}`,
-					})),
-				}}
-			/>
-			{/* Left Scroll Button */}
-			<IconButton
-				className='scroll-button'
-				onClick={() => scroll("left")}
-				sx={{
-					position: "absolute",
-					left: 0,
-					transform: "translateY(-50%)",
-					top: "50%",
-					zIndex: 2,
-					backgroundColor: "background.paper",
-					color: "text.primary",
-					boxShadow: 2,
-					transition: "all 0.1s ease",
-					"&:hover": {
-						color: "white",
-						backgroundColor: "warning.main",
-						transform: "translateY(-50%) scale(1.3)",
-					},
-				}}
-			>
-				<ChevronLeftTwoTone />
-			</IconButton>
-			{/* Chip Container */}
-			<Box
-				ref={containerRef}
-				component='ul'
-				sx={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-around",
-					listStyle: "none",
-					overflowX: "auto",
-					scrollbarWidth: "none",
+    return (
+        <Box
+            component='nav'
+            aria-label='Main Categories'
+            sx={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 200,
+                bgcolor: 'background.paper',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
+                py: 1,
+            }}
+        >
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ItemList',
+                    name: 'تصنيفات المنتجات',
+                    itemListElement: productsAndCategories.map(
+                        (category, index) => ({
+                            '@type': 'SiteNavigationElement',
+                            position: index + 1,
+                            name: t(category.labelKey),
+                            url: `${window.location.origin}${category.path}`,
+                        }),
+                    ),
+                }}
+            />
 
-					"&::-webkit-scrollbar": { display: "none" },
-					maskImage:
-						"linear-gradient(to right, transparent, #fff 30px, #fff calc(100% - 30px), transparent)",
-					WebkitMaskImage:
-						"linear-gradient(to right, transparent, #fff 30px, #fff calc(100% - 30px), transparent)",
-				}}
-			>
-				{productsAndCategories.map((category) => (
-					<Box
-						key={category.value}
-						component='li'
-						role='listitem'
-						sx={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							minWidth: 80,
-						}}
-					>
-						<NavLink
-							title={`${t("links.products")} - ${t(category.labelKey)}`}
-							to={category.path}
-							style={{ textDecoration: "none" }}
-						>
-							{({ isActive }) => (
-								<Box
-									sx={{
-										width: 50,
-										height: 50,
-										borderRadius: "50%",
-										cursor: "pointer",
-										backgroundColor: isActive ? "primary.main" : "transparent",
-										boxShadow: isActive ? 8 : 2,
-										border: "2px solid",
-										borderColor: isActive ? "primary.main" : "divider",
-										display: "flex",
-										justifyContent: "center",
-										alignItems: "center",
-										transition: "all 0.3s ease",
-										mt: 1,
+            {/* Left scroll button */}
+            <IconButton
+                onClick={() => scroll('left')}
+                size='small'
+                sx={{
+                    position: 'absolute',
+                    left: 4,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 2,
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    width: 28,
+                    height: 28,
+                    '&:hover': {
+                        bgcolor: 'background.default',
+                        borderColor: 'text.secondary',
+                    },
+                }}
+            >
+                <ChevronLeftTwoTone sx={{ fontSize: 18 }} />
+            </IconButton>
 
-										"&:hover": {
-											transform: "scale(1.1)",
-											boxShadow: 6,
-										},
-									}}
-								>
-									<Box
-										component='img'
-										src={category.icon}
-										alt={`${t(category.labelKey)} - تصنيف`}
-										sx={{
-											width: 36,
-											height: 36,
-											objectFit: "contain",
-										}}
-									/>
-								</Box>
-							)}
-						</NavLink>
+            {/* Scrollable container */}
+            <Box
+                ref={containerRef}
+                component='ul'
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0,
+                    listStyle: 'none',
+                    overflowX: 'auto',
+                    scrollbarWidth: 'none',
+                    px: 5,
+                    '&::-webkit-scrollbar': { display: 'none' },
+                    maskImage:
+                        'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
+                    WebkitMaskImage:
+                        'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
+                }}
+            >
+                {productsAndCategories.map((category) => (
+                    <Box
+                        key={category.value}
+                        component='li'
+                        role='listitem'
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            flexShrink: 0,
+                            minWidth: 72,
+                        }}
+                    >
+                        <NavLink
+                            title={`${t('links.products')} - ${t(category.labelKey)}`}
+                            to={category.path}
+                            style={{ textDecoration: 'none' }}
+                        >
+                            {({ isActive }) => (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        gap: 0.5,
+                                        px: 1,
+                                        py: 0.75,
+                                        borderRadius: '10px',
+                                        cursor: 'pointer',
+                                        bgcolor: isActive
+                                            ? 'primary.50'
+                                            : 'transparent',
+                                        border: '1px solid',
+                                        borderColor: isActive
+                                            ? 'primary.light'
+                                            : 'transparent',
+                                        transition: 'all 0.15s ease',
+                                        '&:hover': {
+                                            bgcolor: isActive
+                                                ? 'primary.50'
+                                                : 'action.hover',
+                                        },
+                                    }}
+                                >
+                                    <Box
+                                        component='img'
+                                        src={category.icon}
+                                        alt={`${t(category.labelKey)} - تصنيف`}
+                                        sx={{
+                                            width: 32,
+                                            height: 32,
+                                            objectFit: 'contain',
+                                            filter: isActive
+                                                ? 'none'
+                                                : 'grayscale(0.2)',
+                                            transition: 'filter 0.15s',
+                                        }}
+                                    />
+                                    <Typography
+                                        component='span'
+                                        variant='caption'
+                                        sx={{
+                                            fontWeight: isActive ? 700 : 500,
+                                            fontSize: '0.7rem',
+                                            color: isActive
+                                                ? 'primary.main'
+                                                : 'text.secondary',
+                                            whiteSpace: 'nowrap',
+                                            lineHeight: 1.2,
+                                        }}
+                                    >
+                                        {t(category.labelKey)}
+                                    </Typography>
+                                </Box>
+                            )}
+                        </NavLink>
+                    </Box>
+                ))}
+            </Box>
 
-						<Typography
-							component={"h2"}
-							variant='body2'
-							sx={{
-								fontWeight: 600,
-								fontSize: "0.75rem",
-								color: "text.primary",
-								mt: 0.5,
-							}}
-						>
-							{t(category.labelKey)}
-						</Typography>
-					</Box>
-				))}
-			</Box>
-			{/* Right Scroll Button */}
-			<IconButton
-				className='scroll-button'
-				onClick={() => scroll("right")}
-				sx={{
-					position: "absolute",
-					right: 0,
-					top: "50%",
-					transform: "translateY(-50%)",
-					zIndex: 2,
-					backgroundColor: "background.paper",
-					color: "text.primary",
-					boxShadow: 2,
-					transition: "all 0.3s ease",
-					"&:hover": {
-						color: "white",
-						backgroundColor: "warning.main",
-						transform: "translateY(-50%) scale(1.3)",
-					},
-				}}
-			>
-				<ChevronRightTwoTone />
-			</IconButton>
-		</Box>
-	);
+            {/* Right scroll button */}
+            <IconButton
+                onClick={() => scroll('right')}
+                size='small'
+                sx={{
+                    position: 'absolute',
+                    right: 4,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    zIndex: 2,
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    width: 28,
+                    height: 28,
+                    '&:hover': {
+                        bgcolor: 'background.default',
+                        borderColor: 'text.secondary',
+                    },
+                }}
+            >
+                <ChevronRightTwoTone sx={{ fontSize: 18 }} />
+            </IconButton>
+        </Box>
+    );
 };
 
 export default ChipNavigation;
