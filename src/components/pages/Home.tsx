@@ -38,7 +38,7 @@ import ChipNavigation from '../navbar/ChepNavigation';
  * Home page — redesigned with clean, minimal aesthetic
  */
 const Home: FunctionComponent = () => {
-    const { auth } = useUser();
+    const { auth , isLoggedIn} = useUser();
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -300,7 +300,15 @@ const Home: FunctionComponent = () => {
                                 variant='contained'
                                 size='large'
                                 startIcon={<AddIcon />}
-                                onClick={showAddProductModal}
+                                onClick={() => {
+                                    if (isLoggedIn) {
+                                        showAddProductModal();
+                                    } else {
+                                        navigate(path.Login, {
+                                            state: { from: path.Home },
+                                        });
+                                    }
+                                }}
                                 sx={{
                                     px: 3.5,
                                     py: 1.25,

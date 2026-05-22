@@ -74,7 +74,6 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
         transform: 'translateY(-2px)',
     },
     '&.active': {
-        
         fontWeight: 'bold',
         backgroundColor:
             theme.palette.mode === 'dark'
@@ -450,19 +449,21 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Box>
 
                                 {/* Messages */}
-                                <Box
-                                    component='li'
-                                    role='listitem'
-                                    sx={{ flexShrink: 0 }}
-                                >
-                                    <StyledNavLink
-                                        to={path.MessagesPage}
-                                        aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
-                                        title={`${t('links.Messages')} الرسائل موقع صفقة`}
+                                {isLoggedIn && (
+                                    <Box
+                                        component='li'
+                                        role='listitem'
+                                        sx={{ flexShrink: 0 }}
                                     >
-                                        <ChatBubble sx={{ fontSize: 20 }} />
-                                    </StyledNavLink>
-                                </Box>
+                                        <StyledNavLink
+                                            to={path.MessagesPage}
+                                            aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
+                                            title={`${t('links.Messages')} الرسائل موقع صفقة`}
+                                        >
+                                            <ChatBubble sx={{ fontSize: 20 }} />
+                                        </StyledNavLink>
+                                    </Box>
+                                )}
 
                                 {/* Contact */}
                                 <Box
