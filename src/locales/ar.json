@@ -1,5 +1,8 @@
 {
     "you": "انت",
+    "saveChanges": "حفظ التغييرات",
+    "hideImage": "إخفاء",
+    "showImage": "إظهار صورة الملف الشخصي",
     "personalInformation": "المعلومات الشخصية",
     "fullName": "الاسم الكامل",
     "phone": "الهاتف",

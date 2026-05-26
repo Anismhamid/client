@@ -1,5 +1,8 @@
 {
     "you": "You",
+    "saveChanges": "Save Changes",
+    "hideImage": "Hide Profile Picture",
+    "showImage": "Show Profile Picture",
     "personalInformation": "Personal Information",
     "fullName": "Full Name",
     "secondaryPhone": "Secondary Phone",
