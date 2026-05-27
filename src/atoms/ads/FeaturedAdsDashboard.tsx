@@ -13,18 +13,17 @@ import {
     CircularProgress,
     Stack,
     Chip,
+    SelectChangeEvent,
 } from '@mui/material';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { FeaturedAd } from '../../interfaces/featuredAd';
 import useSnackbar from '../../hooks/useSnackbar';
 import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
-import PaymentModal from '../pymentModal/PymentModal';
 import { getCustomerProfilePostsBySlug } from '../../services/postsServices';
 import { useUser } from '../../context/useUSer';
 import { Posts } from '../../interfaces/Posts';
 import AlertDialogs from '../toasts/Sweetalert';
-import PromotionPlans from './PromotionPlans';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -40,21 +39,16 @@ const FeaturedAdsDashboard = () => {
     });
     const [saving, setSaving] = useState(false);
     const { snackbar, showSnackbar, closeSnackbar } = useSnackbar();
-    const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [userListings, setUserListings] = useState<Posts[]>([]);
-    const [deleteAdId, setDeleteAdId] = useState<string | null>(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    const handleOpenPayment = () => setShowPaymentModal(true);
-    const handleClosePayment = () => setShowPaymentModal(false);
+    // FIX 1: Track which specific ad is pending deletion, not just a boolean
+    const [adToDelete, setAdToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         getCustomerProfilePostsBySlug(auth?.slug as string)
-            .then((res) => {
-                setUserListings(res);
-            })
+            .then((res) => setUserListings(res))
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 setUserListings([]);
             });
     }, [auth?.slug]);
@@ -78,35 +72,33 @@ const FeaturedAdsDashboard = () => {
         fetchAds();
     }, []);
 
-    const handleChange = (
-        e: React.ChangeEvent<
-            | HTMLInputElement
-            | HTMLTextAreaElement
-            | { name?: string; value: unknown }
-        >,
-    ) => {
-        const name = e.target.name!;
-        setNewAd((prev) => ({ ...prev, [name]: e.target.value }));
+    // FIX 2: Separate handlers for TextField and Select to avoid TS union-type issues
+    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setNewAd((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSelectChange = (e: SelectChangeEvent<string>) => {
+        const { name, value } = e.target;
+        setNewAd((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async () => {
         setSaving(true);
         try {
-            await axios.post(`${api}/featured-ads/buy`, newAd, {
-                headers: {
-                    Authorization: localStorage.getItem('token'),
-                    'Content-Type': 'application/json',
+            const { data } = await axios.post(
+                `${api}/featured-ads/buy`,
+                newAd,
+                {
+                    headers: {
+                        Authorization: localStorage.getItem('token'),
+                        'Content-Type': 'application/json',
+                    },
                 },
-            });
-            showSnackbar('تم ترويج الإعلان بنجاح!', 'success');
-            await fetchAds();
-            setNewAd({
-                listingId: '',
-                type: 'homepage',
-                startDate: dayjs().format('YYYY-MM-DD'),
-                endDate: dayjs().add(7, 'day').format('YYYY-MM-DD'),
-            });
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            );
+            // Redirect to Stripe Checkout
+            window.location.href = data.url;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             showSnackbar(err.response?.data?.message || 'حدث خطأ', 'error');
         } finally {
@@ -115,7 +107,6 @@ const FeaturedAdsDashboard = () => {
     };
 
     const handleDelete = async (adId: string) => {
-        if (!confirm('هل أنت متأكد من حذف الإعلان؟')) return;
         try {
             await axios.delete(`${api}/featured-ads/delete/${adId}`, {
                 headers: { Authorization: localStorage.getItem('token') },
@@ -124,11 +115,10 @@ const FeaturedAdsDashboard = () => {
             showSnackbar('تم حذف الإعلان بنجاح!', 'success');
         } catch (err) {
             console.error(err);
-            alert('حدث خطأ أثناء الحذف');
+            showSnackbar('حدث خطأ أثناء الحذف', 'error');
         }
     };
 
-    // عداد الإعلانات النشطة حسب النوع
     const activeCounts = ads.reduce(
         (acc, ad) => {
             if (ad?.isActive && ad?.type) {
@@ -144,6 +134,7 @@ const FeaturedAdsDashboard = () => {
             <Typography variant='h4' gutterBottom>
                 إدارة Featured Ads
             </Typography>
+
             <MuiSnackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
@@ -158,7 +149,8 @@ const FeaturedAdsDashboard = () => {
                     {snackbar.message}
                 </Alert>
             </MuiSnackbar>
-            {/* شراء إعلان جديد */}
+
+            {/* Buy new ad */}
             <Paper sx={{ p: 3, mb: 4 }}>
                 <Typography variant='h6' gutterBottom>
                     شراء إعلان جديد
@@ -170,18 +162,11 @@ const FeaturedAdsDashboard = () => {
                             <Select
                                 name='listingId'
                                 value={newAd.listingId}
-                                onChange={(e) =>
-                                    setNewAd((prev) => ({
-                                        ...prev,
-                                        listingId: e.target.value,
-                                    }))
-                                }
+                                onChange={handleSelectChange}
+                                label='اختر الإعلان'
                             >
                                 {userListings.map((listing) => (
-                                    <MenuItem
-                                        key={listing._id}
-                                        value={listing._id}
-                                    >
+                                    <MenuItem key={listing._id} value={listing._id}>
                                         {listing.product_name || 'بدون عنوان'}
                                     </MenuItem>
                                 ))}
@@ -195,12 +180,8 @@ const FeaturedAdsDashboard = () => {
                             <Select
                                 name='type'
                                 value={newAd.type}
-                                onChange={(e) =>
-                                    setNewAd((prev) => ({
-                                        ...prev,
-                                        type: e.target.value,
-                                    }))
-                                }
+                                onChange={handleSelectChange}
+                                label='نوع الترويج'
                             >
                                 <MenuItem value='homepage'>Homepage</MenuItem>
                                 <MenuItem value='top'>Top</MenuItem>
@@ -215,7 +196,7 @@ const FeaturedAdsDashboard = () => {
                             type='date'
                             name='startDate'
                             value={newAd.startDate}
-                            onChange={handleChange}
+                            onChange={handleTextChange}
                             InputLabelProps={{ shrink: true }}
                             fullWidth
                         />
@@ -227,7 +208,7 @@ const FeaturedAdsDashboard = () => {
                             type='date'
                             name='endDate'
                             value={newAd.endDate}
-                            onChange={handleChange}
+                            onChange={handleTextChange}
                             InputLabelProps={{ shrink: true }}
                             fullWidth
                         />
@@ -237,65 +218,27 @@ const FeaturedAdsDashboard = () => {
                         <Button
                             variant='contained'
                             disabled={!newAd.listingId || saving}
-                            onClick={handleOpenPayment}
+                            onClick={handleSubmit}
                         >
                             {saving ? <CircularProgress size={24} /> : 'شراء'}
                         </Button>
-
-                        <PaymentModal
-                            show={showPaymentModal}
-                            onHide={handleClosePayment}
-                            onConfirm={(data) => {
-                                handleSubmit();
-                                console.log('Payment confirmed:', data);
-                                showSnackbar('تم تأكيد الدفع', 'success');
-                                handleClosePayment();
-                            }}
-                        />
                     </Grid>
                 </Grid>
             </Paper>
 
-            {/* إعلانات نشطة حسب النوع */}
+            {/* Active ads by type */}
             <Paper sx={{ p: 2, mb: 4 }}>
                 <Typography variant='h6' gutterBottom>
                     الإعلانات النشطة حسب النوع
                 </Typography>
                 <Stack direction='row' spacing={2}>
-                    <Chip
-                        label={`Homepage: ${activeCounts.homepage || 0}`}
-                        color='success'
-                    />
-                    <Chip
-                        label={`Top: ${activeCounts.top || 0}`}
-                        color='success'
-                    />
-                    <Chip
-                        label={`Highlight: ${activeCounts.highlight || 0}`}
-                        color='success'
-                    />
+                    <Chip label={`Homepage: ${activeCounts.homepage || 0}`} color='success' />
+                    <Chip label={`Top: ${activeCounts.top || 0}`} color='success' />
+                    <Chip label={`Highlight: ${activeCounts.highlight || 0}`} color='success' />
                 </Stack>
-                {/* <Button variant='contained' onClick={handleOpenPayment}>
-					دفع
-				</Button>
-
-				<MuiSnackbar
-					open={snackbar.open}
-					autoHideDuration={6000}
-					onClose={closeSnackbar}
-					anchorOrigin={{vertical: "bottom", horizontal: "center"}}
-				>
-					<Alert
-						onClose={closeSnackbar}
-						severity={snackbar.severity}
-						sx={{width: "100%"}}
-					>
-						{snackbar.message}
-					</Alert>
-				</MuiSnackbar> */}
             </Paper>
 
-            {/* إعلانات المستخدم */}
+            {/* User's current ads */}
             <Typography variant='h6' gutterBottom>
                 إعلاناتك الحالية
             </Typography>
@@ -307,56 +250,52 @@ const FeaturedAdsDashboard = () => {
             ) : (
                 <Grid container spacing={2}>
                     {ads.map((ad) => {
-                        const isActive =
-                            ad.isActive && dayjs().isBefore(dayjs(ad.endDate));
+                        const isActive = ad.isActive && dayjs().isBefore(dayjs(ad.endDate));
                         return (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
                                 <Paper
                                     sx={{
                                         p: 2,
-                                        backgroundColor: isActive
-                                            ? '#e8f5e9'
-                                            : '#ffebee',
+                                        backgroundColor: isActive ? '#e8f5e9' : '#ffebee',
                                     }}
                                 >
+                                    {/* FIX 3: Use correct populated field name from interface */}
                                     <Typography variant='subtitle1'>
-                                        {ad.listingId?.title || 'بدون عنوان'}
+                                        {ad.listingId?.product_name || 'بدون عنوان'}
                                     </Typography>
+                                    <Typography variant='body2'>نوع: {ad.type}</Typography>
                                     <Typography variant='body2'>
-                                        نوع: {ad.type}
-                                    </Typography>
-                                    <Typography variant='body2'>
-                                        من{' '}
-                                        {dayjs(ad.startDate).format(
-                                            'DD/MM/YYYY',
-                                        )}{' '}
-                                        إلى{' '}
+                                        من {dayjs(ad.startDate).format('DD/MM/YYYY')} إلى{' '}
                                         {dayjs(ad.endDate).format('DD/MM/YYYY')}
                                     </Typography>
-                                    <Typography variant='body2'>
+                                    <Typography variant='body2' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         الحالة:
                                         {isActive ? (
-                                            <Chip
-                                                label={'common.active'}
-                                                color='success'
-                                            />
+                                            <Chip label='نشط' color='success' size='small' />
                                         ) : (
-                                            <Chip
-                                                label={'common.inActive'}
-                                                color='error'
-                                            />
+                                            <Chip label='غير نشط' color='error' size='small' />
                                         )}
                                     </Typography>
+
+                                    {/* FIX 4: Add a delete button that opens the modal for THIS specific ad */}
+                                    <Button
+                                        variant='outlined'
+                                        color='error'
+                                        size='small'
+                                        sx={{ mt: 1 }}
+                                        onClick={() => setAdToDelete(ad._id)}
+                                    >
+                                        حذف
+                                    </Button>
+
                                     <AlertDialogs
-                                        show={showDeleteModal}
-                                        onHide={() => setShowDeleteModal(false)}
+                                        show={adToDelete === ad._id}
+                                        onHide={() => setAdToDelete(null)}
                                         title='حذف إعلان'
                                         description='هل أنت متأكد من حذف هذا الإعلان؟'
                                         handleDelete={() => {
-                                            setDeleteAdId(ad._id);
-                                            if (deleteAdId)
-                                                handleDelete(deleteAdId);
-                                            setShowDeleteModal(false);
+                                            handleDelete(ad._id);
+                                            setAdToDelete(null);
                                         }}
                                     />
                                 </Paper>
@@ -365,20 +304,6 @@ const FeaturedAdsDashboard = () => {
                     })}
                 </Grid>
             )}
-
-            <PromotionPlans
-                onSelect={(type, days) => {
-                    setNewAd((prev) => ({
-                        ...prev,
-                        type,
-                        startDate: dayjs().format('YYYY-MM-DD'),
-
-                        endDate: dayjs().add(days, 'day').format('YYYY-MM-DD'),
-                    }));
-
-                    handleOpenPayment();
-                }}
-            />
         </Box>
     );
 };
