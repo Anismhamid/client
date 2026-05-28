@@ -49,7 +49,7 @@ import { productsAndCategories } from '../navCategoryies';
 import JsonLd from '../../../../utils/JsonLd';
 import { GradientSwitch } from './GradientSwitch';
 import MobileDrawer from './MobileDrawer';
-import SafqaLogo from '../../../atoms/deepseek_jsx_20260522_818862';
+import SafqaLogo from '../../../atoms/SafqaLogo';
 
 interface ThemeProps {
     mode: PaletteMode;

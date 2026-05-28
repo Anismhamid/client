@@ -33,12 +33,13 @@ import PostCard from './products/PostsCard';
 import { Posts } from '../../interfaces/Posts';
 import { useProducts } from '../../hooks/useProducts';
 import ChipNavigation from '../navbar/ChepNavigation';
+import HomepageFeaturedSection from '../../atoms/ads/HomepageFeaturedSection ';
 
 /**
  * Home page — redesigned with clean, minimal aesthetic
  */
 const Home: FunctionComponent = () => {
-    const { auth , isLoggedIn} = useUser();
+    const { auth, isLoggedIn } = useUser();
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(true);
@@ -398,6 +399,11 @@ const Home: FunctionComponent = () => {
 
             {/* ─── MAIN CONTENT ─── */}
             <Box dir={diriction} component='main' id='products-section'>
+                {/* Featured Ads */}
+                <HomepageFeaturedSection
+                    onViewAll={() => navigate('/featured-ads')}
+                />
+
                 {/* Discounts */}
                 {!searchQuery && <DiscountsAndOffers />}
 

@@ -1,11 +1,24 @@
+export interface ListingRef {
+    _id: string;
+    title: string;
+    category?: string;
+    location?: string;
+    price?: number;
+    image?: { url: string; alt: string };
+}
+
+export type AdType = 'homepage' | 'top' | 'highlight';
+
 export interface FeaturedAd {
-	_id: string;
-	listingId: {_id: string; product_name: string, price?: number};
-	userId: string;
-	type: "homepage" | "top" | "highlight";
-	startDate: string;
-	endDate: string;
-	isActive: boolean;
-	createdAt: string;
-	updatedAt: string;
+    _id: string;
+    listingId: ListingRef | null;
+    userId: string;
+    type: AdType;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    paid: boolean;
+    stripeSessionId: string;
+    createdAt: string;
+    updatedAt: string;
 }

@@ -23,7 +23,7 @@ import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
 import { getCustomerProfilePostsBySlug } from '../../services/postsServices';
 import { useUser } from '../../context/useUSer';
 import { Posts } from '../../interfaces/Posts';
-import AlertDialogs from '../toasts/Sweetalert';
+// import AlertDialogs from '../toasts/Sweetalert';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -42,7 +42,7 @@ const FeaturedAdsDashboard = () => {
     const [userListings, setUserListings] = useState<Posts[]>([]);
 
     // FIX 1: Track which specific ad is pending deletion, not just a boolean
-    const [adToDelete, setAdToDelete] = useState<string | null>(null);
+    // const [adToDelete, setAdToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         getCustomerProfilePostsBySlug(auth?.slug as string)
@@ -73,7 +73,9 @@ const FeaturedAdsDashboard = () => {
     }, []);
 
     // FIX 2: Separate handlers for TextField and Select to avoid TS union-type issues
-    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleTextChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
         const { name, value } = e.target;
         setNewAd((prev) => ({ ...prev, [name]: value }));
     };
@@ -98,24 +100,11 @@ const FeaturedAdsDashboard = () => {
             );
             // Redirect to Stripe Checkout
             window.location.href = data.url;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             showSnackbar(err.response?.data?.message || 'حدث خطأ', 'error');
         } finally {
             setSaving(false);
-        }
-    };
-
-    const handleDelete = async (adId: string) => {
-        try {
-            await axios.delete(`${api}/featured-ads/delete/${adId}`, {
-                headers: { Authorization: localStorage.getItem('token') },
-            });
-            await fetchAds();
-            showSnackbar('تم حذف الإعلان بنجاح!', 'success');
-        } catch (err) {
-            console.error(err);
-            showSnackbar('حدث خطأ أثناء الحذف', 'error');
         }
     };
 
@@ -166,7 +155,10 @@ const FeaturedAdsDashboard = () => {
                                 label='اختر الإعلان'
                             >
                                 {userListings.map((listing) => (
-                                    <MenuItem key={listing._id} value={listing._id}>
+                                    <MenuItem
+                                        key={listing._id}
+                                        value={listing._id}
+                                    >
                                         {listing.product_name || 'بدون عنوان'}
                                     </MenuItem>
                                 ))}
@@ -232,9 +224,18 @@ const FeaturedAdsDashboard = () => {
                     الإعلانات النشطة حسب النوع
                 </Typography>
                 <Stack direction='row' spacing={2}>
-                    <Chip label={`Homepage: ${activeCounts.homepage || 0}`} color='success' />
-                    <Chip label={`Top: ${activeCounts.top || 0}`} color='success' />
-                    <Chip label={`Highlight: ${activeCounts.highlight || 0}`} color='success' />
+                    <Chip
+                        label={`Homepage: ${activeCounts.homepage || 0}`}
+                        color='success'
+                    />
+                    <Chip
+                        label={`Top: ${activeCounts.top || 0}`}
+                        color='success'
+                    />
+                    <Chip
+                        label={`Highlight: ${activeCounts.highlight || 0}`}
+                        color='success'
+                    />
                 </Stack>
             </Paper>
 
@@ -250,54 +251,57 @@ const FeaturedAdsDashboard = () => {
             ) : (
                 <Grid container spacing={2}>
                     {ads.map((ad) => {
-                        const isActive = ad.isActive && dayjs().isBefore(dayjs(ad.endDate));
+                        const isActive =
+                            ad.isActive && dayjs().isBefore(dayjs(ad.endDate));
                         return (
                             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
                                 <Paper
                                     sx={{
                                         p: 2,
-                                        backgroundColor: isActive ? '#e8f5e9' : '#ffebee',
+                                        backgroundColor: isActive
+                                            ? '#e8f5e9'
+                                            : '#ffebee',
                                     }}
                                 >
                                     {/* FIX 3: Use correct populated field name from interface */}
                                     <Typography variant='subtitle1'>
-                                        {ad.listingId?.product_name || 'بدون عنوان'}
+                                        {ad.listingId?.title || 'بدون عنوان'}
                                     </Typography>
-                                    <Typography variant='body2'>نوع: {ad.type}</Typography>
                                     <Typography variant='body2'>
-                                        من {dayjs(ad.startDate).format('DD/MM/YYYY')} إلى{' '}
+                                        نوع: {ad.type}
+                                    </Typography>
+                                    <Typography variant='body2'>
+                                        من{' '}
+                                        {dayjs(ad.startDate).format(
+                                            'DD/MM/YYYY',
+                                        )}{' '}
+                                        إلى{' '}
                                         {dayjs(ad.endDate).format('DD/MM/YYYY')}
                                     </Typography>
-                                    <Typography variant='body2' sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography
+                                        variant='body2'
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 1,
+                                        }}
+                                    >
                                         الحالة:
                                         {isActive ? (
-                                            <Chip label='نشط' color='success' size='small' />
+                                            <Chip
+                                                label='نشط'
+                                                color='success'
+                                                size='small'
+                                            />
                                         ) : (
-                                            <Chip label='غير نشط' color='error' size='small' />
+                                            <Chip
+                                                label='غير نشط'
+                                                color='error'
+                                                size='small'
+                                            />
                                         )}
                                     </Typography>
 
-                                    {/* FIX 4: Add a delete button that opens the modal for THIS specific ad */}
-                                    <Button
-                                        variant='outlined'
-                                        color='error'
-                                        size='small'
-                                        sx={{ mt: 1 }}
-                                        onClick={() => setAdToDelete(ad._id)}
-                                    >
-                                        حذف
-                                    </Button>
-
-                                    <AlertDialogs
-                                        show={adToDelete === ad._id}
-                                        onHide={() => setAdToDelete(null)}
-                                        title='حذف إعلان'
-                                        description='هل أنت متأكد من حذف هذا الإعلان؟'
-                                        handleDelete={() => {
-                                            handleDelete(ad._id);
-                                            setAdToDelete(null);
-                                        }}
-                                    />
                                 </Paper>
                             </Grid>
                         );

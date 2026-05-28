@@ -5,6 +5,8 @@ import { path, productsPathes } from './routes';
 import RoleType from '../interfaces/UserType';
 import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
+import MyAdsDashboard from '../atoms/ads/MyAdsDashboard ';
+import HomepageFeaturedSection from '../atoms/ads/HomepageFeaturedSection ';
 
 const UsersManagement = lazy(
     () => import('../components/settings/UsersManagement'),
@@ -121,6 +123,14 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={`${path.DiscountsAndOffers}`}
                 element={<DiscountsAndOffers />}
+            />
+            <Route
+                path={`${path.MyAdsDashboard}`}
+                element={<MyAdsDashboard />}
+            />
+            <Route
+                path={`${path.FeaturedAds}`}
+                element={<HomepageFeaturedSection />}
             />
 
             <Route path={'*'} element={<PageNotFound />} />

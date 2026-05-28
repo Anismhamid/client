@@ -48,6 +48,8 @@ export enum path {
     Messages = '/messages',
     userTouserMessage = 'chat',
     MessagesPage = 'messages/chat',
+    MyAdsDashboard = '/my-ads-dashboard',
+    FeaturedAds = '/featured-ads',
 
     // Admin
     AdminSettings = '/admin-settings',
