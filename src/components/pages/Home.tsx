@@ -187,6 +187,8 @@ const Home: FunctionComponent = () => {
                     position: 'relative',
                     overflow: 'hidden',
                     bgcolor: 'background.paper',
+                    background:
+                        'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)',
                 }}
             >
                 {/* Subtle dot-grid pattern */}
@@ -356,7 +358,10 @@ const Home: FunctionComponent = () => {
                     borderBottom: '1px solid',
                     borderColor: 'divider',
                     bgcolor: 'background.default',
+                    boxShadow: ' 10px 10px 10px rgba(245, 158, 11, 0.067)',
                     py: 2.5,
+                      background:
+                        'radial-gradient(circle,  0%, transparent 70%)',
                     px: { xs: 2, md: 4 },
                 }}
             >
@@ -398,7 +403,15 @@ const Home: FunctionComponent = () => {
             </Box>
 
             {/* ─── MAIN CONTENT ─── */}
-            <Box dir={diriction} component='main' id='products-section'>
+            <Box
+                dir={diriction}
+                sx={{
+                    background:
+                        'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)',
+                }}
+                component='main'
+                id='products-section'
+            >
                 {/* Featured Ads */}
                 <HomepageFeaturedSection
                     onViewAll={() => navigate('/featured-ads')}

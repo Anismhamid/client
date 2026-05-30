@@ -109,7 +109,7 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                     noWrap
                     sx={{ mb: 0.5 }}
                 >
-                    {ad.listingId?.title ?? '(الإعلان محذوف)'}
+                    {ad.listingId?.product_name ?? '(الإعلان محذوف)'}
                 </Typography>
                 <Typography
                     variant='caption'

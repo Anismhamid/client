@@ -26,6 +26,8 @@ import {
 	LocationOn,
 	Report,
 	VisibilityRounded,
+	LocalFireDepartment,
+	Verified,
 } from "@mui/icons-material";
 import { Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef } from "react";
 import { generatePath, Link, useNavigate } from "react-router-dom";
@@ -52,7 +54,16 @@ interface PostCardProps {
 	category: string;
 	onLikeToggle?: (postId: string, liked: boolean) => void;
 	updateProductInList?: (updatedPost: Posts) => void;
+	/** إذا كان الإعلان مميزاً / مروَّجاً */
+	featured?: boolean;
+	featuredType?: "homepage" | "top" | "highlight";
 }
+
+const FEATURED_META = {
+	homepage: { label: "صفحة رئيسية", color: "#f59e0b", bg: "rgba(245,158,11,0.10)" },
+	top: { label: "مرفوع", color: "#818cf8", bg: "rgba(129,140,248,0.10)" },
+	highlight: { label: "مضيء", color: "#34d399", bg: "rgba(52,211,153,0.10)" },
+};
 
 const PostCard: FunctionComponent<PostCardProps> = memo(
 	({
@@ -64,6 +75,8 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		openDeleteModal,
 		onLikeToggle,
 		updateProductInList,
+		featured = false,
+		featuredType = "highlight",
 	}) => {
 		const { t } = useTranslation();
 		const dir = handleRTL();
@@ -75,6 +88,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 		const menuRef = useRef(null);
 
 		const jsonLdData = generateSingleProductJsonLd(post);
+		const featuredMeta = FEATURED_META[featuredType];
 
 		const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setMenuAnchor(e.currentTarget);
 		const handleMenuClose = () => setMenuAnchor(null);
@@ -118,18 +132,22 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			<Card
 				dir={dir}
 				sx={{
-					borderRadius: "12px",
-					border: "1px solid",
-					borderColor: "divider",
-					boxShadow: "none",
+					borderRadius: "16px",
+					border: "1.5px solid",
+					borderColor: featured ? featuredMeta.color + "60" : "divider",
+					boxShadow: featured
+						? `0 0 0 3px ${featuredMeta.color}18, 0 4px 24px ${featuredMeta.color}15`
+						: "none",
 					display: "flex",
 					flexDirection: "column",
 					overflow: "hidden",
 					cursor: isOutOfStock ? "not-allowed" : "default",
 					filter: isOutOfStock ? "grayscale(0.4)" : "none",
-					transition: "border-color 0.15s",
+					transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
+					position: "relative",
 					"&:hover": {
-						borderColor: "text.disabled",
+						borderColor: featured ? featuredMeta.color + "90" : "text.disabled",
+						transform: featured ? "translateY(-2px)" : "none",
 					},
 				}}
 				itemScope
@@ -139,6 +157,34 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 			>
 				<JsonLd data={jsonLdData} />
 
+				{/* ── FEATURED BANNER ── */}
+				{featured && (
+					<Box
+						sx={{
+							background: `linear-gradient(90deg, ${featuredMeta.color}22, ${featuredMeta.color}08)`,
+							borderBottom: `1px solid ${featuredMeta.color}30`,
+							px: 1.5,
+							py: 0.6,
+							display: "flex",
+							alignItems: "center",
+							gap: 0.75,
+						}}
+					>
+						<LocalFireDepartment sx={{ fontSize: 14, color: featuredMeta.color }} />
+						<Typography
+							variant="caption"
+							sx={{
+								color: featuredMeta.color,
+								fontWeight: 700,
+								fontSize: "0.72rem",
+								letterSpacing: 0.5,
+							}}
+						>
+							إعلان مميز · {featuredMeta.label}
+						</Typography>
+					</Box>
+				)}
+
 				{/* ── HEADER ── */}
 				<Box sx={{ px: 1.5, pt: 1.5, pb: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
 					<Link
@@ -147,31 +193,62 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 						})}
 						style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}
 					>
-						<Avatar
-							src={post.seller?.user?.image?.url || "user.png"}
-							alt={post.seller?.name || "بائع"}
-							sx={{
-								width: 38,
-								height: 38,
-								border: "1.5px solid",
-								borderColor: "divider",
-								"&:hover": { borderColor: "primary.main" },
-								transition: "border-color 0.15s",
-							}}
-						/>
-						<Box>
-							<Typography
-								variant="subtitle2"
-								fontWeight={600}
+						<Box sx={{ position: "relative" }}>
+							<Avatar
+								src={post.seller?.user?.image?.url || "user.png"}
+								alt={post.seller?.name || "بائع"}
 								sx={{
-									fontSize: "0.875rem",
-									color: "text.primary",
-									lineHeight: 1.3,
-									"&:hover": { textDecoration: "underline" },
+									width: 38,
+									height: 38,
+									border: "1.5px solid",
+									borderColor: featured ? featuredMeta.color + "60" : "divider",
+									transition: "border-color 0.15s",
 								}}
-							>
-								{post.seller?.name || post.seller?.slug || "بائع"}
-							</Typography>
+							/>
+							{featured && (
+								<Verified
+									sx={{
+										position: "absolute",
+										bottom: -2,
+										right: -2,
+										fontSize: 14,
+										color: featuredMeta.color,
+										bgcolor: "background.paper",
+										borderRadius: "50%",
+									}}
+								/>
+							)}
+						</Box>
+						<Box>
+							<Stack direction="row" alignItems="center" spacing={0.5}>
+								<Typography
+									variant="subtitle2"
+									fontWeight={600}
+									sx={{
+										fontSize: "0.875rem",
+										color: "text.primary",
+										lineHeight: 1.3,
+										"&:hover": { textDecoration: "underline" },
+									}}
+								>
+									{post.seller?.name || post.seller?.slug || "بائع"}
+								</Typography>
+								{featured && (
+									<Chip
+										label="موثّق"
+										size="small"
+										sx={{
+											height: 16,
+											fontSize: "0.65rem",
+											fontWeight: 700,
+											bgcolor: featuredMeta.bg,
+											color: featuredMeta.color,
+											border: `1px solid ${featuredMeta.color}40`,
+											"& .MuiChip-label": { px: 0.75 },
+										}}
+									/>
+								)}
+							</Stack>
 							<Stack direction="row" alignItems="center" spacing={0.5}>
 								<Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.75rem" }}>
 									{formatTimeAgo(String(post.createdAt), t) || ""}
@@ -283,8 +360,24 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								height: 210,
 								objectFit: "cover",
 								bgcolor: "action.hover",
+								transition: "transform 0.3s ease",
+								"&:hover": featured ? { transform: "scale(1.02)" } : {},
 							}}
 						/>
+						{/* Featured overlay gradient */}
+						{featured && (
+							<Box
+								sx={{
+									position: "absolute",
+									bottom: 0,
+									left: 0,
+									right: 0,
+									height: 60,
+									background: `linear-gradient(to top, ${featuredMeta.color}18, transparent)`,
+									pointerEvents: "none",
+								}}
+							/>
+						)}
 					</Link>
 
 					{/* Discount badge */}
@@ -357,7 +450,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 						<Typography
 							variant="h6"
 							fontWeight={700}
-							sx={{ color: "primary.main", fontSize: "1.125rem", lineHeight: 1 }}
+							sx={{
+								color: featured ? featuredMeta.color : "primary.main",
+								fontSize: "1.125rem",
+								lineHeight: 1,
+							}}
 							itemProp="offers"
 							itemScope
 							itemType="https://schema.org/Offer"
@@ -501,6 +598,13 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 								fontWeight: 600,
 								fontSize: "0.8125rem",
 								py: 0.5,
+								...(featured && {
+									background: `linear-gradient(90deg, ${featuredMeta.color}, ${featuredMeta.color}cc)`,
+									color: "#000",
+									"&:hover": {
+										background: `linear-gradient(90deg, ${featuredMeta.color}ee, ${featuredMeta.color})`,
+									},
+								}),
 							}}
 						>
 							تواصل

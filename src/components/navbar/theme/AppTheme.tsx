@@ -177,9 +177,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 position='relative'
                 dir={dir}
                 sx={{
-                    background: mode === 'dark' ? '' : '#F5F5F5',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                    zIndex: 1100, // Increased for better layering
+                    background: mode === 'dark' ? 'rgba(245, 159, 11, 0.030)' : '#F5F5F5',
+                    boxShadow: '0 4px 20px #f59e0b11',
+                    zIndex: 1100,
                     overflow: 'hidden',
                     top: 0,
                 }}

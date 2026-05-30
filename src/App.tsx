@@ -35,7 +35,7 @@ function App() {
 					mode,
 					...(mode === "light"
 						? {
-								primary: {main: "#000000c7"},
+								primary: {main: "#f59f0b"},
 								secondary: {main: "#1976d2"},
 								background: {
 									default: "#f5f5f5",
@@ -47,8 +47,8 @@ function App() {
 								},
 							}
 						: {
-								primary: {main: "#90caf9"},
-								secondary: {main: "#ce93d8"},
+								primary: {main: "#f59f0b"},
+								secondary: {main: "#000000"},
 								background: {
 									default: "#121212",
 									paper: "#0C141A",

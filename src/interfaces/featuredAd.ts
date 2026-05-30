@@ -1,6 +1,6 @@
 export interface ListingRef {
     _id: string;
-    title: string;
+    product_name: string;
     category?: string;
     location?: string;
     price?: number;
@@ -18,7 +18,8 @@ export interface FeaturedAd {
     endDate: string;
     isActive: boolean;
     paid: boolean;
-    stripeSessionId: string;
-    createdAt: string;
-    updatedAt: string;
+    image: { url: string; alt: string };
+    stripeSessionId?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }

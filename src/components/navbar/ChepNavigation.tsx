@@ -33,6 +33,7 @@ const ChipNavigation = () => {
                 borderBottom: '1px solid',
                 borderColor: 'divider',
                 py: 1,
+                
             }}
         >
             <JsonLd

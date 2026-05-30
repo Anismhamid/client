@@ -8,6 +8,7 @@ import ChairIcon from '@mui/icons-material/Chair';
 import CheckroomIcon from '@mui/icons-material/Checkroom';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+
 import {
     Box,
     Button,
@@ -17,9 +18,9 @@ import {
     Typography,
     Chip,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
 import { FeaturedAd } from '../../interfaces/featuredAd';
-import { formatDate } from '../../helpers/dateAndPriceFormat';
+import { formatDate, formatPrice } from '../../helpers/dateAndPriceFormat';
+import { useHomePageAds } from '../../hooks/useHomePageAds';
 import { productsPathes } from '../../routes/routes';
 
 /* ── Category icon helper ───────────────────────────── */
@@ -90,8 +91,9 @@ function AdCardSkeleton() {
 }
 
 /* ── Single ad card ─────────────────────────────────── */
-function HomepageAdCard({ ad, path }: { ad: FeaturedAd; path: string }) {
+function HomepageAdCard({ ad }: { ad: FeaturedAd }) {
     const listing = ad.listingId;
+    const path = `${productsPathes.postsDetails}/${listing?.category}/Ads/${listing?._id}`;
 
     return (
         <Box
@@ -105,14 +107,12 @@ function HomepageAdCard({ ad, path }: { ad: FeaturedAd; path: string }) {
                 borderColor: 'divider',
                 borderRadius: 3,
                 overflow: 'hidden',
-                // cursor: onClick ? 'pointer' : 'default',
+                cursor: 'pointer',
                 transition: 'transform 0.18s ease, border-color 0.18s ease',
-                // '&:hover': onClick
-                //     ? {
-                //           transform: 'translateY(-3px)',
-                //           borderColor: '#9FE1CB',
-                //       }
-                //     : {},
+                '&:hover': {
+                    transform: 'translateY(-5px)',
+                    borderColor: '#9FE1CB',
+                },
             }}
         >
             {/* Top accent bar */}
@@ -135,6 +135,51 @@ function HomepageAdCard({ ad, path }: { ad: FeaturedAd; path: string }) {
                         borderRadius: '0 0 6px 6px',
                     }}
                 />
+
+                <Box
+                    sx={{
+                        position: 'relative',
+                        height: 160,
+                        overflow: 'hidden',
+                        bgcolor: '#E1F5EE',
+                    }}
+                >
+                    <img
+                        src={listing?.image?.url}
+                        alt={listing?.product_name}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                        }}
+                    />
+                    <Chip
+                        label='مميز'
+                        size='small'
+                        sx={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 10,
+                            bgcolor: '#1D9E75',
+                            color: '#085041',
+                        }}
+                    />
+                    {listing?.price && (
+                        <Chip
+                            label={formatPrice(listing.price)}
+                            size='small'
+                            sx={{
+                                position: 'absolute',
+                                bottom: 10,
+                                left: 10,
+                                bgcolor: 'background.paper',
+                                color: '#19c421',
+                                border: '0.5px solid #9FE1CB',
+                            }}
+                        />
+                    )}
+                </Box>
 
                 {/* Icon box */}
                 <Box
@@ -160,7 +205,7 @@ function HomepageAdCard({ ad, path }: { ad: FeaturedAd; path: string }) {
                     noWrap
                     sx={{ mb: 0.5, color: 'text.primary' }}
                 >
-                    {listing?.title ?? '—'}
+                    {listing?.product_name ?? '—'}
                 </Typography>
 
                 {/* Category */}
@@ -218,32 +263,13 @@ interface HomepageFeaturedSectionProps {
     onViewAll?: () => void;
 }
 
-const api = import.meta.env.VITE_API_URL;
+// const api = import.meta.env.VITE_API_URL;
 
 export default function HomepageFeaturedSection({
     onViewAll,
 }: HomepageFeaturedSectionProps) {
-    const [ads, setAds] = useState<FeaturedAd[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const res = await fetch(`${api}/featured-ads/homepage`);
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                setAds(data.ads ?? []);
-            } catch {
-                setError(true);
-            } finally {
-                setLoading(false);
-            }
-        })();
-    }, []);
-
-    // Don't render section if no ads and not loading
-    if (error || (!loading && ads.length === 0)) return null;
+    const { homePageAds, loading } = useHomePageAds();
+    if (!loading && homePageAds.length === 0) return null;
 
     return (
         <Box
@@ -284,7 +310,8 @@ export default function HomepageFeaturedSection({
                                 variant='caption'
                                 color='text.secondary'
                             >
-                                {ads.length} إعلان نشط على الصفحة الرئيسية
+                                {homePageAds.length} إعلان نشط على الصفحة
+                                الرئيسية
                             </Typography>
                         )}
                     </Box>
@@ -315,12 +342,9 @@ export default function HomepageFeaturedSection({
                               <AdCardSkeleton />
                           </Grid>
                       ))
-                    : ads.map((ad) => (
+                    : homePageAds.map((ad) => (
                           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
-                              <HomepageAdCard
-                                  ad={ad}
-                                  path={`${productsPathes.postsDetails}/${ad.listingId?.category}/${ad.listingId?.title}/${ad.listingId?._id}`}
-                              />
+                              <HomepageAdCard ad={ad} />
                           </Grid>
                       ))}
             </Grid>

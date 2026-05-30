@@ -146,7 +146,7 @@ function AdRow({
             {/* Info */}
             <Box sx={{ flex: 1, minWidth: 0 }}>
                 <Typography variant='body2' fontWeight={500} noWrap mb={0.4}>
-                    {ad.listingId?.title ?? '(الإعلان محذوف)'}
+                    {ad.listingId?.product_name ?? '(الإعلان محذوف)'}
                 </Typography>
                 <Stack
                     direction='row'

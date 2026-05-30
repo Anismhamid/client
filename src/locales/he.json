@@ -70,6 +70,8 @@
         "lastLogin": "כניסה אחרונה",
         "email": "דואר אלקטרוני",
         "password": "סיסמה",
+        "description": "התחבר לחשבונך כדי להמשיך מהמקום שבו הפסקת",
+        "successMessage": "ברוכים הבאים {{name}}!",
         "loginButton": "התחברות",
         "googleLoginError": "התחברות עם Google נכשלה",
         "noAccount": "אין לך חשבון עדיין?",

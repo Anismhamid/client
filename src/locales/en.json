@@ -67,6 +67,8 @@
     "login": {
         "lastLogin": "Last login",
         "email": "Email",
+        "description": "Log in to your account to continue where you left off",
+        "successMessage": "Welcome back {{name}}!",
         "password": "Password",
         "loginButton": "Login",
         "googleLoginError": "Google login failed",

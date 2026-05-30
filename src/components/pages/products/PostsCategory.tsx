@@ -268,7 +268,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const generateCategory = generateCategoryJsonLd(category, products);
 
     return (
-        <>
+        <main>
             {/* FIX 1: React 19 hoists these to <head> natively — no library needed */}
             <title>{categoryTitle} | صفقة</title>
             <link rel='canonical' href={currentUrl} />
@@ -368,6 +368,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                     >
                                         <Box ref={observerRef}>
                                             <ProductCard
+                                             featured featuredType="highlight"
                                                 post={post}
                                                 discountedPrice={
                                                     discountedPrice
@@ -509,7 +510,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                     description={`هل أنت متأكد أنك تريد حذف "${productToDelete}"؟ لا يمكن التراجع عن هذا الإجراء.`}
                 />
             </Box>
-        </>
+        </main>
     );
 };
 
