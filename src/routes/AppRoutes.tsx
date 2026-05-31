@@ -12,7 +12,7 @@ import PaymentSuccess from '../components/pages/payment/Success';
 const UsersManagement = lazy(
     () => import('../components/settings/UsersManagement'),
 );
-const Home = lazy(() => import('../components/pages/Home'));
+const Home = lazy(() => import('../components/pages/home/Home'));
 const Login = lazy(() => import('../components/settings/Login'));
 const About = lazy(() => import('../components/pages/About'));
 // import EditUserData from "../atoms/userManage/EditUserData";

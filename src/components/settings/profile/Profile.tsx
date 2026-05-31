@@ -46,7 +46,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
-import { useUserProducts } from '../../../hooks/useUserProducts';
+import { useUserProducts } from '../../../hooks/useUserPosts';
 import useToken from '../../../hooks/useToken';
 import { useUser } from '../../../context/useUSer';
 import { Posts } from '../../../interfaces/Posts';

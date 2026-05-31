@@ -1,16 +1,16 @@
-// shared/hooks/useProducts.ts
+// shared/hooks/usePosts.ts
 import { useEffect, useRef, useState, useCallback } from "react";
 import { getAllPosts } from "../services/postsServices";
 import { Posts } from "../interfaces/Posts";
 
-export const useProducts = () => {
+export const usePosts = () => {
 	const [posts, setPosts] = useState<Posts[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
 
 	const isMounted = useRef(true);
 
-	const fetchPostts = useCallback(async () => {
+	const fetchPosts = useCallback(async () => {
 		try {
 			setLoading(true);
 			setError(null);
@@ -37,16 +37,16 @@ export const useProducts = () => {
 	useEffect(() => {
 		isMounted.current = true;
 
-		fetchPostts();
+		fetchPosts();
 
 		return () => {
 			isMounted.current = false;
 		};
-	}, [fetchPostts]);
+	}, [fetchPosts]);
 
 	// 🔥 refetch function
 	const refetch = () => {
-		fetchPostts();
+		fetchPosts();
 	};
 
 	return {

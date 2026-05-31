@@ -102,7 +102,7 @@ export interface Posts {
     location: string;
     likes?: string[];
     isNew?: boolean;
-
+    type?: string;
     seller: Seller;
 
     product_name: string;

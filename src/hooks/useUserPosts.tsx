@@ -1,10 +1,10 @@
-// hooks/useUserProducts.ts
+// hooks/useUserPosts.ts
 import {useEffect, useState} from "react";
 import {getCustomerProfilePostsBySlug} from "../services/postsServices";
 import {Posts} from "../interfaces/Posts";
 
-export const useUserProducts = (slug: string) => {
-	const [userProducts, setUserProducts] = useState<Posts[]>([]);
+export const useUserPosts = (slug: string) => {
+	const [userPosts, setUserPosts] = useState<Posts[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -14,7 +14,7 @@ export const useUserProducts = (slug: string) => {
 		const fetch = async () => {
 			try {
 				const products = await getCustomerProfilePostsBySlug(slug);
-				setUserProducts(products);
+				setUserPosts(products);
 			} catch {
 				setError("Failed to load products");
 			} finally {
@@ -26,7 +26,7 @@ export const useUserProducts = (slug: string) => {
 	}, [slug]);
 
 	return {
-		userProducts,
+		userPosts,
 		loading,
 		error,
 	};

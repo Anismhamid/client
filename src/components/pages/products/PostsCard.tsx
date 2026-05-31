@@ -1,708 +1,850 @@
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
-	Avatar,
-	Box,
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardMedia,
-	Chip,
-	Divider,
-	IconButton,
-	Menu,
-	MenuItem,
-	Stack,
-	Tooltip,
-	Typography,
-} from "@mui/material";
+    Avatar,
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardMedia,
+    Chip,
+    Divider,
+    IconButton,
+    Menu,
+    MenuItem,
+    Stack,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import {
-	Bookmark,
-	BookmarkBorder,
-	Comment,
-	MoreHoriz,
-	Share as ShareIcon,
-	LocationOn,
-	Report,
-	VisibilityRounded,
-	LocalFireDepartment,
-	Verified,
-} from "@mui/icons-material";
-import { Dispatch, FunctionComponent, memo, SetStateAction, useState, useRef } from "react";
-import { generatePath, Link, useNavigate } from "react-router-dom";
-import { Posts } from "../../../interfaces/Posts";
-import { formatPrice } from "../../../helpers/dateAndPriceFormat";
-import { generateSingleProductJsonLd } from "../../../../utils/structuredData";
-import JsonLd from "../../../../utils/JsonLd";
-import { useTranslation } from "react-i18next";
-import handleRTL from "../../../locales/handleRTL";
-import { showError, showSuccess } from "../../../atoms/toasts/ReactToast";
-import LikeButton from "../../../atoms/like/LikeButton";
-import { path, productsPathes } from "../../../routes/routes";
-import { formatTimeAgo } from "./helpers/helperFunctions";
+    Bookmark,
+    BookmarkBorder,
+    Comment,
+    MoreHoriz,
+    Share as ShareIcon,
+    LocationOn,
+    Report,
+    VisibilityRounded,
+} from '@mui/icons-material';
+import {
+    Dispatch,
+    FunctionComponent,
+    memo,
+    SetStateAction,
+    useState,
+    useRef,
+} from 'react';
+import { generatePath, Link, useNavigate } from 'react-router-dom';
+import { Posts } from '../../../interfaces/Posts';
+import { formatPrice } from '../../../helpers/dateAndPriceFormat';
+import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
+import JsonLd from '../../../../utils/JsonLd';
+import { useTranslation } from 'react-i18next';
+import handleRTL from '../../../locales/handleRTL';
+import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
+import LikeButton from '../../../atoms/like/LikeButton';
+import { path, productsPathes } from '../../../routes/routes';
+import { formatTimeAgo } from './helpers/helperFunctions';
 
 interface PostCardProps {
-	post: Posts;
-	discountedPrice: number;
-	canEdit?: boolean;
-	setPostIdToUpdate: Dispatch<SetStateAction<string>>;
-	onShowUpdateProductModal: () => void;
-	openDeleteModal: (name: string) => void;
-	setLoadedImages: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-	loadedImages: Record<string, boolean>;
-	category: string;
-	onLikeToggle?: (postId: string, liked: boolean) => void;
-	updateProductInList?: (updatedPost: Posts) => void;
-	/** إذا كان الإعلان مميزاً / مروَّجاً */
-	featured?: boolean;
-	featuredType?: "homepage" | "top" | "highlight";
+    post: Posts;
+    discountedPrice: number;
+    canEdit?: boolean;
+    setPostIdToUpdate: Dispatch<SetStateAction<string>>;
+    onShowUpdateProductModal: () => void;
+    openDeleteModal: (name: string) => void;
+    setLoadedImages: React.Dispatch<
+        React.SetStateAction<Record<string, boolean>>
+    >;
+    loadedImages: Record<string, boolean>;
+    category: string;
+    onLikeToggle?: (postId: string, liked: boolean) => void;
+    updateProductInList?: (updatedPost: Posts) => void;
 }
 
-const FEATURED_META = {
-	homepage: { label: "صفحة رئيسية", color: "#f59e0b", bg: "rgba(245,158,11,0.10)" },
-	top: { label: "مرفوع", color: "#818cf8", bg: "rgba(129,140,248,0.10)" },
-	highlight: { label: "مضيء", color: "#34d399", bg: "rgba(52,211,153,0.10)" },
-};
-
 const PostCard: FunctionComponent<PostCardProps> = memo(
-	({
-		post,
-		discountedPrice,
-		canEdit,
-		setPostIdToUpdate,
-		onShowUpdateProductModal,
-		openDeleteModal,
-		onLikeToggle,
-		updateProductInList,
-		featured = false,
-		featuredType = "highlight",
-	}) => {
-		const { t } = useTranslation();
-		const dir = handleRTL();
-		const navigate = useNavigate();
+    ({
+        post,
+        discountedPrice,
+        canEdit,
+        setPostIdToUpdate,
+        onShowUpdateProductModal,
+        openDeleteModal,
+        onLikeToggle,
+        updateProductInList,
+    }) => {
+        const { t } = useTranslation();
+        const dir = handleRTL();
+        const navigate = useNavigate();
 
-		const [isBookmarked, setIsBookmarked] = useState(false);
-		const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
-		const [expanded, setExpanded] = useState<boolean>(false);
-		const menuRef = useRef(null);
+        const [isBookmarked, setIsBookmarked] = useState(false);
+        const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+        const [expanded, setExpanded] = useState<boolean>(false);
+        const menuRef = useRef(null);
 
-		const jsonLdData = generateSingleProductJsonLd(post);
-		const featuredMeta = FEATURED_META[featuredType];
+        const jsonLdData = generateSingleProductJsonLd(post);
 
-		const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setMenuAnchor(e.currentTarget);
-		const handleMenuClose = () => setMenuAnchor(null);
+        const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) =>
+            setMenuAnchor(e.currentTarget);
+        const handleMenuClose = () => setMenuAnchor(null);
 
-		const handleShare = () => {
-			const shareUrl = `${window.location.origin}/product-details/${post.category}/${post.brand}/${post._id}`;
-			const shareText = `${post.product_name} - ${post.price} شيكل`;
-			if (navigator.share) {
-				navigator
-					.share({ title: post.product_name, text: shareText, url: shareUrl })
-					.then(() => showSuccess("تمت المشاركة بنجاح"))
-					.catch(() => showError("فشل المشاركة"));
-			} else {
-				navigator.clipboard
-					.writeText(shareUrl)
-					.then(() => showSuccess("تم نسخ الرابط"))
-					.catch(() => showError("فشل نسخ الرابط"));
-			}
-			handleMenuClose();
-		};
+        const handleShare = () => {
+            const shareUrl = `${window.location.origin}/product-details/${post.category}/${post.brand}/${post._id}`;
+            const shareText = `${post.product_name} - ${post.price} شيكل`;
+            if (navigator.share) {
+                navigator
+                    .share({
+                        title: post.product_name,
+                        text: shareText,
+                        url: shareUrl,
+                    })
+                    .then(() => showSuccess('تمت المشاركة بنجاح'))
+                    .catch(() => showError('فشل المشاركة'));
+            } else {
+                navigator.clipboard
+                    .writeText(shareUrl)
+                    .then(() => showSuccess('تم نسخ الرابط'))
+                    .catch(() => showError('فشل نسخ الرابط'));
+            }
+            handleMenuClose();
+        };
 
-		const handleReport = () => {
-			showSuccess("تم الإبلاغ عن المنتج");
-			handleMenuClose();
-		};
+        const handleReport = () => {
+            showSuccess('تم الإبلاغ عن المنتج');
+            handleMenuClose();
+        };
 
-		const handleProductUpdate = (updatedProduct: Posts) => {
-			if (updateProductInList) updateProductInList(updatedProduct);
-		};
+        const handleProductUpdate = (updatedProduct: Posts) => {
+            if (updateProductInList) updateProductInList(updatedProduct);
+        };
 
-		const setProduct = updateProductInList
-			? (updater: (prev: Posts) => Posts) => {
-				handleProductUpdate(updater(post));
-			}
-			: undefined;
+        const setProduct = updateProductInList
+            ? (updater: (prev: Posts) => Posts) => {
+                  handleProductUpdate(updater(post));
+              }
+            : undefined;
 
-		const productUrl = `${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
-		const isOutOfStock = post.in_stock === false;
+        const productUrl = `${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
+        const isOutOfStock = post.in_stock === false;
 
-		return (
-			<Card
-				dir={dir}
-				sx={{
-					borderRadius: "16px",
-					border: "1.5px solid",
-					borderColor: featured ? featuredMeta.color + "60" : "divider",
-					boxShadow: featured
-						? `0 0 0 3px ${featuredMeta.color}18, 0 4px 24px ${featuredMeta.color}15`
-						: "none",
-					display: "flex",
-					flexDirection: "column",
-					overflow: "hidden",
-					cursor: isOutOfStock ? "not-allowed" : "default",
-					filter: isOutOfStock ? "grayscale(0.4)" : "none",
-					transition: "border-color 0.2s, box-shadow 0.2s, transform 0.2s",
-					position: "relative",
-					"&:hover": {
-						borderColor: featured ? featuredMeta.color + "90" : "text.disabled",
-						transform: featured ? "translateY(-2px)" : "none",
-					},
-				}}
-				itemScope
-				itemType="https://schema.org/Product"
-				role="article"
-				aria-label={`منتج: ${post.product_name}`}
-			>
-				<JsonLd data={jsonLdData} />
+        return (
+            <Card
+                dir={dir}
+                sx={{
+                    borderRadius: '16px',
+                    border: '1.5px solid',
+                    // borderColor: featured ? featuredMeta.color + "60" : "divider",
+                    // boxShadow: featured
+                    // 	? `0 0 0 3px ${featuredMeta.color}18, 0 4px 24px ${featuredMeta.color}15`
+                    // 	: "none",
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                    cursor: isOutOfStock ? 'not-allowed' : 'default',
+                    filter: isOutOfStock ? 'grayscale(0.4)' : 'none',
+                    transition:
+                        'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
+                    position: 'relative',
+                    // "&:hover": {
+                    // 	borderColor: featured ? featuredMeta.color + "90" : "text.disabled",
+                    // 	transform: featured ? "translateY(-2px)" : "none",
+                    // },
+                }}
+                itemScope
+                itemType='https://schema.org/Product'
+                role='article'
+                aria-label={`منتج: ${post.product_name}`}
+            >
+                <JsonLd data={jsonLdData} />
 
-				{/* ── FEATURED BANNER ── */}
-				{featured && (
-					<Box
-						sx={{
-							background: `linear-gradient(90deg, ${featuredMeta.color}22, ${featuredMeta.color}08)`,
-							borderBottom: `1px solid ${featuredMeta.color}30`,
-							px: 1.5,
-							py: 0.6,
-							display: "flex",
-							alignItems: "center",
-							gap: 0.75,
-						}}
-					>
-						<LocalFireDepartment sx={{ fontSize: 14, color: featuredMeta.color }} />
-						<Typography
-							variant="caption"
-							sx={{
-								color: featuredMeta.color,
-								fontWeight: 700,
-								fontSize: "0.72rem",
-								letterSpacing: 0.5,
-							}}
-						>
-							إعلان مميز · {featuredMeta.label}
-						</Typography>
-					</Box>
-				)}
+                {/* ── HEADER ── */}
+                <Box
+                    sx={{
+                        px: 1.5,
+                        pt: 1.5,
+                        pb: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Link
+                        to={generatePath(path.CustomerProfile, {
+                            slug: encodeURIComponent(post.seller?.slug ?? ''),
+                        })}
+                        style={{
+                            textDecoration: 'none',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 10,
+                        }}
+                    >
+                        <Box sx={{ position: 'relative' }}>
+                            <Avatar
+                                src={
+                                    post.seller?.user?.image?.url || 'user.png'
+                                }
+                                alt={post.seller?.name || 'بائع'}
+                                sx={{
+                                    width: 38,
+                                    height: 38,
+                                    border: '1.5px solid',
+                                    transition: 'border-color 0.15s',
+                                }}
+                            />
+                        </Box>
+                        <Box>
+                            <Stack
+                                direction='row'
+                                alignItems='center'
+                                spacing={0.5}
+                            >
+                                <Typography
+                                    variant='subtitle2'
+                                    fontWeight={600}
+                                    sx={{
+                                        fontSize: '0.875rem',
+                                        color: 'text.primary',
+                                        lineHeight: 1.3,
+                                        '&:hover': {
+                                            textDecoration: 'underline',
+                                        },
+                                    }}
+                                >
+                                    {post.seller?.name ||
+                                        post.seller?.slug ||
+                                        'بائع'}
+                                </Typography>
+                            </Stack>
+                            <Stack
+                                direction='row'
+                                alignItems='center'
+                                spacing={0.5}
+                            >
+                                <Typography
+                                    variant='caption'
+                                    sx={{
+                                        color: 'text.secondary',
+                                        fontSize: '0.75rem',
+                                    }}
+                                >
+                                    {formatTimeAgo(String(post.createdAt), t) ||
+                                        ''}
+                                </Typography>
+                                <Typography
+                                    variant='caption'
+                                    sx={{ color: 'text.secondary' }}
+                                >
+                                    ·
+                                </Typography>
+                                <Tooltip title='عام للجميع'>
+                                    <Typography
+                                        variant='caption'
+                                        sx={{ fontSize: '0.75rem' }}
+                                    >
+                                        🌍
+                                    </Typography>
+                                </Tooltip>
+                            </Stack>
+                        </Box>
+                    </Link>
 
-				{/* ── HEADER ── */}
-				<Box sx={{ px: 1.5, pt: 1.5, pb: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-					<Link
-						to={generatePath(path.CustomerProfile, {
-							slug: encodeURIComponent(post.seller?.slug ?? ""),
-						})}
-						style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}
-					>
-						<Box sx={{ position: "relative" }}>
-							<Avatar
-								src={post.seller?.user?.image?.url || "user.png"}
-								alt={post.seller?.name || "بائع"}
-								sx={{
-									width: 38,
-									height: 38,
-									border: "1.5px solid",
-									borderColor: featured ? featuredMeta.color + "60" : "divider",
-									transition: "border-color 0.15s",
-								}}
-							/>
-							{featured && (
-								<Verified
-									sx={{
-										position: "absolute",
-										bottom: -2,
-										right: -2,
-										fontSize: 14,
-										color: featuredMeta.color,
-										bgcolor: "background.paper",
-										borderRadius: "50%",
-									}}
-								/>
-							)}
-						</Box>
-						<Box>
-							<Stack direction="row" alignItems="center" spacing={0.5}>
-								<Typography
-									variant="subtitle2"
-									fontWeight={600}
-									sx={{
-										fontSize: "0.875rem",
-										color: "text.primary",
-										lineHeight: 1.3,
-										"&:hover": { textDecoration: "underline" },
-									}}
-								>
-									{post.seller?.name || post.seller?.slug || "بائع"}
-								</Typography>
-								{featured && (
-									<Chip
-										label="موثّق"
-										size="small"
-										sx={{
-											height: 16,
-											fontSize: "0.65rem",
-											fontWeight: 700,
-											bgcolor: featuredMeta.bg,
-											color: featuredMeta.color,
-											border: `1px solid ${featuredMeta.color}40`,
-											"& .MuiChip-label": { px: 0.75 },
-										}}
-									/>
-								)}
-							</Stack>
-							<Stack direction="row" alignItems="center" spacing={0.5}>
-								<Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.75rem" }}>
-									{formatTimeAgo(String(post.createdAt), t) || ""}
-								</Typography>
-								<Typography variant="caption" sx={{ color: "text.secondary" }}>·</Typography>
-								<Tooltip title="عام للجميع">
-									<Typography variant="caption" sx={{ fontSize: "0.75rem" }}>🌍</Typography>
-								</Tooltip>
-							</Stack>
-						</Box>
-					</Link>
+                    <IconButton
+                        size='small'
+                        onClick={handleMenuOpen}
+                        ref={menuRef}
+                        sx={{
+                            color: 'text.secondary',
+                            '&:hover': { bgcolor: 'action.hover' },
+                        }}
+                    >
+                        <MoreHoriz sx={{ fontSize: 20 }} />
+                    </IconButton>
 
-					<IconButton
-						size="small"
-						onClick={handleMenuOpen}
-						ref={menuRef}
-						sx={{ color: "text.secondary", "&:hover": { bgcolor: "action.hover" } }}
-					>
-						<MoreHoriz sx={{ fontSize: 20 }} />
-					</IconButton>
+                    <Menu
+                        anchorEl={menuAnchor}
+                        open={Boolean(menuAnchor)}
+                        onClose={handleMenuClose}
+                        PaperProps={{
+                            sx: {
+                                borderRadius: '10px',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                minWidth: 160,
+                            },
+                        }}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                    >
+                        <MenuItem
+                            onClick={handleShare}
+                            sx={{ fontSize: '0.875rem', gap: 1 }}
+                        >
+                            <ShareIcon sx={{ fontSize: 18 }} /> مشاركة
+                        </MenuItem>
+                        <MenuItem
+                            onClick={handleReport}
+                            sx={{ fontSize: '0.875rem', gap: 1 }}
+                        >
+                            <Report
+                                sx={{ fontSize: 18, color: 'error.main' }}
+                            />
+                            <Typography color='error' variant='inherit'>
+                                الإبلاغ
+                            </Typography>
+                        </MenuItem>
+                        {canEdit && (
+                            <Box>
+                                <Divider />
+                                <MenuItem
+                                    onClick={() => {
+                                        setPostIdToUpdate(post._id as string);
+                                        onShowUpdateProductModal();
+                                        handleMenuClose();
+                                    }}
+                                    sx={{ fontSize: '0.875rem', gap: 1 }}
+                                >
+                                    <EditIcon sx={{ fontSize: 18 }} /> تعديل
+                                </MenuItem>
+                                <MenuItem
+                                    onClick={() => {
+                                        openDeleteModal(post._id as string);
+                                        handleMenuClose();
+                                    }}
+                                    sx={{ fontSize: '0.875rem', gap: 1 }}
+                                >
+                                    <DeleteIcon
+                                        sx={{
+                                            fontSize: 18,
+                                            color: 'error.main',
+                                        }}
+                                    />
+                                    <Typography color='error' variant='inherit'>
+                                        حذف
+                                    </Typography>
+                                </MenuItem>
+                            </Box>
+                        )}
+                    </Menu>
+                </Box>
 
-					<Menu
-						anchorEl={menuAnchor}
-						open={Boolean(menuAnchor)}
-						onClose={handleMenuClose}
-						PaperProps={{
-							sx: {
-								borderRadius: "10px",
-								border: "1px solid",
-								borderColor: "divider",
-								boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
-								minWidth: 160,
-							},
-						}}
-						anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-						transformOrigin={{ vertical: "top", horizontal: "right" }}
-					>
-						<MenuItem onClick={handleShare} sx={{ fontSize: "0.875rem", gap: 1 }}>
-							<ShareIcon sx={{ fontSize: 18 }} /> مشاركة
-						</MenuItem>
-						<MenuItem onClick={handleReport} sx={{ fontSize: "0.875rem", gap: 1 }}>
-							<Report sx={{ fontSize: 18, color: "error.main" }} />
-							<Typography color="error" variant="inherit">الإبلاغ</Typography>
-						</MenuItem>
-						{canEdit && (
-							<Box>
-								<Divider />
-								<MenuItem
-									onClick={() => {
-										setPostIdToUpdate(post._id as string);
-										onShowUpdateProductModal();
-										handleMenuClose();
-									}}
-									sx={{ fontSize: "0.875rem", gap: 1 }}
-								>
-									<EditIcon sx={{ fontSize: 18 }} /> تعديل
-								</MenuItem>
-								<MenuItem
-									onClick={() => {
-										openDeleteModal(post._id as string);
-										handleMenuClose();
-									}}
-									sx={{ fontSize: "0.875rem", gap: 1 }}
-								>
-									<DeleteIcon sx={{ fontSize: 18, color: "error.main" }} />
-									<Typography color="error" variant="inherit">حذف</Typography>
-								</MenuItem>
-							</Box>
-						)}
-					</Menu>
-				</Box>
+                {/* ── PRODUCT NAME ── */}
+                <Box sx={{ px: 1.5, pb: 1 }}>
+                    <Link to={productUrl} style={{ textDecoration: 'none' }}>
+                        <Typography
+                            variant='subtitle1'
+                            fontWeight={700}
+                            sx={{
+                                fontSize: '1rem',
+                                color: 'text.primary',
+                                lineHeight: 1.4,
+                                '&:hover': { textDecoration: 'underline' },
+                            }}
+                            itemProp='name'
+                        >
+                            {post.product_name}
+                        </Typography>
+                    </Link>
+                </Box>
 
-				{/* ── PRODUCT NAME ── */}
-				<Box sx={{ px: 1.5, pb: 1 }}>
-					<Link to={productUrl} style={{ textDecoration: "none" }}>
-						<Typography
-							variant="subtitle1"
-							fontWeight={700}
-							sx={{
-								fontSize: "1rem",
-								color: "text.primary",
-								lineHeight: 1.4,
-								"&:hover": { textDecoration: "underline" },
-							}}
-							itemProp="name"
-						>
-							{post.product_name}
-						</Typography>
-					</Link>
-				</Box>
+                {/* ── IMAGE ── */}
+                <Box sx={{ position: 'relative' }}>
+                    <Link
+                        to={productUrl}
+                        onClick={(e) => {
+                            if (isOutOfStock) {
+                                e.preventDefault();
+                                showError('هذا المنتج غير متوفر حالياً');
+                            }
+                        }}
+                        style={{ display: 'block' }}
+                    >
+                        <CardMedia
+                            component='img'
+                            image={post.image.url}
+                            alt={post.product_name}
+                            sx={{
+                                height: 210,
+                                objectFit: 'cover',
+                                bgcolor: 'action.hover',
+                                transition: 'transform 0.3s ease',
+                                '&:hover': { transform: 'scale(1.02)' },
+                            }}
+                        />
+                     
+                    </Link>
 
-				{/* ── IMAGE ── */}
-				<Box sx={{ position: "relative" }}>
-					<Link
-						to={productUrl}
-						onClick={(e) => {
-							if (isOutOfStock) {
-								e.preventDefault();
-								showError("هذا المنتج غير متوفر حالياً");
-							}
-						}}
-						style={{ display: "block" }}
-					>
-						<CardMedia
-							component="img"
-							image={post.image.url}
-							alt={post.product_name}
-							sx={{
-								height: 210,
-								objectFit: "cover",
-								bgcolor: "action.hover",
-								transition: "transform 0.3s ease",
-								"&:hover": featured ? { transform: "scale(1.02)" } : {},
-							}}
-						/>
-						{/* Featured overlay gradient */}
-						{featured && (
-							<Box
-								sx={{
-									position: "absolute",
-									bottom: 0,
-									left: 0,
-									right: 0,
-									height: 60,
-									background: `linear-gradient(to top, ${featuredMeta.color}18, transparent)`,
-									pointerEvents: "none",
-								}}
-							/>
-						)}
-					</Link>
+                    {/* Discount badge */}
+                    {post.sale && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 10,
+                                left: 10,
+                                bgcolor: 'error.main',
+                                color: '#fff',
+                                fontSize: '0.75rem',
+                                fontWeight: 700,
+                                px: 1,
+                                py: 0.25,
+                                borderRadius: '6px',
+                                lineHeight: 1.6,
+                            }}
+                        >
+                            -{post.discount}%
+                        </Box>
+                    )}
 
-					{/* Discount badge */}
-					{post.sale && (
-						<Box
-							sx={{
-								position: "absolute",
-								top: 10,
-								left: 10,
-								bgcolor: "error.main",
-								color: "#fff",
-								fontSize: "0.75rem",
-								fontWeight: 700,
-								px: 1,
-								py: 0.25,
-								borderRadius: "6px",
-								lineHeight: 1.6,
-							}}
-						>
-							-{post.discount}%
-						</Box>
-					)}
+                    {/* Out of stock badge */}
+                    {isOutOfStock && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                top: 10,
+                                right: 10,
+                                bgcolor: 'rgba(0,0,0,0.65)',
+                                color: '#fff',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                px: 1,
+                                py: 0.25,
+                                borderRadius: '6px',
+                                lineHeight: 1.6,
+                            }}
+                        >
+                            غير متوفر
+                        </Box>
+                    )}
 
-					{/* Out of stock badge */}
-					{isOutOfStock && (
-						<Box
-							sx={{
-								position: "absolute",
-								top: 10,
-								right: 10,
-								bgcolor: "rgba(0,0,0,0.65)",
-								color: "#fff",
-								fontSize: "0.75rem",
-								fontWeight: 600,
-								px: 1,
-								py: 0.25,
-								borderRadius: "6px",
-								lineHeight: 1.6,
-							}}
-						>
-							غير متوفر
-						</Box>
-					)}
+                    {/* Bookmark button */}
+                    <IconButton
+                        onClick={() => setIsBookmarked(!isBookmarked)}
+                        size='small'
+                        sx={{
+                            position: 'absolute',
+                            top: 8,
+                            right: 8,
+                            bgcolor: 'rgba(255,255,255,0.9)',
+                            width: 30,
+                            height: 30,
+                            '&:hover': { bgcolor: '#fff' },
+                        }}
+                    >
+                        {isBookmarked ? (
+                            <Bookmark
+                                sx={{ fontSize: 16, color: 'primary.main' }}
+                            />
+                        ) : (
+                            <BookmarkBorder sx={{ fontSize: 16 }} />
+                        )}
+                    </IconButton>
+                </Box>
 
-					{/* Bookmark button */}
-					<IconButton
-						onClick={() => setIsBookmarked(!isBookmarked)}
-						size="small"
-						sx={{
-							position: "absolute",
-							top: 8,
-							right: 8,
-							bgcolor: "rgba(255,255,255,0.9)",
-							width: 30,
-							height: 30,
-							"&:hover": { bgcolor: "#fff" },
-						}}
-					>
-						{isBookmarked
-							? <Bookmark sx={{ fontSize: 16, color: "primary.main" }} />
-							: <BookmarkBorder sx={{ fontSize: 16 }} />
-						}
-					</IconButton>
-				</Box>
+                {/* ── CONTENT ── */}
+                <CardContent
+                    sx={{ p: 1.5, pt: 1.25, '&:last-child': { pb: 0 } }}
+                >
+                    {/* Price row */}
+                    <Stack
+                        direction='row'
+                        alignItems='baseline'
+                        spacing={1}
+                        sx={{ mb: 1.25 }}
+                    >
+                        <Typography
+                            variant='h6'
+                            fontWeight={700}
+                            sx={{
+                                color: 'primary.main',
+                                fontSize: '1.125rem',
+                                lineHeight: 1,
+                            }}
+                            itemProp='offers'
+                            itemScope
+                            itemType='https://schema.org/Offer'
+                        >
+                            {post.sale
+                                ? formatPrice(discountedPrice)
+                                : formatPrice(post.price)}
+                            <meta
+                                itemProp='price'
+                                content={
+                                    post.sale
+                                        ? discountedPrice.toString()
+                                        : post.price.toString()
+                                }
+                            />
+                            <meta itemProp='priceCurrency' content='ILS' />
+                            <meta
+                                itemProp='availability'
+                                content={
+                                    post.in_stock
+                                        ? 'https://schema.org/InStock'
+                                        : 'https://schema.org/OutOfStock'
+                                }
+                            />
+                        </Typography>
+                        {post.sale && (
+                            <Typography
+                                variant='caption'
+                                sx={{
+                                    color: 'text.secondary',
+                                    textDecoration: 'line-through',
+                                    fontSize: '0.8125rem',
+                                }}
+                            >
+                                {formatPrice(post.price)}
+                            </Typography>
+                        )}
+                    </Stack>
 
-				{/* ── CONTENT ── */}
-				<CardContent sx={{ p: 1.5, pt: 1.25, "&:last-child": { pb: 0 } }}>
-					{/* Price row */}
-					<Stack direction="row" alignItems="baseline" spacing={1} sx={{ mb: 1.25 }}>
-						<Typography
-							variant="h6"
-							fontWeight={700}
-							sx={{
-								color: featured ? featuredMeta.color : "primary.main",
-								fontSize: "1.125rem",
-								lineHeight: 1,
-							}}
-							itemProp="offers"
-							itemScope
-							itemType="https://schema.org/Offer"
-						>
-							{post.sale ? formatPrice(discountedPrice) : formatPrice(post.price)}
-							<meta itemProp="price" content={post.sale ? discountedPrice.toString() : post.price.toString()} />
-							<meta itemProp="priceCurrency" content="ILS" />
-							<meta itemProp="availability" content={post.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"} />
-						</Typography>
-						{post.sale && (
-							<Typography variant="caption" sx={{ color: "text.secondary", textDecoration: "line-through", fontSize: "0.8125rem" }}>
-								{formatPrice(post.price)}
-							</Typography>
-						)}
-					</Stack>
+                    {/* Description */}
+                    {post.description && (
+                        <Box sx={{ mb: 1.25 }}>
+                            <Typography
+                                variant='body2'
+                                sx={{
+                                    fontSize: '0.875rem',
+                                    color: 'text.secondary',
+                                    lineHeight: 1.6,
+                                    whiteSpace: 'pre-line',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: expanded ? 'none' : 2,
+                                    WebkitBoxOrient: 'vertical',
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                {post.description}
+                            </Typography>
+                            {post.description.length > 100 && (
+                                <Button
+                                    size='small'
+                                    onClick={() => setExpanded(!expanded)}
+                                    sx={{
+                                        p: 0,
+                                        mt: 0.25,
+                                        minWidth: 0,
+                                        textTransform: 'none',
+                                        fontWeight: 600,
+                                        fontSize: '0.8125rem',
+                                        color: 'text.secondary',
+                                        '&:hover': {
+                                            bgcolor: 'transparent',
+                                            color: 'text.primary',
+                                        },
+                                    }}
+                                >
+                                    {expanded ? 'إخفاء' : 'المزيد'}
+                                </Button>
+                            )}
+                        </Box>
+                    )}
 
-					{/* Description */}
-					{post.description && (
-						<Box sx={{ mb: 1.25 }}>
-							<Typography
-								variant="body2"
-								sx={{
-									fontSize: "0.875rem",
-									color: "text.secondary",
-									lineHeight: 1.6,
-									whiteSpace: "pre-line",
-									display: "-webkit-box",
-									WebkitLineClamp: expanded ? "none" : 2,
-									WebkitBoxOrient: "vertical",
-									overflow: "hidden",
-								}}
-							>
-								{post.description}
-							</Typography>
-							{post.description.length > 100 && (
-								<Button
-									size="small"
-									onClick={() => setExpanded(!expanded)}
-									sx={{
-										p: 0,
-										mt: 0.25,
-										minWidth: 0,
-										textTransform: "none",
-										fontWeight: 600,
-										fontSize: "0.8125rem",
-										color: "text.secondary",
-										"&:hover": { bgcolor: "transparent", color: "text.primary" },
-									}}
-								>
-									{expanded ? "إخفاء" : "المزيد"}
-								</Button>
-							)}
-						</Box>
-					)}
+                    {/* Tags row */}
+                    <Stack
+                        direction='row'
+                        flexWrap='wrap'
+                        gap={0.75}
+                        sx={{ mb: 1.25 }}
+                    >
+                        <Link
+                            to={`/category/${post.category}`}
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <Chip
+                                label={t(`categories.${post.category}.label`)}
+                                size='small'
+                                sx={{
+                                    height: 22,
+                                    fontSize: '0.75rem',
+                                    bgcolor: 'primary.50',
+                                    color: 'primary.main',
+                                    fontWeight: 600,
+                                    border: '1px solid',
+                                    borderColor: 'primary.light',
+                                    '&:hover': { bgcolor: 'primary.100' },
+                                }}
+                            />
+                        </Link>
 
-					{/* Tags row */}
-					<Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 1.25 }}>
-						<Link to={`/category/${post.category}`} style={{ textDecoration: "none" }}>
-							<Chip
-								label={t(`categories.${post.category}.label`)}
-								size="small"
-								sx={{
-									height: 22,
-									fontSize: "0.75rem",
-									bgcolor: "primary.50",
-									color: "primary.main",
-									fontWeight: 600,
-									border: "1px solid",
-									borderColor: "primary.light",
-									"&:hover": { bgcolor: "primary.100" },
-								}}
-							/>
-						</Link>
+                        {post.subcategory && (
+                            <Link
+                                to={`/category/${post.category}/${post.subcategory}`}
+                                style={{ textDecoration: 'none' }}
+                            >
+                                <Chip
+                                    label={t(
+                                        `categories.${post.category}.subCategories.${post.subcategory}`,
+                                    )}
+                                    size='small'
+                                    sx={{
+                                        height: 22,
+                                        fontSize: '0.75rem',
+                                        bgcolor: 'primary.50',
+                                        color: 'primary.main',
+                                        border: '1px solid',
+                                        borderColor: 'primary.light',
+                                        '&:hover': { bgcolor: 'primary.100' },
+                                    }}
+                                />
+                            </Link>
+                        )}
 
-						{post.subcategory && (
-							<Link to={`/category/${post.category}/${post.subcategory}`} style={{ textDecoration: "none" }}>
-								<Chip
-									label={t(`categories.${post.category}.subCategories.${post.subcategory}`)}
-									size="small"
-									sx={{
-										height: 22,
-										fontSize: "0.75rem",
-										bgcolor: "primary.50",
-										color: "primary.main",
-										border: "1px solid",
-										borderColor: "primary.light",
-										"&:hover": { bgcolor: "primary.100" },
-									}}
-								/>
-							</Link>
-						)}
+                        {post.location && (
+                            <Chip
+                                icon={
+                                    <LocationOn
+                                        sx={{ fontSize: '12px !important' }}
+                                    />
+                                }
+                                label={post.location}
+                                size='small'
+                                sx={{
+                                    height: 22,
+                                    fontSize: '0.75rem',
+                                    color: 'text.secondary',
+                                }}
+                            />
+                        )}
 
-						{post.location && (
-							<Chip
-								icon={<LocationOn sx={{ fontSize: "12px !important" }} />}
-								label={post.location}
-								size="small"
-								sx={{ height: 22, fontSize: "0.75rem", color: "text.secondary" }}
-							/>
-						)}
+                        {post.isNew !== undefined && (
+                            <Chip
+                                label={post.isNew ? '🆕 جديد' : '🔄 مستعمل'}
+                                size='small'
+                                sx={{
+                                    height: 22,
+                                    fontSize: '0.75rem',
+                                    bgcolor: post.isNew
+                                        ? 'success.50'
+                                        : 'warning.50',
+                                    color: post.isNew
+                                        ? 'success.main'
+                                        : 'warning.main',
+                                }}
+                            />
+                        )}
 
-						{post.isNew !== undefined && (
-							<Chip
-								label={post.isNew ? "🆕 جديد" : "🔄 مستعمل"}
-								size="small"
-								sx={{
-									height: 22,
-									fontSize: "0.75rem",
-									bgcolor: post.isNew ? "success.50" : "warning.50",
-									color: post.isNew ? "success.main" : "warning.main",
-								}}
-							/>
-						)}
+                        {post.brand && (
+                            <Chip
+                                label={post.brand}
+                                size='small'
+                                sx={{
+                                    height: 22,
+                                    fontSize: '0.75rem',
+                                    color: 'text.secondary',
+                                }}
+                            />
+                        )}
+                    </Stack>
 
-						{post.brand && (
-							<Chip
-								label={post.brand}
-								size="small"
-								sx={{ height: 22, fontSize: "0.75rem", color: "text.secondary" }}
-							/>
-						)}
-					</Stack>
+                    {/* Contact + Waze */}
+                    <Stack direction='row' gap={1}>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            startIcon={
+                                <Comment sx={{ fontSize: '14px !important' }} />
+                            }
+                            onClick={() =>
+                                navigate(
+                                    generatePath(path.CustomerProfile, {
+                                        slug: encodeURIComponent(
+                                            post.seller?.slug ?? '',
+                                        ),
+                                    }),
+                                )
+                            }
+                            disableElevation
+                            sx={{
+                                borderRadius: '8px',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.8125rem',
+                                py: 0.5,
+                            }}
+                        >
+                            تواصل
+                        </Button>
 
-					{/* Contact + Waze */}
-					<Stack direction="row" gap={1}>
-						<Button
-							variant="contained"
-							size="small"
-							startIcon={<Comment sx={{ fontSize: "14px !important" }} />}
-							onClick={() =>
-								navigate(
-									generatePath(path.CustomerProfile, {
-										slug: encodeURIComponent(post.seller?.slug ?? ""),
-									})
-								)
-							}
-							disableElevation
-							sx={{
-								borderRadius: "8px",
-								textTransform: "none",
-								fontWeight: 600,
-								fontSize: "0.8125rem",
-								py: 0.5,
-								...(featured && {
-									background: `linear-gradient(90deg, ${featuredMeta.color}, ${featuredMeta.color}cc)`,
-									color: "#000",
-									"&:hover": {
-										background: `linear-gradient(90deg, ${featuredMeta.color}ee, ${featuredMeta.color})`,
-									},
-								}),
-							}}
-						>
-							تواصل
-						</Button>
+                        <Link
+                            to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            style={{ textDecoration: 'none' }}
+                        >
+                            <Chip
+                                icon={
+                                    <img
+                                        src='/waze.png'
+                                        width={16}
+                                        alt='waze'
+                                    />
+                                }
+                                label='Waze'
+                                size='small'
+                                sx={{
+                                    height: 30,
+                                    bgcolor: '#33CCFF',
+                                    color: '#fff',
+                                    fontWeight: 600,
+                                    fontSize: '0.8125rem',
+                                    cursor: 'pointer',
+                                    '& .MuiChip-icon': { ml: 0.75 },
+                                }}
+                            />
+                        </Link>
+                    </Stack>
+                </CardContent>
 
-						<Link
-							to={`https://waze.com/ul?q=${encodeURIComponent(post.location || "")}&navigate=yes`}
-							target="_blank"
-							rel="noopener noreferrer"
-							style={{ textDecoration: "none" }}
-						>
-							<Chip
-								icon={<img src="/waze.png" width={16} alt="waze" />}
-								label="Waze"
-								size="small"
-								sx={{
-									height: 30,
-									bgcolor: "#33CCFF",
-									color: "#fff",
-									fontWeight: 600,
-									fontSize: "0.8125rem",
-									cursor: "pointer",
-									"& .MuiChip-icon": { ml: 0.75 },
-								}}
-							/>
-						</Link>
-					</Stack>
-				</CardContent>
+                {/* ── STATS ── */}
+                <Box
+                    sx={{
+                        px: 1.5,
+                        py: 0.75,
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <Stack
+                        direction='row'
+                        justifyContent='space-between'
+                        alignItems='center'
+                    >
+                        <Typography
+                            variant='caption'
+                            sx={{ color: 'text.secondary', fontSize: '0.8rem' }}
+                        >
+                            {post.likes?.length || 0} إعجاب
+                        </Typography>
+                        <Stack
+                            direction='row'
+                            alignItems='center'
+                            spacing={0.5}
+                        >
+                            <VisibilityRounded
+                                sx={{ fontSize: 14, color: 'text.secondary' }}
+                            />
+                            <Typography
+                                variant='caption'
+                                sx={{
+                                    color: 'text.secondary',
+                                    fontSize: '0.8rem',
+                                }}
+                            >
+                                129
+                            </Typography>
+                        </Stack>
+                    </Stack>
+                </Box>
 
-				{/* ── STATS ── */}
-				<Box sx={{ px: 1.5, py: 0.75, borderTop: "1px solid", borderColor: "divider" }}>
-					<Stack direction="row" justifyContent="space-between" alignItems="center">
-						<Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
-							{post.likes?.length || 0} إعجاب
-						</Typography>
-						<Stack direction="row" alignItems="center" spacing={0.5}>
-							<VisibilityRounded sx={{ fontSize: 14, color: "text.secondary" }} />
-							<Typography variant="caption" sx={{ color: "text.secondary", fontSize: "0.8rem" }}>
-								129
-							</Typography>
-						</Stack>
-					</Stack>
-				</Box>
-
-				{/* ── ACTIONS ── */}
-				<CardActions sx={{ p: 0, borderTop: "1px solid", borderColor: "divider" }}>
-					<Box sx={{ width: "100%", display: "flex" }}>
-						<Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-							<LikeButton product={post} setProduct={setProduct} onLikeToggle={onLikeToggle} />
-						</Box>
-						<Divider orientation="vertical" flexItem />
-						<Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-							<Button
-								fullWidth
-								startIcon={<Comment sx={{ fontSize: "18px !important" }} />}
-								sx={{
-									color: "text.secondary",
-									py: 1,
-									borderRadius: 0,
-									textTransform: "none",
-									fontSize: "0.875rem",
-									fontWeight: 600,
-									gap: 0.5,
-									"&:hover": { bgcolor: "action.hover", color: "text.primary" },
-								}}
-							>
-								تعليق
-							</Button>
-						</Box>
-						<Divider orientation="vertical" flexItem />
-						<Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
-							<Button
-								fullWidth
-								startIcon={
-									isBookmarked
-										? <Bookmark sx={{ fontSize: "18px !important", color: "primary.main" }} />
-										: <BookmarkBorder sx={{ fontSize: "18px !important" }} />
-								}
-								onClick={() => setIsBookmarked(!isBookmarked)}
-								sx={{
-									color: isBookmarked ? "primary.main" : "text.secondary",
-									py: 1,
-									borderRadius: 0,
-									textTransform: "none",
-									fontSize: "0.875rem",
-									fontWeight: 600,
-									gap: 0.5,
-									"&:hover": { bgcolor: "action.hover" },
-								}}
-							>
-								حفظ
-							</Button>
-						</Box>
-					</Box>
-				</CardActions>
-			</Card>
-		);
-	}
+                {/* ── ACTIONS ── */}
+                <CardActions
+                    sx={{
+                        p: 0,
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <Box sx={{ width: '100%', display: 'flex' }}>
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <LikeButton
+                                product={post}
+                                setProduct={setProduct}
+                                onLikeToggle={onLikeToggle}
+                            />
+                        </Box>
+                        <Divider orientation='vertical' flexItem />
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Button
+                                fullWidth
+                                startIcon={
+                                    <Comment
+                                        sx={{ fontSize: '18px !important' }}
+                                    />
+                                }
+                                sx={{
+                                    color: 'text.secondary',
+                                    py: 1,
+                                    borderRadius: 0,
+                                    textTransform: 'none',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    gap: 0.5,
+                                    '&:hover': {
+                                        bgcolor: 'action.hover',
+                                        color: 'text.primary',
+                                    },
+                                }}
+                            >
+                                تعليق
+                            </Button>
+                        </Box>
+                        <Divider orientation='vertical' flexItem />
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Button
+                                fullWidth
+                                startIcon={
+                                    isBookmarked ? (
+                                        <Bookmark
+                                            sx={{
+                                                fontSize: '18px !important',
+                                                color: 'primary.main',
+                                            }}
+                                        />
+                                    ) : (
+                                        <BookmarkBorder
+                                            sx={{ fontSize: '18px !important' }}
+                                        />
+                                    )
+                                }
+                                onClick={() => setIsBookmarked(!isBookmarked)}
+                                sx={{
+                                    color: isBookmarked
+                                        ? 'primary.main'
+                                        : 'text.secondary',
+                                    py: 1,
+                                    borderRadius: 0,
+                                    textTransform: 'none',
+                                    fontSize: '0.875rem',
+                                    fontWeight: 600,
+                                    gap: 0.5,
+                                    '&:hover': { bgcolor: 'action.hover' },
+                                }}
+                            >
+                                حفظ
+                            </Button>
+                        </Box>
+                    </Box>
+                </CardActions>
+            </Card>
+        );
+    },
 );
 
 export default PostCard;

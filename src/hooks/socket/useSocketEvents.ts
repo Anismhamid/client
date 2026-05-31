@@ -2,17 +2,17 @@
 import { useEffect } from 'react';
 // import {useTranslation} from "react-i18next";
 import { useNavigate } from 'react-router-dom';
-import { showNewPostToast } from '../atoms/bootStrapToast/SocketToast';
-import { showInfo } from '../atoms/toasts/ReactToast';
-import { useUser } from '../context/useUSer';
-import { UserRegister } from '../interfaces/User';
-import RoleType from '../interfaces/UserType';
-import socket from '../socket/globalSocket';
+import { showNewPostToast } from '../../atoms/bootStrapToast/SocketToast';
+import { showInfo } from '../../atoms/toasts/ReactToast';
+import { useUser } from '../../context/useUSer';
+import { UserRegister } from '../../interfaces/User';
+import RoleType from '../../interfaces/UserType';
+import socket from '../../socket/globalSocket';
 import useNotificationSound from './useNotificationSound';
-import { Posts } from '../interfaces/Posts';
-import { productsPathes } from '../routes/routes';
-import { useChat } from './useChat';
-import { LocalMessage } from '../interfaces/chat/localMessage';
+import { Posts } from '../../interfaces/Posts';
+import { productsPathes } from '../../routes/routes';
+import { useChat } from '../useChat';
+import { LocalMessage } from '../../interfaces/chat/localMessage';
 
 const useSocketEvents = () => {
     const { auth } = useUser();
@@ -32,7 +32,7 @@ const useSocketEvents = () => {
         const userMessages = messages[currentChatId] || [];
 
         userMessages.forEach((msg) => {
-            if (msg.from._id !== auth._id && msg.status === 'sent') {
+            if (msg.from?._id !== auth._id && msg.status === 'sent') {
                 // تحديث محليًا
                 updateMessageStatus(currentChatId, msg._id, 'seen');
 
@@ -40,7 +40,7 @@ const useSocketEvents = () => {
                 socket.emit('message:seen', {
                     messageId: msg._id,
                     from: auth._id,
-                    to: msg.from._id,
+                    to: msg.from?._id,
                 });
             }
         });
@@ -112,7 +112,7 @@ const useSocketEvents = () => {
 
             showNewPostToast({
                 navigate,
-                navigateTo: `${productsPathes.productDetails}/${newPost.category}/${newPost.brand}/${newPost._id}`,
+                navigateTo: `${productsPathes.postsDetails}/${newPost.category}/${newPost.brand}/${newPost._id}`,
                 post: newPost,
             });
 
@@ -131,12 +131,15 @@ const useSocketEvents = () => {
         // };
         const messageReceived = (msg: LocalMessage) => {
             const otherUserId =
-                msg.from._id === auth._id ? msg.to._id : msg.from._id;
+                msg.from?._id === auth._id ? msg.to?._id : msg.from?._id;
 
-            addMessageForUser(otherUserId, msg);
+            addMessageForUser(otherUserId as string, msg);
 
             if (currentChatId !== otherUserId) {
-                setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
+                setUnreadForUser(
+                    otherUserId as string,
+                    (prev) => (prev || 0) + 1,
+                );
                 playNotificationSound('messageReceived');
                 if (Notification.permission === 'granted') {
                     new Notification(`رسالة من ${msg.from?.name}`, {
