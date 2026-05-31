@@ -45,10 +45,10 @@ const FeaturedAdsDashboard = () => {
     const [selectedPlan, setSelectedPlan] = useState<string>('homepage');
     const { t } = useTranslation();
 
-     const PRICE_VALUES = {
+    const PRICE_VALUES = {
         homepage: 50,
         top: 25,
-        highlight: 10
+        highlight: 10,
     };
 
     const PLAN_META: Record<
@@ -68,7 +68,9 @@ const FeaturedAdsDashboard = () => {
             accent: '#f59e0b',
             icon: '🏠',
             desc: t('ads.promotionPackages.homepage.description'),
-            price: t('ads.promotionPackages.homepage.price',{price: PRICE_VALUES.homepage}),
+            price: t('ads.promotionPackages.homepage.price', {
+                price: PRICE_VALUES.homepage,
+            }),
         },
         top: {
             label: t('ads.promotionPackages.top.name'),
@@ -76,7 +78,9 @@ const FeaturedAdsDashboard = () => {
             accent: '#818cf8',
             icon: '🚀',
             desc: t('ads.promotionPackages.top.description'),
-            price: t('ads.promotionPackages.top.price',{price: PRICE_VALUES.top}),
+            price: t('ads.promotionPackages.top.price', {
+                price: PRICE_VALUES.top,
+            }),
         },
         highlight: {
             label: t('ads.promotionPackages.highlight.name'),
@@ -84,7 +88,9 @@ const FeaturedAdsDashboard = () => {
             accent: '#34d399',
             icon: '✨',
             desc: t('ads.promotionPackages.highlight.description'),
-            price: t('ads.promotionPackages.highlight.price',{price: PRICE_VALUES.highlight}),
+            price: t('ads.promotionPackages.highlight.price', {
+                price: PRICE_VALUES.highlight,
+            }),
         },
     };
 
@@ -142,6 +148,7 @@ const FeaturedAdsDashboard = () => {
                     },
                 },
             );
+            console.log(data);
             window.location.href = data.url;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {

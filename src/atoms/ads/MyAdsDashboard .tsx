@@ -219,14 +219,6 @@ export default function MyAdsDashboard() {
     const [tab, setTab] = useState<TabFilter>('all');
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    // const [adToDelete, setAdToDelete] = useState<string | null>(null);
-
-    // const [activeCounts, setActiveCounts] = useState<Record<AdType, number>>({
-    //     homepage: 0,
-    //     top: 0,
-    //     highlight: 0,
-    // });
-
     const fetchAds = async () => {
         setLoading(true);
         try {
