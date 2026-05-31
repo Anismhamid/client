@@ -7,6 +7,7 @@ import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
 import MyAdsDashboard from '../atoms/ads/MyAdsDashboard ';
 import HomepageFeaturedSection from '../atoms/ads/HomepageFeaturedSection ';
+import PaymentSuccess from '../components/pages/payment/Success';
 
 const UsersManagement = lazy(
     () => import('../components/settings/UsersManagement'),
@@ -134,6 +135,8 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 path={`${path.FeaturedAds}`}
                 element={<HomepageFeaturedSection />}
             />
+
+            <Route path='/payment/success' element={<PaymentSuccess />} />
 
             <Route path={'*'} element={<PageNotFound />} />
         </Routes>
