@@ -16,8 +16,8 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { showError, showSuccess } from '../toasts/ReactToast';
-import { AdType, FeaturedAd } from '../../interfaces/featuredAd';
+import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
+import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
 
 /* ── Config ─────────────────────────────── */
 const typeConfig: Record<

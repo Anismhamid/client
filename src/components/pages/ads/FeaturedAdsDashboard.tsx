@@ -16,13 +16,13 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { FeaturedAd } from '../../interfaces/featuredAd';
-import useSnackbar from '../../hooks/useSnackbar';
+import { FeaturedAd } from '../../../interfaces/featuredAd';
+import useSnackbar from '../../../hooks/useSnackbar';
 import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
-import { getCustomerProfilePostsBySlug } from '../../services/postsServices';
-import { useUser } from '../../context/useUSer';
-import { Posts } from '../../interfaces/Posts';
-import { formatDate } from '../../helpers/dateAndPriceFormat';
+import { getCustomerProfilePostsBySlug } from '../../../services/postsServices';
+import { useUser } from '../../../context/useUSer';
+import { Posts } from '../../../interfaces/Posts';
+import { formatDate } from '../../../helpers/dateAndPriceFormat';
 import { useTranslation } from 'react-i18next';
 
 const api = import.meta.env.VITE_API_URL;

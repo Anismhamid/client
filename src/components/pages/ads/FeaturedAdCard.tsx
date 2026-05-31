@@ -2,8 +2,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import { Box, Chip, Stack, Typography } from '@mui/material';
-import { AdType, FeaturedAd } from '../../interfaces/featuredAd';
-import { formatDate, formatPrice } from '../../helpers/dateAndPriceFormat';
+import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
+import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
 
 interface FeaturedAdCardProps {
     ad: FeaturedAd;
@@ -57,7 +57,7 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                 border: '0.5px solid',
                 borderColor: 'divider',
                 overflow: 'hidden',
-                bgcolor: 'background.paper',
+                // bgcolor: 'background.paper',
                 opacity: ad.isActive ? 1 : 0.65,
                 transition: 'box-shadow 0.2s',
                 '&:hover': { boxShadow: '0 2px 12px rgba(0,0,0,0.07)' },

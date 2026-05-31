@@ -77,9 +77,8 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
         fontWeight: 'bold',
         backgroundColor:
             theme.palette.mode === 'dark'
-                ? 'rgba(220, 53, 69, 0.1)'
-                : 'rgba(220, 53, 69, 0.05)',
-        boxShadow: '0 2px 8px rgba(220, 53, 69, 0.2)',
+                ? 'rgba(220, 145, 53, 0.1)'
+                : 'rgb(245, 159, 11)',
     },
 }));
 
@@ -167,7 +166,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     publisher: {
                         '@type': 'Organization',
                         name: 'صفقة',
-                        logo: `${window.location.origin}/logo.png`,
+                        logo: `${window.location.origin}/d3.png`,
                     },
                 }}
             />
@@ -177,7 +176,10 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 position='relative'
                 dir={dir}
                 sx={{
-                    background: mode === 'dark' ? 'rgba(245, 159, 11, 0.030)' : '#F5F5F5',
+                    background:
+                        mode === 'dark'
+                            ? 'rgba(245, 159, 11, 0.016)'
+                            : '#F5F5F5',
                     boxShadow: '0 4px 20px #f59e0b11',
                     zIndex: 1100,
                     overflow: 'hidden',

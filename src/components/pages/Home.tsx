@@ -33,7 +33,9 @@ import PostCard from './products/PostsCard';
 import { Posts } from '../../interfaces/Posts';
 import { useProducts } from '../../hooks/useProducts';
 import ChipNavigation from '../navbar/ChepNavigation';
-import HomepageFeaturedSection from '../../atoms/ads/HomepageFeaturedSection ';
+import HomepageFeaturedSection from './ads/HomepageFeaturedSection ';
+import { HighlightAdsSection } from './ads/HighlightAdsSection';
+import { TopAdsSection } from './ads/TopAdsSection';
 
 /**
  * Home page — redesigned with clean, minimal aesthetic
@@ -188,7 +190,7 @@ const Home: FunctionComponent = () => {
                     overflow: 'hidden',
                     bgcolor: 'background.paper',
                     background:
-                        'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)',
+                        'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
                 }}
             >
                 {/* Subtle dot-grid pattern */}
@@ -248,7 +250,7 @@ const Home: FunctionComponent = () => {
                                     letterSpacing: 0.4,
                                 }}
                             >
-                                سوق إلكتروني موثوق
+                                سـوق إلـكـتـرونـي مـوثـوق
                             </Typography>
                         </Box>
                     </motion.div>
@@ -355,13 +357,10 @@ const Home: FunctionComponent = () => {
             <Box
                 dir={diriction}
                 sx={{
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
                     bgcolor: 'background.default',
-                    boxShadow: ' 10px 10px 10px rgba(245, 158, 11, 0.067)',
+                    boxShadow: ' 10px 10px 10px rgba(245, 159, 11, 0.067)',
                     py: 2.5,
-                      background:
-                        'radial-gradient(circle,  0%, transparent 70%)',
+
                     px: { xs: 2, md: 4 },
                 }}
             >
@@ -407,15 +406,22 @@ const Home: FunctionComponent = () => {
                 dir={diriction}
                 sx={{
                     background:
-                        'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)',
+                        'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
                 }}
                 component='main'
                 id='products-section'
             >
                 {/* Featured Ads */}
-                <HomepageFeaturedSection
-                    onViewAll={() => navigate('/featured-ads')}
-                />
+                <Container
+                    maxWidth='lg'
+                    sx={{ px: { xs: 2, sm: 3, md: 4 }, mb: 4 }}
+                >
+                    <HighlightAdsSection />
+                    <TopAdsSection />
+                    <HomepageFeaturedSection
+                        onViewAll={() => navigate('/featured-ads')}
+                    />
+                </Container>
 
                 {/* Discounts */}
                 {!searchQuery && <DiscountsAndOffers />}

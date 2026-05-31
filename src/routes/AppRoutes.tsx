@@ -5,8 +5,8 @@ import { path, productsPathes } from './routes';
 import RoleType from '../interfaces/UserType';
 import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
-import MyAdsDashboard from '../atoms/ads/MyAdsDashboard ';
-import HomepageFeaturedSection from '../atoms/ads/HomepageFeaturedSection ';
+import MyAdsDashboard from '../components/pages/ads/MyAdsDashboard ';
+import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSection ';
 import PaymentSuccess from '../components/pages/payment/Success';
 
 const UsersManagement = lazy(
@@ -54,7 +54,7 @@ const MessagesPage = lazy(
     () => import('../components/pages/chatBox/MessagesPage'),
 );
 const FeaturedAdsDashboard = lazy(
-    () => import('../atoms/ads/FeaturedAdsDashboard'),
+    () => import('../components/pages/ads/FeaturedAdsDashboard'),
 );
 
 interface AppRoutesProps {

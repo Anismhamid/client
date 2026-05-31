@@ -45,13 +45,12 @@ import {
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { FeaturedAd } from '../../interfaces/featuredAd';
-import { formatDate, formatPrice } from '../../helpers/dateAndPriceFormat';
-import { useHomePageAds } from '../../hooks/useHomePageAds';
-import { productsPathes } from '../../routes/routes';
-import { categoryLabels } from '../../interfaces/postsCategoeis';
-
-
+import { FeaturedAd } from '../../../interfaces/featuredAd';
+import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
+import { productsPathes } from '../../../routes/routes';
+import { categoryLabels } from '../../../interfaces/postsCategoeis';
+import { useNavigate } from 'react-router-dom';
+import { useHomePageAds } from '../../../hooks/ads/useFeaturedAds';
 
 // تعريف الفئات مع أيقوناتها وألوانها
 const CATEGORY_META: Record<
@@ -213,13 +212,13 @@ function FeaturedBadge({ endDate }: { endDate: Date | string }) {
 }
 
 /* ── Single ad card ─────────────────────────────────── */
-function HomepageAdCard({ ad, index }: { ad: FeaturedAd; index: number }) {
+export function HomepageAdCard({ ad, index }: { ad: FeaturedAd; index: number }) {
     const theme = useTheme();
     const listing = ad.listingId;
+    const navigate = useNavigate();
     const path = `${productsPathes.postsDetails}/${listing?.category}/Ads/${listing?._id}`;
 
     if (!listing) return null;
-
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -228,12 +227,13 @@ function HomepageAdCard({ ad, index }: { ad: FeaturedAd; index: number }) {
         >
             <Card
                 onClick={() => {
-                    window.location.href = path;
+                    navigate(`${path}`);
                 }}
                 sx={{
                     position: 'relative',
                     borderRadius: 3,
                     overflow: 'hidden',
+
                     cursor: 'pointer',
                     transition: 'all 0.25s ease-in-out',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
@@ -470,7 +470,7 @@ function CategorySection({
 
             <Grid container spacing={2.5}>
                 {ads.map((ad, idx) => (
-                    <HomepageAdCard key={ad._id} ad={ad} index={idx} />
+                    <HomepageAdCard ad={ad} index={idx} />
                 ))}
             </Grid>
         </Box>
@@ -529,7 +529,7 @@ export default function HomepageFeaturedSection({
                 px: { xs: 2, sm: 3, md: 4 },
                 py: { xs: 3, md: 4 },
                 bgcolor: 'background.default',
-                borderRadius: 0,
+                borderRadius: 3,
             }}
         >
             {/* Header Section */}
@@ -675,7 +675,9 @@ export default function HomepageFeaturedSection({
             {!loading && selectedTab !== 'all' && (
                 <Grid container spacing={2.5}>
                     {adsByCategory[selectedTab]?.map((ad, idx) => (
-                        <HomepageAdCard key={ad._id} ad={ad} index={idx} />
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
+                            <HomepageAdCard ad={ad} index={idx} />
+                        </Grid>
                     ))}
                 </Grid>
             )}
