@@ -1,218 +1,243 @@
-import { FunctionComponent, useMemo } from "react";
-import { useTranslation } from "react-i18next";
+import { FunctionComponent, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableRow,
-	Paper,
-	Chip,
-	Box,
-	Typography,
-	useTheme,
-	alpha,
-	Divider,
-} from "@mui/material";
-import { categoriesLogic } from "../../../interfaces/postLogicMap";
-import { getColorHex } from "../../../atoms/colorsSettings/carsColors";
-import { Posts as PostType } from "../../../interfaces/Posts";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import CategoryOutlinedIcon from "@mui/icons-material/CategoryOutlined";
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Paper,
+    Chip,
+    Box,
+    Typography,
+    useTheme,
+    alpha,
+    Divider,
+} from '@mui/material';
+import { categoriesLogic } from '../../../interfaces/postLogicMap';
+import { getColorHex } from '../../../atoms/colorsSettings/carsColors';
+import { Posts as PostType } from '../../../interfaces/Posts';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 
 interface Field {
-	name: string;
-	type: string;
-	required?: boolean;
-	options?: string[];
+    name: string;
+    type: string;
+    required?: boolean;
+    options?: string[];
 }
 
 interface PostDetailsTableProps {
-	Posts: PostType;
+    Posts: PostType;
 }
 
-const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({ Posts }) => {
-	const { t } = useTranslation();
-	const theme = useTheme();
+const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({
+    Posts,
+}) => {
+    const { t } = useTranslation();
+    const theme = useTheme();
 
-	const fields: Field[] = useMemo(() => {
-		if (!Posts.subcategory) return [];
+    const fields: Field[] = useMemo(() => {
+        if (!Posts.subcategory) return [];
 
-		const categoryFields =
-			categoriesLogic[Posts.category]?.[
-			Posts.subcategory as keyof (typeof categoriesLogic)[typeof Posts.category]
-			];
+        const categoryFields =
+            categoriesLogic[Posts.category]?.[
+                Posts.subcategory as keyof (typeof categoriesLogic)[typeof Posts.category]
+            ];
 
-		return (categoryFields as Field[]) || [];
-	}, [Posts]);
+        return (categoryFields as Field[]) || [];
+    }, [Posts]);
 
-	if (fields.length === 0) {
-		return (
-			<Paper
-				elevation={0}
-				sx={{
-					p: 4,
-					textAlign: "center",
-					borderRadius: 3,
-					border: "1px solid",
-					borderColor: "divider",
-					bgcolor: alpha(theme.palette.primary.main, 0.02),
-				}}
-			>
-				<InfoOutlinedIcon
-					sx={{
-						fontSize: 48,
-						color: "text.secondary",
-						mb: 2,
-						opacity: 0.5,
-					}}
-				/>
-				<Typography variant='h6' color='text.secondary' gutterBottom>
-					لا توجد تفاصيل إضافية
-				</Typography>
-				<Typography variant='body2' color='text.secondary'>
-					هذا المنتج لا يحتوي على تفاصيل إضافية
-				</Typography>
-			</Paper>
-		);
-	}
+    if (fields.length === 0) {
+        return (
+            <Paper
+                elevation={0}
+                sx={{
+                    p: 4,
+                    textAlign: 'center',
+                    borderRadius: 3,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: alpha(theme.palette.primary.main, 0.02),
+                }}
+            >
+                <InfoOutlinedIcon
+                    sx={{
+                        fontSize: 48,
+                        color: 'text.secondary',
+                        mb: 2,
+                        opacity: 0.5,
+                    }}
+                />
+                <Typography variant='h6' color='text.secondary' gutterBottom>
+                    لا توجد تفاصيل إضافية
+                </Typography>
+                <Typography variant='body2' color='text.secondary'>
+                    هذا المنتج لا يحتوي على تفاصيل إضافية
+                </Typography>
+            </Paper>
+        );
+    }
 
-	const renderValue = (field: Field, value: string | number | boolean | string[] | undefined | null) => {
-		if (field.name === "color" && typeof value === "string") {
-			const colorHex = getColorHex(value);
-			return (
-				<Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-					<Box
-						sx={{
-							width: 20,
-							height: 20,
-							borderRadius: "50%",
-							bgcolor: colorHex || value,
-							border: "2px solid",
-							borderColor: "background.paper",
-							boxShadow: `0 0 0 1px ${alpha(theme.palette.divider, 0.1)}`,
-							transition: "transform 0.2s",
-							"&:hover": {
-								transform: "scale(1.1)",
-							},
-						}}
-					/>
-					<Typography variant='body2' fontWeight={500}>
-						{value}
-					</Typography>
-				</Box>
-			);
-		}
+    const renderValue = (
+        field: Field,
+        value: string | number | boolean | string[] | undefined | null,
+    ) => {
+        if (field.name === 'color' && typeof value === 'string') {
+            const colorHex = getColorHex(value);
+            return (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Box
+                        sx={{
+                            width: 20,
+                            height: 20,
+                            borderRadius: '50%',
+                            bgcolor: colorHex || value,
+                            border: '2px solid',
+                            borderColor: 'background.paper',
+                            boxShadow: `0 0 0 1px ${alpha(theme.palette.divider, 0.1)}`,
+                            transition: 'transform 0.2s',
+                            '&:hover': {
+                                transform: 'scale(1.1)',
+                            },
+                        }}
+                    />
+                    <Typography variant='body2' fontWeight={500}>
+                        {value}
+                    </Typography>
+                </Box>
+            );
+        }
 
-		if (Array.isArray(value) && value.length > 0) {
-			return (
-				<Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap" }}>
-					{value.map((item, index) => (
-						<Chip
-							key={index}
-							label={item}
-							size='small'
-							variant='outlined'
-							sx={{
-								borderRadius: 1.5,
-								"&:hover": {
-									bgcolor: alpha(theme.palette.primary.main, 0.05),
-									borderColor: "primary.main",
-								},
-							}}
-						/>
-					))}
-				</Box>
-			);
-		}
+        if (Array.isArray(value) && value.length > 0) {
+            return (
+                <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                    {value.map((item, index) => (
+                        <Chip
+                            key={index}
+                            label={item}
+                            size='small'
+                            variant='outlined'
+                            sx={{
+                                borderRadius: 1.5,
+                                '&:hover': {
+                                    bgcolor: alpha(
+                                        theme.palette.primary.main,
+                                        0.05,
+                                    ),
+                                    borderColor: 'primary.main',
+                                },
+                            }}
+                        />
+                    ))}
+                </Box>
+            );
+        }
 
-		if (Array.isArray(value) && value.length === 0) {
-			return (
-				<Typography variant='body2' color='text.disabled'>
-					-
-				</Typography>
-			);
-		}
+        if (Array.isArray(value) && value.length === 0) {
+            return (
+                <Typography variant='body2' color='text.disabled'>
+                    -
+                </Typography>
+            );
+        }
 
-		if (typeof value === "number") {
-			return (
-				<Typography variant='body2' fontWeight={600}>
-					{value}
-				</Typography>
-			);
-		}
+        if (typeof value === 'number') {
+            return (
+                <Typography variant='body2' fontWeight={600}>
+                    {value}
+                </Typography>
+            );
+        }
 
-		if (typeof value === "boolean") {
-			const boolValue = value ? t("common.yes") : t("common.no");
-			return (
-				<Chip
-					label={boolValue}
-					size='small'
-					color={value ? "success" : "default"}
-					sx={{
-						minWidth: 60,
-						fontWeight: 500,
-						"& .MuiChip-label": { px: 2 },
-					}}
-				/>
-			);
-		}
+        if (typeof value === 'boolean') {
+            const boolValue = value ? t('common.yes') : t('common.no');
+            return (
+                <Chip
+                    label={boolValue}
+                    size='small'
+                    color={value ? 'success' : 'default'}
+                    sx={{
+                        minWidth: 60,
+                        fontWeight: 500,
+                        '& .MuiChip-label': { px: 2 },
+                    }}
+                />
+            );
+        }
 
-		if (typeof value === "string" && value) {
-			const translatedValue = t(`common.${value}`, { defaultValue: value });
-			return <Typography variant='body2'>{translatedValue}</Typography>;
-		}
+        if (typeof value === 'string' && value) {
+            const translatedValue = t(`common.${value}`, {
+                defaultValue: value,
+            });
+            return <Typography variant='body2'>{translatedValue}</Typography>;
+        }
 
-		return (
-			<Typography variant='body2' color='text.disabled'>
-				-
-			</Typography>
-		);
-	};
+        return (
+            <Typography variant='body2' color='text.disabled'>
+                -
+            </Typography>
+        );
+    };
 
-	return (
-		<TableContainer
-			component={Paper}
-			elevation={0}
-			sx={{
-				borderRadius: 3,
-				overflow: "hidden",
-				border: "1px solid",
-				borderColor: "divider",
-			}}
-		>
-			<Table>
-				<TableBody>
-					{/* Category Header */}
-					<TableRow
-						sx={{
-							bgcolor: alpha(theme.palette.primary.main, 0.03),
-							"&:hover": {
-								bgcolor: alpha(theme.palette.primary.main, 0.05),
-							},
-						}}
-					>
-						<TableCell
-							component='th'
-							sx={{
-								fontWeight: 600,
-								width: "35%",
-								borderBottom: "none",
-								py: 2.5,
-							}}
-						>
-							<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-								<CategoryOutlinedIcon
-									sx={{ fontSize: 20, color: "primary.main" }}
-								/>
-								<Typography variant='body2' fontWeight={600}>
-									{t("modals.updateProductModal.category")}
-								</Typography>
-							</Box>
-						</TableCell>
-						<TableCell sx={{ borderBottom: "none", py: 2.5 }}>
-							<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-								{/* <Chip
+    return (
+        <TableContainer
+            component={Paper}
+            elevation={0}
+            sx={{
+                borderRadius: 3,
+                overflow: 'hidden',
+                border: '1px solid',
+                borderColor: 'divider',
+            }}
+        >
+            <Table>
+                <TableBody>
+                    {/* Category Header */}
+                    <TableRow
+                        sx={{
+                            bgcolor: alpha(theme.palette.primary.main, 0.03),
+                            '&:hover': {
+                                bgcolor: alpha(
+                                    theme.palette.primary.main,
+                                    0.05,
+                                ),
+                            },
+                        }}
+                    >
+                        <TableCell
+                            component='th'
+                            sx={{
+                                fontWeight: 600,
+                                width: '35%',
+                                borderBottom: 'none',
+                                py: 2.5,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                }}
+                            >
+                                <CategoryOutlinedIcon
+                                    sx={{ fontSize: 20, color: 'primary.main' }}
+                                />
+                                <Typography variant='body2' fontWeight={600}>
+                                    {t('modals.updateProductModal.category')}
+                                </Typography>
+                            </Box>
+                        </TableCell>
+                        <TableCell sx={{ borderBottom: 'none', py: 2.5 }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: 1,
+                                    flexWrap: 'wrap',
+                                }}
+                            >
+                                {/* <Chip
 									label={t(
 										`categories.${t(Posts.category)}.label`,
 									)}
@@ -223,66 +248,81 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({ Posts }) =
 										fontWeight: 500,
 									}}
 								/> */}
-								{Posts.subcategory && (
-									<Chip
-										label={t(
-											`categories.${Posts.category}.subCategories.${Posts.subcategory.toLocaleLowerCase()}`,
-										)}
-										variant='filled'
-										size='medium'
-										color="primary"
-										sx={{
-											fontWeight: 700,
-											borderRadius: 1.5,
-											fontSize: 18,
-											letterSpacing: 2,
-										}}
-									/>
-								)}
+                                {Posts.subcategory && (
+                                    <Chip
+                                        label={t(
+                                            `categories.${Posts.category}.subCategories.${Posts.subcategory.toLocaleLowerCase()}`,
+                                        )}
+                                        variant='filled'
+                                        size='medium'
+                                        color='primary'
+                                        sx={{
+                                            fontWeight: 700,
+                                            borderRadius: 1.5,
+                                            fontSize: 18,
+                                            letterSpacing: 2,
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                        </TableCell>
+                    </TableRow>
+                    {/* Divider */}
+                    <TableRow>
+                        <TableCell
+                            colSpan={2}
+                            sx={{ p: 0, borderBottom: 'none' }}
+                        >
+                            <Divider sx={{ borderStyle: 'dashed' }} />
+                        </TableCell>
+                    </TableRow>
 
-							</Box>
-						</TableCell>
-					</TableRow>
-					{/* Divider */}
-					<TableRow>
-						<TableCell colSpan={2} sx={{ p: 0, borderBottom: "none" }}>
-							<Divider sx={{ borderStyle: "dashed" }} />
-						</TableCell>
-					</TableRow>
+                    {fields.map((field, index) => {
+                        const value = Posts[field._id] as
+                            | string
+                            | number
+                            | boolean
+                            | string[]
+                            | undefined
+                            | null
+                            | typeof Posts;
+                        if (value === undefined || value === null) return null;
 
-					{fields.map((field, index) => {
-						const value = Posts[field.name] as string | number | boolean | string[] | undefined | null;
-						if (value === undefined || value === null) return null;
-
-						return (
-							<TableRow
-								key={field.name}
-								sx={{
-									"&:hover": {
-										bgcolor: alpha(theme.palette.primary.main, 0.02),
-									},
-									...(index === fields.length - 1 && {
-										"& .MuiTableCell-root": {
-											borderBottom: "none",
-										},
-									}),
-								}}
-							>
-								<TableCell
-									component='th'
-									sx={{
-										fontWeight: 500,
-										color: "text.secondary",
-										bgcolor: alpha(
-											theme.palette.background.default,
-											0.5,
-										),
-										width: "35%",
-									}}
-								>
-									<Typography variant='body2' color='text.secondary'>
-										{t(`common.${field.name}`)}
-										{/* {field.required && (
+                        return (
+                            <TableRow
+                                key={field.name}
+                                sx={{
+                                    '&:hover': {
+                                        bgcolor: alpha(
+                                            theme.palette.primary.main,
+                                            0.02,
+                                        ),
+                                    },
+                                    ...(index === fields.length - 1 && {
+                                        '& .MuiTableCell-root': {
+                                            borderBottom: 'none',
+                                        },
+                                    }),
+                                }}
+                            >
+                                <TableCell
+                                    component='th'
+                                    sx={{
+                                        fontWeight: 500,
+                                        color: 'text.secondary',
+                                        bgcolor: alpha(
+                                            theme.palette.background.default,
+                                            0.5,
+                                        ),
+                                        width: '35%',
+                                    }}
+                                >
+                                    <Typography
+                                        variant='body2'
+                                        color='text.secondary'
+                                    >
+                                        {t(`common.${field.name}`)}
+                                        {/* {field.required && (
 											<Typography
 												component='span'
 												color='error.main'
@@ -291,16 +331,18 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({ Posts }) =
 												*
 											</Typography>
 										)} */}
-									</Typography>
-								</TableCell>
-								<TableCell>{renderValue(field, value)}</TableCell>
-							</TableRow>
-						);
-					})}
-				</TableBody>
-			</Table>
-		</TableContainer>
-	);
+                                    </Typography>
+                                </TableCell>
+                                <TableCell>
+                                    {renderValue(field, value)}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
 };
 
 export default PostDetailsTable;

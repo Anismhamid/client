@@ -83,7 +83,7 @@ export default function PaymentSuccess() {
                         </Typography>
                         <Button
                             variant='contained'
-                            onClick={() => navigate('/dashboard/featured-ads')}
+                            onClick={() => navigate('/my-ads-dashboard')}
                         >
                             عرض إعلاناتي
                         </Button>
