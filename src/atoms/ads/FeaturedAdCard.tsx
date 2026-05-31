@@ -5,8 +5,6 @@ import { Box, Chip, Stack, Typography } from '@mui/material';
 import { AdType, FeaturedAd } from '../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../helpers/dateAndPriceFormat';
 
-
-
 interface FeaturedAdCardProps {
     ad: FeaturedAd;
     onDelete?: (id: string) => void;
@@ -109,7 +107,7 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                     noWrap
                     sx={{ mb: 0.5 }}
                 >
-                    {ad.listingId?.product_name ?? '(الإعلان محذوف)'}
+                    {ad.listingId?.product_name}
                 </Typography>
                 <Typography
                     variant='caption'

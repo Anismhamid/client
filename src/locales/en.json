@@ -87,7 +87,7 @@
         "error": "Login failed",
         "googleError": "Google login error: {{message}}"
     },
-        "description": "Safqa - An online marketplace for buying and selling products",
+    "description": "Safqa - An online marketplace for buying and selling products",
 
     "register": {
         "title": "יצירת חשבון חדש",
@@ -734,7 +734,8 @@
         "settings": "Settings",
         "logout": "Logout",
         "admin": "Site Admin",
-        "siteModerator": "Site Moderator"
+        "siteModerator": "Site Moderator",
+        "storeStatistics": "Store Statistics"
     },
 
     "about": {
@@ -795,5 +796,84 @@
         "heading": "Delete Account",
         "description": "If you delete your account, this action cannot be undone",
         "buttonText": "Delete Permanently"
+    },
+
+    "ads": {
+        "createAd": "Promote Ad",
+        "createAdDescription": "Increase your ad's visibility by promoting it. Choose your budget and campaign duration to start attracting more potential buyers.",
+        "dashboard": "Ads Dashboard",
+        "description": "Here you can manage your ads, edit or delete them as needed",
+        "noAds": "You don't have any ads yet. Create a new ad to increase your products' visibility!",
+        "promotionPackages": {
+            "title": "Promotion Packages",
+            "description": "Choose from different promotion packages to increase your ad's visibility",
+            "homepage": {
+                "name": "Homepage Package",
+                "description": "Premium placement at the top of the homepage, seen by thousands of visitors daily",
+                "price": "{{price}} / per week",
+                "features": [
+                    "Top homepage placement",
+                    "Daily automatic renewal",
+                    "Priority display"
+                ]
+            },
+            "top": {
+                "name": "Top Listing Package",
+                "description": "Your ad at the top of search results and lists at all times",
+                "price": "{{price}} / per week",
+                "features": [
+                    "Search result priority",
+                    "Top of lists placement",
+                    "Gold highlighting"
+                ]
+            },
+            "highlight": {
+                "name": "Highlight Package",
+                "description": "Eye-catching visual highlighting that makes your ad stand out",
+                "price": "{{price}} / per week",
+                "features": [
+                    "Special ad background",
+                    "Glowing icon",
+                    "Green highlighting"
+                ]
+            }
+        },
+        "stats": {
+            "active": "Active",
+            "expired": "Expired",
+            "daysLeft": "days left",
+            "noActiveAds": "No active promoted ads at the moment"
+        },
+        "purchase": {
+            "title": "Purchase Promotion Package",
+            "subtitle": "Complete the details below and proceed to payment",
+            "selectListing": "Select your ad",
+            "selectPromotion": "Promotion type",
+            "startDate": "Start date",
+            "endDate": "End date",
+            "duration": "Duration",
+            "days": "days",
+            "payNow": "Pay Now",
+            "processing": "Processing...",
+            "selectPackage": "Choose the package that suits you"
+        },
+        "currentAds": "Your Current Ads",
+        "noPromotedAds": "No promoted ads yet",
+        "startPromoting": "Start by purchasing your first promotion package now",
+        "common": {
+            "selected": "Selected",
+            "untitled": "Untitled",
+            "error": "An error occurred",
+            "success": "Operation completed successfully",
+            "confirm": "Confirm",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "edit": "Edit",
+            "save": "Save",
+            "loading": "Loading...",
+            "back": "Back",
+            "next": "Next",
+            "submit": "Submit"
+        }
     }
 }

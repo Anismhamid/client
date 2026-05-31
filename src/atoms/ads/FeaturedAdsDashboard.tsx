@@ -22,46 +22,12 @@ import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
 import { getCustomerProfilePostsBySlug } from '../../services/postsServices';
 import { useUser } from '../../context/useUSer';
 import { Posts } from '../../interfaces/Posts';
+import { formatDate } from '../../helpers/dateAndPriceFormat';
+import { useTranslation } from 'react-i18next';
 
 const api = import.meta.env.VITE_API_URL;
 
 // ─── Plan config ────────────────────────────────────────────────────────────
-const PLAN_META: Record<
-    string,
-    {
-        label: string;
-        color: string;
-        accent: string;
-        icon: string;
-        desc: string;
-        price: string;
-    }
-> = {
-    homepage: {
-        label: 'الصفحة الرئيسية',
-        color: '#0f172a',
-        accent: '#f59e0b',
-        icon: '🏠',
-        desc: 'ظهور مميز في أعلى الصفحة الرئيسية أمام آلاف الزوار يومياً',
-        price: '٩٩ ₪ / أسبوع',
-    },
-    top: {
-        label: 'إعلان مرفوع',
-        color: '#1e1b4b',
-        accent: '#818cf8',
-        icon: '🚀',
-        desc: 'إعلانك في صدارة نتائج البحث وأعلى القوائم دائماً',
-        price: '٦٩ ₪ / أسبوع',
-    },
-    highlight: {
-        label: 'إعلان مضيء',
-        color: '#064e3b',
-        accent: '#34d399',
-        icon: '✨',
-        desc: 'تمييز بصري لافت يجعل إعلانك يبرز وسط المنافسين',
-        price: '٤٩ ₪ / أسبوع',
-    },
-};
 
 const FeaturedAdsDashboard = () => {
     const [ads, setAds] = useState<FeaturedAd[]>([]);
@@ -77,6 +43,50 @@ const FeaturedAdsDashboard = () => {
     const { snackbar, showSnackbar, closeSnackbar } = useSnackbar();
     const [userListings, setUserListings] = useState<Posts[]>([]);
     const [selectedPlan, setSelectedPlan] = useState<string>('homepage');
+    const { t } = useTranslation();
+
+     const PRICE_VALUES = {
+        homepage: 50,
+        top: 25,
+        highlight: 10
+    };
+
+    const PLAN_META: Record<
+        string,
+        {
+            label: string;
+            color: string;
+            accent: string;
+            icon: string;
+            desc: string;
+            price: string;
+        }
+    > = {
+        homepage: {
+            label: t('ads.promotionPackages.homepage.name'),
+            color: '#0f172a',
+            accent: '#f59e0b',
+            icon: '🏠',
+            desc: t('ads.promotionPackages.homepage.description'),
+            price: t('ads.promotionPackages.homepage.price',{price: PRICE_VALUES.homepage}),
+        },
+        top: {
+            label: t('ads.promotionPackages.top.name'),
+            color: '#1e1b4b',
+            accent: '#818cf8',
+            icon: '🚀',
+            desc: t('ads.promotionPackages.top.description'),
+            price: t('ads.promotionPackages.top.price',{price: PRICE_VALUES.top}),
+        },
+        highlight: {
+            label: t('ads.promotionPackages.highlight.name'),
+            color: '#064e3b',
+            accent: '#34d399',
+            icon: '✨',
+            desc: t('ads.promotionPackages.highlight.description'),
+            price: t('ads.promotionPackages.highlight.price',{price: PRICE_VALUES.highlight}),
+        },
+    };
 
     useEffect(() => {
         getCustomerProfilePostsBySlug(auth?.slug as string)
@@ -206,7 +216,7 @@ const FeaturedAdsDashboard = () => {
                         mb: 2,
                     }}
                 >
-                    ✦ باقات الترويج المدفوع ✦
+                    {t('ads.promotionPackages.title')}
                 </Typography>
                 <Typography
                     variant='h2'
@@ -218,19 +228,7 @@ const FeaturedAdsDashboard = () => {
                         mb: 2,
                     }}
                 >
-                    اجعل إعلانك
-                    <Box
-                        component='span'
-                        sx={{
-                            display: 'block',
-                            background:
-                                'linear-gradient(90deg, #f59e0b, #fcd34d)',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                        }}
-                    >
-                        لا يُقاوَم
-                    </Box>
+                    {t('ads.promotionPackages.subtitle')}
                 </Typography>
                 <Typography
                     sx={{
@@ -240,7 +238,7 @@ const FeaturedAdsDashboard = () => {
                         fontSize: '1.05rem',
                     }}
                 >
-                    وصول أوسع، مبيعات أكثر — اختر الباقة التي تناسبك وابدأ الآن
+                    {t('ads.promotionPackages.description')}
                 </Typography>
             </Box>
 
@@ -728,13 +726,8 @@ const FeaturedAdsDashboard = () => {
                                                 fontSize: '0.8rem',
                                             }}
                                         >
-                                            {dayjs(ad.startDate).format(
-                                                'DD/MM/YYYY',
-                                            )}{' '}
-                                            ←{' '}
-                                            {dayjs(ad.endDate).format(
-                                                'DD/MM/YYYY',
-                                            )}
+                                            {formatDate(ad.startDate)} ←{' '}
+                                            {formatDate(ad.endDate)}
                                         </Typography>
                                     </Box>
                                 </Grid>

@@ -1,16 +1,13 @@
+import dayjs from 'dayjs';
+
 /**
  *
  * @param date
  * @returns formated date to local ILS
  */
-export const formatDate = (date: string) =>
-	new Date(date).toLocaleString("he-IL", {
-		year: "2-digit",
-		month: "short",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
+export const formatDate = (date: string) => {
+    return dayjs(date).format('HH:mm - DD/MM/YYYY');
+};
 
 /**
  *
@@ -18,14 +15,14 @@ export const formatDate = (date: string) =>
  * @returns formated price to local ILS
  */
 export const formatPrice = (price: number) => {
-	if (price === undefined || price === null || isNaN(price)) {
-		return "—";
-	}
+    if (price === undefined || price === null || isNaN(price)) {
+        return '—';
+    }
 
-	return price.toLocaleString("he-IL", {
-		style: "currency",
-		currency: "ILS",
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 0,
-	});
+    return price.toLocaleString('he-IL', {
+        style: 'currency',
+        currency: 'ILS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    });
 };
