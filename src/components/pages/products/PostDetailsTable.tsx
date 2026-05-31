@@ -21,6 +21,7 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 
 interface Field {
+    _id: keyof PostType;
     name: string;
     type: string;
     required?: boolean;
@@ -286,6 +287,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({
                             | undefined
                             | null
                             | typeof Posts;
+                            
                         if (value === undefined || value === null) return null;
 
                         return (
@@ -334,7 +336,7 @@ const PostDetailsTable: FunctionComponent<PostDetailsTableProps> = ({
                                     </Typography>
                                 </TableCell>
                                 <TableCell>
-                                    {renderValue(field, value)}
+                                    {renderValue(field, value as string)}
                                 </TableCell>
                             </TableRow>
                         );

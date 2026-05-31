@@ -124,8 +124,8 @@ const PostDetails: FunctionComponent = () => {
 		: t("product.category") || "التصنيف";
 
 	const isOwner = useMemo(() => {
-		return auth?._id && post.userData?._id && auth._id === String(post.userData?._id);
-	}, [auth?._id, post.userData?._id]);
+		return auth?._id && post._id && auth._id === String(post._id);
+	}, [auth?._id, post._id]);
 
 	const handleZoomIn = useCallback(() => {
 		setZoomLevel((prev) => Math.min(prev + 0.5, 3));
@@ -361,7 +361,7 @@ const PostDetails: FunctionComponent = () => {
 								>
 									<Stack direction='row' spacing={2} alignItems='center'>
 										<Avatar
-											src={post.seller?.imageUrl || "/user.png"}
+											src={post.seller?.user.image?.url || "/user.png"}
 											alt={sellerDisplayName}
 											sx={{ width: 64, height: 64, border: 2, borderColor: "divider" }}
 										/>
@@ -696,7 +696,7 @@ const PostDetails: FunctionComponent = () => {
 																setPost(prevPost => ({
 																	...prevPost,
 																	reviews: [response.review, ...(prevPost.reviews || [])],
-																	reviewCount: Number(prevPost.reviewCount || 0) + 1
+																	reviewCount: Number(prevPost.reviews?.length || 0) + 1
 																}));
 
 																// Clear the form
@@ -732,10 +732,10 @@ const PostDetails: FunctionComponent = () => {
 									<Card sx={{ ...sectionCardSx, p: { xs: 2.25, md: 3 } }}>
 										<Stack spacing={2.5}>
 											<Box>
-												<Stack direction='row' spacing={1} flexWrap='wrap' sx={{ mb: 1.5 }}>
+												{/* <Stack direction='row' spacing={1} flexWrap='wrap' sx={{ mb: 1.5 }}>
 													<Chip label={categoryLabel} color='secondary' />
 													{post.condition && <Chip label={String(post.condition)} variant='outlined' />}
-												</Stack>
+												</Stack> */}
 												<Typography variant='h3' component='h1' sx={{ fontWeight: 900, lineHeight: 1.2, mb: 1.5 }}>
 													{post.product_name}
 												</Typography>
@@ -816,7 +816,7 @@ const PostDetails: FunctionComponent = () => {
 													})}
 													style={{ textDecoration: "none", color: "inherit" }}
 												>
-													<Avatar src={post.seller?.imageUrl || "/user.png"} alt={sellerDisplayName} sx={{ width: 56, height: 56 }} />
+													<Avatar src={post.seller?.user.image?.url || "/user.png"} alt={sellerDisplayName} sx={{ width: 56, height: 56 }} />
 												</Link>
 												<Box>
 													<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>
