@@ -46,7 +46,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
-import { useUserProducts } from '../../../hooks/useUserPosts';
+import { useUserPosts } from '../../../hooks/useUserPosts';
 import useToken from '../../../hooks/useToken';
 import { useUser } from '../../../context/useUSer';
 import { Posts } from '../../../interfaces/Posts';
@@ -112,7 +112,7 @@ const Profile: FunctionComponent = () => {
         slug: '',
     });
 
-    const { userProducts, loading: productsLoading } = useUserProducts(
+    const { userPosts, loading: productsLoading } = useUserPosts(
         user.slug,
     );
 
@@ -195,7 +195,7 @@ const Profile: FunctionComponent = () => {
     const stats = useMemo(() => {
         if (!user)
             return {
-                totalProducts: userProducts.length,
+                totalProducts: userPosts.length,
                 totalFavorites: 0,
                 rating: 0,
                 totalLikesOnMyProducts: 0,
@@ -203,11 +203,11 @@ const Profile: FunctionComponent = () => {
             };
 
         return {
-            totalProducts: userProducts.length,
-            rating: calculateRating(userProducts || []),
+            totalProducts: userPosts.length,
+            rating: calculateRating(userPosts || []),
             completionPercentage: calculateProfileCompletion(user),
         };
-    }, [user, userProducts]);
+    }, [user, userPosts]);
 
     const handleDeleteAccount = () => {
         if (!decodedToken?._id) return;
@@ -565,7 +565,7 @@ const Profile: FunctionComponent = () => {
                                             variant='h4'
                                             fontWeight='bold'
                                         >
-                                            {userProducts.length || 0}
+                                            {userPosts.length || 0}
                                         </Typography>
                                         <Typography
                                             variant='body2'
