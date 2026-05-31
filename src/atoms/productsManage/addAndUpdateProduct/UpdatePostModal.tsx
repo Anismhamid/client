@@ -90,10 +90,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
                 slug: post.seller.slug || undefined,
                 user: {
                     _id: post.seller.user._id || '',
-                    name: {
-                        first: post.seller.user.name.first || '',
-                        last: post.seller.user.name.last || '',
-                    },
+                    name: post.seller.user.name || '',
                     image: undefined,
                 },
             },
