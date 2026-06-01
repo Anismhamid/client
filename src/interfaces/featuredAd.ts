@@ -1,4 +1,9 @@
 export interface ListingRef {
+    likes: never[];
+    createdAt: string;
+    seller: null;
+    sale: boolean;
+    description: string;
     _id: string;
     product_name: string;
     category?: string;

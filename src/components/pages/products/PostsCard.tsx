@@ -51,6 +51,7 @@ interface PostCardProps {
     post: Posts;
     discountedPrice: number;
     canEdit?: boolean;
+    featured?: boolean;
     setPostIdToUpdate: Dispatch<SetStateAction<string>>;
     onShowUpdateProductModal: () => void;
     openDeleteModal: (name: string) => void;
@@ -68,6 +69,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
         post,
         discountedPrice,
         canEdit,
+        featured = false,
         setPostIdToUpdate,
         onShowUpdateProductModal,
         openDeleteModal,
@@ -133,11 +135,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                 dir={dir}
                 sx={{
                     borderRadius: '16px',
-                    border: '1.5px solid',
-                    // borderColor: featured ? featuredMeta.color + "60" : "divider",
-                    // boxShadow: featured
-                    // 	? `0 0 0 3px ${featuredMeta.color}18, 0 4px 24px ${featuredMeta.color}15`
-                    // 	: "none",
+                    border: featured ? '2px solid' : '1.5px solid',
+                    borderColor: featured ? '#FFD700' : 'divider',
+                    boxShadow: featured
+                        ? '0 0 0 3px rgba(255,215,0,0.15), 0 8px 24px rgba(255,215,0,0.2)'
+                        : 'none',
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'hidden',
@@ -146,10 +148,16 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     transition:
                         'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
                     position: 'relative',
-                    // "&:hover": {
-                    // 	borderColor: featured ? featuredMeta.color + "90" : "text.disabled",
-                    // 	transform: featured ? "translateY(-2px)" : "none",
-                    // },
+
+                    '&:hover': {
+                        borderColor: featured ? '#FFC107' : 'text.disabled',
+                        transform: featured
+                            ? 'translateY(-4px)'
+                            : 'translateY(-1px)',
+                        boxShadow: featured
+                            ? '0 12px 32px rgba(255,215,0,0.3)'
+                            : undefined,
+                    },
                 }}
                 itemScope
                 itemType='https://schema.org/Product'
@@ -157,6 +165,23 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                 aria-label={`منتج: ${post.product_name}`}
             >
                 <JsonLd data={jsonLdData} />
+
+                {featured && (
+                    <Box
+                        sx={{
+                            background:
+                                'linear-gradient(90deg,#FFD700,#FFC107)',
+                            color: '#000',
+                            py: 0.5,
+                            textAlign: 'center',
+                            fontWeight: 700,
+                            fontSize: '0.8rem',
+                            letterSpacing: 0.3,
+                        }}
+                    >
+                        ⭐ إعلان مميز
+                    </Box>
+                )}
 
                 {/* ── HEADER ── */}
                 <Box
@@ -180,6 +205,26 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             gap: 10,
                         }}
                     >
+                        {featured && (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 10,
+                                    left: post.sale ? 75 : 10,
+                                    bgcolor: '#FFD700',
+                                    color: '#000',
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    px: 1,
+                                    py: 0.25,
+                                    borderRadius: '6px',
+                                    zIndex: 5,
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                                }}
+                            >
+                                ⭐ مميز
+                            </Box>
+                        )}
                         <Box sx={{ position: 'relative' }}>
                             <Avatar
                                 src={
@@ -379,7 +424,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 '&:hover': { transform: 'scale(1.02)' },
                             }}
                         />
-                     
                     </Link>
 
                     {/* Discount badge */}

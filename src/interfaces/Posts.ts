@@ -35,70 +35,12 @@ type Seller = {
     user: SellerUser;
 };
 
-// export interface Posts {
-//     location: string;
-//     likes?: string[];
-//     isNew?: boolean;
-//     _id?: string;
-
-//     seller: Seller;
-
-//     product_name: string;
-//     category: CategoryValue;
-//     subcategory?: string;
-//     brand?: string;
-//     year?: string;
-//     fuel?: string;
-//     mileage?: number;
-//     color?: string;
-
-//     price: number;
-//     description: string;
-
-//     image: {
-//         url: string;
-//         publicId: string;
-//     };
-
-//     sale: boolean;
-//     discount: number;
-
-//     reviews?: Review[];
-
-//     in_stock: boolean;
-//     userData?: User;
-
-//     [key: string]:
-//         | string
-//         | number
-//         | boolean
-//         | string[]
-//         | User
-//         | undefined
-//         | {
-//               name?: string;
-//               slug?: string;
-//               user: {
-//                   _id?: string;
-//                   name: { first: string; last: string };
-//                   image: { url: string };
-//               };
-//           }
-//         | {
-//               url: string;
-//               publicId: string;
-//           }
-//         | {
-//               createdAt: Date | string;
-//               user: User | string | object;
-//               rating: number;
-//               comment: string;
-//           }[];
-// }
 
 export interface Posts {
+    featured?: boolean | null;
     _id?: string;
     createdAt: Date | string;
+    updatedAt?: Date | string;
     location: string;
     likes?: string[];
     isNew?: boolean;

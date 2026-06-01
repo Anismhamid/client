@@ -313,203 +313,162 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                         text={t(`categories.${category}.label`)}
                     />
                 </Box>
-                <Container maxWidth='lg'>
+            </Box>
+
+            <Container maxWidth='lg'>
+                <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{ mb: 3, px: { xs: 2, md: 0 } }}
+                >
+                    {t('common.viewOf')} {visibleProducts.length}{' '}
+                    {t('common.outOf')} {filteredProducts.length}{' '}
+                    {t('common.countOfPosts')}
+                </Typography>
+
+                {filteredProducts.length > 0 ? (
+                    <Grid container spacing={2}>
+                        {visibleProducts.map((post: Posts) => {
+                            const discountedPrice = post.sale
+                                ? post.price -
+                                  (post.price * (post.discount || 0)) / 100
+                                : post.price;
+
+                            return (
+                                <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+                                    <Box ref={observerRef}>
+                                        <ProductCard
+                                            key={post._id}
+                                            post={post}
+                                            discountedPrice={discountedPrice}
+                                            canEdit={canEdit}
+                                            setPostIdToUpdate={
+                                                setPostIdToUpdate
+                                            }
+                                            onShowUpdateProductModal={
+                                                onShowUpdateProductModal
+                                            }
+                                            openDeleteModal={openDeleteModal}
+                                            setLoadedImages={setLoadedImages}
+                                            loadedImages={loadedImages}
+                                            category={category}
+                                            onLikeToggle={handleToggleLike}
+                                            updateProductInList={(
+                                                updatedPost,
+                                            ) => {
+                                                setProducts((prev) =>
+                                                    prev.map((p) =>
+                                                        p._id ===
+                                                        updatedPost._id
+                                                            ? updatedPost
+                                                            : p,
+                                                    ),
+                                                );
+                                                setVisibleProducts((prev) =>
+                                                    prev.map((p) =>
+                                                        p._id ===
+                                                        updatedPost._id
+                                                            ? updatedPost
+                                                            : p,
+                                                    ),
+                                                );
+                                            }}
+                                        />
+                                    </Box>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                ) : (
                     <Box
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
+                            bgcolor: '#fff',
+                            p: 5,
+                            textAlign: 'center',
+                            borderRadius: 3,
+                            border: '1px solid #e4e6eb',
+                            mt: 3,
                         }}
                     >
-                        {/* Visible decorative heading (aria-hidden since real h1 is above) */}
-                        {/* <Typography
-							aria-hidden="true"
-							variant='h6'
-							sx={{
-								color: theme.palette.primary.main,
-								fontWeight: 600,
-								display: { xs: "none", md: "block" },
-							}}
-						>
-							{categoryTitle}
-						</Typography> */}
+                        <Typography
+                            variant='h6'
+                            color='primary.main'
+                            sx={{ mb: 2 }}
+                        >
+                            لم يتم العثور على منتجات مطابقة لمعايير البحث
+                        </Typography>
+                        <Typography variant='body2' color='primary.main'>
+                            حاول البحث باستخدام كلمات أخرى
+                        </Typography>
                     </Box>
-                </Container>
-            </Box>
+                )}
 
-            <Box component='main'>
-                <Container maxWidth='lg'>
-                    <Typography
-                        variant='body2'
-                        color='text.secondary'
-                        sx={{ mb: 3, px: { xs: 2, md: 0 } }}
+                {visibleProducts.length < filteredProducts.length && (
+                    <Box
+                        ref={loadMoreRef}
+                        sx={{
+                            py: 4,
+                            textAlign: 'center',
+                        }}
                     >
-                        {t('common.viewOf')} {visibleProducts.length}{' '}
-                        {t('common.outOf')} {filteredProducts.length}{' '}
-                        {t('common.countOfPosts')}
-                    </Typography>
-
-                    {filteredProducts.length > 0 ? (
-                        <Grid container spacing={2}>
-                            {visibleProducts.map((post: Posts) => {
-                                const discountedPrice = post.sale
-                                    ? post.price -
-                                      (post.price * (post.discount || 0)) / 100
-                                    : post.price;
-
-                                return (
-                                    <Grid
-                                        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
-                                        key={post._id}
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <Box ref={observerRef}>
-                                            <ProductCard
-                                             featured featuredType="highlight"
-                                                post={post}
-                                                discountedPrice={
-                                                    discountedPrice
-                                                }
-                                                canEdit={canEdit}
-                                                setPostIdToUpdate={
-                                                    setPostIdToUpdate
-                                                }
-                                                onShowUpdateProductModal={
-                                                    onShowUpdateProductModal
-                                                }
-                                                openDeleteModal={
-                                                    openDeleteModal
-                                                }
-                                                setLoadedImages={
-                                                    setLoadedImages
-                                                }
-                                                loadedImages={loadedImages}
-                                                category={category}
-                                                onLikeToggle={handleToggleLike}
-                                                updateProductInList={(
-                                                    updatedPost,
-                                                ) => {
-                                                    setProducts((prev) =>
-                                                        prev.map((p) =>
-                                                            p._id ===
-                                                            updatedPost._id
-                                                                ? updatedPost
-                                                                : p,
-                                                        ),
-                                                    );
-                                                    setVisibleProducts((prev) =>
-                                                        prev.map((p) =>
-                                                            p._id ===
-                                                            updatedPost._id
-                                                                ? updatedPost
-                                                                : p,
-                                                        ),
-                                                    );
-                                                }}
-                                            />
-                                        </Box>
-                                    </Grid>
-                                );
-                            })}
-                        </Grid>
-                    ) : (
-                        <Box
-                            sx={{
-                                bgcolor: '#fff',
-                                p: 5,
-                                textAlign: 'center',
-                                borderRadius: 3,
-                                border: '1px solid #e4e6eb',
-                                mt: 3,
-                            }}
-                        >
-                            <Typography
-                                variant='h6'
-                                color='primary.main'
-                                sx={{ mb: 2 }}
+                        {isLoadingMore ? (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                }}
                             >
-                                لم يتم العثور على منتجات مطابقة لمعايير البحث
-                            </Typography>
-                            <Typography variant='body2' color='primary.main'>
-                                حاول البحث باستخدام كلمات أخرى
-                            </Typography>
-                        </Box>
-                    )}
-
-                    {visibleProducts.length < filteredProducts.length && (
-                        <Box
-                            ref={loadMoreRef}
-                            sx={{
-                                py: 4,
-                                textAlign: 'center',
-                            }}
-                        >
-                            {isLoadingMore ? (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Loader />
-                                </Box>
-                            ) : (
-                                <Button
-                                    variant='outlined'
-                                    onClick={handleShowMore}
-                                    sx={{
-                                        px: 4,
-                                        py: 1.5,
-                                        borderRadius: 2,
-                                        borderColor: theme.palette.primary.main,
-                                        color: theme.palette.primary.main,
-                                        '&:hover': {
-                                            bgcolor: alpha(
-                                                theme.palette.primary.main,
-                                                0.04,
-                                            ),
-                                            borderColor:
-                                                theme.palette.primary.dark,
-                                        },
-                                    }}
-                                >
-                                    تحميل المزيد
-                                </Button>
-                            )}
-                        </Box>
-                    )}
-
-                    {visibleProducts.length === filteredProducts.length &&
-                        filteredProducts.length > 0 && (
-                            <Box sx={{ py: 4, textAlign: 'center' }}>
-                                <Typography
-                                    variant='body2'
-                                    color='text.secondary'
-                                >
-                                    🎉 {t('common.endOfPosts')}
-                                </Typography>
+                                <Loader />
                             </Box>
+                        ) : (
+                            <Button
+                                variant='outlined'
+                                onClick={handleShowMore}
+                                sx={{
+                                    px: 4,
+                                    py: 1.5,
+                                    borderRadius: 2,
+                                    borderColor: theme.palette.primary.main,
+                                    color: theme.palette.primary.main,
+                                    '&:hover': {
+                                        bgcolor: alpha(
+                                            theme.palette.primary.main,
+                                            0.04,
+                                        ),
+                                        borderColor: theme.palette.primary.dark,
+                                    },
+                                }}
+                            >
+                                تحميل المزيد
+                            </Button>
                         )}
-                </Container>
+                    </Box>
+                )}
 
-                <UpdateProductModal
-                    refresh={refreshAfterChange}
-                    postId={postIdToUpdate}
-                    show={showUpdateProductModal}
-                    onHide={() => onHideUpdateProductModal()}
-                />
+                {visibleProducts.length === filteredProducts.length &&
+                    filteredProducts.length > 0 && (
+                        <Box sx={{ py: 4, textAlign: 'center' }}>
+                            <Typography variant='body2' color='text.secondary'>
+                                🎉 {t('common.endOfPosts')}
+                            </Typography>
+                        </Box>
+                    )}
+            </Container>
 
-                <AlertDialogs
-                    show={showDeleteModal}
-                    onHide={closeDeleteModal}
-                    handleDelete={() => handleDelete(productToDelete)}
-                    title={'حذف المنتج'}
-                    description={`هل أنت متأكد أنك تريد حذف "${productToDelete}"؟ لا يمكن التراجع عن هذا الإجراء.`}
-                />
-            </Box>
+            <UpdateProductModal
+                refresh={refreshAfterChange}
+                postId={postIdToUpdate}
+                show={showUpdateProductModal}
+                onHide={() => onHideUpdateProductModal()}
+            />
+
+            <AlertDialogs
+                show={showDeleteModal}
+                onHide={closeDeleteModal}
+                handleDelete={() => handleDelete(productToDelete)}
+                title={'حذف المنتج'}
+                description={`هل أنت متأكد أنك تريد حذف "${productToDelete}"؟ لا يمكن التراجع عن هذا الإجراء.`}
+            />
         </main>
     );
 };
