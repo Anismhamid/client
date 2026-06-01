@@ -1,7 +1,6 @@
 // components/home/AdsSection.tsx
 import { Container } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { HighlightAdsSection } from '../ads/HighlightAdsSection';
 import TopAdsSection from '../ads/TopAdsSection';
 import HomepageFeaturedSection from '../ads/HomepageFeaturedSection ';
 
@@ -11,7 +10,6 @@ const AdsSection = () => {
 
     return (
         <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 }, mb: 4 }}>
-            <HighlightAdsSection />
             <TopAdsSection />
             <HomepageFeaturedSection onViewAll={() => navigate('/featured-ads')} />
         </Container>

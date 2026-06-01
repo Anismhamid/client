@@ -56,18 +56,19 @@ export const sendMessage = async (
 	const tempId = `temp-${Date.now()}-${Math.random()}`;
 
 	const tempMessage: LocalMessage = {
-		_id: tempId,
-		from: currentUser,
-		to: otherUser,
-		message: messageText,
-		status: "pending",
-		createdAt: new Date(),
-		fileType: undefined,
-		fileUrl: undefined,
-		warning: false,
-		tempId,
-		isImportant: false,
-	};
+        _id: tempId,
+        from: currentUser,
+        to: otherUser,
+        message: messageText,
+        status: "pending",
+        createdAt: new Date(),
+        fileType: undefined,
+        fileUrl: undefined,
+        warning: false,
+        tempId,
+        isImportant: false,
+        text: ""
+    };
 
 
 	addMessageForUser(otherUser?._id ?? "", tempMessage);

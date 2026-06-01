@@ -94,6 +94,7 @@ const Home: FunctionComponent = () => {
 
                 <PostsGrid
                     posts={posts}
+                    featured={false}
                     canEdit={canEdit}
                     onSetPostIdToUpdate={setPostIdToUpdate}
                     onShowUpdateModal={() => setShowUpdateModal(true)}

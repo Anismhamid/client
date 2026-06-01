@@ -10,6 +10,8 @@ import {
     CardMedia,
     Chip,
     Divider,
+    Drawer,
+    // Drawer,
     IconButton,
     Menu,
     MenuItem,
@@ -35,7 +37,7 @@ import {
     useState,
     useRef,
 } from 'react';
-import { generatePath, Link, useNavigate } from 'react-router-dom';
+import { generatePath, Link } from 'react-router-dom';
 import { Posts } from '../../../interfaces/Posts';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
@@ -46,6 +48,9 @@ import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import LikeButton from '../../../atoms/like/LikeButton';
 import { path, productsPathes } from '../../../routes/routes';
 import { formatTimeAgo } from './helpers/helperFunctions';
+// import ChatBoxWrapper from '../chatBox/ChatBoxWrapper';
+import { useUser } from '../../../context/useUSer';
+import ChatBox from '../chatBox/ChatBox';
 
 interface PostCardProps {
     post: Posts;
@@ -55,13 +60,18 @@ interface PostCardProps {
     setPostIdToUpdate: Dispatch<SetStateAction<string>>;
     onShowUpdateProductModal: () => void;
     openDeleteModal: (name: string) => void;
-    setLoadedImages: React.Dispatch<
+    setLoadedImages?: React.Dispatch<
         React.SetStateAction<Record<string, boolean>>
     >;
-    loadedImages: Record<string, boolean>;
+    loadedImages?: Record<string, boolean>;
     category: string;
     onLikeToggle?: (postId: string, liked: boolean) => void;
     updateProductInList?: (updatedPost: Posts) => void;
+}
+
+export interface ChatUser {
+    _id: string;
+    name: string;
 }
 
 const PostCard: FunctionComponent<PostCardProps> = memo(
@@ -78,12 +88,21 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
     }) => {
         const { t } = useTranslation();
         const dir = handleRTL();
-        const navigate = useNavigate();
-
+        // const navigate = useNavigate();
+        const { auth } = useUser();
         const [isBookmarked, setIsBookmarked] = useState(false);
         const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
         const [expanded, setExpanded] = useState<boolean>(false);
+        const [openChat, setOpenChat] = useState(false);
         const menuRef = useRef(null);
+
+        const currentUser = {
+            _id: auth._id as string,
+            name: { first: auth.name.first, last: auth.name.last },
+            email: auth.email as string,
+            role: auth.role as string,
+        };
+        const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
 
         const jsonLdData = generateSingleProductJsonLd(post);
 
@@ -92,8 +111,9 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
         const handleMenuClose = () => setMenuAnchor(null);
 
         const handleShare = () => {
-            const shareUrl = `${window.location.origin}/product-details/${post.category}/${post.brand}/${post._id}`;
+            const shareUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
             const shareText = `${post.product_name} - ${post.price} شيكل`;
+
             if (navigator.share) {
                 navigator
                     .share({
@@ -129,6 +149,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
 
         const productUrl = `${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
         const isOutOfStock = post.in_stock === false;
+        // const listingUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
 
         return (
             <Card
@@ -697,23 +718,23 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             startIcon={
                                 <Comment sx={{ fontSize: '14px !important' }} />
                             }
-                            onClick={() =>
-                                navigate(
-                                    generatePath(path.CustomerProfile, {
-                                        slug: encodeURIComponent(
-                                            post.seller?.slug ?? '',
-                                        ),
-                                    }),
-                                )
-                            }
-                            disableElevation
-                            sx={{
-                                borderRadius: '8px',
-                                textTransform: 'none',
-                                fontWeight: 600,
-                                fontSize: '0.8125rem',
-                                py: 0.5,
+                            onClick={() => {
+                                const sellerUser = post.seller;
+                                // const fromId = auth?._id;
+
+                                // if (!sellerUser?._id || !fromId) {
+                                //     showError('لا يمكن فتح المحادثة');
+                                //     return;
+                                // }
+
+                                setSelectedUser({
+                                    _id: sellerUser.user as string,
+                                    name: sellerUser.name as string,
+                                });
+
+                                setOpenChat(true);
                             }}
+                            disableElevation
                         >
                             تواصل
                         </Button>
@@ -722,7 +743,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
                             target='_blank'
                             rel='noopener noreferrer'
-                            style={{ textDecoration: 'none' }}
+                            style={{ textDecoration: 'none', gap: 1 }}
                         >
                             <Chip
                                 icon={
@@ -738,6 +759,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                     height: 30,
                                     bgcolor: '#33CCFF',
                                     color: '#fff',
+                                    gap: 1,
                                     fontWeight: 600,
                                     fontSize: '0.8125rem',
                                     cursor: 'pointer',
@@ -886,6 +908,22 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                         </Box>
                     </Box>
                 </CardActions>
+                <Drawer
+                    anchor='right'
+                    open={openChat}
+                    onClose={() => setOpenChat(false)}
+                    PaperProps={{
+                        sx: { width: { xs: '100%', sm: 400, md: 450 } },
+                    }}
+                >
+                    {openChat && selectedUser && (
+                        <ChatBox
+                            currentUser={currentUser}
+                            otherUser={selectedUser}
+                            token={localStorage.getItem('token') as string}
+                        />
+                    )}
+                </Drawer>
             </Card>
         );
     },

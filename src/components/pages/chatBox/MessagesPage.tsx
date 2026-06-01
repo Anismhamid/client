@@ -36,7 +36,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
     };
 
     return {
-        _id: msg._id ?? `temp-${Date.now()}`,
+        _id: msg._id ,
         from: {
             _id: msg.from?._id ?? 'unknown',
             name: {

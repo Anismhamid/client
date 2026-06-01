@@ -20,10 +20,9 @@ type Review = {
 
 type SellerUser = {
     _id: string;
-    name: {
-        first: string;
-        last: string;
-    };
+    name: string;
+    slug?: string;
+    user: string;
     image?: {
         url: string;
     };
@@ -79,10 +78,9 @@ export const initialProductValue: Partial<Posts> = {
         slug: '',
         user: {
             _id: '',
-            name: {
-                first: '',
-                last: '',
-            },
+            name: '',
+            slug: '',
+            user: '',
             image: { url: '' },
         },
     },

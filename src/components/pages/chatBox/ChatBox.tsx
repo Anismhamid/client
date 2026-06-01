@@ -248,7 +248,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 			socket.off("user:typing");
 			socket.off("user:stopTyping");
 		};
-	}, [otherUser?._id, token, currentUser._id]);
+	}, []);
 
 	useEffect(() => {
 		if (userMessages.length > 0) {
@@ -271,7 +271,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, toke
 				markAsSeen();
 			}
 		}
-	}, [userMessages.length, otherUser._id]);
+	}, [token, otherUser._id]);
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
