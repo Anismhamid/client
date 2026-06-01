@@ -35,9 +35,8 @@ type Seller = {
     user: SellerUser;
 };
 
-
 export interface Posts {
-    featured?: boolean | null;
+    featured: boolean;
     _id?: string;
     createdAt: Date | string;
     updatedAt?: Date | string;
@@ -74,7 +73,7 @@ export interface Posts {
 
 export const initialProductValue: Partial<Posts> = {
     location: 'אום אל פחם',
-
+    featured: false,
     seller: {
         name: '',
         slug: '',

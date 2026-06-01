@@ -218,6 +218,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const categoryDescription = t(`categories.${category}.description`);
     const currentUrl = `${window.location.origin}/category/${category}`;
 
+    useEffect(() => {
+        console.log(products);
+    }, [products]);
+
     if (loading) {
         return (
             <Box
