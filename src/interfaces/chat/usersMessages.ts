@@ -12,30 +12,32 @@ export interface User {
 }
 
 export interface UserMessage {
-	updatedAt: Date | string;
+    updatedAt: Date | string;
     first: string;
     last: string;
+    image?: { url: string; alt: string };
     _id?: string;
+    status?: boolean;
     from: {
         _id?: string;
         email?: string;
         first?: string;
         last?: string;
         role?: string;
-        status?: boolean;
+        image?: { url: string; alt: string };
     };
     to: {
-        status?: boolean;
         _id?: string;
         email?: string;
         first?: string;
         last?: string;
         role?: string;
+        image?: { url: string; alt: string };
     };
+    messageStatus: string;
     message: string;
     warning?: boolean;
     isImportant?: boolean;
-    status: string;
     replyTo?: string;
     createdAt: string;
     name?: { first: string; last: string };

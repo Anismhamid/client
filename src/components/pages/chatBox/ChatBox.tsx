@@ -1,643 +1,673 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState, useRef, FunctionComponent, useLayoutEffect } from "react";
-import axios from "axios";
 import {
-	Box,
-	Typography,
-	TextField,
-	IconButton,
-	Paper,
-	CircularProgress,
-	InputAdornment,
-	Fade,
-	Zoom,
-	Fab,
-	Avatar,
-} from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
+    useEffect,
+    useState,
+    useRef,
+    FunctionComponent,
+    useLayoutEffect,
+} from 'react';
+import axios from 'axios';
+import {
+    Box,
+    Typography,
+    TextField,
+    IconButton,
+    Paper,
+    CircularProgress,
+    InputAdornment,
+    Fade,
+    Zoom,
+    Fab,
+} from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
-import socket from "../../../socket/globalSocket";
-import { useChat } from "../../../hooks/useChat";
-import { BaseUser } from "../../../interfaces/chat/chatUser";
-import { LocalMessage } from "../../../interfaces/chat/localMessage";
-import Linkify from "./Linkify";
-import handleRTL from "../../../locales/handleRTL";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
-import { useTranslation } from "react-i18next";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import socket from '../../../socket/globalSocket';
+import { useChat } from '../../../hooks/useChat';
+import { BaseUser } from '../../../interfaces/chat/chatUser';
+import { LocalMessage } from '../../../interfaces/chat/localMessage';
+import Linkify from './Linkify';
+import handleRTL from '../../../locales/handleRTL';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import { useTranslation } from 'react-i18next';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {
-	formatMessageTime,
-	getStatusIcon,
-	scrollToBottom,
-	sendMessage,
-} from "./helpers/functions";
+    formatMessageTime,
+    getStatusIcon,
+    scrollToBottom,
+    sendMessage,
+} from './helpers/functions';
 
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatBoxProps {
-	currentUser: BaseUser;
-	otherUser: BaseUser;
-	token: string;
+    currentUser: BaseUser;
+    otherUser: BaseUser;
+    token: string;
 }
 
-const ChatBox: FunctionComponent<ChatBoxProps> = ({ currentUser, otherUser, token }) => {
-	const { messages, addMessageForUser, setMessagesForUser, setUnreadForUser } = useChat();
-	const [input, setInput] = useState("");
-	const [typing, setTyping] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
-	const [hasMore, setHasMore] = useState(true);
-	const [isFetchingMore, setIsFetchingMore] = useState(false);
+const ChatBox: FunctionComponent<ChatBoxProps> = ({
+    currentUser,
+    otherUser,
+    token,
+}) => {
+    const {
+        messages,
+        addMessageForUser,
+        setMessagesForUser,
+        setUnreadForUser,
+    } = useChat();
+    const [input, setInput] = useState('');
+    const [typing, setTyping] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
 
-	const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const isTypingRef = useRef(false);
-	const fileInputRef = useRef<HTMLInputElement>(null);
-	const chatContainerRef = useRef<HTMLDivElement | null>(null);
-	const userMessages = messages[otherUser?._id ?? ""] || [];
-	const dir = handleRTL();
-	const { t } = useTranslation();
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isTypingRef = useRef(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const chatContainerRef = useRef<HTMLDivElement | null>(null);
+    const userMessages = messages[otherUser?._id ?? ''] || [];
+    const dir = handleRTL();
+    const { t } = useTranslation();
 
-	const lastScrollHeightRef = useRef<number>(0);
-	const lastSeenRef = useRef<string | null>(null);
-	const [showScrollBtn, setShowScrollBtn] = useState(false);
+    const lastScrollHeightRef = useRef<number>(0);
+    const lastSeenRef = useRef<string | null>(null);
+    const [showScrollBtn, setShowScrollBtn] = useState(false);
+   
 
-	const getUserFullName = (user?: BaseUser) => {
-		if (!user) return "";
+    const getUserFullName = (user?: BaseUser) => {
+        if (!user) return '';
 
-		return `${user.name?.first?.toUpperCase() ?? "user"} ${user.name?.last?.toUpperCase() ?? ""}`.trim();
-	};
+        return `${user.name?.first?.toUpperCase() ?? 'user'} ${user.name?.last?.toUpperCase() ?? ''}`.trim();
+    };
 
+    // עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
+    const markAsSeen = () => {
+        if (!otherUser?._id || !socket) return;
+        socket.emit('message:seen', {
+            from: otherUser._id,
+            to: currentUser._id,
+            roomId: [otherUser._id, currentUser._id].sort().join('_'),
+        });
+        setUnreadForUser(otherUser._id, 0);
+    };
 
-	// עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
-	const markAsSeen = () => {
-		if (!otherUser?._id || !socket) return;
-		socket.emit("message:seen", {
-			from: otherUser._id,
-			to: currentUser._id,
-			roomId: [otherUser._id, currentUser._id].sort().join("_"),
-		});
-		setUnreadForUser(otherUser._id, 0);
-	};
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setInput(value);
+        if (!socket) return;
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		setInput(value);
-		if (!socket) return;
+        if (!value.trim()) {
+            socket.emit('user:stopTyping', {
+                to: otherUser._id,
+                from: currentUser._id,
+            });
+            isTypingRef.current = false;
+            return;
+        }
 
-		if (!value.trim()) {
-			socket.emit("user:stopTyping", { to: otherUser._id, from: currentUser._id });
-			isTypingRef.current = false;
-			return;
-		}
+        if (!isTypingRef.current) {
+            socket.emit('user:typing', {
+                to: otherUser._id,
+                from: currentUser._id,
+            });
+            isTypingRef.current = true;
+        }
 
-		if (!isTypingRef.current) {
-			socket.emit("user:typing", {
-				to: otherUser._id,
-				from: currentUser._id,
-			});
-			isTypingRef.current = true;
-		}
+        // reset timer
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
 
-		// reset timer
-		if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+            socket.emit('user:stopTyping', {
+                to: otherUser._id,
+                from: currentUser._id,
+            });
+            isTypingRef.current = false;
+        }, 1500);
+    };
 
-		typingTimeoutRef.current = setTimeout(() => {
-			socket.emit("user:stopTyping", {
-				to: otherUser._id,
-				from: currentUser._id,
-			});
-			isTypingRef.current = false;
-		}, 1500);
-	};
+   
+    const loadConversation = async (isInitial = true) => {
+        if (isInitial) setIsLoading(true);
+        else {
+            setIsFetchingMore(true);
+            if (chatContainerRef.current) {
+                // حفظ الارتفاع الحالي قبل إضافة الرسائل الجديدة
+                lastScrollHeightRef.current =
+                    chatContainerRef.current.scrollHeight;
+            }
+        }
 
-	const loadConversation = async (isInitial = true) => {
-		if (isInitial) setIsLoading(true);
-		else {
-			setIsFetchingMore(true);
-			if (chatContainerRef.current) {
-				// حفظ الارتفاع الحالي قبل إضافة الرسائل الجديدة
-				lastScrollHeightRef.current = chatContainerRef.current.scrollHeight;
-			}
-		}
+        try {
+            const skip = isInitial ? 0 : userMessages.length;
+            const res = await axios.get(
+                `${api}/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
+                { headers: { Authorization: token } },
+            );
 
-		try {
-			const skip = isInitial ? 0 : userMessages.length;
-			const res = await axios.get(
-				`${api}/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
-				{ headers: { Authorization: token } }
-			);
+            const fetchedMessages = res.data.messages;
 
-			const fetchedMessages = res.data.messages;
+            if (isInitial) {
+                setMessagesForUser(otherUser._id ?? '', fetchedMessages);
+                setTimeout(() => scrollToBottom('auto', chatContainerRef), 0);
+            } else {
+                // تحديث الرسائل
+                setMessagesForUser(otherUser._id ?? '', (prev) => [
+                    ...fetchedMessages,
+                    ...prev,
+                ]);
+            }
+            setHasMore(res.data.hasMore);
+        } catch (err) {
+            console.error('Pagination error:', err);
+        } finally {
+            setIsLoading(false);
+            setTimeout(() => setIsFetchingMore(false), 100);
+        }
+    };
 
-			if (isInitial) {
-				setMessagesForUser(otherUser._id ?? "", fetchedMessages);
-				setTimeout(() => scrollToBottom("auto", chatContainerRef), 0);
-			} else {
-				// تحديث الرسائل
-				setMessagesForUser(otherUser._id ?? "", (prev) => [
-					...fetchedMessages,
-					...prev,
-				]);
-				// ملاحظة: لا نغير isFetchingMore هنا مباشرة، سنتركها للـ finally
-			}
-			setHasMore(res.data.hasMore);
-		} catch (err) {
-			console.error("Pagination error:", err);
-		} finally {
-			setIsLoading(false);
-			// نترك مسافة زمنية بسيطة جداً لضمان أن الـ Effect التقط الحالة
-			setTimeout(() => setIsFetchingMore(false), 100);
-		}
-	};
+    useLayoutEffect(() => {
+        const container = chatContainerRef.current;
+        if (!container || userMessages.length === 0) return;
 
-	useLayoutEffect(() => {
-		const container = chatContainerRef.current;
-		if (!container || userMessages.length === 0) return;
+        // إذا كنا في حالة جلب رسائل قديمة (Pagination)
+        if (isFetchingMore && lastScrollHeightRef.current > 0) {
+            const heightDifference =
+                container.scrollHeight - lastScrollHeightRef.current;
 
-		// إذا كنا في حالة جلب رسائل قديمة (Pagination)
-		if (isFetchingMore && lastScrollHeightRef.current > 0) {
-			const heightDifference = container.scrollHeight - lastScrollHeightRef.current;
+            // تثبيت السكرول: الارتفاع الجديد ناقص القديم يعطيك نفس المكان الذي كنت تقف عنده
+            container.scrollTo({
+                top: heightDifference,
+                behavior: 'smooth',
+            });
 
-			// تثبيت السكرول: الارتفاع الجديد ناقص القديم يعطيك نفس المكان الذي كنت تقف عنده
-			container.scrollTo({
-				top: heightDifference,
-				behavior: 'smooth'
-			});
+            lastScrollHeightRef.current = 0; // إعادة تعيين بعد الاستخدام
+        }
+    }, [userMessages.length]);
 
-			lastScrollHeightRef.current = 0; // إعادة تعيين بعد الاستخدام
-		}
-	}, [userMessages.length]);
+    useEffect(() => {
+        loadConversation();
 
-	useEffect(() => {
-		loadConversation();
+        socket.on('message:received', (message: LocalMessage) => {
+            if (message?.from?._id === otherUser?._id) {
+                addMessageForUser(otherUser?._id ?? '', message);
+                if (isNearBottom()) {
+                    scrollToBottom('smooth', chatContainerRef);
+                }
+            }
+        });
 
-		socket.on("message:received", (message: LocalMessage) => {
-			if (message?.from?._id === otherUser?._id) {
-				addMessageForUser(otherUser?._id ?? "", message);
-				if (isNearBottom()) {
-					scrollToBottom("smooth", chatContainerRef);
-				}
-			}
-		});
+        socket.on('message:sent', (message: LocalMessage) => {
+            if (message?.to?._id === otherUser?._id) {
+                setMessagesForUser(otherUser?._id ?? '', (prev) =>
+                    prev.map((m) => {
+                        if (
+                            m.tempId &&
+                            message.tempId &&
+                            m.tempId === message.tempId
+                        ) {
+                            return { ...message };
+                        }
 
-		socket.on("message:sent", (message: LocalMessage) => {
-			if (message?.to?._id === otherUser?._id) {
-				setMessagesForUser(otherUser?._id ?? "", (prev) =>
-					prev.map((m) => {
-						if (m.tempId && message.tempId && m.tempId === message.tempId) {
-							return { ...message };
-						}
+                        if (m._id === message._id) {
+                            return { ...m, status: message.status };
+                        }
 
-						if (m._id === message._id) {
-							return { ...m, status: message.status };
-						}
+                        return m;
+                    }),
+                );
+            }
+        });
 
-						return m;
-					})
-				);
-			}
-		});
+        socket.on('user:typing', ({ from }: { from: string }) => {
+            if (from === otherUser._id) {
+                setTyping(true);
+            }
+        });
 
-		socket.on("user:typing", ({ from }: { from: string }) => {
-			if (from === otherUser._id) {
-				setTyping(true);
-			}
-		});
+        socket.on('user:stopTyping', ({ from }: { from: string }) => {
+            if (from === otherUser._id) setTyping(false);
+        });
 
-		socket.on("user:stopTyping", ({ from }: { from: string }) => {
-			if (from === otherUser._id) setTyping(false);
-		});
+        socket.on('message:delivered', (message: LocalMessage) => {
+            if (message?.to?._id === otherUser?._id) {
+                setMessagesForUser(otherUser?._id ?? '', (prev) =>
+                    prev.map((m) => {
+                        if (
+                            m.tempId &&
+                            message.tempId &&
+                            m.tempId === message.tempId
+                        ) {
+                            return { ...message };
+                        }
 
-		socket.on("message:delivered", (message: LocalMessage) => {
-			if (message?.to?._id === otherUser?._id) {
-				setMessagesForUser(otherUser?._id ?? "", (prev) =>
-					prev.map((m) => {
-						if (m.tempId && message.tempId && m.tempId === message.tempId) {
-							return { ...message };
-						}
+                        if (m._id === message._id) {
+                            return { ...m, status: message.status };
+                        }
 
-						if (m._id === message._id) {
-							return { ...m, status: message.status };
-						}
+                        return m;
+                    }),
+                );
+            }
+        });
 
-						return m;
-					})
-				);
-			}
-		});
+        // האזנה לעדכון סטטוס "נקרא" מהצד השני
+        socket.on('message:seen', ({ by }: { by: string }) => {
+            if (by === otherUser._id) {
+                setMessagesForUser(otherUser?._id ?? '', (prev) =>
+                    prev.map((m) =>
+                        m?.from?._id === currentUser._id
+                            ? { ...m, status: 'seen' }
+                            : m,
+                    ),
+                );
+            }
+        });
 
-		// האזנה לעדכון סטטוס "נקרא" מהצד השני
-		socket.on("message:seen", ({ by }: { by: string }) => {
-			if (by === otherUser._id) {
-				setMessagesForUser(otherUser?._id ?? "", (prev) =>
-					prev.map((m) =>
-						m?.from?._id === currentUser._id ? { ...m, status: "seen" } : m,
-					),
-				);
-			}
-		});
+        console.log(otherUser);
 
-		console.log(otherUser);
+        return () => {
+            socket.off('message:delivered');
+            socket.off('message:received');
+            socket.off('message:sent');
+            socket.off('message:seen');
+            socket.off('user:typing');
+            socket.off('user:stopTyping');
+        };
+    }, [otherUser._id]);
 
+    useEffect(() => {
+        if (userMessages.length > 0) {
+            const lastMessage = userMessages[userMessages.length - 1];
+            // If the last message is from the OTHER user and I am currently looking at the chat
+            if (
+                lastMessage?.from?._id === otherUser?._id &&
+                lastMessage.status !== 'seen' &&
+                isNearBottom()
+            ) {
+                lastSeenRef.current = lastMessage._id;
+                // Also call the API to persist this in the DB
+                axios.patch(
+                    `${api}/messages/mark-as-seen/${otherUser._id}`,
+                    {},
+                    {
+                        headers: { Authorization: token },
+                    },
+                );
+                markAsSeen();
+            }
+        }
+    }, [token, otherUser._id]);
 
-		return () => {
-			socket.off("message:delivered");
-			socket.off("message:received");
-			socket.off("message:sent");
-			socket.off("message:seen");
-			socket.off("user:typing");
-			socket.off("user:stopTyping");
-		};
-	}, []);
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-	useEffect(() => {
-		if (userMessages.length > 0) {
-			const lastMessage = userMessages[userMessages.length - 1];
-			// If the last message is from the OTHER user and I am currently looking at the chat
-			if (
-				lastMessage?.from?._id === otherUser?._id &&
-				lastMessage.status !== "seen" &&
-				isNearBottom()
-			) {
-				lastSeenRef.current = lastMessage._id;
-				// Also call the API to persist this in the DB
-				axios.patch(
-					`${api}/messages/mark-as-seen/${otherUser._id}`,
-					{},
-					{
-						headers: { Authorization: token },
-					},
-				);
-				markAsSeen();
-			}
-		}
-	}, [token, otherUser._id]);
+        // בדיקת גודל (למשל עד 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('הקובץ גדול מדי. מקסימום 5MB');
+            return;
+        }
 
-	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('toUserId', otherUser?._id ?? '');
 
-		// בדיקת גודל (למשל עד 5MB)
-		if (file.size > 5 * 1024 * 1024) {
-			alert("הקובץ גדול מדי. מקסימום 5MB");
-			return;
-		}
+        try {
+            // שליחה לשרת (Endpoint ייעודי לקבצים)
+            const res = await axios.post(`${api}/messages/upload`, formData, {
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
 
-		const formData = new FormData();
-		formData.append("file", file);
-		formData.append("toUserId", otherUser?._id ?? "");
+            // הוספת הודעה זמנית או רענון צ'אט
+            if (res.data.message) {
+                addMessageForUser(otherUser?._id ?? '', res.data.message);
+                scrollToBottom('smooth', chatContainerRef);
+            }
+        } catch (err) {
+            console.error('Failed to upload file:', err);
+        }
+    };
 
-		try {
-			// שליחה לשרת (Endpoint ייעודי לקבצים)
-			const res = await axios.post(`${api}/messages/upload`, formData, {
-				headers: {
-					Authorization: token,
-					"Content-Type": "multipart/form-data",
-				},
-			});
+    const isNearBottom = () => {
+        if (!chatContainerRef.current) return false;
+        const { scrollTop, scrollHeight, clientHeight } =
+            chatContainerRef.current;
+        return scrollHeight - scrollTop - clientHeight < 200;
+    };
 
-			// הוספת הודעה זמנית או רענון צ'אט
-			if (res.data.message) {
-				addMessageForUser(otherUser?._id ?? "", res.data.message);
-				scrollToBottom("smooth", chatContainerRef);
-			}
-		} catch (err) {
-			console.error("Failed to upload file:", err);
-		}
-	};
+    useEffect(() => {
+        return () => {
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+        };
+    }, []);
 
-	const isNearBottom = () => {
-		if (!chatContainerRef.current) return false;
-		const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
-		return scrollHeight - scrollTop - clientHeight < 200;
-	};
+    return (
+        <Box
+            sx={{
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                bgcolor: 'background.paper',
+            }}
+        >
+            <Box
+                ref={chatContainerRef}
+                onScroll={(e) => {
+                    const { scrollTop } = e.currentTarget;
+                    setShowScrollBtn(!isNearBottom());
 
-	useEffect(() => {
-		return () => {
-			if (typingTimeoutRef.current) {
-				clearTimeout(typingTimeoutRef.current);
-			}
-		};
-	}, []);
+                    if (scrollTop === 0 && hasMore && !isFetchingMore) {
+                        loadConversation(false);
+                    }
+                }}
+                sx={{
+                    flexGrow: 1,
+                    overflowY: 'auto',
+                    p: 2,
+                    // pb: 15,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 1.5,
+                    overflowAnchor: 'auto',
 
+                    overscrollBehaviorY: 'contain',
+                }}
+            >
+                {/* TOP SPINNER: Shown when fetching older messages */}
+                {isFetchingMore && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            py: 1,
+                        }}
+                    >
+                        <CircularProgress size={20} />
+                    </Box>
+                )}
 
+                {isLoading && !isFetchingMore ? (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            mt: 4,
+                        }}
+                    >
+                        <CircularProgress size={24} />
+                    </Box>
+                ) : (
+                    userMessages.map((msg) => {
+                        const isMe = msg?.from?._id === currentUser._id;
+                        const isFile = msg.fileUrl;
+                        return (
+                            <Box
+                                key={msg._id}
+                                sx={{
+                                    alignSelf: isMe ? 'flex-start' : 'flex-end',
+                                }}
+                            >
+                                <Paper
+                                    elevation={isMe ? 0 : 1} // Flat for my messages, elevated for received
+                                    sx={{
+                                        p: '10px 14px',
+                                        minWidth: '80px',
+                                        maxWidth: 'maxContent',
+                                        display: 'flex',
+                                        gap: 1.5,
+                                        flexDirection: isMe
+                                            ? ''
+                                            : 'row-reverse',
+                                        borderRadius: isMe
+                                            ? '12px 4px 18px 18px'
+                                            : '4px 12px 18px 18px',
+                                        bgcolor: isMe
+                                            ? (theme) =>
+                                                  `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
+                                            : 'background.paper',
+                                        border: !isMe ? '1px solid' : 'none',
+                                        borderColor: 'divider',
+                                        wordBreak: 'break-word',
+                                    }}
+                                >
+                                    {isFile ? (
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 1,
+                                            }}
+                                        >
+                                            {msg.fileType?.includes('image') ? (
+                                                <img
+                                                    src={msg.fileUrl}
+                                                    alt='sent file'
+                                                    style={{
+                                                        maxWidth: '100%',
+                                                        borderRadius: 4,
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    onClick={() =>
+                                                        window.open(msg.fileUrl)
+                                                    }
+                                                />
+                                            ) : (
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1,
+                                                        p: 1,
+                                                        bgcolor:
+                                                            'rgba(0,0,0,0.05)',
+                                                        borderRadius: 1,
+                                                    }}
+                                                >
+                                                    <InsertDriveFileIcon />
+                                                    <Typography
+                                                        variant='caption'
+                                                        sx={{
+                                                            textDecoration:
+                                                                'underline',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                        onClick={() =>
+                                                            window.open(
+                                                                msg.fileUrl,
+                                                            )
+                                                        }
+                                                    >
+                                                        צפה בקובץ
+                                                    </Typography>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    ) : (
+                                        <Typography
+                                            variant='body2'
+                                            sx={{
+                                                wordBreak: 'break-word',
+                                                lineHeight: 1.5,
+                                                whiteSpace: 'pre-wrap',
+                                            }}
+                                        >
+                                            <Linkify
+                                                text={msg?.message ?? ''}
+                                            />
+                                        </Typography>
+                                    )}
 
-	return (
-		<Box
-			sx={{
-				height: "100%",
-				display: "flex",
-				flexDirection: "column",
-				bgcolor: "background.paper",
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'flex-end',
+                                            gap: 0.5,
+                                            mt: 0.3,
+                                        }}
+                                    >
+                                        {isMe && getStatusIcon(msg.status)}
+                                    </Box>
+                                </Paper>
+                                <Typography
+                                    variant='caption'
+                                    sx={{
+                                        color: 'text.secondary',
+                                        flex: 'flex-start',
+                                    }}
+                                >
+                                    {String(
+                                        formatMessageTime(
+                                            msg?.createdAt
+                                                ? new Date(msg.createdAt)
+                                                : new Date(),
+                                        ),
+                                    )}
+                                </Typography>
+                            </Box>
+                        );
+                    })
+                )}
 
-			}}
-		>
-			<Box
-				ref={chatContainerRef}
-				onScroll={(e) => {
-					const { scrollTop } = e.currentTarget;
-					setShowScrollBtn(!isNearBottom());
+                {typing && (
+                    <Fade in={typing}>
+                        <Box
+                            sx={{
+                                alignSelf: 'flex-start',
+                                bgcolor: 'action.hover',
+                                px: 1.5,
+                                py: 0.5,
+                                borderRadius: 2,
+                            }}
+                        >
+                            <Typography
+                                variant='caption'
+                                sx={{
+                                    fontStyle: 'italic',
+                                    color: 'text.secondary',
+                                }}
+                            >
+                                {getUserFullName(otherUser)}{' '}
+                                {t('common.typing')}
+                            </Typography>
+                        </Box>
+                    </Fade>
+                )}
 
-					if (scrollTop === 0 && hasMore && !isFetchingMore) {
-						loadConversation(false);
-					}
-				}}
-				sx={{
-					flexGrow: 1,
-					overflowY: "auto",
-					p: 2,
-					pb: 15,
-					display: "flex",
-					flexDirection: "column",
-					gap: 1.5,
-					overflowAnchor: "auto",
+                {/* SCROLL BUTTON */}
+                <Zoom in={showScrollBtn}>
+                    <Fab
+                        color='primary'
+                        size='small'
+                        onClick={() =>
+                            scrollToBottom('smooth', chatContainerRef)
+                        }
+                        sx={{
+                            position: 'absolute',
+                            bottom: 50, // Above the text input area
+                            right: dir === 'rtl' ? 'auto' : 20,
+                            left: dir === 'rtl' ? 20 : 'auto',
+                            zIndex: 10,
+                            boxShadow: 3,
+                        }}
+                    >
+                        <ArrowDownwardIcon />
+                    </Fab>
+                </Zoom>
+            </Box>
 
-					overscrollBehaviorY: "contain"
-				}}
-			>
-				{/* TOP SPINNER: Shown when fetching older messages */}
-				{isFetchingMore && (
-					<Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
-						<CircularProgress size={20} />
-					</Box>
-				)}
+            {/* Input Area */}
+            <Box
+                sx={{
+                    p: 2,
+                    bgcolor: 'background.paper',
+                    borderTop: '1px solid',
+                    borderColor: 'divider',
+                }}
+            >
+                <input
+                    type='file'
+                    hidden
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept='image/*,.pdf,.doc,.docx'
+                />
 
-				{isLoading && !isFetchingMore ? (
-					<Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-						<CircularProgress size={24} />
-					</Box>
-				) : (
-					userMessages.map((msg) => {
-						const isMe = msg?.from?._id === currentUser._id;
-						const isFile = msg.fileUrl;
-						return (
-							<Box
-								key={msg._id}
-								sx={{
-									alignSelf: isMe ? "flex-start" : "flex-end",
-								}}
-							>
-								{!isMe && (
-									<Box sx={{ display: "flex", alignItems: "flex-start", gap: 1, mb: 0.5 }}>
-										<Typography variant="caption" color="text.secondary">
-											{getUserFullName(otherUser)}
-										</Typography>
-										<Avatar
-											src={otherUser.image?.url}
-											sx={{
-												width: 32,
-												height: 32,
-												fontSize: "0.875rem",
-												bgcolor: "primary.main",
-											}}
-										>
-											{`${getUserFullName(otherUser)?.[0]}${getUserFullName(otherUser)?.split(" ")[1]?.[0] || ""}`}
-										</Avatar>
-									</Box>
-								)}
-								<Paper
-									elevation={isMe ? 0 : 1}  // Flat for my messages, elevated for received
-									sx={{
-										p: "10px 14px",
-										minWidth: "80px",
-										maxWidth: "maxContent",
-										display: "flex",
-										gap: 1.5,
-										flexDirection: isMe ? "" : "row-reverse",
-										borderRadius: isMe
-											? "12px 4px 18px 18px"
-											: "4px 12px 18px 18px",
-										bgcolor: isMe
-											? (theme) => `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
-											: "background.paper",
-										border: !isMe ? "1px solid" : "none",
-										borderColor: "divider",
-										wordBreak: "break-word",
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <IconButton
+                        color='primary'
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <AttachFileIcon />
+                    </IconButton>
 
-									}}
-								>
-
-
-									{/* <Avatar
-										src={otherUser.from?.image?.url}
-										sx={{
-											width: 40,
-											height: 40,
-											fontSize: "1.10rem",
-											bgcolor: "primary.main",
-											zIndex: 0
-										}}
-									>
-										{`${getUserFullName(otherUser.from)?.[0]}.${getUserFullName(otherUser.from)?.split(" ")[1]?.[0]}`}
-									</Avatar>
- */}
-
-									{isFile ? (
-										<Box
-											sx={{
-												display: "flex",
-												flexDirection: "column",
-												gap: 1,
-											}}
-										>
-											{msg.fileType?.includes("image") ? (
-												<img
-													src={msg.fileUrl}
-													alt='sent file'
-													style={{
-														maxWidth: "100%",
-														borderRadius: 4,
-														cursor: "pointer",
-													}}
-													onClick={() =>
-														window.open(msg.fileUrl)
-													}
-												/>
-											) : (
-												<Box
-													sx={{
-														display: "flex",
-														alignItems: "center",
-														gap: 1,
-														p: 1,
-														bgcolor: "rgba(0,0,0,0.05)",
-														borderRadius: 1,
-													}}
-												>
-													<InsertDriveFileIcon />
-													<Typography
-														variant='caption'
-														sx={{
-															textDecoration: "underline",
-															cursor: "pointer",
-														}}
-														onClick={() =>
-															window.open(msg.fileUrl)
-														}
-													>
-														צפה בקובץ
-													</Typography>
-												</Box>
-											)}
-										</Box>
-									) : (
-										<Typography
-											variant="body2"
-											sx={{
-												wordBreak: "break-word",
-												lineHeight: 1.5,
-												whiteSpace: "pre-wrap",
-											}}
-										>
-											<Linkify text={msg?.message ?? ""} />
-										</Typography>
-									)}
-
-									<Box
-										sx={{
-											display: "flex",
-											alignItems: "center",
-											justifyContent: "flex-end",
-											gap: 0.5,
-											mt: 0.3,
-										}}
-									>
-
-										{isMe && getStatusIcon(msg.status)}
-									</Box>
-								</Paper>
-								<Typography variant='caption' sx={{ color: "text.secondary", flex: "flex-start" }}>
-							{String(formatMessageTime(msg?.createdAt ? new Date(msg.createdAt) : new Date()))}
-								</Typography>
-							</Box>
-						);
-					})
-				)}
-
-				{typing && (
-					<Fade in={typing}>
-						<Box
-							sx={{
-								alignSelf: "flex-start",
-								bgcolor: "action.hover",
-								px: 1.5,
-								py: 0.5,
-								borderRadius: 2,
-							}}
-						>
-							<Typography
-								variant='caption'
-								sx={{ fontStyle: "italic", color: "text.secondary" }}
-							>
-								{getUserFullName(otherUser)} {t("common.typing")}
-							</Typography>
-						</Box>
-					</Fade>
-				)}
-
-				{/* SCROLL BUTTON */}
-				<Zoom in={showScrollBtn}>
-					<Fab
-						color='primary'
-						size='small'
-						onClick={() => scrollToBottom("smooth", chatContainerRef)}
-						sx={{
-							position: "absolute",
-							bottom: 50, // Above the text input area
-							right: dir === "rtl" ? "auto" : 20,
-							left: dir === "rtl" ? 20 : "auto",
-							zIndex: 10,
-							boxShadow: 3,
-						}}
-					>
-						<ArrowDownwardIcon />
-					</Fab>
-				</Zoom>
-			</Box>
-
-			{/* Input Area */}
-			<Box
-				sx={{
-					p: 2,
-					bgcolor: "background.paper",
-					borderTop: "1px solid",
-					borderColor: "divider",
-				}}
-			>
-				<input
-					type='file'
-					hidden
-					ref={fileInputRef}
-					onChange={handleFileChange}
-					accept='image/*,.pdf,.doc,.docx'
-				/>
-
-				<Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-					<IconButton
-						color='primary'
-						onClick={() => fileInputRef.current?.click()}
-					>
-						<AttachFileIcon />
-					</IconButton>
-
-					<TextField
-						fullWidth
-						multiline
-						maxRows={4}
-
-						value={input}
-						onChange={handleInputChange}
-						onKeyDown={(e) => {
-							if (e.key === "Enter" && !e.shiftKey) {
-								e.preventDefault();
-								sendMessage(
-									input,
-									currentUser,
-									otherUser,
-									setInput,
-									chatContainerRef,
-									addMessageForUser,
-									token,
-								);
-							}
-						}}
-						placeholder='הקלד הודעה...'
-						InputProps={{
-							endAdornment: (
-								<InputAdornment position='end'>
-									<IconButton
-										color='primary'
-										onClick={() =>
-											sendMessage(
-												input,
-												currentUser,
-												otherUser,
-												setInput,
-												chatContainerRef,
-												addMessageForUser,
-												token,
-											)
-										}
-										disabled={!input.trim()}
-									>
-										<SendIcon
-											sx={{
-												transform:
-													dir === "rtl"
-														? "rotate(180deg)"
-														: "none",
-											}}
-										/>
-									</IconButton>
-								</InputAdornment>
-							),
-							sx: { borderRadius: 4, backgroundColor: "action.hover" },
-						}}
-					/>
-				</Box>
-			</Box>
-		</Box>
-	);
+                    <TextField
+                        fullWidth
+                        multiline
+                        maxRows={4}
+                        value={input}
+                        onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage(
+                                    input,
+                                    currentUser,
+                                    otherUser,
+                                    setInput,
+                                    chatContainerRef,
+                                    addMessageForUser,
+                                    token,
+                                );
+                            }
+                        }}
+                        placeholder='הקלד הודעה...'
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position='end'>
+                                    <IconButton
+                                        color='primary'
+                                        onClick={() =>
+                                            sendMessage(
+                                                input,
+                                                currentUser,
+                                                otherUser,
+                                                setInput,
+                                                chatContainerRef,
+                                                addMessageForUser,
+                                                token,
+                                            )
+                                        }
+                                        disabled={!input.trim()}
+                                    >
+                                        <SendIcon
+                                            sx={{
+                                                transform:
+                                                    dir === 'rtl'
+                                                        ? 'rotate(180deg)'
+                                                        : 'none',
+                                            }}
+                                        />
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                            sx: {
+                                borderRadius: 0,
+                                backgroundColor: 'action.hover',
+                            },
+                        }}
+                    />
+                </Box>
+            </Box>
+        </Box>
+    );
 };
 
 export default ChatBox;

@@ -19,16 +19,18 @@ type Review = {
 };
 
 type SellerUser = {
-    _id: string;
+    _id?: string;
     name: string;
     slug?: string;
     user: string;
     image?: {
         url: string;
+        Last: string;
     };
 };
 
 type Seller = {
+    _id?: string;
     name?: string;
     slug?: string;
     user: SellerUser;
@@ -74,6 +76,7 @@ export const initialProductValue: Partial<Posts> = {
     location: 'אום אל פחם',
     featured: false,
     seller: {
+        _id: '',
         name: '',
         slug: '',
         user: {
@@ -81,7 +84,10 @@ export const initialProductValue: Partial<Posts> = {
             name: '',
             slug: '',
             user: '',
-            image: { url: '' },
+            image: {
+                url: '',
+                Last: '',
+            },
         },
     },
 

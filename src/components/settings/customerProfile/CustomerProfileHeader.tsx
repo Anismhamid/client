@@ -402,7 +402,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                 role: auth.role,
                             },
                             message: '',
-                            status: 'sent',
+                            messageStatus: 'sent',
                             createdAt: new Date().getTime().toString(),
                             updatedAt: new Date().getTime().toString(),
                         }}

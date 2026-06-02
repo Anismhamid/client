@@ -7,6 +7,7 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime"; // אופציונל
 import socket from "../../../../socket/globalSocket";
 import axios from "axios";
 import { Typography } from "@mui/material";
+import { UserMessage } from "../../../../interfaces/chat/usersMessages";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -99,3 +100,27 @@ export const formatMessageTime = (dateString: Date) => {
 		return error;
 	}
 };
+
+export const getUserName = (user: UserMessage) => {
+	if (typeof user.name === 'string') return user.name;
+	const first = user.name?.first || '';
+	const last = user.name?.last || '';
+	return `${first} ${last}`.trim() || 'User';
+};
+
+export const formatTime = (dateString: string) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        if (date.toDateString() === now.toDateString()) {
+            return date.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+            });
+        }
+        return date.toLocaleDateString([], {
+            day: '2-digit',
+            month: '2-digit',
+        });
+    };
+
+	

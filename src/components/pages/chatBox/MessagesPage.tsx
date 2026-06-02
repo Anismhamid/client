@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
     Grid,
     Box,
@@ -36,7 +36,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
     };
 
     return {
-        _id: msg._id ,
+        _id: msg._id,
         from: {
             _id: msg.from?._id ?? 'unknown',
             name: {
@@ -45,7 +45,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.email ?? '',
             role: msg.role ?? 'Client',
-            status: msg.from?.status ?? false,
+            status: msg?.status ?? false,
         },
         to: {
             _id: msg.to?._id ?? 'unknown',
@@ -55,10 +55,10 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.to?.email ?? '',
             role: msg.to?.role ?? 'Client',
-            status: msg.to?.status ?? false,
+            status: msg?.status ?? false,
         },
         message: msg.message,
-        status: (msg.status as 'sent' | 'delivered' | 'seen') ?? 'sent',
+        status: (msg.messageStatus as 'sent' | 'delivered' | 'seen') ?? 'sent',
         createdAt: convertToDate(msg.createdAt),
         updatedAt: convertToDate(msg.updatedAt),
         warning: msg.warning ?? false,
@@ -78,19 +78,19 @@ const MessagesPage = () => {
     const { auth } = useUser();
     const dir = handleRTL();
 
+    const handleSelectChat = useCallback((user: UserMessage) => {
+        setSelectedUser(user);
+    }, []);
+
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
+    console.log('selectedUser:', selectedUser);
     const currentUser = {
         _id: auth._id as string,
         name: { first: auth.name.first, last: auth.name.last },
         email: auth.email as string,
         role: auth.role as string,
     };
-
-    const isOnline =
-        selectedUser?.from?._id === currentUser._id
-            ? selectedUser?.to?.status
-            : selectedUser?.from?.status;
 
     return (
         <Box
@@ -111,6 +111,35 @@ const MessagesPage = () => {
                     px: { xs: 0, md: 2 },
                 }}
             >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                        mt: 0.25,
+                    }}
+                >
+                    <Box
+                        sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            bgcolor: selectedUser?.status
+                                ? 'success.main'
+                                : 'error.main',
+                        }}
+                    />
+                    <Typography
+                        variant='caption'
+                        sx={{
+                            color: selectedUser?.status
+                                ? 'success.main'
+                                : 'error.main',
+                        }}
+                    >
+                        {selectedUser?.status ? t('online') : t('offline')}
+                    </Typography>
+                </Box>
                 <Paper
                     elevation={isMobile ? 0 : 2}
                     sx={{
@@ -153,9 +182,7 @@ const MessagesPage = () => {
                                                 'token',
                                             ) as string
                                         }
-                                        onSelectChat={(user) =>
-                                            setSelectedUser(user)
-                                        }
+                                        onSelectChat={handleSelectChat}
                                         selectedUserId={selectedUser?._id}
                                     />
                                 </Grid>
@@ -276,7 +303,7 @@ const MessagesPage = () => {
                                                                 borderRadius:
                                                                     '50%',
                                                                 bgcolor:
-                                                                    isOnline
+                                                                    selectedUser?.status
                                                                         ? 'success.main'
                                                                         : 'error.main',
                                                             }}
@@ -284,18 +311,14 @@ const MessagesPage = () => {
                                                         <Typography
                                                             variant='caption'
                                                             sx={{
-                                                                color: isOnline
+                                                                color: selectedUser?.status
                                                                     ? 'success.main'
                                                                     : 'error.main',
                                                             }}
                                                         >
-                                                            {isOnline
-                                                                ? t(
-                                                                      'chat.online',
-                                                                  )
-                                                                : t(
-                                                                      'chat.offline',
-                                                                  )}
+                                                            {selectedUser?.status
+                                                                ? t('online')
+                                                                : t('offline')}
                                                         </Typography>
                                                     </Box>
                                                 </Box>

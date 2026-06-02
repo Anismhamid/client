@@ -71,7 +71,10 @@ interface PostCardProps {
 
 export interface ChatUser {
     _id: string;
-    name: string;
+    name: {
+        first?: string;
+        last?: string;
+    };
 }
 
 const PostCard: FunctionComponent<PostCardProps> = memo(
@@ -726,12 +729,15 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 //     showError('لا يمكن فتح المحادثة');
                                 //     return;
                                 // }
+                                console.log('Selected user for chat:', sellerUser);
 
                                 setSelectedUser({
-                                    _id: sellerUser.user as string,
-                                    name: sellerUser.name as string,
+                                    _id: sellerUser.user as unknown as string,
+                                    name: {
+                                        first: sellerUser.name,
+                                        last: '',
+                                    },
                                 });
-
                                 setOpenChat(true);
                             }}
                             disableElevation

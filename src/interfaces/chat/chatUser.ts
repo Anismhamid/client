@@ -6,7 +6,7 @@ export interface BaseUser {
     };
     email?: string;
     role?: string;
-    image?: { url: string };
+    image?: { url: string; alt: string };
 }
 
 export interface BaseMessage {
@@ -17,7 +17,6 @@ export interface BaseMessage {
     to?: BaseUser;
 
     createdAt: Date | string;
-    
 
     status?: 'sent' | 'delivered' | 'seen';
 
