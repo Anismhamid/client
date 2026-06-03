@@ -25,6 +25,7 @@ export interface UserMessage {
         last?: string;
         role?: string;
         image?: { url: string; alt: string };
+        status?: boolean;
     };
     to: {
         _id?: string;
@@ -33,6 +34,7 @@ export interface UserMessage {
         last?: string;
         role?: string;
         image?: { url: string; alt: string };
+        status?: boolean;
     };
     messageStatus: string;
     message: string;

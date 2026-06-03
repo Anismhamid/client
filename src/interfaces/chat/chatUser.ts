@@ -7,18 +7,39 @@ export interface BaseUser {
     email?: string;
     role?: string;
     image?: { url: string; alt: string };
+    status: boolean;
 }
 
 export interface BaseMessage {
     _id: string;
     message?: string;
 
-    from?: BaseUser;
-    to?: BaseUser;
+    from?: {
+        _id?: string;
+        name?: {
+            first?: string;
+            last?: string;
+        };
+        email?: string;
+        role?: string;
+        image?: { url: string; alt: string };
+        status?: boolean;
+    };
+    to?: {
+        _id?: string;
+        name?: {
+            first?: string;
+            last?: string;
+        };
+        email?: string;
+        role?: string;
+        image?: { url: string; alt: string };
+        status?: boolean;
+    };
 
     createdAt: Date | string;
 
-    status?: 'sent' | 'delivered' | 'seen';
+    status?: 'sent' | 'delivered' | 'seen' | 'pending';
 
     warning?: boolean;
     isImportant?: boolean;

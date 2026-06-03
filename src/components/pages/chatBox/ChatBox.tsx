@@ -74,7 +74,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const lastScrollHeightRef = useRef<number>(0);
     const lastSeenRef = useRef<string | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
-   
 
     const getUserFullName = (user?: BaseUser) => {
         if (!user) return '';
@@ -127,7 +126,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         }, 1500);
     };
 
-   
     const loadConversation = async (isInitial = true) => {
         if (isInitial) setIsLoading(true);
         else {

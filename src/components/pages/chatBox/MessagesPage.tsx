@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
     Grid,
     Box,
@@ -25,6 +25,7 @@ import { path } from '../../../routes/routes';
 import { ChatMessage } from '../../../interfaces/chat/chatMessage';
 import ChatBox from './ChatBox';
 import { useUser } from '../../../context/useUSer';
+import socket from '../../../socket/globalSocket';
 
 // Fixed mapping function with proper type conversion
 // eslint-disable-next-line react-refresh/only-export-components
@@ -45,7 +46,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.email ?? '',
             role: msg.role ?? 'Client',
-            status: msg?.status ?? false,
+            status: msg.from?.status ?? false,
         },
         to: {
             _id: msg.to?._id ?? 'unknown',
@@ -55,10 +56,12 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.to?.email ?? '',
             role: msg.to?.role ?? 'Client',
-            status: msg?.status ?? false,
+            status: msg.to?.status ?? false,
         },
         message: msg.message,
-        status: (msg.messageStatus as 'sent' | 'delivered' | 'seen') ?? 'sent',
+        status:
+            (msg.messageStatus as 'sent' | 'delivered' | 'seen' | 'pending') ??
+            'sent',
         createdAt: convertToDate(msg.createdAt),
         updatedAt: convertToDate(msg.updatedAt),
         warning: msg.warning ?? false,
@@ -78,18 +81,38 @@ const MessagesPage = () => {
     const { auth } = useUser();
     const dir = handleRTL();
 
+    useEffect(() => {
+        const handleStatusChanged = ({
+            userId,
+            status,
+        }: {
+            userId: string;
+            status: boolean;
+        }) => {
+            if (selectedUser?._id === userId) {
+                setSelectedUser((prev) => (prev ? { ...prev, status } : prev));
+            }
+        };
+
+        socket.on('user:statusChanged', handleStatusChanged);
+
+        return () => {
+            socket.off('user:statusChanged', handleStatusChanged);
+        };
+    }, [selectedUser?._id]);
+
     const handleSelectChat = useCallback((user: UserMessage) => {
         setSelectedUser(user);
     }, []);
 
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
-    console.log('selectedUser:', selectedUser);
     const currentUser = {
         _id: auth._id as string,
         name: { first: auth.name.first, last: auth.name.last },
         email: auth.email as string,
         role: auth.role as string,
+        status: auth.status as boolean,
     };
 
     return (
@@ -336,9 +359,12 @@ const MessagesPage = () => {
                                         >
                                             <ChatBox
                                                 currentUser={currentUser}
-                                                otherUser={mapUserMessageToChatBox(
-                                                    selectedUser,
-                                                )}
+                                                otherUser={{
+                                                    ...mapUserMessageToChatBox(
+                                                        selectedUser,
+                                                    ),
+                                                    status: selectedUser.status as boolean,
+                                                }}
                                                 token={
                                                     localStorage.getItem(
                                                         'token',

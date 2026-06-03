@@ -119,6 +119,24 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         }
     }, [decodedToken, setAuth, setIsLoggedIn]);
 
+    useEffect(() => {
+        if (auth._id) {
+            patchUserStatus(auth._id, true).catch(console.error);
+        }
+    }, [auth._id]);
+
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            if (auth._id) {
+                patchUserStatus(auth._id, false).catch(console.error);
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () =>
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [auth._id]);
+
     const isAdmin = auth?.role === RoleType.Admin;
 
     const { pathname } = useLocation();
@@ -128,11 +146,11 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     }, [pathname]);
 
     const logout = useCallback(() => {
-        if (socket.connected && auth._id) {
-            socket.disconnect();
+        if (auth._id) {
             patchUserStatus(auth._id, false).catch((error) => {
                 console.error(error);
             });
+            socket.disconnect();
         }
         localStorage.removeItem('token');
         setAuth(emptyAuthValues);
