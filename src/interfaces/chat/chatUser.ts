@@ -7,7 +7,7 @@ export interface BaseUser {
     email?: string;
     role?: string;
     image?: { url: string; alt: string };
-    status: boolean;
+    status?: boolean;
 }
 
 export interface BaseMessage {

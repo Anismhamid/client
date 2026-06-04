@@ -119,24 +119,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         }
     }, [decodedToken, setAuth, setIsLoggedIn]);
 
-    useEffect(() => {
-        if (auth._id) {
-            patchUserStatus(auth._id, true).catch(console.error);
-        }
-    }, [auth._id]);
-
-    useEffect(() => {
-        const handleBeforeUnload = () => {
-            if (auth._id) {
-                patchUserStatus(auth._id, false).catch(console.error);
-            }
-        };
-
-        window.addEventListener('beforeunload', handleBeforeUnload);
-        return () =>
-            window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, [auth._id]);
-
     const isAdmin = auth?.role === RoleType.Admin;
 
     const { pathname } = useLocation();
@@ -145,13 +127,17 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         window.scrollTo(0, 0);
     }, [pathname]);
 
+    const disconnectSocket = () => socket.disconnect();
+
     const logout = useCallback(() => {
-        if (auth._id) {
-            patchUserStatus(auth._id, false).catch((error) => {
-                console.error(error);
-            });
-            socket.disconnect();
+        const userId = auth?._id as string;
+
+        if (userId) {
+            patchUserStatus(userId, false).catch(console.error);
         }
+
+        disconnectSocket();
+
         localStorage.removeItem('token');
         setAuth(emptyAuthValues);
         setIsLoggedIn(false);

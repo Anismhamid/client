@@ -62,16 +62,15 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                     headers: { Authorization: token },
                 });
 
-                const conversationsWithStatus = (
-                    res.data.conversations || []
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                ).map((conv: any) => ({
-                    ...conv,
-                    user: {
-                        ...conv.user,
-                        status: conv.user.status ?? false, // أضف هذا
-                    },
-                }));
+                const conversationsWithStatus = (res.data.conversations || [])
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    .map((conv: any) => ({
+                        ...conv,
+                        user: {
+                            ...conv.user,
+                            status: conv.user.status ?? false, // أضف هذا
+                        },
+                    }));
 
                 setConversations(conversationsWithStatus);
             } catch (err) {
@@ -107,7 +106,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
         ({ conv, isSelected }: { conv: Conversation; isSelected: boolean }) => {
             const unreadCount = unreadCounts[conv.user._id as string] || 0;
             const userName = getUserName(conv.user);
-            console.log('user:', conv.user);
+
             return (
                 <motion.div
                     initial={{ opacity: 0, x: -16 }}
@@ -446,7 +445,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                     >
                         <CircularProgress
                             size={28}
-                            thickness={4}
+                            thickness={5}
                             sx={{
                                 color: alpha(theme.palette.primary.main, 0.6),
                             }}

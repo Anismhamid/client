@@ -302,9 +302,13 @@ export const changeUserPassword = async (
 
 export const patchUserStatus = async (userId: string, status: boolean) => {
     try {
-        const response = await axios.patch(`${api}/status/${userId}`, {
-            status,
-        });
+        const response = await axios.patch(
+            `${api}/status/${userId}`,
+            {
+                status,
+            },
+            { headers: { Authorization: localStorage.getItem('token') } },
+        );
         return response.data;
     } catch (error) {
         console.error('Error updating status:', error);

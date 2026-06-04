@@ -11,6 +11,7 @@ import {
     alpha,
     Container,
     Tooltip,
+    Button,
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ForumTwoToneIcon from '@mui/icons-material/ForumTwoTone';
@@ -23,9 +24,12 @@ import { useTranslation } from 'react-i18next';
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import { ChatMessage } from '../../../interfaces/chat/chatMessage';
-import ChatBox from './ChatBox';
+// import ChatBox from './ChatBox';
 import { useUser } from '../../../context/useUSer';
 import socket from '../../../socket/globalSocket';
+import ChatModal from './ChatModal';
+import ChatBox from './ChatBox';
+// import socket from '../../../socket/globalSocket';
 
 // Fixed mapping function with proper type conversion
 // eslint-disable-next-line react-refresh/only-export-components
@@ -46,7 +50,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.email ?? '',
             role: msg.role ?? 'Client',
-            status: msg.from?.status ?? false,
+            status: msg.from?.status || false,
         },
         to: {
             _id: msg.to?._id ?? 'unknown',
@@ -56,7 +60,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
             },
             email: msg.to?.email ?? '',
             role: msg.to?.role ?? 'Client',
-            status: msg.to?.status ?? false,
+            status: msg.to?.status || false,
         },
         message: msg.message,
         status:
@@ -80,6 +84,9 @@ const MessagesPage = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { auth } = useUser();
     const dir = handleRTL();
+    const token = localStorage.getItem('token') ?? '';
+    // const isOnline = selectedUser?.from?.status === true;
+    const [chatOpen, setChatOpen] = useState(false);
 
     useEffect(() => {
         const handleStatusChanged = ({
@@ -89,9 +96,10 @@ const MessagesPage = () => {
             userId: string;
             status: boolean;
         }) => {
-            if (selectedUser?._id === userId) {
-                setSelectedUser((prev) => (prev ? { ...prev, status } : prev));
-            }
+            setSelectedUser((prev) => {
+                if (!prev || prev._id !== userId) return prev;
+                return { ...prev, status };
+            });
         };
 
         socket.on('user:statusChanged', handleStatusChanged);
@@ -99,7 +107,7 @@ const MessagesPage = () => {
         return () => {
             socket.off('user:statusChanged', handleStatusChanged);
         };
-    }, [selectedUser?._id]);
+    }, []);
 
     const handleSelectChat = useCallback((user: UserMessage) => {
         setSelectedUser(user);
@@ -134,35 +142,7 @@ const MessagesPage = () => {
                     px: { xs: 0, md: 2 },
                 }}
             >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5,
-                        mt: 0.25,
-                    }}
-                >
-                    <Box
-                        sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            bgcolor: selectedUser?.status
-                                ? 'success.main'
-                                : 'error.main',
-                        }}
-                    />
-                    <Typography
-                        variant='caption'
-                        sx={{
-                            color: selectedUser?.status
-                                ? 'success.main'
-                                : 'error.main',
-                        }}
-                    >
-                        {selectedUser?.status ? t('online') : t('offline')}
-                    </Typography>
-                </Box>
+                
                 <Paper
                     elevation={isMobile ? 0 : 2}
                     sx={{
@@ -200,11 +180,7 @@ const MessagesPage = () => {
                                 >
                                     <ChatList
                                         currentUser={currentUser}
-                                        token={
-                                            localStorage.getItem(
-                                                'token',
-                                            ) as string
-                                        }
+                                        token={token}
                                         onSelectChat={handleSelectChat}
                                         selectedUserId={selectedUser?._id}
                                     />
@@ -352,7 +328,25 @@ const MessagesPage = () => {
                                                 </IconButton>
                                             </Tooltip>
                                         </Box>
+                                        <Button
+                                            onClick={() => setChatOpen(true)}
+                                        >
+                                            Open Chat
+                                        </Button>
 
+                                        <ChatModal
+                                            open={chatOpen}
+                                            onClose={() => setChatOpen(false)}
+                                            currentUser={{
+                                                _id: auth._id,
+                                                name: auth.name,
+                                                email: auth.email,
+                                                role: auth.role,
+                                                // status: auth.status,
+                                            }}
+                                            otherUser={selectedUser}
+                                            token={token}
+                                        />
                                         {/* Chat Messages */}
                                         <Box
                                             sx={{ flex: 1, overflow: 'hidden' }}
@@ -363,7 +357,7 @@ const MessagesPage = () => {
                                                     ...mapUserMessageToChatBox(
                                                         selectedUser,
                                                     ),
-                                                    status: selectedUser.status as boolean,
+                                                    status: selectedUser?.status as boolean,
                                                 }}
                                                 token={
                                                     localStorage.getItem(

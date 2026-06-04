@@ -182,37 +182,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         FormErrors | null,
         FormData
     >(loginAction, null);
-    // Alternative formik implementation (commented out but kept for reference)
-    /*
-	const formik = useFormik<UserLogin>({
-		initialValues: {
-			email: "",
-			password: "",
-		},
-		validationSchema: loginSchema,
-		onSubmit: async (values, {resetForm}) => {
-			try {
-				setLoading(true);
-				const token = await loginUser(values);
-				if (token) {
-					localStorage.setItem("token", token);
-					setAfterDecode(token);
-					setAuth(decodedToken);
-					setIsLoggedIn(true);
-					showSuccess(t("login.successMessage") || "התחברת בהצלחה!");
-					navigate(path.Home);
-				}
-			} catch (error) {
-				setAuth(emptyAuthValues);
-				setIsLoggedIn(false);
-				resetForm();
-				showError(t("login.errors.loginFailed") || "Login failed");
-			} finally {
-				setLoading(false);
-			}
-		},
-	});
-	*/
 
     const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
         if (!response.credential) {

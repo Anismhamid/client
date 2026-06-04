@@ -37,6 +37,8 @@ import {
     scrollToBottom,
     sendMessage,
 } from './helpers/functions';
+import { Navigate } from 'react-router-dom';
+import { path } from '../../../routes/routes';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -346,10 +348,12 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         };
     }, []);
 
+    if (!currentUser?._id) return <Navigate to={path.Login} replace />;
+
     return (
         <Box
             sx={{
-                height: '100vh',
+                height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
                 bgcolor: 'background.paper',
@@ -369,7 +373,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     flexGrow: 1,
                     overflowY: 'auto',
                     p: 2,
-                    // pb: 15,
+                    pb: 15,
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 1.5,
