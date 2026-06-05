@@ -1,6 +1,6 @@
 import { Card, CardContent, Typography } from '@mui/material';
 import { FunctionComponent } from 'react';
-import UserDetailTable from '../../../../atoms/userManage/UesrDetailsTable';
+import UserDetailTable from '../../../navbar/userManage/UesrDetailsTable';
 import { User } from '../../../../interfaces/chat/usersMessages';
 import { useTranslation } from 'react-i18next';
 

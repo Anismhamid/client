@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../context/useUSer';
 import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
-
+import { useEffect } from 'react';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
@@ -18,6 +18,10 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const direction = handleRTL();
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [navigate]);
 
     const handleAddClick = () => {
         if (isLoggedIn) {
@@ -55,7 +59,14 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 }}
             />
 
-            <Box sx={{ position: 'relative', zIndex: 1, maxWidth: 580, mx: 'auto' }}>
+            <Box
+                sx={{
+                    position: 'relative',
+                    zIndex: 1,
+                    maxWidth: 580,
+                    mx: 'auto',
+                }}
+            >
                 {/* Badge */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -86,8 +97,12 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             }}
                         />
                         <Typography
-                            variant="caption"
-                            sx={{ color: 'primary.main', fontWeight: 600, letterSpacing: 0.4 }}
+                            variant='caption'
+                            sx={{
+                                color: 'primary.main',
+                                fontWeight: 600,
+                                letterSpacing: 0.4,
+                            }}
                         >
                             سـوق إلـكـتـرونـي مـوثـوق
                         </Typography>
@@ -101,7 +116,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     transition={{ duration: 0.5, delay: 0.1 }}
                 >
                     <Typography
-                        variant="h1"
+                        variant='h1'
                         sx={{
                             fontWeight: 800,
                             fontSize: { xs: '2.4rem', md: '3.2rem' },
@@ -114,7 +129,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                         🛒 {t('webPageName')}
                     </Typography>
                     <Typography
-                        variant="body1"
+                        variant='body1'
                         sx={{
                             color: 'text.secondary',
                             fontSize: { xs: '1rem', md: '1.1rem' },
@@ -132,10 +147,17 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
                 >
-                    <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            gap: 1.5,
+                            justifyContent: 'center',
+                            flexWrap: 'wrap',
+                        }}
+                    >
                         <Button
-                            variant="contained"
-                            size="large"
+                            variant='contained'
+                            size='large'
                             startIcon={<AddIcon />}
                             onClick={handleAddClick}
                             sx={{
@@ -151,8 +173,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             {t('create-post')}
                         </Button>
                         <Button
-                            variant="outlined"
-                            size="large"
+                            variant='outlined'
+                            size='large'
                             sx={{
                                 px: 3.5,
                                 py: 1.25,

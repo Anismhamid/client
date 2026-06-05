@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'react';
-import RoleType from '../../interfaces/UserType';
+import RoleType from '../../../interfaces/UserType';
 import {
     styled,
     TableContainer,
@@ -10,7 +10,7 @@ import {
     TableRow,
     Paper,
 } from '@mui/material';
-import { User } from '../../interfaces/chat/usersMessages';
+import { User } from '../../../interfaces/chat/usersMessages';
 import { useTranslation } from 'react-i18next';
 
 interface UserDetailTableProps {

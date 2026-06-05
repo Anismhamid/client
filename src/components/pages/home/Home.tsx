@@ -1,5 +1,5 @@
 // pages/Home.tsx
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, lazy, Suspense, useState } from 'react';
 import { Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 // import { useNavigate } from 'react-router-dom';
@@ -8,23 +8,33 @@ import HeroSection from './HeroSection';
 import StatsStrip from './StatsStrip';
 import AdsSection from './AdsSection';
 import Loader from '../../../atoms/loader/Loader';
-import AddProductModal from '../../../atoms/productsManage/addAndUpdateProduct/CreatePostModal';
-import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
+const AddProductModal = lazy(
+    () =>
+        import(
+            '../../../atoms/productsManage/addAndUpdateProduct/CreatePostModal'
+        ),
+);
+
+const UpdateProductModal = lazy(
+    () =>
+        import(
+            '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal'
+        ),
+);
 import { showError } from '../../../atoms/toasts/ReactToast';
-import AlertDialogs from '../../../atoms/toasts/Sweetalert';
+const AlertDialogs = lazy(() => import('../../../atoms/toasts/Sweetalert'));
 import { useUser } from '../../../context/useUSer';
 import { usePosts } from '../../../hooks/usePosts';
 import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
 import { deletePost, toggleLike } from '../../../services/postsServices';
-import DiscountsAndOffers from '../products/DiscountsAndOffers';
-import ContactCTA from './ContactCTA';
-import PostsGrid from './PostsGrid';
+const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
+const ContactCTA = lazy(() => import('./ContactCTA'));
+const PostsGrid = lazy(() => import('./PostsGrid'));
 
 const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
-    // const navigate = useNavigate();
     const direction = handleRTL();
     const { posts, loading } = usePosts();
 
@@ -34,8 +44,7 @@ const Home: FunctionComponent = () => {
     const [postIdToUpdate, setPostIdToUpdate] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [refresh, setRefresh] = useState(false);
+    const [, setRefresh] = useState(false);
 
     const isAdmin = auth?.role === RoleType.Admin;
     const isModerator = auth?.role === RoleType.Moderator;
@@ -71,18 +80,16 @@ const Home: FunctionComponent = () => {
                 property='og:description'
                 content='بيع وشراء المنتجات بسهولة وأمان'
             />
-
             {/* ─── HERO ─── */}
             <HeroSection onAddProduct={() => setShowAddModal(true)} />
-
             {/* ─── STATS ─── */}
             <StatsStrip postsCount={posts.length} />
-
             {/* ─── MAIN ─── */}
             <Box
                 dir={direction}
                 component='main'
-                id='products-section'
+                id='lising-section'
+                title='lising-section'
                 sx={{
                     background:
                         'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
@@ -90,42 +97,47 @@ const Home: FunctionComponent = () => {
             >
                 <AdsSection />
 
-                <DiscountsAndOffers />
-
-                <PostsGrid
-                    posts={posts}
-                    featured={false}
-                    canEdit={canEdit}
-                    onSetPostIdToUpdate={setPostIdToUpdate}
-                    onShowUpdateModal={() => setShowUpdateModal(true)}
-                    onOpenDeleteModal={(name) => {
-                        setPostToDelete(name);
-                        setShowDeleteModal(true);
-                    }}
-                    onLikeToggle={toggleLike}
-                />
-
-                <ContactCTA />
+                <Suspense fallback={<Loader />}>
+                    <DiscountsAndOffers />
+                    <PostsGrid
+                        posts={posts}
+                        featured={false}
+                        canEdit={canEdit}
+                        onSetPostIdToUpdate={setPostIdToUpdate}
+                        onShowUpdateModal={() => setShowUpdateModal(true)}
+                        onOpenDeleteModal={(name) => {
+                            setPostToDelete(name);
+                            setShowDeleteModal(true);
+                        }}
+                        onLikeToggle={toggleLike}
+                    />
+                    <ContactCTA />
+                </Suspense>
             </Box>
-
-            {/* ─── MODALS ─── */}
-            <UpdateProductModal
-                refresh={() => setRefresh((r) => !r)}
-                postId={postIdToUpdate}
-                show={showUpdateModal}
-                onHide={() => setShowUpdateModal(false)}
-            />
-            <AlertDialogs
-                show={showDeleteModal}
-                onHide={() => setShowDeleteModal(false)}
-                title='⚠️ تنبيه مهم!'
-                description={`هل أنت متأكد من رغبتك في حذف المنتج "${postToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
-                handleDelete={() => handleDelete(postToDelete)}
-            />
-            <AddProductModal
-                show={showAddModal}
-                onHide={() => setShowAddModal(false)}
-            />
+            <Suspense fallback={<Loader />}>
+                {/* ─── MODALS ─── */}
+                <UpdateProductModal
+                    refresh={() => setRefresh((r) => !r)}
+                    postId={postIdToUpdate}
+                    show={showUpdateModal}
+                    onHide={() => setShowUpdateModal(false)}
+                />
+            </Suspense>{' '}
+            <Suspense fallback={<Loader />}>
+                <AlertDialogs
+                    show={showDeleteModal}
+                    onHide={() => setShowDeleteModal(false)}
+                    title='⚠️ تنبيه مهم!'
+                    description={`هل أنت متأكد من رغبتك في حذف المنتج "${postToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
+                    handleDelete={() => handleDelete(postToDelete)}
+                />
+            </Suspense>
+            <Suspense fallback={<Loader />}>
+                <AddProductModal
+                    show={showAddModal}
+                    onHide={() => setShowAddModal(false)}
+                />
+            </Suspense>
         </>
     );
 };

@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { showSuccess, showError } from '../toasts/ReactToast';
+import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 import { FunctionComponent, useEffect, useState } from 'react';
 import {
     Autocomplete,
@@ -10,10 +10,10 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { editUserProfile, getUserById } from '../../services/usersServices';
-import Loader from '../loader/Loader';
-import useAddressData from '../../hooks/useAddressData';
-import { EditUserProfile } from '../../interfaces/User';
+import { editUserProfile, getUserById } from '../../../services/usersServices';
+import Loader from '../../../atoms/loader/Loader';
+import useAddressData from '../../../hooks/useAddressData';
+import { EditUserProfile } from '../../../interfaces/User';
 import { useTranslation } from 'react-i18next';
 
 interface EditUserDataProps {
@@ -403,7 +403,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                 >
                                     {preview
                                         ? t('hideImage') || 'إخفاء'
-                                        : t('showImage') || 'إظهار صورة الملف الشخصي'}
+                                        : t('showImage') ||
+                                          'إظهار صورة الملف الشخصي'}
                                 </Button>
                                 {preview && (
                                     <div className='mt-3'>

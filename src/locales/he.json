@@ -491,7 +491,8 @@
                 "save": "חסכו",
                 "errors": {
                     "fetchFailed": "טעינת המוצרים בהנחה נכשלה. אנא נסו שוב מאוחר יותר."
-                }
+                },
+                "viewAll": "צפו בכל המבצעים"
             },
             "categories": {
                 "discountsAndOffers": {
@@ -692,8 +693,10 @@
         "settings": "הגדרות",
         "logout": "התנתקות",
         "admin": "מנהל האתר",
+        "client": "משתמש",
         "siteModerator": "מפקח האתר",
-        "storeStatistics": "סטטיסטיקות החנות"
+        "storeStatistics": "סטטיסטיקות החנות",
+        "ads": "קידום"
     },
     "about": {
         "title": "מי אנחנו",

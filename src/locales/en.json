@@ -1,6 +1,6 @@
 {
     "you": "You",
-    "online":"Online",
+    "online": "Online",
     "saveChanges": "Save Changes",
     "hideImage": "Hide Profile Picture",
     "showImage": "Show Profile Picture",
@@ -532,7 +532,8 @@
                 "save": "Save",
                 "errors": {
                     "fetchFailed": "Failed to load discounted products. Please try again later."
-                }
+                },
+                "viewAll": "View All Offers"
             },
             "categories": {
                 "discountsAndOffers": {
@@ -735,8 +736,10 @@
         "settings": "Settings",
         "logout": "Logout",
         "admin": "Site Admin",
+        "client": "Customer",
         "siteModerator": "Site Moderator",
-        "storeStatistics": "Store Statistics"
+        "storeStatistics": "Store Statistics",
+        "ads": "Manage ads"
     },
 
     "about": {

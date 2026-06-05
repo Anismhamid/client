@@ -44,7 +44,7 @@ import {
     Lock,
     ArrowRight,
 } from '@mui/icons-material';
-import UserInfoModal from '../../atoms/userManage/UserInfoModal';
+import UserInfoModal from '../navbar/userManage/UserInfoModal';
 import { jwtDecode } from 'jwt-decode';
 import { CredentialResponse } from '@react-oauth/google';
 import { DecodedGooglePayload } from '../../interfaces/googleValues';

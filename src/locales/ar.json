@@ -1,6 +1,6 @@
 {
     "you": "انت",
-    "online":"متصل",
+    "online": "متصل",
     "saveChanges": "حفظ التغييرات",
     "hideImage": "إخفاء",
     "showImage": "إظهار صورة الملف الشخصي",
@@ -546,7 +546,8 @@
                 "save": "وفر",
                 "errors": {
                     "fetchFailed": "فشل تحميل المنشورات المخفضة. يرجى المحاولة مرة أخرى لاحقًا."
-                }
+                },
+                "viewAll": "عرض الكل"
             },
             "categories": {
                 "discountsAndOffers": {
@@ -702,8 +703,10 @@
         "settings": "الإعدادات",
         "logout": "تسجيل الخروج",
         "admin": "مدير الموقع",
+        "client": "مستخدم",
         "siteModerator": "مشرف الموقع",
-        "storeStatistics": "إحصائيات المتجر"
+        "storeStatistics": "إحصائيات المتجر",
+        "ads": "الترويج"
     },
     "about": {
         "title": "من نحن",

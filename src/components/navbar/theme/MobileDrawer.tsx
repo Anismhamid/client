@@ -35,7 +35,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
 import { path } from '../../../routes/routes';
-import AccountMenu from '../../../atoms/userManage/AccountMenu';
+import AccountMenu from '../userManage/AccountMenu';
 import { GradientSwitch } from './GradientSwitch';
 import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
@@ -186,7 +186,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                 borderRadius: '8px',
                                 '&.active': {
                                     backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: "#f59e0b11",
+                                    color: '#f59e0b11',
                                     fontWeight: 'bold',
                                 },
                             }}
@@ -286,8 +286,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                         'translateY(-50%)',
                                                     width: 4,
                                                     height: '60%',
-                                                    backgroundColor:
-                                                        '#f59f0b',
+                                                    backgroundColor: '#f59f0b',
                                                     borderRadius: 2,
                                                 },
                                             },

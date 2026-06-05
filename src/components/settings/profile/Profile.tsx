@@ -55,8 +55,8 @@ import { showSuccess } from '../../../atoms/toasts/ReactToast';
 import { emptyAuthValues } from '../../../interfaces/authValues';
 import { deleteUserById, getUserById } from '../../../services/usersServices';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
-import DeleteAccountBox from '../../../atoms/userManage/DeleteAccountBox';
-import EditUserData from '../../../atoms/userManage/EditUserData';
+import DeleteAccountBox from '../../navbar/userManage/DeleteAccountBox';
+import EditUserData from '../../navbar/userManage/EditUserData';
 import QuickActionsTab from './tabs/QuickActionsTab';
 import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
@@ -112,9 +112,7 @@ const Profile: FunctionComponent = () => {
         slug: '',
     });
 
-    const { userPosts, loading: productsLoading } = useUserPosts(
-        user.slug,
-    );
+    const { userPosts, loading: productsLoading } = useUserPosts(user.slug);
 
     const calculateProfileCompletion = (user: User) => {
         const fields = [
