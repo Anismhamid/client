@@ -1,7 +1,7 @@
 // pages/Home.tsx
 import { FunctionComponent, lazy, Suspense, useState } from 'react';
 import { Box } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 // import { useNavigate } from 'react-router-dom';
 
 import HeroSection from './HeroSection';
@@ -28,15 +28,18 @@ import { usePosts } from '../../../hooks/usePosts';
 import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
 import { deletePost, toggleLike } from '../../../services/postsServices';
+import JsonLd from '../../../../utils/JsonLd';
+import { useLocation } from 'react-router-dom';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
 
 const Home: FunctionComponent = () => {
     const { auth } = useUser();
-    const { t } = useTranslation();
+    // const { t } = useTranslation();
     const direction = handleRTL();
     const { posts, loading } = usePosts();
+    const location = useLocation();
 
     // Modals state
     const [showAddModal, setShowAddModal] = useState(false);
@@ -59,14 +62,12 @@ const Home: FunctionComponent = () => {
 
     if (loading) return <Loader />;
 
-    const currentUrl = window.location.origin;
+    const currentUrl = `https://client-qqq1.vercel.app${location.pathname}`;
 
     return (
         <>
-            {/* ─── SEO (unchanged) ─── */}
-            <title>
-                {t('home')} | {t('webPageName')}
-            </title>
+            ;{/* ─── SEO (unchanged) ─── */}
+            <title>صفقة | منصة بيع وشراء المنتجات الجديدة والمستعملة</title>
             <meta
                 name='description'
                 content='صفقة منصة إلكترونية لبيع وشراء المنتجات الجديدة والمستعملة بسهولة وأمان'
@@ -79,6 +80,37 @@ const Home: FunctionComponent = () => {
             <meta
                 property='og:description'
                 content='بيع وشراء المنتجات بسهولة وأمان'
+            />
+            <meta
+                property='og:image'
+                content='https://client-qqq1.vercel.app/d3.png'
+            />
+            <meta property='og:url' content='https://client-qqq1.vercel.app' />
+            <meta property='og:type' content='website' />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@graph': [
+                        {
+                            '@type': 'WebSite',
+                            '@id': 'https://client-qqq1.vercel.app/#website',
+                            name: 'صفقة',
+                            alternateName: 'Safqa',
+                            url: 'https://client-qqq1.vercel.app',
+                        },
+                        {
+                            '@type': 'Organization',
+                            '@id': 'https://client-qqq1.vercel.app/#organization',
+                            name: 'صفقة',
+                            alternateName: 'Safqa',
+                            url: 'https://client-qqq1.vercel.app',
+                            logo: {
+                                '@type': 'ImageObject',
+                                url: 'https://client-qqq1.vercel.app/d3.png',
+                            },
+                        },
+                    ],
+                }}
             />
             {/* ─── HERO ─── */}
             <HeroSection onAddProduct={() => setShowAddModal(true)} />

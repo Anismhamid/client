@@ -24,6 +24,8 @@ import { productsAndCategories } from '../../navbar/navCategoryies';
 import ChipNavigation from '../../navbar/ChepNavigation';
 import PostCard from '../products/PostsCard';
 import { toggleLike } from '../../../services/postsServices';
+import JsonLd from '../../../../utils/JsonLd';
+import { generateProductsItemListJsonLd } from '../../../../utils/structuredData';
 
 interface PostGridProps {
     posts: Posts[];
@@ -136,6 +138,8 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
 
     return (
         <>
+            <JsonLd data={generateProductsItemListJsonLd(posts.slice(0, 20))} />
+
             {/* SEARCH */}
             <Box
                 sx={{

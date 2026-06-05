@@ -35,12 +35,12 @@ export const generateSingleProductJsonLd = (post: Posts) => {
 
     return {
         '@context': 'https://schema.org',
-        '@type': 'post',
-        '@id': `${postUrl}#post`,
+        '@type': 'Product',
+        '@id': `${postUrl}#product`,
         sku: post._id,
         name: post.product_name,
         description: post.description || 'منتج معروض للبيع على موقع صفقة',
-        image: post.image?.url || 'https://client-qqq1.vercel.app/myLogo.png',
+        image:[ post.image?.url || 'https://client-qqq1.vercel.app/d3.png'],
         category: post.category,
         brand: {
             '@type': 'Brand',
@@ -58,14 +58,15 @@ export const generateSingleProductJsonLd = (post: Posts) => {
                     : 'https://schema.org/OutOfStock',
             hasMerchantReturnPolicy: {
                 '@type': 'MerchantReturnPolicy',
-                returnPolicyCategory: 'https://schema.org/DynamicReturnPolicy',
-                seller: {
-                    '@type': 'Person',
-                    name: post.seller?.name || 'مستخدم مسجل',
-                    url: post.seller?.slug
-                        ? `https://client-qqq1.vercel.app/user/customer/${post.seller.slug}`
-                        : undefined,
-                },
+                returnPolicyCategory:
+                    'https://schema.org/MerchantReturnNotPermitted',
+            },
+            seller: {
+                '@type': 'Person',
+                name: post.seller?.name || 'مستخدم مسجل',
+                url: post.seller?.slug
+                    ? `https://client-qqq1.vercel.app/user/customer/${post.seller.slug}`
+                    : undefined,
             },
 
             priceValidUntil: '2026-12-31',
