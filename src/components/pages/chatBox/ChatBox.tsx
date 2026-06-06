@@ -5,6 +5,7 @@ import {
     useRef,
     FunctionComponent,
     useLayoutEffect,
+    useCallback,
 } from 'react';
 import axios from 'axios';
 import {
@@ -77,22 +78,36 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const lastSeenRef = useRef<string | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
 
-    const getUserFullName = (user?: BaseUser) => {
-        if (!user) return '';
+    useEffect(() => {
+        console.table(['typing', isTypingRef]);
+    }, [isTypingRef]);
 
-        return `${user.name?.first?.toUpperCase() ?? 'user'} ${user.name?.last?.toUpperCase() ?? ''}`.trim();
+    const getUserFullName = (userName: string) => {
+        if (!userName) return '';
+
+        return userName;
     };
 
+    // const updateMessageStatus = useCallback(
+    //     (messageId: string, status: string) => {
+    //         setMessagesForUser(otherUser?._id ?? '', (prev) =>
+    //             prev.map((m) => (m._id === messageId ? { ...m, status } : m)),
+    //         );
+    //     },
+    //     [otherUser?._id],
+    // );
+
     // עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
-    const markAsSeen = () => {
+    const markAsSeen = useCallback(() => {
         if (!otherUser?._id || !socket) return;
+
         socket.emit('message:seen', {
             from: otherUser._id,
             to: currentUser._id,
             roomId: [otherUser._id, currentUser._id].sort().join('_'),
         });
         setUnreadForUser(otherUser._id, 0);
-    };
+    }, [otherUser?._id, currentUser._id]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -298,7 +313,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 markAsSeen();
             }
         }
-    }, [token, otherUser._id]);
+    }, [userMessages, otherUser._id,markAsSeen]);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -547,6 +562,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                 px: 1.5,
                                 py: 0.5,
                                 borderRadius: 2,
+                                maxWidth: 'fit-content',
                             }}
                         >
                             <Typography
@@ -556,8 +572,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     color: 'text.secondary',
                                 }}
                             >
-                                {getUserFullName(otherUser)}{' '}
-                                {t('common.typing')}
+                                {getUserFullName(otherUser.name?.first || '')}{' '}
+                                {t('common.typing')}...
                             </Typography>
                         </Box>
                     </Fade>

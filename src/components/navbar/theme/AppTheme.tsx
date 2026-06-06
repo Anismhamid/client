@@ -14,6 +14,7 @@ import {
     Drawer,
     useTheme,
     AppBar,
+    Badge,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LanguageSwitcher from '../../../locales/languageSwich';
@@ -50,6 +51,7 @@ import JsonLd from '../../../../utils/JsonLd';
 import { GradientSwitch } from './GradientSwitch';
 import MobileDrawer from './MobileDrawer';
 import SafqaLogo from '../../../atoms/SafqaLogo';
+import { useChat } from '../../../hooks/useChat';
 
 interface ThemeProps {
     mode: PaletteMode;
@@ -101,6 +103,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<
         string | false
     >(false);
+
+    const { unreadCounts } = useChat();
+    const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
     const openMega = Boolean(megaAnchor);
 
@@ -461,13 +466,21 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         role='listitem'
                                         sx={{ flexShrink: 0 }}
                                     >
-                                        <StyledNavLink
-                                            to={path.MessagesPage}
-                                            aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
-                                            title={`${t('links.Messages')} الرسائل موقع صفقة`}
+                                        {' '}
+                                        <Badge
+                                            badgeContent={totalUnread || 0}
+                                            color='error'
                                         >
-                                            <ChatBubble sx={{ fontSize: 20 }} />
-                                        </StyledNavLink>
+                                            <StyledNavLink
+                                                to={path.MessagesPage}
+                                                aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
+                                                title={`${t('links.Messages')} الرسائل موقع صفقة`}
+                                            >
+                                                <ChatBubble
+                                                    sx={{ fontSize: 20 }}
+                                                />
+                                            </StyledNavLink>{' '}
+                                        </Badge>
                                     </Box>
                                 )}
 
