@@ -295,7 +295,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
 
                 {isAdmin && (
                     <MenuItem
-                        onClick={() => navigateTo(path.WebSiteAdmins)}
+                        onClick={() => navigateTo(path.WebsiteAdmins)}
                         sx={menuItemSx()}
                     >
                         <ListItemIcon sx={{ minWidth: 36 }}>

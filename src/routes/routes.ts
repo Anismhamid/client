@@ -44,7 +44,7 @@ export enum path {
     // User
     CustomerProfile = '/users/customer/:slug',
     UsersManagement = '/users-management',
-    WebSiteAdmins = '/admins',
+    WebsiteAdmins = '/statistics-panel',
     Messages = '/messages',
     userTouserMessage = 'chat',
     MessagesPage = 'messages/chat',

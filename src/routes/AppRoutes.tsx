@@ -32,9 +32,7 @@ const PostDetails = lazy(
 );
 const Products = lazy(() => import('../components/pages/products/Posts'));
 const Messages = lazy(() => import('../components/settings/Messages'));
-const WebSiteAdmins = lazy(
-    () => import('../components/settings/WebSiteAdmins'),
-);
+import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -87,7 +85,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 }
             />
             <Route path={path.MessagesPage} element={<MessagesPage />} />
-            <Route path={path.WebSiteAdmins} element={<WebSiteAdmins />} />
+            <Route path={path.WebsiteAdmins} element={<WebSiteAdmins />} />
             <Route
                 path={path.UsersManagement}
                 element={
