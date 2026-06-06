@@ -317,57 +317,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     </Box>
                                 )}
 
-                                {/* Products with mega menu */}
-                                {/* <Box
-									component='li'
-									role='listitem'
-									sx={{ flexShrink: 0 }}
-									onMouseEnter={
-										!isMobile
-											? (e) => setMegaAnchor(e.currentTarget)
-											: undefined
-									}
-									onMouseLeave={
-										!isMobile ? () => setMegaAnchor(null) : undefined
-									}
-									onClick={
-										isMobile
-											? (e) => setMegaAnchor(e.currentTarget)
-											: undefined
-									}
-									// sx={{cursor: "pointer", position: "relative"}}
-									aria-haspopup='true'
-									aria-expanded={openMega ? "true" : "false"}
-								>
-									<StyledNavLink
-										to='#'
-										onClick={(e) => {
-											e.preventDefault();
-											if (isMobile) setMegaAnchor(e.currentTarget);
-										}}
-										aria-label='المنتجات والتصنيفات'
-										title={t("links.products")}
-									>
-										<CategoryIcon sx={{ fontSize: 20 }} />
-
-										<KeyboardArrowDownIcon
-											sx={{
-												transition: "transform 0.3s",
-												transform: openMega
-													? "rotate(180deg)"
-													: "rotate(0deg)",
-											}}
-										/>
-									</StyledNavLink>
-
-									<MegaMenu
-										anchorEl={megaAnchor}
-										open={openMega}
-										onClose={() => setMegaAnchor(null)}
-										categories={productsAndCategories}
-									/>
-								</Box> */}
-
                                 {/* Products with mega menu wrapper */}
                                 <Box
                                     component='li'

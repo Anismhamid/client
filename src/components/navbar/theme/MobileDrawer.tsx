@@ -35,10 +35,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
 import { path } from '../../../routes/routes';
-import AccountMenu from '../userManage/AccountMenu';
 import { GradientSwitch } from './GradientSwitch';
 import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
+import { useChat } from '../../../hooks/useChat';
 
 interface MobileDrawerProps {
     mode: PaletteMode;
@@ -66,7 +66,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
     isAdmin,
     auth,
     handleThemeChange,
-    logout,
 }) => {
     const { t } = useTranslation();
     const theme = useTheme();
@@ -74,6 +73,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
     const handleMobileMenuToggle = (menu: string) => {
         setExpandedMobileMenu(expandedMobileMenu === menu ? false : menu);
     };
+
+    const { unreadCounts } = useChat();
+    const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
     const handleNavLinkClick = () => {
         setMobileOpen(false);
@@ -191,14 +193,21 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                 },
                             }}
                         >
-                            <ChatBubble sx={{ fontSize: 20 }} />
-                            <ListItemText
-                                primary={t('accountMenu.messages') || 'الرسائل'}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: 500 },
-                                    'aria-label': 'الرسائل - موقع صفقة',
-                                }}
-                            />
+                            <Badge
+                                badgeContent={totalUnread || 0}
+                                color='error'
+                            >
+                                <ChatBubble sx={{ fontSize: 20 }} />
+                                <ListItemText
+                                    primary={
+                                        t('accountMenu.messages') || 'الرسائل'
+                                    }
+                                    primaryTypographyProps={{
+                                        sx: { fontWeight: 500 },
+                                        'aria-label': 'الرسائل - موقع صفقة',
+                                    }}
+                                />
+                            </Badge>
                         </ListItemButton>
                     </ListItem>
                     {/* Products with categories - IMPLEMENTED */}
@@ -609,7 +618,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 
                 {/* Login/Logout button */}
                 <Box sx={{ mt: 2 }}>
-                    {!isLoggedIn ? (
+                    {!isLoggedIn && (
                         <Button
                             fullWidth
                             variant='contained'
@@ -631,12 +640,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                         >
                             {t('links.login')}
                         </Button>
-                    ) : (
-                        <AccountMenu
-                            logout={logout}
-                            // mobileView
-                            // handleNavClick={handleNavLinkClick}
-                        />
                     )}
                 </Box>
 

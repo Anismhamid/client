@@ -322,7 +322,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                         color: 'transparent',
                     }}
                 >
-                    {t('messages.title') || 'Messages'}
+                    {t('messages.main') || 'Messages'}
                 </Typography>
                 <Typography
                     variant='body2'

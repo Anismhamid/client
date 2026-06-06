@@ -54,6 +54,9 @@
     "messages": {
         "main": "Messages",
         "search": "Search messages",
+        "welcome": "Safqa Site Chat",
+        "chooseChat": "Choose a conversation from the list to start",
+        "subtitle": "Stay connected with users and manage your deals with ease",
         "all": "All",
         "unread": "Unread",
         "directMessage": "Direct message",

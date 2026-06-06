@@ -88,15 +88,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         return userName;
     };
 
-    // const updateMessageStatus = useCallback(
-    //     (messageId: string, status: string) => {
-    //         setMessagesForUser(otherUser?._id ?? '', (prev) =>
-    //             prev.map((m) => (m._id === messageId ? { ...m, status } : m)),
-    //         );
-    //     },
-    //     [otherUser?._id],
-    // );
-
     // עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
     const markAsSeen = useCallback(() => {
         if (!otherUser?._id || !socket) return;
