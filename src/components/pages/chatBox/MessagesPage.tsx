@@ -21,7 +21,7 @@ import ChatList from './ChatList';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import handleRTL from '../../../locales/handleRTL';
 import { useTranslation } from 'react-i18next';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import { ChatMessage } from '../../../interfaces/chat/chatMessage';
 // import ChatBox from './ChatBox';
@@ -252,6 +252,7 @@ const MessagesPage = () => {
                                                         <ArrowBackIosNewIcon />
                                                     </IconButton>
                                                 )}
+                                                <Link to={`${path.CustomerProfile}/${selectedUser}`}>
                                                 <Avatar
                                                     sx={{
                                                         width: 44,
@@ -268,7 +269,7 @@ const MessagesPage = () => {
                                                         selectedUser.name
                                                             ?.last?.[0]
                                                     }
-                                                </Avatar>
+                                                </Avatar></Link>
                                                 <Box>
                                                     <Typography
                                                         variant='subtitle1'

@@ -423,7 +423,7 @@ const CustomerProfile: FunctionComponent = () => {
                                     </TabPanel>
 
                                     <TabPanel value={tabValue} index={3}>
-                                        <RatingsTab stats={stats} />
+                                        <RatingsTab stats={stats} user={user} />
                                     </TabPanel>
 
                                     <TabPanel value={tabValue} index={4}>
