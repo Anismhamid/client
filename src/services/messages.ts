@@ -151,11 +151,12 @@ export const updateMessageStatus = async (
 // دالة لحذف رسالة
 export const deleteMessage = async (messageId: string): Promise<boolean> => {
     try {
-        await axiosInstance.delete(`/messages/${messageId}`);
+        await axiosInstance.delete(`${messageId}`, {
+            headers: { Authorization: localStorage.getItem('token') },
+        });
         return true;
     } catch (error: any) {
         console.error('❌ Error deleting message:', {
-            messageId,
             error: error.response?.data || error.message,
         });
         return false;

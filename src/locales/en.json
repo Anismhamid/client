@@ -60,7 +60,9 @@
         "all": "All",
         "unread": "Unread",
         "directMessage": "Direct message",
-        "contactWith": "Contact with "
+        "contactWith": "Contact with ",
+        "delete": "Delete",
+        "deleteAll": "Delete All"
     },
     "roles": {
         "title": "Role",

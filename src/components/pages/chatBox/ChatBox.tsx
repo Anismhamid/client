@@ -21,6 +21,8 @@ import {
     Fab,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { Menu, MenuItem } from '@mui/material';
 
 import socket from '../../../socket/globalSocket';
 import { useChat } from '../../../hooks/useChat';
@@ -40,6 +42,9 @@ import {
 } from './helpers/functions';
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
+import { deleteMessage } from '../../../services/messages';
+import { showSuccess } from '../../../atoms/toasts/ReactToast';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -65,6 +70,33 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
+        null,
+    );
+    const open = Boolean(anchorEl);
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        setSelectedMessageId(null);
+    };
+
+    const handleDeleteClick = async (messageId: string) => {
+        handleMenuClose();
+        try {
+            const res = await deleteMessage(messageId);
+            if (res) {
+                showSuccess('delete is success');
+                setMessagesForUser(otherUser._id as string, (prev) =>
+                    prev.filter((m) => m._id !== messageId),
+                );
+            }
+        } catch (err) {
+            console.log(err);
+            showSuccess('delete failed');
+        }
+    };
 
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isTypingRef = useRef(false);
@@ -304,7 +336,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 markAsSeen();
             }
         }
-    }, [userMessages, otherUser._id,markAsSeen]);
+    }, [userMessages, otherUser._id, markAsSeen]);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -365,6 +397,44 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 bgcolor: 'background.paper',
             }}
         >
+            <Menu
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                }}
+                transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                }}
+                PaperProps={{
+                    sx: {
+                        maxWidth: 120,
+                        boxShadow: 2,
+                    },
+                }}
+            >
+                <MenuItem
+                    onClick={() => {
+                        if (selectedMessageId) {
+                            handleDeleteClick(selectedMessageId);
+                        }
+                    }}
+                    sx={{
+                        color: 'error.main',
+                        gap: 1,
+                        '&:hover': {
+                            bgcolor: 'error.light',
+                            color: 'error.contrastText',
+                        },
+                    }}
+                >
+                    <DeleteIcon fontSize='small' />
+                    {t('messages.delete')}
+                </MenuItem>
+            </Menu>
             <Box
                 ref={chatContainerRef}
                 onScroll={(e) => {
@@ -412,18 +482,230 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         <CircularProgress size={24} />
                     </Box>
                 ) : (
+                    // userMessages.map((msg) => {
+                    //     const isMe = msg?.from?._id === currentUser._id;
+                    //     const isFile = msg.fileUrl;
+                    //     return (
+                    //         <Box
+                    //             key={msg._id}
+                    //             sx={{
+                    //                 alignSelf: isMe ? 'flex-start' : 'flex-end',
+                    //             }}
+                    //         >
+                    //             <Paper
+                    //                 elevation={isMe ? 0 : 1} // Flat for my messages, elevated for received
+                    //                 sx={{
+                    //                     p: '10px 14px',
+                    //                     minWidth: '80px',
+                    //                     maxWidth: 'maxContent',
+                    //                     display: 'flex',
+                    //                     gap: 1.5,
+                    //                     flexDirection: isMe
+                    //                         ? ''
+                    //                         : 'row-reverse',
+                    //                     borderRadius: isMe
+                    //                         ? '12px 4px 18px 18px'
+                    //                         : '4px 12px 18px 18px',
+                    //                     bgcolor: isMe
+                    //                         ? (theme) =>
+                    //                               `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
+                    //                         : 'background.paper',
+                    //                     border: !isMe ? '1px solid' : 'none',
+                    //                     borderColor: 'divider',
+                    //                     wordBreak: 'break-word',
+                    //                 }}
+                    //             >
+                    //                 {isMe && (
+                    //                     <>
+                    //                         <IconButton
+                    //                             size='small'
+                    //                             onClick={(e) =>
+                    //                                 handleMenuClick(e, msg._id)
+                    //                             }
+                    //                             sx={{
+                    //                                 position: 'absolute',
+                    //                                 top: -8,
+                    //                                 right: -8,
+                    //                                 bgcolor: 'background.paper',
+                    //                                 width: 24,
+                    //                                 height: 24,
+                    //                                 boxShadow: 1,
+                    //                                 opacity: 0,
+                    //                                 transition:
+                    //                                     'opacity 0.2s ease-in-out',
+                    //                                 '&:hover': {
+                    //                                     bgcolor: 'action.hover',
+                    //                                 },
+                    //                                 '.MuiPaper-root:hover &': {
+                    //                                     opacity: 1,
+                    //                                 },
+                    //                                 zIndex: 1,
+                    //                             }}
+                    //                         >
+                    //                             <MoreVertIcon
+                    //                                 fontSize='small'
+                    //                                 sx={{
+                    //                                     color: 'text.secondary',
+                    //                                 }}
+                    //                             />
+                    //                         </IconButton>
+
+                    //                         <Menu
+                    //                             anchorEl={anchorEl}
+                    //                             open={
+                    //                                 open &&
+                    //                                 selectedMessageId ===
+                    //                                     msg._id
+                    //                             }
+                    //                             onClose={handleMenuClose}
+                    //                             anchorOrigin={{
+                    //                                 vertical: 'bottom',
+                    //                                 horizontal: 'right',
+                    //                             }}
+                    //                             transformOrigin={{
+                    //                                 vertical: 'top',
+                    //                                 horizontal: 'right',
+                    //                             }}
+                    //                             PaperProps={{
+                    //                                 sx: {
+                    //                                     minWidth: 120,
+                    //                                     boxShadow: 2,
+                    //                                 },
+                    //                             }}
+                    //                         >
+                    //                             <MenuItem
+                    //                                 onClick={() =>
+                    //                                     handleDeleteClick(
+                    //                                         msg._id,
+                    //                                     )
+                    //                                 }
+                    //                                 sx={{
+                    //                                     color: 'error.main',
+                    //                                     gap: 1,
+                    //                                     '&:hover': {
+                    //                                         bgcolor:
+                    //                                             'error.light',
+                    //                                         color: 'error.contrastText',
+                    //                                     },
+                    //                                 }}
+                    //                             >
+                    //                                 <DeleteIcon fontSize='small' />
+                    //                                 {t('common.delete', 'حذف')}
+                    //                             </MenuItem>
+                    //                         </Menu>
+                    //                     </>
+                    //                 )}
+                    //                 {isFile ? (
+                    //                     <Box
+                    //                         sx={{
+                    //                             display: 'flex',
+                    //                             flexDirection: 'column',
+                    //                             gap: 1,
+                    //                         }}
+                    //                     >
+                    //                         {msg.fileType?.includes('image') ? (
+                    //                             <img
+                    //                                 src={msg.fileUrl}
+                    //                                 alt='sent file'
+                    //                                 style={{
+                    //                                     maxWidth: '100%',
+                    //                                     borderRadius: 4,
+                    //                                     cursor: 'pointer',
+                    //                                 }}
+                    //                                 onClick={() =>
+                    //                                     window.open(msg.fileUrl)
+                    //                                 }
+                    //                             />
+                    //                         ) : (
+                    //                             <Box
+                    //                                 sx={{
+                    //                                     display: 'flex',
+                    //                                     alignItems: 'center',
+                    //                                     gap: 1,
+                    //                                     p: 1,
+                    //                                     bgcolor:
+                    //                                         'rgba(0,0,0,0.05)',
+                    //                                     borderRadius: 1,
+                    //                                 }}
+                    //                             >
+                    //                                 <InsertDriveFileIcon />
+                    //                                 <Typography
+                    //                                     variant='caption'
+                    //                                     sx={{
+                    //                                         textDecoration:
+                    //                                             'underline',
+                    //                                         cursor: 'pointer',
+                    //                                     }}
+                    //                                     onClick={() =>
+                    //                                         window.open(
+                    //                                             msg.fileUrl,
+                    //                                         )
+                    //                                     }
+                    //                                 >
+                    //                                     צפה בקובץ
+                    //                                 </Typography>
+                    //                             </Box>
+                    //                         )}
+                    //                     </Box>
+                    //                 ) : (
+                    //                     <Typography
+                    //                         variant='body2'
+                    //                         sx={{
+                    //                             wordBreak: 'break-word',
+                    //                             lineHeight: 1.5,
+                    //                             whiteSpace: 'pre-wrap',
+                    //                         }}
+                    //                     >
+                    //                         <Linkify
+                    //                             text={msg?.message ?? ''}
+                    //                         />
+                    //                     </Typography>
+                    //                 )}
+
+                    //                 <Box
+                    //                     sx={{
+                    //                         display: 'flex',
+                    //                         alignItems: 'center',
+                    //                         justifyContent: 'flex-end',
+                    //                         gap: 0.5,
+                    //                         mt: 0.3,
+                    //                     }}
+                    //                 >
+                    //                     {isMe && getStatusIcon(msg.status)}
+                    //                 </Box>
+                    //             </Paper>
+                    //             <Typography
+                    //                 variant='caption'
+                    //                 sx={{
+                    //                     color: 'text.secondary',
+                    //                     flex: 'flex-start',
+                    //                 }}
+                    //             >
+                    //                 {String(
+                    //                     formatMessageTime(
+                    //                         msg?.createdAt
+                    //                             ? new Date(msg.createdAt)
+                    //                             : new Date(),
+                    //                     ),
+                    //                 )}
+                    //             </Typography>
+                    //         </Box>
+                    //     );
+                    // })
                     userMessages.map((msg) => {
                         const isMe = msg?.from?._id === currentUser._id;
                         const isFile = msg.fileUrl;
+
                         return (
                             <Box
                                 key={msg._id}
                                 sx={{
                                     alignSelf: isMe ? 'flex-start' : 'flex-end',
+                                    position: 'relative',
                                 }}
                             >
                                 <Paper
-                                    elevation={isMe ? 0 : 1} // Flat for my messages, elevated for received
+                                    elevation={isMe ? 0 : 1}
                                     sx={{
                                         p: '10px 14px',
                                         minWidth: '80px',
@@ -443,8 +725,46 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                         border: !isMe ? '1px solid' : 'none',
                                         borderColor: 'divider',
                                         wordBreak: 'break-word',
+                                        position: 'relative',
                                     }}
                                 >
+                                    {isMe && (
+                                        <IconButton
+                                            size='small'
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setAnchorEl(e.currentTarget);
+                                                setSelectedMessageId(msg._id);
+                                            }}
+                                            sx={{
+                                                position: 'absolute',
+                                                top: -8,
+                                                right: -8,
+                                                bgcolor: 'background.paper',
+                                                width: 24,
+                                                height: 24,
+                                                boxShadow: 1,
+                                                opacity: 0,
+                                                transition:
+                                                    'opacity 0.2s ease-in-out',
+                                                '&:hover': {
+                                                    bgcolor: 'action.hover',
+                                                },
+                                                '.MuiPaper-root:hover &': {
+                                                    opacity: 1,
+                                                },
+                                                zIndex: 1,
+                                            }}
+                                        >
+                                            <MoreVertIcon
+                                                fontSize='small'
+                                                sx={{
+                                                    color: 'text.secondary',
+                                                }}
+                                            />
+                                        </IconButton>
+                                    )}
+
                                     {isFile ? (
                                         <Box
                                             sx={{
