@@ -93,6 +93,11 @@ export const verifyGoogleToken = async (token: string) => {
     }
 };
 
+/**
+ * 
+ * @param googleId 
+ * @returns 
+ */
 export const verifyGoogleUser = async (googleId: string) => {
     try {
         const res = await axios.get(`${api}/google/verify/${googleId}`);
