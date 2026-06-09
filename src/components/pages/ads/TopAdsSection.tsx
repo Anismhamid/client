@@ -63,7 +63,9 @@ const RankBadge = ({ rank }: RankBadgeProps) => {
                 height: 32,
                 borderRadius: '50%',
                 bgcolor: alpha(
-                    isTop3 ? theme.palette.warning.main : theme.palette.grey[600],
+                    isTop3
+                        ? theme.palette.warning.main
+                        : theme.palette.grey[600],
                     0.9,
                 ),
                 display: 'flex',
@@ -98,7 +100,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
     if (loading) {
         return (
             <Box sx={{ mb: 6 }}>
-                <Typography variant="h5" fontWeight={800} sx={{ mb: 3 }}>
+                <Typography variant='h5' fontWeight={800} sx={{ mb: 3 }}>
                     أفضل الإعلانات ⭐
                 </Typography>
                 <AdGridSkeleton count={4} height={250} />
@@ -109,10 +111,13 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
     if (error) {
         return (
             <Box sx={{ mb: 6, textAlign: 'center', py: 4 }}>
-                <Typography color="error" gutterBottom>
+                <Typography color='error' gutterBottom>
                     {error}
                 </Typography>
-                <Button variant="outlined" onClick={() => window.location.reload()}>
+                <Button
+                    variant='outlined'
+                    onClick={() => window.location.reload()}
+                >
                     إعادة المحاولة
                 </Button>
             </Box>
@@ -122,7 +127,11 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
     if (topAds.length === 0) return null;
 
     return (
-        <Container maxWidth="lg" sx={{ mb: 6, px: { xs: 2, sm: 3, md: 4 } }}>
+        <Container
+            component={'article'}
+            maxWidth='lg'
+            sx={{ mb: 6, px: { xs: 2, sm: 3, md: 4 } }}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -140,7 +149,8 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                             ? `0 0 0 3px ${featuredMeta.color}18, 0 4px 24px ${featuredMeta.color}15`
                             : 'none',
                         overflow: 'hidden',
-                        transition: 'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
+                        transition:
+                            'border-color 0.2s, box-shadow 0.2s, transform 0.2s',
                         position: 'relative',
                         mb: 3,
                         '&:hover': {
@@ -164,12 +174,19 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                 justifyContent: 'space-between',
                             }}
                         >
-                            <Stack direction="row" alignItems="center" gap={0.75}>
+                            <Stack
+                                direction='row'
+                                alignItems='center'
+                                gap={0.75}
+                            >
                                 <LocalFireDepartment
-                                    sx={{ fontSize: 14, color: featuredMeta.color }}
+                                    sx={{
+                                        fontSize: 14,
+                                        color: featuredMeta.color,
+                                    }}
                                 />
                                 <Typography
-                                    variant="caption"
+                                    variant='caption'
                                     sx={{
                                         color: featuredMeta.color,
                                         fontWeight: 700,
@@ -182,8 +199,8 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                             </Stack>
 
                             <Chip
-                                label="موثّق"
-                                size="small"
+                                label='موثّق'
+                                size='small'
                                 sx={{
                                     height: 20,
                                     fontSize: '0.65rem',
@@ -200,19 +217,26 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                     {/* Header Content */}
                     <Box sx={{ p: 2.5 }}>
                         <Stack
-                            direction="row"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            flexWrap="wrap"
+                            direction='row'
+                            alignItems='center'
+                            justifyContent='space-between'
+                            flexWrap='wrap'
                             gap={2}
                         >
-                            <Stack direction="row" alignItems="center" gap={1.5}>
+                            <Stack
+                                direction='row'
+                                alignItems='center'
+                                gap={1.5}
+                            >
                                 <Box
                                     sx={{
                                         width: 48,
                                         height: 48,
                                         borderRadius: 2,
-                                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                                        bgcolor: alpha(
+                                            theme.palette.primary.main,
+                                            0.1,
+                                        ),
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -242,27 +266,35 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
 
                                 <Box>
                                     <Typography
-                                        variant="h5"
+                                        variant='h5'
                                         fontWeight={800}
                                         sx={{ mb: 0.5 }}
                                     >
                                         أفضل الإعلانات ⭐
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography
+                                        variant='body2'
+                                        color='text.secondary'
+                                    >
                                         الإعلانات الأكثر مشاهدة وتفاعلاً
                                     </Typography>
                                 </Box>
                             </Stack>
 
                             <Button
-                                variant="text"
+                                variant='text'
                                 endIcon={<EastIcon />}
-                                onClick={() => navigate('/featured-ads?type=top')}
+                                onClick={() =>
+                                    navigate('/featured-ads?type=top')
+                                }
                                 sx={{
                                     fontWeight: 600,
                                     color: theme.palette.primary.main,
                                     '&:hover': {
-                                        bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                        bgcolor: alpha(
+                                            theme.palette.primary.main,
+                                            0.08,
+                                        ),
                                     },
                                 }}
                             >
@@ -297,7 +329,10 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.4, delay: idx * 0.05 }}
+                                transition={{
+                                    duration: 0.4,
+                                    delay: idx * 0.05,
+                                }}
                             >
                                 <Paper
                                     elevation={0}

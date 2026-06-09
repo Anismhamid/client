@@ -161,9 +161,6 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     borderRadius: '16px',
                     border: featured ? '2px solid' : '1.5px solid',
                     borderColor: featured ? '#FFD700' : 'divider',
-                    boxShadow: featured
-                        ? '0 0 0 3px rgba(255,215,0,0.15), 0 8px 24px rgba(255,215,0,0.2)'
-                        : 'none',
                     display: 'flex',
                     flexDirection: 'column',
                     overflow: 'hidden',
@@ -176,17 +173,17 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     '&:hover': {
                         borderColor: featured ? '#FFC107' : 'text.disabled',
                         transform: featured
-                            ? 'translateY(-4px)'
-                            : 'translateY(-1px)',
+                            ? 'translateY(-12px)'
+                            : 'translateY(-3px)',
                         boxShadow: featured
-                            ? '0 12px 32px rgba(255,215,0,0.3)'
+                            ? '0 12px 32px rgba(255, 217, 0, 0.151)'
                             : undefined,
                     },
                 }}
                 itemScope
                 itemType='https://schema.org/Product'
                 role='article'
-                aria-label={`منتج: ${post.product_name}`}
+                aria-label={`اعلان: ${post.product_name}`}
             >
                 <JsonLd data={jsonLdData} />
 
@@ -194,7 +191,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     <Box
                         sx={{
                             background:
-                                'linear-gradient(90deg,#FFD700,#FFC107)',
+                                'linear-gradient(90deg,#ffd9007a,#FFC107)',
                             color: '#000',
                             py: 0.5,
                             textAlign: 'center',
@@ -203,7 +200,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             letterSpacing: 0.3,
                         }}
                     >
-                        ⭐ إعلان مميز
+                        ⭐ {t("ads.financed")}
                     </Box>
                 )}
 
@@ -233,9 +230,9 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             <Box
                                 sx={{
                                     position: 'absolute',
-                                    top: 10,
+                                    top: 400,
                                     left: post.sale ? 75 : 10,
-                                    bgcolor: '#FFD700',
+                                    // bgcolor: '#FFD700',
                                     color: '#000',
                                     fontSize: '0.75rem',
                                     fontWeight: 700,
@@ -246,7 +243,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                     boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                                 }}
                             >
-                                ⭐ مميز
+                                ⭐
                             </Box>
                         )}
                         <Box sx={{ position: 'relative' }}>
@@ -729,7 +726,10 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 //     showError('لا يمكن فتح المحادثة');
                                 //     return;
                                 // }
-                                console.log('Selected user for chat:', sellerUser);
+                                console.log(
+                                    'Selected user for chat:',
+                                    sellerUser,
+                                );
 
                                 setSelectedUser({
                                     _id: sellerUser.user as unknown as string,
@@ -742,7 +742,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             }}
                             disableElevation
                         >
-                            تواصل
+                            {t('common.contact')}
                         </Button>
 
                         <Link

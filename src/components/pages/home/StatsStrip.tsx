@@ -1,20 +1,20 @@
 // components/home/StatsStrip.tsx
 import { Box, Container, Typography } from '@mui/material';
 import handleRTL from '../../../locales/handleRTL';
+import { useTranslation } from 'react-i18next';
 
 interface StatsStripProps {
     postsCount: number;
 }
 
-const STATS = (count: number) => [
-    { num: `${count}+`, label: 'منتج نشط' },
-    { num: '٢٤/٧', label: 'دعم متواصل' },
-    { num: '١٠٠٪', label: 'آمن وموثوق' },
-];
-
 const StatsStrip = ({ postsCount }: StatsStripProps) => {
     const direction = handleRTL();
-
+    const { t } = useTranslation();
+    const STATS = (count: number) => [
+        { num: `${count}+`, label: t('ActivePost') },
+        { num: '24/7', label: t('ContinuousSupport') },
+        { num: '100%', label: t('SafeAndReliable') },
+    ];
     return (
         <Box
             dir={direction}
@@ -25,7 +25,7 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
                 px: { xs: 2, md: 4 },
             }}
         >
-            <Container maxWidth="lg">
+            <Container maxWidth='lg'>
                 <Box
                     sx={{
                         display: 'flex',
@@ -46,7 +46,10 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
                             >
                                 {stat.num}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                            <Typography
+                                variant='caption'
+                                sx={{ color: 'text.secondary' }}
+                            >
                                 {stat.label}
                             </Typography>
                         </Box>

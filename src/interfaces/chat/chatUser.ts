@@ -8,6 +8,7 @@ export interface BaseUser {
     role?: string;
     image?: { url: string; alt: string };
     status?: boolean;
+    slug?: string;
 }
 
 export interface BaseMessage {

@@ -42,6 +42,7 @@ export const mapUserMessageToChatBox = (msg: UserMessage): ChatMessage => {
 
     return {
         _id: msg._id,
+        slug: msg.slug,
         from: {
             _id: msg.from?._id ?? 'unknown',
             name: {
@@ -142,7 +143,6 @@ const MessagesPage = () => {
                     px: { xs: 0, md: 2 },
                 }}
             >
-                
                 <Paper
                     elevation={isMobile ? 0 : 2}
                     sx={{
@@ -252,24 +252,34 @@ const MessagesPage = () => {
                                                         <ArrowBackIosNewIcon />
                                                     </IconButton>
                                                 )}
-                                                <Link to={`${path.CustomerProfile}/${selectedUser}`}>
-                                                <Avatar
-                                                    sx={{
-                                                        width: 44,
-                                                        height: 44,
-                                                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
-                                                        boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
-                                                    }}
+                                                <Link
+                                                    to={
+                                                        selectedUser.slug
+                                                            ? path.CustomerProfile.replace(
+                                                                  ':slug',
+                                                                  selectedUser.slug,
+                                                              )
+                                                            : '#'
+                                                    }
                                                 >
-                                                    {
-                                                        selectedUser.name
-                                                            ?.first?.[0]
-                                                    }
-                                                    {
-                                                        selectedUser.name
-                                                            ?.last?.[0]
-                                                    }
-                                                </Avatar></Link>
+                                                    <Avatar
+                                                        sx={{
+                                                            width: 44,
+                                                            height: 44,
+                                                            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                                                            boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
+                                                        }}
+                                                    >
+                                                        {
+                                                            selectedUser.name
+                                                                ?.first?.[0]
+                                                        }
+                                                        {
+                                                            selectedUser.name
+                                                                ?.last?.[0]
+                                                        }
+                                                    </Avatar>
+                                                </Link>
                                                 <Box>
                                                     <Typography
                                                         variant='subtitle1'

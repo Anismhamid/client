@@ -6,15 +6,13 @@ export interface User {
     address?: { city: string; street: string; houseNumber: number };
     email: string;
     role: string;
-    slug?: string;
     gender?: string;
     createdAt?: string;
 }
 
 export interface UserMessage {
+    slug?: string;
     updatedAt: Date | string;
-    first: string;
-    last: string;
     image?: { url: string; alt: string };
     _id?: string;
     status?: boolean;

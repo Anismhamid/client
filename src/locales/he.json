@@ -1,5 +1,10 @@
 {
     "you": "אתה",
+    "ActivePost":"פוסט פעיל",
+    "ContinuousSupport":"תמיכה מתמשכת",
+    "SafeAndReliable": "בטוח ואמין",
+    "TrustedOnlineMarketplace": "שוק מקוון אמין",
+    "showAll": "הצג הכל",
     "online": "פעיל",
     "saveChanges": "שמור שינויים",
     "hideImage": "הסתר תמונת פרופיל",
@@ -62,8 +67,8 @@
         "all": "הכל",
         "unread": "הודעות שלא נקראו",
         "directMessage": "הודעה ישירה",
-        "delete":"מחיקה",
-        "deleteAll":"מחיקת כל ההודעות",
+        "delete": "מחיקה",
+        "deleteAll": "מחיקת כל ההודעות",
         "contactWith": "צור קשר עם "
     },
     "roles": {
@@ -764,6 +769,7 @@
     },
     "ads": {
         "createAd": "קידום מודעה",
+        "financed": "ממומן",
         "createAdDescription": "הגדל את החשיפה של המודעה שלך באמצעות קידום. בחר את התקציב שלך ומשך הקמפיין כדי להתחיל למשוך קונים פוטנציאליים נוספים.",
         "dashboard": "לוח בקרת מודעות",
         "description": "כאן תוכל לנהל את המודעות שלך, לערוך או למחוק אותן לפי הצורך",
@@ -774,6 +780,7 @@
             "homepage": {
                 "name": "חבילת עמוד ראשי",
                 "description": "מיקום מובחר בראש העמוד הראשי, מול אלפי מבקרים ביום",
+                "FeaturedAdOnTheHomepage": "מודעה ממומנת בדף הבית",
                 "price": "{{price}} / לשבוע",
                 "features": [
                     "הופעה בראש העמוד הראשי",

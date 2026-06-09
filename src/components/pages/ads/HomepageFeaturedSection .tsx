@@ -42,6 +42,7 @@ import {
     Paper,
     Tabs,
     Tab,
+    Container,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
@@ -51,6 +52,7 @@ import { productsPathes } from '../../../routes/routes';
 import { categoryLabels } from '../../../interfaces/postsCategoeis';
 import { useNavigate } from 'react-router-dom';
 import { useHomePageAds } from '../../../hooks/ads/useFeaturedAds';
+import { useTranslation } from 'react-i18next';
 
 // تعريف الفئات مع أيقوناتها وألوانها
 const CATEGORY_META: Record<
@@ -133,20 +135,19 @@ function getCategoryIcon(category?: string, size = 24) {
     const cat = category ?? '';
     const meta = CATEGORY_META[cat];
     const iconSx = { fontSize: size, color: '#0F6E56' };
-
     if (meta?.icon) {
         const IconComponent = meta.icon;
         return <IconComponent sx={iconSx} />;
     }
 
     // Fallback للفئات غير الموجودة
-    if (cat.includes('عقار') || cat.includes('شقة'))
+    if (cat.includes('Home') || cat.includes('apartment'))
         return <HomeIcon sx={iconSx} />;
-    if (cat.includes('سيارة')) return <DirectionsCarIcon sx={iconSx} />;
-    if (cat.includes('إلكترون')) return <DevicesIcon sx={iconSx} />;
-    if (cat.includes('ألعاب')) return <SportsEsportsIcon sx={iconSx} />;
-    if (cat.includes('أثاث')) return <ChairIcon sx={iconSx} />;
-    if (cat.includes('ملابس')) return <CheckroomIcon sx={iconSx} />;
+    if (cat.includes('Cars')) return <DirectionsCarIcon sx={iconSx} />;
+    if (cat.includes('Electronics')) return <DevicesIcon sx={iconSx} />;
+    if (cat.includes('Kids')) return <SportsEsportsIcon sx={iconSx} />;
+    if (cat.includes('Home')) return <ChairIcon sx={iconSx} />;
+    if (cat.includes('womenClothes')) return <CheckroomIcon sx={iconSx} />;
 
     return <CategoryIcon sx={iconSx} />;
 }
@@ -212,7 +213,13 @@ function FeaturedBadge({ endDate }: { endDate: Date | string }) {
 }
 
 /* ── Single ad card ─────────────────────────────────── */
-export function HomepageAdCard({ ad, index }: { ad: FeaturedAd; index: number }) {
+export function HomepageAdCard({
+    ad,
+    index,
+}: {
+    ad: FeaturedAd;
+    index: number;
+}) {
     const theme = useTheme();
     const listing = ad.listingId;
     const navigate = useNavigate();
@@ -440,7 +447,7 @@ function CategorySection({
     if (ads.length === 0) return null;
 
     return (
-        <Box sx={{ mb: 5 }}>
+        <Container component={'article'} sx={{ mb: 5 }}>
             <Stack
                 direction='row'
                 alignItems='center'
@@ -458,7 +465,7 @@ function CategorySection({
                     {categoryInfo.label}
                 </Typography>
                 <Chip
-                    label={`${ads.length} إعلان`}
+                    label={`${ads.length} - Ad`}
                     size='small'
                     sx={{
                         bgcolor: alpha(categoryInfo.color, 0.1),
@@ -473,7 +480,7 @@ function CategorySection({
                     <HomepageAdCard ad={ad} index={idx} />
                 ))}
             </Grid>
-        </Box>
+        </Container>
     );
 }
 
@@ -488,6 +495,7 @@ export default function HomepageFeaturedSection({
     const theme = useTheme();
     const { homePageAds, loading } = useHomePageAds();
     const [selectedTab, setSelectedTab] = useState<string>('all');
+    const { t } = useTranslation();
 
     // Group ads by category
     const adsByCategory = useMemo(() => {
@@ -566,12 +574,14 @@ export default function HomepageFeaturedSection({
                             fontWeight={800}
                             sx={{ mb: 0.5 }}
                         >
-                            إعلانات مميزة
+                            {t('ads.financed')}
                         </Typography>
                         {!loading && homePageAds.length > 0 && (
                             <Typography variant='body2' color='text.secondary'>
-                                {homePageAds.length} إعلان مميز على الصفحة
-                                الرئيسية
+                                {homePageAds.length}{' '}
+                                {t(
+                                    'ads.promotionPackages.homepage.FeaturedAdOnTheHomepage',
+                                )}
                             </Typography>
                         )}
                     </Box>
@@ -593,7 +603,7 @@ export default function HomepageFeaturedSection({
                             },
                         }}
                     >
-                        عرض الكل
+                        {t('showAll')}
                     </Button>
                 )}
             </Stack>

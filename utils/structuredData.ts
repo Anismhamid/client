@@ -40,7 +40,7 @@ export const generateSingleProductJsonLd = (post: Posts) => {
         sku: post._id,
         name: post.product_name,
         description: post.description || 'منتج معروض للبيع على موقع صفقة',
-        image:[ post.image?.url || 'https://client-qqq1.vercel.app/d3.png'],
+        image: [post.image?.url || 'https://client-qqq1.vercel.app/d3.png'],
         category: post.category,
         brand: {
             '@type': 'Brand',
@@ -179,5 +179,5 @@ export const generateProductsItemListJsonLd = (posts: Posts[]) => ({
 
 export const generateDiscountsJsonLd = (posts: Posts[]) => ({
     '@context': 'https://schema.org',
-    '@graph': posts.map((post) => generateSingleProductJsonLd(post)), // ✅ إعادة استخدام الدالة الأساسية لضمان التطابق 100%
+    '@graph': posts.map((post) => generateSingleProductJsonLd(post)),
 });

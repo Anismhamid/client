@@ -62,15 +62,21 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                     headers: { Authorization: token },
                 });
 
-                const conversationsWithStatus = (res.data.conversations || [])
+                const conversationsWithStatus = res.data.conversations.map(
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    .map((conv: any) => ({
+                    (conv: any) => ({
                         ...conv,
                         user: {
                             ...conv.user,
-                            status: conv.user.status ?? false, // أضف هذا
+                            slug: conv.user.slug || conv.user._id, // 🔥 مهم
+                            name: {
+                                first: conv.user.name?.first || '',
+                                last: conv.user.name?.last || '',
+                            },
+                            status: conv.user.status ?? false,
                         },
-                    }));
+                    }),
+                );
 
                 setConversations(conversationsWithStatus);
             } catch (err) {

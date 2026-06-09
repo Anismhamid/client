@@ -104,7 +104,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                 letterSpacing: 0.4,
                             }}
                         >
-                            سـوق إلـكـتـرونـي مـوثـوق
+                            {t('TrustedOnlineMarketplace')}
                         </Typography>
                     </Box>
                 </motion.div>

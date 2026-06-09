@@ -1,5 +1,10 @@
 {
     "you": "You",
+    "ActivePost":"Active Posts",
+    "ContinuousSupport":"Continuous support",
+    "SafeAndReliable": "Safe and reliable",
+    "TrustedOnlineMarketplace": "Trusted online marketplace",
+    "showAll": "Show All",
     "online": "Online",
     "saveChanges": "Save Changes",
     "hideImage": "Hide Profile Picture",
@@ -809,6 +814,7 @@
 
     "ads": {
         "createAd": "Promote Ad",
+        "financed": "financed",
         "createAdDescription": "Increase your ad's visibility by promoting it. Choose your budget and campaign duration to start attracting more potential buyers.",
         "dashboard": "Ads Dashboard",
         "description": "Here you can manage your ads, edit or delete them as needed",
@@ -819,6 +825,7 @@
             "homepage": {
                 "name": "Homepage Package",
                 "description": "Premium placement at the top of the homepage, seen by thousands of visitors daily",
+                "FeaturedAdOnTheHomepage": "Featured ad on the homepage",
                 "price": "{{price}} / per week",
                 "features": [
                     "Top homepage placement",
