@@ -204,6 +204,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setAuth(decodedToken);
                     setIsLoggedIn(true);
                     navigate(path.Home);
+                    console.log(decodedGoogle);
+                    
                 }
             } else {
                 setGoogleResponse(response);

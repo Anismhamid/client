@@ -133,20 +133,21 @@ const useSocketEvents = () => {
             const otherUserId =
                 msg.from?._id === auth._id ? msg.to?._id : msg.from?._id;
 
-            addMessageForUser(otherUserId as string, msg);
+            // addMessageForUser(otherUserId as string, msg);
 
-            if (currentChatId !== otherUserId) {
+            // if (currentChatId !== otherUserId) {
                 setUnreadForUser(
                     otherUserId as string,
                     (prev) => (prev || 0) + 1,
                 );
                 playNotificationSound('messageReceived');
+
                 if (Notification.permission === 'granted') {
-                    new Notification(`رسالة من ${msg.from?.name}`, {
+                    new Notification(`رسالة من ${msg.from?.name?.first}`, {
                         body: msg.text,
                     });
                 }
-            }
+            // }
         };
 
         const messageSent = (msg: any) => {
