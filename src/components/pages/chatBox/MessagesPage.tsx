@@ -128,8 +128,8 @@ const MessagesPage = () => {
         <Box
             dir={dir}
             sx={{
-                height: '100vh',
-                width: '100vw',
+                height: '90vh',
+                width: '100%',
                 overflow: 'hidden',
                 bgcolor: 'background.default',
             }}
