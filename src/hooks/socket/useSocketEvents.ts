@@ -135,6 +135,8 @@ const useSocketEvents = () => {
 
             addMessageForUser(otherUserId as string, msg);
 
+            showInfo(`لديك رسالة جديده ${msg.from?.name?.first ??"user"}`);
+
             if (otherUserId) {
                 setUnreadForUser(
                     otherUserId as string,

@@ -9,7 +9,9 @@ import { Buffer } from 'buffer';
 import ErrorBoundary from './components/pages/ErrorBoundary.tsx';
 import { ChatProvider } from './hooks/useChat.tsx';
 window.Buffer = Buffer;
+import "react-toastify/dist/ReactToastify.css";
 
+// eslint-disable-next-line react-refresh/only-export-components
 const AppWithProviders = () => {
     const { auth } = useUser();
     return (

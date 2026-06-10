@@ -20,6 +20,7 @@ const useNotificationSound = () => {
 			default:
 				audio = defaultSound.current;
 		}
+		audio.volume = 3
 		audio.pause();
 		audio.currentTime = 0;
 		audio.play().catch(console.error);
