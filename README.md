@@ -12,6 +12,7 @@ A C2C (Consumer-to-Consumer) marketplace that lets users list, sell, and buy pro
 
 ---
 
+
 ## Table of Contents
 
 1. [Features](#features)
@@ -61,6 +62,25 @@ A C2C (Consumer-to-Consumer) marketplace that lets users list, sell, and buy pro
 | Validation | Joi |
 
 ---
+
+flowchart LR
+    A[React 19 + Vite Frontend] --> B[REST API Calls]
+    A --> C[Socket.IO Client]
+
+    B --> D[Node.js + Express Backend]
+    C --> E[Socket.IO Server]
+
+    D --> F[MongoDB Atlas]
+    D --> G[JWT Auth]
+    D --> H[Google OAuth]
+
+    D --> I[Product Service]
+    D --> J[User Service]
+    D --> K[Message Service]
+    D --> L[Featured Ads Service]
+
+    E --> K
+    
 
 ## Getting Started
 
