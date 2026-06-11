@@ -1,122 +1,137 @@
-import { FunctionComponent } from "react";
-import ProductCategory from "./PostsCategory";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import JsonLd from "../../../../utils/JsonLd";
-import { generateCategoryJsonLd } from "../../../../utils/structuredData";
-import { Box, Typography } from "@mui/material";
-import { motion } from "framer-motion";
-import ChepNavigation from "../../navbar/ChepNavigation";
+import { FunctionComponent } from 'react';
+import ProductCategory from './PostsCategory';
+import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import JsonLd from '../../../../utils/JsonLd';
+import { generateCategoryJsonLd } from '../../../../utils/structuredData';
+import { Box, Typography } from '@mui/material';
+import { motion } from 'framer-motion';
+import ChepNavigation from '../../navbar/ChepNavigation';
+import { usePosts } from '../../../hooks/usePosts';
 
 /**
  * Mains products
  * @returns products
  */
 const Posts: FunctionComponent = () => {
-	const { t } = useTranslation();
-	const { category } = useParams<{ category: string }>();
+    const { t } = useTranslation();
+    const { category } = useParams<{ category: string }>();
+    const { posts } = usePosts();
+    if (!category) {
+        return <div className='text-center mt-4'>Category not found</div>;
+    }
 
-	if (!category) {
-		return <div className='text-center mt-4'>Category not found</div>;
-	}
+    const categoryData = generateCategoryJsonLd(category, posts);
 
-	const categoryData = generateCategoryJsonLd(category, []);
+    const pageTitle = t(`categories.${category}.heading`);
 
-	const pageTitle = t(`categories.${category}.heading`);
+    return (
+        <>
+            <JsonLd data={categoryData} />
+            <title>{pageTitle}</title>
+            <meta
+                name='description'
+                content={t(`categories.${category}.description`)}
+            />
+            <Box
+                className='container-fluid'
+                sx={{
+                    py: { xs: 4, md: 6 },
+                    position: 'relative',
+                    overflow: 'hidden',
+                }}
+            >
+                {/* Animated Background Elements */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: -100,
+                        right: -100,
+                        width: 300,
+                        height: 300,
+                        borderRadius: '50%',
+                        background:
+                            'linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)',
+                        animation: 'float 8s ease-in-out infinite',
+                        border: 1,
+                        borderColor: 'rgba(0,0,0,0.05)',
+                        opacity: 0.8,
+                    }}
+                />
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        bottom: -80,
+                        left: -80,
+                        width: 250,
+                        height: 250,
+                        borderRadius: '50%',
+                        background:
+                            'linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)',
+                        animation: 'float 10s ease-in-out infinite 1s',
+                        opacity: 0.8,
+                    }}
+                />
 
-	return (
-		<>
-			<JsonLd data={categoryData} />
-			<title>{pageTitle}</title>
-			<meta
-				name='description'
-				content={t(`categories.${category}.description`)}
-			/>
-			<Box
-				className='container-fluid'
-				sx={{
-					py: { xs: 4, md: 6 },
-					position: "relative",
-					overflow: "hidden",
-				}}
-			>
-				{/* Animated Background Elements */}
-				<Box
-					sx={{
-						position: "absolute",
-						top: -100,
-						right: -100,
-						width: 300,
-						height: 300,
-						borderRadius: "50%",
-						background: "linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
-						animation: "float 8s ease-in-out infinite",
-						border: 1,
-						borderColor: "rgba(0,0,0,0.05)",
-						opacity: 0.8,
-					}}
-				/>
-				<Box
-					sx={{
-						position: "absolute",
-						bottom: -80,
-						left: -80,
-						width: 250,
-						height: 250,
-						borderRadius: "50%",
-						background: "linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)",
-						animation: "float 10s ease-in-out infinite 1s",
-						opacity: 0.8,
-					}}
-				/>
-
-				<Box
-					sx={{
-						position: "relative",
-						zIndex: 1,
-						textAlign: "center",
-						p: 2,
-						width: "100%",
-						maxWidth: "100%",
-						margin: "0 auto",
-					}}
-				>
-					<motion.div
-						initial={{ opacity: 0, y: 30 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.8 }}
-					>
-						<Typography
-							variant='h1'
-							sx={{
-								mb: 4,
-								color: "text.secondary",
-								maxWidth: "600px",
-								margin: "0 auto",
-								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
-							}}
-						>
-							{t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.heading`)}
-						</Typography>
-						<Typography
-							variant='body1'
-							sx={{
-								color: "text.secondary",
-								maxWidth: "800px",
-								margin: "0 auto",
-								mt: 4,
-								fontSize: { xs: "1rem", sm: "1.25rem", md: "1.5rem" },
-							}}
-						>
-							{t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`)}
-						</Typography>
-					</motion.div>
-				</Box>
-			</Box>
-			<ChepNavigation />
-			<ProductCategory category={category} />
-		</>
-	);
+                <Box
+                    sx={{
+                        position: 'relative',
+                        zIndex: 1,
+                        textAlign: 'center',
+                        p: 2,
+                        width: '100%',
+                        maxWidth: '100%',
+                        margin: '0 auto',
+                    }}
+                >
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        <Typography
+                            variant='h1'
+                            sx={{
+                                mb: 4,
+                                color: 'text.secondary',
+                                maxWidth: '600px',
+                                margin: '0 auto',
+                                fontSize: {
+                                    xs: '1rem',
+                                    sm: '1.25rem',
+                                    md: '1.5rem',
+                                },
+                            }}
+                        >
+                            {t(
+                                `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.heading`,
+                            )}
+                        </Typography>
+                        <Typography
+                            variant='body1'
+                            sx={{
+                                color: 'text.secondary',
+                                maxWidth: '800px',
+                                margin: '0 auto',
+                                mt: 4,
+                                fontSize: {
+                                    xs: '1rem',
+                                    sm: '1.25rem',
+                                    md: '1.5rem',
+                                },
+                            }}
+                        >
+                            {t(
+                                `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`,
+                            )}
+                        </Typography>
+                    </motion.div>
+                </Box>
+            </Box>
+            <ChepNavigation />
+            <ProductCategory category={category} />
+        </>
+    );
 };
 
 export default Posts;

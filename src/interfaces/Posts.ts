@@ -25,7 +25,7 @@ type SellerUser = {
     user: string;
     image?: {
         url: string;
-        Last: string;
+        alt: string;
     };
 };
 
@@ -86,7 +86,7 @@ export const initialProductValue: Partial<Posts> = {
             user: '',
             image: {
                 url: '',
-                Last: '',
+                alt: '',
             },
         },
     },
