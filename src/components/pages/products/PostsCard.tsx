@@ -50,7 +50,7 @@ import { path, productsPathes } from '../../../routes/routes';
 import { formatTimeAgo } from './helpers/helperFunctions';
 // import ChatBoxWrapper from '../chatBox/ChatBoxWrapper';
 import { useUser } from '../../../context/useUSer';
-import ChatBox from '../chatBox/ChatBox';
+import ChatModal from '../chatBox/ChatModal';
 
 interface PostCardProps {
     post: Posts;
@@ -200,7 +200,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                             letterSpacing: 0.3,
                         }}
                     >
-                        ⭐ {t("ads.financed")}
+                        ⭐ {t('ads.financed')}
                     </Box>
                 )}
 
@@ -710,70 +710,81 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                         )}
                     </Stack>
 
+                    <Button
+                        onClick={() => {
+                            console.log('post', post);
+                            console.log('seller', post.seller);
+                        }}
+                    >
+                        debug
+                    </Button>
+
                     {/* Contact + Waze */}
-                    <Stack direction='row' gap={1}>
-                        <Button
-                            variant='contained'
-                            size='small'
-                            startIcon={
-                                <Comment sx={{ fontSize: '14px !important' }} />
-                            }
-                            onClick={() => {
-                                const sellerUser = post.seller;
-                                // const fromId = auth?._id;
+                    {auth?._id &&
+                        post?.seller?.user?._id &&
+                        post.seller.user._id !== auth._id && (
+                            <Stack direction='row' gap={1}>
+                                <Button
+                                    variant='contained'
+                                    size='small'
+                                    startIcon={
+                                        <Comment
+                                            sx={{ fontSize: '14px !important' }}
+                                        />
+                                    }
+                                    onClick={() => {
+                                        const sellerUser = post.seller;
+                                        const fromId = auth?._id;
 
-                                // if (!sellerUser?._id || !fromId) {
-                                //     showError('لا يمكن فتح المحادثة');
-                                //     return;
-                                // }
-                                console.log(
-                                    'Selected user for chat:',
-                                    sellerUser,
-                                );
+                                        if (!sellerUser?.user?._id || !fromId) {
+                                            showError('لا يمكن فتح المحادثة');
+                                            return;
+                                        }
 
-                                setSelectedUser({
-                                    _id: sellerUser.user as unknown as string,
-                                    name: {
-                                        first: sellerUser.name,
-                                        last: '',
-                                    },
-                                });
-                                setOpenChat(true);
-                            }}
-                            disableElevation
-                        >
-                            {t('common.contact')}
-                        </Button>
+                                        setSelectedUser({
+                                            _id: sellerUser.user?._id as string,
+                                            name: {
+                                                first: sellerUser.name,
+                                                last: selectedUser?.name?.last,
+                                            },
+                                        });
+                                        setOpenChat(true);
+                                    }}
+                                    disableElevation
+                                >
+                                    {t('common.contact')}
+                                </Button>
 
-                        <Link
-                            to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            style={{ textDecoration: 'none', gap: 1 }}
-                        >
-                            <Chip
-                                icon={
-                                    <img
-                                        src='/waze.png'
-                                        width={16}
-                                        alt='waze'
+                                <Link
+                                    to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    style={{ textDecoration: 'none', gap: 1 }}
+                                >
+                                    <Chip
+                                        icon={
+                                            <img
+                                                src='/waze.png'
+                                                width={16}
+                                                alt='waze'
+                                            />
+                                        }
+                                        label='Waze'
+                                        size='small'
+                                        sx={{
+                                            height: 30,
+                                            bgcolor: '#33CCFF',
+                                            color: '#fff',
+                                            gap: 1,
+                                            fontWeight: 600,
+                                            fontSize: '0.8125rem',
+                                            cursor: 'pointer',
+                                            '& .MuiChip-icon': { ml: 0.75 },
+                                        }}
                                     />
-                                }
-                                label='Waze'
-                                size='small'
-                                sx={{
-                                    height: 30,
-                                    bgcolor: '#33CCFF',
-                                    color: '#fff',
-                                    gap: 1,
-                                    fontWeight: 600,
-                                    fontSize: '0.8125rem',
-                                    cursor: 'pointer',
-                                    '& .MuiChip-icon': { ml: 0.75 },
-                                }}
-                            />
-                        </Link>
-                    </Stack>
+                                </Link>
+                            </Stack>
+                        )}
                 </CardContent>
 
                 {/* ── STATS ── */}
@@ -923,7 +934,9 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     }}
                 >
                     {openChat && selectedUser && (
-                        <ChatBox
+                        <ChatModal
+                            onClose={() => setOpenChat(false)}
+                            open={openChat}
                             currentUser={currentUser}
                             otherUser={selectedUser}
                             token={localStorage.getItem('token') as string}

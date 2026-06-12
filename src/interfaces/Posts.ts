@@ -19,21 +19,23 @@ type Review = {
 };
 
 type SellerUser = {
-    _id?: string;
     name: string;
     slug?: string;
-    user: string;
-    image?: {
-        url: string;
-        alt: string;
-    };
-};
 
-type Seller = {
-    _id?: string;
-    name?: string;
-    slug?: string;
-    user: SellerUser;
+    user?: {
+        _id: string;
+        slug?: string;
+
+        name: {
+            first: string;
+            last: string;
+        };
+
+        image?: {
+            url: string;
+            alt: string;
+        };
+    };
 };
 
 export interface Posts {
@@ -45,7 +47,7 @@ export interface Posts {
     likes?: string[];
     isNew?: boolean;
     type?: string;
-    seller: Seller;
+    seller: SellerUser;
 
     product_name: string;
     category: CategoryValue;
@@ -76,14 +78,16 @@ export const initialProductValue: Partial<Posts> = {
     location: 'אום אל פחם',
     featured: false,
     seller: {
-        _id: '',
         name: '',
         slug: '',
+
         user: {
             _id: '',
-            name: '',
             slug: '',
-            user: '',
+            name: {
+                first: '',
+                last: '',
+            },
             image: {
                 url: '',
                 alt: '',
