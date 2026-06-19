@@ -1,13 +1,21 @@
 // pages/Home.tsx
 import { FunctionComponent, lazy, Suspense, useState } from 'react';
-import { Box } from '@mui/material';
-// import { useTranslation } from 'react-i18next';
-// import { useNavigate } from 'react-router-dom';
+import {
+    // Alert,
+    // AlertTitle,
+    Button,
+    Grid,
+    Paper,
+    Typography,
+} from '@mui/material';
+
+import { Link as RouterLink } from 'react-router-dom';
 
 import HeroSection from './HeroSection';
 import StatsStrip from './StatsStrip';
 import AdsSection from './AdsSection';
 import Loader from '../../../atoms/loader/Loader';
+
 const AddProductModal = lazy(
     () =>
         import(
@@ -30,13 +38,16 @@ import handleRTL from '../../../locales/handleRTL';
 import { deletePost, toggleLike } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { path } from '../../../routes/routes';
+import TransitionAlerts from './TransitionAlerts';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
 
 const Home: FunctionComponent = () => {
     const { auth } = useUser();
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     const direction = handleRTL();
     const { posts, loading } = usePosts();
     const location = useLocation();
@@ -66,7 +77,7 @@ const Home: FunctionComponent = () => {
 
     return (
         <>
-            ;{/* ─── SEO (unchanged) ─── */}
+            {/* ─── SEO (unchanged) ─── */}
             <title>صفقة | منصة بيع وشراء المنتجات الجديدة والمستعملة</title>
             <meta
                 name='description'
@@ -113,20 +124,71 @@ const Home: FunctionComponent = () => {
                 }}
             />
             {/* ─── HERO ─── */}
-            <HeroSection onAddProduct={() => setShowAddModal(true)} />
+            <header>
+                <TransitionAlerts/>
+                <HeroSection onAddProduct={() => setShowAddModal(true)} />
+            </header>
+            {/* help section */}
+            <section id='help-section'>
+                <Paper elevation={3} sx={{ p: 4, mt: 2, borderRadius: 3 }}>
+                    <Typography
+                        variant='h5'
+                        gutterBottom
+                        fontWeight='bold'
+                        textAlign='center'
+                    >
+                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
+                    </Typography>
+
+                    <Grid container spacing={3} mt={2}>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Button
+                                fullWidth
+                                variant='outlined'
+                                component={RouterLink}
+                                to='/help/selling'
+                                startIcon={<span>💰</span>}
+                                sx={{ py: 2 }}
+                            >
+                                {t('pages.contact.howToSell', 'كيفية البيع')}
+                            </Button>
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Button
+                                fullWidth
+                                variant='outlined'
+                                component={RouterLink}
+                                to={path.SafetyHelp}
+                                startIcon={<span>🛡️</span>}
+                                sx={{ py: 2 }}
+                            >
+                                {t('pages.contact.safetyTips', 'نصائح الأمان')}
+                            </Button>
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 4 }}>
+                            <Button
+                                fullWidth
+                                variant='outlined'
+                                component={RouterLink}
+                                to={path.DisputesHelp}
+                                startIcon={<span>⚖️</span>}
+                                sx={{ py: 2 }}
+                            >
+                                {t(
+                                    'pages.contact.resolveDisputes',
+                                    'حل النزاعات',
+                                )}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Paper>
+            </section>
             {/* ─── STATS ─── */}
-            <StatsStrip postsCount={posts.length} />
+            <section id='StatsStrip-section'>
+                <StatsStrip postsCount={posts.length} />
+            </section>
             {/* ─── MAIN ─── */}
-            <Box
-                dir={direction}
-                component='main'
-                id='lising-section'
-                title='lising-section'
-                sx={{
-                    background:
-                        'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
-                }}
-            >
+            <main id='lising-section' dir={direction}>
                 <AdsSection />
 
                 <Suspense fallback={<Loader />}>
@@ -145,7 +207,7 @@ const Home: FunctionComponent = () => {
                     />
                     <ContactCTA />
                 </Suspense>
-            </Box>
+            </main>
             <Suspense fallback={<Loader />}>
                 {/* ─── MODALS ─── */}
                 <UpdateProductModal
@@ -154,7 +216,7 @@ const Home: FunctionComponent = () => {
                     show={showUpdateModal}
                     onHide={() => setShowUpdateModal(false)}
                 />
-            </Suspense>{' '}
+            </Suspense>
             <Suspense fallback={<Loader />}>
                 <AlertDialogs
                     show={showDeleteModal}

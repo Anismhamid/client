@@ -448,7 +448,7 @@ const SellingHelp: FunctionComponent = () => {
 							startIcon={isRTL ? undefined : <ArrowBack />}
 							endIcon={isRTL ? <ArrowBack /> : undefined}
 							component={RouterLink}
-							to='/help'
+							to='/'
 							sx={{
 								px: 4,
 								py: 1.5,
@@ -456,7 +456,7 @@ const SellingHelp: FunctionComponent = () => {
 								fontWeight: "medium",
 							}}
 						>
-							{t("common.backToHelp", "عودة إلى المساعدة")}
+							{t("common.backToHelp", "عودة")}
 						</Button>
 					</Stack>
 
