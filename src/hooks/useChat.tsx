@@ -89,7 +89,7 @@ export const ChatProvider = ({
     );
 
     const updateMessageStatus = useCallback(
-        (userId: string, messageId: string, status: 'delivered' | 'seen') => {
+        (userId: string, messageId: string, status:'sent'| 'delivered' | 'seen') => {
             setMessages((prev) => {
                 const userMessages = prev[userId] || [];
                 const updatedMessages = userMessages.map((msg) =>
