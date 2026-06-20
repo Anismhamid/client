@@ -60,6 +60,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
     const [chatOpen, setChatOpen] = useState(false);
     const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         const loadConversations = async () => {
@@ -567,7 +568,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             {/* Chat Modal */}
             {selectedUser && isMobile && (
                 <ChatModal
-                    open={chatOpen}
+                    open={chatOpen || isMobile === true || isTablet ? true : false}
                     onClose={handleCloseChat}
                     currentUser={{
                         _id: auth?._id || '',
