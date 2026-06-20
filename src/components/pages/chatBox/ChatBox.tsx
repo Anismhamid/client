@@ -19,6 +19,8 @@ import {
     Fade,
     Zoom,
     Fab,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -45,6 +47,7 @@ import { path } from '../../../routes/routes';
 import { deleteMessage } from '../../../services/messages';
 import { showSuccess } from '../../../atoms/toasts/ReactToast';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useUser } from '../../../context/useUSer';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -76,7 +79,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         null,
     );
     const open = Boolean(anchorEl);
-
 
     const handleMenuClose = () => {
         setAnchorEl(null);
@@ -110,6 +112,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const lastScrollHeightRef = useRef<number>(0);
     const lastSeenRef = useRef<string | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
+    const theme = useTheme();
+    const { auth } = useUser();
+
+    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
+    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         console.table(['typing', isTypingRef]);
@@ -387,214 +394,202 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         };
     }, []);
 
-    if (!currentUser?._id) return <Navigate to={path.Login} replace />;
+    if (!auth._id) return <Navigate to={path.Login} replace />;
 
     return (
-        <Box
-            sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                bgcolor: 'background.paper',
-            }}
-        >
-            <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleMenuClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                PaperProps={{
-                    sx: {
-                        maxWidth: 120,
-                        boxShadow: 2,
-                    },
+        !isMobile &&
+        !isTablet && (
+            <Box
+                sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    bgcolor: 'background.paper',
                 }}
             >
-                <MenuItem
-                    onClick={() => {
-                        if (selectedMessageId) {
-                            handleDeleteClick(selectedMessageId);
-                        }
+                <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleMenuClose}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
                     }}
-                    sx={{
-                        color: 'error.main',
-                        gap: 1,
-                        '&:hover': {
-                            bgcolor: 'error.light',
-                            color: 'error.contrastText',
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    PaperProps={{
+                        sx: {
+                            maxWidth: 120,
+                            boxShadow: 2,
                         },
                     }}
                 >
-                    <DeleteIcon fontSize='small' />
-                    {t('messages.delete')}
-                </MenuItem>
-            </Menu>
-            <Box
-                ref={chatContainerRef}
-                onScroll={(e) => {
-                    const { scrollTop } = e.currentTarget;
-                    setShowScrollBtn(!isNearBottom());
-
-                    if (scrollTop === 0 && hasMore && !isFetchingMore) {
-                        loadConversation(false);
-                    }
-                }}
-                sx={{
-                    flexGrow: 1,
-                    overflowY: 'auto',
-                    p: 2,
-                    pb: 15,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 1.5,
-                    overflowAnchor: 'auto',
-
-                    overscrollBehaviorY: 'contain',
-                }}
-            >
-                {/* TOP SPINNER: Shown when fetching older messages */}
-                {isFetchingMore && (
-                    <Box
+                    <MenuItem
+                        onClick={() => {
+                            if (selectedMessageId) {
+                                handleDeleteClick(selectedMessageId);
+                            }
+                        }}
                         sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            py: 1,
+                            color: 'error.main',
+                            gap: 1,
+                            '&:hover': {
+                                bgcolor: 'error.light',
+                                color: 'error.contrastText',
+                            },
                         }}
                     >
-                        <CircularProgress size={20} />
-                    </Box>
-                )}
+                        <DeleteIcon fontSize='small' />
+                        {t('messages.delete')}
+                    </MenuItem>
+                </Menu>
+                <Box
+                    ref={chatContainerRef}
+                    onScroll={(e) => {
+                        const { scrollTop } = e.currentTarget;
+                        setShowScrollBtn(!isNearBottom());
 
-                {isLoading && !isFetchingMore ? (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            justifyContent: 'center',
-                            mt: 4,
-                        }}
-                    >
-                        <CircularProgress size={24} />
-                    </Box>
-                ) : (
-                    userMessages.map((msg) => {
-                        const isMe = msg?.from?._id === currentUser._id;
-                        const isFile = msg.fileUrl;
+                        if (scrollTop === 0 && hasMore && !isFetchingMore) {
+                            loadConversation(false);
+                        }
+                    }}
+                    sx={{
+                        flexGrow: 1,
+                        overflowY: 'auto',
+                        p: 2,
+                        pb: 15,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 1.5,
+                        overflowAnchor: 'auto',
 
-                        return (
-                            <Box
-                                key={msg._id}
-                                sx={{
-                                    alignSelf: isMe ? 'flex-start' : 'flex-end',
-                                    position: 'relative',
-                                }}
-                            >
-                                <Paper
-                                    elevation={isMe ? 0 : 1}
+                        overscrollBehaviorY: 'contain',
+                    }}
+                >
+                    {/* TOP SPINNER: Shown when fetching older messages */}
+                    {isFetchingMore && (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                py: 1,
+                            }}
+                        >
+                            <CircularProgress size={20} />
+                        </Box>
+                    )}
+
+                    {isLoading && !isFetchingMore ? (
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                mt: 4,
+                            }}
+                        >
+                            <CircularProgress size={24} />
+                        </Box>
+                    ) : (
+                        userMessages.map((msg) => {
+                            const isMe = msg?.from?._id === currentUser._id;
+                            const isFile = msg.fileUrl;
+
+                            return (
+                                <Box
+                                    key={msg._id}
                                     sx={{
-                                        p: '10px 14px',
-                                        minWidth: '80px',
-                                        maxWidth: 'maxContent',
-                                        display: 'flex',
-                                        gap: 1.5,
-                                        flexDirection: isMe
-                                            ? ''
-                                            : 'row-reverse',
-                                        borderRadius: isMe
-                                            ? '12px 4px 18px 18px'
-                                            : '4px 12px 18px 18px',
-                                        bgcolor: isMe
-                                            ? (theme) =>
-                                                  `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
-                                            : 'background.paper',
-                                        border: !isMe ? '1px solid' : 'none',
-                                        borderColor: 'divider',
-                                        wordBreak: 'break-word',
+                                        alignSelf: isMe
+                                            ? 'flex-start'
+                                            : 'flex-end',
                                         position: 'relative',
                                     }}
                                 >
-                                    {isMe && (
-                                        <IconButton
-                                            size='small'
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setAnchorEl(e.currentTarget);
-                                                setSelectedMessageId(msg._id);
-                                            }}
-                                            sx={{
-                                                position: 'absolute',
-                                                top: -8,
-                                                right: -8,
-                                                bgcolor: 'background.paper',
-                                                width: 24,
-                                                height: 24,
-                                                boxShadow: 1,
-                                                opacity: 0,
-                                                transition:
-                                                    'opacity 0.2s ease-in-out',
-                                                '&:hover': {
-                                                    bgcolor: 'action.hover',
-                                                },
-                                                '.MuiPaper-root:hover &': {
-                                                    opacity: 1,
-                                                },
-                                                zIndex: 1,
-                                            }}
-                                        >
-                                            <MoreVertIcon
-                                                fontSize='small'
-                                                sx={{
-                                                    color: 'text.secondary',
+                                    <Paper
+                                        elevation={isMe ? 0 : 1}
+                                        sx={{
+                                            p: '10px 14px',
+                                            minWidth: '80px',
+                                            maxWidth: 'maxContent',
+                                            display: 'flex',
+                                            gap: 1.5,
+                                            flexDirection: isMe
+                                                ? ''
+                                                : 'row-reverse',
+                                            borderRadius: isMe
+                                                ? '12px 4px 18px 18px'
+                                                : '4px 12px 18px 18px',
+                                            bgcolor: isMe
+                                                ? (theme) =>
+                                                      `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
+                                                : 'background.paper',
+                                            border: !isMe
+                                                ? '1px solid'
+                                                : 'none',
+                                            borderColor: 'divider',
+                                            wordBreak: 'break-word',
+                                            position: 'relative',
+                                        }}
+                                    >
+                                        {isMe && (
+                                            <IconButton
+                                                size='small'
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setAnchorEl(
+                                                        e.currentTarget,
+                                                    );
+                                                    setSelectedMessageId(
+                                                        msg._id,
+                                                    );
                                                 }}
-                                            />
-                                        </IconButton>
-                                    )}
-
-                                    {isFile ? (
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                gap: 1,
-                                            }}
-                                        >
-                                            {msg.fileType?.includes('image') ? (
-                                                <img
-                                                    src={msg.fileUrl}
-                                                    alt='sent file'
-                                                    style={{
-                                                        maxWidth: '100%',
-                                                        borderRadius: 4,
-                                                        cursor: 'pointer',
-                                                    }}
-                                                    onClick={() =>
-                                                        window.open(msg.fileUrl)
-                                                    }
-                                                />
-                                            ) : (
-                                                <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: -8,
+                                                    right: -8,
+                                                    bgcolor: 'background.paper',
+                                                    width: 24,
+                                                    height: 24,
+                                                    boxShadow: 1,
+                                                    opacity: 0,
+                                                    transition:
+                                                        'opacity 0.2s ease-in-out',
+                                                    '&:hover': {
+                                                        bgcolor: 'action.hover',
+                                                    },
+                                                    '.MuiPaper-root:hover &': {
+                                                        opacity: 1,
+                                                    },
+                                                    zIndex: 1,
+                                                }}
+                                            >
+                                                <MoreVertIcon
+                                                    fontSize='small'
                                                     sx={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: 1,
-                                                        p: 1,
-                                                        bgcolor:
-                                                            'rgba(0,0,0,0.05)',
-                                                        borderRadius: 1,
+                                                        color: 'text.secondary',
                                                     }}
-                                                >
-                                                    <InsertDriveFileIcon />
-                                                    <Typography
-                                                        variant='caption'
-                                                        sx={{
-                                                            textDecoration:
-                                                                'underline',
+                                                />
+                                            </IconButton>
+                                        )}
+
+                                        {isFile ? (
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    gap: 1,
+                                                }}
+                                            >
+                                                {msg.fileType?.includes(
+                                                    'image',
+                                                ) ? (
+                                                    <img
+                                                        src={msg.fileUrl}
+                                                        alt='sent file'
+                                                        style={{
+                                                            maxWidth: '100%',
+                                                            borderRadius: 4,
                                                             cursor: 'pointer',
                                                         }}
                                                         onClick={() =>
@@ -602,179 +597,208 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                                 msg.fileUrl,
                                                             )
                                                         }
+                                                    />
+                                                ) : (
+                                                    <Box
+                                                        sx={{
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            gap: 1,
+                                                            p: 1,
+                                                            bgcolor:
+                                                                'rgba(0,0,0,0.05)',
+                                                            borderRadius: 1,
+                                                        }}
                                                     >
-                                                        צפה בקובץ
-                                                    </Typography>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    ) : (
-                                        <Typography
-                                            variant='body2'
+                                                        <InsertDriveFileIcon />
+                                                        <Typography
+                                                            variant='caption'
+                                                            sx={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                                cursor: 'pointer',
+                                                            }}
+                                                            onClick={() =>
+                                                                window.open(
+                                                                    msg.fileUrl,
+                                                                )
+                                                            }
+                                                        >
+                                                            צפה בקובץ
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        ) : (
+                                            <Typography
+                                                variant='body2'
+                                                sx={{
+                                                    wordBreak: 'break-word',
+                                                    lineHeight: 1.5,
+                                                    whiteSpace: 'pre-wrap',
+                                                }}
+                                            >
+                                                <Linkify
+                                                    text={msg?.message ?? ''}
+                                                />
+                                            </Typography>
+                                        )}
+
+                                        <Box
                                             sx={{
-                                                wordBreak: 'break-word',
-                                                lineHeight: 1.5,
-                                                whiteSpace: 'pre-wrap',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'flex-end',
+                                                gap: 0.5,
+                                                mt: 0.3,
                                             }}
                                         >
-                                            <Linkify
-                                                text={msg?.message ?? ''}
-                                            />
-                                        </Typography>
-                                    )}
-
-                                    <Box
+                                            {isMe && getStatusIcon(msg.status)}
+                                        </Box>
+                                    </Paper>
+                                    <Typography
+                                        variant='caption'
                                         sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'flex-end',
-                                            gap: 0.5,
-                                            mt: 0.3,
+                                            color: 'text.secondary',
+                                            flex: 'flex-start',
                                         }}
                                     >
-                                        {isMe && getStatusIcon(msg.status)}
-                                    </Box>
-                                </Paper>
+                                        {String(
+                                            formatMessageTime(
+                                                msg?.createdAt
+                                                    ? new Date(msg.createdAt)
+                                                    : new Date(),
+                                            ),
+                                        )}
+                                    </Typography>
+                                </Box>
+                            );
+                        })
+                    )}
+
+                    {typing && (
+                        <Fade in={typing}>
+                            <Box
+                                sx={{
+                                    alignSelf: 'flex-start',
+                                    bgcolor: 'action.hover',
+                                    px: 1.5,
+                                    py: 0.5,
+                                    borderRadius: 2,
+                                    maxWidth: 'fit-content',
+                                }}
+                            >
                                 <Typography
                                     variant='caption'
                                     sx={{
+                                        fontStyle: 'italic',
                                         color: 'text.secondary',
-                                        flex: 'flex-start',
                                     }}
                                 >
-                                    {String(
-                                        formatMessageTime(
-                                            msg?.createdAt
-                                                ? new Date(msg.createdAt)
-                                                : new Date(),
-                                        ),
-                                    )}
+                                    {getUserFullName(
+                                        otherUser.name?.first || '',
+                                    )}{' '}
+                                    {t('common.typing')}...
                                 </Typography>
                             </Box>
-                        );
-                    })
-                )}
+                        </Fade>
+                    )}
 
-                {typing && (
-                    <Fade in={typing}>
-                        <Box
+                    {/* SCROLL BUTTON */}
+                    <Zoom in={showScrollBtn}>
+                        <Fab
+                            color='primary'
+                            size='small'
+                            onClick={() =>
+                                scrollToBottom('smooth', chatContainerRef)
+                            }
                             sx={{
-                                alignSelf: 'flex-start',
-                                bgcolor: 'action.hover',
-                                px: 1.5,
-                                py: 0.5,
-                                borderRadius: 2,
-                                maxWidth: 'fit-content',
+                                position: 'absolute',
+                                bottom: 50, // Above the text input area
+                                right: dir === 'rtl' ? 'auto' : 20,
+                                left: dir === 'rtl' ? 20 : 'auto',
+                                zIndex: 10,
+                                boxShadow: 3,
                             }}
                         >
-                            <Typography
-                                variant='caption'
-                                sx={{
-                                    fontStyle: 'italic',
-                                    color: 'text.secondary',
-                                }}
-                            >
-                                {getUserFullName(otherUser.name?.first || '')}{' '}
-                                {t('common.typing')}...
-                            </Typography>
-                        </Box>
-                    </Fade>
-                )}
+                            <ArrowDownwardIcon />
+                        </Fab>
+                    </Zoom>
+                </Box>
 
-                {/* SCROLL BUTTON */}
-                <Zoom in={showScrollBtn}>
-                    <Fab
-                        color='primary'
-                        size='small'
-                        onClick={() =>
-                            scrollToBottom('smooth', chatContainerRef)
-                        }
-                        sx={{
-                            position: 'absolute',
-                            bottom: 50, // Above the text input area
-                            right: dir === 'rtl' ? 'auto' : 20,
-                            left: dir === 'rtl' ? 20 : 'auto',
-                            zIndex: 10,
-                            boxShadow: 3,
-                        }}
-                    >
-                        <ArrowDownwardIcon />
-                    </Fab>
-                </Zoom>
-            </Box>
-
-            {/* Input Area */}
-            <Box
-                sx={{
-                    p: 2,
-                    bgcolor: 'background.paper',
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                }}
-            >
-                <input
-                    type='file'
-                    hidden
-                   
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    accept='image/*,.pdf,.doc,.docx'
-                />
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <IconButton
-                        color='primary'
-                        onClick={() => fileInputRef.current?.click()}
-                    >
-                        <AttachFileIcon />
-                    </IconButton>
-
-                    <TextField
-                        fullWidth
-                         autoFocus={true}
-                        multiline
-                        maxRows={4}
-                        value={input}
-                        onChange={handleInputChange}
-                        placeholder='הקלד הודעה...'
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position='end'>
-                                    <IconButton
-                                        color='primary'
-                                        onClick={() =>
-                                            sendMessage(
-                                                input,
-                                                currentUser,
-                                                otherUser,
-                                                setInput,
-                                                chatContainerRef,
-                                                addMessageForUser,
-                                                token,
-                                            )
-                                        }
-                                        disabled={!input.trim()}
-                                    >
-                                        <SendIcon
-                                            sx={{
-                                                transform:
-                                                    dir === 'rtl'
-                                                        ? 'rotate(180deg)'
-                                                        : 'none',
-                                            }}
-                                        />
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                            sx: {
-                                borderRadius: 0,
-                                backgroundColor: 'action.hover',
-                            },
-                        }}
+                {/* Input Area */}
+                <Box
+                    sx={{
+                        p: 2,
+                        bgcolor: 'background.paper',
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <input
+                        type='file'
+                        hidden
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        accept='image/*,.pdf,.doc,.docx'
                     />
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                        <IconButton
+                            color='primary'
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            <AttachFileIcon />
+                        </IconButton>
+
+                        <TextField
+                            fullWidth
+                            autoFocus={true}
+                            multiline
+                            maxRows={4}
+                            value={input}
+                            onChange={handleInputChange}
+                            placeholder='הקלד הודעה...'
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position='end'>
+                                        <IconButton
+                                            color='primary'
+                                            onClick={() =>
+                                                sendMessage(
+                                                    input,
+                                                    currentUser,
+                                                    otherUser,
+                                                    setInput,
+                                                    chatContainerRef,
+                                                    addMessageForUser,
+                                                    token,
+                                                )
+                                            }
+                                            disabled={!input.trim()}
+                                        >
+                                            <SendIcon
+                                                sx={{
+                                                    transform:
+                                                        dir === 'rtl'
+                                                            ? 'rotate(180deg)'
+                                                            : 'none',
+                                                }}
+                                            />
+                                        </IconButton>
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    borderRadius: 0,
+                                    backgroundColor: 'action.hover',
+                                },
+                            }}
+                        />
+                    </Box>
                 </Box>
             </Box>
-        </Box>
+        )
     );
 };
 
