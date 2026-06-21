@@ -110,9 +110,14 @@ const MessagesPage = () => {
         };
     }, []);
 
-    const handleSelectChat = useCallback((user: UserMessage) => {
-        setSelectedUser(user);
-    }, []);
+    const handleSelectChat = useCallback(
+        (user: UserMessage) => {
+            setSelectedUser(user);
+            if (isMobile) setChatOpen(true);
+            else setChatOpen(false);
+        },
+        [isMobile],
+    );
 
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
@@ -342,7 +347,7 @@ const MessagesPage = () => {
                                         <Button
                                             onClick={() => setChatOpen(true)}
                                         >
-                                            Open Chat
+                                            {t("messages.openChat")}
                                         </Button>
 
                                         <ChatModal

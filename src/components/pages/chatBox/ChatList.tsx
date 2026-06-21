@@ -13,7 +13,6 @@ import {
     Badge,
     alpha,
     useTheme,
-    useMediaQuery,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -59,8 +58,6 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     const { auth } = useUser();
     const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
     const [chatOpen, setChatOpen] = useState(false);
-    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         const loadConversations = async () => {
@@ -548,7 +545,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                             </Typography>
                         </Box>
                     ) : (
-                        <AnimatePresence>
+                        <AnimatePresence initial={false}>
                             <List sx={{ p: 0.5 }}>
                                 {filteredConversations.map((conv) => (
                                     <ConversationItem
@@ -566,9 +563,9 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             </Box>
 
             {/* Chat Modal */}
-            {selectedUser && isMobile && (
+            {selectedUser && (
                 <ChatModal
-                    open={chatOpen || isMobile === true || isTablet ? true : false}
+                    open={chatOpen}
                     onClose={handleCloseChat}
                     currentUser={{
                         _id: auth?._id || '',

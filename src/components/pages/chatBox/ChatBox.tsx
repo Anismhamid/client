@@ -19,8 +19,7 @@ import {
     Fade,
     Zoom,
     Fab,
-    useMediaQuery,
-    useTheme,
+
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -112,11 +111,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const lastScrollHeightRef = useRef<number>(0);
     const lastSeenRef = useRef<string | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
-    const theme = useTheme();
     const { auth } = useUser();
 
-    const isMobile = useMediaQuery(theme.breakpoints.down('xs'));
-    const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         console.table(['typing', isTypingRef]);
@@ -397,8 +393,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     if (!auth._id) return <Navigate to={path.Login} replace />;
 
     return (
-        !isMobile &&
-        !isTablet && (
+
             <Box
                 sx={{
                     height: '100%',
@@ -799,7 +794,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 </Box>
             </Box>
         )
-    );
+
 };
 
 export default ChatBox;
