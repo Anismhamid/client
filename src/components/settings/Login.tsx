@@ -49,7 +49,6 @@ import { jwtDecode } from 'jwt-decode';
 import { CredentialResponse } from '@react-oauth/google';
 import { DecodedGooglePayload } from '../../interfaces/googleValues';
 import { useTranslation } from 'react-i18next';
-import Loader from '../../atoms/loader/Loader';
 import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
 
@@ -89,7 +88,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     : false;
 
                 if (!isExpired) {
-                    navigate(path.Home);
+                    navigate(path.Home, { replace: true });
                 } else {
                     // Token expired, remove it
                     localStorage.removeItem('token');
@@ -205,7 +204,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setIsLoggedIn(true);
                     navigate(path.Home);
                     console.log(decodedGoogle);
-                    
                 }
             } else {
                 setGoogleResponse(response);
@@ -248,8 +246,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     // }, [navigate]);
 
     const currentUrl = `https://client-qqq1.vercel.app/login`;
-
-    if (isPending) return <Loader />;
 
     const dire = handleRTL();
 
@@ -534,7 +530,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             shape='pill'
                                             theme='filled_blue'
                                             size='large'
-                                            width='100%'
+                                            width={300}
                                             text='signin_with'
                                             logo_alignment='center'
                                             onSuccess={handleGoogleLoginSuccess}
