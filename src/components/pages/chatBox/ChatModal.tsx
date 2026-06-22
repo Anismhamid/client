@@ -198,7 +198,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
     }, [open, otherUser._id]);
 
     useEffect(() => {
-        if (open) return;
+        if (!otherUser?._id) return;
 
         socket.on('message:received', (message: LocalMessage) => {
             if (message?.from?._id === otherUser?._id) {
@@ -259,17 +259,20 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
             }
         });
 
-        socket.on('message:seen', ({ by }: { by: string }) => {
-            if (by === otherUser._id) {
-                setMessagesForUser(otherUser?._id ?? '', (prev) =>
-                    prev.map((m) =>
-                        m?.from?._id === currentUser._id
-                            ? { ...m, status: 'seen' }
-                            : m,
-                    ),
-                );
-            }
-        });
+        socket.on(
+            'message:seen',
+            ({ from }: { from: string; }) => {
+                if (from === otherUser._id) {
+                    setMessagesForUser(otherUser?._id ?? '', (prev) =>
+                        prev.map((m) =>
+                            m?.from?._id === currentUser._id
+                                ? { ...m, status: 'seen' }
+                                : m,
+                        ),
+                    );
+                }
+            },
+        );
 
         return () => {
             socket.off('message:delivered');
@@ -292,11 +295,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                 isNearBottom()
             ) {
                 lastSeenRef.current = lastMessage._id;
-                axios.patch(
-                    `${api}/messages/mark-as-seen/${otherUser._id}`,
-                    {},
-                    { headers: { Authorization: token } },
-                );
+
                 markAsSeen();
             }
         }
@@ -433,9 +432,8 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                                         bgcolor: 'primary',
                                         mr: 2,
                                     }}
-                                
-                                src={otherUser.image?.url}>
-
+                                    src={otherUser.image?.url}
+                                >
                                     {getUserFullName(otherUser).charAt(0) ||
                                         'U'}
                                 </Avatar>
