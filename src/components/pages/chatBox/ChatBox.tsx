@@ -233,7 +233,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
         socket.on('message:received', (message: LocalMessage) => {
             if (message?.from?._id === otherUser?._id) {
-                addMessageForUser(otherUser?._id ?? '', message);
+                addMessageForUser(otherUser?._id as string, message);
                 if (isNearBottom()) {
                     scrollToBottom('smooth', chatContainerRef);
                 }

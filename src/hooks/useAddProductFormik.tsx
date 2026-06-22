@@ -28,12 +28,13 @@ const useAddPostFormik = (onHide: () => void) => {
 			discount: 0,
 			in_stock: true,
 			location: "",
-			// seller: {
-			// 	name: "",
-			// 	slug: undefined,
-			// 	user: "",
-			// 	imageUrl: "",
-			// },
+			featured: false,
+			createdAt: "",
+			seller: {
+				name: "",
+				slug: undefined,
+				user: undefined
+			}
 		},
 		validationSchema: yup.object({
 			product_name: yup

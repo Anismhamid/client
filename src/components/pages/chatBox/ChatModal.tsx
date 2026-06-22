@@ -198,7 +198,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
     }, [open, otherUser._id]);
 
     useEffect(() => {
-        if (!open) return;
+        if (open) return;
 
         socket.on('message:received', (message: LocalMessage) => {
             if (message?.from?._id === otherUser?._id) {
