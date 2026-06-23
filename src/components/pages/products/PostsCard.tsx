@@ -248,10 +248,11 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                         )}
                         <Box sx={{ position: 'relative' }}>
                             <Avatar
-                                src={
-                                    post.seller?.user?.image?.url || 'user.png'
+                                src={post.seller?.image?.url || 'user.png'}
+                                alt={
+                                    `${post.seller?.name?.first}${' '}${post.seller?.name?.last}` ||
+                                    'بائع'
                                 }
-                                alt={post.seller?.name || 'بائع'}
                                 sx={{
                                     width: 38,
                                     height: 38,
@@ -278,7 +279,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                         },
                                     }}
                                 >
-                                    {post.seller?.name ||
+                                    {post.seller?.name?.first ||
                                         post.seller?.slug ||
                                         'بائع'}
                                 </Typography>
@@ -713,7 +714,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                     {/* Contact + Waze */}
 
                     <Stack
-                        hidden={post.seller?.user?._id === auth?._id}
+                        hidden={post.seller?._id === auth?._id}
                         direction='row'
                         sx={{
                             display: 'flex',
@@ -733,14 +734,14 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 const sellerUser = post.seller;
                                 const fromId = auth?._id;
 
-                                if (!sellerUser?.user?._id || !fromId) {
+                                if (!sellerUser?._id || !fromId) {
                                     return navigate('/login');
                                 }
 
                                 setSelectedUser({
-                                    _id: sellerUser.user?._id as string,
+                                    _id: sellerUser?._id as string,
                                     name: {
-                                        first: sellerUser.name,
+                                        first: sellerUser.name?.first,
                                         last: selectedUser?.name?.last,
                                     },
                                 });
@@ -767,7 +768,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 }
                                 label='Waze'
                                 size='small'
-                                hidden={post.seller?.user?._id === auth?._id}
+                                hidden={post.seller?._id === auth?._id}
                                 variant='outlined'
                                 sx={{
                                     height: 30,

@@ -1,99 +1,104 @@
-import { useFormik } from "formik";
-import * as yup from "yup";
-import { useTranslation } from "react-i18next";
-import { createNewPost } from "../services/postsServices";
-import { Posts } from "../interfaces/Posts";
-import { useState } from "react";
-import { uploadImage } from "../services/uploadImage";
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { useTranslation } from 'react-i18next';
+import { createNewPost } from '../services/postsServices';
+import { Posts } from '../interfaces/Posts';
+import { useState } from 'react';
+import { uploadImage } from '../services/uploadImage';
 
 const useAddPostFormik = (onHide: () => void) => {
-	const { t } = useTranslation();
-	const [imageFile, setImageFile] = useState<File | null>(null);
+    const { t } = useTranslation();
+    const [imageFile, setImageFile] = useState<File | null>(null);
 
-	const [imageData, setImageData] = useState<{
-		url: string;
-		publicId: string;
-	} | null>(null);
+    const [imageData, setImageData] = useState<{
+        url: string;
+        publicId: string;
+    } | null>(null);
 
-	const formik = useFormik<Posts>({
-		initialValues: {
-			product_name: "",
-			image: { url: "", publicId: "" },
-			category: "House",
-			subcategory: "",
-			type: "",
-			price: 0,
-			description: "",
-			sale: false,
-			discount: 0,
-			in_stock: true,
-			location: "",
-			featured: false,
-			createdAt: "",
-			seller: {
-				name: "",
-				slug: undefined,
-				user: undefined
-			}
-		},
-		validationSchema: yup.object({
-			product_name: yup
-				.string()
-				.min(2, t("modals.addProductModal.validation.productNameMin"))
-				.required(t("modals.addProductModal.validation.productNameRequired")),
-			category: yup
-				.string()
-				.required(t("modals.addProductModal.validation.categoryRequired")),
-			price: yup
-				.number()
-				.required(t("modals.addProductModal.validation.priceRequired")),
-			type: yup.string(),
-			description: yup
-				.string()
-				.min(2, t("modals.addProductModal.validation.descriptionMin"))
-				.max(500, t("modals.addProductModal.validation.descriptionMax")),
+    const formik = useFormik<Posts>({
+        initialValues: {
+            product_name: '',
+            image: { url: '', publicId: '' },
+            category: 'House',
+            subcategory: '',
+            type: '',
+            price: 0,
+            description: '',
+            sale: false,
+            discount: 0,
+            in_stock: true,
+            location: '',
+            featured: false,
+            createdAt: '',
+            // seller: {
+            //     _id: '',
+            //     slug: '',
+            //     name: { first: '', last: '' },
+            //     image: { url: '', alt: '' },
+            // },
+        },
+        validationSchema: yup.object({
+            product_name: yup
+                .string()
+                .min(2, t('modals.addProductModal.validation.productNameMin'))
+                .required(
+                    t('modals.addProductModal.validation.productNameRequired'),
+                ),
+            category: yup
+                .string()
+                .required(
+                    t('modals.addProductModal.validation.categoryRequired'),
+                ),
+            price: yup
+                .number()
+                .required(t('modals.addProductModal.validation.priceRequired')),
+            type: yup.string(),
+            description: yup
+                .string()
+                .min(2, t('modals.addProductModal.validation.descriptionMin'))
+                .max(
+                    500,
+                    t('modals.addProductModal.validation.descriptionMax'),
+                ),
 
-			sale: yup.boolean(),
-			discount: yup.number(),
-			location: yup.string(),
-		}),
-		onSubmit: async (values, { resetForm }) => {
-			try {
-				let uploadedImage = imageData;
+            sale: yup.boolean(),
+            discount: yup.number(),
+            location: yup.string(),
+        }),
+        onSubmit: async (values, { resetForm }) => {
+            try {
+                let uploadedImage = imageData;
 
-				if (imageFile && !imageData) {
-					uploadedImage = await uploadImage(imageFile);
-					setImageData({
-						url: uploadedImage.url,
-						publicId: uploadedImage.publicId,
-					});
-				}
+                if (imageFile && !imageData) {
+                    uploadedImage = await uploadImage(imageFile);
+                    setImageData({
+                        url: uploadedImage.url,
+                        publicId: uploadedImage.publicId,
+                    });
+                }
 
+                const { ...productData } = values;
 
-				const { seller, ...productData } = values;
+                console.log(productData);
 
-				console.log(productData);
+                await createNewPost({
+                    ...productData,
+                    image: {
+                        url: uploadedImage?.url || '',
+                        publicId: uploadedImage?.publicId || '',
+                    },
+                });
 
-
-				await createNewPost({
-					...productData,
-					image: {
-						url: uploadedImage?.url || "",
-						publicId: uploadedImage?.publicId || "",
-					},
-					seller: seller
-				});
-
-				resetForm();
-				setImageFile(null);
-				setImageData(null);
-				onHide?.();
-			} catch (error) {
-				console.error(error);
-			}
-		},
-	});
-	return { formik, imageFile, setImageFile, imageData, setImageData };
+                resetForm();
+                setImageFile(null);
+                setImageData(null);
+                onHide?.();
+            } catch (error) {
+                console.error(error);
+            }
+        },
+    });
+    return { formik, imageFile, setImageFile, imageData, setImageData };
 };
 
 export default useAddPostFormik;

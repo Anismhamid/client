@@ -50,7 +50,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({ show, onHide
                 display: "flex",
                 alignItems: isMobile ? "flex-end" : "center",
                 justifyContent: "center",
-                zIndex: 2000,
+                // zIndex: 2000,
             }}
         >
             <Fade in={show} timeout={300}>

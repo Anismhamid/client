@@ -153,10 +153,20 @@ const Home: FunctionComponent = () => {
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
-            <section id='help-section'>
-                <Paper elevation={3} sx={{ p: 4, mt: 2, borderRadius: 3 }}>
+            <section
+                id='help-section'
+                style={{
+                    margin:"auto"
+                  
+                }}
+            >
+                <Paper
+                    style={{ backgroundColor: 'primary.main' }}
+                    elevation={1}
+                    sx={{ p: 2, m: 2, border: '1px solid #b400003d' }}
+                >
                     <Typography
-                        variant='h5'
+                        variant='h6'
                         gutterBottom
                         fontWeight='bold'
                         textAlign='center'
@@ -165,26 +175,22 @@ const Home: FunctionComponent = () => {
                     </Typography>
 
                     <Grid container spacing={3} mt={2}>
-                        <Grid size={{ xs: 12, md: 4 }}>
+                        <Grid size={{ xs: 6, md: 4 }}>
                             <Button
                                 fullWidth
                                 variant='outlined'
                                 component={RouterLink}
                                 to='/help/selling'
-                                startIcon={<span>💰</span>}
-                                sx={{ py: 2 }}
                             >
                                 {t('pages.contact.howToSell', 'كيفية البيع')}
                             </Button>
                         </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
+                        <Grid size={{ xs: 6, md: 4 }}>
                             <Button
                                 fullWidth
                                 variant='outlined'
                                 component={RouterLink}
                                 to={path.SafetyHelp}
-                                startIcon={<span>🛡️</span>}
-                                sx={{ py: 2 }}
                             >
                                 {t('pages.contact.safetyTips', 'نصائح الأمان')}
                             </Button>
@@ -195,8 +201,6 @@ const Home: FunctionComponent = () => {
                                 variant='outlined'
                                 component={RouterLink}
                                 to={path.DisputesHelp}
-                                startIcon={<span>⚖️</span>}
-                                sx={{ py: 2 }}
                             >
                                 {t(
                                     'pages.contact.resolveDisputes',

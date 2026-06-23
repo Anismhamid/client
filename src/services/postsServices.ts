@@ -123,8 +123,7 @@ export const createNewPost = async (post: Posts) => {
     try {
         const response = await axios.post(`${api}/posts`, post, {
             headers: {
-                Authorization: localStorage.getItem('token'),
-                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem('token')
             },
         });
 
