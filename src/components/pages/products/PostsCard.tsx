@@ -108,7 +108,7 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
         const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
 
         const jsonLdData = generateSingleProductJsonLd(post);
-const navigate = useNavigate()
+        const navigate = useNavigate();
         const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) =>
             setMenuAnchor(e.currentTarget);
         const handleMenuClose = () => setMenuAnchor(null);
@@ -711,68 +711,76 @@ const navigate = useNavigate()
                     </Stack>
 
                     {/* Contact + Waze */}
-                    {post.seller?.user?._id !== auth?._id && (
-                        <Stack direction='row' gap={1}>
-                            <Button
-                                variant='contained'
-                                size='small'
-                                startIcon={
-                                    <Comment
-                                        sx={{ fontSize: '14px !important' }}
+
+                    <Stack
+                        hidden={post.seller?.user?._id === auth?._id}
+                        direction='row'
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-around',
+                        }}
+                        display={'flex'}
+                        gap={1}
+                    >
+                        <Button
+                            variant='outlined'
+                            size='small'
+                            startIcon={
+                                <Comment sx={{ fontSize: '14px !important' }} />
+                            }
+                            onClick={() => {
+                                const sellerUser = post.seller;
+                                const fromId = auth?._id;
+
+                                if (!sellerUser?.user?._id || !fromId) {
+                                    return navigate('/login');
+                                }
+
+                                setSelectedUser({
+                                    _id: sellerUser.user?._id as string,
+                                    name: {
+                                        first: sellerUser.name,
+                                        last: selectedUser?.name?.last,
+                                    },
+                                });
+                                setOpenChat(true);
+                            }}
+                            disableElevation
+                        >
+                            {t('common.contact')}
+                        </Button>
+
+                        <Link
+                            to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            style={{ textDecoration: 'none', gap: 1 }}
+                        >
+                            <Chip
+                                icon={
+                                    <img
+                                        src='/waze.png'
+                                        width={16}
+                                        alt='waze'
                                     />
                                 }
-                                onClick={() => {
-                                    const sellerUser = post.seller;
-                                    const fromId = auth?._id;
-
-                                    if (!sellerUser?.user?._id || !fromId) {
-                                        return navigate("/login");
-                                    }
-
-                                    setSelectedUser({
-                                        _id: sellerUser.user?._id as string,
-                                        name: {
-                                            first: sellerUser.name,
-                                            last: selectedUser?.name?.last,
-                                        },
-                                    });
-                                    setOpenChat(true);
+                                label='Waze'
+                                size='small'
+                                hidden={post.seller?.user?._id === auth?._id}
+                                variant='outlined'
+                                sx={{
+                                    height: 30,
+                                    color: 'info.main',
+                                    gap: 1,
+                                    fontWeight: 600,
+                                    fontSize: '0.9rem',
+                                    cursor: 'pointer',
+                                    '& .MuiChip-icon': { mr: 0.75 },
                                 }}
-                                disableElevation
-                            >
-                                {t('common.contact')}
-                            </Button>
-
-                            <Link
-                                to={`https://waze.com/ul?q=${encodeURIComponent(post.location || '')}&navigate=yes`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                style={{ textDecoration: 'none', gap: 1 }}
-                            >
-                                <Chip
-                                    icon={
-                                        <img
-                                            src='/waze.png'
-                                            width={16}
-                                            alt='waze'
-                                        />
-                                    }
-                                    label='Waze'
-                                    size='small'
-                                    sx={{
-                                        height: 30,
-                                        bgcolor: '#33CCFF',
-                                        color: '#fff',
-                                        gap: 1,
-                                        fontWeight: 600,
-                                        fontSize: '0.8125rem',
-                                        cursor: 'pointer',
-                                        '& .MuiChip-icon': { ml: 0.75 },
-                                    }}
-                                />
-                            </Link>
-                        </Stack>
-                    )}
+                            />
+                        </Link>
+                    </Stack>
                 </CardContent>
 
                 {/* ── STATS ── */}

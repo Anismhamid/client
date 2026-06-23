@@ -23,7 +23,6 @@ import { Posts } from '../../../interfaces/Posts';
 import { productsAndCategories } from '../../navbar/navCategoryies';
 import ChipNavigation from '../../navbar/ChepNavigation';
 import PostCard from '../products/PostsCard';
-import { toggleLike } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
 import { generateProductsItemListJsonLd } from '../../../../utils/structuredData';
 
@@ -125,17 +124,6 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
         return () => observer.disconnect();
     }, [handleLoadMore]);
 
-    /* ---------------- SAFE LIKE HANDLER ---------------- */
-    const handleLike = useCallback(
-        (id: string, liked?: boolean) => {
-            // optional API call safe wrapper
-            toggleLike(id).catch(() => {});
-
-            onLikeToggle(id, liked);
-        },
-        [onLikeToggle],
-    );
-
     return (
         <>
             <JsonLd data={generateProductsItemListJsonLd(posts.slice(0, 20))} />
@@ -212,7 +200,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                                     onOpenDeleteModal
                                                 }
                                                 category={post.category}
-                                                onLikeToggle={handleLike}
+                                                onLikeToggle={onLikeToggle}
                                             />
                                         </motion.div>
                                     </Grid>

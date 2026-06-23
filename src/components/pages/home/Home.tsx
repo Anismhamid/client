@@ -1,5 +1,5 @@
 // pages/Home.tsx
-import { FunctionComponent, lazy, Suspense, useState } from 'react';
+import { FunctionComponent, lazy, Suspense, useEffect, useState } from 'react';
 import {
     // Alert,
     // AlertTitle,
@@ -35,12 +35,13 @@ import { useUser } from '../../../context/useUSer';
 import { usePosts } from '../../../hooks/usePosts';
 import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
-import { deletePost, toggleLike } from '../../../services/postsServices';
+import { deletePost } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
 import TransitionAlerts from './TransitionAlerts';
+import { Posts } from '../../../interfaces/Posts';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
@@ -49,7 +50,7 @@ const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
     const direction = handleRTL();
-    const { posts, loading } = usePosts();
+    const { posts: initialPosts, loading } = usePosts();
     const location = useLocation();
 
     // Modals state
@@ -59,7 +60,30 @@ const Home: FunctionComponent = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
     const [, setRefresh] = useState(false);
+    const [posts, setPosts] = useState<Posts[]>([]);
 
+    useEffect(() => {
+        setPosts(initialPosts);
+    }, [initialPosts]);
+
+    const handleLikeToggle = async (postId: string) => {
+        if (!auth?._id) return;
+        const userId = auth._id;
+
+        // optimistic update
+        setPosts((prev) =>
+            prev.map((p) => {
+                if (p._id !== postId) return p;
+                const liked = p.likes?.includes(userId);
+                return {
+                    ...p,
+                    likes: liked
+                        ? p.likes!.filter((id) => id !== userId)
+                        : [...(p.likes || []), userId],
+                };
+            }),
+        );
+    };
     const isAdmin = auth?.role === RoleType.Admin;
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
@@ -125,7 +149,7 @@ const Home: FunctionComponent = () => {
             />
             {/* ─── HERO ─── */}
             <header>
-                <TransitionAlerts/>
+                <TransitionAlerts />
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
@@ -203,7 +227,7 @@ const Home: FunctionComponent = () => {
                             setPostToDelete(name);
                             setShowDeleteModal(true);
                         }}
-                        onLikeToggle={toggleLike}
+                        onLikeToggle={handleLikeToggle}
                     />
                     <ContactCTA />
                 </Suspense>
