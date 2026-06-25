@@ -734,14 +734,14 @@ const PostCard: FunctionComponent<PostCardProps> = memo(
                                 const sellerUser = post.seller;
                                 const fromId = auth?._id;
 
-                                if (!sellerUser?._id || !fromId) {
+                                if (!sellerUser?._id && !fromId) {
                                     return navigate('/login');
                                 }
 
                                 setSelectedUser({
                                     _id: sellerUser?._id as string,
                                     name: {
-                                        first: sellerUser.name?.first,
+                                        first: sellerUser?.name?.first,
                                         last: selectedUser?.name?.last,
                                     },
                                 });
