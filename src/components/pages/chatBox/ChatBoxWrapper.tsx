@@ -1,10 +1,19 @@
 import ChatBox from './ChatBox';
 import { FunctionComponent } from 'react';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
-import { mapUserMessageToChatBox } from './MessagesPage';
 import { useUser } from '../../../context/useUSer';
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
+
+const mapUserMessageToChatBox = (user: UserMessage) => ({
+    _id: user.from._id,
+    name: {
+        first: user.to?.first ?? '',
+        last: user.to?.last ?? '',
+    },
+    email: user.to.email ?? '',
+    role: user.to.role ?? 'Client',
+});
 
 interface ChatBoxWrapperProps {
     user: UserMessage;
@@ -30,7 +39,7 @@ const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({ user }) => {
             }}
             otherUser={{
                 ...mapUserMessageToChatBox(user),
-                status: user.status,
+                status: user.to.status,
             }}
             token={token || ''}
         />

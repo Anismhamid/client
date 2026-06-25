@@ -117,7 +117,7 @@ const PostDetails: FunctionComponent = () => {
 	const [isSharing, setIsSharing] = useState<boolean>(false);
 
 	const sellerDisplayName =
-		post.seller?.name || "user";
+		post.seller?.name?.first || "user";
 
 	const categoryLabel = post.category
 		? categoryLabels[post.category] || t(post.category)
@@ -361,7 +361,7 @@ const PostDetails: FunctionComponent = () => {
 								>
 									<Stack direction='row' spacing={2} alignItems='center'>
 										<Avatar
-											src={post.seller?.user.image?.url || "/user.png"}
+											src={post.seller?.image?.url || "/user.png"}
 											alt={sellerDisplayName}
 											sx={{ width: 64, height: 64, border: 2, borderColor: "divider" }}
 										/>
@@ -816,7 +816,7 @@ const PostDetails: FunctionComponent = () => {
 													})}
 													style={{ textDecoration: "none", color: "inherit" }}
 												>
-													<Avatar src={post.seller?.user.image?.url || "/user.png"} alt={sellerDisplayName} sx={{ width: 56, height: 56 }} />
+													<Avatar src={post.seller?.image?.url || "/user.png"} alt={sellerDisplayName} sx={{ width: 56, height: 56 }} />
 												</Link>
 												<Box>
 													<Typography variant='subtitle1' sx={{ fontWeight: 700 }}>

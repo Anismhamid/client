@@ -13,6 +13,7 @@ import {
     Badge,
     alpha,
     useTheme,
+    Avatar,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -202,36 +203,16 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                                 },
                             }}
                         >
-                            <div
-                                style={{
+                            <Avatar
+                                src={conv.user?.image?.url}
+                                sx={{
                                     width: 48,
                                     height: 48,
-                                    fontSize: '1rem',
                                     fontWeight: 700,
-                                    letterSpacing: '-0.5px',
-                                    boxShadow: isSelected
-                                        ? `0 4px 16px ${alpha(theme.palette.primary.main, 0.4)}`
-                                        : `0 2px 8px ${alpha(theme.palette.primary.main, 0.2)}`,
-                                    transition: 'all 0.2s ease',
-                                    flexShrink: 0,
-                                    backgroundColor: isSelected
-                                        ? theme.palette.primary.main
-                                        : theme.palette.grey[400],
-                                    color: theme.palette.common.white,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    borderRadius: '50%',
-                                    backgroundImage: conv.user.image?.url
-                                        ? `url(${conv.user.image.url})`
-                                        : 'none',
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
                                 }}
                             >
-                                {!conv.user.image?.url &&
-                                    userName?.charAt(0).toUpperCase()}
-                            </div>
+                                {userName?.charAt(0).toUpperCase()}
+                            </Avatar>
                         </Badge>
 
                         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -572,6 +553,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                         name: auth?.name || { first: '', last: '' },
                         email: auth?.email || '',
                         role: auth?.role || 'user',
+                        image: auth.image,
                     }}
                     otherUser={selectedUser}
                     token={token}

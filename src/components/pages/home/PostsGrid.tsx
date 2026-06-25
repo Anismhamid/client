@@ -187,6 +187,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                                 discountedPrice={
                                                     discountedPrice
                                                 }
+                                                
                                                 canEdit={canEdit}
                                                 setPostIdToUpdate={() =>
                                                     onSetPostIdToUpdate(

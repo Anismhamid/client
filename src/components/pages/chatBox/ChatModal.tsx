@@ -23,7 +23,6 @@ import {
     Slide,
     AppBar,
     Toolbar,
-    Avatar,
     Badge,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
@@ -48,6 +47,7 @@ import {
 } from './helpers/functions';
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
+import UserAvatar from './UserAvatar';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -92,7 +92,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
 
     const getUserFullName = (user?: BaseUser) => {
         if (!user) return '';
-        return `${user.name?.first?.toUpperCase() ?? 'user'} ${user.name?.last?.toUpperCase() ?? ''}`.trim();
+        return `${user.name?.first ?? 'user'} ${user.name?.last || ''}`.trim();
     };
 
     const markAsSeen = () => {
@@ -259,20 +259,17 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
             }
         });
 
-        socket.on(
-            'message:seen',
-            ({ from }: { from: string; }) => {
-                if (from === otherUser._id) {
-                    setMessagesForUser(otherUser?._id ?? '', (prev) =>
-                        prev.map((m) =>
-                            m?.from?._id === currentUser._id
-                                ? { ...m, status: 'seen' }
-                                : m,
-                        ),
-                    );
-                }
-            },
-        );
+        socket.on('message:seen', ({ from }: { from: string }) => {
+            if (from === otherUser._id) {
+                setMessagesForUser(otherUser?._id ?? '', (prev) =>
+                    prev.map((m) =>
+                        m?.from?._id === currentUser._id
+                            ? { ...m, status: 'seen' }
+                            : m,
+                    ),
+                );
+            }
+        });
 
         return () => {
             socket.off('message:delivered');
@@ -344,6 +341,10 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                 clearTimeout(typingTimeoutRef.current);
             }
         };
+    }, []);
+
+    useEffect(() => {
+        console.log('otherUser', otherUser.image);
     }, []);
 
     if (!currentUser?._id) return <Navigate to={path.Login} replace />;
@@ -418,25 +419,15 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                                 variant='dot'
                                 sx={{
                                     '& .MuiBadge-badge': {
-                                        bgcolor: otherUser?.status
-                                            ? 'success'
-                                            : 'error',
+                                        bgcolor:
+                                            otherUser?.status === true
+                                                ? 'green'
+                                                : 'error',
                                         boxShadow: '0 0 0 2px white',
                                     },
                                 }}
                             >
-                                <Avatar
-                                    sx={{
-                                        width: 44,
-                                        height: 44,
-                                        bgcolor: 'primary',
-                                        mr: 2,
-                                    }}
-                                    src={otherUser.image?.url}
-                                >
-                                    {getUserFullName(otherUser).charAt(0) ||
-                                        'U'}
-                                </Avatar>
+                                <UserAvatar user={otherUser} />
                             </Badge>
 
                             <Box sx={{ flexGrow: 1 }}>

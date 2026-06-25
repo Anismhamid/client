@@ -27,13 +27,13 @@ import {
 } from '@mui/material';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 import { useTranslation } from 'react-i18next';
-import ProductCard from './PostsCard';
 import { generateCategoryJsonLd } from '../../../../utils/structuredData';
 import JsonLd from '../../../../utils/JsonLd';
 import { useNavigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import SearchBox from '../../../atoms/productsManage/SearchBox';
 import { Posts } from '../../../interfaces/Posts';
+import PostCard from './PostsCard';
 
 interface PostsCategoryProps {
     category: string;
@@ -338,7 +338,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                             return (
                                 <Grid size={{ xs: 12, md: 4, lg: 3 }}>
                                     <Box ref={observerRef}>
-                                        <ProductCard
+                                        <PostCard
                                             featured={post.featured}
                                             key={post._id}
                                             post={post}

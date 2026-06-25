@@ -15,32 +15,12 @@ export interface BaseMessage {
     _id: string;
     message?: string;
 
-    from?: {
-        _id?: string;
-        name?: {
-            first?: string;
-            last?: string;
-        };
-        email?: string;
-        role?: string;
-        image?: { url: string; alt: string };
-        status?: boolean;
-    };
-    to?: {
-        _id?: string;
-        name?: {
-            first?: string;
-            last?: string;
-        };
-        email?: string;
-        role?: string;
-        image?: { url: string; alt: string };
-        status?: boolean;
-    };
+    from?: BaseUser;
+
+    to?: BaseUser;
 
     createdAt: Date | string;
-
-    status?: 'sent' | 'delivered' | 'seen' | 'pending';
+    updatedAt?: Date | string;
 
     warning?: boolean;
     isImportant?: boolean;
