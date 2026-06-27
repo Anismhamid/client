@@ -1,54 +1,123 @@
-import Box from '@mui/material/Box';
-import Alert from '@mui/material/Alert';
-import IconButton from '@mui/material/IconButton';
-import Collapse from '@mui/material/Collapse';
-import CloseIcon from '@mui/icons-material/Close';
-import { AlertHeading } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
+import {
+    Alert,
+    AlertTitle,
+    Fab,
+    IconButton,
+    Slide,
+    SlideProps,
+    Snackbar,
+    Tooltip,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+
+function SlideTransition(props: SlideProps) {
+    return <Slide {...props} direction='down' />;
+}
 
 function TransitionAlerts() {
+    const [seen, setSeen] = useState(() => {
+        return localStorage.getItem('development-alert') === 'true';
+    });
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        const time = setTimeout(() => {
+        if (seen) return;
+
+        const timer = setTimeout(() => {
             setOpen(true);
 
             const audio = new Audio('/perfect-ding-1-355745.mp3');
             audio.volume = 0.5;
-
-            audio.play().catch(() => {
-                // Browser blocked autoplay
-                console.log('Autoplay blocked');
-            });
+            audio.play().catch(() => {});
         }, 3000);
 
-        return () => clearTimeout(time);
-    }, []);
+        return () => clearTimeout(timer);
+    }, [seen]);
+
+    const handleClose = () => {
+        setOpen(false);
+        setSeen(true);
+
+        localStorage.setItem('development-alert', 'true');
+    };
+
+    const handleReopen = () => {
+        setOpen(true);
+    };
 
     return (
-        <Box sx={{ width: '100%', position: 'fixed', zIndex: 11 }}>
-            <Collapse in={open}>
+        <>
+            <Snackbar
+                open={open}
+                autoHideDuration={12000}
+                onClose={handleClose}
+                TransitionComponent={SlideTransition}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center',
+                }}
+            >
                 <Alert
+                    onClose={handleClose}
                     severity='warning'
-                    sx={{ m: 3, mb: 0 }}
+                    variant='filled'
+                    sx={{
+                        width: '100%',
+                        maxWidth: 750,
+                        borderRadius: 3,
+                        boxShadow: 6,
+                        alignItems: 'flex-start',
+                    }}
                     action={
                         <IconButton
                             color='inherit'
                             size='small'
                             onClick={() => setOpen(false)}
                         >
-                            <CloseIcon fontSize='inherit' />
+                            <CloseIcon fontSize='small' />
                         </IconButton>
                     }
                 >
-                    <AlertHeading>تنبيه</AlertHeading>
-                    الموقع لا يزال قيد التطوير، وقد تظهر بعض الأخطاء أو المشاكل
-                    البسيطة أو قد تكون بعض الميزات غير مكتملة. إذا واجهت أي
-                    مشكلة، نرجو إبلاغنا فورًا، وسنعمل على إصلاحها بأسرع وقت
-                    ممكن. شكرًا لتفهمكم ودعمكم.
+                    <AlertTitle sx={{ fontWeight: 700 }}>🚧 تنبيه</AlertTitle>
+                    الموقع لا يزال في مرحلة التطوير، لذلك قد تواجه بعض الأخطاء
+                    أو تلاحظ أن بعض الميزات لم تكتمل بعد.
+                    <br />
+                    <br />
+                    إذا واجهت أي مشكلة أو كان لديك أي اقتراح، نرجو التواصل معنا،
+                    وسنعمل على معالجته في أقرب وقت ممكن.
+                    <br />
+                    <strong>شكرًا لتفهمكم ودعمكم ❤️</strong>
                 </Alert>
-            </Collapse>
-        </Box>
+            </Snackbar>
+
+            {/* 👇 الزر الجانبي */}
+            {seen && !open && (
+                <Tooltip title='إظهار التنبيه'>
+                    <Fab
+                        color='warning'
+                        size='small'
+                        onClick={handleReopen}
+                        sx={{
+                            position: 'fixed',
+                            top: 120,
+                            right: 16,
+                            zIndex: (theme) => theme.zIndex.snackbar,
+                            animation: 'pulse 2s infinite',
+
+                            '@keyframes pulse': {
+                                '0%': { transform: 'scale(1)' },
+                                '50%': { transform: 'scale(1.15)' },
+                                '100%': { transform: 'scale(1)' },
+                            },
+                        }}
+                    >
+                        <WarningAmberRoundedIcon />
+                    </Fab>
+                </Tooltip>
+            )}
+        </>
     );
 }
 

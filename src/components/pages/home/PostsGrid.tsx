@@ -86,7 +86,8 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                 (p.product_name || '').toLowerCase().includes(q) ||
                 (p.description || '').toLowerCase().includes(q) ||
                 (p.category || '').toLowerCase().includes(q) ||
-                String(p.price || '').includes(q)
+                String(p.price || '').includes(q) ||
+                (p.seller?.name?.first || '').toLowerCase().includes(q)
             );
         });
     }, [safePosts, searchQuery, t]);
@@ -96,9 +97,6 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
         return filteredProducts.slice(0, visibleCount);
     }, [filteredProducts, visibleCount]);
 
-    // useEffect(() => {
-    //     setVisibleCount(INITIAL_VISIBLE);
-    // }, [searchQuery, posts]);
 
     const handleLoadMore = useCallback(() => {
         setVisibleCount((prev) => {
@@ -187,7 +185,6 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                                 discountedPrice={
                                                     discountedPrice
                                                 }
-                                                
                                                 canEdit={canEdit}
                                                 setPostIdToUpdate={() =>
                                                     onSetPostIdToUpdate(

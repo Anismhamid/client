@@ -152,7 +152,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const isOutOfStock = post.in_stock === false;
     // const listingUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
 
-
     return (
         <Card
             dir={dir}
@@ -371,37 +370,37 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             الإبلاغ
                         </Typography>
                     </MenuItem>
+
+                    {canEdit && <Divider />}
+
                     {canEdit && (
-                        <Box>
-                            <Divider />
-                            <MenuItem
-                                onClick={() => {
-                                    setPostIdToUpdate(post._id as string);
-                                    onShowUpdateProductModal();
-                                    handleMenuClose();
-                                }}
-                                sx={{ fontSize: '0.875rem', gap: 1 }}
-                            >
-                                <EditIcon sx={{ fontSize: 18 }} /> تعديل
-                            </MenuItem>
-                            <MenuItem
-                                onClick={() => {
-                                    openDeleteModal(post._id as string);
-                                    handleMenuClose();
-                                }}
-                                sx={{ fontSize: '0.875rem', gap: 1 }}
-                            >
-                                <DeleteIcon
-                                    sx={{
-                                        fontSize: 18,
-                                        color: 'error.main',
-                                    }}
-                                />
-                                <Typography color='error' variant='inherit'>
-                                    حذف
-                                </Typography>
-                            </MenuItem>
-                        </Box>
+                        <MenuItem
+                            onClick={() => {
+                                setPostIdToUpdate(post._id as string);
+                                onShowUpdateProductModal();
+                                handleMenuClose();
+                            }}
+                            sx={{ fontSize: '0.875rem', gap: 1 }}
+                        >
+                            <EditIcon sx={{ fontSize: 18 }} /> تعديل
+                        </MenuItem>
+                    )}
+
+                    {canEdit && (
+                        <MenuItem
+                            onClick={() => {
+                                openDeleteModal(post._id as string);
+                                handleMenuClose();
+                            }}
+                            sx={{ fontSize: '0.875rem', gap: 1 }}
+                        >
+                            <DeleteIcon
+                                sx={{ fontSize: 18, color: 'error.main' }}
+                            />
+                            <Typography color='error' variant='inherit'>
+                                حذف
+                            </Typography>
+                        </MenuItem>
                     )}
                 </Menu>
             </Box>

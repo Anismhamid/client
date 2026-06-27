@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react';
 import handleRTL from './locales/handleRTL.ts';
 import { Suspense } from 'react';
 import Loader from './atoms/loader/Loader.tsx';
+import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
 
 function App() {
     const { auth } = useUser();
@@ -120,6 +121,7 @@ function App() {
                 theme={mode}
             />
             <Theme mode={mode} setMode={setMode} />
+             <TransitionAlerts />
             <SpeedDialComponent />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />

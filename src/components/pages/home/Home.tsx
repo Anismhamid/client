@@ -40,7 +40,6 @@ import JsonLd from '../../../../utils/JsonLd';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
-import TransitionAlerts from './TransitionAlerts';
 import { Posts } from '../../../interfaces/Posts';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
@@ -88,11 +87,14 @@ const Home: FunctionComponent = () => {
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
 
-    const handleDelete = (productName: string) => {
-        deletePost(productName).catch((err) => {
+    const handleDelete = async (postId: string) => {
+        try {
+            await deletePost(postId);
+            setPosts((prev) => prev.filter((p) => p._id !== postId));
+        } catch (err) {
             console.error(err);
             showError('שגיאה במחיקת המוצר!');
-        });
+        }
     };
 
     if (loading) return <Loader />;
@@ -101,17 +103,15 @@ const Home: FunctionComponent = () => {
 
     return (
         <>
-            {/* ─── SEO (unchanged) ─── */}
-            <title>صفقة | منصة بيع وشراء المنتجات الجديدة والمستعملة</title>
+            {/* ─── SEO ─── */}
+            <title>بيع وشراء جديد ومستعمل | صفقة</title>
+
             <meta
                 name='description'
                 content='صفقة منصة إلكترونية لبيع وشراء المنتجات الجديدة والمستعملة بسهولة وأمان'
             />
             <link rel='canonical' href={currentUrl} />
-            <meta
-                property='og:title'
-                content='صفقة | سوق إلكتروني لبيع وشراء المنتجات'
-            />
+            <meta property='og:title' content='بيع وشراء جديد ومستعمل | صفقة' />
             <meta
                 property='og:description'
                 content='بيع وشراء المنتجات بسهولة وأمان'
@@ -149,15 +149,14 @@ const Home: FunctionComponent = () => {
             />
             {/* ─── HERO ─── */}
             <header>
-                <TransitionAlerts />
+               
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
             <section
                 id='help-section'
                 style={{
-                    margin:"auto"
-                  
+                    margin: 'auto',
                 }}
             >
                 <Paper

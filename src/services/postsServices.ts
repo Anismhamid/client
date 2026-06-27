@@ -123,7 +123,7 @@ export const createNewPost = async (post: Posts) => {
     try {
         const response = await axios.post(`${api}/posts`, post, {
             headers: {
-                Authorization: localStorage.getItem('token')
+                Authorization: localStorage.getItem('token'),
             },
         });
 
@@ -190,9 +190,7 @@ export const getpostsByCategory = async (category: string) => {
     try {
         const response = await axios.get(`${api}/posts/${category}`);
         return response.data;
-    } catch (error) {
-        console.log(error);
-
+    } catch {
         return [];
     }
 };
@@ -203,9 +201,7 @@ export const getCustomerProfilePostsBySlug = async (
     try {
         const res = await axios.get(`${api}/posts/customer/${slug}`);
         return res.data;
-    } catch (err) {
-        console.log(err);
-
+    } catch {
         return [];
     }
 };
@@ -221,9 +217,7 @@ export const toggleLike = async (postId: string) => {
             },
         );
         return res.data; // { liked: true/false, totalLikes: number }
-    } catch (error) {
-        console.log(error);
-
+    } catch {
         return [];
     }
 };
@@ -248,8 +242,7 @@ export const submitReview = async (
 
         console.log('Review submitted:', res.data);
         return res.data;
-    } catch (error: any) {
-        console.log(error.response?.data || error.message);
-        throw error;
+    } catch {
+        return [];
     }
 };

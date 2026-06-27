@@ -339,8 +339,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                 <Grid size={{ xs: 12, md: 4, lg: 3 }}>
                                     <Box ref={observerRef}>
                                         <PostCard
-                                            featured={post.featured}
                                             key={post._id}
+                                            featured={post.featured}
                                             post={post}
                                             discountedPrice={discountedPrice}
                                             canEdit={canEdit}
