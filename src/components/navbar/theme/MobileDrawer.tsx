@@ -30,7 +30,7 @@ import {
     ChatBubble,
 } from '@mui/icons-material';
 import { FunctionComponent, SyntheticEvent } from 'react';
-import { Collapse, FormGroup } from 'react-bootstrap';
+import { Collapse, FormGroup } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
