@@ -25,7 +25,11 @@ const UserInformation: FunctionComponent<UserInformationProps> = ({user}) => {
 							</Typography>
 							<Typography variant='body1' fontWeight='medium'>
 								{user?.createdAt
-									? formatDate(user?.createdAt)
+								? formatDate(
+									typeof user.createdAt === "string"
+										? user.createdAt
+										: user.createdAt.toISOString()
+								)
 									: "غير محدد"}
 							</Typography>
 						</Grid>
@@ -42,7 +46,7 @@ const UserInformation: FunctionComponent<UserInformationProps> = ({user}) => {
 								{t("register.gender")}
 							</Typography>
 							<Typography variant='body1' fontWeight='medium'>
-								{user.gender === "זכר"
+								{user.gender === "male"
 									? t("register.male")
 									: t("register.female")}
 							</Typography>

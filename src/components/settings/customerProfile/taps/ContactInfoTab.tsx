@@ -162,9 +162,9 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
             <Grid size={{ xs: 12, lg: 6 }}>
                 <ContactTab
                     user={user}
-                    handleContactSeller={function (): void {
-                        throw new Error('Function not implemented.');
-                    }}
+                    // handleContactSeller={function (): void {
+                    //     throw new Error('Function not implemented.');
+                    // }}
                     handleWhatsApp={function (): void {
                         throw new Error('Function not implemented.');
                     }}

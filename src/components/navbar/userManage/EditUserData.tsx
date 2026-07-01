@@ -6,7 +6,15 @@ import {
     Autocomplete,
     Box,
     Button,
+    Card,
+    CardContent,
     CircularProgress,
+    FormControl,
+    FormHelperText,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Select,
     TextField,
     Typography,
 } from '@mui/material';
@@ -23,7 +31,7 @@ interface EditUserDataProps {
 
 /**
  * Auth complete profile
- * @returns inputs to colmplate the fileds on database
+ * @returns inputs to complete the fields on database
  */
 const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
     const [loading, setIsLoading] = useState<boolean>(true);
@@ -43,74 +51,63 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
         enableReinitialize: true,
         validationSchema: yup.object({
             name: yup.object({
-                first: yup.string().required('שם פרטי חשוב'),
+                first: yup.string().required('الاسم الأول مطلوب'),
                 last: yup.string(),
             }),
             phone: yup.object({
                 phone_1: yup
                     .string()
-                    .matches(
-                        /^0[2-9]\d{7,8}$/,
-                        'מספר טלפון לא תקין בפורמט ישראלי',
-                    )
-                    .required('נדרש מספר טלפון'),
+                    .matches(/^0[2-9]\d{7,8}$/, 'رقم الهاتف غير صحيح')
+                    .required('رقم الهاتف مطلوب'),
                 phone_2: yup
                     .string()
-                    .matches(
-                        /^0[2-9]\d{7,8}$/,
-                        'מספר טלפון לא תקין בפורמט ישראלי',
-                    ),
+                    .matches(/^0[2-9]\d{7,8}$/, 'رقم الهاتف غير صحيح'),
             }),
             image: yup.object({
                 url: yup.string(),
                 alt: yup.string(),
             }),
             address: yup.object({
-                city: yup.string().required('נדרשת עיר'),
-                street: yup.string().required('נדרש רחוב'),
+                city: yup.string().required('المدينة مطلوبة'),
+                street: yup.string().required('الشارع مطلوب'),
                 houseNumber: yup.string(),
             }),
-            gender: yup.string().required('נדרש מין'), // Fixed error message
+            gender: yup.string().required('الجنس مطلوب'),
         }),
         onSubmit: (values) => {
-            console.log('Form values:', values); // Add this line
-            console.log('User ID:', userId); // Add this line
+            if (!userId) return;
 
-            if (userId) {
-                const payload = {
-                    name: {
-                        first: values.name.first,
-                        last: values.name.last || '', // Ensure no undefined
-                    },
-                    phone: {
-                        phone_1: values.phone.phone_1,
-                        phone_2: values.phone.phone_2 || '', // Ensure no undefined
-                    },
-                    image: {
-                        url: values.image.url || '',
-                        alt: values.image.alt || values.name.first || '',
-                    },
-                    address: {
-                        city: values.address.city,
-                        street: values.address.street,
-                        houseNumber: values.address.houseNumber || '',
-                    },
-                    gender: values.gender,
-                };
+            const payload = {
+                name: {
+                    first: values.name.first,
+                    last: values.name.last || '',
+                },
+                phone: {
+                    phone_1: values.phone.phone_1,
+                    phone_2: values.phone.phone_2 || '',
+                },
+                image: {
+                    url: values.image.url || '',
+                    alt: values.image.alt || values.name.first || '',
+                },
+                address: {
+                    city: values.address.city,
+                    street: values.address.street,
+                    houseNumber: values.address.houseNumber || '',
+                },
+                gender: values.gender,
+            };
 
-                console.log('Payload to send:', payload); // Add this line
-
-                editUserProfile(userId, payload)
-                    .then(() => {
-                        formik.setSubmitting(false);
-                        showSuccess('הפרופיל עודכן בהצלחה!');
-                    })
-                    .catch((error) => {
-                        console.error('Update error:', error); // Add this line
-                        formik.setSubmitting(false);
-                        showError('שגיאה בעדכון הפרופיל');
-                    });
-            }
+            editUserProfile(userId, payload)
+                .then(() => {
+                    formik.setSubmitting(false);
+                    showSuccess('تم تحديث الملف الشخصي بنجاح!');
+                })
+                .catch((error) => {
+                    console.error('Update error:', error);
+                    formik.setSubmitting(false);
+                    showError('حدث خطأ أثناء تحديث الملف الشخصي');
+                });
         },
     });
 
@@ -121,7 +118,6 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                 const userData = await getUserById(userId);
                 setUser(userData);
 
-                // Set initial values with defaults
                 formik.setValues({
                     name: {
                         first: userData.name?.first || '',
@@ -151,6 +147,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
         };
 
         fetchUser();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userId]);
 
     const { cities, streets, loadingStreets } = useAddressData(
@@ -162,36 +159,31 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
     if (loading) return <Loader />;
 
     return (
-        <Box
-            style={{
-                minHeight: 'fit-content',
-                backgroundColor: 'white',
-                borderRadius: 25,
-                boxShadow: '0px 0.3px 1px 0px black',
-                padding: 20,
-            }}
-            className=' d-flex align-items-center justify-content-center'
-            aria-label='شاشه منبثقه لتحديث الملف الشخصي'
+        <Card
+            variant='outlined'
+            sx={{ borderRadius: 4, maxWidth: 960, mx: 'auto' }}
+            aria-label='شاشة تحديث الملف الشخصي'
         >
-            <Box className='container '>
-                <form onSubmit={formik.handleSubmit} className='mt-4'>
-                    <Typography
-                        aria-label='تحديث الملف الشخصي'
-                        variant='h4'
-                        align='center'
-                        gutterBottom
-                    >
-                        تحديث الملف الشخصي
-                    </Typography>
-                    <Box className=' row row-cols-md-1 row-cols-md-2  row-cols-lg-3'>
-                        <div>
+            <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+                <Typography
+                    variant='h5'
+                    align='center'
+                    fontWeight={800}
+                    gutterBottom
+                    sx={{ mb: 3 }}
+                >
+                    تحديث الملف الشخصي
+                </Typography>
+
+                <Box component='form' onSubmit={formik.handleSubmit}>
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <TextField
-                                aria-label='الاسم الأول'
                                 label='الاسم الأول'
                                 name='name.first'
-                                type='text'
                                 value={formik.values.name.first}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={
                                     formik.touched.name?.first &&
                                     Boolean(formik.errors.name?.first)
@@ -201,18 +193,17 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                     formik.errors.name?.first
                                 }
                                 fullWidth
-                                className='my-2'
                                 variant='outlined'
                             />
-                        </div>
-                        <div>
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <TextField
-                                aria-label='اسم العائلة'
                                 label='اسم العائلة'
                                 name='name.last'
-                                type='text'
                                 value={formik.values.name.last}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={
                                     formik.touched.name?.last &&
                                     Boolean(formik.errors.name?.last)
@@ -222,18 +213,52 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                     formik.errors.name?.last
                                 }
                                 fullWidth
-                                className='my-2'
                                 variant='outlined'
                             />
-                        </div>
-                        <div>
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                            <FormControl fullWidth error={formik.touched.gender && Boolean(formik.errors.gender)}>
+                                <InputLabel id='gender-label'>
+                                    {t('register.gender')}
+                                </InputLabel>
+                                <Select
+                                    labelId='gender-label'
+                                    id='gender'
+                                    name='gender'
+                                    label={t('register.gender') as string}
+                                    value={formik.values.gender}
+                                    onChange={formik.handleChange}
+                                    onBlur={formik.handleBlur}
+                                >
+                                    <MenuItem value=''>
+                                        <em>
+                                            {t('register.selectGender') ||
+                                                'اختر الجنس'}
+                                        </em>
+                                    </MenuItem>
+                                    <MenuItem value='male'>
+                                        {t('register.male')}
+                                    </MenuItem>
+                                    <MenuItem value='female'>
+                                        {t('register.female')}
+                                    </MenuItem>
+                                </Select>
+                                {formik.touched.gender && formik.errors.gender && (
+                                    <FormHelperText>
+                                        {formik.errors.gender}
+                                    </FormHelperText>
+                                )}
+                            </FormControl>
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <TextField
-                                aria-label='الهاتف الرئيسي'
                                 label='الهاتف الرئيسي'
                                 name='phone.phone_1'
-                                type='text'
                                 value={formik.values.phone.phone_1}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 error={
                                     formik.touched.phone?.phone_1 &&
                                     Boolean(formik.errors.phone?.phone_1)
@@ -243,26 +268,43 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                     formik.errors.phone?.phone_1
                                 }
                                 fullWidth
-                                className='my-2'
                                 variant='outlined'
                             />
-                        </div>
+                        </Grid>
 
-                        <div>
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                             <TextField
-                                aria-label='هاتف آخر (اختياري)'
                                 label='هاتف آخر (اختياري)'
                                 name='phone.phone_2'
-                                type='text'
                                 value={formik.values.phone.phone_2}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                error={
+                                    formik.touched.phone?.phone_2 &&
+                                    Boolean(formik.errors.phone?.phone_2)
+                                }
+                                helperText={
+                                    formik.touched.phone?.phone_2 &&
+                                    formik.errors.phone?.phone_2
+                                }
                                 fullWidth
-                                className='my-2'
                                 variant='outlined'
                             />
-                        </div>
+                        </Grid>
 
-                        <div>
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                            <TextField
+                                label='رقم المنزل'
+                                name='address.houseNumber'
+                                value={formik.values.address.houseNumber}
+                                onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
+                                fullWidth
+                                variant='outlined'
+                            />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <Autocomplete
                                 options={cities}
                                 value={formik.values.address.city || null}
@@ -276,7 +318,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                     <TextField
                                         {...params}
                                         label='اختر مدينة'
-                                        variant='filled'
+                                        variant='outlined'
                                         error={
                                             formik.touched.address?.city &&
                                             Boolean(formik.errors.address?.city)
@@ -285,168 +327,102 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                             formik.touched.address?.city &&
                                             formik.errors.address?.city
                                         }
-                                        className='my-2'
                                         fullWidth
                                     />
                                 )}
                             />
-                        </div>
-                        <div>
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <Autocomplete
                                 options={streets}
                                 value={formik.values.address.street || null}
                                 onChange={(_event, value) =>
-                                    formik.setFieldValue(
-                                        'address.street',
-                                        value,
-                                    )
+                                    formik.setFieldValue('address.street', value)
                                 }
                                 onBlur={() =>
-                                    formik.setFieldTouched(
-                                        'address.street',
-                                        true,
-                                    )
+                                    formik.setFieldTouched('address.street', true)
                                 }
-                                disabled={
-                                    !formik.values.address.city ||
-                                    loadingStreets
-                                }
+                                disabled={!formik.values.address.city || loadingStreets}
                                 loading={loadingStreets}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
                                         label='اختر شارعًا'
-                                        variant='filled'
+                                        variant='outlined'
                                         error={
                                             formik.touched.address?.street &&
-                                            Boolean(
-                                                formik.errors.address?.street,
-                                            )
+                                            Boolean(formik.errors.address?.street)
                                         }
                                         helperText={
                                             formik.touched.address?.street &&
                                             formik.errors.address?.street
                                         }
-                                        className='my-2'
                                         fullWidth
                                     />
                                 )}
                             />
-                        </div>
-                        <div>
-                            <TextField
-                                aria-label='رقم المنزل'
-                                label='رقم المنزل'
-                                name='address.houseNumber'
-                                type='text'
-                                value={formik.values.address.houseNumber}
-                                onChange={formik.handleChange}
-                                fullWidth
-                                className='my-2'
-                                variant='outlined'
-                            />
-                        </div>
-                        <div className='form-floating'>
-                            <select
-                                id='gender'
-                                name='gender'
-                                className='form-select'
-                                value={formik.values.gender}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <option value=''>
-                                    {t('register.selectGender') || 'בחר מין'}
-                                </option>
-                                <option value='male'>
-                                    {t('register.male')}
-                                </option>
-                                <option value='female'>
-                                    {t('register.female')}
-                                </option>
-                            </select>
-                            <label htmlFor='gender'>
-                                {t('register.gender')}
-                            </label>
-                            {formik.touched.gender && formik.errors.gender && (
-                                <div className='text-danger small mt-1'>
-                                    {formik.errors.gender}
-                                </div>
-                            )}
-                        </div>
+                        </Grid>
 
-                        <div>
+                        <Grid size={12}>
                             <TextField
-                                aria-label='تغيير رابط الصورة'
-                                label='تغيير رابط الصورة'
+                                label='رابط الصورة'
                                 name='image.url'
-                                type='text'
                                 value={formik.values.image.url}
                                 onChange={formik.handleChange}
+                                onBlur={formik.handleBlur}
                                 fullWidth
-                                className='my-2'
                                 variant='outlined'
                             />
-                            <Box
-                                sx={{
-                                    textAlign: 'end',
-                                    width: '100%',
-                                }}
-                            >
+                            <Box sx={{ mt: 1.5 }}>
                                 <Button
-                                    sx={{
-                                        borderRadius: 50,
-                                    }}
-                                    fullWidth
                                     variant='outlined'
                                     onClick={handleImageChange}
+                                    sx={{ borderRadius: 999 }}
                                 >
                                     {preview
-                                        ? t('hideImage') || 'إخفاء'
-                                        : t('showImage') ||
-                                          'إظهار صورة الملف الشخصي'}
+                                        ? t('hideImage') || 'إخفاء الصورة'
+                                        : t('showImage') || 'إظهار صورة الملف الشخصي'}
                                 </Button>
                                 {preview && (
-                                    <div className='mt-3'>
-                                        <img
-                                            aria-label='صورة'
-                                            height={250}
-                                            src={
-                                                formik.values.image.url ||
-                                                user?.image?.url
-                                            }
+                                    <Box sx={{ mt: 2 }}>
+                                        <Box
+                                            component='img'
+                                            src={formik.values.image.url || user?.image?.url}
                                             alt={`${user?.name.first} avatar`}
-                                            style={{
-                                                maxWidth: '300px',
-                                                borderRadius: '10px',
+                                            sx={{
+                                                height: 220,
+                                                maxWidth: 280,
+                                                borderRadius: 3,
+                                                objectFit: 'cover',
+                                                border: '1px solid',
+                                                borderColor: 'divider',
                                             }}
                                         />
-                                    </div>
+                                    </Box>
                                 )}
                             </Box>
-                        </div>
-                    </Box>
-                    <Box className='text-center mt-3 w-25 m-auto'>
+                        </Grid>
+                    </Grid>
+
+                    <Box sx={{ textAlign: 'center', mt: 4 }}>
                         <Button
                             type='submit'
-                            variant='outlined'
+                            variant='contained'
                             color='primary'
                             disabled={formik.isSubmitting}
-                            fullWidth
-                            sx={{
-                                borderRadius: 50,
-                            }}
+                            sx={{ borderRadius: 999, px: 5, py: 1.25 }}
                         >
                             {formik.isSubmitting ? (
-                                <CircularProgress size={24} color='inherit' />
+                                <CircularProgress size={22} color='inherit' />
                             ) : (
                                 t('saveChanges') || 'حفظ التغييرات'
                             )}
                         </Button>
                     </Box>
-                </form>
-            </Box>
-        </Box>
+                </Box>
+            </CardContent>
+        </Card>
     );
 };
 

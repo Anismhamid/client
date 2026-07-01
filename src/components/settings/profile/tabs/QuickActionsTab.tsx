@@ -23,35 +23,23 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
     };
 
     const handleExportData = () => {
-        // Logic to export user data
         showSuccess('سيتم تحميل بياناتك قريباً');
     };
 
     return (
-        <Card sx={{ borderRadius: 3 }}>
+        <Card variant='outlined' sx={{ borderRadius: 3, mt: 3 }}>
             <CardContent>
-                <Typography
-                    variant='h5'
-                    gutterBottom
-                    fontWeight='bold'
-                    color='primary'
-                >
+                <Typography variant='h6' gutterBottom fontWeight={800}>
                     إجراءات سريعة
                 </Typography>
-                <Grid container spacing={2}>
+                <Grid container spacing={1.5}>
                     <Grid size={{ xs: 12, sm: 6 }}>
-                        {/* TODO:change password */}
                         <Button
                             variant='outlined'
                             fullWidth
-                            startIcon={<SecurityIcon />}
-                            // onClick={changePassword}
                             disabled
-                            sx={{
-                                py: 1.5,
-                                justifyContent: 'flex-center',
-                                gap: 2,
-                            }}
+                            startIcon={<SecurityIcon />}
+                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
                         >
                             تغيير كلمة المرور (قريبأ)
                         </Button>
@@ -62,11 +50,7 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             fullWidth
                             startIcon={<SupportIcon />}
                             onClick={contactSupport}
-                            sx={{
-                                py: 1.5,
-                                justifyContent: 'flex-center',
-                                gap: 2,
-                            }}
+                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
                         >
                             دعم فني
                         </Button>
@@ -78,11 +62,7 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             disabled
                             startIcon={<Download />}
                             onClick={handleExportData}
-                            sx={{
-                                py: 1.5,
-                                justifyContent: 'flex-center',
-                                gap: 2,
-                            }}
+                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
                         >
                             تصدير البيانات (قريبأ)
                         </Button>
@@ -92,16 +72,10 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             variant='outlined'
                             fullWidth
                             startIcon={<QrCode />}
-                            onClick={() =>
-                                navigate(`/users/customer/${user?.slug}`)
-                            }
-                            sx={{
-                                py: 1.5,
-                                justifyContent: 'flex-center',
-                                gap: 2,
-                            }}
+                            onClick={() => navigate(`/users/customer/${user?.slug}`)}
+                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
                         >
-                            الصفحتي التجاريه
+                            الصفحتي التجارية
                         </Button>
                     </Grid>
                 </Grid>

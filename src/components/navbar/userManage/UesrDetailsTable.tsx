@@ -1,15 +1,14 @@
 import { FunctionComponent } from 'react';
 import RoleType from '../../../interfaces/UserType';
+import { Box, Stack, Typography, Divider, alpha, useTheme } from '@mui/material';
 import {
-    styled,
-    TableContainer,
-    tableCellClasses,
-    Table,
-    TableCell,
-    TableBody,
-    TableRow,
-    Paper,
-} from '@mui/material';
+    Person,
+    Phone,
+    PhoneAndroid,
+    LocationOn,
+    Email,
+    VerifiedUser,
+} from '@mui/icons-material';
 import { User } from '../../../interfaces/chat/usersMessages';
 import { useTranslation } from 'react-i18next';
 
@@ -17,93 +16,111 @@ interface UserDetailTableProps {
     user: User;
 }
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-    },
-    // إما حذف قسم الـ head أو تعديله:
-    [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.primary.main,
-        color: theme.palette.common.white,
-        fontWeight: 'bold',
-        fontSize: '1rem',
-    },
-}));
+interface DetailRow {
+    icon: React.ReactNode;
+    label: string;
+    value: React.ReactNode;
+}
 
 const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({ user }) => {
     const { t } = useTranslation();
+    const theme = useTheme();
+
+    const roleLabel =
+        user.role === RoleType.Admin
+            ? 'مدير ومشرف'
+            : user.role === RoleType.Moderator
+              ? 'مشرف'
+              : 'مستخدم';
+
+    const addressValue =
+        user.address?.city && user.address?.street && user.address?.houseNumber
+            ? `البلد: ${user.address.city} شارع: ${user.address.street} رقم البيت: ${user.address.houseNumber}`
+            : '-';
+
+    const rows: DetailRow[] = [
+        {
+            icon: <Person fontSize='small' />,
+            label: t('fullName'),
+            value: `${user.name?.first || ''} ${user.name?.last || ''}`.trim() || '-',
+        },
+        {
+            icon: <Phone fontSize='small' />,
+            label: t('phone'),
+            value: user.phone?.phone_1 || '-',
+        },
+        ...(user.phone?.phone_2
+            ? [
+                  {
+                      icon: <PhoneAndroid fontSize='small' />,
+                      label: t('secondaryPhone'),
+                      value: user.phone.phone_2,
+                  },
+              ]
+            : []),
+        {
+            icon: <LocationOn fontSize='small' />,
+            label: t('address'),
+            value: addressValue,
+        },
+        {
+            icon: <Email fontSize='small' />,
+            label: t('email'),
+            value: user.email,
+        },
+        {
+            icon: <VerifiedUser fontSize='small' />,
+            label: t('userType'),
+            value: (
+                <Typography component='span' fontWeight={700} color='success.main'>
+                    {roleLabel}
+                </Typography>
+            ),
+        },
+    ];
 
     return (
-        <TableContainer style={{ width: '100%' }} component={Paper}>
-            <Table aria-label='user details table '>
-                <TableBody>
-                    <TableRow>
-                        <StyledTableCell align='center'>
-                            {t('fullName')}
-                        </StyledTableCell>
-                        <TableCell className=' fs-5'>
-                            {user.name?.first} {user.name?.last}
-                        </TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                        <StyledTableCell align='center'>
-                            {t('phone')}
-                        </StyledTableCell>
-                        <TableCell className=' fs-5'>
-                            {user.phone?.phone_1 || '-'}
-                        </TableCell>
-                    </TableRow>
-
-                    {user.phone?.phone_2 && (
-                        <TableRow>
-                            <StyledTableCell>
-                                {t('secondaryPhone')}
-                            </StyledTableCell>
-                            <TableCell className=' fs-5'>
-                                {user.phone.phone_2}
-                            </TableCell>
-                        </TableRow>
-                    )}
-
-                    <TableRow>
-                        <StyledTableCell align='center'>
-                            {t('address')}
-                        </StyledTableCell>
-                        <TableCell className='fs-5'>
-                            {user.address?.city &&
-                            user.address?.street &&
-                            user.address?.houseNumber
-                                ? `البلد: ${user.address.city} شارع: ${user.address.street} رقم البيت: ${user.address.houseNumber}`
-                                : '-'}
-                        </TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                        <StyledTableCell align='center'>
-                            {t('email')}
-                        </StyledTableCell>
-                        <TableCell className=' fs-5'>{user.email}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                        <StyledTableCell align='center'>
-                            {t('userType')}
-                        </StyledTableCell>
-                        <TableCell
-                            className='fs-5'
-                            sx={{ color: 'success.main', fontWeight: 'bold' }}
+        <Stack sx={{ width: '100%' }} divider={<Divider />}>
+            {rows.map((row, i) => (
+                <Stack
+                    key={i}
+                    direction='row'
+                    alignItems='center'
+                    spacing={2}
+                    sx={{ py: 1.75 }}
+                >
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 36,
+                            height: 36,
+                            flexShrink: 0,
+                            borderRadius: '50%',
+                            bgcolor: alpha(theme.palette.primary.main, 0.1),
+                            color: 'primary.main',
+                        }}
+                    >
+                        {row.icon}
+                    </Box>
+                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                        <Typography variant='caption' color='text.secondary'>
+                            {row.label}
+                        </Typography>
+                        <Typography
+                            variant='body1'
+                            sx={{
+                                fontWeight: 600,
+                                overflowWrap: 'break-word',
+                            }}
                         >
-                            {user.role === RoleType.Admin
-                                ? 'مدير ومشرف'
-                                : user.role === RoleType.Moderator
-                                  ? 'مشرف'
-                                  : 'مستخدم'}
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </TableContainer>
+                            {row.value}
+                        </Typography>
+                    </Box>
+                </Stack>
+            ))}
+        </Stack>
     );
 };
 
