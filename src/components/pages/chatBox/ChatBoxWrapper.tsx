@@ -6,10 +6,10 @@ import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 
 const mapUserMessageToChatBox = (user: UserMessage) => ({
-    _id: user.from._id,
+    _id: user.to._id,
     name: {
-        first: user.to?.first ?? '',
-        last: user.to?.last ?? '',
+        first: user.to.first ?? '',
+        last: user.to.last ?? '',
     },
     email: user.to.email ?? '',
     role: user.to.role ?? 'Client',

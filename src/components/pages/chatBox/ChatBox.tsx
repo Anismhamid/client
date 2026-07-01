@@ -307,7 +307,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             }
         });
 
-        console.log(otherUser);
 
         return () => {
             socket.off('message:delivered');

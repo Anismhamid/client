@@ -14,6 +14,7 @@ import {
     alpha,
     useTheme,
     Avatar,
+    useMediaQuery,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -23,6 +24,8 @@ import { useTranslation } from 'react-i18next';
 import { formatTime, getUserName } from './helpers/functions';
 import ChatModal from './ChatModal';
 import { useUser } from '../../../context/useUSer';
+// import ChatModal from './ChatModal';
+// import { useUser } from '../../../context/useUSer';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -59,6 +62,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     const { auth } = useUser();
     const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
     const [chatOpen, setChatOpen] = useState(false);
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const loadConversations = async () => {
@@ -115,8 +119,8 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     }, [conversations, searchTerm, filter, unreadCounts]);
 
     const handleOpenChat = (user: UserMessage) => {
-        setSelectedUser(user);
-        setChatOpen(true);
+        // setSelectedUser(user);
+        // setChatOpen(true);
         onSelectChat(user);
     };
 
@@ -544,7 +548,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             </Box>
 
             {/* Chat Modal */}
-            {selectedUser && (
+            {selectedUser && isMobile && (
                 <ChatModal
                     open={chatOpen}
                     onClose={handleCloseChat}

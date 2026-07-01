@@ -343,10 +343,6 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
         };
     }, []);
 
-    useEffect(() => {
-        console.log('otherUser', otherUser.image);
-    }, []);
-
     if (!currentUser?._id) return <Navigate to={path.Login} replace />;
 
     return (
