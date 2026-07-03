@@ -104,6 +104,18 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         string | false
     >(false);
 
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [hovered, setHovered] = useState(false);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        setMousePosition({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
+
     const { unreadCounts } = useChat();
     const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
@@ -184,6 +196,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 component='header'
                 position='relative'
                 dir={dir}
+                onMouseMove={handleMouseMove}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
                 sx={{
                     background:
                         mode === 'dark'
@@ -193,6 +208,28 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     zIndex: 1100,
                     overflow: 'hidden',
                     top: 0,
+                    '&::after': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: 1,
+                        borderRadius: '21px',
+                        pointerEvents: 'none',
+                        borderBottom: '1px solid transparent',
+                        background: `
+                                                radial-gradient(
+                                                180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
+                                                rgb(255, 167, 38),
+                                                transparent 60%
+                                                )
+                                                border-box
+                                                `,
+                        WebkitMask:
+                            'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude',
+                        opacity: hovered ? 1 : 0,
+                        transition: 'opacity .25s',
+                    },
                 }}
                 aria-label='شريط التنقل'
                 title='شريط التنقل'

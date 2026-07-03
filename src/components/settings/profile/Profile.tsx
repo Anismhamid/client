@@ -57,7 +57,40 @@ import QuickActionsTab from './tabs/QuickActionsTab';
 import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
 
-const INK = '#12161C';
+const INK = 'primary'; // '#12161C';
+const ACCENT = '#f59e0b'; // brand amber, used across navbar/switch/active states
+
+/**
+ * Returns a traffic-light color for the profile-completion ring so the
+ * number itself communicates urgency, not just progress.
+ */
+const getCompletionColor = (percentage: number) => {
+    if (percentage >= 80) return '#22c55e';
+    if (percentage >= 50) return ACCENT;
+    return '#ef4444';
+};
+
+/**
+ * Human-friendly relative date for the activity feed: "اليوم"، "أمس"، or
+ * a short date for anything older.
+ */
+const getRelativeDate = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const today = new Date();
+    const diffDays = Math.floor(
+        (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
+            86400000,
+    );
+
+    const time = date.toLocaleTimeString('ar', {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+    if (diffDays === 0) return `اليوم، ${time}`;
+    if (diffDays === 1) return `أمس، ${time}`;
+    return `${date.toLocaleDateString('ar', { day: 'numeric', month: 'short' })}، ${time}`;
+};
 
 /**
  * User Profile Component
@@ -74,6 +107,17 @@ const Profile: FunctionComponent = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [showEdit, setShowEdit] = useState<boolean>(false);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [hovered, setHovered] = useState(false);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+
+        setMousePosition({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
 
     const { id } = useParams();
 
@@ -251,20 +295,25 @@ const Profile: FunctionComponent = () => {
     ];
     const currentUrl = `https://client-qqq1.vercel.app/profile`;
 
+    const completionColor = getCompletionColor(stats.completionPercentage);
+
     const statItems = [
         {
-            icon: <ShoppingCart sx={{ fontSize: 28 }} color='primary' />,
+            icon: <ShoppingCart sx={{ fontSize: 24 }} />,
+            color: theme.palette.primary.main,
             value: userPosts.length || 0,
             label: 'منشوراتي',
             to: `/users/customer/${user.slug}`,
         },
         {
-            icon: <Favorite sx={{ fontSize: 28 }} color='error' />,
+            icon: <Favorite sx={{ fontSize: 24 }} />,
+            color: '#ef4444',
             value: stats.totalFavorites,
             label: t('favorites'),
         },
         {
-            icon: <Star sx={{ fontSize: 28 }} color='warning' />,
+            icon: <Star sx={{ fontSize: 24 }} />,
+            color: ACCENT,
             value: stats.rating.toFixed(1),
             label: 'تقييم',
         },
@@ -300,25 +349,41 @@ const Profile: FunctionComponent = () => {
                     <Container maxWidth='lg'>
                         {/* Membership Card Header */}
                         <Box
+                            onMouseMove={handleMouseMove}
+                            onMouseEnter={() => setHovered(true)}
+                            onMouseLeave={() => setHovered(false)}
                             sx={{
                                 position: 'relative',
                                 mb: 7,
                                 borderRadius: '22px',
                                 bgcolor: INK,
-                                color: '#fff',
                                 px: { xs: 3, md: 5 },
                                 pt: { xs: 3, md: 4 },
                                 pb: { xs: 5, md: 5 },
-                                boxShadow: '0 20px 40px -20px rgba(0,0,0,0.5)',
+                                overflow: 'hidden',
+                                boxShadow: '0 20px 40px -20px rgba(0,0,0,.5)',
+
                                 '&::after': {
                                     content: '""',
                                     position: 'absolute',
-                                    bottom: -11,
-                                    insetInline: 0,
-                                    height: 22,
-                                    background: `radial-gradient(circle at 11px 0, transparent 11px, ${INK} 11.5px)`,
-                                    backgroundSize: '22px 22px',
-                                    backgroundRepeat: 'repeat-x',
+                                    inset: 1,
+                                    borderRadius: '21px',
+                                    pointerEvents: 'none',
+                                    border: '1px solid transparent',
+                                    background: `
+                                                radial-gradient(
+                                                180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
+                                              rgb(255, 167, 38),
+                                                transparent 80%
+                                                )
+                                                border-box
+                                                `,
+                                    WebkitMask:
+                                        'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
+                                    WebkitMaskComposite: 'xor',
+                                    maskComposite: 'exclude',
+                                    opacity: hovered ? 1 : 0,
+                                    transition: 'opacity .25s',
                                 },
                             }}
                         >
@@ -332,25 +397,24 @@ const Profile: FunctionComponent = () => {
                                     variant='overline'
                                     sx={{
                                         letterSpacing: 3,
-                                        color: alpha('#fff', 0.55),
                                         fontWeight: 700,
                                     }}
                                 >
                                     بطاقة عضوية · صفقة
                                 </Typography>
-                                <Stack direction='row' spacing={1}>
+                                <Stack direction='row' gap={1}>
                                     <Tooltip title='مشاركة'>
                                         <IconButton
                                             onClick={handleShareProfile}
                                             size='small'
                                             sx={{
-                                                color: '#fff',
+                                                // color: '#fff',
                                                 border: '1px solid',
-                                                borderColor: alpha('#fff', 0.2),
+                                                // borderColor: alpha('#fff', 0.2),
                                                 '&:hover': {
                                                     borderColor: alpha(
-                                                        '#fff',
-                                                        0.5,
+                                                        '#272aee',
+                                                        0.8,
                                                     ),
                                                 },
                                             }}
@@ -363,9 +427,9 @@ const Profile: FunctionComponent = () => {
                                             onClick={handleLogout}
                                             size='small'
                                             sx={{
-                                                color: '#fff',
+                                                // color: '#fff',
                                                 border: '1px solid',
-                                                borderColor: alpha('#fff', 0.2),
+                                                // borderColor: alpha('#fff', 0.2),
                                                 '&:hover': {
                                                     borderColor: 'error.main',
                                                     color: 'error.light',
@@ -410,29 +474,46 @@ const Profile: FunctionComponent = () => {
                                                 ?.charAt(0)
                                                 .toUpperCase()}
                                         </Avatar>
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                bottom: -6,
-                                                insetInlineEnd: -6,
-                                                width: 38,
-                                                height: 38,
-                                                borderRadius: '50%',
-                                                bgcolor: 'success.main',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                border: `3px solid ${INK}`,
-                                                transform: 'rotate(-8deg)',
-                                            }}
-                                        >
-                                            <VerifiedUser
+
+                                        {/* Verification stamp — reads like an
+                                            official seal rather than a plain badge */}
+                                        <Tooltip title='حساب موثّق'>
+                                            <Box
                                                 sx={{
-                                                    fontSize: 18,
-                                                    color: '#fff',
+                                                    position: 'absolute',
+                                                    bottom: -8,
+                                                    insetInlineEnd: -8,
+                                                    width: 42,
+                                                    height: 42,
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    bgcolor: '#d1ab00',
+                                                    p: '3px',
                                                 }}
-                                            />
-                                        </Box>
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        borderRadius: '50%',
+                                                        bgcolor: 'success.main',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent:
+                                                            'center',
+                                                    }}
+                                                >
+                                                    <VerifiedUser
+                                                        sx={{
+                                                            fontSize: 18,
+                                                            color: '#fff',
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        </Tooltip>
                                     </Box>
                                 </Grid>
 
@@ -462,10 +543,7 @@ const Profile: FunctionComponent = () => {
                                             sm: 'flex-start',
                                         }}
                                     >
-                                        <Typography
-                                            variant='body2'
-                                            sx={{ color: alpha('#fff', 0.6) }}
-                                        >
+                                        <Typography variant='body2'>
                                             @
                                             {user.slug ||
                                                 user.email.split('@')[0]}
@@ -481,7 +559,6 @@ const Profile: FunctionComponent = () => {
                                             size='small'
                                             sx={{
                                                 bgcolor: alpha('#fff', 0.12),
-                                                color: '#fff',
                                                 fontWeight: 600,
                                             }}
                                         />
@@ -492,16 +569,19 @@ const Profile: FunctionComponent = () => {
                                                     : 'غير نشط'
                                             }
                                             size='small'
-                                            color='success'
-                                            sx={{ fontWeight: 600 }}
+                                            sx={{
+                                                fontWeight: 600,
+                                                bgcolor: user.status
+                                                    ? alpha('#22c55e', 0.18)
+                                                    : alpha('#fff', 0.1),
+                                                color: user.status
+                                                    ? '#4ade80'
+                                                    : alpha('#fff', 0.6),
+                                            }}
                                         />
                                     </Stack>
 
-                                    <Stack
-                                        direction='column'
-                                        spacing={0.75}
-                                        sx={{ color: alpha('#fff', 0.75) }}
-                                    >
+                                    <Stack direction='column' spacing={0.75}>
                                         {user.email && (
                                             <Box
                                                 display='flex'
@@ -596,11 +676,28 @@ const Profile: FunctionComponent = () => {
                                                 },
                                             }}
                                         >
-                                            {s.icon}
+                                            <Box
+                                                sx={{
+                                                    width: 44,
+                                                    height: 44,
+                                                    mx: 'auto',
+                                                    mb: 1,
+                                                    borderRadius: '50%',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    bgcolor: alpha(
+                                                        s.color,
+                                                        0.12,
+                                                    ),
+                                                    color: s.color,
+                                                }}
+                                            >
+                                                {s.icon}
+                                            </Box>
                                             <Typography
                                                 variant='h5'
                                                 fontWeight={800}
-                                                sx={{ mt: 0.5 }}
                                             >
                                                 {s.value}
                                             </Typography>
@@ -649,71 +746,114 @@ const Profile: FunctionComponent = () => {
                                         py: 2,
                                     }}
                                 >
-                                    <Box
-                                        sx={{
-                                            position: 'relative',
-                                            display: 'inline-flex',
-                                        }}
+                                    <Tooltip
+                                        title={`اكتمال الملف الشخصي: ${stats.completionPercentage}%`}
                                     >
-                                        <CircularProgress
-                                            variant='determinate'
-                                            value={stats.completionPercentage}
-                                            size={64}
-                                            thickness={4}
-                                            sx={{ color: 'primary.main' }}
-                                        />
                                         <Box
                                             sx={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
+                                                position: 'relative',
+                                                display: 'inline-flex',
                                             }}
                                         >
-                                            <Typography
-                                                variant='caption'
-                                                fontWeight={800}
+                                            <CircularProgress
+                                                variant='determinate'
+                                                value={100}
+                                                size={64}
+                                                thickness={4}
+                                                sx={{
+                                                    color: alpha(
+                                                        completionColor,
+                                                        0.15,
+                                                    ),
+                                                    position: 'absolute',
+                                                }}
+                                            />
+                                            <CircularProgress
+                                                variant='determinate'
+                                                value={
+                                                    stats.completionPercentage
+                                                }
+                                                size={64}
+                                                thickness={4}
+                                                sx={{
+                                                    color: completionColor,
+                                                }}
+                                            />
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                }}
                                             >
-                                                {stats.completionPercentage}%
-                                            </Typography>
+                                                <Typography
+                                                    variant='caption'
+                                                    fontWeight={800}
+                                                >
+                                                    {stats.completionPercentage}
+                                                    %
+                                                </Typography>
+                                            </Box>
                                         </Box>
-                                    </Box>
+                                    </Tooltip>
                                 </Grid>
                             </Grid>
                         </Paper>
 
-                        {/* Tabs Navigation */}
-                        <Tabs
-                            value={activeTab}
-                            onChange={handleTabChange}
-                            variant={isMobile ? 'scrollable' : 'standard'}
-                            scrollButtons='auto'
-                            centered={!isMobile}
-                            TabIndicatorProps={{
-                                sx: { height: 3, borderRadius: 3 },
-                            }}
+                        {/* Tabs Navigation — segmented pill style to echo the card motif */}
+                        <Box
                             sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
                                 mb: 4,
-                                borderBottom: '1px solid',
-                                borderColor: 'divider',
-                                '& .MuiTab-root': {
-                                    fontWeight: 700,
-                                    textTransform: 'none',
-                                    fontSize: '1rem',
-                                    minHeight: 52,
-                                },
                             }}
                         >
-                            {tabs.map((tab, index) => (
-                                <Tab
-                                    key={index}
-                                    label={tab.label}
-                                    icon={tab.icon}
-                                    iconPosition='start'
-                                />
-                            ))}
-                        </Tabs>
+                            <Tabs
+                                value={activeTab}
+                                onChange={handleTabChange}
+                                variant={isMobile ? 'scrollable' : 'standard'}
+                                scrollButtons={isMobile ? 'auto' : false}
+                                TabIndicatorProps={{
+                                    sx: { display: 'none' },
+                                }}
+                                sx={{
+                                    p: 0.75,
+                                    bgcolor: (t) =>
+                                        alpha(t.palette.text.primary, 0.04),
+                                    borderRadius: 999,
+                                    minHeight: 0,
+                                    '& .MuiTabs-flexContainer': {
+                                        gap: 0.5,
+                                    },
+                                    '& .MuiTab-root': {
+                                        fontWeight: 700,
+                                        textTransform: 'none',
+                                        fontSize: '0.95rem',
+                                        minHeight: 40,
+                                        borderRadius: 999,
+                                        px: 2.5,
+                                        color: 'text.secondary',
+                                        transition: 'all .2s',
+                                    },
+                                    '& .Mui-selected': {
+                                        bgcolor: 'background.paper',
+                                        color: `${theme.palette.text.primary} !important`,
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                    },
+                                }}
+                            >
+                                {tabs.map((tab, index) => (
+                                    <Tab
+                                        key={index}
+                                        label={tab.label}
+                                        icon={tab.icon}
+                                        iconPosition='start'
+                                    />
+                                ))}
+                            </Tabs>
+                        </Box>
 
                         {/* Tab Content */}
                         {activeTab === 0 && (
@@ -738,13 +878,25 @@ const Profile: FunctionComponent = () => {
                                             }}
                                         >
                                             <CardContent>
-                                                <Typography
-                                                    variant='h6'
-                                                    gutterBottom
-                                                    fontWeight={800}
+                                                <Stack
+                                                    direction='row'
+                                                    alignItems='center'
+                                                    spacing={1}
+                                                    mb={2}
                                                 >
-                                                    سجل النشاط
-                                                </Typography>
+                                                    <HistoryIcon
+                                                        fontSize='small'
+                                                        sx={{
+                                                            color: 'text.secondary',
+                                                        }}
+                                                    />
+                                                    <Typography
+                                                        variant='h6'
+                                                        fontWeight={800}
+                                                    >
+                                                        سجل النشاط
+                                                    </Typography>
+                                                </Stack>
                                                 {user.activity?.length ? (
                                                     <Box
                                                         sx={{
@@ -773,62 +925,54 @@ const Profile: FunctionComponent = () => {
                                                                     (
                                                                         timestamp,
                                                                         index,
-                                                                    ) => {
-                                                                        const date =
-                                                                            new Date(
-                                                                                timestamp,
-                                                                            );
-                                                                        return (
+                                                                    ) => (
+                                                                        <Box
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            sx={{
+                                                                                position:
+                                                                                    'relative',
+                                                                                pInlineStart:
+                                                                                    '38px',
+                                                                                pl: '38px',
+                                                                            }}
+                                                                        >
                                                                             <Box
-                                                                                key={
-                                                                                    index
-                                                                                }
                                                                                 sx={{
                                                                                     position:
-                                                                                        'relative',
-                                                                                    pInlineStart:
-                                                                                        '38px',
-                                                                                    pl: '38px',
+                                                                                        'absolute',
+                                                                                    insetInlineStart: 9,
+                                                                                    top: 4,
+                                                                                    width: 14,
+                                                                                    height: 14,
+                                                                                    borderRadius:
+                                                                                        '50%',
+                                                                                    bgcolor:
+                                                                                        'background.paper',
+                                                                                    border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
                                                                                 }}
+                                                                            />
+                                                                            <Typography
+                                                                                variant='body2'
+                                                                                fontWeight={
+                                                                                    600
+                                                                                }
                                                                             >
-                                                                                <Box
-                                                                                    sx={{
-                                                                                        position:
-                                                                                            'absolute',
-                                                                                        insetInlineStart: 9,
-                                                                                        top: 4,
-                                                                                        width: 14,
-                                                                                        height: 14,
-                                                                                        borderRadius:
-                                                                                            '50%',
-                                                                                        bgcolor:
-                                                                                            'background.paper',
-                                                                                        border: '2px solid',
-                                                                                        borderColor:
-                                                                                            'primary.main',
-                                                                                    }}
-                                                                                />
-                                                                                <Typography
-                                                                                    variant='body2'
-                                                                                    fontWeight={
-                                                                                        600
-                                                                                    }
-                                                                                >
-                                                                                    {date.toLocaleString(
-                                                                                        'he-IL',
-                                                                                    )}
-                                                                                </Typography>
-                                                                                <Typography
-                                                                                    variant='caption'
-                                                                                    color='text.secondary'
-                                                                                >
-                                                                                    {t(
-                                                                                        'login.lastLogin',
-                                                                                    )}
-                                                                                </Typography>
-                                                                            </Box>
-                                                                        );
-                                                                    },
+                                                                                {getRelativeDate(
+                                                                                    timestamp,
+                                                                                )}
+                                                                            </Typography>
+                                                                            <Typography
+                                                                                variant='caption'
+                                                                                color='text.secondary'
+                                                                            >
+                                                                                {t(
+                                                                                    'login.lastLogin',
+                                                                                )}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    ),
                                                                 )}
                                                         </Stack>
                                                     </Box>
