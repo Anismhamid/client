@@ -197,7 +197,6 @@ const PostDetails: FunctionComponent = () => {
         },
         [isZoomed],
     );
-
     const handleFullscreenToggle = useCallback(async () => {
         try {
             if (!document.fullscreenElement) {
@@ -518,7 +517,6 @@ const PostDetails: FunctionComponent = () => {
                                         startIcon={<Comment />}
                                         sx={{ gap: 2 }}
                                         onClick={(event) => {
-											
                                             event.preventDefault();
                                             navigate(
                                                 generatePath(
@@ -686,8 +684,9 @@ const PostDetails: FunctionComponent = () => {
                                                                             '0.3s ease',
                                                                         transform:
                                                                             isZoomed
-                                                                                ? `scale(${zoomLevel})`
+                                                                                ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
                                                                                 : 'scale(1)',
+                                                                        transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
                                                                     }}
                                                                 />
                                                             </Box>
