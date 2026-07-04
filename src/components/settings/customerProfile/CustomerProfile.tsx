@@ -40,6 +40,10 @@ import CustomerProfileHeader from './CustomerProfileHeader';
 import { AuthValues } from '../../../interfaces/authValues';
 import { useUser } from '../../../context/useUSer';
 
+// هوية صفقة اللونية الموحدة
+const BRAND_GOLD = '#B8860B';
+const BRAND_BROWN = '#8B4513';
+
 const CustomerProfile: FunctionComponent = () => {
     const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
@@ -164,7 +168,11 @@ const CustomerProfile: FunctionComponent = () => {
                         ease: 'linear',
                     }}
                 >
-                    <CircularProgress size={60} thickness={4} />
+                    <CircularProgress
+                        size={60}
+                        thickness={4}
+                        sx={{ color: BRAND_GOLD }}
+                    />
                 </motion.div>
                 <Typography
                     variant='h6'
@@ -218,6 +226,7 @@ const CustomerProfile: FunctionComponent = () => {
                                 borderRadius: 3,
                                 textTransform: 'none',
                                 fontWeight: 600,
+                                background: `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`,
                             }}
                         >
                             العودة للخلف
@@ -231,35 +240,35 @@ const CustomerProfile: FunctionComponent = () => {
     const currentUrl = `https://client-qqq1.vercel.app/users/customer/${slug}`;
     const dir = handleRTL();
 
-    // Stats cards configuration
+    // بطاقات الإحصائيات — تدرجات مشتقة من نفس هوية العلامة بدل ألوان عشوائية
     const statCards = [
         {
             icon: <ThumbUp />,
             value: stats.totalLikes,
             label: 'إعجاب',
-            color: theme.palette.primary.main,
-            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            color: BRAND_GOLD,
+            gradient: `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`,
         },
         {
             icon: <Visibility />,
             value: stats.totalViews,
             label: 'مشاهدة',
-            color: theme.palette.info.main,
-            gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+            color: '#A0522D',
+            gradient: 'linear-gradient(135deg, #A0522D 0%, #6B3410 100%)',
         },
         {
             icon: <LocalOffer />,
             value: stats.totalProducts,
             label: 'منتج',
-            color: theme.palette.success.main,
-            gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+            color: '#8B6914',
+            gradient: 'linear-gradient(135deg, #C9A227 0%, #8B6914 100%)',
         },
         {
             icon: <Star />,
             value: stats.rating,
             label: 'تقييم',
-            color: theme.palette.warning.main,
-            gradient: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+            color: BRAND_BROWN,
+            gradient: `linear-gradient(135deg, #D2955B 0%, ${BRAND_BROWN} 100%)`,
         },
     ];
 
@@ -279,7 +288,7 @@ const CustomerProfile: FunctionComponent = () => {
             <Box
                 sx={{
                     minHeight: '100vh',
-                    bgcolor: alpha(theme.palette.primary.main, 0.02),
+                    bgcolor: alpha(BRAND_GOLD, 0.03),
                 }}
             >
                 <Container dir={dir} maxWidth='lg' sx={{ py: 4 }}>
@@ -295,7 +304,7 @@ const CustomerProfile: FunctionComponent = () => {
                         user={user}
                     />
 
-                    {/* Modern Stats Section */}
+                    {/* بطاقات الإحصائيات */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -317,10 +326,10 @@ const CustomerProfile: FunctionComponent = () => {
                                                 position: 'relative',
                                                 overflow: 'hidden',
                                                 border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
-                                                background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)}, ${alpha(stat.color, 0.03)})`,
+                                                background: `linear-gradient(135deg, ${alpha(theme.palette.background.paper, 0.95)}, ${alpha(stat.color, 0.04)})`,
                                                 transition: 'all 0.3s ease',
                                                 '&:hover': {
-                                                    boxShadow: `0 8px 24px ${alpha(stat.color, 0.15)}`,
+                                                    boxShadow: `0 8px 24px ${alpha(stat.color, 0.18)}`,
                                                     borderColor: alpha(
                                                         stat.color,
                                                         0.3,
@@ -337,7 +346,7 @@ const CustomerProfile: FunctionComponent = () => {
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
                                                     margin: '0 auto 12px',
-                                                    background: `linear-gradient(135deg, ${alpha(stat.color, 0.12)}, ${alpha(stat.color, 0.05)})`,
+                                                    background: `linear-gradient(135deg, ${alpha(stat.color, 0.14)}, ${alpha(stat.color, 0.05)})`,
                                                     color: stat.color,
                                                 }}
                                             >
@@ -375,7 +384,7 @@ const CustomerProfile: FunctionComponent = () => {
                         </Grid>
                     </motion.div>
 
-                    {/* Enhanced Tabs Section */}
+                    {/* قسم التبويبات */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -383,10 +392,9 @@ const CustomerProfile: FunctionComponent = () => {
                     >
                         <Card
                             sx={{
-                                borderRadius: 4,
+                                // borderRadius: 4,
                                 overflow: 'hidden',
-                                boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
-                                border: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                                // boxShadow: `0 4px 20px ${alpha(theme.palette.common.black, 0.05)}`,
                             }}
                         >
                             <CustomTabs

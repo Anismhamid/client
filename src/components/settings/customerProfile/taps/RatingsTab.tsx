@@ -1,12 +1,4 @@
-import {
-    Box,
-    Typography,
-    LinearProgress,
-    Chip,
-    Grid,
-    alpha,
-    useTheme,
-} from '@mui/material';
+import { Box, Typography, LinearProgress, Chip, Grid, alpha } from '@mui/material';
 import { FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stats } from '../types/states';
@@ -16,6 +8,10 @@ import { usePosts } from '../../../../hooks/usePosts';
 import { getAverageRating } from '../../../pages/products/helpers/helperFunctions';
 import { User } from '../../../../interfaces/chat/usersMessages';
 
+// هوية صفقة اللونية الموحدة بدل warning.main الافتراضي
+const BRAND_GOLD = '#B8860B';
+const BRAND_BROWN = '#8B4513';
+
 interface RatingsTabProps {
     stats: Stats;
     user: User;
@@ -24,10 +20,9 @@ interface RatingsTabProps {
 const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
     const { t } = useTranslation();
     const { posts } = usePosts();
-    const theme = useTheme();
 
     const myPosts = useMemo(
-        () => posts.filter((post) => user._id === post.seller?.user?._id),
+        () => posts.filter((post) => user._id === post.seller?._id),
         [posts, user._id],
     );
 
@@ -61,7 +56,6 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
     return (
         <Box py={4} px={2}>
             <Grid container spacing={4} justifyContent='center'>
-
                 {/* الرقم الكبير */}
                 <Grid size={{ xs: 12, md: 4 }}>
                     <Box
@@ -69,11 +63,11 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                         sx={{
                             p: 4,
                             borderRadius: 4,
-                            bgcolor: alpha(theme.palette.warning.main, 0.06),
-                            border: `1px solid ${alpha(theme.palette.warning.main, 0.2)}`,
+                            bgcolor: alpha(BRAND_GOLD, 0.06),
+                            border: `1px solid ${alpha(BRAND_GOLD, 0.25)}`,
                         }}
                     >
-                        <Star sx={{ fontSize: 52, color: 'warning.main', mb: 1 }} />
+                        <Star sx={{ fontSize: 52, color: BRAND_GOLD, mb: 1 }} />
 
                         <Typography variant='h2' fontWeight={800} lineHeight={1}>
                             {userPostsRating.toFixed(1)}
@@ -88,6 +82,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                             precision={0.5}
                             readOnly
                             size='medium'
+                            sx={{ color: BRAND_GOLD }}
                         />
 
                         <Box
@@ -102,7 +97,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                                 label={`${totalReviews} تقييم`}
                                 size='small'
                                 variant='outlined'
-                                color='warning'
+                                sx={{ borderColor: BRAND_GOLD, color: BRAND_BROWN }}
                             />
                             <Chip
                                 icon={<Star fontSize='small' />}
@@ -117,7 +112,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                                 mt={3}
                                 pt={3}
                                 sx={{
-                                    borderTop: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+                                    borderTop: `1px solid ${alpha(BRAND_GOLD, 0.25)}`,
                                 }}
                             >
                                 <Typography variant='caption' color='text.secondary'>
@@ -126,7 +121,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                                 <Typography
                                     variant='h5'
                                     fontWeight={700}
-                                    color='warning.main'
+                                    sx={{ color: BRAND_GOLD }}
                                 >
                                     {stats.rating.toFixed(1)}
                                 </Typography>
@@ -168,7 +163,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                                                     key={i}
                                                     sx={{
                                                         fontSize: 16,
-                                                        color: 'warning.main',
+                                                        color: BRAND_GOLD,
                                                     }}
                                                 />
                                             ) : (
@@ -190,14 +185,11 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user, stats }) => {
                                             flex: 1,
                                             height: 10,
                                             borderRadius: 5,
-                                            bgcolor: alpha(
-                                                theme.palette.warning.main,
-                                                0.1,
-                                            ),
+                                            bgcolor: alpha(BRAND_GOLD, 0.1),
                                             '& .MuiLinearProgress-bar': {
                                                 bgcolor:
                                                     pct > 0
-                                                        ? 'warning.main'
+                                                        ? BRAND_GOLD
                                                         : 'transparent',
                                                 borderRadius: 5,
                                             },

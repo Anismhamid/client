@@ -5,11 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { User } from '../../../../interfaces/chat/usersMessages';
 import { Link } from 'react-router-dom';
 import ContactTab from './ContactTab';
+
+const BRAND_BROWN = '#8B4513';
+
 interface ContactInfoTabProps {
     user: User;
 }
+
 /**
- * Users contact info tab
+ * تبويب معلومات التواصل الخاصة بالمستخدم
  * @param {user}
  * @returns ContactInfoTab
  */
@@ -22,12 +26,10 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                 <Typography
                     variant='h6'
                     gutterBottom
-                    color='primary'
-                    sx={{ fontWeight: 'bold' }}
+                    sx={{ color: BRAND_BROWN, fontWeight: 700 }}
                 >
                     {t('contact_info')}
                 </Typography>
-                {/* <Divider sx={{mb: 2, boxShadow: 1}} /> */}
                 <Card sx={{ p: 3 }}>
                     <Box
                         sx={{
@@ -55,9 +57,8 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                     variant='body1'
                                     sx={{
                                         p: 1.5,
-
                                         textDecoration: 'none',
-                                        color: 'success',
+                                        color: 'success.main',
                                     }}
                                 >
                                     {user.phone?.phone_1
@@ -86,7 +87,7 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                             px: 1.5,
                                             py: 0.5,
                                             textDecoration: 'none',
-                                            color: 'success',
+                                            color: 'success.main',
                                         }}
                                     >
                                         {user.phone?.phone_2
@@ -130,41 +131,9 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                 </Card>
             </Grid>
 
-            {/* <Grid size={{xs: 12, md: 6}}>
-				<Card sx={{p: 3, borderRadius: 2, height: "100%"}}>
-					<Typography
-						variant='h6'
-						gutterBottom
-						color='primary'
-						sx={{fontWeight: "bold"}}
-					>
-						{t("account_details")}
-					</Typography>
-					<Divider sx={{mb: 2}} />
-					<Stack spacing={2}>
-						<Box display='flex' justifyContent='space-between'>
-							<Typography color='text.secondary'>
-								{t("member_since")}:
-							</Typography>
-							<Typography fontWeight='medium'>
-								{formatDate(user?.createdAt ?? "")}
-							</Typography>
-						</Box>
-						<Box display='flex' justifyContent='space-between'>
-							<Typography color='text.secondary'>
-								{t("account_status")}:
-							</Typography>
-							<Chip label={t("verified")} size='small' color='success' />
-						</Box>
-					</Stack>
-				</Card>
-			</Grid> */}
             <Grid size={{ xs: 12, lg: 6 }}>
                 <ContactTab
                     user={user}
-                    // handleContactSeller={function (): void {
-                    //     throw new Error('Function not implemented.');
-                    // }}
                     handleWhatsApp={function (): void {
                         throw new Error('Function not implemented.');
                     }}
