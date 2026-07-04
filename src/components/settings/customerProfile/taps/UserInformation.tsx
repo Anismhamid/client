@@ -1,76 +1,82 @@
-import {Card, Grid, Typography, Chip} from "@mui/material";
-import {FunctionComponent} from "react";
-import {formatDate} from "../../../../helpers/dateAndPriceFormat";
-import {AuthValues} from "../../../../interfaces/authValues";
-import {useTranslation} from "react-i18next";
+import { Card, Grid, Typography, Chip } from '@mui/material';
+import { FunctionComponent } from 'react';
+import { formatDate } from '../../../../helpers/dateAndPriceFormat';
+import { AuthValues } from '../../../../interfaces/authValues';
+import { useTranslation } from 'react-i18next';
+
+const BRAND_BROWN = '#8B4513';
 
 interface UserInformationProps {
-	user: AuthValues;
+    user: AuthValues;
 }
 
-const UserInformation: FunctionComponent<UserInformationProps> = ({user}) => {
-	const {t} = useTranslation();
+const UserInformation: FunctionComponent<UserInformationProps> = ({ user }) => {
+    const { t } = useTranslation();
 
-	return (
-		<Grid container spacing={3}>
-			<Grid size={{xs: 12}}>
-				<Card sx={{p: 3}}>
-					<Typography variant='h6' gutterBottom color='primary'>
-						معلومات الحساب
-					</Typography>
-					<Grid container spacing={2}>
-						<Grid size={{xs: 6, md: 3}}>
-							<Typography variant='body2' color='text.secondary'>
-								{t("member_since")}
-							</Typography>
-							<Typography variant='body1' fontWeight='medium'>
-								{user?.createdAt
-								? formatDate(
-									typeof user.createdAt === "string"
-										? user.createdAt
-										: user.createdAt.toISOString()
-								)
-									: "غير محدد"}
-							</Typography>
-						</Grid>
-						<Grid size={{xs: 6, md: 3}}>
-							<Typography variant='body1' color='text.secondary'>
-								{t("roles.title")}
-							</Typography>
-							<Typography variant='body1' fontWeight='medium'>
-								{t(`roles.${user.role?.toLocaleLowerCase()}`)}
-							</Typography>
-						</Grid>
-						<Grid size={{xs: 6, md: 3}}>
-							<Typography variant='body2' color='text.secondary'>
-								{t("register.gender")}
-							</Typography>
-							<Typography variant='body1' fontWeight='medium'>
-								{user.gender === "male"
-									? t("register.male")
-									: t("register.female")}
-							</Typography>
-						</Grid>
-						<Grid size={{xs: 6, md: 3}}>
-							<Typography variant='body1' color='text.secondary'>
-								{t("status.title")}
-							</Typography>
-							<Chip
-								label={
-									user.status
-										? t("status.active")
-										: t("suauts.Inactive")
-								}
-								color={user.status ? "success" : "error"}
-								size='small'
-								variant='filled'
-							/>
-						</Grid>
-					</Grid>
-				</Card>
-			</Grid>
-		</Grid>
-	);
+    return (
+        <Grid container spacing={3}>
+            <Grid size={{ xs: 12 }}>
+                <Card sx={{ p: 3 }}>
+                    <Typography
+                        variant='h6'
+                        gutterBottom
+                        sx={{ color: BRAND_BROWN, fontWeight: 700 }}
+                    >
+                        معلومات الحساب
+                    </Typography>
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 6, md: 3 }}>
+                            <Typography variant='body2' color='text.secondary'>
+                                {t('member_since')}
+                            </Typography>
+                            <Typography variant='body1' fontWeight='medium'>
+                                {user?.createdAt
+                                    ? formatDate(
+                                          typeof user.createdAt === 'string'
+                                              ? user.createdAt
+                                              : user.createdAt.toISOString(),
+                                      )
+                                    : 'غير محدد'}
+                            </Typography>
+                        </Grid>
+                        <Grid size={{ xs: 6, md: 3 }}>
+                            <Typography variant='body1' color='text.secondary'>
+                                {t('roles.title')}
+                            </Typography>
+                            <Typography variant='body1' fontWeight='medium'>
+                                {t(`roles.${user.role?.toLocaleLowerCase()}`)}
+                            </Typography>
+                        </Grid>
+                        <Grid size={{ xs: 6, md: 3 }}>
+                            <Typography variant='body2' color='text.secondary'>
+                                {t('register.gender')}
+                            </Typography>
+                            <Typography variant='body1' fontWeight='medium'>
+                                {user.gender === 'male'
+                                    ? t('register.male')
+                                    : t('register.female')}
+                            </Typography>
+                        </Grid>
+                        <Grid size={{ xs: 6, md: 3 }}>
+                            <Typography variant='body1' color='text.secondary'>
+                                {t('status.title')}
+                            </Typography>
+                            <Chip
+                                label={
+                                    user.status
+                                        ? t('status.active')
+                                        : t('suauts.Inactive')
+                                }
+                                color={user.status ? 'success' : 'error'}
+                                size='small'
+                                variant='filled'
+                            />
+                        </Grid>
+                    </Grid>
+                </Card>
+            </Grid>
+        </Grid>
+    );
 };
 
 export default UserInformation;

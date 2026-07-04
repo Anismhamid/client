@@ -6,7 +6,6 @@ import { User } from '../../../../interfaces/chat/usersMessages';
 import { Link } from 'react-router-dom';
 import ContactTab from './ContactTab';
 
-const BRAND_BROWN = '#8B4513';
 
 interface ContactInfoTabProps {
     user: User;
@@ -23,13 +22,6 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
     return (
         <Grid container spacing={3}>
             <Grid size={{ xs: 12, md: 12 }}>
-                <Typography
-                    variant='h6'
-                    gutterBottom
-                    sx={{ color: BRAND_BROWN, fontWeight: 700 }}
-                >
-                    {t('contact_info')}
-                </Typography>
                 <Card sx={{ p: 3 }}>
                     <Box
                         sx={{
