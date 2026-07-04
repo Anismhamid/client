@@ -1,53 +1,60 @@
-import {useRef} from "react";
+import { useRef } from 'react';
 
 const useNotificationSound = () => {
-	const messageReceivedSound = useRef(new Audio("/live-chat-353605.mp3"));
-	const messageSentSound = useRef(new Audio("/live-chat-2.mp3"));
-	const defaultSound = useRef(new Audio("/notification.mp3"));
+    const messageReceivedSound = useRef(new Audio('/live-chat-353605.mp3'));
+    const messageSentSound = useRef(new Audio('/live-chat-2.mp3'));
+    const defaultSound = useRef(new Audio('/notification.mp3'));
 
-	const playNotificationSound = (
-		type: "messageReceived" | "messageSent" | "default" = "default",
-	) => {
-		let audio: HTMLAudioElement;
+    const vibrate = () => {
+        if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200]);
+        }
+    };
 
-		switch (type) {
-			case "messageReceived":
-				audio = messageReceivedSound.current;
-				break;
-			case "messageSent":
-				audio = messageSentSound.current;
-				break;
-			default:
-				audio = defaultSound.current;
-		}
-		audio.volume = 1
-		audio.pause();
-		audio.currentTime = 0;
-		audio.play().catch(console.error);
-	};
+    const playNotificationSound = (
+        type: 'messageReceived' | 'messageSent' | 'default' = 'default',
+    ) => {
+        let audio: HTMLAudioElement;
 
-	const showNotification = (message: string) => {
-		if (!("Notification" in window)) return;
+        switch (type) {
+            case 'messageReceived':
+                audio = messageReceivedSound.current;
+                break;
+            case 'messageSent':
+                audio = messageSentSound.current;
+                break;
+            default:
+                audio = defaultSound.current;
+        }
+        audio.volume = 1;
+        audio.pause();
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+    };
 
-		if (Notification.permission === "granted") {
-			new Notification(message, {icon: "/d3.png"});
-			return;
-		}
+    const showNotification = (message: string) => {
+        if (!('Notification' in window)) return;
 
-		if (Notification.permission !== "denied") {
-			Notification.requestPermission().then((permission) => {
-				if (permission === "granted") {
-					new Notification(message, {icon: "/d3.png"});
+        if (Notification.permission === 'granted') {
+            new Notification(message, { icon: '/d3.png', tag: 'chat-message' });
+            vibrate();
+            return;
+        }
 
-					if ("vibrate" in navigator) {
-						navigator.vibrate([200, 100, 200]);
-					}
-				}
-			});
-		}
-	};
+        if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then((permission) => {
+                if (permission === 'granted') {
+                    new Notification(message, {
+                        icon: '/d3.png',
+                        tag: 'chat-message',
+                    });
+                    vibrate();
+                }
+            });
+        }
+    };
 
-	return {playNotificationSound, showNotification};
+    return { playNotificationSound, showNotification };
 };
 
 export default useNotificationSound;
