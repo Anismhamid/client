@@ -114,6 +114,17 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const { auth } = useUser();
 
     const getUserFullName = (userName: string) => userName;
+    const initialScrollDone = useRef(false);
+
+    useLayoutEffect(() => {
+        if (isLoading) return;
+        if (initialScrollDone.current) return;
+
+        requestAnimationFrame(() => {
+            scrollToBottom('auto', chatContainerRef);
+            initialScrollDone.current = true;
+        });
+    }, [isLoading, userMessages.length]);
 
     // עדכון סטטוס הודעות כ"נקראו" בשרת וב-Socket
     const markAsSeen = useCallback(() => {
@@ -224,9 +235,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
         socket.on('message:received', (message: LocalMessage) => {
             if (message?.from?._id === otherUser?._id) {
+                const shouldScroll = isNearBottom();
+
                 addMessageForUser(otherUser?._id as string, message);
-                if (isNearBottom()) {
-                    scrollToBottom('smooth', chatContainerRef);
+                if (shouldScroll) {
+                    requestAnimationFrame(() => {
+                        scrollToBottom('smooth', chatContainerRef);
+                    });
                 }
             }
         });
@@ -345,7 +360,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         if (!chatContainerRef.current) return false;
         const { scrollTop, scrollHeight, clientHeight } =
             chatContainerRef.current;
-        return scrollHeight - scrollTop - clientHeight < 200;
+        return scrollHeight - scrollTop - clientHeight < 1000;
     };
 
     useEffect(() => {
