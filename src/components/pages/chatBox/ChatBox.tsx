@@ -194,7 +194,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
             if (isInitial) {
                 setMessagesForUser(otherUser._id ?? '', fetchedMessages);
-                setTimeout(() => scrollToBottom('auto', chatContainerRef), 0);
+                requestAnimationFrame(() => {
+                    scrollToBottom('smooth', chatContainerRef);
+                });
             } else {
                 // تحديث الرسائل
                 setMessagesForUser(otherUser._id ?? '', (prev) => [
@@ -212,23 +214,17 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     };
 
     useLayoutEffect(() => {
+        if (!isFetchingMore) return;
+
         const container = chatContainerRef.current;
-        if (!container || userMessages.length === 0) return;
+        if (!container) return;
 
-        // إذا كنا في حالة جلب رسائل قديمة (Pagination)
-        if (isFetchingMore && lastScrollHeightRef.current > 0) {
-            const heightDifference =
-                container.scrollHeight - lastScrollHeightRef.current;
+        const diff = container.scrollHeight - lastScrollHeightRef.current;
 
-            // تثبيت السكرول: الارتفاع الجديد ناقص القديم يعطيك نفس المكان الذي كنت تقف عنده
-            container.scrollTo({
-                top: heightDifference,
-                behavior: 'instant',
-            });
+        container.scrollTop = diff;
 
-            lastScrollHeightRef.current = 0; // إعادة تعيين بعد الاستخدام
-        }
-    }, [userMessages.length]);
+        lastScrollHeightRef.current = 0;
+    }, [isFetchingMore, userMessages.length]);
 
     useEffect(() => {
         loadConversation();
