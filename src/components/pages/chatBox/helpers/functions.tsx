@@ -3,7 +3,7 @@ import DoneAllIcon from '@mui/icons-material/DoneAll';
 import { Dispatch, RefObject, SetStateAction } from 'react';
 import { LocalMessage } from '../../../../interfaces/chat/localMessage';
 import { BaseUser } from '../../../../interfaces/chat/chatUser';
-import AccessTimeIcon from '@mui/icons-material/AccessTime'; // אופציונלי להודעה בשליחה
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import socket from '../../../../socket/globalSocket';
 import axios from 'axios';
 import { Typography } from '@mui/material';
@@ -46,6 +46,25 @@ export const scrollToBottom = (
     });
 };
 
+/**
+ * يوحّد منطق تحديث الرسالة عند وصول أحداث
+ * message:sent / message:delivered / message:seen
+ * بدلاً من تكرار نفس الـ .map() ثلاث مرات في ChatBox.
+ */
+export const reconcileMessage = (
+    prev: LocalMessage[],
+    incoming: LocalMessage,
+): LocalMessage[] =>
+    prev.map((m) => {
+        if (m.tempId && incoming.tempId && m.tempId === incoming.tempId) {
+            return { ...incoming };
+        }
+        if (m._id === incoming._id) {
+            return { ...m, status: incoming.status };
+        }
+        return m;
+    });
+
 export const sendMessage = async (
     text: string,
     currentUser: BaseUser,
@@ -54,6 +73,10 @@ export const sendMessage = async (
     chatContainerRef: RefObject<HTMLDivElement | null>,
     addMessageForUser: (userId: string, msg: LocalMessage) => void,
     token: string,
+    setMessagesForUser?: (
+        userId: string,
+        updater: (prev: LocalMessage[]) => LocalMessage[],
+    ) => void,
 ) => {
     if (!text.trim()) return;
     const messageText = text.trim();
@@ -90,6 +113,12 @@ export const sendMessage = async (
         );
     } catch (err) {
         console.error('Failed to send:', err);
+        // نعلّم الرسالة كخطأ بدل ما تضل عالقة على "pending" للأبد
+        setMessagesForUser?.(otherUser?._id ?? '', (prev) =>
+            prev.map((m) =>
+                m.tempId === tempId ? { ...m, status: 'error' } : m,
+            ),
+        );
     }
 };
 
@@ -125,12 +154,3 @@ export const formatTime = (dateString: string) => {
         month: '2-digit',
     });
 };
-
-// export const deleteMessage = (messageId: string) => {
-//     try {
-//         const message = axios.delete(`${api}/messages/${messageId}`);
-//         return message;
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
