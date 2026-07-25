@@ -20,6 +20,8 @@ import useToken from '../../hooks/useToken';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
 import { AuthValues } from '../../interfaces/authValues';
 import { GoogleLogin } from '@react-oauth/google';
+import { Capacitor } from '@capacitor/core';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 import {
     Box,
     Button,
@@ -34,12 +36,13 @@ import {
     Fade,
     Container,
     Grid,
+    Alert,
+    AlertTitle,
 } from '@mui/material';
 import {
     Visibility,
     VisibilityOff,
     Login as LoginIcon,
-    PersonAdd,
     Email,
     Lock,
     ArrowRight,
@@ -75,7 +78,73 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const { setAuth, setIsLoggedIn } = useUser();
+    const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
     // const [loading, setLoading] = useState<boolean>(false);
+
+    const handleNativeGoogleLogin = async () => {
+        try {
+            setShowSignOutButton(false);
+            // Add more specific options
+            const res = await SocialLogin.login({
+                provider: 'google',
+                options: {
+                    webClientId: import.meta.env.VITE_API_GOOGLE_API,
+                    mode: 'online',
+                    ...({
+                        additionalParameters: {
+                            prompt: 'select_account',
+                        },
+                    } as any),
+                },
+            });
+
+            const idToken = (res.result as any)?.idToken;
+            if (!idToken) {
+                throw new Error(
+                    t('login.errors.missingGoogleCredential') ||
+                        'Missing Google credential',
+                );
+            }
+
+            const decodedGoogle = jwtDecode<DecodedGooglePayload>(idToken);
+
+            const userExists = await verifyGoogleUser(decodedGoogle.sub);
+
+            const fakeCredentialResponse = {
+                credential: idToken,
+            } as CredentialResponse;
+
+            if (userExists) {
+                const token = await handleGoogleLogin(
+                    fakeCredentialResponse,
+                    null,
+                );
+                if (token) {
+                    const decodedToken = jwtDecode<AuthValues>(token);
+                    setAfterDecode(token);
+                    setAuth(decodedToken);
+                    setIsLoggedIn(true);
+                    navigate(path.Home);
+                }
+            } else {
+                setGoogleResponse(fakeCredentialResponse);
+                setShowModal(true);
+            }
+        } catch (error: any) {
+            console.error('Google login error:', error);
+
+            // معالجة أخطاء محددة
+            if (error.message?.includes('16')) {
+                showError(
+                    'Account reauthentication needed. Please sign out of Google and try again.',
+                );
+            } else {
+                showError(
+                    t('login.errors.googleLoginError') + ': ' + error.message,
+                );
+            }
+        }
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -190,6 +259,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             );
         }
         try {
+            setShowSignOutButton(false);
             const decodedGoogle = jwtDecode<DecodedGooglePayload>(
                 response.credential,
             );
@@ -208,11 +278,77 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             } else {
                 setGoogleResponse(response);
                 setShowModal(true);
+                setShowSignOutButton(false);
             }
         } catch (error: any) {
             showError(
                 t('login.errors.googleLoginError') + ': ' + error.message,
             );
+        }
+    };
+
+    // const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
+    //     if (!response.credential) {
+    //         throw new Error('Missing Google credential');
+    //     }
+    //     try {
+    //         const decodedGoogle = jwtDecode<DecodedGooglePayload>(
+    //             response.credential,
+    //         );
+
+    //         // Check if user exists
+    //         const userExists = await verifyGoogleUser(decodedGoogle.sub);
+
+    //         if (userExists) {
+    //             const token = await handleGoogleLogin(response, null);
+    //             if (token) {
+    //                 const decodedToken = jwtDecode<AuthValues>(token);
+    //                 setAfterDecode(token);
+    //                 setAuth(decodedToken);
+    //                 setIsLoggedIn(true);
+    //                 navigate(path.Home);
+    //             }
+    //         } else {
+    //             // New user - show registration modal
+    //             setGoogleResponse(response);
+    //             setShowModal(true);
+    //         }
+    //     } catch (error: any) {
+    //         // Handle specific error cases
+    //         if (error.message.includes('16')) {
+    //             showError(
+    //                 'Account reauthentication needed. Please sign out of Google and try again.',
+    //             );
+    //         } else {
+    //             showError(
+    //                 t('login.errors.googleLoginError') + ': ' + error.message,
+    //             );
+    //         }
+    //     }
+    // };
+
+    // أضف هذه الدالة
+    const handleGoogleSignOut = async () => {
+        try {
+            if (Capacitor.isNativePlatform()) {
+                await SocialLogin.logout({
+                    provider: 'google',
+                });
+            }
+            // مسح التوكن المحلي
+            localStorage.removeItem('token');
+            setAuth({} as AuthValues);
+            setIsLoggedIn(false);
+            setShowSignOutButton(false);
+            showSuccess(
+                'Signed out successfully. Please try logging in again.',
+            );
+
+            // إعادة تحميل الصفحة لتصفية الجلسة
+            window.location.reload();
+        } catch (error) {
+            console.error('Sign out error:', error);
+            showError('Failed to sign out. Please try manually.');
         }
     };
 
@@ -238,12 +374,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             setShowModal(false);
         }
     };
-
-    // useEffect(() => {
-    // 	if (localStorage.token) {
-    // 		navigate(path.Home);
-    // 	}
-    // }, [navigate]);
 
     const currentUrl = `https://client-qqq1.vercel.app/login`;
 
@@ -521,64 +651,104 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     <Box
                                         sx={{
                                             display: 'flex',
-                                            justifyContent: 'center',
-                                            mb: 3,
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            gap: 2,
                                         }}
                                     >
-                                        <GoogleLogin
-                                            ux_mode='popup'
-                                            shape='pill'
-                                            theme='filled_blue'
-                                            size='large'
-                                            width={300}
-                                            text='signin_with'
-                                            logo_alignment='center'
-                                            onSuccess={handleGoogleLoginSuccess}
-                                            onError={() =>
-                                                showError(
-                                                    t(
-                                                        'login.googleLoginError',
-                                                    ) || 'Google login failed',
-                                                )
-                                            }
-                                        />
-                                    </Box>
+                                        {Capacitor.isNativePlatform() ? (
+                                            <Button
+                                                variant='contained'
+                                                onClick={
+                                                    handleNativeGoogleLogin
+                                                }
+                                                fullWidth
+                                                size='large'
+                                                sx={{
+                                                    maxWidth: 300,
+                                                    borderRadius: 50,
+                                                    textTransform: 'none',
+                                                    fontWeight: 600,
+                                                    background: '#1a73e8',
+                                                    '&:hover': {
+                                                        background: '#1765c9',
+                                                    },
+                                                }}
+                                            >
+                                                {t('login.loginButton')} Google
+                                            </Button>
+                                        ) : (
+                                            <GoogleLogin
+                                                ux_mode='popup'
+                                                shape='pill'
+                                                theme='filled_blue'
+                                                size='large'
+                                                width={300}
+                                                text='signin_with'
+                                                logo_alignment='center'
+                                                onSuccess={
+                                                    handleGoogleLoginSuccess
+                                                }
+                                                onError={() => {
+                                                    setShowSignOutButton(true);
+                                                    showError(
+                                                        t(
+                                                            'login.googleLoginError',
+                                                        ) ||
+                                                            'Google login failed',
+                                                    );
+                                                }}
+                                                useOneTap={false}
+                                                auto_select={false}
+                                                hosted_domain={undefined}
+                                            />
+                                        )}
 
-                                    <Box sx={{ textAlign: 'center', mt: 4 }}>
-                                        <Typography
-                                            variant='body1'
-                                            sx={{
-                                                mb: 2,
-                                                color:
-                                                    mode === 'dark'
-                                                        ? 'text.secondary'
-                                                        : 'text.primary',
-                                            }}
-                                        >
-                                            {t('login.noAccount')}
-                                        </Typography>
-                                        <Button
-                                            variant='outlined'
-                                            color='secondary'
-                                            onClick={() =>
-                                                navigate(path.Register)
-                                            }
-                                            startIcon={<PersonAdd />}
-                                            fullWidth
-                                            size='large'
-                                            sx={{
-                                                borderRadius: 3,
-                                                py: 0.5,
-                                                // borderWidth: 2,
-                                                fontWeight: 600,
-                                                '&:hover': {
-                                                    gap: 3,
-                                                },
-                                                gap: 1,
-                                            }}
-                                        >
-                                            {t('login.register')}
-                                        </Button>
+                                        {showSignOutButton && (
+                                            <Box
+                                                sx={{
+                                                    width: '100%',
+                                                    maxWidth: 300,
+                                                }}
+                                            >
+                                                <Alert
+                                                    severity='warning'
+                                                    sx={{ mb: 1 }}
+                                                >
+                                                    <AlertTitle>
+                                                        Reauthentication
+                                                        Required
+                                                    </AlertTitle>
+                                                    Please sign out of Google
+                                                    and try again.
+                                                </Alert>
+                                                <Button
+                                                    variant='outlined'
+                                                    color='error'
+                                                    onClick={
+                                                        handleGoogleSignOut
+                                                    }
+                                                    fullWidth
+                                                    size='medium'
+                                                    sx={{
+                                                        borderRadius: 50,
+                                                        textTransform: 'none',
+                                                        fontWeight: 600,
+                                                        borderColor: '#d32f2f',
+                                                        color: '#d32f2f',
+                                                        '&:hover': {
+                                                            borderColor:
+                                                                '#b71c1c',
+                                                            background:
+                                                                'rgba(211, 47, 47, 0.04)',
+                                                        },
+                                                    }}
+                                                    // startIcon={<LogoutIcon />}
+                                                >
+                                                    Sign out of Google
+                                                </Button>
+                                            </Box>
+                                        )}
                                     </Box>
 
                                     <Box
