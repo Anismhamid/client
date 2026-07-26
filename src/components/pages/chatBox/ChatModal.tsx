@@ -19,11 +19,11 @@ import {
     Zoom,
     Fab,
     Modal,
-    Backdrop,
     Slide,
     AppBar,
     Toolbar,
     Badge,
+    useMediaQuery,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CloseIcon from '@mui/icons-material/Close';
@@ -32,7 +32,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import socket from '../../../socket/globalSocket';
 import { useChat } from '../../../hooks/useChat';
 import { BaseUser } from '../../../interfaces/chat/chatUser';
-import { LocalMessage } from '../../../interfaces/chat/localMessage';
+// import { LocalMessage } from '../../../interfaces/chat/localMessage';
 import Linkify from './Linkify';
 import handleRTL from '../../../locales/handleRTL';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
@@ -48,11 +48,14 @@ import {
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import UserAvatar from './UserAvatar';
+import { LocalMessage } from '../../../interfaces/chat/localMessage';
 
 const api = import.meta.env.VITE_API_URL;
 
 interface ChatModalProps {
     open: boolean;
+    minimized?: boolean;
+    onMinimize?: () => void;
     onClose: () => void;
     currentUser: BaseUser;
     otherUser: BaseUser;
@@ -61,6 +64,7 @@ interface ChatModalProps {
 
 const ChatModal: FunctionComponent<ChatModalProps> = ({
     open,
+    onMinimize,
     onClose,
     currentUser,
     otherUser,
@@ -89,6 +93,16 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
     const lastScrollHeightRef = useRef<number>(0);
     const lastSeenRef = useRef<string | null>(null);
     const [showScrollBtn, setShowScrollBtn] = useState(false);
+
+    const isDesktop = useMediaQuery('(min-width:900px)');
+
+    useEffect(() => {
+        if (open) {
+            setTimeout(() => {
+                scrollToBottom('auto', chatContainerRef);
+            }, 100);
+        }
+    }, [open]);
 
     const getUserFullName = (user?: BaseUser) => {
         if (!user) return '';
@@ -279,7 +293,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
             socket.off('user:typing');
             socket.off('user:stopTyping');
         };
-    }, [open, otherUser._id]);
+    }, [otherUser._id]);
 
     useEffect(() => {
         if (!open) return;
@@ -320,7 +334,10 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
             });
 
             if (res.data.message) {
-                addMessageForUser(otherUser?._id ?? '', res.data.message);
+                addMessageForUser(otherUser?._id ?? '', {
+                    ...res.data.message,
+                    status: 'sent',
+                });
                 scrollToBottom('smooth', chatContainerRef);
             }
         } catch (err) {
@@ -350,41 +367,52 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
             open={open}
             onClose={onClose}
             closeAfterTransition
-            slots={{ backdrop: Backdrop }}
+            // slots={{ backdrop: backdrop }}
             slotProps={{
                 backdrop: {
                     timeout: 300,
                     sx: {
                         backdropFilter: 'blur(8px)',
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
                     },
                 },
             }}
             sx={{
-                zIndex: 1300,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1400,
             }}
         >
-            <Slide direction='up' in={open} mountOnEnter unmountOnExit>
+            <Slide direction='up' in={open} mountOnEnter>
                 <Box
                     sx={{
-                        position: 'absolute',
-                        // top: '50%',
-                        // left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: { xs: '100%', md: '50%', xl: '40%' },
-                        height: '100%',
-                        maxWidth: 1200,
+                        width: {
+                            xs: '100%',
+                            sm: '90%',
+                            md: '60%',
+                            lg: '45%',
+                        },
+                        height: {
+                            xs: '100%',
+                            sm: '90vh',
+                        },
+                        maxWidth: 700,
                         bgcolor: 'background.paper',
-                        borderRadius: { xs: 0, sm: 3 },
+                        borderRadius: {
+                            xs: 0,
+                            sm: 3,
+                        },
                         boxShadow: 24,
                         overflow: 'hidden',
                         display: 'flex',
                         flexDirection: 'column',
+                        outline: 'none',
                     }}
                 >
                     {/* Modal Header */}
                     <AppBar
-                        position='sticky'
+                        position='static'
                         color='default'
                         elevation={1}
                         sx={{
@@ -396,14 +424,16 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                         <Toolbar>
                             <IconButton
                                 edge='start'
-                                onClick={onClose}
-                                sx={{ mr: 2 }}
+                                onClick={() => {
+                                    if (isDesktop) {
+                                        onMinimize?.();
+                                    } else {
+                                        onClose();
+                                    }
+                                }}
+                                // sx={{ mr: 2 }}
                             >
-                                {window.innerWidth < 600 ? (
-                                    <ArrowBackIcon />
-                                ) : (
-                                    <CloseIcon />
-                                )}
+                                {isDesktop ? <CloseIcon /> : <ArrowBackIcon />}
                             </IconButton>
 
                             <Badge
@@ -461,14 +491,13 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                             }
                         }}
                         sx={{
-                            flexGrow: 1,
+                            flex: 1,
+                            minHeight: 0,
                             overflowY: 'auto',
                             p: 2,
                             display: 'flex',
                             flexDirection: 'column',
                             gap: 1.5,
-                            overflowAnchor: 'auto',
-                            overscrollBehaviorY: 'contain',
                             bgcolor: 'background.default',
                         }}
                     >
@@ -696,6 +725,7 @@ const ChatModal: FunctionComponent<ChatModalProps> = ({
                     <Box
                         sx={{
                             p: 2,
+                            flexShrink: 0,
                             bgcolor: 'background.paper',
                             borderTop: '1px solid',
                             borderColor: 'divider',

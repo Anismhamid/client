@@ -27,8 +27,10 @@ import { ChatMessage } from '../../../interfaces/chat/chatMessage';
 // import ChatBox from './ChatBox';
 import { useUser } from '../../../context/useUSer';
 import socket from '../../../socket/globalSocket';
-import ChatModal from './ChatModal';
+// import ChatModal from './ChatModal';
 import ChatBox from './ChatBox';
+import { useChatWindow } from '../../../context/ChatWindowContext';
+// import { BaseUser } from '../../../interfaces/chat/chatUser';
 // import socket from '../../../socket/globalSocket';
 
 // Fixed mapping function with proper type conversion
@@ -87,7 +89,9 @@ const MessagesPage = () => {
     const dir = handleRTL();
     const token = localStorage.getItem('token') ?? '';
     // const isOnline = selectedUser?.from?.status === true;
-    const [chatOpen, setChatOpen] = useState(false);
+    // const [chatOpen, setChatOpen] = useState(false);
+    // const [chatMinimized, setChatMinimized] = useState(false);
+    const { openChat } = useChatWindow();
 
     useEffect(() => {
         const handleStatusChanged = ({
@@ -110,14 +114,12 @@ const MessagesPage = () => {
         };
     }, []);
 
-    const handleSelectChat = useCallback(
-        (user: UserMessage) => {
-            setSelectedUser(user);
-            if (isMobile) setChatOpen(true);
-            else setChatOpen(false);
-        },
-        [isMobile],
-    );
+   const handleSelectChat = useCallback(
+    (user: UserMessage) => {
+        openChat(user);
+    },
+    [openChat]
+);
 
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
@@ -345,14 +347,22 @@ const MessagesPage = () => {
                                             </Tooltip>
                                         </Box>
                                         <Button
-                                            onClick={() => setChatOpen(true)}
+                                            onClick={() =>
+                                                openChat(selectedUser)
+                                            }
                                         >
-                                            {t("messages.openChat")}
+                                            {t('messages.openChat')}
                                         </Button>
 
-                                        <ChatModal
-                                            open={chatOpen}
-                                            onClose={() => setChatOpen(false)}
+                                        {/* <ChatModal
+                                            open={chatOpen && !chatMinimized}
+                                            onMinimize={() => {
+                                                setChatMinimized(true);
+                                            }}
+                                            onClose={() => {
+                                                setChatOpen(false);
+                                                setChatMinimized(false);
+                                            }}
                                             currentUser={{
                                                 _id: auth._id,
                                                 name: auth.name,
@@ -363,6 +373,63 @@ const MessagesPage = () => {
                                             otherUser={selectedUser}
                                             token={token}
                                         />
+                                        {chatMinimized &&
+                                            !isMobile &&
+                                            selectedUser && (
+                                                <Paper
+                                                    onClick={() =>
+                                                        setChatMinimized(false)
+                                                    }
+                                                    elevation={8}
+                                                    sx={{
+                                                        position: 'fixed',
+                                                        bottom: 20,
+                                                        right: 20,
+                                                        width: 320,
+                                                        height: 70,
+                                                        borderRadius: 3,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        px: 2,
+                                                        cursor: 'pointer',
+                                                        zIndex: 1500,
+                                                    }}
+                                                >
+                                                    <Avatar
+                                                        src={
+                                                            selectedUser.image
+                                                                ?.url
+                                                        }
+                                                        alt={`${selectedUser.name?.first} ${selectedUser.name?.last}`}
+                                                        sx={{
+                                                            mr: 2,
+                                                        }}
+                                                    >
+                                                        {
+                                                            selectedUser.name
+                                                                ?.first?.[0]
+                                                        }
+                                                    </Avatar>
+
+                                                    <Box>
+                                                        <Typography
+                                                            fontWeight={600}
+                                                        >
+                                                            {
+                                                                selectedUser
+                                                                    .name?.first
+                                                            }
+                                                        </Typography>
+
+                                                        <Typography
+                                                            variant='caption'
+                                                            color='text.secondary'
+                                                        >
+                                                            اضغط لفتح المحادثة
+                                                        </Typography>
+                                                    </Box>
+                                                </Paper>
+                                            )} */}
                                         {/* Chat Messages */}
                                         <Box
                                             sx={{ flex: 1, overflow: 'hidden' }}

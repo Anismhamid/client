@@ -14,6 +14,7 @@ import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { useEffect } from 'react';
 import { SocialLogin } from '@capgo/capacitor-social-login';
+import { ChatWindowProvider } from './context/ChatWindowContext.tsx';
 
 if (Capacitor.isNativePlatform()) {
     SocialLogin.initialize({
@@ -51,15 +52,17 @@ function BackButtonHandler() {
 const AppWithProviders = () => {
     const { auth } = useUser();
     return (
-        <ChatProvider authId={auth._id ?? ''}>
-            <SpeedInsights />
-            <BrowserRouter>
-                <ErrorBoundary>
-                    <BackButtonHandler />
-                    <App />
-                </ErrorBoundary>
-            </BrowserRouter>
-        </ChatProvider>
+        <ChatWindowProvider>
+            <ChatProvider authId={auth._id ?? ''}>
+                <SpeedInsights />
+                <BrowserRouter>
+                    <ErrorBoundary>
+                        <BackButtonHandler />
+                        <App />
+                    </ErrorBoundary>
+                </BrowserRouter>
+            </ChatProvider>
+        </ChatWindowProvider>
     );
 };
 

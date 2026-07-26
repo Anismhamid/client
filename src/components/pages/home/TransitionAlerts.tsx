@@ -71,8 +71,8 @@ function TransitionAlerts() {
                     >
                         <Box
                             sx={{
-                                width: 38,
-                                height: 38,
+                                width: 28,
+                                height: 28,
                                 borderRadius: '50%',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -164,8 +164,8 @@ function TransitionAlerts() {
                         size='small'
                         onClick={() => setOpen(true)}
                         sx={{
-                            position: 'fixed',
-                            top: 120,
+                            position: 'relative',
+                            top: 0,
                             right: 16,
                             zIndex: (theme) => theme.zIndex.snackbar,
                             background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
