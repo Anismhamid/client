@@ -16,6 +16,11 @@ import { LocalMessage } from '../../interfaces/chat/localMessage';
 
 const useSocketEvents = () => {
     const { auth } = useUser();
+
+    const userId = auth?._id;
+    const userRole = auth?.role;
+    const userName = auth?.name?.first;
+
     const navigate = useNavigate();
     const { playNotificationSound, showNotification } = useNotificationSound();
     const {
@@ -27,62 +32,73 @@ const useSocketEvents = () => {
     } = useChat();
 
     useEffect(() => {
-        if (!currentChatId || !auth || !messages) return;
+        if (!currentChatId || !userId || !messages) return;
 
         const userMessages = messages[currentChatId] || [];
 
         userMessages.forEach((msg) => {
-            if (msg.from?._id !== auth._id && msg.status === 'sent') {
+            if (msg.from?._id !== userId && msg.status === 'sent') {
                 // تحديث محليًا
                 updateMessageStatus(currentChatId, msg._id, 'seen');
 
                 // إرسال إلى السيرفر
                 socket.emit('message:seen', {
                     messageId: msg._id,
-                    from: auth._id,
+                    from: userId,
                     to: msg.from?._id,
                 });
             }
         });
-    }, [currentChatId, messages, auth?._id, updateMessageStatus, auth]);
+    }, [currentChatId, messages, userId, updateMessageStatus]);
 
     useEffect(() => {
-        if (!auth) return;
+        if (!userId) return;
 
         const isAdminOrModerator =
-            auth.role === RoleType.Admin || auth.role === RoleType.Moderator;
+            userRole === RoleType.Admin || userRole === RoleType.Moderator;
 
         // הגדרת נתוני התחברות
         socket.auth = {
-            userId: auth._id,
-            role: auth.role,
-            name: auth.name?.first,
+            userId: userId,
+            role: userRole,
+            name: userName,
             withCredentials: true,
         };
 
-        // התחברות אם לא מחובר
-        if (!socket.connected) socket.connect();
-
         // התחברות לחדר אדמין
         const handleConnect = () => {
+
+            socket.emit('join-user', {
+                userId: userId,
+            });
+
             if (isAdminOrModerator)
-                socket.emit('admins', { userId: auth._id, role: auth.role });
+                socket.emit('admins', { userId: userId, role: userRole });
         };
+
+        socket.on('connect', handleConnect);
+
+        // התחברות אם לא מחובר
+        if (!socket.connected) socket.connect();
 
         // הודעת שגיאה
         const handleError = (err: any) => console.error('Socket error:', err);
 
         // ניתוק
+        // const handleDisconnect = (reason: any) => {
+        //     console.warn('Socket disconnected:', reason);
+        //     setTimeout(() => {
+        //         if (!socket.connected) socket.connect();
+        //     }, 1000);
+        // };
+
         const handleDisconnect = (reason: any) => {
             console.warn('Socket disconnected:', reason);
-            setTimeout(() => {
-                if (!socket.connected) socket.connect();
-            }, 1000);
         };
 
         // משתמש חדש נרשם
         const handleUserRegistered = (user: UserRegister) => {
-            if (auth.role === RoleType.Admin) {
+            if (userRole === RoleType.Admin) {
                 playNotificationSound();
                 showInfo(`${user.email} ${user.role} مستخدم جديد تم تسجيله`);
                 showNotification(
@@ -93,7 +109,7 @@ const useSocketEvents = () => {
 
         // משתמש התחבר
         const handleUserLoggedIn = (user: UserRegister) => {
-            if (auth.role === RoleType.Admin) {
+            if (userRole === RoleType.Admin) {
                 playNotificationSound();
 
                 const msg =
@@ -130,18 +146,27 @@ const useSocketEvents = () => {
         // 	}
         // };
         const messageReceived = (msg: LocalMessage) => {
-            const otherUserId =
-                msg.from?._id === auth._id ? msg.to?._id : msg.from?._id;
+            if (msg.from?._id === userId) {
+                return;
+            }
+
+            // const otherUserId =
+            //     msg.from?._id === userId ? msg.to?._id : msg.from?._id;
+
+            const otherUserId = msg.from?._id;
 
             addMessageForUser(otherUserId as string, msg);
 
-            showInfo(`لديك رسالة جديده ${msg.from?.name?.first ??"user"}`);
+            // showInfo(`لديك رسالة جديده ${msg.from?.name?.first ?? 'user'}`);
 
             if (otherUserId) {
-                setUnreadForUser(
-                    otherUserId as string,
-                    (prev) => (prev || 0) + 1,
-                );
+                // setUnreadForUser(
+                //     otherUserId as string,
+                //     (prev) => (prev || 0) + 1,
+                // );
+
+                setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
+
                 playNotificationSound('messageReceived');
 
                 if (Notification.permission === 'granted') {
@@ -153,13 +178,12 @@ const useSocketEvents = () => {
         };
 
         const messageSent = (msg: any) => {
-            if (msg.from?._id === auth._id) {
+            if (msg.from?._id === userId) {
                 playNotificationSound('messageSent');
             }
         };
 
         // חיבור מאזינים
-        socket.on('connect', handleConnect);
         socket.on('error', handleError);
         socket.on('disconnect', handleDisconnect);
         socket.on('message:sent', messageSent);
@@ -178,13 +202,15 @@ const useSocketEvents = () => {
             socket.off('user:registered', handleUserRegistered);
             socket.off('user:newUserLoggedIn', handleUserLoggedIn);
             socket.off('product:new', handleNewProduct);
+            socket.disconnect();
         };
     }, [
-        auth,
+        userId,
+        userRole,
+        userName,
         navigate,
         playNotificationSound,
         addMessageForUser,
-        currentChatId,
         setUnreadForUser,
         showNotification,
     ]);
