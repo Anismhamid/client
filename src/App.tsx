@@ -128,7 +128,7 @@ function App() {
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
                 <ChatManager />
-                <FloatingChats/>
+                <FloatingChats />
             </Suspense>
             <Footer />
         </ThemeProvider>

@@ -67,7 +67,8 @@
         "directMessage": "Direct message",
         "contactWith": "Contact with ",
         "delete": "Delete",
-        "deleteAll": "Delete All"
+        "deleteAll": "Delete All",
+        "typeMessage": "Type your message here..."
     },
     "roles": {
         "title": "Role",

@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { Box, Paper, IconButton, Typography, Avatar } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
@@ -7,6 +8,7 @@ import { useChatWindow } from '../../../context/ChatWindowContext';
 import { useUser } from '../../../context/useUSer';
 import ChatBox from './ChatBox';
 import { mapUserMessageToChatBox } from './MessagesPage';
+import MiniChat from './MiniChat';
 
 const FloatingChats = () => {
     const { chats, minimizeChat, closeChat, openChat } = useChatWindow();
@@ -26,103 +28,111 @@ const FloatingChats = () => {
         status: Boolean(auth.status),
     };
 
-    return (
+    return createPortal(
         <Box
             sx={{
                 position: 'fixed',
-                bottom: 20,
-                left: 20,
-                display: 'flex',
-                gap: 1,
+                bottom: { xs: 0, sm: 15 },
+                left: { xs: 0, sm: 20 },
+                right: { xs: 0, sm: 'auto' },
                 zIndex: 2000,
+                display: 'flex',
+                flexDirection: { xs: 'column-reverse', sm: 'row' },
+                alignItems: 'flex-end',
+                justifyContent: { xs: 'flex-end', sm: 'flex-start' },
+                gap: 2,
+                p: { xs: 1, sm: 0 },
+                pointerEvents: 'none', // Prevents blocking clicks behind
+                '& > *': {
+                    pointerEvents: 'auto', // Re-enable clicks on children
+                },
             }}
         >
-            {chats.map((chat) =>
-                chat.minimized ? (
-                    <Paper
-                        key={chat.user._id}
-                        onClick={() => openChat(chat.user)}
-                        sx={{
-                            width: 220,
-                            height: 50,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            px: 2,
-                            cursor: 'pointer',
-                            borderRadius: 1,
-                        }}
-                    >
-                        <Avatar src={chat.user.image?.url} sx={{ mr: 1 }} />
-
-                        <Typography>{chat.user.name?.first}</Typography>
-                    </Paper>
-                ) : (
-                    <Paper
-                        key={chat.user._id}
-                        sx={{
-                            width: 360,
-                            height: 500,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            borderRadius: 3,
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <Box
+            {chats.map((chat) => (
+                <Box key={chat.user._id}>
+                    {chat.minimized ? (
+                        <MiniChat
+                            user={chat.user}
+                            onOpen={() => openChat(chat.user)}
+                        />
+                    ) : (
+                        <Paper
                             sx={{
-                                height: 55,
                                 display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                px: 2,
-                                bgcolor: 'background.paper',
-                            }}
-                        >
-                            <Box display='flex' alignItems='center' gap={1}>
-                                <Avatar src={chat.user.image?.url} />
-
-                                <Typography>{chat.user.name?.first}</Typography>
-                            </Box>
-
-                            <Box>
-                                <IconButton
-                                    onClick={() =>
-                                        minimizeChat(chat.user._id as string)
-                                    }
-                                >
-                                    <ExpandMoreIcon />
-                                </IconButton>
-
-                                <IconButton
-                                    onClick={() =>
-                                        closeChat(chat.user._id as string)
-                                    }
-                                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </Box>
-                        </Box>
-
-                        <Box
-                            sx={{
-                                flex: 1,
+                                flexDirection: 'column',
+                                borderRadius: 1,
                                 overflow: 'hidden',
+                                border: 1,
+                                // maxWidth: 360,
+                                width: { xs: '100vw', sm: 360 },
+                                height: { xs: '100vh', sm: 500 },
+                                position: { xs: 'fixed', sm: 'relative' },
+                                top: { xs: 0, sm: 'auto' },
+                                left: { xs: 0, sm: 'auto' },
                             }}
                         >
-                            <ChatBox
-                                currentUser={currentUser}
-                                otherUser={{
-                                    ...mapUserMessageToChatBox(chat.user),
-                                    status: Boolean(chat.user.status),
+                            <Box
+                                sx={{
+                                    height: 55,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    px: 2,
+                                    bgcolor: 'background.paper',
+                                    borderBottom: 1,
+                                    borderColor: 'divider',
+                                    flexShrink: 0,
                                 }}
-                                token={token}
-                            />
-                        </Box>
-                    </Paper>
-                ),
-            )}
-        </Box>
+                            >
+                                <Box display='flex' alignItems='center' gap={1}>
+                                    <Avatar src={chat.user.image?.url} />
+                                    <Typography>
+                                        {chat.user.name?.first}
+                                    </Typography>
+                                </Box>
+
+                                <Box>
+                                    <IconButton
+                                        onClick={() =>
+                                            minimizeChat(
+                                                chat.user._id as string,
+                                            )
+                                        }
+                                    >
+                                        <ExpandMoreIcon />
+                                    </IconButton>
+
+                                    <IconButton
+                                        onClick={() =>
+                                            closeChat(chat.user._id as string)
+                                        }
+                                    >
+                                        <CloseIcon />
+                                    </IconButton>
+                                </Box>
+                            </Box>
+
+                            <Box
+                                sx={{
+                                    flex: 1,
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                <ChatBox
+                                    currentUser={currentUser}
+                                    otherUser={{
+                                        ...mapUserMessageToChatBox(chat.user),
+                                        status: Boolean(chat.user.status),
+                                    }}
+                                    token={token}
+                                />
+                            </Box>
+                        </Paper>
+                    )}
+                </Box>
+            ))}
+        </Box>,
+        document.body,
     );
 };
 

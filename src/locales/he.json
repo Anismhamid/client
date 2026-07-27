@@ -69,7 +69,8 @@
         "directMessage": "הודעה ישירה",
         "delete": "מחיקה",
         "deleteAll": "מחיקת כל ההודעות",
-        "contactWith": "צור קשר עם "
+        "contactWith": "צור קשר עם ",
+        "typeMessage": "הקלד את ההודעה שלך כאן..."
     },
     "roles": {
         "title": "תפקיד",
