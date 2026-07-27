@@ -28,7 +28,7 @@ import { ChatMessage } from '../../../interfaces/chat/chatMessage';
 import { useUser } from '../../../context/useUSer';
 import socket from '../../../socket/globalSocket';
 // import ChatModal from './ChatModal';
-import ChatBox from './ChatBox';
+// import ChatBox from './ChatBox';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 // import { BaseUser } from '../../../interfaces/chat/chatUser';
 // import socket from '../../../socket/globalSocket';
@@ -431,7 +431,7 @@ const MessagesPage = () => {
                                                 </Paper>
                                             )} */}
                                         {/* Chat Messages */}
-                                        <Box
+                                        {/* <Box
                                             sx={{ flex: 1, overflow: 'hidden' }}
                                         >
                                             <ChatBox
@@ -448,7 +448,7 @@ const MessagesPage = () => {
                                                     ) as string
                                                 }
                                             />
-                                        </Box>
+                                        </Box> */}
                                     </motion.div>
                                 </AnimatePresence>
                             ) : (

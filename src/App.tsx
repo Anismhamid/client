@@ -17,7 +17,7 @@ import handleRTL from './locales/handleRTL.ts';
 import { Suspense } from 'react';
 import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
-import ChatManager from './components/pages/chatBox/ChatManager.tsx';
+// import ChatManager from './components/pages/chatBox/ChatManager.tsx';
 import FloatingChats from './components/pages/chatBox/FloatingChats.tsx';
 
 function App() {
@@ -127,7 +127,7 @@ function App() {
             <SpeedDialComponent />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
-                <ChatManager />
+                {/* <ChatManager /> */}
                 <FloatingChats />
             </Suspense>
             <Footer />

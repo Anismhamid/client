@@ -14,7 +14,6 @@ import {
     alpha,
     useTheme,
     Avatar,
-    useMediaQuery,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,10 +21,6 @@ import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import { useChat } from '../../../hooks/useChat';
 import { useTranslation } from 'react-i18next';
 import { formatTime, getUserName } from './helpers/functions';
-import ChatModal from './ChatModal';
-import { useUser } from '../../../context/useUSer';
-// import ChatModal from './ChatModal';
-// import { useUser } from '../../../context/useUSer';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -59,10 +54,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     const { unreadCounts } = useChat();
     const { t } = useTranslation();
     const theme = useTheme();
-    const { auth } = useUser();
-    const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
-    const [chatOpen, setChatOpen] = useState(false);
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    // const { auth } = useUser();
+    // const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
+    // const [chatOpen, setChatOpen] = useState(false);
+    // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     useEffect(() => {
         const loadConversations = async () => {
@@ -124,10 +119,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
         onSelectChat(user);
     };
 
-    const handleCloseChat = () => {
-        setChatOpen(false);
-        setSelectedUser(null);
-    };
+    // const handleCloseChat = () => {
+    //     setChatOpen(false);
+    //     setSelectedUser(null);
+    // };
 
     const ConversationItem = memo(
         ({ conv, isSelected }: { conv: Conversation; isSelected: boolean }) => {
@@ -548,7 +543,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             </Box>
 
             {/* Chat Modal */}
-            {selectedUser && isMobile && (
+            {/* {selectedUser && isMobile && (
                 <ChatModal
                     open={chatOpen}
                     onClose={handleCloseChat}
@@ -562,7 +557,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                     otherUser={selectedUser}
                     token={token}
                 />
-            )}
+            )} */}
         </>
     );
 };
