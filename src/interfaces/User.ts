@@ -1,56 +1,57 @@
 // Register interface
 export interface UserRegister {
-	role?: "Client" | "Admin" | "Moderator";
-	name: {
-		first: string;
-		last: string;
-	};
-	phone: {
-		phone_1: string;
-		phone_2: string;
-	};
-	address: {
-		city: string;
-		street: string;
-		houseNumber?: string;
-	};
-	email: string;
-	password: string;
-	confirmPassword?: string;
-	gender: string;
-	slug: string;
-	image: {
-		url?: string;
-		alt?: string;
-	};
-	status?: boolean;
-	terms: boolean;
+    _id: string;
+    role?: 'Client' | 'Admin' | 'Moderator';
+    name: {
+        first: string;
+        last: string;
+    };
+    phone: {
+        phone_1: string;
+        phone_2: string;
+    };
+    address: {
+        city: string;
+        street: string;
+        houseNumber?: string;
+    };
+    email: string;
+    password: string;
+    confirmPassword?: string;
+    gender: string;
+    slug: string;
+    image: {
+        url?: string;
+        alt?: string;
+    };
+    status?: boolean;
+    terms: boolean;
 }
 
 // Edit interface
 export interface EditUserProfile {
-	name: {
-		first: string;
-		last: string;
-	};
-	phone: {
-		phone_1: string;
-		phone_2: string;
-	};
-	address: {
-		city: string;
-		street: string;
-		houseNumber?: string;
-	};
-	gender: string;
-	image?: {
-		url: string;
-		alt: string;
-	};
+    name: {
+        first: string;
+        last: string;
+    };
+    phone: {
+        phone_1: string;
+        phone_2: string;
+    };
+    address: {
+        city: string;
+        street: string;
+        houseNumber?: string;
+    };
+    gender: string;
+    image?: {
+        url: string;
+        alt: string;
+    };
 }
 
 // Login interface
 export interface UserLogin {
-	email: string;
-	password: string;
+    email: string;
+    password: string;
 }

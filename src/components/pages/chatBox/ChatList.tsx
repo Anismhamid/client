@@ -541,23 +541,6 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                     )}
                 </Box>
             </Box>
-
-            {/* Chat Modal */}
-            {/* {selectedUser && isMobile && (
-                <ChatModal
-                    open={chatOpen}
-                    onClose={handleCloseChat}
-                    currentUser={{
-                        _id: auth?._id || '',
-                        name: auth?.name || { first: '', last: '' },
-                        email: auth?.email || '',
-                        role: auth?.role || 'user',
-                        image: auth.image,
-                    }}
-                    otherUser={selectedUser}
-                    token={token}
-                />
-            )} */}
         </>
     );
 };

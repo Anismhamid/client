@@ -114,12 +114,12 @@ const MessagesPage = () => {
         };
     }, []);
 
-   const handleSelectChat = useCallback(
-    (user: UserMessage) => {
-        openChat(user);
-    },
-    [openChat]
-);
+    const handleSelectChat = useCallback(
+        (user: UserMessage) => {
+            openChat(user);
+        },
+        [openChat],
+    );
 
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
@@ -353,102 +353,6 @@ const MessagesPage = () => {
                                         >
                                             {t('messages.openChat')}
                                         </Button>
-
-                                        {/* <ChatModal
-                                            open={chatOpen && !chatMinimized}
-                                            onMinimize={() => {
-                                                setChatMinimized(true);
-                                            }}
-                                            onClose={() => {
-                                                setChatOpen(false);
-                                                setChatMinimized(false);
-                                            }}
-                                            currentUser={{
-                                                _id: auth._id,
-                                                name: auth.name,
-                                                email: auth.email,
-                                                role: auth.role,
-                                                // status: auth.status,
-                                            }}
-                                            otherUser={selectedUser}
-                                            token={token}
-                                        />
-                                        {chatMinimized &&
-                                            !isMobile &&
-                                            selectedUser && (
-                                                <Paper
-                                                    onClick={() =>
-                                                        setChatMinimized(false)
-                                                    }
-                                                    elevation={8}
-                                                    sx={{
-                                                        position: 'fixed',
-                                                        bottom: 20,
-                                                        right: 20,
-                                                        width: 320,
-                                                        height: 70,
-                                                        borderRadius: 3,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        px: 2,
-                                                        cursor: 'pointer',
-                                                        zIndex: 1500,
-                                                    }}
-                                                >
-                                                    <Avatar
-                                                        src={
-                                                            selectedUser.image
-                                                                ?.url
-                                                        }
-                                                        alt={`${selectedUser.name?.first} ${selectedUser.name?.last}`}
-                                                        sx={{
-                                                            mr: 2,
-                                                        }}
-                                                    >
-                                                        {
-                                                            selectedUser.name
-                                                                ?.first?.[0]
-                                                        }
-                                                    </Avatar>
-
-                                                    <Box>
-                                                        <Typography
-                                                            fontWeight={600}
-                                                        >
-                                                            {
-                                                                selectedUser
-                                                                    .name?.first
-                                                            }
-                                                        </Typography>
-
-                                                        <Typography
-                                                            variant='caption'
-                                                            color='text.secondary'
-                                                        >
-                                                            اضغط لفتح المحادثة
-                                                        </Typography>
-                                                    </Box>
-                                                </Paper>
-                                            )} */}
-                                        {/* Chat Messages */}
-                                        {/* <Box
-                                            sx={{ flex: 1, overflow: 'hidden' }}
-                                        >
-                                            <ChatBox
-                                                currentUser={currentUser}
-                                                otherUser={{
-                                                    ...mapUserMessageToChatBox(
-                                                        selectedUser,
-                                                    ),
-                                                    status: selectedUser?.status as boolean,
-                                                }}
-                                                token={
-                                                    localStorage.getItem(
-                                                        'token',
-                                                    ) as string
-                                                }
-                                            />
-                                        </Box> */}
                                     </motion.div>
                                 </AnimatePresence>
                             ) : (

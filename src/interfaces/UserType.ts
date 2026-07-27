@@ -1,7 +1,8 @@
 export enum RoleType {
-	Admin = "Admin",
-	Moderator = "Moderator",
-	Client = "Client",
+    Admin = 'Admin',
+    Moderator = 'Moderator',
+    Client = 'Client',
+    Delivery = 'Delivery',
 }
 
 export default RoleType;

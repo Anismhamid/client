@@ -48,7 +48,7 @@ import LikeButton from '../../../atoms/like/LikeButton';
 import { path, productsPathes } from '../../../routes/routes';
 import { formatTimeAgo } from './helpers/helperFunctions';
 import { useUser } from '../../../context/useUSer';
-import ChatModal from '../chatBox/ChatModal';
+// import ChatModal from '../chatBox/ChatModal';
 
 interface PostCardProps {
     post: Posts;
@@ -95,12 +95,12 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const [openChat, setOpenChat] = useState(false);
     const menuRef = useRef(null);
 
-    const currentUser = {
-        _id: auth._id as string,
-        name: { first: auth.name.first, last: auth.name.last },
-        email: auth.email as string,
-        role: auth.role as string,
-    };
+    // const currentUser = {
+    //     _id: auth._id as string,
+    //     name: { first: auth.name.first, last: auth.name.last },
+    //     email: auth.email as string,
+    //     role: auth.role as string,
+    // };
     const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
 
     const jsonLdData = generateSingleProductJsonLd(post);
@@ -804,7 +804,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     sx: { width: { xs: '100%', sm: 400, md: 450 } },
                 }}
             >
-                {openChat && selectedUser && (
+                {/* {openChat && selectedUser && (
                     <ChatModal
                         onClose={() => setOpenChat(false)}
                         open={openChat}
@@ -812,7 +812,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         otherUser={selectedUser}
                         token={localStorage.getItem('token') as string}
                     />
-                )}
+                )} */}
             </Drawer>
         </Card>
     );
