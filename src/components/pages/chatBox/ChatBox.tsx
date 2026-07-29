@@ -227,6 +227,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     }, [isFetchingMore, userMessages.length]);
 
     useEffect(() => {
+        if (!socket.connected) {
+            socket.connect();
+        }
+
         loadConversation();
 
         socket.on('message:received', (message: LocalMessage) => {
@@ -356,7 +360,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         if (!chatContainerRef.current) return false;
         const { scrollTop, scrollHeight, clientHeight } =
             chatContainerRef.current;
-        return scrollHeight - scrollTop - clientHeight < 1000;
+        return scrollHeight - scrollTop - clientHeight < 150;
     };
 
     useEffect(() => {
@@ -556,7 +560,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                         cursor: 'pointer',
                                                     }}
                                                     onClick={() =>
-                                                        window.open(msg.fileUrl)
+                                                        window.open(msg.fileUrl,'_blank','noopener norferrer')
                                                     }
                                                 />
                                             ) : (
