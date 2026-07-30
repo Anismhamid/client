@@ -215,10 +215,11 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setAfterDecode(token);
                 setAuth(decoded);
                 setIsLoggedIn(true);
-                await registerPush(token);
+
                 if (Capacitor.isNativePlatform()) {
                     initPushNotifications(token);
                 }
+                await registerPush(token);
                 showSuccess(
                     t('login.successMessage', {
                         name: decoded.name.first,
@@ -282,6 +283,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setAuth(decodedToken);
                     setIsLoggedIn(true);
                     navigate(path.Home);
+                    if (Capacitor.isNativePlatform()) {
+                        await initPushNotifications(token);
+                    }
+
                     await registerPush(token);
                 }
             } else {
