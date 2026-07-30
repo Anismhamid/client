@@ -1,18 +1,8 @@
 import { PushNotifications, Token } from '@capacitor/push-notifications';
-import { LocalNotifications } from '@capacitor/local-notifications';
 
 import axios from 'axios';
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
-
-await LocalNotifications.createChannel({
-    id: 'default',
-    name: 'Default',
-    description: 'Default notifications',
-    importance: 5,
-    visibility: 1,
-    sound: 'default',
-});
 
 export async function initPushNotifications(authToken: string) {
     let permission = await PushNotifications.checkPermissions();
@@ -22,18 +12,17 @@ export async function initPushNotifications(authToken: string) {
     }
 
     if (permission.receive !== 'granted') {
+        console.log('Push permission denied');
         return;
     }
 
-    await PushNotifications.register();
-
     PushNotifications.addListener('registration', async (token: Token) => {
-        console.log('FCM TOKEN', token);
+        console.log('FCM TOKEN:', token.value);
 
         await axios.patch(
             `${api}/push-token`,
             {
-                pushToken: token,
+                pushToken: token.value,
             },
             {
                 headers: {
@@ -41,6 +30,10 @@ export async function initPushNotifications(authToken: string) {
                 },
             },
         );
+    });
+
+    PushNotifications.addListener('registrationError', (error) => {
+        console.error('FCM registration error', error);
     });
 
     PushNotifications.addListener(
@@ -56,4 +49,6 @@ export async function initPushNotifications(authToken: string) {
             console.log('Push clicked', action);
         },
     );
+
+    await PushNotifications.register();
 }
