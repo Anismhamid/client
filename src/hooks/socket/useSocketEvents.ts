@@ -67,7 +67,6 @@ const useSocketEvents = () => {
 
         // התחברות לחדר אדמין
         const handleConnect = () => {
-
             socket.emit('join-user', {
                 userId: userId,
             });
@@ -169,11 +168,9 @@ const useSocketEvents = () => {
 
                 playNotificationSound('messageReceived');
 
-                if (Notification.permission === 'granted') {
-                    new Notification(`رسالة من ${msg.from?.name?.first}`, {
-                        body: msg.text,
-                    });
-                }
+                showNotification(
+                    `رسالة من ${msg.from?.name?.first ?? 'مستخدم'}`,
+                );
             }
         };
 
@@ -202,7 +199,6 @@ const useSocketEvents = () => {
             socket.off('user:registered', handleUserRegistered);
             socket.off('user:newUserLoggedIn', handleUserLoggedIn);
             socket.off('product:new', handleNewProduct);
-            socket.disconnect();
         };
     }, [
         userId,

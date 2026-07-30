@@ -16,7 +16,10 @@ const useNotificationSound = () => {
 
 
     const vibrate = () => {
-        if ('vibrate' in navigator) {
+        if (
+            typeof navigator !== 'undefined' &&
+            'vibrate' in navigator
+        ) {
             navigator.vibrate([200, 100, 200]);
         }
     };
@@ -50,34 +53,46 @@ const useNotificationSound = () => {
     };
 
 
+const showNotification = async (message: string) => {
 
-    const showNotification = async (message: string) => {
-
-
-        // Android Capacitor
-        // لا تستخدم Browser Notification
-        if (Capacitor.isNativePlatform()) {
-            console.log(
-                'Native app: use FCM notification'
-            );
-            return;
-        }
+    if (Capacitor.isNativePlatform()) {
+        console.log('Native app: use FCM notification');
+        return;
+    }
 
 
-
-        // Browser only
-        if (
-            typeof window === 'undefined' ||
-            !('Notification' in window)
-        ) {
-            return;
-        }
+    if (
+        typeof window === 'undefined' ||
+        typeof window.Notification === 'undefined'
+    ) {
+        return;
+    }
 
 
+    if (window.Notification.permission === 'granted') {
 
-        if (Notification.permission === 'granted') {
+        new window.Notification(
+            message,
+            {
+                icon: '/d3.png',
+                tag: 'chat-message',
+            },
+        );
 
-            new Notification(
+        vibrate();
+        return;
+    }
+
+
+    if (window.Notification.permission !== 'denied') {
+
+        const permission =
+            await window.Notification.requestPermission();
+
+
+        if (permission === 'granted') {
+
+            new window.Notification(
                 message,
                 {
                     icon: '/d3.png',
@@ -86,40 +101,14 @@ const useNotificationSound = () => {
             );
 
             vibrate();
-
-            return;
         }
-
-
-
-        if (Notification.permission !== 'denied') {
-
-            const permission =
-                await Notification.requestPermission();
-
-
-            if (permission === 'granted') {
-
-                new Notification(
-                    message,
-                    {
-                        icon: '/d3.png',
-                        tag:'chat-message',
-                    },
-                );
-
-                vibrate();
-            }
-        }
-
-    };
-
+    }
+};
 
     return {
         playNotificationSound,
         showNotification,
     };
 };
-
 
 export default useNotificationSound;
