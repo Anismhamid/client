@@ -54,6 +54,8 @@ import { DecodedGooglePayload } from '../../interfaces/googleValues';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
+import { registerPush } from '../../services/pushNotifications';
+import { initPushNotifications } from '../../hooks/socket/pushNotifications';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -125,6 +127,9 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setAuth(decodedToken);
                     setIsLoggedIn(true);
                     navigate(path.Home);
+                    if (Capacitor.isNativePlatform()) {
+                        initPushNotifications(token);
+                    }
                 }
             } else {
                 setGoogleResponse(fakeCredentialResponse);
@@ -210,6 +215,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setAfterDecode(token);
                 setAuth(decoded);
                 setIsLoggedIn(true);
+                await registerPush(token);
+                if (Capacitor.isNativePlatform()) {
+                    initPushNotifications(token);
+                }
                 showSuccess(
                     t('login.successMessage', {
                         name: decoded.name.first,
@@ -273,7 +282,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setAuth(decodedToken);
                     setIsLoggedIn(true);
                     navigate(path.Home);
-                    console.log(decodedGoogle);
+                    await registerPush(token);
                 }
             } else {
                 setGoogleResponse(response);
