@@ -51,6 +51,7 @@ function BackButtonHandler() {
 // eslint-disable-next-line react-refresh/only-export-components
 const AppWithProviders = () => {
     const { auth } = useUser();
+  
     return (
         <ChatWindowProvider>
             <ChatProvider authId={auth._id ?? ''}>

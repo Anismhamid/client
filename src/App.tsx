@@ -19,10 +19,12 @@ import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
 // import ChatManager from './components/pages/chatBox/ChatManager.tsx';
 import FloatingChats from './components/pages/chatBox/FloatingChats.tsx';
+import usePushSync from './hooks/usePushSync.ts';
 
 function App() {
     const { auth } = useUser();
     useSocketEvents();
+    usePushSync();
 
     // Manage theme mode state
     const getInitialMode = (): PaletteMode => {

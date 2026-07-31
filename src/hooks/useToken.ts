@@ -41,7 +41,7 @@ function useToken() {
         }
     }, [token]);
 
-    return { decodedToken, setAfterDecode };
+    return { token, decodedToken, setAfterDecode };
 }
 
 export default useToken;
