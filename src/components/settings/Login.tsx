@@ -55,7 +55,7 @@ import { useTranslation } from 'react-i18next';
 import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
 import { registerPush } from '../../services/pushNotifications';
-import { initPushNotifications } from '../../hooks/pushNotifications';
+// import { initPushNotifications } from '../../hooks/pushNotifications';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -128,7 +128,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setIsLoggedIn(true);
                     navigate(path.Home);
                     if (Capacitor.isNativePlatform()) {
-                        initPushNotifications(token);
+                        // initPushNotifications(token);
+                        await registerPush(token);
                     }
                 }
             } else {
@@ -217,9 +218,9 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setIsLoggedIn(true);
 
                 if (Capacitor.isNativePlatform()) {
-                    initPushNotifications(token);
+                    // await initPushNotifications(token);
+                    await registerPush(token);
                 }
-                await registerPush(token);
                 showSuccess(
                     t('login.successMessage', {
                         name: decoded.name.first,
@@ -284,7 +285,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     setIsLoggedIn(true);
                     navigate(path.Home);
                     if (Capacitor.isNativePlatform()) {
-                        await initPushNotifications(token);
+                        // await initPushNotifications(token);
                         await registerPush(token);
                     }
                 }

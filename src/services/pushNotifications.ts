@@ -35,7 +35,7 @@ export async function registerPush(tokenAuth: string) {
                 await axios.patch(
                     `${api}/users/push-token`,
                     {
-                        token: token.value,
+                        pushToken: token.value,
                     },
                     {
                         headers: {
@@ -44,7 +44,7 @@ export async function registerPush(tokenAuth: string) {
                     },
                 );
 
-                console.log('Token saved');
+                console.log('Token saved',token.value);
             } catch (error) {
                 console.error('Token save error', error);
             }
