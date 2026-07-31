@@ -42,7 +42,7 @@ export async function registerPush(tokenAuth: string) {
                     },
                     {
                         headers: {
-                            Authorization: `Bearer ${tokenAuth}`,
+                            Authorization:  tokenAuth,
                         },
                     },
                 );
