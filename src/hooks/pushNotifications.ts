@@ -29,32 +29,37 @@ export async function initPushNotifications(authToken: string) {
         vibration: true,
     });
 
-    PushNotifications.addListener('registration', async (token: Token) => {
-        console.log('🔥 FCM TOKEN RECEIVED:', token.value);
+    await PushNotifications.addListener(
+        'registration',
+        async (token: Token) => {
+            console.log('🔥 TOKEN:', token.value);
 
-        try {
-            const res = await axios.patch(
-                `${api}/push-token`,
-                {
-                    pushToken: token.value,
-                },
-                {
+            console.log('AUTH TOKEN:', authToken);
+
+            console.log('URL:', `${api}/push-token`);
+
+            const body = {
+                pushToken: token.value,
+            };
+
+            console.log('BODY:', body);
+
+            try {
+                const res = await axios.patch(`${api}/push-token`, body, {
                     headers: {
                         Authorization: authToken,
                     },
-                },
-            );
+                });
 
-            console.log('✅ TOKEN SAVED:', res.data);
+                console.log('✅ SAVED:', res.data);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            } catch (error: any) {
+                console.log('❌ ERROR STATUS:', error.response?.status);
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
-            console.error(
-                '❌ TOKEN SAVE ERROR:',
-                error.response?.data || error.message,
-            );
-        }
-    });
+                console.log('❌ ERROR DATA:', error.response?.data);
+            }
+        },
+    );
 
     PushNotifications.addListener('registrationError', (error) => {
         console.error('FCM registration error', error);
