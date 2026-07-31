@@ -16,10 +16,12 @@ export async function registerPush(tokenAuth: string) {
         return;
     }
 
+    await PushNotifications.removeAllListeners();
+
+
     const permission = await PushNotifications.requestPermissions();
 
     if (permission.receive !== 'granted') {
-        console.log('Push permission denied');
         return;
     }
 
@@ -30,7 +32,8 @@ export async function registerPush(tokenAuth: string) {
         'registration',
         async (token: Token) => {
             console.log('FCM TOKEN:', token.value);
-
+            console.log('API URL:', api);
+            console.log('TOKEN AUTH:', tokenAuth);
             try {
                 await axios.patch(
                     `${api}/users/push-token`,
@@ -39,12 +42,12 @@ export async function registerPush(tokenAuth: string) {
                     },
                     {
                         headers: {
-                            Authorization: tokenAuth,
+                            Authorization: `Bearer ${tokenAuth}`,
                         },
                     },
                 );
 
-                console.log('Token saved',token.value);
+                console.log('Token saved', token.value);
             } catch (error) {
                 console.error('Token save error', error);
             }
