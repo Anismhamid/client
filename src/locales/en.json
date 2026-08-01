@@ -88,6 +88,8 @@
         "register": "Click to register",
         "privacyPolicy": "Privacy Policy",
         "termsOfUse": "Terms of Use",
+        "rememberMe": "Remember Me",
+        "forgotPassword": "Forgot Password?",
         "validation": {
             "emailInvalid": "Invalid email",
             "emailRequired": "Email is required",

@@ -90,6 +90,8 @@
         "register": "לחץ להרשמה",
         "privacyPolicy": "מדיניות פרטיות",
         "termsOfUse": "תנאי שימוש",
+        "rememberMe": "זכור אותי",
+        "forgotPassword": "שכחת את הסיסמה?",
         "validation": {
             "emailInvalid": "דואר אלקטרוני לא חוקי",
             "emailRequired": "דואר אלקטרוני נדרש",

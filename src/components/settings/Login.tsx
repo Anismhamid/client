@@ -20,7 +20,7 @@ import useToken from '../../hooks/useToken';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
 import { AuthValues } from '../../interfaces/authValues';
 import { GoogleLogin } from '@react-oauth/google';
-import { Capacitor } from '@capacitor/core';
+import { registerPlugin, Capacitor } from '@capacitor/core';
 import { SocialLogin } from '@capgo/capacitor-social-login';
 import {
     Box,
@@ -38,6 +38,8 @@ import {
     Grid,
     Alert,
     AlertTitle,
+    Checkbox,
+    FormControlLabel,
 } from '@mui/material';
 import {
     Visibility,
@@ -56,6 +58,7 @@ import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
 // ✅ إزالة import registerPush - usePushSync سيتعامل معها
 // import { registerPush } from '../../services/pushNotifications';
+import { Preferences } from '@capacitor/preferences';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -66,6 +69,11 @@ interface FormErrors {
     password?: string;
     general?: string;
 }
+
+interface AutofillHelperPlugin {
+    commit(): Promise<void>;
+}
+const AutofillHelper = registerPlugin<AutofillHelperPlugin>('AutofillHelper');
 
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
@@ -79,7 +87,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const { t } = useTranslation();
 
     // ✅ دالة موحدة لتسجيل الدخول
-    const handleSuccessfulLogin = async (token: string) => {
+    const handleSuccessfulLogin = async (token: string, email?: string) => {
         try {
             // 1. حفظ التوكن
             localStorage.setItem('token', token);
@@ -90,8 +98,19 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             setAuth(decoded);
             setIsLoggedIn(true);
 
-            // 3. ✅ لا حاجة لاستدعاء registerPush هنا
-            // usePushSync في App.tsx سيتعامل معها تلقائياً
+            if (rememberMe && email) {
+                await Preferences.set({ key: REMEMBER_KEY, value: email });
+            } else {
+                await Preferences.remove({ key: REMEMBER_KEY });
+            }
+
+            if (Capacitor.isNativePlatform()) {
+                try {
+                    await AutofillHelper.commit();
+                } catch (e) {
+                    console.log('Autofill commit failed', e);
+                }
+            }
 
             // 4. عرض رسالة نجاح
             showSuccess(
@@ -219,7 +238,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
             if (token) {
                 // ✅ استخدام الدالة الموحدة
-                await handleSuccessfulLogin(token);
+                await handleSuccessfulLogin(token, values.email);
                 return null;
             } else {
                 throw new Error('Something is wrong please try again');
@@ -324,6 +343,21 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         }
     };
 
+    const REMEMBER_KEY = 'remembered_email';
+
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const [savedEmail, setSavedEmail] = useState<string>('');
+
+    useEffect(() => {
+        (async () => {
+            const { value } = await Preferences.get({ key: REMEMBER_KEY });
+            if (value) {
+                setSavedEmail(value);
+                setRememberMe(true);
+            }
+        })();
+    }, []);
+
     const currentUrl = `https://client-qqq1.vercel.app/login`;
     const dire = handleRTL();
 
@@ -409,7 +443,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                 </Typography>
 
                                 <form
-                                    autoComplete='off'
+                                    autoComplete='on'
                                     noValidate
                                     action={submitAction}
                                 >
@@ -417,6 +451,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         label={t('login.email')}
                                         type='email'
                                         name='email'
+                                        defaultValue={savedEmail}
                                         error={Boolean(error?.email)}
                                         helperText={error?.email}
                                         fullWidth
@@ -500,7 +535,21 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             {error.general}
                                         </Typography>
                                     )}
-
+                                    <FormControlLabel
+                                        control={
+                                            <Checkbox
+                                                checked={rememberMe}
+                                                onChange={(e) =>
+                                                    setRememberMe(
+                                                        e.target.checked,
+                                                    )
+                                                }
+                                            />
+                                        }
+                                        label={
+                                            t('login.rememberMe') || 'تذكرني'
+                                        }
+                                    />
                                     <Box sx={{ mt: 4 }}>
                                         <Button
                                             color='primary'

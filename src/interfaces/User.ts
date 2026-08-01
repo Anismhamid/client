@@ -1,6 +1,6 @@
 // Register interface
 export interface UserRegister {
-    _id: string;
+    _id?: string;
     role?: 'Client' | 'Admin' | 'Moderator';
     name: {
         first: string;

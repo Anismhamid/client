@@ -4,4 +4,13 @@
     <string name="title_activity_main">Safqa</string>
     <string name="package_name">com.safqa.app</string>
     <string name="custom_url_scheme">com.safqa.app</string>
+    <string name="asset_statements">
+    [{
+        "relation": ["delegate_permission/common.get_login_creds"],
+        "target": {
+            "namespace": "web",
+            "site": "https://client-qqq1.vercel.app"
+        }
+    }]
+</string>
 </resources>
