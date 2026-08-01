@@ -20,7 +20,7 @@ import useToken from '../../hooks/useToken';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
 import { AuthValues } from '../../interfaces/authValues';
 import { GoogleLogin } from '@react-oauth/google';
-import { registerPlugin, Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SocialLogin } from '@capgo/capacitor-social-login';
 import {
     Box,
@@ -59,6 +59,7 @@ import SafqaLogo from '../../atoms/SafqaLogo';
 // ✅ إزالة import registerPush - usePushSync سيتعامل معها
 // import { registerPush } from '../../services/pushNotifications';
 import { Preferences } from '@capacitor/preferences';
+import { SavePassword } from '@capgo/capacitor-autofill-save-password';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -70,10 +71,16 @@ interface FormErrors {
     general?: string;
 }
 
-interface AutofillHelperPlugin {
-    commit(): Promise<void>;
+interface CredentialHelperPlugin {
+    getSavedPassword(): Promise<{ username: string; password: string }>;
 }
-const AutofillHelper = registerPlugin<AutofillHelperPlugin>('AutofillHelper');
+const CredentialHelper =
+    registerPlugin<CredentialHelperPlugin>('CredentialHelper');
+
+// interface AutofillHelperPlugin {
+//     commit(): Promise<void>;
+// }
+// const AutofillHelper = registerPlugin<AutofillHelperPlugin>('AutofillHelper');
 
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
@@ -84,10 +91,16 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const { setAuth, setIsLoggedIn } = useUser();
     const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
+    const [savedPasswordValue, setSavedPasswordValue] = useState<string>('');
+
     const { t } = useTranslation();
 
     // ✅ دالة موحدة لتسجيل الدخول
-    const handleSuccessfulLogin = async (token: string, email?: string) => {
+    const handleSuccessfulLogin = async (
+        token: string,
+        email?: string,
+        password?: string,
+    ) => {
         try {
             // 1. حفظ التوكن
             localStorage.setItem('token', token);
@@ -104,11 +117,14 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 await Preferences.remove({ key: REMEMBER_KEY });
             }
 
-            if (Capacitor.isNativePlatform()) {
+            if (Capacitor.isNativePlatform() && email && password) {
                 try {
-                    await AutofillHelper.commit();
+                    await SavePassword.promptDialog({
+                        username: email,
+                        password,
+                    });
                 } catch (e) {
-                    console.log('Autofill commit failed', e);
+                    console.log('Save password prompt failed', e);
                 }
             }
 
@@ -238,7 +254,11 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
             if (token) {
                 // ✅ استخدام الدالة الموحدة
-                await handleSuccessfulLogin(token, values.email);
+                await handleSuccessfulLogin(
+                    token,
+                    values.email,
+                    values.password,
+                );
                 return null;
             } else {
                 throw new Error('Something is wrong please try again');
@@ -354,6 +374,19 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             if (value) {
                 setSavedEmail(value);
                 setRememberMe(true);
+            }
+        })();
+    }, []);
+
+    useEffect(() => {
+        if (!Capacitor.isNativePlatform()) return;
+        (async () => {
+            try {
+                const cred = await CredentialHelper.getSavedPassword();
+                setSavedEmail(cred.username);
+                setSavedPasswordValue(cred.password);
+            } catch (e) {
+                console.log('No saved credential found', e);
             }
         })();
     }, []);
@@ -486,6 +519,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         name='password'
                                         error={Boolean(error?.password)}
                                         helperText={error?.password}
+                                        defaultValue={savedPasswordValue}
                                         fullWidth
                                         margin='normal'
                                         variant='outlined'
