@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { UserLogin } from '../../interfaces/User';
 import * as yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom'; // Removed redirect import
+import { Link, useNavigate } from 'react-router-dom';
 import { path } from '../../routes/routes';
 import {
     handleGoogleLogin,
@@ -54,8 +54,8 @@ import { DecodedGooglePayload } from '../../interfaces/googleValues';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
-import { registerPush } from '../../services/pushNotifications';
-// import { initPushNotifications } from '../../hooks/pushNotifications';
+// ✅ إزالة import registerPush - usePushSync سيتعامل معها
+// import { registerPush } from '../../services/pushNotifications';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -67,11 +67,6 @@ interface FormErrors {
     general?: string;
 }
 
-/**
- * Modes login
- * @param {mode = "light"}
- * @returns Login component
- */
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
     const { setAfterDecode } = useToken();
@@ -81,12 +76,41 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const { setAuth, setIsLoggedIn } = useUser();
     const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
-    // const [loading, setLoading] = useState<boolean>(false);
+    const { t } = useTranslation();
+
+    // ✅ دالة موحدة لتسجيل الدخول
+    const handleSuccessfulLogin = async (token: string) => {
+        try {
+            // 1. حفظ التوكن
+            localStorage.setItem('token', token);
+
+            // 2. فك تشفير التوكن
+            const decoded = jwtDecode<AuthValues>(token);
+            setAfterDecode(token);
+            setAuth(decoded);
+            setIsLoggedIn(true);
+
+            // 3. ✅ لا حاجة لاستدعاء registerPush هنا
+            // usePushSync في App.tsx سيتعامل معها تلقائياً
+
+            // 4. عرض رسالة نجاح
+            showSuccess(
+                t('login.successMessage', {
+                    name: decoded.name?.first || '',
+                }) || 'Login successful',
+            );
+
+            // 5. التوجيه للصفحة الرئيسية
+            navigate(path.Home);
+        } catch (error: any) {
+            console.error('Login handler error:', error);
+            showError(error.message || 'Login failed');
+        }
+    };
 
     const handleNativeGoogleLogin = async () => {
         try {
             setShowSignOutButton(false);
-            // Add more specific options
             const res = await SocialLogin.login({
                 provider: 'google',
                 options: {
@@ -109,7 +133,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             }
 
             const decodedGoogle = jwtDecode<DecodedGooglePayload>(idToken);
-
             const userExists = await verifyGoogleUser(decodedGoogle.sub);
 
             const fakeCredentialResponse = {
@@ -122,15 +145,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     null,
                 );
                 if (token) {
-                    const decodedToken = jwtDecode<AuthValues>(token);
-                    setAfterDecode(token);
-                    setAuth(decodedToken);
-                    setIsLoggedIn(true);
-                    navigate(path.Home);
-                    if (Capacitor.isNativePlatform()) {
-                        // initPushNotifications(token);
-                        await registerPush(token);
-                    }
+                    // ✅ استخدام الدالة الموحدة
+                    await handleSuccessfulLogin(token);
                 }
             } else {
                 setGoogleResponse(fakeCredentialResponse);
@@ -138,8 +154,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             }
         } catch (error: any) {
             console.error('Google login error:', error);
-
-            // معالجة أخطاء محددة
             if (error.message?.includes('16')) {
                 showError(
                     'Account reauthentication needed. Please sign out of Google and try again.',
@@ -156,7 +170,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
-                // Verify token is not expired before redirecting
                 const decoded = jwtDecode<AuthValues>(token);
                 const isExpired = decoded.exp
                     ? decoded.exp * 1000 < Date.now()
@@ -165,18 +178,14 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 if (!isExpired) {
                     navigate(path.Home, { replace: true });
                 } else {
-                    // Token expired, remove it
                     localStorage.removeItem('token');
                 }
             } catch (error) {
-                // Invalid token, remove it
                 localStorage.removeItem('token');
                 console.log(error);
             }
         }
     }, [navigate]);
-
-    const { t } = useTranslation();
 
     const loginSchema = useMemo(
         () =>
@@ -184,7 +193,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 email: yup
                     .string()
                     .email(t('login.validation.emailInvalid'))
-                    .required(t('login.validation.emailRequired')), // Fixed: was passwordRequired
+                    .required(t('login.validation.emailRequired')),
                 password: yup
                     .string()
                     .min(8, t('login.validation.passwordMin'))
@@ -204,29 +213,13 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 password: formData.get('password') as string,
             };
 
-            // Validate with yup
             await loginSchema.validate(values, { abortEarly: false });
 
-            // Call login API
             const token = await loginUser(values as UserLogin);
 
             if (token) {
-                localStorage.setItem('token', token);
-                const decoded = jwtDecode<AuthValues>(token);
-                setAfterDecode(token);
-                setAuth(decoded);
-                setIsLoggedIn(true);
-
-                if (Capacitor.isNativePlatform()) {
-                    // await initPushNotifications(token);
-                    await registerPush(token);
-                }
-                showSuccess(
-                    t('login.successMessage', {
-                        name: decoded.name.first,
-                    }) || 'Login successful',
-                );
-                navigate(path.Home);
+                // ✅ استخدام الدالة الموحدة
+                await handleSuccessfulLogin(token);
                 return null;
             } else {
                 throw new Error('Something is wrong please try again');
@@ -236,7 +229,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
             const errors: FormErrors = {};
 
-            // Handle yup validation errors
             if (err.inner) {
                 err.inner.forEach((error: any) => {
                     if (error.path === 'email') {
@@ -246,7 +238,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     }
                 });
             } else {
-                // Handle API errors
                 errors.general =
                     err.message ||
                     t('login.errors.loginFailed') ||
@@ -279,15 +270,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             if (userExists) {
                 const token = await handleGoogleLogin(response, null);
                 if (token) {
-                    const decodedToken = jwtDecode<AuthValues>(token);
-                    setAfterDecode(token);
-                    setAuth(decodedToken);
-                    setIsLoggedIn(true);
-                    navigate(path.Home);
-                    if (Capacitor.isNativePlatform()) {
-                        // await initPushNotifications(token);
-                        await registerPush(token);
-                    }
+                    // ✅ استخدام الدالة الموحدة
+                    await handleSuccessfulLogin(token);
                 }
             } else {
                 setGoogleResponse(response);
@@ -301,47 +285,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         }
     };
 
-    // const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
-    //     if (!response.credential) {
-    //         throw new Error('Missing Google credential');
-    //     }
-    //     try {
-    //         const decodedGoogle = jwtDecode<DecodedGooglePayload>(
-    //             response.credential,
-    //         );
-
-    //         // Check if user exists
-    //         const userExists = await verifyGoogleUser(decodedGoogle.sub);
-
-    //         if (userExists) {
-    //             const token = await handleGoogleLogin(response, null);
-    //             if (token) {
-    //                 const decodedToken = jwtDecode<AuthValues>(token);
-    //                 setAfterDecode(token);
-    //                 setAuth(decodedToken);
-    //                 setIsLoggedIn(true);
-    //                 navigate(path.Home);
-    //             }
-    //         } else {
-    //             // New user - show registration modal
-    //             setGoogleResponse(response);
-    //             setShowModal(true);
-    //         }
-    //     } catch (error: any) {
-    //         // Handle specific error cases
-    //         if (error.message.includes('16')) {
-    //             showError(
-    //                 'Account reauthentication needed. Please sign out of Google and try again.',
-    //             );
-    //         } else {
-    //             showError(
-    //                 t('login.errors.googleLoginError') + ': ' + error.message,
-    //             );
-    //         }
-    //     }
-    // };
-
-    // أضف هذه الدالة
     const handleGoogleSignOut = async () => {
         try {
             if (Capacitor.isNativePlatform()) {
@@ -349,7 +292,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     provider: 'google',
                 });
             }
-            // مسح التوكن المحلي
             localStorage.removeItem('token');
             setAuth({} as AuthValues);
             setIsLoggedIn(false);
@@ -357,8 +299,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             showSuccess(
                 'Signed out successfully. Please try logging in again.',
             );
-
-            // إعادة تحميل الصفحة لتصفية الجلسة
             window.location.reload();
         } catch (error) {
             console.error('Sign out error:', error);
@@ -376,13 +316,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 showError('Please try again');
                 return;
             }
-            const decoded = jwtDecode<AuthValues>(token);
-            if (token) {
-                setAfterDecode(token);
-                setAuth(decoded);
-                setIsLoggedIn(true);
-                navigate(path.Home);
-            }
+            // ✅ استخدام الدالة الموحدة
+            await handleSuccessfulLogin(token);
         } catch (error: any) {
             showError(error.message);
             setShowModal(false);
@@ -390,7 +325,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     };
 
     const currentUrl = `https://client-qqq1.vercel.app/login`;
-
     const dire = handleRTL();
 
     return (
@@ -422,9 +356,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     }}
                 >
                     <Grid container spacing={4} alignItems='center'>
-                        {/* Right side - Login form */}
                         <Grid size={{ xs: 12, md: 6 }}>
-                            {/* Fixed: should be 'item' prop */}
                             <Paper
                                 elevation={mode === 'dark' ? 8 : 4}
                                 sx={{
@@ -480,7 +412,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     autoComplete='off'
                                     noValidate
                                     action={submitAction}
-                                    // If using formik: onSubmit={formik.handleSubmit}
                                 >
                                     <TextField
                                         label={t('login.email')}
@@ -569,31 +500,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             {error.general}
                                         </Typography>
                                     )}
-
-                                    <Box
-                                        sx={{
-                                            textAlign: 'right',
-                                            mt: 1,
-                                            mb: 3,
-                                        }}
-                                    >
-                                        {/* <Link
-											// TODO: Add forgot password route
-											to={path.ForgotPassword || path.Home}
-											style={{
-												textDecoration: "none",
-												color:
-													mode === "dark"
-														? "#90caf9"
-														: "#1976d2",
-												fontSize: "0.9rem",
-												fontWeight: 500,
-											}}
-										>
-											{t("login.forgotPassword") ||
-												"نسيت كلمة المرور؟"}
-										</Link> */}
-                                    </Box>
 
                                     <Box sx={{ mt: 4 }}>
                                         <Button
@@ -757,7 +663,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                                 'rgba(211, 47, 47, 0.04)',
                                                         },
                                                     }}
-                                                    // startIcon={<LogoutIcon />}
                                                 >
                                                     Sign out of Google
                                                 </Button>
@@ -817,11 +722,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     'linear-gradient(to bottom, #48C1F7, #103365)',
                                 borderRadius: '10px',
                             }}
-                        />{' '}
-                        {/* Left side - Welcome message */}
+                        />
                         <Grid size={{ xs: 12, md: 5 }}>
-                            {' '}
-                            {/* Fixed: should be 'item' prop */}
                             <Fade in={true} timeout={800}>
                                 <Box
                                     sx={{
@@ -850,14 +752,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 md: '3.5rem',
                                             },
                                         }}
-                                    >
-                                        {/* {t("login.welcome") || "مرحباً بعودتك!"} */}
-                                    </Typography>
-                                    {/* <img
-										src={"/myLogo2.png"}
-										style={{width: "100%", maxWidth: "220px"}}
-										alt='logo'
-									/> */}
+                                    />
                                     <SafqaLogo />
                                     <Typography
                                         variant='h6'

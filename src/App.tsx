@@ -17,14 +17,22 @@ import handleRTL from './locales/handleRTL.ts';
 import { Suspense } from 'react';
 import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
-// import ChatManager from './components/pages/chatBox/ChatManager.tsx';
 import FloatingChats from './components/pages/chatBox/FloatingChats.tsx';
 import usePushSync from './hooks/usePushSync.ts';
+import { Capacitor } from '@capacitor/core';
+import { setupNotificationNavigation } from './services/pushNotifications.service';
+import { useNavigate } from 'react-router-dom';
+import NotificationListener from './components/NotificationListener.tsx';
 
 function App() {
     const { auth } = useUser();
+    const navigate = useNavigate();
+    
+    // ✅ تفعيل الإشعارات
+    const { isInitialized, error, refreshPushToken } = usePushSync();
+    
+    // ✅ تفعيل Socket Events
     useSocketEvents();
-    usePushSync();
 
     // Manage theme mode state
     const getInitialMode = (): PaletteMode => {
@@ -37,6 +45,40 @@ function App() {
     useEffect(() => {
         localStorage.setItem('theme', mode);
     }, [mode]);
+
+    // ✅ إعداد التنقل من الإشعارات
+    useEffect(() => {
+        if (Capacitor.isNativePlatform()) {
+            setupNotificationNavigation((path: string) => {
+                console.log('🔔 Navigating from notification:', path);
+                navigate(path);
+            });
+        }
+    }, [navigate]);
+
+    // ✅ عرض حالة الإشعارات في الكونسول (للتطوير)
+    useEffect(() => {
+        if (Capacitor.isNativePlatform()) {
+            console.log('🔔 Push Notification Status:', {
+                isInitialized,
+                error: error || '✅ No errors',
+                platform: Capacitor.getPlatform(),
+                hasAuth: !!auth
+            });
+        }
+    }, [isInitialized, error, auth]);
+
+    // ✅ تحديث التوكن بشكل دوري (كل 5 دقائق)
+    useEffect(() => {
+        if (!Capacitor.isNativePlatform() || !isInitialized || !auth) return;
+
+        const interval = setInterval(() => {
+            console.log('🔄 Refreshing push token...');
+            refreshPushToken();
+        }, 300000); // 5 دقائق
+
+        return () => clearInterval(interval);
+    }, [isInitialized, refreshPushToken, auth]);
 
     const theme = useMemo(
         () =>
@@ -129,8 +171,9 @@ function App() {
             <SpeedDialComponent />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
-                {/* <ChatManager /> */}
                 <FloatingChats />
+                {/* ✅ إضافة مستمع الإشعارات */}
+                <NotificationListener />
             </Suspense>
             <Footer />
         </ThemeProvider>
