@@ -40,7 +40,7 @@ import {
     Zoom,
 } from '@mui/material';
 
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import RoleType from '../../../interfaces/UserType';
 

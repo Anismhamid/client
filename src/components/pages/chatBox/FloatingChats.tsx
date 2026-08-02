@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import { useChatWindow } from '../../../context/ChatWindowContext';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import ChatBox from './ChatBox';
 import { mapUserMessageToChatBox } from './MessagesPage';
 import MiniChat from './MiniChat';
@@ -54,6 +54,7 @@ const FloatingChats = () => {
                         <MiniChat
                             user={chat.user}
                             onOpen={() => openChat(chat.user)}
+                            
                         />
                     ) : (
                         <Paper
@@ -125,6 +126,7 @@ const FloatingChats = () => {
                                         status: Boolean(chat.user.status),
                                     }}
                                     token={token}
+                                    initialMessage={chat.initialMessage}
                                 />
                             </Box>
                         </Paper>

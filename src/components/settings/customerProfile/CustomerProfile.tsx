@@ -38,7 +38,7 @@ import ContactTab from './taps/ContactTab';
 import UserInformation from './taps/UserInformation';
 import CustomerProfileHeader from './CustomerProfileHeader';
 import { AuthValues } from '../../../interfaces/authValues';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 
 // هوية صفقة اللونية الموحدة
 const BRAND_GOLD = '#B8860B';

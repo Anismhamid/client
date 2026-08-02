@@ -1,6 +1,6 @@
 import Footer from './components/footer/Footer.tsx';
 import { ToastContainer } from 'react-toastify';
-import { useUser } from './context/useUSer.tsx';
+import { useUser } from './hooks/useUSer.tsx';
 import {
     CssBaseline,
     ThemeProvider,
@@ -27,10 +27,10 @@ import NotificationListener from './components/NotificationListener.tsx';
 function App() {
     const { auth } = useUser();
     const navigate = useNavigate();
-    
+
     // ✅ تفعيل الإشعارات
     const { isInitialized, error, refreshPushToken } = usePushSync();
-    
+
     // ✅ تفعيل Socket Events
     useSocketEvents();
 
@@ -63,7 +63,7 @@ function App() {
                 isInitialized,
                 error: error || '✅ No errors',
                 platform: Capacitor.getPlatform(),
-                hasAuth: !!auth
+                hasAuth: !!auth,
             });
         }
     }, [isInitialized, error, auth]);

@@ -12,7 +12,7 @@ import {
     Favorite as FavoriteIcon,
     FavoriteBorder as FavoriteBorderIcon,
 } from '@mui/icons-material';
-import { useUser } from '../../context/useUSer';
+import { useUser } from '../../hooks/useUSer';
 import { handleLike, HandleLikeParams } from '../../helpers/handleLike';
 import { Posts } from '../../interfaces/Posts';
 
@@ -95,7 +95,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
                 handleClick();
                 if (!userLiked) {
                     playNotificationSound();
-					console.log(product);
+                    console.log(product);
                 }
                 console.log(product);
             }}

@@ -1,7 +1,7 @@
 import ChatBox from './ChatBox';
 import { FunctionComponent } from 'react';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 

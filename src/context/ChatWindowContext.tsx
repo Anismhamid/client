@@ -4,6 +4,7 @@ import {
     useState,
     ReactNode,
     useCallback,
+    useEffect,
 } from 'react';
 
 import { UserMessage } from '../interfaces/chat/usersMessages';
@@ -11,22 +12,32 @@ import { UserMessage } from '../interfaces/chat/usersMessages';
 interface ChatWindow {
     user: UserMessage;
     minimized: boolean;
+    initialMessage?: string;
 }
 
 interface ChatWindowContextType {
     chats: ChatWindow[];
-    openChat: (user: UserMessage) => void;
+    openChat: (user: UserMessage, initialMessage?: string) => void;
     minimizeChat: (id: string) => void;
     closeChat: (id: string) => void;
+    getInitialMessage: (userId: string) => string | undefined;
+    clearInitialMessage: (userId: string) => void;
 }
 
 const ChatWindowContext = createContext<ChatWindowContextType | null>(null);
 
 export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
     const [chats, setChats] = useState<ChatWindow[]>([]);
-
-    const openChat = (user: UserMessage) => {
+useEffect(() => {
+    console.log(chats);
+}, [chats]);
+    const openChat = (user: UserMessage, initialMessage?: string) => {
         const userId = user._id || user.from?._id;
+        console.log('openChat', initialMessage);
+        if (!userId) {
+            console.warn('Cannot open chat: user ID is missing');
+            return;
+        }
 
         setChats((prev) => {
             const exists = prev.find(
@@ -39,6 +50,8 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
                         ? {
                               ...chat,
                               minimized: false,
+                              initialMessage:
+                                  chat.initialMessage || initialMessage,
                           }
                         : chat,
                 );
@@ -49,6 +62,7 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
                 {
                     user,
                     minimized: false,
+                    initialMessage,
                 },
             ];
         });
@@ -56,19 +70,50 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 
     const minimizeChat = useCallback((id: string) => {
         setChats((prev) =>
-            prev.map((x) =>
-                x.user._id === id
+            prev.map((x) => {
+                const chatId = x.user._id || x.user.from?._id;
+                return chatId === id
                     ? {
                           ...x,
                           minimized: true,
                       }
-                    : x,
-            ),
+                    : x;
+            }),
         );
     }, []);
 
     const closeChat = useCallback((id: string) => {
-        setChats((prev) => prev.filter((x) => x.user._id !== id));
+        setChats((prev) =>
+            prev.filter((x) => {
+                const chatId = x.user._id || x.user.from?._id;
+                return chatId !== id;
+            }),
+        );
+    }, []);
+
+    const getInitialMessage = useCallback(
+        (userId: string) => {
+            const chat = chats.find((x) => {
+                const chatId = x.user._id || x.user.from?._id;
+                return chatId === userId;
+            });
+            return chat?.initialMessage;
+        },
+        [chats],
+    );
+
+    const clearInitialMessage = useCallback((userId: string) => {
+        setChats((prev) =>
+            prev.map((x) => {
+                const chatId = x.user._id || x.user.from?._id;
+                return chatId === userId
+                    ? {
+                          ...x,
+                          initialMessage: undefined,
+                      }
+                    : x;
+            }),
+        );
     }, []);
 
     return (
@@ -78,6 +123,8 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
                 openChat,
                 minimizeChat,
                 closeChat,
+                getInitialMessage,
+                clearInitialMessage,
             }}
         >
             {children}

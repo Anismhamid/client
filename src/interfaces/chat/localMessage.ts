@@ -7,4 +7,5 @@ export interface LocalMessage extends Omit<BaseMessage, "status"> {
 	fileUrl?: string;
 	tempId?: string;
 	date?: Date;
+	 isInitial?: boolean;
 }

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { showNewPostToast } from '../../atoms/bootStrapToast/SocketToast';
 import { showInfo } from '../../atoms/toasts/ReactToast';
-import { useUser } from '../../context/useUSer';
+import { useUser } from '../useUSer';
 import { UserRegister } from '../../interfaces/User';
 import RoleType from '../../interfaces/UserType';
 import socket from '../../socket/globalSocket';

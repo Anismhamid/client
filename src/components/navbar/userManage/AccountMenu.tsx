@@ -18,7 +18,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LogoutIcon from '@mui/icons-material/Logout';
 import EmailIcon from '@mui/icons-material/Email';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 
 interface AccountMenuProps {
     logout: () => void;
@@ -370,7 +370,10 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         ...menuItemSx(),
                         '&:hover': {
                             bgcolor: alpha(theme.palette.error.main, 0.08),
-                            transform: direction === 'rtl' ? 'translateX(4px)' : 'translateX(4px)',
+                            transform:
+                                direction === 'rtl'
+                                    ? 'translateX(4px)'
+                                    : 'translateX(4px)',
                         },
                     }}
                 >

@@ -8,6 +8,9 @@ import {
     Paper,
     Typography,
 } from '@mui/material';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
+import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -31,7 +34,7 @@ const UpdateProductModal = lazy(
 );
 import { showError } from '../../../atoms/toasts/ReactToast';
 const AlertDialogs = lazy(() => import('../../../atoms/toasts/Sweetalert'));
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { usePosts } from '../../../hooks/usePosts';
 import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
@@ -45,11 +48,36 @@ const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
 
+const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+
+const QUICK_HELP_LINKS = [
+    {
+        icon: StorefrontOutlinedIcon,
+        to: '/help/selling',
+        key: 'pages.contact.howToSell',
+        fallback: 'كيفية البيع',
+    },
+    {
+        icon: ShieldOutlinedIcon,
+        to: null,
+        pathKey: 'SafetyHelp' as const,
+        key: 'pages.contact.safetyTips',
+        fallback: 'نصائح الأمان',
+    },
+    {
+        icon: GavelOutlinedIcon,
+        to: null,
+        pathKey: 'DisputesHelp' as const,
+        key: 'pages.contact.resolveDisputes',
+        fallback: 'حل النزاعات',
+    },
+];
+
 const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
     const direction = handleRTL();
-    const { posts: initialPosts, loading } = usePosts();
+    const { posts: initialPosts } = usePosts();
     const location = useLocation();
 
     // Modals state
@@ -97,7 +125,7 @@ const Home: FunctionComponent = () => {
         }
     };
 
-    if (loading) return <Loader />;
+    // if (loading) return <Loader />;
 
     const currentUrl = `https://client-qqq1.vercel.app${location.pathname}`;
 
@@ -149,7 +177,6 @@ const Home: FunctionComponent = () => {
             />
             {/* ─── HERO ─── */}
             <header>
-               
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
@@ -160,53 +187,66 @@ const Home: FunctionComponent = () => {
                 }}
             >
                 <Paper
-                    style={{ backgroundColor: 'primary.main' }}
-                    elevation={1}
-                    sx={{ p: 2, m: 2, border: '1px solid #b400003d' }}
+                    elevation={0}
+                    sx={{
+                        p: { xs: 2.5, md: 3 },
+                        m: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: '16px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            insetInlineStart: 0,
+                            insetInlineEnd: 0,
+                            height: 4,
+                            background: GRADIENT,
+                        },
+                    }}
                 >
                     <Typography
                         variant='h6'
                         gutterBottom
                         fontWeight='bold'
                         textAlign='center'
+                        sx={{ pt: 0.5 }}
                     >
                         {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
                     </Typography>
 
-                    <Grid container spacing={3} mt={2}>
-                        <Grid size={{ xs: 6, md: 4 }}>
-                            <Button
-                                fullWidth
-                                variant='outlined'
-                                component={RouterLink}
-                                to='/help/selling'
-                            >
-                                {t('pages.contact.howToSell', 'كيفية البيع')}
-                            </Button>
-                        </Grid>
-                        <Grid size={{ xs: 6, md: 4 }}>
-                            <Button
-                                fullWidth
-                                variant='outlined'
-                                component={RouterLink}
-                                to={path.SafetyHelp}
-                            >
-                                {t('pages.contact.safetyTips', 'نصائح الأمان')}
-                            </Button>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 4 }}>
-                            <Button
-                                fullWidth
-                                variant='outlined'
-                                component={RouterLink}
-                                to={path.DisputesHelp}
-                            >
-                                {t(
-                                    'pages.contact.resolveDisputes',
-                                    'حل النزاعات',
-                                )}
-                            </Button>
-                        </Grid>
+                    <Grid container spacing={2} mt={1}>
+                        {QUICK_HELP_LINKS.map((link) => {
+                            const Icon = link.icon;
+                            const to = link.pathKey
+                                ? path[link.pathKey]
+                                : link.to!;
+                            return (
+                                <Grid key={link.key} size={{ xs: 6, md: 4 }}>
+                                    <Button
+                                        fullWidth
+                                        variant='outlined'
+                                        component={RouterLink}
+                                        to={to}
+                                        startIcon={<Icon fontSize='small' />}
+                                        sx={{
+                                            py: 1.1,
+                                            borderRadius: '10px',
+                                            borderColor: 'divider',
+                                            color: 'text.primary',
+                                            '&:hover': {
+                                                borderColor: '#8B4513',
+                                                bgcolor: 'primary.50',
+                                            },
+                                        }}
+                                    >
+                                        {t(link.key, link.fallback)}
+                                    </Button>
+                                </Grid>
+                            );
+                        })}
                     </Grid>
                 </Paper>
             </section>

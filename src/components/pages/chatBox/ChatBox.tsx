@@ -46,7 +46,7 @@ import { path } from '../../../routes/routes';
 import { deleteMessage } from '../../../services/messages';
 import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -54,12 +54,14 @@ interface ChatBoxProps {
     currentUser: BaseUser;
     otherUser: BaseUser;
     token: string;
+    initialMessage?: string;
 }
 
 const ChatBox: FunctionComponent<ChatBoxProps> = ({
     currentUser,
     otherUser,
     token,
+    initialMessage,
 }) => {
     const {
         messages,
@@ -72,6 +74,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [isFetchingMore, setIsFetchingMore] = useState(false);
+    const [initialMessageSent, setInitialMessageSent] = useState(false);
 
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedMessageId, setSelectedMessageId] = useState<string | null>(
@@ -113,8 +116,70 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const [showScrollBtn, setShowScrollBtn] = useState(false);
     const { auth } = useUser();
 
-    const getUserFullName = (userName: string) => userName;
     const initialScrollDone = useRef(false);
+
+    // إرسال الرسالة الأولية تلقائياً
+    useEffect(() => {
+        if (initialMessage && !initialMessageSent && !isLoading && socket) {
+            // إنشاء الرسالة الأولية يدوياً (لأن sendMessage قد لا تعمل بشكل صحيح)
+            const newMessage: LocalMessage = {
+                _id: `initial-${Date.now()}`,
+                text: initialMessage, // استخدام text
+                from: currentUser,
+                to: otherUser,
+                status: 'sent',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+            };
+
+            // إضافة الرسالة محلياً
+            addMessageForUser(otherUser._id as string, newMessage);
+
+            // إرسال عبر Socket
+            socket.emit('message:send', {
+                from: currentUser._id,
+                to: otherUser._id,
+                message: initialMessage,
+                roomId: [otherUser._id, currentUser._id].sort().join('_'),
+            });
+
+            // حفظ في السيرفر
+            axios
+                .post(
+                    `${api}/messages`,
+                    {
+                        toUserId: otherUser._id,
+                        message: initialMessage,
+                    },
+                    {
+                        headers: { Authorization: token },
+                    },
+                )
+                .then((res) => {
+                    // تحديث الرسالة بالـ ID الحقيقي من السيرفر
+                    if (res.data._id) {
+                        setMessagesForUser(otherUser._id as string, (prev) =>
+                            prev.map((m) =>
+                                m._id === newMessage._id
+                                    ? { ...m, _id: res.data._id }
+                                    : m,
+                            ),
+                        );
+                    }
+                })
+                .catch((err) => {
+                    console.error('Failed to send initial message:', err);
+                    showError('فشل إرسال الرسالة الأولية');
+                });
+
+            // التمرير للأسفل
+            setTimeout(() => {
+                scrollToBottom('smooth', chatContainerRef);
+            }, 100);
+
+            setInitialMessageSent(true);
+        }
+    }, [initialMessage, initialMessageSent, isLoading]);
 
     useLayoutEffect(() => {
         if (isLoading) return;
@@ -160,7 +225,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             isTypingRef.current = true;
         }
 
-        // reset timer
         if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
 
         typingTimeoutRef.current = setTimeout(() => {
@@ -177,7 +241,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         else {
             setIsFetchingMore(true);
             if (chatContainerRef.current) {
-                // حفظ الارتفاع الحالي قبل إضافة الرسائل الجديدة
                 lastScrollHeightRef.current =
                     chatContainerRef.current.scrollHeight;
             }
@@ -198,7 +261,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     scrollToBottom('smooth', chatContainerRef);
                 });
             } else {
-                // تحديث الرسائل
                 setMessagesForUser(otherUser._id ?? '', (prev) => [
                     ...fetchedMessages,
                     ...prev,
@@ -220,9 +282,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         if (!container) return;
 
         const diff = container.scrollHeight - lastScrollHeightRef.current;
-
         container.scrollTop = diff;
-
         lastScrollHeightRef.current = 0;
     }, [isFetchingMore, userMessages.length]);
 
@@ -236,7 +296,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         socket.on('message:received', (message: LocalMessage) => {
             if (message?.from?._id === otherUser?._id) {
                 const shouldScroll = isNearBottom();
-
                 addMessageForUser(otherUser?._id as string, message);
                 if (shouldScroll) {
                     requestAnimationFrame(() => {
@@ -272,7 +331,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             }
         });
 
-        // האזנה לעדכון סטטוס "נקרא" מהצד השני
         socket.on('message:seen', ({ by }: { by: string }) => {
             if (by === otherUser._id) {
                 setMessagesForUser(otherUser?._id ?? '', (prev) =>
@@ -298,14 +356,12 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     useEffect(() => {
         if (userMessages.length > 0) {
             const lastMessage = userMessages[userMessages.length - 1];
-            // If the last message is from the OTHER user and I am currently looking at the chat
             if (
                 lastMessage?.from?._id === otherUser?._id &&
                 lastMessage.status !== 'seen' &&
                 isNearBottom()
             ) {
                 lastSeenRef.current = lastMessage._id;
-                // Also call the API to persist this in the DB
                 axios.patch(
                     `${api}/messages/mark-as-seen/${otherUser._id}`,
                     {},
@@ -322,7 +378,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // בדיקת גודל (למשל עד 5MB)
         if (file.size > 5 * 1024 * 1024) {
             showError(t('messages.fileTooLarge'));
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -334,7 +389,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         formData.append('toUserId', otherUser?._id ?? '');
 
         try {
-            // שליחה לשרת (Endpoint ייעודי לקבצים)
             const res = await axios.post(`${api}/messages/upload`, formData, {
                 headers: {
                     Authorization: token,
@@ -342,7 +396,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 },
             });
 
-            // הוספת הודעה זמנית או רענון צ'אט
             if (res.data.message) {
                 addMessageForUser(otherUser?._id ?? '', res.data.message);
                 scrollToBottom('smooth', chatContainerRef);
@@ -351,7 +404,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             console.error('Failed to upload file:', err);
             showError(t('messages.uploadFailed'));
         } finally {
-            // מאפשר לבחור מחדש אותו קובץ בדיוק
             if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
@@ -442,7 +494,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     overscrollBehaviorY: 'contain',
                 }}
             >
-                {/* TOP SPINNER: Shown when fetching older messages */}
                 {isFetchingMore && (
                     <Box
                         sx={{
@@ -560,7 +611,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                         cursor: 'pointer',
                                                     }}
                                                     onClick={() =>
-                                                        window.open(msg.fileUrl,'_blank','noopener norferrer')
+                                                        window.open(
+                                                            msg.fileUrl,
+                                                            '_blank',
+                                                            'noopener norferrer',
+                                                        )
                                                     }
                                                 />
                                             ) : (
@@ -604,7 +659,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                             }}
                                         >
                                             <Linkify
-                                                text={msg?.message ?? ''}
+                                                text={
+                                                    msg?.message ??
+                                                    msg?.text ??
+                                                    ''
+                                                }
                                             />
                                         </Typography>
                                     )}
@@ -625,7 +684,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     variant='caption'
                                     sx={{
                                         color: 'text.secondary',
-                                        flex: 'flex-start',
+                                        flex: 'flex-end',
                                     }}
                                 >
                                     {String(
@@ -645,7 +704,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     <Fade in={typing}>
                         <Box
                             sx={{
-                                alignSelf: 'flex-start',
+                                alignSelf: 'flex-end',
                                 bgcolor: 'action.hover',
                                 px: 1.5,
                                 py: 0.5,
@@ -660,14 +719,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     color: 'text.secondary',
                                 }}
                             >
-                                {getUserFullName(otherUser.name?.first || '')}{' '}
+                                {otherUser.name?.first }{' '}
                                 {t('common.typing')}...
                             </Typography>
                         </Box>
                     </Fade>
                 )}
 
-                {/* SCROLL BUTTON */}
                 <Zoom in={showScrollBtn}>
                     <Fab
                         color='primary'
@@ -677,7 +735,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         }
                         sx={{
                             position: 'absolute',
-                            bottom: 50, // Above the text input area
+                            bottom: 50,
                             right: dir === 'rtl' ? 'auto' : 20,
                             left: dir === 'rtl' ? 20 : 'auto',
                             zIndex: 10,
@@ -689,7 +747,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 </Zoom>
             </Box>
 
-            {/* Input Area */}
             <Box
                 sx={{
                     p: 2,

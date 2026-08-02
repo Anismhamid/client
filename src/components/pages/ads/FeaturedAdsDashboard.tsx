@@ -20,7 +20,7 @@ import { FeaturedAd } from '../../../interfaces/featuredAd';
 import useSnackbar from '../../../hooks/useSnackbar';
 import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
 import { getCustomerProfilePostsBySlug } from '../../../services/postsServices';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
 import { useTranslation } from 'react-i18next';

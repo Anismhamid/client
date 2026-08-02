@@ -11,7 +11,7 @@ import {
     deletePost,
     getpostsByCategory,
 } from '../../../services/postsServices';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import Loader from '../../../atoms/loader/Loader';
 import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
 import { showError } from '../../../atoms/toasts/ReactToast';

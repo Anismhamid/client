@@ -1,4 +1,5 @@
 import {
+    alpha,
     Avatar,
     Badge,
     Box,
@@ -6,7 +7,6 @@ import {
     Card,
     CardContent,
     Chip,
-    Drawer,
     Grid,
     Rating,
     Stack,
@@ -14,7 +14,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent } from 'react';
 import {
     Share,
     Phone,
@@ -28,12 +28,12 @@ import {
 } from '@mui/icons-material';
 import { NavigateFunction } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User } from '../../../interfaces/chat/usersMessages';
+import { User, UserMessage } from '../../../interfaces/chat/usersMessages';
 import { Stats } from './types/states';
 import { Posts } from '../../../interfaces/Posts';
-import ChatBoxWrapper from '../../pages/chatBox/ChatBoxWrapper';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import RoleType from '../../../interfaces/UserType';
+import { showError } from '../../../atoms/toasts/ReactToast';
 
 // نفس هوية صفقة اللونية المستخدمة في التنبيه وصفحة المنتج
 const BRAND_GOLD = '#B8860B';
@@ -51,6 +51,7 @@ interface CustomerProfileHeaderProps {
     handleWhatsApp: () => void;
     dir: 'ltr' | 'rtl';
 }
+import { useChatWindow } from '../../../context/ChatWindowContext';
 
 const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     handleShareProfile,
@@ -63,10 +64,22 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 }) => {
     const theme = useTheme();
     const { t } = useTranslation();
-    const [openChat, setOpenChat] = useState<boolean>(false);
     const { auth } = useUser();
+    const { openChat } = useChatWindow();
 
     const isRtl = dir === 'rtl';
+
+    const handleOpenChat = () => {
+        if (!auth?._id) {
+            navigate('/login');
+            return;
+        }
+        if (!user?._id) {
+            showError('لا يمكن فتح المحادثة، المستخدم غير متوفر');
+            return;
+        }
+        openChat(user as UserMessage);
+    };
 
     return (
         <motion.div
@@ -321,14 +334,21 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 
                         {/* أزرار التواصل */}
                         <Grid size={{ xs: 12, md: 3 }}>
-                            <Stack spacing={1} sx={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
+                            <Stack
+                                spacing={1}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
                                 <Button
                                     variant='outlined'
                                     size='small'
                                     disableElevation
                                     startIcon={<ChatBubble />}
                                     fullWidth
-                                    onClick={() => setOpenChat(!openChat)}
+                                    onClick={handleOpenChat}
                                     sx={{
                                         fontWeight: 'bold',
                                         borderRadius: 1.5,
@@ -360,7 +380,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     واتساب
                                 </Button>
 
-                                <Button
+                                {/* <Button
                                     variant='outlined'
                                     size='small'
                                     fullWidth
@@ -375,52 +395,32 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     }}
                                 >
                                     مشاركة الملف
+                                </Button> */}
+                                <Button
+                                    variant='text'
+                                    size='small'
+                                    fullWidth
+                                    startIcon={<Share sx={{ fontSize: 18 }} />}
+                                    onClick={handleShareProfile}
+                                    sx={{
+                                        fontWeight: 600,
+                                        color: 'text.secondary',
+                                        py: 1,
+                                        borderRadius: 2,
+                                        transition: 'all 0.2s ease',
+                                        '&:hover': {
+                                            color: BRAND_BROWN,
+                                            bgcolor: alpha(BRAND_GOLD, 0.04),
+                                        },
+                                    }}
+                                >
+                                    مشاركة الملف الشخصي
                                 </Button>
                             </Stack>
                         </Grid>
                     </Grid>
                 </CardContent>
             </Card>
-
-            {/* لوحة المحادثة */}
-            <Drawer
-                anchor={isRtl ? 'right' : 'left'}
-                open={openChat}
-                onClose={() => setOpenChat(false)}
-                PaperProps={{
-                    sx: { width: { xs: '100%', sm: 400, md: 450 } },
-                }}
-            >
-                {auth && openChat && (
-                    <ChatBoxWrapper
-                        user={{
-                            _id: user._id,
-                            name: {
-                                first: user.name.first,
-                                last: user.name.last,
-                            },
-                            from: {
-                                _id: auth._id,
-                                first: auth.name.first,
-                                last: auth.name.last,
-                                email: auth.email,
-                                role: auth.role,
-                            },
-                            to: {
-                                _id: user._id,
-                                first: user.name.first,
-                                last: user.name.last,
-                                email: user.email,
-                                role: user.role,
-                            },
-                            message: '',
-                            messageStatus: 'sent',
-                            createdAt: new Date().getTime().toString(),
-                            updatedAt: new Date().getTime().toString(),
-                        }}
-                    />
-                )}
-            </Drawer>
         </motion.div>
     );
 };

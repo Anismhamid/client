@@ -15,7 +15,7 @@ import {
     loginUser,
     verifyGoogleUser,
 } from '../../services/usersServices';
-import { useUser } from '../../context/useUSer';
+import { useUser } from '../../hooks/useUSer';
 import useToken from '../../hooks/useToken';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
 import { AuthValues } from '../../interfaces/authValues';

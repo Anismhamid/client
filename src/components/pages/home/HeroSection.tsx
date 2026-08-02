@@ -1,17 +1,22 @@
 // components/home/HeroSection.tsx
 import { Box, Button, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import VerifiedIcon from '@mui/icons-material/Verified';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
 import { useEffect } from 'react';
+import SealBadge from './SealBadge';
+// import SealBadge from './SealBadge';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
 }
+
+const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
 const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
     const { isLoggedIn } = useUser();
@@ -47,14 +52,17 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
             }}
         >
-            {/* Dot-grid pattern */}
+            {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
             <Box
                 sx={{
                     position: 'absolute',
                     inset: 0,
                     backgroundImage:
-                        'radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)',
-                    backgroundSize: '28px 28px',
+                        'repeating-linear-gradient(rgba(139,69,19,0.055) 0px, rgba(139,69,19,0.055) 1px, transparent 1px, transparent 32px)',
+                    maskImage:
+                        'radial-gradient(ellipse at center, black 0%, transparent 75%)',
+                    WebkitMaskImage:
+                        'radial-gradient(ellipse at center, black 0%, transparent 75%)',
                     pointerEvents: 'none',
                 }}
             />
@@ -67,7 +75,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     mx: 'auto',
                 }}
             >
-                {/* Badge */}
+                {/* Seal badge + trust label */}
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -77,9 +85,9 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                         sx={{
                             display: 'inline-flex',
                             alignItems: 'center',
-                            gap: 0.75,
+                            gap: 1,
                             px: 1.5,
-                            py: 0.5,
+                            py: 0.75,
                             mb: 3,
                             border: '1px solid',
                             borderColor: 'primary.light',
@@ -87,15 +95,9 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             bgcolor: 'primary.50',
                         }}
                     >
-                        <Box
-                            sx={{
-                                width: 6,
-                                height: 6,
-                                borderRadius: '50%',
-                                bgcolor: 'primary.main',
-                                flexShrink: 0,
-                            }}
-                        />
+                        <SealBadge size={22} rotate={-8}>
+                            <VerifiedIcon sx={{ fontSize: 13 }} />
+                        </SealBadge>
                         <Typography
                             variant='caption'
                             sx={{
@@ -155,42 +157,67 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             flexWrap: 'wrap',
                         }}
                     >
-                        <Button
-                            variant='contained'
-                            size='large'
-                            startIcon={<AddIcon />}
-                            onClick={handleAddClick}
-                            sx={{
-                                px: 3.5,
-                                py: 1.25,
-                                borderRadius: '10px',
-                                fontWeight: 700,
-                                fontSize: '0.95rem',
-                                boxShadow: 'none',
-                                '&:hover': { boxShadow: 'none', opacity: 0.88 },
-                            }}
+                        <motion.div
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.98 }}
                         >
-                            {t('create-post')}
-                        </Button>
-                        <Button
-                            variant='outlined'
-                            size='large'
-                            sx={{
-                                px: 3.5,
-                                py: 1.25,
-                                borderRadius: '10px',
-                                fontWeight: 600,
-                                fontSize: '0.95rem',
-                                borderWidth: '1.5px',
-                            }}
-                            onClick={() =>
-                                document
-                                    .getElementById('products-section')
-                                    ?.scrollIntoView({ behavior: 'smooth' })
-                            }
+                            <Button
+                                variant='contained'
+                                size='large'
+                                startIcon={<AddIcon />}
+                                onClick={handleAddClick}
+                                sx={{
+                                    px: 3.5,
+                                    py: 1.25,
+                                    borderRadius: '10px',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    background: GRADIENT,
+                                    boxShadow:
+                                        '0 10px 24px -10px rgba(139,69,19,0.55)',
+                                    '&:hover': {
+                                        boxShadow:
+                                            '0 14px 28px -10px rgba(139,69,19,0.65)',
+                                        background: GRADIENT,
+                                        filter: 'brightness(1.06)',
+                                    },
+                                }}
+                            >
+                                {t('create-post')}
+                            </Button>
+                        </motion.div>
+                        <motion.div
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.98 }}
                         >
-                            {t('browse-posts') || 'تصفح المنتجات'}
-                        </Button>
+                            <Button
+                                variant='outlined'
+                                size='large'
+                                sx={{
+                                    px: 3.5,
+                                    py: 1.25,
+                                    borderRadius: '10px',
+                                    fontWeight: 600,
+                                    fontSize: '0.95rem',
+                                    borderWidth: '1.5px',
+                                    borderColor: 'text.primary',
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        borderWidth: '1.5px',
+                                        borderColor: '#8B4513',
+                                        color: '#8B4513',
+                                        bgcolor: 'transparent',
+                                    },
+                                }}
+                                onClick={() =>
+                                    document
+                                        .getElementById('products-section')
+                                        ?.scrollIntoView({ behavior: 'smooth' })
+                                }
+                            >
+                                {t('browse-posts') || 'تصفح المنتجات'}
+                            </Button>
+                        </motion.div>
                     </Box>
                 </motion.div>
             </Box>

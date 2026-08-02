@@ -3,7 +3,7 @@ import { SpeedInsights } from '@vercel/speed-insights/react';
 import './index.css';
 import App from './App.tsx';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
-import { UserProvider, useUser } from './context/useUSer.tsx';
+import { UserProvider, useUser } from './hooks/useUSer.tsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Buffer } from 'buffer';
 import ErrorBoundary from './components/pages/ErrorBoundary.tsx';
@@ -51,7 +51,7 @@ function BackButtonHandler() {
 // eslint-disable-next-line react-refresh/only-export-components
 const AppWithProviders = () => {
     const { auth } = useUser();
-  
+
     return (
         <ChatWindowProvider>
             <ChatProvider authId={auth._id ?? ''}>

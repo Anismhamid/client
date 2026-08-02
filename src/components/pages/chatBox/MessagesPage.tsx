@@ -25,7 +25,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import { ChatMessage } from '../../../interfaces/chat/chatMessage';
 // import ChatBox from './ChatBox';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import socket from '../../../socket/globalSocket';
 // import ChatModal from './ChatModal';
 // import ChatBox from './ChatBox';

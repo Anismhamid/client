@@ -17,6 +17,7 @@ import {
     Typography,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Posts } from '../../../interfaces/Posts';
@@ -25,6 +26,7 @@ import ChipNavigation from '../../navbar/ChepNavigation';
 import PostCard from '../products/PostsCard';
 import JsonLd from '../../../../utils/JsonLd';
 import { generateProductsItemListJsonLd } from '../../../../utils/structuredData';
+import SealBadge from './SealBadge';
 
 interface PostGridProps {
     posts: Posts[];
@@ -141,21 +143,37 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                 }}
             >
                 <Container maxWidth='lg'>
-                    <TextField
-                        fullWidth
-                        size='small'
-                        placeholder={t('search')}
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position='start'>
-                                    <SearchIcon fontSize='small' />
-                                </InputAdornment>
-                            ),
+                    <Box
+                        sx={{
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: '14px',
+                            p: 1,
+                            bgcolor: 'background.default',
                         }}
-                    />
-                    <ChipNavigation />
+                    >
+                        <TextField
+                            fullWidth
+                            size='small'
+                            placeholder={t('search')}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position='start'>
+                                        <SearchIcon fontSize='small' />
+                                    </InputAdornment>
+                                ),
+                                sx: {
+                                    borderRadius: '10px',
+                                    bgcolor: 'background.paper',
+                                },
+                            }}
+                        />
+                    </Box>
+                    <Box sx={{ mt: 1.5 }}>
+                        <ChipNavigation />
+                    </Box>
                 </Container>
             </Box>
 
@@ -164,7 +182,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                 <AnimatePresence mode='wait'>
                     {visibleProducts.length > 0 ? (
                         <Grid container spacing={2.5}>
-                            {visibleProducts.map((post) => {
+                            {visibleProducts.map((post, index) => {
                                 const discountedPrice = post.sale
                                     ? post.price -
                                       (post.price * (post.discount || 0)) / 100
@@ -178,6 +196,10 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                         <motion.div
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
+                                            transition={{
+                                                duration: 0.35,
+                                                delay: Math.min(index % LOAD_MORE_STEP, 12) * 0.03,
+                                            }}
                                         >
                                             <PostCard
                                                 post={post}
@@ -206,7 +228,21 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             })}
                         </Grid>
                     ) : (
-                        <Box sx={{ textAlign: 'center', py: 6 }}>
+                        <Box
+                            sx={{
+                                textAlign: 'center',
+                                py: 8,
+                                px: 3,
+                                border: '1px dashed',
+                                borderColor: 'divider',
+                                borderRadius: '16px',
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                                <SealBadge size={56} rotate={0} tone='outline'>
+                                    <SearchOffIcon sx={{ fontSize: 24 }} />
+                                </SealBadge>
+                            </Box>
                             <Typography variant='h6'>لا توجد نتائج</Typography>
                         </Box>
                     )}

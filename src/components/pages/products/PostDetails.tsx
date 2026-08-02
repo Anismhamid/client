@@ -27,6 +27,8 @@ import {
     TextField,
     Tooltip,
     Typography,
+    alpha,
+    Paper,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -38,6 +40,7 @@ import {
     Fullscreen,
     FullscreenExit,
     Home as HomeIcon,
+    Person,
     Phone,
     Share as ShareIcon,
     Store as StoreIcon,
@@ -50,7 +53,7 @@ import { path } from '../../../routes/routes';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import ColorsAndSizes from '../../../atoms/productsManage/ColorsAndSizes';
 import { useTranslation } from 'react-i18next';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
 import JsonLd from '../../../../utils/JsonLd';
@@ -70,9 +73,13 @@ import {
     submitReview,
 } from '../../../services/postsServices';
 import { easeOut, motion } from 'framer-motion';
+import { useChatWindow } from '../../../context/ChatWindowContext';
+import { UserMessage } from '../../../interfaces/chat/usersMessages';
 
-// ألوان الهوية البصرية لصفقة (نفس تدرج بطاقة العضوية)
+// ألوان الهوية البصرية
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+const BRAND_COLOR = '#B8860B';
+const BRAND_DARK = '#8B4513';
 
 const fadeUp = {
     hidden: { opacity: 0, y: 24 },
@@ -87,22 +94,21 @@ const fadeUp = {
 };
 
 const sectionCardSx = {
-    borderRadius: 6,
+    borderRadius: 3,
     bgcolor: 'background.paper',
     border: '1px solid',
     borderColor: 'divider',
-    boxShadow: '0 10px 40px rgba(0,0,0,.06)',
-    transition: '.3s',
-
+    boxShadow: '0 4px 20px rgba(0,0,0,.04)',
+    transition: 'all .3s cubic-bezier(.4,0,.2,1)',
     '&:hover': {
-        boxShadow: '0 18px 60px rgba(0,0,0,.12)',
+        boxShadow: '0 8px 40px rgba(0,0,0,.08)',
     },
 };
 
 const SectionTitle = memo(
     ({ title, subtitle }: { title: string; subtitle?: string }) => (
         <Box sx={{ mb: 3 }}>
-            <Typography variant='h5' sx={{ fontWeight: 800, mb: 1 }}>
+            <Typography variant='h5' sx={{ fontWeight: 800, mb: 0.5 }}>
                 {title}
             </Typography>
             {subtitle && (
@@ -136,9 +142,50 @@ const PostDetails: FunctionComponent = () => {
     const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [isSharing, setIsSharing] = useState<boolean>(false);
-    const [activeImage, setActiveImage] = useState(0);
+    const [activeImage] = useState(0);
+    const { openChat } = useChatWindow();
 
     const sellerDisplayName = `${post.seller?.name?.first} ${post.seller?.name?.last || 'user'}`;
+
+    const handleContactSeller = useCallback(() => {
+        const seller = post.seller;
+        if (!auth?._id) {
+            navigate(path.Login);
+            return;
+        }
+        if (!seller?._id) {
+            showError('لا يمكن فتح المحادثة، البائع غير متوفر');
+            return;
+        }
+
+        // إنشاء رسالة أولية تحتوي على معلومات المنتج
+        const initialMessage =
+            `مرحباً، أنا مهتم بمنتجك "${post.product_name}" 💬\n\n` +
+            `📦 السعر: ${formatPrice(post.price)}\n` +
+            `📂 التصنيف: ${categoryLabel}\n` +
+            `🔗 رابط المنتج: ${window.location.href}\n\n` +
+            `هل المنتج لا يزال متوفراً؟`;
+
+        // فتح المحادثة مع الرسالة الأولية
+        openChat(seller as UserMessage, initialMessage);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        auth?._id,
+        navigate,
+        openChat,
+        post.price,
+        post.product_name,
+        post.seller,
+    ]);
+
+    const goToProfile = useCallback(() => {
+        if (!post.seller?.slug) return;
+        navigate(
+            generatePath(path.CustomerProfile, {
+                slug: encodeURIComponent(post.seller.slug),
+            }),
+        );
+    }, [navigate, post.seller?.slug]);
 
     const SECTION_TITLES = useMemo(
         () => ({
@@ -401,141 +448,246 @@ const PostDetails: FunctionComponent = () => {
             >
                 <Container maxWidth='xl' sx={{ pt: { xs: 2, md: 5 }, pb: 10 }}>
                     <Stack spacing={4}>
-                        {/* شريط البائع العلوي */}
-                        <Card sx={{ ...sectionCardSx, p: { xs: 2, md: 3 } }}>
-                            <Link
-                                to={generatePath(path.CustomerProfile, {
-                                    slug: encodeURIComponent(
-                                        post.seller?.slug ?? '',
-                                    ),
-                                })}
-                                style={{
-                                    textDecoration: 'none',
-                                    color: 'inherit',
-                                }}
+                        {/* شريط البائع العلوي - محسّن */}
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                ...sectionCardSx,
+                                p: { xs: 2, md: 3 },
+                                borderRadius: 3,
+                            }}
+                        >
+                            <Stack
+                                direction={{ xs: 'column', md: 'row' }}
+                                spacing={{ xs: 2, md: 2 }}
+                                alignItems={{ xs: 'stretch', md: 'center' }}
+                                justifyContent='space-between'
                             >
+                                {/* معلومات البائع */}
                                 <Stack
-                                    direction={{ xs: 'column', sm: 'row' }}
+                                    direction='row'
                                     spacing={2}
-                                    alignItems={{
-                                        xs: 'flex-start',
-                                        sm: 'center',
-                                    }}
-                                    justifyContent='space-between'
+                                    alignItems='center'
+                                    sx={{ flex: 1, minWidth: 0 }}
                                 >
-                                    <Stack
-                                        direction='row'
-                                        spacing={2}
-                                        alignItems='center'
-                                    >
-                                        <Avatar
-                                            src={
-                                                post.seller?.image?.url ||
-                                                '/user.png'
-                                            }
-                                            alt={sellerDisplayName}
-                                            sx={{
-                                                width: 64,
-                                                height: 64,
-                                                border: '2px solid',
-                                                borderColor: '#B8860B',
-                                            }}
-                                        />
-                                        <Box>
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                                alignItems='center'
-                                                flexWrap='wrap'
-                                            >
-                                                <Typography
-                                                    variant='h6'
-                                                    sx={{ fontWeight: 700 }}
-                                                >
-                                                    {sellerDisplayName}
-                                                </Typography>
-                                                {isOwner && (
-                                                    <Chip
-                                                        label='صاحب المنشور'
-                                                        size='small'
-                                                        sx={{
-                                                            background:
-                                                                BRAND_GRADIENT,
-                                                            color: '#fff',
-                                                            fontWeight: 700,
-                                                        }}
-                                                    />
-                                                )}
-                                            </Stack>
-                                            <Stack
-                                                direction={{
-                                                    xs: 'column',
-                                                    sm: 'row',
-                                                }}
-                                                spacing={1}
-                                                divider={
-                                                    <Divider
-                                                        orientation='vertical'
-                                                        flexItem
-                                                        sx={{
-                                                            display: {
-                                                                xs: 'none',
-                                                                sm: 'block',
-                                                            },
-                                                        }}
-                                                    />
-                                                }
-                                                sx={{ mt: 0.75 }}
-                                            >
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                >
-                                                    @
-                                                    {post.seller?.slug ||
-                                                        'seller'}
-                                                </Typography>
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                >
-                                                    منشور منذ{' '}
-                                                    {formatTimeAgo(
-                                                        String(
-                                                            post.createdAt ||
-                                                                '',
-                                                        ),
-                                                        t,
-                                                    )}
-                                                </Typography>
-                                            </Stack>
-                                        </Box>
-                                    </Stack>
-
-                                    <Button
-                                        variant='contained'
-                                        startIcon={<Comment />}
-                                        sx={{ gap: 1, background: BRAND_GRADIENT }}
-                                        onClick={(event) => {
-                                            event.preventDefault();
-                                            navigate(
-                                                generatePath(
-                                                    path.CustomerProfile,
-                                                    {
-                                                        slug: encodeURIComponent(
-                                                            post.seller?.slug ??
-                                                                '',
-                                                        ),
+                                    <Avatar
+                                        src={
+                                            post.seller?.image?.url ||
+                                            '/user.png'
+                                        }
+                                        alt={sellerDisplayName}
+                                        onClick={goToProfile}
+                                        sx={{
+                                            width: 56,
+                                            height: 56,
+                                            border: '2px solid',
+                                            borderColor: BRAND_COLOR,
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.2s',
+                                            '&:hover': {
+                                                transform: 'scale(1.05)',
+                                            },
+                                        }}
+                                    />
+                                    <Box sx={{ minWidth: 0, flex: 1 }}>
+                                        <Stack
+                                            direction='row'
+                                            spacing={1}
+                                            alignItems='center'
+                                            flexWrap='wrap'
+                                        >
+                                            <Typography
+                                                variant='h6'
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    fontSize: {
+                                                        xs: '1rem',
+                                                        md: '1.1rem',
                                                     },
+                                                }}
+                                            >
+                                                {sellerDisplayName}
+                                            </Typography>
+                                            {isOwner && (
+                                                <Chip
+                                                    label='صاحب المنشور'
+                                                    size='small'
+                                                    sx={{
+                                                        fontWeight: 700,
+                                                        height: 24,
+                                                        '& .MuiChip-label': {
+                                                            px: 1.5,
+                                                            fontSize: '0.7rem',
+                                                        },
+                                                    }}
+                                                />
+                                            )}
+                                            {post.seller?.slug && (
+                                                <Tooltip title='بائع موثوق'>
+                                                    <VerifiedRounded
+                                                        sx={{
+                                                            color: BRAND_COLOR,
+                                                            fontSize: 20,
+                                                        }}
+                                                    />
+                                                </Tooltip>
+                                            )}
+                                        </Stack>
+                                        <Stack
+                                            direction={{
+                                                xs: 'column',
+                                                sm: 'row',
+                                            }}
+                                            spacing={{ xs: 0.5, sm: 1.5 }}
+                                            divider={
+                                                <Divider
+                                                    orientation='vertical'
+                                                    flexItem
+                                                    sx={{
+                                                        display: {
+                                                            xs: 'none',
+                                                            sm: 'block',
+                                                        },
+                                                    }}
+                                                />
+                                            }
+                                            sx={{ mt: 0.5 }}
+                                        >
+                                            <Typography
+                                                variant='body2'
+                                                color='text.secondary'
+                                                sx={{ fontSize: '0.8125rem' }}
+                                            >
+                                                @{post.seller?.slug || 'seller'}
+                                            </Typography>
+                                            <Typography
+                                                variant='body2'
+                                                color='text.secondary'
+                                                sx={{ fontSize: '0.8125rem' }}
+                                            >
+                                                منشور منذ{' '}
+                                                {formatTimeAgo(
+                                                    String(
+                                                        post.createdAt || '',
+                                                    ),
+                                                    t,
+                                                )}
+                                            </Typography>
+                                        </Stack>
+                                    </Box>
+                                </Stack>
+
+                                {/* أزرار الإجراءات */}
+                                <Stack
+                                    direction='row'
+                                    spacing={1}
+                                    sx={{
+                                        flexShrink: 0,
+                                        '& .MuiButton-root': {
+                                            py: 1,
+                                            px: { xs: 1.5, sm: 2.5 },
+                                            fontSize: '0.8125rem',
+                                            fontWeight: 600,
+                                            whiteSpace: 'nowrap',
+                                        },
+                                    }}
+                                >
+                                    <Button
+                                        variant='outlined'
+                                        startIcon={
+                                            <Person sx={{ fontSize: 20 }} />
+                                        }
+                                        onClick={goToProfile}
+                                        sx={{
+                                            borderColor: 'divider',
+                                            color: 'text.secondary',
+                                            '&:hover': {
+                                                borderColor: BRAND_COLOR,
+                                                color: BRAND_COLOR,
+                                                bgcolor: alpha(
+                                                    BRAND_COLOR,
+                                                    0.04,
                                                 ),
-                                            );
+                                            },
                                         }}
                                     >
-                                        تواصل
+                                        الملف الشخصي
                                     </Button>
+                                    {isOwner ? (
+                                        <>
+                                            <Button
+                                                variant='outlined'
+                                                startIcon={
+                                                    <EditIcon
+                                                        sx={{ fontSize: 20 }}
+                                                    />
+                                                }
+                                                onClick={handleEditProduct}
+                                                sx={{
+                                                    borderColor: 'warning.main',
+                                                    '&:hover': {
+                                                        bgcolor: alpha(
+                                                            '#ED6C02',
+                                                            0.04,
+                                                        ),
+                                                    },
+                                                }}
+                                            >
+                                                تعديل
+                                            </Button>
+                                            <Button
+                                                variant='outlined'
+                                                startIcon={
+                                                    <DeleteIcon
+                                                        sx={{ fontSize: 20 }}
+                                                    />
+                                                }
+                                                onClick={() =>
+                                                    setShowDeleteModal(true)
+                                                }
+                                                sx={{
+                                                    borderColor: 'error.main',
+                                                    color: 'error.main',
+                                                    '&:hover': {
+                                                        bgcolor: alpha(
+                                                            '#D32F2F',
+                                                            0.04,
+                                                        ),
+                                                    },
+                                                }}
+                                            >
+                                                حذف
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <Button
+                                            variant='outlined'
+                                            startIcon={
+                                                <Comment
+                                                    sx={{ fontSize: 20 }}
+                                                />
+                                            }
+                                            onClick={handleContactSeller}
+                                            sx={{
+                                                gap: 1,
+                                                borderColor: 'divider',
+                                                color: 'text.secondary',
+                                                '&:hover': {
+                                                    borderColor: BRAND_COLOR,
+                                                    color: BRAND_COLOR,
+                                                    bgcolor: alpha(
+                                                        BRAND_COLOR,
+                                                        0.04,
+                                                    ),
+                                                },
+                                            }}
+                                        >
+                                            تواصل
+                                        </Button>
+                                    )}
                                 </Stack>
-                            </Link>
-                        </Card>
+                            </Stack>
+                        </Paper>
 
                         {/* مسار التنقل */}
                         <Box>
@@ -545,21 +697,33 @@ const PostDetails: FunctionComponent = () => {
                                     'مسار التنقل'
                                 }
                                 separator={
-                                    <ChevronRight sx={{ fontSize: 20 }} />
+                                    <ChevronRight
+                                        sx={{
+                                            fontSize: 20,
+                                            color: 'text.disabled',
+                                        }}
+                                    />
                                 }
                             >
                                 <Button
                                     component={Link}
                                     to={path.Home}
-                                    startIcon={<HomeIcon />}
-                                    sx={{ textTransform: 'none' }}
+                                    startIcon={
+                                        <HomeIcon sx={{ fontSize: 18 }} />
+                                    }
+                                    sx={{
+                                        textTransform: 'none',
+                                        fontSize: '0.875rem',
+                                    }}
                                 >
                                     {t('home')}
                                 </Button>
 
                                 {post.category && (
                                     <Button
-                                        startIcon={<StoreIcon />}
+                                        startIcon={
+                                            <StoreIcon sx={{ fontSize: 18 }} />
+                                        }
                                         onClick={() => {
                                             const catPath =
                                                 categoryPathMap[
@@ -570,7 +734,10 @@ const PostDetails: FunctionComponent = () => {
                                         disabled={
                                             !categoryPathMap[post.category]
                                         }
-                                        sx={{ textTransform: 'none' }}
+                                        sx={{
+                                            textTransform: 'none',
+                                            fontSize: '0.875rem',
+                                        }}
                                     >
                                         {categoryLabel}
                                     </Button>
@@ -578,7 +745,15 @@ const PostDetails: FunctionComponent = () => {
 
                                 <Typography
                                     variant='body2'
-                                    sx={{ fontWeight: 700 }}
+                                    sx={{
+                                        fontWeight: 700,
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
+                                        maxWidth: 200,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                    }}
                                 >
                                     {post.product_name}
                                 </Typography>
@@ -599,6 +774,7 @@ const PostDetails: FunctionComponent = () => {
                                             sx={{
                                                 ...sectionCardSx,
                                                 overflow: 'hidden',
+                                                borderRadius: 3,
                                             }}
                                         >
                                             <Box
@@ -609,8 +785,11 @@ const PostDetails: FunctionComponent = () => {
                                                 }
                                                 sx={{
                                                     position: 'relative',
-                                                    height: { xs: 360, md: 620 },
-                                                    borderRadius: 4,
+                                                    height: {
+                                                        xs: 360,
+                                                        md: 520,
+                                                    },
+                                                    borderRadius: 3,
                                                     overflow: 'hidden',
                                                     cursor: isZoomed
                                                         ? 'zoom-out'
@@ -622,7 +801,7 @@ const PostDetails: FunctionComponent = () => {
                                                         position: 'absolute',
                                                         inset: 0,
                                                         background:
-                                                            'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(184,134,11,.15), transparent 40%)',
+                                                            'radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(184,134,11,.12), transparent 40%)',
                                                         pointerEvents: 'none',
                                                         transition: '0.2s',
                                                     },
@@ -630,140 +809,77 @@ const PostDetails: FunctionComponent = () => {
                                             >
                                                 {post.image?.url ? (
                                                     <>
-                                                        <Box>
-                                                            <Box
-                                                                sx={{
-                                                                    height: {
-                                                                        xs: 320,
-                                                                        md: 500,
-                                                                    },
-                                                                    borderRadius: 4,
-                                                                    overflow:
-                                                                        'hidden',
-                                                                    mb: 2,
-                                                                    position:
-                                                                        'relative',
-                                                                }}
-                                                            >
-                                                                <CardMedia
-                                                                    component='img'
-                                                                    image={
-                                                                        images[
-                                                                            activeImage
-                                                                        ]
-                                                                    }
-                                                                    sx={{
-                                                                        width: '100%',
-                                                                        height: '100%',
-                                                                        objectFit:
-                                                                            'contain',
-                                                                        transition:
-                                                                            '0.3s ease',
-                                                                        transform:
-                                                                            isZoomed
-                                                                                ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
-                                                                                : 'scale(1)',
-                                                                        transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                                                                    }}
-                                                                />
-                                                            </Box>
+                                                        <CardMedia
+                                                            component='img'
+                                                            image={
+                                                                images[
+                                                                    activeImage
+                                                                ]
+                                                            }
+                                                            sx={{
+                                                                width: '100%',
+                                                                height: '100%',
+                                                                objectFit:
+                                                                    'contain',
+                                                                transition:
+                                                                    'transform 0.3s ease',
+                                                                transform:
+                                                                    isZoomed
+                                                                        ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
+                                                                        : 'scale(1)',
+                                                                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
+                                                            }}
+                                                        />
 
-                                                            {images.length >
-                                                                1 && (
-                                                                <Stack
-                                                                    direction='row'
-                                                                    spacing={1}
-                                                                >
-                                                                    {images.map(
-                                                                        (
-                                                                            img,
-                                                                            index,
-                                                                        ) => (
-                                                                            <Box
-                                                                                key={
-                                                                                    index
-                                                                                }
-                                                                                onClick={() =>
-                                                                                    setActiveImage(
-                                                                                        index,
-                                                                                    )
-                                                                                }
-                                                                                sx={{
-                                                                                    width: 70,
-                                                                                    height: 70,
-                                                                                    borderRadius: 2,
-                                                                                    overflow:
-                                                                                        'hidden',
-                                                                                    cursor: 'pointer',
-                                                                                    border:
-                                                                                        activeImage ===
-                                                                                        index
-                                                                                            ? '2px solid #B8860B'
-                                                                                            : '1px solid #ddd',
-                                                                                    opacity:
-                                                                                        activeImage ===
-                                                                                        index
-                                                                                            ? 1
-                                                                                            : 0.6,
-                                                                                    transition:
-                                                                                        '0.2s',
-                                                                                }}
-                                                                            >
-                                                                                <img
-                                                                                    src={
-                                                                                        img
-                                                                                    }
-                                                                                    style={{
-                                                                                        width: '100%',
-                                                                                        height: '100%',
-                                                                                        objectFit:
-                                                                                            'cover',
-                                                                                    }}
-                                                                                />
-                                                                            </Box>
-                                                                        ),
-                                                                    )}
-                                                                </Stack>
-                                                            )}
-                                                        </Box>
-
+                                                        {/* أزرار التحكم بالصورة */}
                                                         <Stack
-                                                            className='image-controls'
                                                             direction='row'
-                                                            spacing={1}
+                                                            spacing={0.5}
                                                             sx={{
                                                                 position:
                                                                     'absolute',
                                                                 left: '50%',
-                                                                bottom: 18,
+                                                                bottom: 16,
                                                                 transform:
                                                                     'translateX(-50%)',
                                                                 background:
-                                                                    'rgba(0,0,0,0.55)',
+                                                                    'rgba(0,0,0,0.6)',
                                                                 backdropFilter:
-                                                                    'blur(10px)',
-                                                                borderRadius: 999,
-                                                                px: 1.5,
-                                                                py: 1,
+                                                                    'blur(12px)',
+                                                                borderRadius: 99,
+                                                                px: 1,
+                                                                py: 0.75,
+                                                                boxShadow:
+                                                                    '0 4px 20px rgba(0,0,0,0.2)',
                                                             }}
                                                         >
-                                                            <Tooltip title='تكبير'>
+                                                            <Tooltip
+                                                                title='تكبير'
+                                                                placement='top'
+                                                            >
                                                                 <IconButton
                                                                     size='small'
                                                                     onClick={(
-                                                                        event,
+                                                                        e,
                                                                     ) => {
-                                                                        event.stopPropagation();
+                                                                        e.stopPropagation();
                                                                         handleZoomIn();
                                                                     }}
                                                                     sx={{
                                                                         color: 'common.white',
                                                                     }}
                                                                 >
-                                                                    <ZoomIn />
+                                                                    <ZoomIn
+                                                                        sx={{
+                                                                            fontSize: 20,
+                                                                        }}
+                                                                    />
                                                                 </IconButton>
                                                             </Tooltip>
-                                                            <Tooltip title='تصغير'>
+                                                            <Tooltip
+                                                                title='تصغير'
+                                                                placement='top'
+                                                            >
                                                                 <span>
                                                                     <IconButton
                                                                         size='small'
@@ -772,54 +888,10 @@ const PostDetails: FunctionComponent = () => {
                                                                             1
                                                                         }
                                                                         onClick={(
-                                                                            event,
+                                                                            e,
                                                                         ) => {
-                                                                            event.stopPropagation();
+                                                                            e.stopPropagation();
                                                                             handleZoomOut();
-                                                                        }}
-                                                                        sx={{
-                                                                            color: 'common.white',
-                                                                        }}
-                                                                    >
-                                                                        <ZoomOut />
-                                                                    </IconButton>
-                                                                </span>
-                                                            </Tooltip>
-                                                            <Tooltip
-                                                                title={
-                                                                    isFullscreen
-                                                                        ? 'إغلاق ملء الشاشة'
-                                                                        : 'ملء الشاشة'
-                                                                }
-                                                            >
-                                                                <IconButton
-                                                                    size='small'
-                                                                    onClick={(
-                                                                        event,
-                                                                    ) => {
-                                                                        event.stopPropagation();
-                                                                        void handleFullscreenToggle();
-                                                                    }}
-                                                                    sx={{
-                                                                        color: 'common.white',
-                                                                    }}
-                                                                >
-                                                                    {isFullscreen ? (
-                                                                        <FullscreenExit />
-                                                                    ) : (
-                                                                        <Fullscreen />
-                                                                    )}
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                            {isZoomed && (
-                                                                <Tooltip title='إعادة الضبط'>
-                                                                    <IconButton
-                                                                        size='small'
-                                                                        onClick={(
-                                                                            event,
-                                                                        ) => {
-                                                                            event.stopPropagation();
-                                                                            handleResetZoom();
                                                                         }}
                                                                         sx={{
                                                                             color: 'common.white',
@@ -827,15 +899,95 @@ const PostDetails: FunctionComponent = () => {
                                                                     >
                                                                         <ZoomOut
                                                                             sx={{
-                                                                                transform:
-                                                                                    'rotate(45deg)',
+                                                                                fontSize: 20,
                                                                             }}
                                                                         />
                                                                     </IconButton>
-                                                                </Tooltip>
+                                                                </span>
+                                                            </Tooltip>
+                                                            <Divider
+                                                                orientation='vertical'
+                                                                flexItem
+                                                                sx={{
+                                                                    bgcolor:
+                                                                        'rgba(255,255,255,0.2)',
+                                                                }}
+                                                            />
+                                                            <Tooltip
+                                                                title={
+                                                                    isFullscreen
+                                                                        ? 'إغلاق ملء الشاشة'
+                                                                        : 'ملء الشاشة'
+                                                                }
+                                                                placement='top'
+                                                            >
+                                                                <IconButton
+                                                                    size='small'
+                                                                    onClick={(
+                                                                        e,
+                                                                    ) => {
+                                                                        e.stopPropagation();
+                                                                        void handleFullscreenToggle();
+                                                                    }}
+                                                                    sx={{
+                                                                        color: 'common.white',
+                                                                    }}
+                                                                >
+                                                                    {isFullscreen ? (
+                                                                        <FullscreenExit
+                                                                            sx={{
+                                                                                fontSize: 20,
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        <Fullscreen
+                                                                            sx={{
+                                                                                fontSize: 20,
+                                                                            }}
+                                                                        />
+                                                                    )}
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            {isZoomed && (
+                                                                <>
+                                                                    <Divider
+                                                                        orientation='vertical'
+                                                                        flexItem
+                                                                        sx={{
+                                                                            bgcolor:
+                                                                                'rgba(255,255,255,0.2)',
+                                                                        }}
+                                                                    />
+                                                                    <Tooltip
+                                                                        title='إعادة الضبط'
+                                                                        placement='top'
+                                                                    >
+                                                                        <IconButton
+                                                                            size='small'
+                                                                            onClick={(
+                                                                                e,
+                                                                            ) => {
+                                                                                e.stopPropagation();
+                                                                                handleResetZoom();
+                                                                            }}
+                                                                            sx={{
+                                                                                color: 'common.white',
+                                                                            }}
+                                                                        >
+                                                                            <ZoomOut
+                                                                                sx={{
+                                                                                    fontSize: 20,
+                                                                                    transform:
+                                                                                        'rotate(45deg)',
+                                                                                }}
+                                                                            />
+                                                                        </IconButton>
+                                                                    </Tooltip>
+                                                                </>
                                                             )}
                                                         </Stack>
 
+                                                        {/* مؤشر مستوى التكبير */}
                                                         {isZoomed && (
                                                             <Box
                                                                 sx={{
@@ -847,10 +999,12 @@ const PostDetails: FunctionComponent = () => {
                                                                     py: 0.5,
                                                                     borderRadius: 99,
                                                                     bgcolor:
-                                                                        'rgba(0,0,0,0.6)',
+                                                                        'rgba(0,0,0,0.7)',
                                                                     color: '#fff',
                                                                     fontWeight: 700,
                                                                     fontSize: 12,
+                                                                    backdropFilter:
+                                                                        'blur(8px)',
                                                                 }}
                                                             >
                                                                 {zoomLevel.toFixed(
@@ -859,6 +1013,39 @@ const PostDetails: FunctionComponent = () => {
                                                                 x
                                                             </Box>
                                                         )}
+
+                                                        {/* تلميح التكبير */}
+                                                        <Box
+                                                            sx={{
+                                                                position:
+                                                                    'absolute',
+                                                                left: 16,
+                                                                top: 16,
+                                                                backgroundColor:
+                                                                    'rgba(255,255,255,0.9)',
+                                                                backdropFilter:
+                                                                    'blur(4px)',
+                                                                borderRadius: 99,
+                                                                px: 1.5,
+                                                                py: 0.5,
+                                                                boxShadow:
+                                                                    '0 2px 8px rgba(0,0,0,0.08)',
+                                                            }}
+                                                        >
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    fontWeight: 700,
+                                                                    color: 'text.secondary',
+                                                                    fontSize:
+                                                                        '0.6875rem',
+                                                                }}
+                                                            >
+                                                                {isZoomed
+                                                                    ? '🔄 اضغط لإلغاء التكبير'
+                                                                    : '🔍 اضغط للتكبير'}
+                                                            </Typography>
+                                                        </Box>
                                                     </>
                                                 ) : (
                                                     <Stack
@@ -867,12 +1054,15 @@ const PostDetails: FunctionComponent = () => {
                                                         spacing={1.5}
                                                         sx={{ height: '100%' }}
                                                     >
-                                                        <Typography variant='h6'>
+                                                        <Typography
+                                                            variant='h6'
+                                                            color='text.secondary'
+                                                        >
                                                             لا توجد صورة للمنتج
                                                         </Typography>
                                                         <Typography
                                                             variant='body2'
-                                                            color='text.secondary'
+                                                            color='text.disabled'
                                                         >
                                                             يمكن إضافة صورة
                                                             لاحقاً لتحسين عرض
@@ -880,52 +1070,30 @@ const PostDetails: FunctionComponent = () => {
                                                         </Typography>
                                                     </Stack>
                                                 )}
-
-                                                <Box
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        left: 16,
-                                                        top: 16,
-                                                        backgroundColor:
-                                                            'rgba(255,255,255,0.9)',
-                                                        borderRadius: 999,
-                                                        px: 1.25,
-                                                        py: 0.5,
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant='caption'
-                                                        sx={{ fontWeight: 700 }}
-                                                    >
-                                                        {isZoomed
-                                                            ? 'اضغط لإلغاء التكبير'
-                                                            : 'اضغط للتكبير'}
-                                                    </Typography>
-                                                </Box>
                                             </Box>
 
+                                            {/* شريط الإجراءات السفلية */}
                                             <Box
                                                 sx={{
-                                                    p: 2.5,
+                                                    p: 2,
                                                     borderTop: 1,
                                                     borderColor: 'divider',
+                                                    bgcolor: alpha(
+                                                        '#000',
+                                                        0.01,
+                                                    ),
                                                 }}
                                             >
                                                 <Stack
                                                     direction='row'
                                                     justifyContent='space-between'
                                                     alignItems='center'
+                                                    flexWrap='wrap'
+                                                    gap={1}
                                                 >
                                                     <Stack
-                                                        onClick={() => {
-                                                            if (!isLoggedIn) {
-                                                                navigate(
-                                                                    path.Login,
-                                                                );
-                                                            }
-                                                        }}
                                                         direction='row'
-                                                        spacing={1}
+                                                        spacing={0.5}
                                                     >
                                                         <LikeButton
                                                             product={post}
@@ -936,14 +1104,29 @@ const PostDetails: FunctionComponent = () => {
                                                                 handleShare
                                                             }
                                                             disabled={isSharing}
+                                                            sx={{
+                                                                color: 'text.secondary',
+                                                                '&:hover': {
+                                                                    color: BRAND_COLOR,
+                                                                    bgcolor:
+                                                                        alpha(
+                                                                            BRAND_COLOR,
+                                                                            0.08,
+                                                                        ),
+                                                                },
+                                                            }}
                                                         >
                                                             <ShareIcon />
                                                         </IconButton>
                                                     </Stack>
 
                                                     <Typography
-                                                        variant='body2'
+                                                        variant='caption'
                                                         color='text.secondary'
+                                                        sx={{
+                                                            fontSize: '0.75rem',
+                                                            opacity: 0.7,
+                                                        }}
                                                     >
                                                         اعرض الصورة بوضوح أعلى
                                                         قبل اتخاذ قرار الشراء.
@@ -954,9 +1137,13 @@ const PostDetails: FunctionComponent = () => {
                                             {isOwner && (
                                                 <Box
                                                     sx={{
-                                                        p: 2.5,
+                                                        p: 2,
                                                         borderTop: 1,
                                                         borderColor: 'divider',
+                                                        bgcolor: alpha(
+                                                            '#000',
+                                                            0.01,
+                                                        ),
                                                     }}
                                                 >
                                                     <Stack
@@ -964,7 +1151,7 @@ const PostDetails: FunctionComponent = () => {
                                                             xs: 'column',
                                                             sm: 'row',
                                                         }}
-                                                        spacing={2}
+                                                        spacing={1.5}
                                                     >
                                                         <Button
                                                             variant='contained'
@@ -976,6 +1163,10 @@ const PostDetails: FunctionComponent = () => {
                                                                 handleEditProduct
                                                             }
                                                             fullWidth
+                                                            sx={{
+                                                                py: 1.25,
+                                                                fontWeight: 600,
+                                                            }}
                                                         >
                                                             {t('edit')}
                                                         </Button>
@@ -991,6 +1182,10 @@ const PostDetails: FunctionComponent = () => {
                                                                 )
                                                             }
                                                             fullWidth
+                                                            sx={{
+                                                                py: 1.25,
+                                                                fontWeight: 600,
+                                                            }}
                                                         >
                                                             {t('delete')}
                                                         </Button>
@@ -1000,10 +1195,12 @@ const PostDetails: FunctionComponent = () => {
                                         </Card>
                                     </motion.div>
 
+                                    {/* تفاصيل المنتج */}
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
                                             p: { xs: 2.25, md: 3 },
+                                            borderRadius: 3,
                                         }}
                                     >
                                         <SectionTitle
@@ -1015,42 +1212,79 @@ const PostDetails: FunctionComponent = () => {
                                                 السعر: formatPrice(post.price),
                                                 البائع: sellerDisplayName,
                                                 الحالة: post.in_stock
-                                                    ? 'متوفر'
-                                                    : 'غير متوفر',
-                                                التقييم: `${rating}/5`,
+                                                    ? '✅ متوفر'
+                                                    : '❌ غير متوفر',
+                                                التقييم: `${rating}/5 ⭐`,
                                             }).map(([key, value]) => (
                                                 <Grid
                                                     size={{ xs: 6, md: 4 }}
                                                     key={key}
                                                 >
-                                                    <Card
+                                                    <Box
                                                         sx={{
-                                                            ...sectionCardSx,
                                                             p: 2,
+                                                            borderRadius: 2,
+                                                            bgcolor: alpha(
+                                                                '#000',
+                                                                0.02,
+                                                            ),
+                                                            border: '1px solid',
+                                                            borderColor:
+                                                                'divider',
+                                                            transition: '0.2s',
+                                                            '&:hover': {
+                                                                bgcolor: alpha(
+                                                                    BRAND_COLOR,
+                                                                    0.04,
+                                                                ),
+                                                                borderColor:
+                                                                    BRAND_COLOR,
+                                                            },
                                                         }}
                                                     >
                                                         <Typography
                                                             variant='caption'
                                                             color='text.secondary'
+                                                            sx={{
+                                                                display:
+                                                                    'block',
+                                                                fontSize:
+                                                                    '0.6875rem',
+                                                                textTransform:
+                                                                    'uppercase',
+                                                                letterSpacing: 0.5,
+                                                                fontWeight: 600,
+                                                            }}
                                                         >
                                                             {key}
                                                         </Typography>
-
                                                         <Typography
-                                                            fontWeight={700}
+                                                            sx={{
+                                                                fontWeight: 700,
+                                                                fontSize:
+                                                                    '0.9375rem',
+                                                                mt: 0.5,
+                                                                color:
+                                                                    key ===
+                                                                    'السعر'
+                                                                        ? BRAND_COLOR
+                                                                        : 'text.primary',
+                                                            }}
                                                         >
                                                             {value}
                                                         </Typography>
-                                                    </Card>
+                                                    </Box>
                                                 </Grid>
                                             ))}
                                         </Grid>
                                     </Card>
 
+                                    {/* المراجعات */}
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
                                             p: { xs: 2.25, md: 3 },
+                                            borderRadius: 3,
                                         }}
                                     >
                                         <SectionTitle
@@ -1065,7 +1299,14 @@ const PostDetails: FunctionComponent = () => {
                                         {post.reviews?.length === 0 ? (
                                             <Alert
                                                 severity='info'
-                                                sx={{ mb: 3, borderRadius: 2 }}
+                                                sx={{
+                                                    mb: 3,
+                                                    borderRadius: 2,
+                                                    bgcolor: alpha(
+                                                        '#0288D1',
+                                                        0.04,
+                                                    ),
+                                                }}
                                             >
                                                 {t('review.noReviewsYet')}
                                             </Alert>
@@ -1089,6 +1330,7 @@ const PostDetails: FunctionComponent = () => {
                                                                 gap: 2,
                                                                 alignItems:
                                                                     'flex-start',
+                                                                borderRadius: 2,
                                                             }}
                                                         >
                                                             <Avatar
@@ -1102,12 +1344,13 @@ const PostDetails: FunctionComponent = () => {
                                                                     height: 44,
                                                                 }}
                                                             />
-
                                                             <Box flex={1}>
                                                                 <Stack
                                                                     direction='row'
                                                                     justifyContent='space-between'
                                                                     alignItems='center'
+                                                                    flexWrap='wrap'
+                                                                    gap={0.5}
                                                                 >
                                                                     <Typography
                                                                         fontWeight={
@@ -1123,7 +1366,6 @@ const PostDetails: FunctionComponent = () => {
                                                                               )
                                                                             : `${review.user?.name.first} ${review.user?.name.last || ''}`}
                                                                     </Typography>
-
                                                                     <Typography
                                                                         variant='caption'
                                                                         color='text.secondary'
@@ -1137,7 +1379,6 @@ const PostDetails: FunctionComponent = () => {
                                                                             )}
                                                                     </Typography>
                                                                 </Stack>
-
                                                                 <Rating
                                                                     value={
                                                                         review.rating ||
@@ -1145,13 +1386,16 @@ const PostDetails: FunctionComponent = () => {
                                                                     }
                                                                     size='small'
                                                                     readOnly
+                                                                    sx={{
+                                                                        mt: 0.5,
+                                                                    }}
                                                                 />
-
                                                                 <Typography
                                                                     variant='body2'
                                                                     sx={{
                                                                         mt: 1,
                                                                         color: 'text.secondary',
+                                                                        lineHeight: 1.7,
                                                                     }}
                                                                 >
                                                                     {
@@ -1180,6 +1424,16 @@ const PostDetails: FunctionComponent = () => {
                                                     'review.reviewPlaceholder',
                                                 )}
                                                 variant='outlined'
+                                                sx={{
+                                                    '& .MuiOutlinedInput-root':
+                                                        {
+                                                            borderRadius: 2,
+                                                            bgcolor: alpha(
+                                                                '#000',
+                                                                0.01,
+                                                            ),
+                                                        },
+                                                }}
                                             />
 
                                             <Stack
@@ -1214,6 +1468,7 @@ const PostDetails: FunctionComponent = () => {
                                                             )
                                                         }
                                                         precision={0.5}
+                                                        size='large'
                                                     />
                                                 </Stack>
                                                 <Button
@@ -1226,6 +1481,17 @@ const PostDetails: FunctionComponent = () => {
                                                     sx={{
                                                         background:
                                                             BRAND_GRADIENT,
+                                                        px: 4,
+                                                        py: 1.25,
+                                                        fontWeight: 600,
+                                                        '&:hover': {
+                                                            opacity: 0.9,
+                                                            transform:
+                                                                'translateY(-1px)',
+                                                        },
+                                                        '&:disabled': {
+                                                            opacity: 0.5,
+                                                        },
                                                     }}
                                                     onClick={async () => {
                                                         if (!isLoggedIn) {
@@ -1274,7 +1540,6 @@ const PostDetails: FunctionComponent = () => {
                                                                             1,
                                                                     }),
                                                                 );
-
                                                                 setComment('');
                                                                 setRating(0);
                                                                 showSuccess(
@@ -1302,8 +1567,7 @@ const PostDetails: FunctionComponent = () => {
                                                     {isSubmittingReview
                                                         ? t(
                                                               'review.submitting',
-                                                          ) ||
-                                                          'جارٍ النشر...'
+                                                          ) || 'جارٍ النشر...'
                                                         : t('review.publish') ||
                                                           'نشر التعليق'}
                                                 </Button>
@@ -1311,7 +1575,14 @@ const PostDetails: FunctionComponent = () => {
                                             {!isLoggedIn && (
                                                 <Alert
                                                     severity='warning'
-                                                    sx={{ mt: 1 }}
+                                                    sx={{
+                                                        mt: 1,
+                                                        borderRadius: 2,
+                                                        bgcolor: alpha(
+                                                            '#ED6C02',
+                                                            0.04,
+                                                        ),
+                                                    }}
                                                 >
                                                     {t('review.loginToReview')}
                                                 </Alert>
@@ -1321,7 +1592,7 @@ const PostDetails: FunctionComponent = () => {
                                 </Stack>
                             </Grid>
 
-                            {/* العمود الأيمن: السعر، الخيارات، بطاقة البائع والتواصل */}
+                            {/* العمود الأيمن: السعر، الخيارات، بطاقة البائع */}
                             <Grid size={{ xs: 12, lg: 5 }}>
                                 <Stack
                                     spacing={3}
@@ -1334,17 +1605,22 @@ const PostDetails: FunctionComponent = () => {
                                         sx={{
                                             ...sectionCardSx,
                                             p: { xs: 2.25, md: 3 },
+                                            borderRadius: 3,
                                         }}
                                     >
                                         <Stack spacing={2.5}>
                                             <Box>
                                                 <Typography
-                                                    variant='h3'
+                                                    variant='h4'
                                                     component='h1'
                                                     sx={{
                                                         fontWeight: 900,
                                                         lineHeight: 1.2,
                                                         mb: 1.5,
+                                                        fontSize: {
+                                                            xs: '1.5rem',
+                                                            md: '2rem',
+                                                        },
                                                     }}
                                                 >
                                                     {post.product_name}
@@ -1366,6 +1642,7 @@ const PostDetails: FunctionComponent = () => {
                                                                 newValue ?? 0,
                                                             )
                                                         }
+                                                        size='medium'
                                                     />
                                                     <Typography
                                                         variant='body2'
@@ -1379,31 +1656,36 @@ const PostDetails: FunctionComponent = () => {
                                                 </Stack>
                                             </Box>
 
-                                            <Card
+                                            <Box
                                                 sx={{
-                                                    ...sectionCardSx,
                                                     p: 3,
-                                                    background:
-                                                        'linear-gradient(135deg, rgba(184,134,11,0.12), rgba(139,69,19,0.05))',
+                                                    borderRadius: 2,
+                                                    background: `linear-gradient(135deg, ${alpha(BRAND_COLOR, 0.08)}, ${alpha(BRAND_DARK, 0.04)})`,
+                                                    border: `1px solid ${alpha(BRAND_COLOR, 0.12)}`,
                                                 }}
                                             >
                                                 <Typography
                                                     variant='body2'
                                                     color='text.secondary'
+                                                    sx={{ mb: 0.5 }}
                                                 >
                                                     السعر الحالي
                                                 </Typography>
 
                                                 <Typography
                                                     variant='h3'
-                                                    fontWeight={900}
                                                     sx={{
+                                                        fontWeight: 900,
                                                         background:
                                                             BRAND_GRADIENT,
                                                         WebkitBackgroundClip:
                                                             'text',
                                                         WebkitTextFillColor:
                                                             'transparent',
+                                                        fontSize: {
+                                                            xs: '2rem',
+                                                            md: '2.5rem',
+                                                        },
                                                     }}
                                                 >
                                                     {formatPrice(post.price)}
@@ -1412,13 +1694,13 @@ const PostDetails: FunctionComponent = () => {
                                                 <Stack
                                                     direction='row'
                                                     spacing={1}
-                                                    mt={2}
+                                                    sx={{ mt: 2 }}
                                                 >
                                                     <Chip
                                                         label={
                                                             post.in_stock
-                                                                ? 'متوفر'
-                                                                : 'غير متوفر'
+                                                                ? '✅ متوفر'
+                                                                : '❌ غير متوفر'
                                                         }
                                                         color={
                                                             post.in_stock
@@ -1426,28 +1708,39 @@ const PostDetails: FunctionComponent = () => {
                                                                 : 'default'
                                                         }
                                                         size='small'
+                                                        sx={{ fontWeight: 600 }}
                                                     />
                                                     <Chip
-                                                        label='رد سريع'
+                                                        label='⚡ رد سريع'
                                                         size='small'
+                                                        sx={{
+                                                            bgcolor: alpha(
+                                                                BRAND_COLOR,
+                                                                0.1,
+                                                            ),
+                                                            color: BRAND_DARK,
+                                                            fontWeight: 600,
+                                                        }}
                                                     />
                                                 </Stack>
-                                            </Card>
-
-                                            <Box>
-                                                <Typography
-                                                    variant='h6'
-                                                    sx={{
-                                                        fontWeight: 700,
-                                                        mb: 1.5,
-                                                    }}
-                                                >
-                                                    الخيارات المتاحة
-                                                </Typography>
-                                                <ColorsAndSizes
-                                                    category={post.category}
-                                                />
                                             </Box>
+
+                                            {post.category && (
+                                                <Box>
+                                                    <Typography
+                                                        variant='h6'
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                            mb: 1.5,
+                                                        }}
+                                                    >
+                                                        الخيارات المتاحة
+                                                    </Typography>
+                                                    <ColorsAndSizes
+                                                        category={post.category}
+                                                    />
+                                                </Box>
+                                            )}
 
                                             <Divider />
 
@@ -1459,7 +1752,6 @@ const PostDetails: FunctionComponent = () => {
                                                 >
                                                     الوصف
                                                 </Typography>
-
                                                 <Typography
                                                     color='text.secondary'
                                                     sx={{ lineHeight: 1.9 }}
@@ -1470,35 +1762,31 @@ const PostDetails: FunctionComponent = () => {
                                             </Box>
 
                                             <Stack spacing={1.5}>
-                                                <Button
-                                                    fullWidth
-                                                    variant='contained'
-                                                    size='large'
-                                                    startIcon={<Comment />}
-                                                    onClick={(event) => {
-                                                        event.preventDefault();
-                                                        navigate(
-                                                            generatePath(
-                                                                path.CustomerProfile,
-                                                                {
-                                                                    slug: encodeURIComponent(
-                                                                        post
-                                                                            .seller
-                                                                            ?.slug ??
-                                                                            '',
-                                                                    ),
-                                                                },
-                                                            ),
-                                                        );
-                                                    }}
-                                                    sx={{
-                                                        py: 1.5,
-                                                        background:
-                                                            BRAND_GRADIENT,
-                                                    }}
-                                                >
-                                                    تواصل مع البائع
-                                                </Button>
+                                                {!isOwner && (
+                                                    <Button
+                                                        fullWidth
+                                                        variant='contained'
+                                                        size='large'
+                                                        startIcon={<Comment />}
+                                                        onClick={
+                                                            handleContactSeller
+                                                        }
+                                                        sx={{
+                                                            py: 1.5,
+                                                            background:
+                                                                BRAND_GRADIENT,
+                                                            '&:hover': {
+                                                                opacity: 0.9,
+                                                                transform:
+                                                                    'translateY(-2px)',
+                                                                boxShadow:
+                                                                    '0 4px 20px rgba(184,134,11,0.3)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        تواصل مع البائع
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     fullWidth
                                                     variant='outlined'
@@ -1507,8 +1795,17 @@ const PostDetails: FunctionComponent = () => {
                                                     href='tel:0538346915'
                                                     sx={{
                                                         py: 1.5,
-                                                        borderColor: '#B8860B',
-                                                        color: '#8B4513',
+                                                        borderColor:
+                                                            BRAND_COLOR,
+                                                        color: BRAND_DARK,
+                                                        '&:hover': {
+                                                            borderColor:
+                                                                BRAND_DARK,
+                                                            bgcolor: alpha(
+                                                                BRAND_COLOR,
+                                                                0.04,
+                                                            ),
+                                                        },
                                                     }}
                                                 >
                                                     اتصل الآن
@@ -1530,7 +1827,13 @@ const PostDetails: FunctionComponent = () => {
                                     </Card>
 
                                     {/* بطاقة البائع الموثقة */}
-                                    <Card sx={{ ...sectionCardSx, p: 3 }}>
+                                    <Card
+                                        sx={{
+                                            ...sectionCardSx,
+                                            p: 3,
+                                            borderRadius: 3,
+                                        }}
+                                    >
                                         <Stack spacing={2}>
                                             <Stack
                                                 direction='row'
@@ -1546,17 +1849,16 @@ const PostDetails: FunctionComponent = () => {
                                                         width: 56,
                                                         height: 56,
                                                         border: '2px solid',
-                                                        borderColor: '#B8860B',
+                                                        borderColor:
+                                                            BRAND_COLOR,
                                                     }}
                                                 />
-
                                                 <Box flex={1}>
                                                     <Typography
                                                         fontWeight={800}
                                                     >
                                                         {sellerDisplayName}
                                                     </Typography>
-
                                                     <Typography
                                                         variant='body2'
                                                         color='text.secondary'
@@ -1565,7 +1867,6 @@ const PostDetails: FunctionComponent = () => {
                                                         {post.seller?.slug}
                                                     </Typography>
                                                 </Box>
-
                                                 {isOwner && (
                                                     <Chip
                                                         label='إعلانك'
@@ -1580,21 +1881,23 @@ const PostDetails: FunctionComponent = () => {
                                                 )}
                                             </Stack>
 
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                                alignItems='center'
+                                            <Box
                                                 sx={{
                                                     px: 1.5,
                                                     py: 1,
                                                     borderRadius: 2,
-                                                    bgcolor:
-                                                        'rgba(184,134,11,0.08)',
+                                                    bgcolor: alpha(
+                                                        BRAND_COLOR,
+                                                        0.06,
+                                                    ),
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1,
                                                 }}
                                             >
                                                 <VerifiedRounded
                                                     sx={{
-                                                        color: '#B8860B',
+                                                        color: BRAND_COLOR,
                                                         fontSize: 20,
                                                     }}
                                                 />
@@ -1604,7 +1907,7 @@ const PostDetails: FunctionComponent = () => {
                                                 >
                                                     بائع موثوق • رد سريع
                                                 </Typography>
-                                            </Stack>
+                                            </Box>
 
                                             <Button
                                                 fullWidth
@@ -1612,6 +1915,16 @@ const PostDetails: FunctionComponent = () => {
                                                 startIcon={<ShareIcon />}
                                                 onClick={handleShare}
                                                 disabled={isSharing}
+                                                sx={{
+                                                    color: 'text.secondary',
+                                                    '&:hover': {
+                                                        color: BRAND_COLOR,
+                                                        bgcolor: alpha(
+                                                            BRAND_COLOR,
+                                                            0.04,
+                                                        ),
+                                                    },
+                                                }}
                                             >
                                                 شارك المنتج
                                             </Button>
@@ -1643,12 +1956,15 @@ const PostDetails: FunctionComponent = () => {
                                         '&::-webkit-scrollbar': {
                                             display: 'none',
                                         },
+                                        scrollBehavior: 'smooth',
                                     }}
                                 >
                                     {relatedProducts.map((product) => (
                                         <Box
                                             key={product._id}
-                                            sx={{ minWidth: 260 }}
+                                            sx={{
+                                                minWidth: { xs: 200, sm: 260 },
+                                            }}
                                         >
                                             <RelatedProductCard
                                                 product={product}

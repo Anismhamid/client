@@ -49,7 +49,7 @@ import { getUserMessages, postMessage } from '../../services/messages';
 import handleRTL from '../../locales/handleRTL';
 import RoleType from '../../interfaces/UserType';
 import { User, UserMessage } from '../../interfaces/chat/usersMessages';
-import { useUser } from '../../context/useUSer';
+import { useUser } from '../../hooks/useUSer';
 import socket from '../../socket/globalSocket';
 import axios from 'axios';
 

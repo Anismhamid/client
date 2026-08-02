@@ -1,5 +1,6 @@
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import {
     Avatar,
     Box,
@@ -10,7 +11,6 @@ import {
     CardMedia,
     Chip,
     Divider,
-    Drawer,
     IconButton,
     Menu,
     MenuItem,
@@ -30,8 +30,8 @@ import {
     FavoriteBorder,
 } from '@mui/icons-material';
 import {
-    Dispatch,
     FunctionComponent,
+    Dispatch,
     SetStateAction,
     useState,
     useRef,
@@ -47,8 +47,10 @@ import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import LikeButton from '../../../atoms/like/LikeButton';
 import { path, productsPathes } from '../../../routes/routes';
 import { formatTimeAgo } from './helpers/helperFunctions';
-import { useUser } from '../../../context/useUSer';
-// import ChatModal from '../chatBox/ChatModal';
+import { useUser } from '../../../hooks/useUSer';
+import SealBadge from '../home/SealBadge';
+import { useChatWindow } from '../../../context/ChatWindowContext';
+import { UserMessage } from '../../../interfaces/chat/usersMessages';
 
 interface PostCardProps {
     post: Posts;
@@ -75,6 +77,8 @@ export interface ChatUser {
     };
 }
 
+const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+
 const PostCard: FunctionComponent<PostCardProps> = ({
     post,
     discountedPrice,
@@ -89,19 +93,11 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const { t } = useTranslation();
     const dir = handleRTL();
     const { auth } = useUser();
+    const { openChat } = useChatWindow();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
     const [expanded, setExpanded] = useState<boolean>(false);
-    const [openChat, setOpenChat] = useState(false);
     const menuRef = useRef(null);
-
-    // const currentUser = {
-    //     _id: auth._id as string,
-    //     name: { first: auth.name.first, last: auth.name.last },
-    //     email: auth.email as string,
-    //     role: auth.role as string,
-    // };
-    const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null);
 
     const jsonLdData = generateSingleProductJsonLd(post);
     const navigate = useNavigate();
@@ -115,7 +111,11 @@ const PostCard: FunctionComponent<PostCardProps> = ({
         const shareText = `${post.product_name} - ${post.price} شيكل`;
         if (navigator.share) {
             navigator
-                .share({ title: post.product_name, text: shareText, url: shareUrl })
+                .share({
+                    title: post.product_name,
+                    text: shareText,
+                    url: shareUrl,
+                })
                 .then(() => showSuccess('تمت المشاركة بنجاح'))
                 .catch(() => showError('فشل المشاركة'));
         } else {
@@ -142,6 +142,22 @@ const PostCard: FunctionComponent<PostCardProps> = ({
           }
         : undefined;
 
+    /** Opens the seller chat via the global chat context — FloatingChats
+     * (mounted once in App.tsx) picks it up and renders it; PostCard never
+     * needs to render a chat window itself. */
+    const handleContactClick = () => {
+        const sellerUser = post.seller;
+        if (!sellerUser?._id) {
+            navigate('/login');
+            return;
+        }
+        if (!auth?._id) {
+            navigate('/login');
+            return;
+        }
+        openChat(sellerUser as UserMessage);
+    };
+
     const productUrl = `${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
     const isOutOfStock = post.in_stock === false;
     const isOwnPost = auth._id === post.seller?._id;
@@ -151,8 +167,8 @@ const PostCard: FunctionComponent<PostCardProps> = ({
             dir={dir}
             sx={{
                 borderRadius: '16px',
-                border: featured ? '2px solid' : '0.5px solid',
-                borderColor: featured ? 'warning.main' : 'divider',
+                border: featured ? '2px solid transparent' : '0.5px solid',
+                borderColor: featured ? 'transparent' : 'divider',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
@@ -166,9 +182,25 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     boxShadow: isOutOfStock
                         ? 'none'
                         : featured
-                          ? '0 12px 32px rgba(234,168,32,0.18)'
+                          ? '0 12px 32px rgba(184,134,11,0.22)'
                           : '0 8px 24px rgba(0,0,0,0.08)',
                 },
+                ...(featured && {
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        inset: 0,
+                        padding: '2px',
+                        borderRadius: '16px',
+                        background: GRADIENT,
+                        WebkitMask:
+                            'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                        WebkitMaskComposite: 'xor',
+                        maskComposite: 'exclude',
+                        pointerEvents: 'none',
+                        zIndex: 2,
+                    },
+                }),
             }}
             itemScope
             itemType='https://schema.org/Product'
@@ -249,20 +281,35 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 '&:hover': { textDecoration: 'underline' },
                             }}
                         >
-                            {post.seller?.name?.first || post.seller?.slug || 'بائع'}
+                            {post.seller?.name?.first ||
+                                post.seller?.slug ||
+                                'بائع'}
                         </Typography>
-                        <Stack direction='row' alignItems='center' spacing={0.5}>
+                        <Stack
+                            direction='row'
+                            alignItems='center'
+                            spacing={0.5}
+                        >
                             <Typography
                                 variant='caption'
-                                sx={{ color: 'text.disabled', fontSize: '0.7rem' }}
+                                sx={{
+                                    color: 'text.disabled',
+                                    fontSize: '0.7rem',
+                                }}
                             >
                                 {formatTimeAgo(String(post.createdAt), t) || ''}
                             </Typography>
-                            <Typography variant='caption' sx={{ color: 'text.disabled' }}>
+                            <Typography
+                                variant='caption'
+                                sx={{ color: 'text.disabled' }}
+                            >
                                 ·
                             </Typography>
                             <Tooltip title='عام للجميع'>
-                                <Typography variant='caption' sx={{ fontSize: '0.7rem' }}>
+                                <Typography
+                                    variant='caption'
+                                    sx={{ fontSize: '0.7rem' }}
+                                >
                                     🌍
                                 </Typography>
                             </Tooltip>
@@ -279,7 +326,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             color: 'text.disabled',
                             width: 30,
                             height: 30,
-                            '&:hover': { bgcolor: 'action.hover', color: 'text.secondary' },
+                            '&:hover': {
+                                bgcolor: 'action.hover',
+                                color: 'text.secondary',
+                            },
                         }}
                     >
                         <MoreHoriz sx={{ fontSize: 18 }} />
@@ -300,14 +350,28 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 minWidth: 160,
                             },
                         }}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right',
+                        }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
                     >
-                        <MenuItem onClick={handleShare} sx={{ fontSize: '0.8125rem', gap: 1 }}>
+                        <MenuItem
+                            onClick={handleShare}
+                            sx={{ fontSize: '0.8125rem', gap: 1 }}
+                        >
                             <ShareIcon sx={{ fontSize: 16 }} /> مشاركة
                         </MenuItem>
-                        <MenuItem onClick={handleReport} sx={{ fontSize: '0.8125rem', gap: 1 }}>
-                            <Report sx={{ fontSize: 16, color: 'error.main' }} />
+                        <MenuItem
+                            onClick={handleReport}
+                            sx={{ fontSize: '0.8125rem', gap: 1 }}
+                        >
+                            <Report
+                                sx={{ fontSize: 16, color: 'error.main' }}
+                            />
                             <Typography color='error' variant='inherit'>
                                 الإبلاغ
                             </Typography>
@@ -336,7 +400,9 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 }}
                                 sx={{ fontSize: '0.8125rem', gap: 1 }}
                             >
-                                <DeleteIcon sx={{ fontSize: 16, color: 'error.main' }} />
+                                <DeleteIcon
+                                    sx={{ fontSize: 16, color: 'error.main' }}
+                                />
                                 <Typography color='error' variant='inherit'>
                                     حذف
                                 </Typography>
@@ -382,11 +448,15 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         image={post.image.url}
                         alt={post.product_name}
                         sx={{
-                            height:300,
+                            height: 300,
                             objectFit: 'cover',
                             bgcolor: 'action.hover',
                             transition: 'transform 0.25s ease',
-                            '&:hover': { transform: isOutOfStock ? 'none' : 'scale(1.025)' },
+                            '&:hover': {
+                                transform: isOutOfStock
+                                    ? 'none'
+                                    : 'scale(1.025)',
+                            },
                         }}
                     />
                 </Link>
@@ -433,44 +503,56 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     </Box>
                 )}
 
-                {/* Featured badge on image */}
+                {/* Featured badge on image — the seal stamp */}
                 {featured && (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            bottom: 10,
-                            right: 10,
-                            bgcolor: 'rgba(250,238,218,0.92)',
-                            color: 'warning.dark',
-                            fontSize: '0.6875rem',
-                            fontWeight: 500,
-                            px: 1,
-                            py: '3px',
-                            borderRadius: '6px',
-                            lineHeight: 1.6,
-                        }}
-                    >
-                        ⭐ مميز
-                    </Box>
+                    <Tooltip title='إعلان مميز'>
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                bottom: 8,
+                                right: 8,
+                                zIndex: 2,
+                            }}
+                        >
+                            <SealBadge size={40} rotate={-8}>
+                                <StarRoundedIcon sx={{ fontSize: 18 }} />
+                            </SealBadge>
+                        </Box>
+                    </Tooltip>
                 )}
             </Box>
 
             {/* ── CONTENT ── */}
             <CardContent sx={{ p: 1.75, pt: 1.25, '&:last-child': { pb: 0 } }}>
                 {/* Price row */}
-                <Stack direction='row' alignItems='baseline' spacing={1} sx={{ mb: 1.25 }}>
+                <Stack
+                    direction='row'
+                    alignItems='baseline'
+                    spacing={1}
+                    sx={{ mb: 1.25 }}
+                >
                     <Typography
                         variant='h6'
                         fontWeight={500}
-                        sx={{ color: 'primary.main', fontSize: '1.125rem', lineHeight: 1 }}
+                        sx={{
+                            color: 'primary.main',
+                            fontSize: '1.125rem',
+                            lineHeight: 1,
+                        }}
                         itemProp='offers'
                         itemScope
                         itemType='https://schema.org/Offer'
                     >
-                        {post.sale ? formatPrice(discountedPrice) : formatPrice(post.price)}
+                        {post.sale
+                            ? formatPrice(discountedPrice)
+                            : formatPrice(post.price)}
                         <meta
                             itemProp='price'
-                            content={post.sale ? discountedPrice.toString() : post.price.toString()}
+                            content={
+                                post.sale
+                                    ? discountedPrice.toString()
+                                    : post.price.toString()
+                            }
                         />
                         <meta itemProp='priceCurrency' content='ILS' />
                         <meta
@@ -526,7 +608,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                     fontWeight: 500,
                                     fontSize: '0.75rem',
                                     color: 'text.disabled',
-                                    '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
+                                    '&:hover': {
+                                        bgcolor: 'transparent',
+                                        color: 'text.primary',
+                                    },
                                 }}
                             >
                                 {expanded ? 'إخفاء' : 'المزيد'}
@@ -537,7 +622,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 
                 {/* Tags row */}
                 <Stack direction='row' flexWrap='wrap' gap={0.75}>
-                    <Link to={`/category/${post.category}`} style={{ textDecoration: 'none' }}>
+                    <Link
+                        to={`/category/${post.category}`}
+                        style={{ textDecoration: 'none' }}
+                    >
                         <Chip
                             label={t(`categories.${post.category}.label`)}
                             size='small'
@@ -579,10 +667,18 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 
                     {post.location && (
                         <Chip
-                            icon={<LocationOn sx={{ fontSize: '11px !important' }} />}
+                            icon={
+                                <LocationOn
+                                    sx={{ fontSize: '11px !important' }}
+                                />
+                            }
                             label={post.location}
                             size='small'
-                            sx={{ height: 22, fontSize: '0.6875rem', color: 'text.secondary' }}
+                            sx={{
+                                height: 22,
+                                fontSize: '0.6875rem',
+                                color: 'text.secondary',
+                            }}
                         />
                     )}
 
@@ -593,10 +689,16 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             sx={{
                                 height: 22,
                                 fontSize: '0.6875rem',
-                                bgcolor: post.isNew ? 'success.50' : 'warning.50',
-                                color: post.isNew ? 'success.main' : 'warning.main',
+                                bgcolor: post.isNew
+                                    ? 'success.50'
+                                    : 'warning.50',
+                                color: post.isNew
+                                    ? 'success.main'
+                                    : 'warning.main',
                                 border: '0.5px solid',
-                                borderColor: post.isNew ? 'success.light' : 'warning.light',
+                                borderColor: post.isNew
+                                    ? 'success.light'
+                                    : 'warning.light',
                             }}
                         />
                     )}
@@ -605,7 +707,11 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <Chip
                             label={post.brand}
                             size='small'
-                            sx={{ height: 22, fontSize: '0.6875rem', color: 'text.secondary' }}
+                            sx={{
+                                height: 22,
+                                fontSize: '0.6875rem',
+                                color: 'text.secondary',
+                            }}
                         />
                     )}
                 </Stack>
@@ -625,22 +731,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     <Button
                         variant='outlined'
                         size='small'
-                        startIcon={<Comment sx={{ fontSize: '14px !important' }} />}
-                        onClick={() => {
-                            const sellerUser = post.seller;
-                            const fromId = auth?._id;
-                            if (!sellerUser?._id && !fromId) {
-                                return navigate('/login');
-                            }
-                            setSelectedUser({
-                                _id: sellerUser?._id as string,
-                                name: {
-                                    first: sellerUser?.name?.first,
-                                    last: selectedUser?.name?.last,
-                                },
-                            });
-                            setOpenChat(true);
-                        }}
+                        startIcon={
+                            <Comment sx={{ fontSize: '14px !important' }} />
+                        }
+                        onClick={handleContactClick}
                         disableElevation
                         sx={{
                             flex: 1,
@@ -715,7 +809,9 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     {post.likes?.length || 0} إعجاب
                 </Typography>
                 <Stack direction='row' alignItems='center' spacing={0.5}>
-                    <VisibilityRounded sx={{ fontSize: 13, color: 'text.disabled' }} />
+                    <VisibilityRounded
+                        sx={{ fontSize: 13, color: 'text.disabled' }}
+                    />
                     <Typography
                         variant='caption'
                         sx={{ color: 'text.disabled', fontSize: '0.75rem' }}
@@ -726,10 +822,18 @@ const PostCard: FunctionComponent<PostCardProps> = ({
             </Box>
 
             {/* ── ACTIONS ── */}
-            <CardActions sx={{ p: 0, borderTop: '0.5px solid', borderColor: 'divider' }}>
+            <CardActions
+                sx={{ p: 0, borderTop: '0.5px solid', borderColor: 'divider' }}
+            >
                 <Box sx={{ width: '100%', display: 'flex' }}>
                     {/* Like */}
-                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                    <Box
+                        sx={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
                         <LikeButton
                             product={post}
                             setProduct={setProduct}
@@ -740,10 +844,18 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     <Divider orientation='vertical' flexItem />
 
                     {/* Comment */}
-                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                    <Box
+                        sx={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
                         <Button
                             fullWidth
-                            startIcon={<Comment sx={{ fontSize: '16px !important' }} />}
+                            startIcon={
+                                <Comment sx={{ fontSize: '16px !important' }} />
+                            }
                             sx={{
                                 color: 'text.secondary',
                                 py: 1,
@@ -752,7 +864,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 fontSize: '0.8125rem',
                                 fontWeight: 500,
                                 gap: 0.5,
-                                '&:hover': { bgcolor: 'action.hover', color: 'text.primary' },
+                                '&:hover': {
+                                    bgcolor: 'action.hover',
+                                    color: 'text.primary',
+                                },
                             }}
                         >
                             تعليق
@@ -762,7 +877,13 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     <Divider orientation='vertical' flexItem />
 
                     {/* Bookmark */}
-                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                    <Box
+                        sx={{
+                            flex: 1,
+                            display: 'flex',
+                            justifyContent: 'center',
+                        }}
+                    >
                         <Button
                             fullWidth
                             startIcon={
@@ -774,12 +895,16 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                         }}
                                     />
                                 ) : (
-                                    <BookmarkBorder sx={{ fontSize: '16px !important' }} />
+                                    <BookmarkBorder
+                                        sx={{ fontSize: '16px !important' }}
+                                    />
                                 )
                             }
                             onClick={() => setIsBookmarked(!isBookmarked)}
                             sx={{
-                                color: isBookmarked ? 'primary.main' : 'text.secondary',
+                                color: isBookmarked
+                                    ? 'primary.main'
+                                    : 'text.secondary',
                                 py: 1,
                                 borderRadius: 0,
                                 textTransform: 'none',
@@ -794,26 +919,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     </Box>
                 </Box>
             </CardActions>
-
-            {/* ── CHAT DRAWER ── */}
-            <Drawer
-                anchor='right'
-                open={openChat}
-                onClose={() => setOpenChat(false)}
-                PaperProps={{
-                    sx: { width: { xs: '100%', sm: 400, md: 450 } },
-                }}
-            >
-                {/* {openChat && selectedUser && (
-                    <ChatModal
-                        onClose={() => setOpenChat(false)}
-                        open={openChat}
-                        currentUser={currentUser}
-                        otherUser={selectedUser}
-                        token={localStorage.getItem('token') as string}
-                    />
-                )} */}
-            </Drawer>
         </Card>
     );
 };

@@ -44,7 +44,7 @@ import { motion } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
 import { useUserPosts } from '../../../hooks/useUserPosts';
 import useToken from '../../../hooks/useToken';
-import { useUser } from '../../../context/useUSer';
+import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
 import { path } from '../../../routes/routes';
 import { showSuccess } from '../../../atoms/toasts/ReactToast';
