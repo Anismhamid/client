@@ -83,6 +83,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Tooltip title={t('account-management') || 'Account Settings'}>
                     <IconButton
+                    
                         onClick={handleClick}
                         size='small'
                         aria-controls={open ? 'account-menu' : undefined}
@@ -126,6 +127,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 elevation={8}
                 PaperProps={{
                     elevation: 8,
+                    
                     sx: {
                         overflow: 'hidden',
                         mt: 1.5,

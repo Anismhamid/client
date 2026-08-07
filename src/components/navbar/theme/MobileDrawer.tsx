@@ -40,6 +40,9 @@ import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
 import { useChat } from '../../../hooks/useChat';
 
+import { openNotificationSettings } from '../../../services/notificationSettings';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 interface MobileDrawerProps {
     mode: PaletteMode;
     setMobileOpen: (value: boolean) => void;
@@ -125,6 +128,10 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     aria-label='القائمة الرئيسية'
                     sx={{ pt: 0 }}
                 >
+                    <ListItemButton onClick={openNotificationSettings}>
+                        <SettingsIcon sx={{ ml: 1 }} />
+                        <ListItemText primary='إعدادات الإشعارات' />
+                    </ListItemButton>
                     {/* Home */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
@@ -180,36 +187,41 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     )}
                     {/* Messages page */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
-{isLoggedIn && (                        <ListItemButton
-                            component={NavLink}
-                            to={path.MessagesPage}
-                            onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#f59f0b', // كانت #f59e0b11
-                                    fontWeight: 'bold',
-                                },
-                            }}
-                        >
-                            <Badge
-                                badgeContent={totalUnread || 0}
-                                color='error'
-                                sx={{ ml: 1 }}
-                            >
-                                <ChatBubble sx={{ fontSize: 20 }} />
-                            </Badge>
-                            <ListItemText
-                                primary={t('accountMenu.messages') || 'الرسائل'}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: 500 },
-                                    'aria-label': 'الرسائل - موقع صفقة',
+                        {isLoggedIn && (
+                            <ListItemButton
+                                component={NavLink}
+                                to={path.MessagesPage}
+                                onClick={handleNavLinkClick}
+                                sx={{
+                                    borderRadius: '8px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    '&.active': {
+                                        backgroundColor:
+                                            'rgba(220, 53, 69, 0.1)',
+                                        color: '#f59f0b', // كانت #f59e0b11
+                                        fontWeight: 'bold',
+                                    },
                                 }}
-                            />
-                        </ListItemButton>)}
+                            >
+                                <Badge
+                                    badgeContent={totalUnread || 0}
+                                    color='error'
+                                    sx={{ ml: 1 }}
+                                >
+                                    <ChatBubble sx={{ fontSize: 20 }} />
+                                </Badge>
+                                <ListItemText
+                                    primary={
+                                        t('accountMenu.messages') || 'الرسائل'
+                                    }
+                                    primaryTypographyProps={{
+                                        sx: { fontWeight: 500 },
+                                        'aria-label': 'الرسائل - موقع صفقة',
+                                    }}
+                                />
+                            </ListItemButton>
+                        )}
                     </ListItem>
                     {/* Products with categories - IMPLEMENTED */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
