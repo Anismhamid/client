@@ -11,26 +11,29 @@ export const useHomePageAds = () => {
 
     useEffect(() => {
         console.log('🚀 جلب الإعلانات المميزة من:', `${api}/homepage`);
-        
+
         axios
             .get(`${api}/homepage`)
             .then(({ data }) => {
                 console.log('✅ بيانات الإعلانات المستلمة:', data);
-                console.log('📊 عدد الإعلانات:', data.ads?.length ?? 0);
-                console.log('📋 تفاصيل الإعلانات:', data.ads);
-                
+                console.log('📊 عدد الإعلانات:', data.length ?? 0);
+                console.log('📋 تفاصيل الإعلانات:', data);
+
                 // تأكد من أن البيانات صحيحة
-                if (data.ads && data.ads.length > 0) {
+                if (data && data.length > 0) {
                     console.log('✅ تم العثور على إعلانات مميزة!');
                 } else {
                     console.warn('⚠️ لا توجد إعلانات مميزة في قاعدة البيانات');
                 }
-                
-                setHomePageAds(data.ads ?? []);
+
+                setHomePageAds(data);
             })
             .catch((err) => {
                 console.error('❌ خطأ في جلب الإعلانات:', err);
-                console.error('❌ تفاصيل الخطأ:', err.response?.data || err.message);
+                console.error(
+                    '❌ تفاصيل الخطأ:',
+                    err.response?.data || err.message,
+                );
             })
             .finally(() => setLoading(false));
     }, []);
@@ -45,12 +48,12 @@ export const useHighlightAds = () => {
 
     useEffect(() => {
         console.log('🚀 جلب الإعلانات المضيئة من:', `${api}/highlight`);
-        
+
         axios
             .get(`${api}/highlight`)
             .then(({ data }) => {
                 console.log('✅ بيانات الإعلانات المضيئة:', data);
-                setAds(data.ads ?? []);
+                setAds(data);
                 setError(null);
             })
             .catch((err) => {
@@ -71,12 +74,12 @@ export const useTopAds = () => {
 
     useEffect(() => {
         console.log('🚀 جلب أفضل الإعلانات من:', `${api}/top`);
-        
+
         axios
             .get(`${api}/top`)
             .then(({ data }) => {
                 console.log('✅ بيانات أفضل الإعلانات:', data);
-                setAds(data.ads ?? []);
+                setAds(data);
                 setError(null);
             })
             .catch((err) => {
