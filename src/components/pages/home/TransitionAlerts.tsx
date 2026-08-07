@@ -158,41 +158,41 @@ function TransitionAlerts() {
                 </Box>
             </Snackbar>
 
-            {seen && !open && (
-                <Tooltip title='إظهار التنبيه' placement='left'>
-                    <Fab
-                        size='small'
-                        onClick={() => setOpen(true)}
-                        sx={{
-                            position: 'relative',
-                            top: 0,
-                            right: 16,
-                            zIndex: (theme) => theme.zIndex.snackbar,
-                            background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                            color: '#fff',
-                            boxShadow: '0 8px 20px -6px rgba(139,69,19,0.6)',
-                            '&:hover': {
-                                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                                filter: 'brightness(1.1)',
-                            },
-                            '&::after': {
-                                content: '""',
-                                position: 'absolute',
-                                inset: 0,
-                                borderRadius: '50%',
-                                border: '2px solid #B8860B',
-                                animation: 'ring 1.8s ease-out infinite',
-                            },
-                            '@keyframes ring': {
-                                '0%': { transform: 'scale(1)', opacity: 0.7 },
-                                '100%': { transform: 'scale(1.6)', opacity: 0 },
-                            },
-                        }}
-                    >
-                        <ConstructionRoundedIcon fontSize='small' />
-                    </Fab>
-                </Tooltip>
-            )}
+         {seen && !open && (
+    <Tooltip title='إظهار التنبيه' placement='left'>
+        <Fab
+            size='small'
+            onClick={() => setOpen(true)}
+            sx={{
+                position: 'fixed',
+                bottom: 20,
+                insetInlineEnd: 20,
+                // zIndex: (theme) => theme.zIndex.snackbar,
+                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                color: '#fff',
+                boxShadow: '0 8px 20px -6px rgba(139,69,19,0.6)',
+                '&:hover': {
+                    background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                    filter: 'brightness(1.1)',
+                },
+                '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: '50%',
+                    border: '2px solid #B8860B',
+                    animation: 'ring 1.8s ease-out infinite',
+                },
+                '@keyframes ring': {
+                    '0%': { transform: 'scale(1)', opacity: 0.7 },
+                    '100%': { transform: 'scale(1.6)', opacity: 0 },
+                },
+            }}
+        >
+            <ConstructionRoundedIcon fontSize='small' />
+        </Fab>
+    </Tooltip>
+)}
         </>
     );
 }
