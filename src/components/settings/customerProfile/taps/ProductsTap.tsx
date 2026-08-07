@@ -54,7 +54,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
     const navigate = useNavigate();
 
     return (
-        <Box mb={4}>
+        <Box m={4}>
             <Box
                 display='flex'
                 justifyContent='space-between'
@@ -81,9 +81,10 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                 </Typography>
                 <Chip
                     icon={<LocalOffer />}
-                    label={`${products.length} منتج`}
+                    label={`${products.length} المنشورات المتاحه`}
                     variant='outlined'
                     sx={{
+                        px: 1,
                         borderColor: BRAND_GOLD,
                         color: BRAND_BROWN,
                         fontWeight: 700,
@@ -150,7 +151,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                             position: 'relative',
                                             overflow: 'hidden',
                                             height: 200,
-                                            bgcolor: 'grey.100',
+                                            bgcolor: 'grey',
                                             cursor: 'pointer',
                                         }}
                                     >
