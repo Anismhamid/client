@@ -180,15 +180,17 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     )}
                     {/* Messages page */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton
+{isLoggedIn && (                        <ListItemButton
                             component={NavLink}
                             to={path.MessagesPage}
                             onClick={handleNavLinkClick}
                             sx={{
                                 borderRadius: '8px',
+                                display: 'flex',
+                                alignItems: 'center',
                                 '&.active': {
                                     backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#f59e0b11',
+                                    color: '#f59f0b', // كانت #f59e0b11
                                     fontWeight: 'bold',
                                 },
                             }}
@@ -196,19 +198,18 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             <Badge
                                 badgeContent={totalUnread || 0}
                                 color='error'
+                                sx={{ ml: 1 }}
                             >
                                 <ChatBubble sx={{ fontSize: 20 }} />
-                                <ListItemText
-                                    primary={
-                                        t('accountMenu.messages') || 'الرسائل'
-                                    }
-                                    primaryTypographyProps={{
-                                        sx: { fontWeight: 500 },
-                                        'aria-label': 'الرسائل - موقع صفقة',
-                                    }}
-                                />
                             </Badge>
-                        </ListItemButton>
+                            <ListItemText
+                                primary={t('accountMenu.messages') || 'الرسائل'}
+                                primaryTypographyProps={{
+                                    sx: { fontWeight: 500 },
+                                    'aria-label': 'الرسائل - موقع صفقة',
+                                }}
+                            />
+                        </ListItemButton>)}
                     </ListItem>
                     {/* Products with categories - IMPLEMENTED */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
@@ -524,7 +525,15 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     </ListItem>
                     {/* Admin Panel - only if admin */}
                     {isAdmin && (
-                        <Divider sx={{ my: 2, height: 30, color: 'red' }} />
+                        <Divider
+                            sx={{
+                                my: 2,
+                                borderColor:
+                                    mode === 'dark'
+                                        ? 'rgba(255,255,255,0.1)'
+                                        : 'rgba(0,0,0,0.1)',
+                            }}
+                        />
                     )}
                     {isAdmin && (
                         <ListItem disablePadding sx={{ mb: 1 }}>

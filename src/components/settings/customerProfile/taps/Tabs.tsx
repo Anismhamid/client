@@ -20,7 +20,7 @@ const CustomTabs: FunctionComponent<TabsProps> = ({
     tabValue,
 }) => {
     return (
-        <Card>
+        <Card >
             <MuiTabs
                 value={tabValue}
                 onChange={handleTabChange}
