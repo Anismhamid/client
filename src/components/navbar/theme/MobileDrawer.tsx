@@ -39,10 +39,15 @@ import { GradientSwitch } from './GradientSwitch';
 import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
 import { useChat } from '../../../hooks/useChat';
+import { Capacitor } from '@capacitor/core';
+import { AppSettings } from '../../appSettings';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
-import { openNotificationSettings } from '../../../services/notificationSettings';
-import SettingsIcon from '@mui/icons-material/Settings';
+const openAppSettings = async () => {
+    if (!Capacitor.isNativePlatform()) return;
 
+    await AppSettings.open();
+};
 interface MobileDrawerProps {
     mode: PaletteMode;
     setMobileOpen: (value: boolean) => void;
@@ -128,10 +133,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     aria-label='القائمة الرئيسية'
                     sx={{ pt: 0 }}
                 >
-                    <ListItemButton onClick={openNotificationSettings}>
-                        <SettingsIcon sx={{ ml: 1 }} />
-                        <ListItemText primary='إعدادات الإشعارات' />
-                    </ListItemButton>
+                    <IconButton onClick={openAppSettings}>
+                        <NotificationsActiveIcon />
+                    </IconButton>
                     {/* Home */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
