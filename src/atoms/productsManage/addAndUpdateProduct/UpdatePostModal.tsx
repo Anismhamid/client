@@ -69,35 +69,31 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     const formik = useFormik<Posts>({
         enableReinitialize: true,
         initialValues: {
-			product_name: post.product_name || '',
-			category: post.category || '',
-			subcategory: post.subcategory || '',
-			type: post.brand || post.subcategory || '',
-			price: post.price || 0,
-			description: post.description || '',
-			image: {
-				url: post.image.url || '',
-				publicId: post.image.publicId || '',
-			},
-			sale: post.sale || false,
-			discount: post.discount || 0,
-			location: post.location || '',
-			in_stock: post.in_stock,
-			...initialDynamicValues,
-			createdAt: '',
-			seller: {
-				name: undefined,
-				slug: undefined,
-				user: {
-					_id: '',
-					name: {
-						first: '',
-						last: ''
-					},
-					image: undefined
-				}
-			}
-		},
+            product_name: post.product_name || '',
+            category: post.category || '',
+            subcategory: post.subcategory || '',
+            type: post.brand || post.subcategory || '',
+            price: post.price || 0,
+            description: post.description || '',
+            image: {
+                url: post.image.url || '',
+                publicId: post.image.publicId || '',
+            },
+            sale: post.sale || false,
+            discount: post.discount || 0,
+            location: post.location || '',
+            in_stock: post.in_stock,
+            ...initialDynamicValues,
+            createdAt: '',
+            seller: {
+                name: {
+                    first: post.seller?.name?.first || '',
+                    last: post.seller?.name?.last || '',
+                },
+                slug: post.seller?.slug || '',
+            },
+            featured: false,
+        },
         validationSchema: yup.object({
             product_name: yup.string().min(2).required(),
             category: yup.string().required(),

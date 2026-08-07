@@ -29,7 +29,7 @@ function App() {
     const navigate = useNavigate();
 
     // ✅ تفعيل الإشعارات
-    const { isInitialized, error, refreshPushToken } = usePushSync();
+    const { isInitialized, refreshPushToken } = usePushSync();
 
     // ✅ تفعيل Socket Events
     useSocketEvents();
@@ -56,17 +56,6 @@ function App() {
         }
     }, [navigate]);
 
-    // ✅ عرض حالة الإشعارات في الكونسول (للتطوير)
-    useEffect(() => {
-        if (Capacitor.isNativePlatform()) {
-            console.log('🔔 Push Notification Status:', {
-                isInitialized,
-                error: error || '✅ No errors',
-                platform: Capacitor.getPlatform(),
-                hasAuth: !!auth,
-            });
-        }
-    }, [isInitialized, error, auth]);
 
     // ✅ تحديث التوكن بشكل دوري (كل 5 دقائق)
     useEffect(() => {
@@ -172,7 +161,7 @@ function App() {
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
                 <FloatingChats />
-                {/* ✅ إضافة مستمع الإشعارات */}
+                {/* مستمع الإشعارات */}
                 <NotificationListener />
             </Suspense>
             <Footer />
