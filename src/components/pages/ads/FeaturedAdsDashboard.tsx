@@ -13,6 +13,7 @@ import {
     Stack,
     Chip,
     SelectChangeEvent,
+    useTheme,
 } from '@mui/material';
 import axios from 'axios';
 import dayjs from 'dayjs';
@@ -30,6 +31,8 @@ const api = import.meta.env.VITE_API_URL;
 // ─── Plan config ────────────────────────────────────────────────────────────
 
 const FeaturedAdsDashboard = () => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     const [ads, setAds] = useState<FeaturedAd[]>([]);
     const { auth } = useUser();
     const [loading, setLoading] = useState(true);
@@ -64,7 +67,7 @@ const FeaturedAdsDashboard = () => {
     > = {
         homepage: {
             label: t('ads.promotionPackages.homepage.name'),
-            color: '#0f172a',
+            color: isDark ? '#0f172a' : '#f1f5f9',
             accent: '#f59e0b',
             icon: '🏠',
             desc: t('ads.promotionPackages.homepage.description'),
@@ -74,7 +77,7 @@ const FeaturedAdsDashboard = () => {
         },
         top: {
             label: t('ads.promotionPackages.top.name'),
-            color: '#1e1b4b',
+            color: isDark ? '#1e1b4b' : '#eef2ff',
             accent: '#818cf8',
             icon: '🚀',
             desc: t('ads.promotionPackages.top.description'),
@@ -84,7 +87,7 @@ const FeaturedAdsDashboard = () => {
         },
         highlight: {
             label: t('ads.promotionPackages.highlight.name'),
-            color: '#064e3b',
+            color: isDark ? '#064e3b' : '#ecfdf5',
             accent: '#34d399',
             icon: '✨',
             desc: t('ads.promotionPackages.highlight.description'),
@@ -170,6 +173,17 @@ const FeaturedAdsDashboard = () => {
 
     const plan = PLAN_META[selectedPlan];
 
+    // Theme-based color variables
+    const textPrimary = isDark ? '#fff' : '#0f172a';
+    const textSecondary = isDark ? '#94a3b8' : '#475569';
+    const textTertiary = isDark ? '#64748b' : '#64748b';
+    const surfaceColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+    const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+    
+    const selectedCardBg = isDark
+        ? `linear-gradient(135deg, ${plan.color}, #1e293b)`
+        : `linear-gradient(135deg, ${plan.color}, #f8fafc)`;
+
     return (
         <Box
             dir='rtl'
@@ -181,6 +195,7 @@ const FeaturedAdsDashboard = () => {
                 px: { xs: 2, md: 4 },
                 position: 'relative',
                 overflow: 'hidden',
+                bgcolor: isDark ? 'transparent' : '#f8fafc',
                 '&::before': {
                     content: '""',
                     position: 'fixed',
@@ -189,8 +204,9 @@ const FeaturedAdsDashboard = () => {
                     width: '70vw',
                     height: '70vw',
                     borderRadius: '50%',
-                    background:
-                        'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)',
+                    background: isDark
+                        ? `radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)`
+                        : `radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)`,
                     pointerEvents: 'none',
                 },
             }}
@@ -228,7 +244,7 @@ const FeaturedAdsDashboard = () => {
                 <Typography
                     variant='h2'
                     sx={{
-                        color: '#fff',
+                        color: textPrimary,
                         fontWeight: 900,
                         fontSize: { xs: '2rem', md: '3.2rem' },
                         lineHeight: 1.2,
@@ -239,7 +255,7 @@ const FeaturedAdsDashboard = () => {
                 </Typography>
                 <Typography
                     sx={{
-                        color: '#94a3b8',
+                        color: textSecondary,
                         maxWidth: 520,
                         mx: 'auto',
                         fontSize: '1.05rem',
@@ -267,18 +283,21 @@ const FeaturedAdsDashboard = () => {
                                     p: 3.5,
                                     height: '100%',
                                     background: isSelected
-                                        ? `linear-gradient(135deg, ${meta.color}, #1e293b)`
-                                        : 'rgba(255,255,255,0.04)',
-                                    border: `2px solid ${isSelected ? meta.accent : 'rgba(255,255,255,0.08)'}`,
+                                        ? selectedCardBg
+                                        : surfaceColor,
+                                    border: `2px solid ${isSelected ? meta.accent : borderColor}`,
                                     boxShadow: isSelected
                                         ? `0 0 40px ${meta.accent}30`
-                                        : 'none',
+                                        : isDark ? 'none' : '0 4px 12px rgba(0,0,0,0.05)',
                                     transition: 'all 0.3s ease',
                                     position: 'relative',
                                     overflow: 'hidden',
                                     '&:hover': {
                                         border: `2px solid ${meta.accent}80`,
                                         transform: 'translateY(-4px)',
+                                        boxShadow: isDark
+                                            ? `0 8px 30px rgba(0,0,0,0.3)`
+                                            : `0 8px 30px rgba(0,0,0,0.1)`,
                                     },
                                 }}
                             >
@@ -289,7 +308,7 @@ const FeaturedAdsDashboard = () => {
                                             top: 16,
                                             left: 16,
                                             background: meta.accent,
-                                            color: '#000',
+                                            color: isDark ? '#000' : '#fff',
                                             fontSize: '0.65rem',
                                             fontWeight: 800,
                                             px: 1.5,
@@ -308,7 +327,7 @@ const FeaturedAdsDashboard = () => {
                                 </Typography>
                                 <Typography
                                     sx={{
-                                        color: '#fff',
+                                        color: textPrimary,
                                         fontWeight: 800,
                                         fontSize: '1.2rem',
                                         mb: 1,
@@ -318,7 +337,7 @@ const FeaturedAdsDashboard = () => {
                                 </Typography>
                                 <Typography
                                     sx={{
-                                        color: '#94a3b8',
+                                        color: textSecondary,
                                         fontSize: '0.88rem',
                                         mb: 2,
                                         lineHeight: 1.6,
@@ -361,10 +380,14 @@ const FeaturedAdsDashboard = () => {
                     sx={{
                         borderRadius: 4,
                         p: { xs: 3, md: 5 },
-                        background: 'rgba(255,255,255,0.04)',
+                        background: isDark
+                            ? 'rgba(255,255,255,0.04)'
+                            : 'rgba(255,255,255,0.9)',
                         border: `1px solid ${plan.accent}30`,
-                        backdropFilter: 'blur(20px)',
-                        boxShadow: `0 0 60px ${plan.accent}10`,
+                        backdropFilter: isDark ? 'blur(20px)' : 'none',
+                        boxShadow: isDark
+                            ? `0 0 60px ${plan.accent}10`
+                            : `0 8px 40px rgba(0,0,0,0.08)`,
                         transition:
                             'box-shadow 0.4s ease, border-color 0.4s ease',
                     }}
@@ -395,7 +418,7 @@ const FeaturedAdsDashboard = () => {
                         <Box>
                             <Typography
                                 sx={{
-                                    color: '#fff',
+                                    color: textPrimary,
                                     fontWeight: 800,
                                     fontSize: '1.2rem',
                                 }}
@@ -403,7 +426,10 @@ const FeaturedAdsDashboard = () => {
                                 شراء باقة {plan.label}
                             </Typography>
                             <Typography
-                                sx={{ color: '#64748b', fontSize: '0.85rem' }}
+                                sx={{
+                                    color: textTertiary,
+                                    fontSize: '0.85rem',
+                                }}
                             >
                                 أكمل البيانات أدناه واتجه للدفع
                             </Typography>
@@ -414,7 +440,7 @@ const FeaturedAdsDashboard = () => {
                         {/* Listing select */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: '#64748b' }}>
+                                <InputLabel sx={{ color: textTertiary }}>
                                     اختر إعلانك
                                 </InputLabel>
                                 <Select
@@ -422,7 +448,7 @@ const FeaturedAdsDashboard = () => {
                                     value={newAd.listingId}
                                     onChange={handleSelectChange}
                                     label='اختر إعلانك'
-                                    sx={selectSx(plan.accent)}
+                                    sx={selectSx(plan.accent, isDark)}
                                 >
                                     {userListings.map((listing) => (
                                         <MenuItem
@@ -440,7 +466,7 @@ const FeaturedAdsDashboard = () => {
                         {/* Type select */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <InputLabel sx={{ color: '#64748b' }}>
+                                <InputLabel sx={{ color: textTertiary }}>
                                     نوع الترويج
                                 </InputLabel>
                                 <Select
@@ -448,7 +474,7 @@ const FeaturedAdsDashboard = () => {
                                     value={newAd.type}
                                     onChange={handleSelectChange}
                                     label='نوع الترويج'
-                                    sx={selectSx(plan.accent)}
+                                    sx={selectSx(plan.accent, isDark)}
                                 >
                                     <MenuItem value='homepage'>
                                         🏠 الصفحة الرئيسية
@@ -473,7 +499,7 @@ const FeaturedAdsDashboard = () => {
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
-                                sx={inputSx(plan.accent)}
+                                sx={inputSx(plan.accent, isDark)}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
@@ -485,7 +511,7 @@ const FeaturedAdsDashboard = () => {
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
-                                sx={inputSx(plan.accent)}
+                                sx={inputSx(plan.accent, isDark)}
                             />
                         </Grid>
 
@@ -504,12 +530,12 @@ const FeaturedAdsDashboard = () => {
                             >
                                 <Typography
                                     sx={{
-                                        color: '#94a3b8',
+                                        color: textSecondary,
                                         fontSize: '0.9rem',
                                     }}
                                 >
                                     المدة:{' '}
-                                    <strong style={{ color: '#e2e8f0' }}>
+                                    <strong style={{ color: textPrimary }}>
                                         {dayjs(newAd.endDate).diff(
                                             dayjs(newAd.startDate),
                                             'day',
@@ -543,7 +569,7 @@ const FeaturedAdsDashboard = () => {
                                     fontWeight: 800,
                                     fontFamily: 'inherit',
                                     background: `linear-gradient(90deg, ${plan.accent}, ${plan.accent}cc)`,
-                                    color: '#000',
+                                    color: isDark ? '#000' : '#fff',
                                     boxShadow: `0 4px 30px ${plan.accent}40`,
                                     '&:hover': {
                                         background: `linear-gradient(90deg, ${plan.accent}ee, ${plan.accent})`,
@@ -552,7 +578,7 @@ const FeaturedAdsDashboard = () => {
                                     },
                                     '&:disabled': {
                                         opacity: 0.5,
-                                        color: '#000',
+                                        color: isDark ? '#000' : '#fff',
                                     },
                                     transition: 'all 0.25s ease',
                                 }}
@@ -560,7 +586,7 @@ const FeaturedAdsDashboard = () => {
                                 {saving ? (
                                     <CircularProgress
                                         size={24}
-                                        sx={{ color: '#000' }}
+                                        sx={{ color: isDark ? '#000' : '#fff' }}
                                     />
                                 ) : (
                                     `💳 ادفع الآن — ${plan.price}`
@@ -579,11 +605,13 @@ const FeaturedAdsDashboard = () => {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         mb: 3,
+                        flexWrap: 'wrap',
+                        gap: 2,
                     }}
                 >
                     <Typography
                         sx={{
-                            color: '#fff',
+                            color: textPrimary,
                             fontWeight: 800,
                             fontSize: '1.3rem',
                         }}
@@ -624,18 +652,24 @@ const FeaturedAdsDashboard = () => {
                             textAlign: 'center',
                             py: 10,
                             borderRadius: 4,
-                            border: '1px dashed rgba(255,255,255,0.1)',
+                            border: `1px dashed ${borderColor}`,
+                            bgcolor: surfaceColor,
                         }}
                     >
                         <Typography sx={{ fontSize: '3rem', mb: 2 }}>
                             📭
                         </Typography>
-                        <Typography sx={{ color: '#64748b', fontSize: '1rem' }}>
+                        <Typography
+                            sx={{
+                                color: textSecondary,
+                                fontSize: '1rem',
+                            }}
+                        >
                             لا توجد إعلانات ترويجية بعد
                         </Typography>
                         <Typography
                             sx={{
-                                color: '#475569',
+                                color: textTertiary,
                                 fontSize: '0.85rem',
                                 mt: 1,
                             }}
@@ -665,12 +699,20 @@ const FeaturedAdsDashboard = () => {
                                             borderRadius: 3,
                                             p: 3,
                                             background: isActive
-                                                ? `linear-gradient(135deg, ${meta.color}cc, #1e293b)`
-                                                : 'rgba(255,255,255,0.03)',
-                                            border: `1px solid ${isActive ? meta.accent + '40' : 'rgba(255,255,255,0.07)'}`,
-                                            transition: 'transform 0.2s ease',
+                                                ? isDark
+                                                    ? `linear-gradient(135deg, ${meta.color}cc, #1e293b)`
+                                                    : `linear-gradient(135deg, ${meta.color}, #f8fafc)`
+                                                : surfaceColor,
+                                            border: `1px solid ${isActive ? meta.accent + '40' : borderColor}`,
+                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                            boxShadow: isDark
+                                                ? 'none'
+                                                : '0 2px 8px rgba(0,0,0,0.04)',
                                             '&:hover': {
                                                 transform: 'translateY(-3px)',
+                                                boxShadow: isDark
+                                                    ? '0 8px 30px rgba(0,0,0,0.3)'
+                                                    : '0 8px 30px rgba(0,0,0,0.08)',
                                             },
                                         }}
                                     >
@@ -696,7 +738,9 @@ const FeaturedAdsDashboard = () => {
                                                 sx={{
                                                     background: isActive
                                                         ? `${meta.accent}20`
-                                                        : 'rgba(239,68,68,0.15)',
+                                                        : isDark
+                                                        ? 'rgba(239,68,68,0.15)'
+                                                        : 'rgba(239,68,68,0.1)',
                                                     color: isActive
                                                         ? meta.accent
                                                         : '#f87171',
@@ -708,7 +752,7 @@ const FeaturedAdsDashboard = () => {
                                         </Box>
                                         <Typography
                                             sx={{
-                                                color: '#e2e8f0',
+                                                color: textPrimary,
                                                 fontWeight: 700,
                                                 mb: 0.5,
                                                 fontSize: '0.95rem',
@@ -729,7 +773,7 @@ const FeaturedAdsDashboard = () => {
                                         </Typography>
                                         <Typography
                                             sx={{
-                                                color: '#64748b',
+                                                color: textTertiary,
                                                 fontSize: '0.8rem',
                                             }}
                                         >
@@ -748,20 +792,22 @@ const FeaturedAdsDashboard = () => {
 };
 
 // ─── Shared style helpers ───────────────────────────────────────────────────
-const selectSx = (accent: string) => ({
-    color: '#e2e8f0',
+const selectSx = (accent: string, isDark: boolean) => ({
+    color: isDark ? '#e2e8f0' : '#0f172a',
     '.MuiOutlinedInput-notchedOutline': {
-        borderColor: 'rgba(255,255,255,0.12)',
+        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
     },
     '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: `${accent}60` },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: accent },
-    '.MuiSvgIcon-root': { color: '#64748b' },
+    '.MuiSvgIcon-root': { color: isDark ? '#64748b' : '#94a3b8' },
 });
 
-const inputSx = (accent: string) => ({
-    '& .MuiInputBase-root': { color: '#e2e8f0' },
+const inputSx = (accent: string, isDark: boolean) => ({
+    '& .MuiInputBase-root': { 
+        color: isDark ? '#e2e8f0' : '#0f172a' 
+    },
     '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: 'rgba(255,255,255,0.12)',
+        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
     },
     '& .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,
@@ -769,9 +815,13 @@ const inputSx = (accent: string) => ({
     '& .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: accent,
     },
-    '& .MuiInputLabel-root': { color: '#64748b' },
+    '& .MuiInputLabel-root': { 
+        color: isDark ? '#64748b' : '#94a3b8' 
+    },
     '& .MuiInputLabel-root.Mui-focused': { color: accent },
-    '& input': { colorScheme: 'dark' },
+    '& input': { 
+        colorScheme: isDark ? 'dark' : 'light' 
+    },
 });
 
 export default FeaturedAdsDashboard;
