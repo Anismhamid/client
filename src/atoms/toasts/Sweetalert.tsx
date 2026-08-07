@@ -47,7 +47,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 					onHide();
 				});
 		}
-	}, [show]);
+	}, [description, handleDelete, onHide, show, title]);
 	return null;
 };
 
