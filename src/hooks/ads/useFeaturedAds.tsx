@@ -1,4 +1,4 @@
-// hooks/useFeaturedAds.ts (new file)
+// hooks/useFeaturedAds.ts
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FeaturedAd } from '../../interfaces/featuredAd';
@@ -6,16 +6,32 @@ import { FeaturedAd } from '../../interfaces/featuredAd';
 const api = `${import.meta.env.VITE_API_URL}/featured-ads`;
 
 export const useHomePageAds = () => {
-    const [homePageAds, setHomePageAds] = useState<FeaturedAd[]>([]); // ← FeaturedAd[]
+    const [homePageAds, setHomePageAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        console.log('🚀 جلب الإعلانات المميزة من:', `${api}/homepage`);
+        
         axios
             .get(`${api}/homepage`)
             .then(({ data }) => {
+                console.log('✅ بيانات الإعلانات المستلمة:', data);
+                console.log('📊 عدد الإعلانات:', data.ads?.length ?? 0);
+                console.log('📋 تفاصيل الإعلانات:', data.ads);
+                
+                // تأكد من أن البيانات صحيحة
+                if (data.ads && data.ads.length > 0) {
+                    console.log('✅ تم العثور على إعلانات مميزة!');
+                } else {
+                    console.warn('⚠️ لا توجد إعلانات مميزة في قاعدة البيانات');
+                }
+                
                 setHomePageAds(data.ads ?? []);
             })
-            .catch(console.error)
+            .catch((err) => {
+                console.error('❌ خطأ في جلب الإعلانات:', err);
+                console.error('❌ تفاصيل الخطأ:', err.response?.data || err.message);
+            })
             .finally(() => setLoading(false));
     }, []);
 
@@ -28,14 +44,17 @@ export const useHighlightAds = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log('🚀 جلب الإعلانات المضيئة من:', `${api}/highlight`);
+        
         axios
             .get(`${api}/highlight`)
             .then(({ data }) => {
+                console.log('✅ بيانات الإعلانات المضيئة:', data);
                 setAds(data.ads ?? []);
                 setError(null);
             })
             .catch((err) => {
-                console.error(err);
+                console.error('❌ خطأ في تحميل الإعلانات المضيئة:', err);
                 setError('حدث خطأ في تحميل الإعلانات المميزة جداً');
             })
             .finally(() => setLoading(false));
@@ -51,14 +70,17 @@ export const useTopAds = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        console.log('🚀 جلب أفضل الإعلانات من:', `${api}/top`);
+        
         axios
             .get(`${api}/top`)
             .then(({ data }) => {
+                console.log('✅ بيانات أفضل الإعلانات:', data);
                 setAds(data.ads ?? []);
                 setError(null);
             })
             .catch((err) => {
-                console.error(err);
+                console.error('❌ خطأ في تحميل أفضل الإعلانات:', err);
                 setError('حدث خطأ في تحميل أفضل الإعلانات');
             })
             .finally(() => setLoading(false));

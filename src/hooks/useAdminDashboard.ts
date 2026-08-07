@@ -88,7 +88,7 @@ export const useAdminDashboard = (role: string) => {
                     .map((post) => ({
                         ...post,
                         userData: users.find(
-                            (u) => u._id === post.seller?.user?._id,
+                            (u) => u._id === post.seller?._id,
                         ) as User,
                     }));
 
