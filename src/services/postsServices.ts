@@ -86,7 +86,7 @@ export const getRelatedPostsAdvanced = async (
  */
 export const updatePost = async (postId: string, updatedPost: Posts) => {
     try {
-        const post = await axios.put(`${api}/Posts/${postId}`, updatedPost, {
+        const post = await axios.put(`${api}/posts/${postId}`, updatedPost, {
             headers: {
                 Authorization: localStorage.getItem('token'),
                 'Content-Type': 'application/json',

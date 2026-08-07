@@ -2,12 +2,13 @@ import { FunctionComponent, useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import { initialProductValue, Posts } from '../../../interfaces/Posts';
 import * as yup from 'yup';
-import { Modal, ModalHeader } from 'react-bootstrap';
 import { getPostById, updatePost } from '../../../services/postsServices';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../../locales/handleRTL';
 import ProductForm, { DynamicField } from './PostForm';
 import { categoriesLogic } from '../../../interfaces/postLogicMap';
+import { Dialog, DialogTitle, Typography, IconButton, DialogContent, Box } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface UpdateProductModalProps {
     show: boolean;
@@ -15,6 +16,9 @@ interface UpdateProductModalProps {
     postId: string;
     refresh: () => void;
 }
+
+const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     show,
@@ -123,33 +127,46 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
 
     return (
         <>
-            <Modal
-                style={{ zIndex: 2000 }}
-                show={show}
-                onHide={() => onHide()}
-                centered
-                dir={dir}
+            <Dialog
+            open={show}
+            onClose={onHide}
+            fullWidth
+            maxWidth='sm'
+            dir={dir}
+            sx={{ '& .MuiDialog-paper': { borderRadius: '16px', overflow: 'hidden' } }}
+        >
+            <DialogTitle
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: GRADIENT,
+                    color: '#fff',
+                    py: 1.75,
+                }}
             >
-                <ModalHeader closeButton>
-                    <h6 className='display-6 p-2 fw-bold text-center'>
-                        {t('modals.updateProductModal.title')}
-                    </h6>
-                </ModalHeader>
+                <Typography variant='h6' fontWeight='bold'>
+                    {t('modals.updateProductModal.title')}
+                </Typography>
+                <IconButton onClick={onHide} size='small' sx={{ color: '#fff' }}>
+                    <CloseIcon fontSize='small' />
+                </IconButton>
+            </DialogTitle>
 
-                <Modal.Body className='rounded d-flex justify-content-center align-items-center'>
-                    <div className='container'>
-                        <ProductForm
-                            imageData={imageData}
-                            formik={formik}
-                            mode='update'
-                            imageFile={imageFile}
-                            setImageFile={setImageFile}
-                            setImageData={setImageData}
-                            onHide={() => onHide()}
-                        />
-                    </div>
-                </Modal.Body>
-            </Modal>
+            <DialogContent sx={{ pt: 3 }}>
+                <Box>
+                    <ProductForm
+                        imageData={imageData}
+                        formik={formik}
+                        mode='update'
+                        imageFile={imageFile}
+                        setImageFile={setImageFile}
+                        setImageData={setImageData}
+                        onHide={onHide}
+                    />
+                </Box>
+            </DialogContent>
+        </Dialog>
         </>
     );
 };
