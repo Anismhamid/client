@@ -86,10 +86,10 @@ export const getRelatedPostsAdvanced = async (
  */
 export const updatePost = async (postId: string, updatedPost: Posts) => {
     try {
+        const token = localStorage.getItem('token');
         const post = await axios.put(`${api}/posts/${postId}`, updatedPost, {
             headers: {
-                Authorization: localStorage.getItem('token'),
-                'Content-Type': 'application/json',
+                Authorization: token,
             },
         });
         return post.data;

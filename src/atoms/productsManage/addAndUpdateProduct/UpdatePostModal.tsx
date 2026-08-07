@@ -7,7 +7,14 @@ import { useTranslation } from 'react-i18next';
 import handleRTL from '../../../locales/handleRTL';
 import ProductForm, { DynamicField } from './PostForm';
 import { categoriesLogic } from '../../../interfaces/postLogicMap';
-import { Dialog, DialogTitle, Typography, IconButton, DialogContent, Box } from '@mui/material';
+import {
+    Dialog,
+    DialogTitle,
+    Typography,
+    IconButton,
+    DialogContent,
+    Box,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface UpdateProductModalProps {
@@ -18,7 +25,6 @@ interface UpdateProductModalProps {
 }
 
 const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
-
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     show,
@@ -76,7 +82,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
             product_name: post.product_name || '',
             category: post.category || '',
             subcategory: post.subcategory || '',
-            type: post.brand || post.subcategory || '',
+            type: post.type || post.subcategory || '',
             price: post.price || 0,
             description: post.description || '',
             image: {
@@ -89,13 +95,6 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
             in_stock: post.in_stock,
             ...initialDynamicValues,
             createdAt: '',
-            seller: {
-                name: {
-                    first: post.seller?.name?.first || '',
-                    last: post.seller?.name?.last || '',
-                },
-                slug: post.seller?.slug || '',
-            },
             featured: false,
         },
         validationSchema: yup.object({
@@ -128,45 +127,54 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     return (
         <>
             <Dialog
-            open={show}
-            onClose={onHide}
-            fullWidth
-            maxWidth='sm'
-            dir={dir}
-            sx={{ '& .MuiDialog-paper': { borderRadius: '16px', overflow: 'hidden' } }}
-        >
-            <DialogTitle
+                open={show}
+                onClose={onHide}
+                fullWidth
+                maxWidth='sm'
+                dir={dir}
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    background: GRADIENT,
-                    color: '#fff',
-                    py: 1.75,
+                    '& .MuiDialog-paper': {
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                    },
                 }}
             >
-                <Typography variant='h6' fontWeight='bold'>
-                    {t('modals.updateProductModal.title')}
-                </Typography>
-                <IconButton onClick={onHide} size='small' sx={{ color: '#fff' }}>
-                    <CloseIcon fontSize='small' />
-                </IconButton>
-            </DialogTitle>
+                <DialogTitle
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        background: GRADIENT,
+                        color: '#fff',
+                        py: 1.75,
+                    }}
+                >
+                    <Typography variant='h6' fontWeight='bold'>
+                        {t('modals.updateProductModal.title')}
+                    </Typography>
+                    <IconButton
+                        onClick={onHide}
+                        size='small'
+                        sx={{ color: '#fff' }}
+                    >
+                        <CloseIcon fontSize='small' />
+                    </IconButton>
+                </DialogTitle>
 
-            <DialogContent sx={{ pt: 3 }}>
-                <Box>
-                    <ProductForm
-                        imageData={imageData}
-                        formik={formik}
-                        mode='update'
-                        imageFile={imageFile}
-                        setImageFile={setImageFile}
-                        setImageData={setImageData}
-                        onHide={onHide}
-                    />
-                </Box>
-            </DialogContent>
-        </Dialog>
+                <DialogContent sx={{ pt: 3 }}>
+                    <Box>
+                        <ProductForm
+                            imageData={imageData}
+                            formik={formik}
+                            mode='update'
+                            imageFile={imageFile}
+                            setImageFile={setImageFile}
+                            setImageData={setImageData}
+                            onHide={onHide}
+                        />
+                    </Box>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
