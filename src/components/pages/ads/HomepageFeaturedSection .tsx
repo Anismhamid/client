@@ -154,30 +154,61 @@ function getCategoryIcon(category?: string, size = 24) {
 
 /* ── Skeleton card ──────────────────────────────────── */
 function AdCardSkeleton() {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
+    
     return (
         <Card
             sx={{
                 borderRadius: 3,
                 overflow: 'hidden',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                boxShadow: isDark 
+                    ? '0 1px 3px rgba(0,0,0,0.3)' 
+                    : '0 1px 3px rgba(0,0,0,0.05)',
+                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
             }}
         >
-            <Skeleton variant='rectangular' height={200} animation='wave' />
+            <Skeleton 
+                variant='rectangular' 
+                height={200} 
+                animation='wave'
+                sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+            />
             <CardContent>
                 <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
-                    <Skeleton variant='circular' width={40} height={40} />
+                    <Skeleton 
+                        variant='circular' 
+                        width={40} 
+                        height={40}
+                        sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                    />
                     <Box sx={{ flex: 1 }}>
-                        <Skeleton variant='text' width='80%' height={24} />
-                        <Skeleton variant='text' width='60%' height={20} />
+                        <Skeleton 
+                            variant='text' 
+                            width='80%' 
+                            height={24}
+                            sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                        />
+                        <Skeleton 
+                            variant='text' 
+                            width='60%' 
+                            height={20}
+                            sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                        />
                     </Box>
                 </Stack>
                 <Skeleton
                     variant='text'
                     width='90%'
                     height={32}
-                    sx={{ mb: 1 }}
+                    sx={{ mb: 1, bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
                 />
-                <Skeleton variant='text' width='70%' height={20} />
+                <Skeleton 
+                    variant='text' 
+                    width='70%' 
+                    height={20}
+                    sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                />
             </CardContent>
         </Card>
     );
@@ -221,11 +252,13 @@ export function HomepageAdCard({
     index: number;
 }) {
     const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     const listing = ad.listingId;
     const navigate = useNavigate();
     const path = `${productsPathes.postsDetails}/${listing?.category}/Ads/${listing?._id}`;
 
     if (!listing) return null;
+    
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -240,13 +273,17 @@ export function HomepageAdCard({
                     position: 'relative',
                     borderRadius: 3,
                     overflow: 'hidden',
-
                     cursor: 'pointer',
                     transition: 'all 0.25s ease-in-out',
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                    boxShadow: isDark 
+                        ? '0 2px 8px rgba(0,0,0,0.3)' 
+                        : '0 2px 8px rgba(0,0,0,0.06)',
+                    bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
                     '&:hover': {
                         transform: 'translateY(-6px)',
-                        boxShadow: '0 12px 24px rgba(0,0,0,0.12)',
+                        boxShadow: isDark 
+                            ? '0 12px 24px rgba(0,0,0,0.5)'
+                            : '0 12px 24px rgba(0,0,0,0.12)',
                         '& .media-overlay': { opacity: 1 },
                         '& .view-button': {
                             opacity: 1,
@@ -310,7 +347,7 @@ export function HomepageAdCard({
                                     theme.palette.common.black,
                                     0.75,
                                 ),
-                                color: theme.palette.success.light,
+                                color: isDark ? '#4caf50' : '#2e7d32',
                                 fontWeight: 700,
                                 fontSize: 14,
                                 backdropFilter: 'blur(4px)',
@@ -355,7 +392,7 @@ export function HomepageAdCard({
                             <Typography
                                 variant='h6'
                                 fontWeight={700}
-                                sx={{ lineHeight: 1.3 }}
+                                sx={{ lineHeight: 1.3, color: isDark ? '#fff' : 'inherit' }}
                             >
                                 {listing.product_name}
                             </Typography>
@@ -416,6 +453,7 @@ export function HomepageAdCard({
                             textTransform: 'none',
                             fontWeight: 600,
                             borderColor: alpha(theme.palette.primary.main, 0.3),
+                            color: isDark ? '#fff' : 'inherit',
                             '&:hover': {
                                 borderColor: theme.palette.primary.main,
                                 bgcolor: alpha(
@@ -442,12 +480,13 @@ function CategorySection({
     ads: FeaturedAd[];
     categoryInfo: (typeof CATEGORY_META)[string];
 }) {
-    const Icon = categoryInfo.icon;
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     if (ads.length === 0) return null;
 
     return (
-        <Container component={'article'} sx={{ mb: 5 }}>
+        <Container component={'article'} sx={{ mb: 5, px: { xs: 0, sm: 0 } }}>
             <Stack
                 direction='row'
                 alignItems='center'
@@ -458,10 +497,10 @@ function CategorySection({
                     pr: 2,
                 }}
             >
-                {Icon && (
-                    <Icon sx={{ fontSize: 28, color: categoryInfo.color }} />
+                {categoryInfo.icon && (
+                    <categoryInfo.icon sx={{ fontSize: 28, color: categoryInfo.color }} />
                 )}
-                <Typography variant='h6' fontWeight={700}>
+                <Typography variant='h6' fontWeight={700} sx={{ color: isDark ? '#fff' : 'inherit' }}>
                     {categoryInfo.label}
                 </Typography>
                 <Chip
@@ -477,7 +516,9 @@ function CategorySection({
 
             <Grid container spacing={2.5}>
                 {ads.map((ad, idx) => (
-                    <HomepageAdCard ad={ad} index={idx} />
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
+                        <HomepageAdCard ad={ad} index={idx} />
+                    </Grid>
                 ))}
             </Grid>
         </Container>
@@ -493,6 +534,7 @@ export default function HomepageFeaturedSection({
     onViewAll,
 }: HomepageFeaturedSectionProps) {
     const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
     const { homePageAds, loading } = useHomePageAds();
     const [selectedTab, setSelectedTab] = useState<string>('all');
     const { t } = useTranslation();
@@ -536,8 +578,9 @@ export default function HomepageFeaturedSection({
             sx={{
                 px: { xs: 2, sm: 3, md: 4 },
                 py: { xs: 3, md: 4 },
-                bgcolor: 'background.default',
+                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'background.default',
                 borderRadius: 3,
+                border: isDark ? '1px solid rgba(255,255,255,0.08)' : 'none',
             }}
         >
             {/* Header Section */}
@@ -572,7 +615,7 @@ export default function HomepageFeaturedSection({
                         <Typography
                             variant='h5'
                             fontWeight={800}
-                            sx={{ mb: 0.5 }}
+                            sx={{ mb: 0.5, color: isDark ? '#fff' : 'inherit' }}
                         >
                             {t('ads.financed')}
                         </Typography>
@@ -623,6 +666,7 @@ export default function HomepageFeaturedSection({
                                 fontSize: '0.9rem',
                                 minWidth: 'auto',
                                 px: 2,
+                                color: isDark ? 'rgba(255,255,255,0.7)' : 'inherit',
                             },
                             '& .Mui-selected': {
                                 color: theme.palette.primary.main,
