@@ -17,7 +17,7 @@ const NotificationListener = () => {
 
             // عرض الإشعار داخل التطبيق باستخدام react-toastify
             toast.info(notification.title || '📬 إشعار جديد', {
-                position: "top-right",
+                position: 'top-right',
                 autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
@@ -27,16 +27,28 @@ const NotificationListener = () => {
                     // التنقل عند الضغط على الإشعار
                     if (notification.data?.screen) {
                         navigate(notification.data.screen);
-                    } else if (notification.data?.type === 'chat' && notification.data?.userId) {
-                        navigate(`/chat/${notification.data.userId}`);
-                    } else if (notification.data?.type === 'order' && notification.data?.orderId) {
+                    } else if (
+                        notification.data?.type === 'chat' &&
+                        notification.data?.userId
+                    ) {
+                        navigate(`/chat`);
+                    } else if (
+                        notification.data?.type === 'order' &&
+                        notification.data?.orderId
+                    ) {
                         navigate(`/orders/${notification.data.orderId}`);
-                    } else if (notification.data?.type === 'product' && notification.data?.productId) {
+                    } else if (
+                        notification.data?.type === 'product' &&
+                        notification.data?.productId
+                    ) {
                         navigate(`/product/${notification.data.productId}`);
-                    } else if (notification.data?.type === 'profile' && notification.data?.userId) {
+                    } else if (
+                        notification.data?.type === 'profile' &&
+                        notification.data?.userId
+                    ) {
                         navigate(`/profile/${notification.data.userId}`);
                     }
-                }
+                },
             });
         };
 
@@ -44,12 +56,12 @@ const NotificationListener = () => {
         const handleNotificationClick = (event: CustomEvent) => {
             const data = event.detail;
             console.log('👆 Notification clicked:', data);
-            
+
             // التنقل حسب نوع الإشعار
             if (data?.screen) {
                 navigate(data.screen);
             } else if (data?.type === 'chat' && data?.userId) {
-                navigate(`/chat/${data.userId}`);
+                navigate(`/chat`);
             } else if (data?.type === 'order' && data?.orderId) {
                 navigate(`/orders/${data.orderId}`);
             } else if (data?.type === 'product' && data?.productId) {
@@ -60,17 +72,29 @@ const NotificationListener = () => {
         };
 
         // إضافة المستمعين
-        window.addEventListener('push-notification-received', handleNotification as EventListener);
-        window.addEventListener('push-notification-clicked', handleNotificationClick as EventListener);
+        window.addEventListener(
+            'push-notification-received',
+            handleNotification as EventListener,
+        );
+        window.addEventListener(
+            'push-notification-clicked',
+            handleNotificationClick as EventListener,
+        );
 
         // تنظيف
         return () => {
-            window.removeEventListener('push-notification-received', handleNotification as EventListener);
-            window.removeEventListener('push-notification-clicked', handleNotificationClick as EventListener);
+            window.removeEventListener(
+                'push-notification-received',
+                handleNotification as EventListener,
+            );
+            window.removeEventListener(
+                'push-notification-clicked',
+                handleNotificationClick as EventListener,
+            );
         };
     }, [navigate]);
 
-    return null; // هذا المكون لا يعرض أي شيء
+    return null;
 };
 
 export default NotificationListener;

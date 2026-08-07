@@ -3,6 +3,7 @@ package com.safqa.app;
 import android.os.Bundle;
 
 import com.getcapacitor.BridgeActivity;
+import com.safqa.app.SettingsPlugin;
 
 public class MainActivity extends BridgeActivity {
 
@@ -11,7 +12,7 @@ public class MainActivity extends BridgeActivity {
 
         registerPlugin(AutofillHelperPlugin.class);
         registerPlugin(CredentialHelperPlugin.class);
-        registerPlugin(NotificationSettingsPlugin.class);
+        registerPlugin(SettingsPlugin.class);
 
         super.onCreate(savedInstanceState);
     }
