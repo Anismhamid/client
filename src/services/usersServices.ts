@@ -3,8 +3,8 @@ import axios from 'axios';
 import { EditUserProfile, UserLogin, UserRegister } from '../interfaces/User';
 import { showError, showSuccess } from '../atoms/toasts/ReactToast';
 import { jwtDecode } from 'jwt-decode';
-import GoogleJwtPayload from '../interfaces/google';
 import { CompleteUserPayload } from '../interfaces/completeProfile';
+import { DecodedGooglePayload } from '../interfaces/google';
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -36,7 +36,7 @@ export const registerNewUser = async (newUserData: UserRegister) => {
  */
 export const handleGoogleLogin = async (response: any, extraData: any) => {
     try {
-        const decoded = jwtDecode<GoogleJwtPayload>(response.credential);
+        const decoded = jwtDecode<DecodedGooglePayload>(response.credential);
         const { email, given_name, family_name, picture, sub } = decoded;
 
         if (!email || !sub) {
@@ -94,9 +94,9 @@ export const verifyGoogleToken = async (token: string) => {
 };
 
 /**
- * 
- * @param googleId 
- * @returns 
+ *
+ * @param googleId
+ * @returns
  */
 export const verifyGoogleUser = async (googleId: string) => {
     try {
@@ -338,4 +338,11 @@ export const checkSlugAvailability = async (slug: string): Promise<boolean> => {
         console.error('Error checking slug availability:', error);
         throw error;
     }
+};
+
+export const forgotPassword = async (email: string): Promise<string> => {
+    const { data } = await axios.post(`${api}/forgot-password`, {
+        email,
+    });
+    return data.message;
 };
