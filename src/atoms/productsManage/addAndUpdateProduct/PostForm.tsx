@@ -20,7 +20,7 @@ import {
 import { FormikProps } from 'formik';
 import { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CarColor, colors } from '../../colorsSettings/carsColors';
+import { colors } from '../../colorsSettings/carsColors';
 import { Posts } from '../../../interfaces/Posts';
 import { deleteImage, uploadImage } from '../../../services/uploadImage';
 import {
@@ -167,8 +167,11 @@ const PostForm: FunctionComponent<PostFormProps> = ({
     }, [formik.values.category]);
 
     const getFieldLabel = useCallback(
-        (name: string, required?: boolean) => {
-            const label = t(`fields.labels.${name}`, { defaultValue: name });
+        (category: CategoryValue, name: string, required?: boolean) => {
+            const label = t(`categories.${category}.fields.${name}`, {
+                defaultValue: name,
+            });
+
             return required ? `${label} *` : label;
         },
         [t],
@@ -214,10 +217,11 @@ const PostForm: FunctionComponent<PostFormProps> = ({
         } else if (typeof rawValue === 'boolean') {
             fieldValue = rawValue ? 'true' : 'false';
         }
+        const category = formik.values.category as CategoryValue;
 
         const isRequired = field.required;
         const error = formik.touched[fieldName] && formik.errors[fieldName];
-        const fieldLabel = getFieldLabel(field.name, isRequired);
+        const fieldLabel = getFieldLabel(category, field.name, isRequired);
 
         switch (field.type) {
             case 'text':
@@ -234,7 +238,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                         helperText={error as string}
                         required={isRequired}
                         placeholder={
-                            t(`fields.placeholder.${field.name}`, {
+                            t(`categories.${category}.fields.${field.name}`, {
                                 defaultValue: field.name,
                             }) as string
                         }
@@ -281,17 +285,28 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                             onBlur={formik.handleBlur}
                         >
                             <MenuItem value=''>
-                                {t(`fields.select.${field.name}`, {
-                                    defaultValue: `اختر ${field.name}`,
-                                })}
+                                {t(
+                                    `categories.${category}.fields.${field.name}`,
+                                    {
+                                        defaultValue: `Select ${field.name}`,
+                                    },
+                                )}
                             </MenuItem>
-                            {field.options?.map((option) => (
-                                <MenuItem key={option} value={option}>
-                                    {t(`options.${option}`, {
-                                        defaultValue: option,
-                                    })}
-                                </MenuItem>
-                            ))}
+                            {field.options?.map((option) => {
+                                const category = formik.values
+                                    .category as CategoryValue;
+
+                                return (
+                                    <MenuItem key={option} value={option}>
+                                        {t(
+                                            `categories.${category}.fields.${field.name}Options.${option}`,
+                                            {
+                                                defaultValue: option,
+                                            },
+                                        )}
+                                    </MenuItem>
+                                );
+                            })}
                         </Select>
                         {error && (
                             <FormHelperText>{error as string}</FormHelperText>
@@ -299,30 +314,44 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                     </FormControl>
                 );
 
-            case 'color':
+            case 'color': {
+                const selectedColor = colors.find(
+                    (color) => color.key === fieldValue,
+                );
+
                 return (
                     <Stack gap={1}>
-                        <FormControl fullWidth size='small'>
-                            <InputLabel>
-                                {t('modals.addProductModal.color')}
-                            </InputLabel>
+                        <FormControl
+                            fullWidth
+                            size='small'
+                            error={Boolean(error)}
+                            required={isRequired}
+                        >
+                            <InputLabel>{fieldLabel}</InputLabel>
+
                             <Select
-                                name='color'
-                                value={formik.values.color || ''}
-                                label={t('modals.addProductModal.color')}
-                                onChange={(e) =>
+                                name={field.name}
+                                value={fieldValue}
+                                label={fieldLabel}
+                                onChange={(e) => {
                                     formik.setFieldValue(
-                                        'color',
+                                        field.name,
                                         e.target.value,
-                                    )
-                                }
+                                    );
+                                }}
                                 onBlur={formik.handleBlur}
                             >
                                 <MenuItem value=''>
-                                    {t('modals.addProductModal.selectColor')}
+                                    {t(
+                                        `categories.${category}.fields.${field.name}`,
+                                        {
+                                            defaultValue: 'Select color',
+                                        },
+                                    )}
                                 </MenuItem>
-                                {colors.map((color: CarColor) => (
-                                    <MenuItem key={color.hex} value={color.hex}>
+
+                                {colors.map((color) => (
+                                    <MenuItem key={color.key} value={color.key}>
                                         <Stack
                                             direction='row'
                                             alignItems='center'
@@ -330,43 +359,60 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                                         >
                                             <Box
                                                 sx={{
-                                                    width: 16,
-                                                    height: 16,
-                                                    borderRadius: '4px',
+                                                    width: 18,
+                                                    height: 18,
+                                                    borderRadius: '5px',
                                                     bgcolor: color.hex,
                                                     border: '1px solid',
                                                     borderColor: 'divider',
+                                                    flexShrink: 0,
                                                 }}
                                             />
-                                            {color.key}
+
+                                            <Typography variant='body2'>
+                                                {t(`colors.${color.key}`, {
+                                                    defaultValue: color.key,
+                                                })}
+                                            </Typography>
                                         </Stack>
                                     </MenuItem>
                                 ))}
                             </Select>
+
+                            {error && (
+                                <FormHelperText>
+                                    {error as string}
+                                </FormHelperText>
+                            )}
                         </FormControl>
-                        {formik.values.color && (
+
+                        {/* Selected color preview */}
+                        {selectedColor && (
                             <Stack direction='row' alignItems='center' gap={1}>
                                 <Box
                                     sx={{
                                         width: 20,
                                         height: 20,
                                         borderRadius: '6px',
-                                        bgcolor: formik.values.color,
+                                        bgcolor: selectedColor.hex,
                                         border: '1px solid',
                                         borderColor: 'divider',
                                     }}
                                 />
+
                                 <Typography
                                     variant='caption'
                                     color='text.secondary'
                                 >
-                                    {formik.values.color}
+                                    {t(`colors.${selectedColor.key}`, {
+                                        defaultValue: selectedColor.key,
+                                    })}
                                 </Typography>
                             </Stack>
                         )}
                     </Stack>
                 );
-
+            }
             case 'boolean':
                 return (
                     <FormControlLabel
@@ -557,8 +603,10 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                                 {availableSubcategories.map((subcat) => (
                                     <MenuItem key={subcat} value={subcat}>
                                         {t(
-                                            `categories.${formik.values.category.toLowerCase()}.subCategories.${subcat}`,
-                                            { defaultValue: subcat },
+                                            `categories.${formik.values.category}.subCategories.${subcat}`,
+                                            {
+                                                defaultValue: subcat,
+                                            },
                                         )}
                                     </MenuItem>
                                 ))}

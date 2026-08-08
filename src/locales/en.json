@@ -1,7 +1,7 @@
 {
     "you": "You",
-    "ActivePost":"Active Posts",
-    "ContinuousSupport":"Continuous support",
+    "ActivePost": "Active Posts",
+    "ContinuousSupport": "Continuous support",
     "SafeAndReliable": "Safe and reliable",
     "TrustedOnlineMarketplace": "Trusted online marketplace",
     "showAll": "Show All",
@@ -331,234 +331,316 @@
         "House": {
             "label": "Home",
             "heading": "Home Supplies",
-            "description": "Category for listing and selling various home supplies such as kitchen tools, storage, and organization.",
+            "description": "A category for selling and displaying various home products such as kitchenware, storage, decor, and maintenance items.",
             "subCategories": {
-                "kitchen": "Kitchen Tools",
+                "kitchen": "Kitchenware",
                 "storage": "Storage & Organization",
                 "decor": "Home Decor",
-                "maintenance": "Tools & Maintenance"
+                "maintenance": "Maintenance Tools"
+            },
+            "fields": {
+                "brand": "Brand",
+                "material": "Material",
+                "powerWatts": "Power in Watts",
+                "location": "Location",
+                "dimensions": "Dimensions",
+                "capacity": "Capacity",
+                "color": "Color",
+                "usageType": "Usage Type",
+                "usageTypeOptions": {
+                    "indoor": "Indoor",
+                    "outdoor": "Outdoor"
+                }
             }
         },
+
         "Garden": {
             "label": "Garden",
-            "heading": "Garden",
-            "description": "Includes products related to gardening such as care tools, watering, and plants.",
+            "heading": "Garden Supplies",
+            "description": "Products and supplies for garden care, plants, irrigation, and outdoor decoration.",
             "subCategories": {
                 "plants": "Plants",
-                "watering": "Watering Supplies",
+                "watering": "Irrigation Supplies",
                 "tools": "Garden Tools",
                 "outdoorDecor": "Outdoor Decor"
+            },
+            "fields": {
+                "plantType": "Plant Type",
+                "season": "Season",
+                "seasonOptions": {
+                    "spring": "Spring",
+                    "summer": "Summer",
+                    "autumn": "Autumn",
+                    "winter": "Winter"
+                },
+                "sunExposure": "Sun Exposure",
+                "brand": "Brand",
+                "hoseLength": "Hose Length",
+                "automatic": "Automatic",
+                "toolType": "Tool Type",
+                "material": "Material",
+                "weatherResistant": "Weather Resistant"
             }
         },
-        "Electronics": {
-            "label": "Electronics",
-            "heading": "Electronics",
-            "description": "Various electronic devices and products such as phones, accessories, and tech gadgets.",
-            "subCategories": {
-                "phones": "Phones",
-                "laptops": "Computers & Laptops",
-                "accessories": "Accessories",
-                "gaming": "Gaming"
-            }
-        },
-        "Baby": {
-            "label": "Baby",
-            "heading": "Baby Supplies",
-            "description": "Products for children such as clothing, care items, and daily essentials.",
-            "subCategories": {
-                "clothes": "Baby Clothing",
-                "care": "Daily Care",
-                "feeding": "Feeding Supplies"
-            }
-        },
-        "Kids": {
-            "label": "Toys",
-            "heading": "Kids Toys",
-            "description": "Toys and products dedicated to children of different ages.",
-            "subCategories": {
-                "educational": "Educational Toys",
-                "toys": "Entertainment Toys",
-                "outdoor": "Outdoor Toys"
-            }
-        },
-        "Cleaning": {
-            "label": "Cleaning",
-            "heading": "Cleaning Supplies",
-            "description": "Products and tools for home cleaning.",
-            "subCategories": {
-                "detergents": "Detergents",
-                "tools": "Cleaning Tools",
-                "disinfection": "Disinfection"
-            }
-        },
-        "Health": {
-            "label": "Health",
-            "heading": "Health & Care",
-            "description": "Products related to personal health and care.",
-            "subCategories": {
-                "personalCare": "Personal Care",
-                "medical": "Medical Supplies",
-                "fitness": "Fitness Equipment"
-            }
-        },
-        "Watches": {
-            "label": "Watches",
-            "heading": "Watches",
-            "description": "Watches of various types and designs.",
-            "subCategories": {
-                "classic": "Classic Watches",
-                "smart": "Smart Watches",
-                "hand": "hand Watches"
-            }
-        },
-        "Beauty": {
-            "label": "Beauty",
-            "heading": "Beauty Products",
-            "description": "Cosmetics and personal care products offered by users.",
-            "subCategories": {
-                "makeup": "Makeup",
-                "skincare": "Skincare",
-                "hair": "Hair Care"
-            }
-        },
-        "WomenClothes": {
-            "label": "Women's Clothing",
-            "heading": "Women's Clothing",
-            "description": "Clothing for women of various styles.",
-            "subCategories": {
-                "casual": "Casual Wear",
-                "dresses": "Dresses",
-                "shoes": "Shoes"
-            }
-        },
-        "WomenBags": {
-            "label": "Women's Bags",
-            "heading": "Women's Bags",
-            "description": "Bags for women of different sizes and uses",
-            "subCategories": {
-                "handbags": "Handbags",
-                "backpacks": "Backpacks",
-                "travel": "Travel Bags"
-            }
-        },
-        "MenClothes": {
-            "label": "Men's Clothing",
-            "heading": "Men's Clothing",
-            "description": "Clothing for men for various uses.",
-            "subCategories": {
-                "casual": "Casual Wear",
-                "formal": "Formal Wear",
-                "shoes": "Shoes"
-            }
-        },
+
         "Cars": {
             "label": "Cars",
-            "heading": "Cars",
-            "description": "Cars for sale by users, new or used.",
+            "heading": "Cars & Accessories",
+            "description": "Cars, spare parts, and automotive accessories offered for sale.",
             "subCategories": {
                 "private": "Private Cars",
                 "electric": "Electric Cars",
                 "parts": "Spare Parts",
                 "accessories": "Car Accessories"
             },
-            "fuel": {
-                "label": "fuel",
-                "settings": {
+            "fields": {
+                "brand": "Brand",
+                "year": "Manufacturing Year",
+                "fuel": "Fuel Type",
+                "fuelOptions": {
                     "gasoline": "Gasoline",
                     "diesel": "Diesel",
-                    "electric": "Full electric"
-                }
-            },
-            "year": "Year",
-            "brand": "Brand",
-            "mileage": "Mileage"
+                    "hybrid": "Hybrid"
+                },
+                "mileage": "Mileage",
+                "color": "Color",
+                "batteryCapacity": "Battery Capacity",
+                "rangeKm": "Driving Range (km)"
+            }
         },
-        "Motorcycles": {
-            "label": "Motorcycles",
-            "heading": "Motorcycles",
-            "description": "Motorcycles of different models.",
+
+        "Bikes": {
+            "label": "Bicycles",
+            "heading": "Bicycles",
+            "description": "Bicycles of different types, sizes, and uses.",
             "subCategories": {
-                "sport": "Sport Bikes",
-                "scooters": "Scooters",
-                "parts": "Spare Parts"
+                "kids": "Kids' Bikes",
+                "mountain": "Mountain Bikes",
+                "road": "Road Bikes"
             },
-            "fuel": {
-                "label": "fuel",
-                "settings": {
-                    "gasoline": "Gasoline",
-                    "diesel": "Diesel",
-                    "electric": "Full electric"
-                }
-            },
-            "year": "Year",
-            "brand": "Brand",
-            "mileage": "Mileage"
+            "fields": {
+                "frameSize": "Frame Size",
+                "color": "Color",
+                "suspension": "Suspension",
+                "weight": "Weight"
+            }
         },
+
         "Trucks": {
             "label": "Trucks",
             "heading": "Trucks",
-            "description": "Trucks for personal or commercial use.",
+            "description": "Light and heavy trucks for personal or commercial use.",
             "subCategories": {
                 "light": "Light Trucks",
                 "heavy": "Heavy Trucks"
             },
-            "fuel": {
-                "label": "fuel",
-                "settings": {
-                    "gasoline": "Gasoline",
-                    "diesel": "Diesel",
-                    "electric": "Full electric"
-                }
-            },
-            "year": "Year",
-            "brand": "Brand",
-            "mileage": "Mileage"
+            "fields": {
+                "brand": "Brand",
+                "loadCapacityTons": "Load Capacity (tons)",
+                "axles": "Number of Axles"
+            }
         },
-        "Bikes": {
-            "label": "Bicycles",
-            "heading": "Bicycles",
-            "description": "Bicycles of various sizes.",
+
+        "Cleaning": {
+            "label": "Cleaning",
+            "heading": "Cleaning Products & Tools",
+            "description": "Cleaning products, detergents, and tools for household use.",
             "subCategories": {
-                "kids": "Kids Bikes",
-                "mountain": "Mountain Bikes",
-                "road": "Road Bikes"
+                "detergents": "Detergents",
+                "tools": "Cleaning Tools",
+                "disinfection": "Disinfection"
             },
-            "year": "Year",
-            "brand": "Brand",
-            "mileage": "Mileage"
+            "fields": {
+                "brand": "Brand",
+                "volume": "Volume"
+            }
         },
+
+        "MenClothes": {
+            "label": "Men's Clothing",
+            "heading": "Men's Clothing",
+            "description": "Men's clothing and footwear in various styles and uses.",
+            "subCategories": {
+                "casual": "Casual Clothing",
+                "formal": "Formal Clothing",
+                "shoes": "Shoes"
+            },
+            "fields": {
+                "size": "Size",
+                "sizeOptions": {
+                    "S": "Small S",
+                    "M": "Medium M",
+                    "L": "Large L",
+                    "XL": "Extra Large XL"
+                },
+                "material": "Material",
+                "color": "Color"
+            }
+        },
+
+        "WomenClothes": {
+            "label": "Women's Clothing",
+            "heading": "Women's Clothing",
+            "description": "Women's clothing and footwear in various styles and designs.",
+            "subCategories": {
+                "casual": "Casual Clothing",
+                "dresses": "Dresses",
+                "shoes": "Shoes"
+            },
+            "fields": {
+                "size": "Size",
+                "sizeOptions": {
+                    "XS": "Extra Small XS",
+                    "S": "Small S",
+                    "M": "Medium M",
+                    "L": "Large L",
+                    "XL": "Extra Large XL"
+                },
+                "color": "Color",
+                "length": "Length",
+                "heelHeight": "Heel Height"
+            }
+        },
+
+        "WomenBags": {
+            "label": "Women's Bags",
+            "heading": "Women's Bags",
+            "description": "Women's bags in various types, sizes, and uses.",
+            "subCategories": {
+                "handbags": "Handbags",
+                "toteBags": "Tote Bags",
+                "backpacks": "Backpacks",
+                "clutches": "Clutches"
+            },
+            "fields": {
+                "size": "Size",
+                "sizeOptions": {
+                    "Mini": "Mini",
+                    "Small": "Small",
+                    "Medium": "Medium",
+                    "Large": "Large",
+                    "Oversized": "Oversized",
+                    "Standard": "Standard"
+                },
+                "color": "Color",
+                "material": "Material",
+                "materialOptions": {
+                    "Leather": "Leather",
+                    "PU Leather": "PU Leather",
+                    "Fabric": "Fabric",
+                    "Suede": "Suede",
+                    "Canvas": "Canvas",
+                    "Nylon": "Nylon"
+                },
+                "strapType": "Strap Type",
+                "strapTypeOptions": {
+                    "Handheld": "Handheld",
+                    "Shoulder": "Shoulder",
+                    "Crossbody": "Crossbody",
+                    "Adjustable": "Adjustable"
+                },
+                "pocketCount": "Number of Pockets",
+                "compartments": "Number of Compartments",
+                "waterproof": "Waterproof",
+                "occasion": "Occasion",
+                "occasionOptions": {
+                    "Evening": "Evening",
+                    "Wedding": "Wedding",
+                    "Party": "Party",
+                    "Formal": "Formal"
+                }
+            }
+        },
+
+        "Baby": {
+            "label": "Baby",
+            "heading": "Baby Supplies",
+            "description": "Products and supplies for babies, including clothing, care products, and feeding accessories.",
+            "subCategories": {
+                "clothes": "Baby Clothing",
+                "care": "Baby Care",
+                "feeding": "Feeding Supplies"
+            },
+            "fields": {
+                "ageGroup": "Age Group",
+                "material": "Material",
+                "brand": "Brand"
+            }
+        },
+
+        "Kids": {
+            "label": "Kids",
+            "heading": "Kids' Toys & Products",
+            "description": "Educational, entertainment, and outdoor toys and products for children.",
+            "subCategories": {
+                "educational": "Educational Toys",
+                "toys": "Entertainment Toys",
+                "outdoor": "Outdoor Toys"
+            },
+            "fields": {
+                "ageGroup": "Age Group",
+                "safeMaterial": "Safe Materials",
+                "material": "Material"
+            }
+        },
+
+        "Health": {
+            "label": "Health & Care",
+            "heading": "Health & Care",
+            "description": "Products related to health, personal care, and fitness.",
+            "subCategories": {
+                "personalCare": "Personal Care",
+                "medical": "Medical Supplies",
+                "fitness": "Fitness Equipment"
+            },
+            "fields": {
+                "brand": "Brand",
+                "expiryDate": "Expiry Date"
+            }
+        },
+
+        "Beauty": {
+            "label": "Beauty",
+            "heading": "Beauty & Care Products",
+            "description": "Makeup, skincare, hair care, and personal care products.",
+            "subCategories": {
+                "makeup": "Makeup",
+                "skincare": "Skincare",
+                "hair": "Hair Care"
+            },
+            "fields": {
+                "brand": "Brand",
+                "expiryDate": "Expiry Date"
+            }
+        },
+
+        "Watches": {
+            "label": "Watches",
+            "heading": "Watches",
+            "description": "Watches in various types and designs, including classic and smart watches.",
+            "subCategories": {
+                "classic": "Classic Watches",
+                "smart": "Smart Watches",
+                "hand": "Wrist Watches"
+            },
+            "fields": {
+                "brand": "Brand",
+                "waterResistant": "Water Resistant"
+            }
+        },
+
         "ElectricVehicles": {
             "label": "Electric Vehicles",
             "heading": "Electric Vehicles",
-            "description": "Vehicles powered by electricity.",
+            "description": "Electric-powered vehicles such as electric cars and scooters.",
             "subCategories": {
                 "cars": "Electric Cars",
                 "scooters": "Electric Scooters"
             },
-            "year": "Year",
-            "brand": "Brand",
-            "mileage": "Mileage"
-        },
-        "discountsAndOffers": {
-            "common": {
-                "discount": "OFF",
-                "save": "Save",
-                "errors": {
-                    "fetchFailed": "Failed to load discounted products. Please try again later."
-                },
-                "viewAll": "View All Offers"
-            },
-            "categories": {
-                "discountsAndOffers": {
-                    "title": "Hot Deals & Discounts",
-                    "description": "Discover amazing discounts on our premium products. Limited time offers with huge savings!",
-                    "subtitle": "Shop now and save big on selected items",
-                    "text1": "Exclusive Offers",
-                    "text2": "Limited time discounts on best-selling products",
-                    "noProducts": "No discounted products available at the moment. Check back soon for new offers!",
-                    "viewAll": "View All Offers",
-                    "ariaLabel": "Discounted products carousel"
-                }
+            "fields": {
+                "brand": "Brand",
+                "rangeKm": "Driving Range (km)",
+                "batteryCapacity": "Battery Capacity"
             }
         }
     },
@@ -894,5 +976,66 @@
             "next": "Next",
             "submit": "Submit"
         }
+    },
+    "colors": {
+        "White": "White",
+        "Black": "Black",
+        "Red": "Red",
+        "Blue": "Blue",
+        "Green": "Green",
+        "Yellow": "Yellow",
+        "Orange": "Orange",
+        "Purple": "Purple",
+        "Brown": "Brown",
+        "Pink": "Pink",
+
+        "Gray": "Gray",
+        "DarkGray": "Dark Gray",
+        "LightGray": "Light Gray",
+        "Silver": "Silver",
+        "Platinum": "Platinum",
+        "MetallicSilver": "Metallic Silver",
+
+        "JetBlack": "Jet Black",
+        "MatteBlack": "Matte Black",
+        "PearlWhite": "Pearl White",
+        "ArcticWhite": "Arctic White",
+        "Gunmetal": "Gunmetal",
+        "Charcoal": "Charcoal",
+
+        "NavyBlue": "Navy Blue",
+        "DeepBlue": "Deep Blue",
+        "MetallicBlue": "Metallic Blue",
+        "SkyBlue": "Sky Blue",
+        "SteelBlue": "Steel Blue",
+
+        "DarkRed": "Dark Red",
+        "FerrariRed": "Ferrari Red",
+        "CandyRed": "Candy Red",
+        "Burgundy": "Burgundy",
+        "Crimson": "Crimson",
+
+        "RacingGreen": "Racing Green",
+        "DarkGreen": "Dark Green",
+        "ForestGreen": "Forest Green",
+        "OliveGreen": "Olive Green",
+        "SeaGreen": "Sea Green",
+
+        "DarkBrown": "Dark Brown",
+        "Coffee": "Coffee",
+        "Tan": "Tan",
+        "Wheat": "Wheat",
+        "Sand": "Sand",
+
+        "Gold": "Gold",
+        "MetallicGold": "Metallic Gold",
+        "Bronze": "Bronze",
+        "Champagne": "Champagne",
+
+        "SlateGray": "Slate Gray",
+        "CarbonGray": "Carbon Gray",
+        "DesertSand": "Desert Sand",
+        "NardoGray": "Nardo Gray",
+        "DarkSlate": "Dark Slate"
     }
 }
