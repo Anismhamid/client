@@ -34,6 +34,7 @@ const Products = lazy(() => import('../components/pages/products/Posts'));
 const Messages = lazy(() => import('../components/settings/Messages'));
 import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins';
 import ForgotPassword from '../components/settings/ForgotPassword';
+import ResetPassword from '../components/settings/ResetPassword';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -137,6 +138,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
 
             <Route path='/payment/success' element={<PaymentSuccess />} />
             <Route path='/password-recover' element={<ForgotPassword />} />
+            <Route path='/reset-password/:token' element={<ResetPassword />} />
 
             <Route path={'*'} element={<PageNotFound />} />
         </Routes>

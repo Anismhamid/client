@@ -36,6 +36,7 @@ export enum path {
     Profile = '/profile',
     FeaturedAdsDashboard = '/adsDashboard',
     ForgotPassword = "/password-recover",
+    ResetPassword = "/reset-password/:token",
 
     // Help (SEO gold)
     SellingHelp = '/help/selling',
