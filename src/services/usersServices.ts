@@ -346,3 +346,15 @@ export const forgotPassword = async (email: string): Promise<string> => {
     });
     return data.message;
 };
+
+export const resetPassword = async (
+    token: string,
+    email: string,
+    password: string,
+): Promise<string> => {
+    const { data } = await axios.post(`${api}/reset-password/${token}`, {
+        email,
+        password,
+    });
+    return data.message;
+};
