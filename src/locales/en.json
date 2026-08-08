@@ -642,6 +642,28 @@
                 "rangeKm": "Driving Range (km)",
                 "batteryCapacity": "Battery Capacity"
             }
+        },
+        "discountsAndOffers": {
+            "common": {
+                "discount": "Discount",
+                "save": "Save",
+                "errors": {
+                    "fetchFailed": "Failed to load discounted products. Please try again later."
+                },
+                "viewAll": "View All"
+            },
+            "categories": {
+                "discountsAndOffers": {
+                    "title": "Deals & Discounts",
+                    "description": "Discover amazing discounts on selected products. Limited-time offers with great savings!",
+                    "subtitle": "Shop now and save big on selected products",
+                    "text1": "Exclusive Deals",
+                    "text2": "Limited-time discounts on best-selling products",
+                    "noProducts": "No discounted products are currently available. Follow us for new deals coming soon!",
+                    "viewAll": "View All Deals",
+                    "ariaLabel": "View discounted products"
+                }
+            }
         }
     },
     "seo": {
