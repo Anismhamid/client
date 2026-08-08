@@ -39,7 +39,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
         ],
         decor: [
             { name: 'material', type: 'text' },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
         maintenance: [
             { name: 'brand', type: 'text' },
@@ -87,7 +87,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 required: true,
             },
             { name: 'mileage', type: 'number' },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
         electric: [
             { name: 'brand', type: 'text', required: true },
@@ -102,7 +102,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
     Bikes: {
         kids: [
             { name: 'frameSize', type: 'text' },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
         mountain: [
             { name: 'frameSize', type: 'text', required: true },
@@ -147,7 +147,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 required: true,
             },
             { name: 'material', type: 'text' },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
         formal: [
             {
@@ -160,7 +160,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
         ],
         shoes: [
             { name: 'size', type: 'number', required: true },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
     },
 
@@ -172,7 +172,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['XS', 'S', 'M', 'L', 'XL'],
                 required: true,
             },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
         ],
         dresses: [
             {
@@ -197,7 +197,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['Mini', 'Small', 'Medium', 'Large'],
                 required: true,
             },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
             {
                 name: 'material',
                 type: 'select',
@@ -217,7 +217,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['Small', 'Medium', 'Large', 'Oversized'],
                 required: true,
             },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
             {
                 name: 'material',
                 type: 'select',
@@ -233,7 +233,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['Mini', 'Small', 'Medium', 'Large'],
                 required: true,
             },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
             { name: 'compartments', type: 'number' },
             { name: 'waterproof', type: 'boolean' },
         ],
@@ -245,7 +245,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['Mini', 'Standard'],
                 required: true,
             },
-            { name: 'color', type: 'text' },
+            { name: 'color', type: 'color' },
             {
                 name: 'occasion',
                 type: 'select',

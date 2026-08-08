@@ -1,7 +1,7 @@
 {
     "you": "אתה",
-    "ActivePost":"פוסט פעיל",
-    "ContinuousSupport":"תמיכה מתמשכת",
+    "ActivePost": "פוסט פעיל",
+    "ContinuousSupport": "תמיכה מתמשכת",
     "SafeAndReliable": "בטוח ואמין",
     "TrustedOnlineMarketplace": "שוק מקוון אמין",
     "showAll": "הצג הכל",
@@ -306,218 +306,316 @@
         "House": {
             "label": "בית",
             "heading": "מוצרי בית",
-            "description": "קטגוריה למכירה וקנייה של מוצרי בית שונים כמו כלי מטבח, אחסון וארגון.",
+            "description": "קטגוריה למכירה והצגה של מגוון מוצרי בית, כגון כלי מטבח, פתרונות אחסון, עיצוב ותחזוקה.",
             "subCategories": {
                 "kitchen": "כלי מטבח",
                 "storage": "אחסון וארגון",
                 "decor": "עיצוב הבית",
-                "maintenance": "כלי עבודה ותחזוקה"
+                "maintenance": "כלי תחזוקה"
+            },
+            "fields": {
+                "brand": "מותג",
+                "material": "חומר",
+                "powerWatts": "הספק בוואט",
+                "location": "מיקום",
+                "dimensions": "מידות",
+                "capacity": "קיבולת",
+                "color": "צבע",
+                "usageType": "סוג שימוש",
+                "usageTypeOptions": {
+                    "indoor": "לשימוש בתוך הבית",
+                    "outdoor": "לשימוש מחוץ לבית"
+                }
             }
         },
+
         "Garden": {
             "label": "גינה",
             "heading": "מוצרי גינה",
-            "description": "כוללת מוצרים הקשורים לגינה כמו כלי עבודה, השקיה וצמחייה.",
+            "description": "מוצרים ואביזרים לטיפול בגינה, צמחים, השקיה ועיצוב חוץ.",
             "subCategories": {
                 "plants": "צמחים",
                 "watering": "ציוד השקיה",
-                "tools": "כלי גינון",
+                "tools": "כלי גינה",
                 "outdoorDecor": "עיצוב חוץ"
+            },
+            "fields": {
+                "plantType": "סוג הצמח",
+                "season": "עונה",
+                "seasonOptions": {
+                    "spring": "אביב",
+                    "summer": "קיץ",
+                    "autumn": "סתיו",
+                    "winter": "חורף"
+                },
+                "sunExposure": "חשיפה לשמש",
+                "brand": "מותג",
+                "hoseLength": "אורך הצינור",
+                "automatic": "אוטומטי",
+                "toolType": "סוג הכלי",
+                "material": "חומר",
+                "weatherResistant": "עמיד בפני תנאי מזג האוויר"
             }
         },
-        "Electronics": {
-            "label": "אלקטרוניקה",
-            "heading": "אלקטרוניקה",
-            "description": "מכשירים ומוצרים אלקטרוניים שונים כגון טלפונים, אביזרים ומוצרי טכנולוגיה.",
-            "subCategories": {
-                "phones": "טלפונים",
-                "laptops": "מחשבים ניידים",
-                "accessories": "אביזרים",
-                "gaming": "גיימינג"
-            }
-        },
-        "Kids": {
-            "label": "צעצועים",
-            "heading": "צעצועים לילדים",
-            "description": "צעצועים ומוצרים המיועדים לילדים בגילאים שונים.",
-            "subCategories": {
-                "educational": "צעצועים חינוכיים",
-                "toys": "צעצועים",
-                "outdoor": "משחקי חוץ"
-            }
-        },
-        "Baby": {
-            "label": "תינוקות",
-            "heading": "מוצרי תינוקות",
-            "description": "מוצרים לתינוקות כגון בגדים, מוצרי טיפוח וצרכים יומיומיים.",
-            "subCategories": {
-                "clothes": "בגדי תינוקות",
-                "care": "טיפוח",
-                "feeding": "האכלה"
-            }
-        },
-        "Beauty": {
-            "label": "טיפוח",
-            "heading": "טיפוח ויופי",
-            "description": "מוצרי טיפוח וקוסמטיקה המוצעים על ידי משתמשים.",
-            "subCategories": {
-                "makeup": "איפור",
-                "skincare": "טיפוח עור",
-                "hair": "טיפוח שיער"
-            }
-        },
-        "Cleaning": {
-            "label": "ניקיון",
-            "heading": "מוצרי ניקיון",
-            "description": "מוצרי וכלי ניקיון לשימוש ביתי.",
-            "subCategories": {
-                "detergents": "חומרי ניקוי",
-                "tools": "כלי ניקיון",
-                "disinfection": "חיטוי"
-            }
-        },
-        "Health": {
-            "label": "בריאות",
-            "heading": "בריאות וטיפוח",
-            "description": "מוצרים הקשורים לבריאות ולטיפוח אישי.",
-            "subCategories": {
-                "personalCare": "טיפוח אישי",
-                "medical": "ציוד רפואי",
-                "fitness": "ציוד כושר"
-            }
-        },
-        "Watches": {
-            "label": "שעונים",
-            "heading": "שעונים",
-            "description": "שעונים מסוגים ועיצובים שונים.",
-            "subCategories": {
-                "classic": "שעונים קלאסיים",
-                "smart": "שעונים חכמים",
-                "hand": "שעוני יד"
-            }
-        },
-        "MenClothes": {
-            "label": "ביגוד גברים",
-            "heading": "ביגוד גברים",
-            "description": "ביגוד לגברים לשימושים שונים.",
-            "subCategories": {
-                "casual": "ביגוד יומיומי",
-                "formal": "ביגוד רשמי",
-                "shoes": "נעליים"
-            }
-        },
-        "WomenClothes": {
-            "label": "ביגוד נשים",
-            "heading": "ביגוד נשים",
-            "description": "ביגוד לנשים בסגנונות שונים.",
-            "subCategories": {
-                "casual": "ביגוד יומיומי",
-                "dresses": "שמלות",
-                "shoes": "נעליים"
-            }
-        },
-        "WomenBags": {
-            "label": "תיקים לנשים",
-            "heading": "תיקים לנשים",
-            "description": "תיקים לנשים בגדלים ושימושים שונים.",
-            "subCategories": {
-                "handbags": "תיקי יד",
-                "backpacks": "תרמילים",
-                "travel": "תיקי נסיעות"
-            }
-        },
+
         "Cars": {
-            "label": "רכבים",
-            "heading": "רכבים",
-            "description": "רכבים למכירה ממשתמשים פרטיים, חדשים או משומשים.",
+            "label": "מכוניות",
+            "heading": "מכוניות ואביזרים",
+            "description": "מכוניות, חלקי חילוף ואביזרים לרכב המוצעים למכירה.",
             "subCategories": {
-                "private": "רכבים פרטיים",
-                "electric": "רכבים חשמליים",
-                "parts": "חלפים",
+                "private": "מכוניות פרטיות",
+                "electric": "מכוניות חשמליות",
+                "parts": "חלקי חילוף",
                 "accessories": "אביזרי רכב"
             },
-            "fuel": {
-                "label": "צריכה",
-                "settings": {
-                    "gasoline": "דלק",
+            "fields": {
+                "brand": "מותג",
+                "year": "שנת ייצור",
+                "fuel": "סוג דלק",
+                "fuelOptions": {
+                    "gasoline": "בנזין",
                     "diesel": "דיזל",
-                    "electric": "חשמלי"
-                }
-            },
-            "year": "שנה",
-            "brand": "יצרן",
-            "mileage": "קילומטרים"
+                    "hybrid": "היברידי"
+                },
+                "mileage": "קילומטראז׳",
+                "color": "צבע",
+                "batteryCapacity": "קיבולת הסוללה",
+                "rangeKm": "טווח נסיעה בקילומטרים"
+            }
         },
-        "Motorcycles": {
-            "label": "אופנועים",
-            "heading": "אופנועים",
-            "description": "אופנועים מדגמים שונים.",
-            "subCategories": {
-                "sport": "אופנועי ספורט",
-                "scooters": "קטנועים",
-                "parts": "חלפים"
-            },
-            "year": "שנה",
-            "brand": "יצרן",
-            "mileage": "קילומטרים"
-        },
-        "Trucks": {
-            "label": "משאיות",
-            "heading": "משאיות",
-            "description": "משאיות לשימוש פרטי או מסחרי.",
-            "subCategories": {
-                "light": "משאיות קלות",
-                "heavy": "משאיות כבדות"
-            },
-            "year": "שנה",
-            "brand": "יצרן",
-            "mileage": "קילומטרים"
-        },
+
         "Bikes": {
             "label": "אופניים",
             "heading": "אופניים",
-            "description": "אופניים בגדלים וסוגים שונים.",
+            "description": "אופניים מסוגים וגדלים שונים ולמגוון שימושים.",
             "subCategories": {
                 "kids": "אופני ילדים",
                 "mountain": "אופני הרים",
                 "road": "אופני כביש"
             },
-            "year": "שנה",
-            "brand": "יצרן",
-            "mileage": "קילומטרים"
+            "fields": {
+                "frameSize": "גודל שלדה",
+                "color": "צבע",
+                "suspension": "מערכת שיכוך",
+                "weight": "משקל"
+            }
         },
+
+        "Trucks": {
+            "label": "משאיות",
+            "heading": "משאיות",
+            "description": "משאיות קלות וכבדות לשימוש פרטי או מסחרי.",
+            "subCategories": {
+                "light": "משאיות קלות",
+                "heavy": "משאיות כבדות"
+            },
+            "fields": {
+                "brand": "מותג",
+                "loadCapacityTons": "כושר העמסה בטונות",
+                "axles": "מספר סרנים"
+            }
+        },
+
+        "Cleaning": {
+            "label": "ניקיון",
+            "heading": "חומרי וכלי ניקוי",
+            "description": "מוצרי ניקוי, חומרי ניקוי וכלים לשימוש ביתי.",
+            "subCategories": {
+                "detergents": "חומרי ניקוי",
+                "tools": "כלי ניקוי",
+                "disinfection": "חיטוי"
+            },
+            "fields": {
+                "brand": "מותג",
+                "volume": "נפח"
+            }
+        },
+
+        "MenClothes": {
+            "label": "בגדי גברים",
+            "heading": "בגדי גברים",
+            "description": "בגדים ונעליים לגברים במגוון סגנונות ושימושים.",
+            "subCategories": {
+                "casual": "בגדים יומיומיים",
+                "formal": "בגדים רשמיים",
+                "shoes": "נעליים"
+            },
+            "fields": {
+                "size": "מידה",
+                "sizeOptions": {
+                    "S": "קטן S",
+                    "M": "בינוני M",
+                    "L": "גדול L",
+                    "XL": "גדול מאוד XL"
+                },
+                "material": "בד",
+                "color": "צבע"
+            }
+        },
+
+        "WomenClothes": {
+            "label": "בגדי נשים",
+            "heading": "בגדי נשים",
+            "description": "בגדים ונעליים לנשים במגוון סגנונות ועיצובים.",
+            "subCategories": {
+                "casual": "בגדים יומיומיים",
+                "dresses": "שמלות",
+                "shoes": "נעליים"
+            },
+            "fields": {
+                "size": "מידה",
+                "sizeOptions": {
+                    "XS": "קטן מאוד XS",
+                    "S": "קטן S",
+                    "M": "בינוני M",
+                    "L": "גדול L",
+                    "XL": "גדול מאוד XL"
+                },
+                "color": "צבע",
+                "length": "אורך",
+                "heelHeight": "גובה עקב"
+            }
+        },
+
+        "WomenBags": {
+            "label": "תיקי נשים",
+            "heading": "תיקי נשים",
+            "description": "תיקי נשים במגוון סוגים, גדלים ושימושים.",
+            "subCategories": {
+                "handbags": "תיקי יד",
+                "toteBags": "תיקי טוט",
+                "backpacks": "תיקי גב",
+                "clutches": "תיקי קלאץ׳"
+            },
+            "fields": {
+                "size": "גודל",
+                "sizeOptions": {
+                    "Mini": "מיני",
+                    "Small": "קטן",
+                    "Medium": "בינוני",
+                    "Large": "גדול",
+                    "Oversized": "גדול במיוחד",
+                    "Standard": "סטנדרטי"
+                },
+                "color": "צבע",
+                "material": "חומר",
+                "materialOptions": {
+                    "Leather": "עור",
+                    "PU Leather": "עור סינתטי PU",
+                    "Fabric": "בד",
+                    "Suede": "זמש",
+                    "Canvas": "קנבס",
+                    "Nylon": "ניילון"
+                },
+                "strapType": "סוג רצועה",
+                "strapTypeOptions": {
+                    "Handheld": "נשיאה ביד",
+                    "Shoulder": "כתף",
+                    "Crossbody": "אלכסוני",
+                    "Adjustable": "מתכווננת"
+                },
+                "pocketCount": "מספר כיסים",
+                "compartments": "מספר תאים",
+                "waterproof": "עמיד למים",
+                "occasion": "אירוע",
+                "occasionOptions": {
+                    "Evening": "ערב",
+                    "Wedding": "חתונה",
+                    "Party": "מסיבה",
+                    "Formal": "אירוע רשמי"
+                }
+            }
+        },
+
+        "Baby": {
+            "label": "תינוקות",
+            "heading": "מוצרי תינוקות",
+            "description": "מוצרים לתינוקות כגון בגדים, מוצרי טיפוח ואביזרי האכלה.",
+            "subCategories": {
+                "clothes": "בגדי תינוקות",
+                "care": "טיפוח וטיפול",
+                "feeding": "מוצרי האכלה"
+            },
+            "fields": {
+                "ageGroup": "קבוצת גיל",
+                "material": "חומר",
+                "brand": "מותג"
+            }
+        },
+
+        "Kids": {
+            "label": "ילדים",
+            "heading": "צעצועים ומוצרי ילדים",
+            "description": "צעצועים ומוצרים חינוכיים, בידוריים ומוצרי חוץ לילדים.",
+            "subCategories": {
+                "educational": "צעצועים חינוכיים",
+                "toys": "צעצועי בידור",
+                "outdoor": "צעצועי חוץ"
+            },
+            "fields": {
+                "ageGroup": "קבוצת גיל",
+                "safeMaterial": "חומרים בטוחים",
+                "material": "חומר"
+            }
+        },
+
+        "Health": {
+            "label": "בריאות וטיפוח",
+            "heading": "בריאות וטיפוח",
+            "description": "מוצרים הקשורים לבריאות, טיפוח אישי וכושר גופני.",
+            "subCategories": {
+                "personalCare": "טיפוח אישי",
+                "medical": "ציוד רפואי",
+                "fitness": "ציוד כושר"
+            },
+            "fields": {
+                "brand": "מותג",
+                "expiryDate": "תאריך תפוגה"
+            }
+        },
+
+        "Beauty": {
+            "label": "יופי",
+            "heading": "מוצרי יופי וטיפוח",
+            "description": "מוצרי איפור, טיפוח העור, טיפוח השיער וטיפוח אישי.",
+            "subCategories": {
+                "makeup": "איפור",
+                "skincare": "טיפוח העור",
+                "hair": "טיפוח השיער"
+            },
+            "fields": {
+                "brand": "מותג",
+                "expiryDate": "תאריך תפוגה"
+            }
+        },
+
+        "Watches": {
+            "label": "שעונים",
+            "heading": "שעונים",
+            "description": "שעונים מסוגים ועיצובים שונים, כולל שעונים קלאסיים וחכמים.",
+            "subCategories": {
+                "classic": "שעונים קלאסיים",
+                "smart": "שעונים חכמים",
+                "hand": "שעוני יד"
+            },
+            "fields": {
+                "brand": "מותג",
+                "waterResistant": "עמיד במים"
+            }
+        },
+
         "ElectricVehicles": {
             "label": "רכבים חשמליים",
-            "heading": "כלי רכב חשמליים",
-            "description": "כלי רכב הפועלים באמצעות חשמל.",
+            "heading": "רכבים חשמליים",
+            "description": "כלי רכב המונעים באמצעות חשמל, כגון מכוניות וקורקינטים חשמליים.",
             "subCategories": {
-                "cars": "רכבים חשמליים",
+                "cars": "מכוניות חשמליות",
                 "scooters": "קורקינטים חשמליים"
             },
-            "year": "שנה",
-            "brand": "יצרן",
-            "mileage": "קילומטרים"
-        },
-        "discountsAndOffers": {
-            "common": {
-                "discount": "הנחה",
-                "save": "חסכו",
-                "errors": {
-                    "fetchFailed": "טעינת המוצרים בהנחה נכשלה. אנא נסו שוב מאוחר יותר."
-                },
-                "viewAll": "צפו בכל המבצעים"
-            },
-            "categories": {
-                "discountsAndOffers": {
-                    "title": "מבצעים חמים והנחות",
-                    "description": "גלו הנחות מדהימות על המוצרים היוקרתיים שלנו. מבצעים לזמן מוגבל עם חיסכון גדול!",
-                    "subtitle": "קנו עכשיו וחסכו המון על פריטים נבחרים",
-                    "text1": "מבצעים בלעדיים",
-                    "text2": "הנחות לזמן מוגבל על המוצרים הנמכרים ביותר",
-                    "noProducts": "אין מוצרים בהנחה זמינים כרגע. בדקו שוב בקרוב למבצעים חדשים!",
-                    "viewAll": "צפו בכל המבצעים",
-                    "ariaLabel": "קרוסלת מוצרים בהנחה"
-                }
+            "fields": {
+                "brand": "מותג",
+                "rangeKm": "טווח נסיעה בקילומטרים",
+                "batteryCapacity": "קיבולת הסוללה"
             }
         }
     },
@@ -845,5 +943,66 @@
             "next": "הבא",
             "submit": "שלח"
         }
+    },
+    "colors": {
+        "White": "לבן",
+        "Black": "שחור",
+        "Red": "אדום",
+        "Blue": "כחול",
+        "Green": "ירוק",
+        "Yellow": "צהוב",
+        "Orange": "כתום",
+        "Purple": "סגול",
+        "Brown": "חום",
+        "Pink": "ורוד",
+
+        "Gray": "אפור",
+        "DarkGray": "אפור כהה",
+        "LightGray": "אפור בהיר",
+        "Silver": "כסוף",
+        "Platinum": "פלטינה",
+        "MetallicSilver": "כסוף מטאלי",
+
+        "JetBlack": "שחור עמוק",
+        "MatteBlack": "שחור מט",
+        "PearlWhite": "לבן פנינה",
+        "ArcticWhite": "לבן ארקטי",
+        "Gunmetal": "אפור מתכתי",
+        "Charcoal": "פחם",
+
+        "NavyBlue": "כחול כהה",
+        "DeepBlue": "כחול עמוק",
+        "MetallicBlue": "כחול מטאלי",
+        "SkyBlue": "תכלת",
+        "SteelBlue": "כחול פלדה",
+
+        "DarkRed": "אדום כהה",
+        "FerrariRed": "אדום פרארי",
+        "CandyRed": "אדום קנדי",
+        "Burgundy": "בורדו",
+        "Crimson": "ארגמן",
+
+        "RacingGreen": "ירוק מרוצים",
+        "DarkGreen": "ירוק כהה",
+        "ForestGreen": "ירוק יער",
+        "OliveGreen": "ירוק זית",
+        "SeaGreen": "ירוק ים",
+
+        "DarkBrown": "חום כהה",
+        "Coffee": "חום קפה",
+        "Tan": "חום בהיר",
+        "Wheat": "חיטה",
+        "Sand": "חולי",
+
+        "Gold": "זהב",
+        "MetallicGold": "זהב מטאלי",
+        "Bronze": "ברונזה",
+        "Champagne": "שמפניה",
+
+        "SlateGray": "אפור צפחה",
+        "CarbonGray": "אפור פחמן",
+        "DesertSand": "חול מדברי",
+        "NardoGray": "אפור נרדו",
+        "DarkSlate": "אפור أردوازي داكن"
     }
 }

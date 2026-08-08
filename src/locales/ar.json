@@ -346,234 +346,316 @@
         "House": {
             "label": "البيت",
             "heading": "مستلزمات البيت",
-            "description": "فئة مخصّصة لعرض وبيع مستلزمات البيت المختلفة مثل أدوات المطبخ، التخزين، والتنظيم.",
+            "description": "فئة مخصّصة لعرض وبيع مستلزمات البيت المختلفة مثل أدوات المطبخ، التخزين، والديكور.",
             "subCategories": {
                 "kitchen": "أدوات مطبخ",
                 "storage": "تخزين وتنظيم",
                 "decor": "ديكور منزلي",
                 "maintenance": "أدوات وصيانة"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "material": "المادة",
+                "powerWatts": "القدرة بالواط",
+                "location": "الموقع",
+                "dimensions": "الأبعاد",
+                "capacity": "السعة",
+                "color": "اللون",
+                "usageType": "نوع الاستخدام",
+                "usageTypeOptions": {
+                    "indoor": "داخلي",
+                    "outdoor": "خارجي"
+                }
             }
         },
+
         "Garden": {
             "label": "الحديقة",
             "heading": "مستلزمات الحديقة",
-            "description": "تشمل هذه الفئة منتجات مرتبطة بالحديقة مثل أدوات العناية، الري، والنباتات.",
+            "description": "منتجات ومستلزمات العناية بالحدائق والنباتات والري والديكور الخارجي.",
             "subCategories": {
                 "plants": "نباتات",
                 "watering": "مستلزمات ري",
                 "tools": "أدوات حديقة",
                 "outdoorDecor": "ديكور خارجي"
+            },
+            "fields": {
+                "plantType": "نوع النبات",
+                "season": "الموسم",
+                "seasonOptions": {
+                    "spring": "الربيع",
+                    "summer": "الصيف",
+                    "autumn": "الخريف",
+                    "winter": "الشتاء"
+                },
+                "sunExposure": "التعرض لأشعة الشمس",
+                "brand": "العلامة التجارية",
+                "hoseLength": "طول الخرطوم",
+                "automatic": "أوتوماتيكي",
+                "toolType": "نوع الأداة",
+                "material": "المادة",
+                "weatherResistant": "مقاوم للعوامل الجوية"
             }
         },
-        "Electronics": {
-            "label": "إلكترونيات",
-            "heading": "إلكترونيات",
-            "description": "أجهزة ومنتجات إلكترونية متنوعة مثل الهواتف، الإكسسوارات، والأدوات التقنية.",
-            "subCategories": {
-                "phones": "هواتف",
-                "laptops": "حواسيب ولابتوبات",
-                "accessories": "إكسسوارات",
-                "gaming": "ألعاب إلكترونية"
-            }
-        },
-        "Kids": {
-            "label": "ألعاب",
-            "heading": "ألعاب الأطفال",
-            "description": "ألعاب ومنتجات مخصّصة للأطفال بمختلف الأعمار.",
-            "subCategories": {
-                "educational": "ألعاب تعليمية",
-                "toys": "ألعاب ترفيهية",
-                "outdoor": "ألعاب خارجية"
-            }
-        },
-        "Baby": {
-            "label": "الأطفال",
-            "heading": "مستلزمات الأطفال",
-            "description": "منتجات خاصة بالأطفال مثل الملابس، أدوات العناية، والاحتياجات اليومية.",
-            "subCategories": {
-                "clothes": "ملابس أطفال",
-                "care": "عناية يومية",
-                "feeding": "مستلزمات إطعام"
-            }
-        },
-        "Beauty": {
-            "label": "التجميل",
-            "heading": "مستحضرات التجميل",
-            "description": "منتجات تجميل وعناية شخصية معروضة من مستخدمين.",
-            "subCategories": {
-                "makeup": "مكياج",
-                "skincare": "عناية بالبشرة",
-                "hair": "العناية بالشعر"
-            }
-        },
-        "Cleaning": {
-            "label": "التنظيف",
-            "heading": "مواد التنظيف",
-            "description": "منتجات وأدوات تنظيف للاستخدام المنزلي.",
-            "subCategories": {
-                "detergents": "منظفات",
-                "tools": "أدوات تنظيف",
-                "disinfection": "تعقيم"
-            }
-        },
-        "Health": {
-            "label": "الصحة والعناية",
-            "heading": "الصحة والعناية",
-            "description": "منتجات متعلقة بالصحة والعناية الشخصية.",
-            "subCategories": {
-                "personalCare": "عناية شخصية",
-                "medical": "مستلزمات طبية",
-                "fitness": "معدات رياضية"
-            }
-        },
-        "Watches": {
-            "label": "ساعات",
-            "heading": "ساعات",
-            "description": "ساعات بمختلف الأنواع والتصاميم.",
-            "subCategories": {
-                "classic": "ساعات كلاسيكية",
-                "smart": "ساعات ذكية",
-                "hand": "ساعات اليد"
-            }
-        },
-        "MenClothes": {
-            "label": "ملابس رجالية",
-            "heading": "ملابس رجالية",
-            "description": "ملابس مخصّصة للرجال بمختلف الاستخدامات.",
-            "subCategories": {
-                "casual": "ملابس يومية",
-                "formal": "ملابس رسمية",
-                "shoes": "أحذية"
-            }
-        },
-        "WomenClothes": {
-            "label": "ملابس نسائية",
-            "heading": "ملابس نسائية",
-            "description": "ملابس مخصّصة للنساء بمختلف الأنماط.",
-            "subCategories": {
-                "casual": "ملابس يومية",
-                "dresses": "فساتين",
-                "shoes": "أحذية"
-            }
-        },
-        "WomenBags": {
-            "label": "حقائب نسائية",
-            "heading": "حقائب نسائية",
-            "description": "حقائب نسائية بمختلف الأحجام والاستخدامات.",
-            "subCategories": {
-                "handbags": "حقائب يد",
-                "backpacks": "حقائب ظهر",
-                "travel": "حقائب سفر"
-            }
-        },
+
         "Cars": {
             "label": "سيارات",
-            "heading": "سيارات",
-            "description": "سيارات معروضة للبيع من مستخدمين، جديدة أو مستعملة.",
+            "heading": "سيارات وملحقاتها",
+            "description": "سيارات وقطع غيار وإكسسوارات السيارات المعروضة للبيع.",
             "subCategories": {
                 "private": "سيارات خاصة",
                 "electric": "سيارات كهربائية",
                 "parts": "قطع غيار",
                 "accessories": "إكسسوارات سيارات"
             },
-            "fuel": {
-                "label": "دعم",
-                "settings": {
+            "fields": {
+                "brand": "العلامة التجارية",
+                "year": "سنة الصنع",
+                "fuel": "نوع الوقود",
+                "fuelOptions": {
                     "gasoline": "بنزين",
                     "diesel": "ديزل",
-                    "electric": "كهربائيه"
-                }
-            },
-            "year": "السنه",
-            "brand": "العلامه التجاريه",
-            "mileage": "كيلومترات"
+                    "hybrid": "هجين"
+                },
+                "mileage": "عدد الكيلومترات",
+                "color": "اللون",
+                "batteryCapacity": "سعة البطارية",
+                "rangeKm": "مدى القيادة بالكيلومترات"
+            }
         },
-        "Motorcycles": {
-            "label": "دراجات نارية",
-            "heading": "دراجات نارية",
-            "description": "دراجات نارية بموديلات مختلفة.",
-            "subCategories": {
-                "sport": "رياضية",
-                "scooters": "سكوترات",
-                "parts": "قطع غيار"
-            },
-            "fuel": {
-                "label": "دعم",
-                "settings": {
-                    "gasoline": "بنزين",
-                    "diesel": "ديزل",
-                    "electric": "كهربائيه"
-                }
-            },
-            "year": "السنه",
-            "brand": "العلامه التجاريه",
-            "mileage": "كيلومترات"
-        },
-        "Trucks": {
-            "label": "شاحنات",
-            "heading": "شاحنات",
-            "description": "شاحنات للاستخدام الشخصي أو التجاري.",
-            "subCategories": {
-                "light": "شاحنات خفيفة",
-                "heavy": "شاحنات ثقيلة"
-            },
-            "fuel": {
-                "label": "دعم",
-                "settings": {
-                    "gasoline": "بنزين",
-                    "diesel": "ديزل",
-                    "electric": "كهربائيه"
-                }
-            },
-            "year": "السنه",
-            "brand": "العلامه التجاريه",
-            "mileage": "كيلومترات"
-        },
+
         "Bikes": {
             "label": "دراجات هوائية",
             "heading": "دراجات هوائية",
-            "description": "دراجات هوائية بمختلف الأحجام.",
+            "description": "دراجات هوائية بمختلف الأنواع والأحجام والاستخدامات.",
             "subCategories": {
                 "kids": "دراجات أطفال",
                 "mountain": "دراجات جبلية",
                 "road": "دراجات طرق"
             },
-            "year": "السنه",
-            "brand": "العلامه التجاريه",
-            "mileage": "كيلومترات"
+            "fields": {
+                "frameSize": "حجم الإطار",
+                "color": "اللون",
+                "suspension": "نظام تعليق",
+                "weight": "الوزن"
+            }
         },
+
+        "Trucks": {
+            "label": "شاحنات",
+            "heading": "شاحنات",
+            "description": "شاحنات خفيفة وثقيلة للاستخدام الشخصي أو التجاري.",
+            "subCategories": {
+                "light": "شاحنات خفيفة",
+                "heavy": "شاحنات ثقيلة"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "loadCapacityTons": "حمولة الشاحنة بالطن",
+                "axles": "عدد المحاور"
+            }
+        },
+
+        "Cleaning": {
+            "label": "التنظيف",
+            "heading": "مواد وأدوات التنظيف",
+            "description": "منتجات ومواد وأدوات التنظيف والتعقيم للاستخدام المنزلي.",
+            "subCategories": {
+                "detergents": "منظفات",
+                "tools": "أدوات تنظيف",
+                "disinfection": "تعقيم"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "volume": "الحجم"
+            }
+        },
+
+        "MenClothes": {
+            "label": "ملابس رجالية",
+            "heading": "ملابس رجالية",
+            "description": "ملابس وأحذية رجالية بمختلف الأنواع والاستخدامات.",
+            "subCategories": {
+                "casual": "ملابس يومية",
+                "formal": "ملابس رسمية",
+                "shoes": "أحذية"
+            },
+            "fields": {
+                "size": "المقاس",
+                "sizeOptions": {
+                    "S": "صغير S",
+                    "M": "متوسط M",
+                    "L": "كبير L",
+                    "XL": "كبير جدًا XL"
+                },
+                "material": "الخامة",
+                "color": "اللون"
+            }
+        },
+
+        "WomenClothes": {
+            "label": "ملابس نسائية",
+            "heading": "ملابس نسائية",
+            "description": "ملابس وأحذية نسائية بمختلف الأنواع والتصاميم.",
+            "subCategories": {
+                "casual": "ملابس يومية",
+                "dresses": "فساتين",
+                "shoes": "أحذية"
+            },
+            "fields": {
+                "size": "المقاس",
+                "sizeOptions": {
+                    "XS": "صغير جدًا XS",
+                    "S": "صغير S",
+                    "M": "متوسط M",
+                    "L": "كبير L",
+                    "XL": "كبير جدًا XL"
+                },
+                "color": "اللون",
+                "length": "الطول",
+                "heelHeight": "ارتفاع الكعب"
+            }
+        },
+
+        "WomenBags": {
+            "label": "حقائب نسائية",
+            "heading": "حقائب نسائية",
+            "description": "حقائب نسائية بمختلف الأنواع والأحجام والاستخدامات.",
+            "subCategories": {
+                "handbags": "حقائب يد",
+                "toteBags": "حقائب توت",
+                "backpacks": "حقائب ظهر",
+                "clutches": "حقائب كلاتش"
+            },
+            "fields": {
+                "size": "الحجم",
+                "sizeOptions": {
+                    "Mini": "صغير جدًا",
+                    "Small": "صغير",
+                    "Medium": "متوسط",
+                    "Large": "كبير",
+                    "Oversized": "كبير جدًا",
+                    "Standard": "قياسي"
+                },
+                "color": "اللون",
+                "material": "الخامة",
+                "materialOptions": {
+                    "Leather": "جلد",
+                    "PU Leather": "جلد صناعي PU",
+                    "Fabric": "قماش",
+                    "Suede": "شمواه",
+                    "Canvas": "كانفاس",
+                    "Nylon": "نايلون"
+                },
+                "strapType": "نوع الحزام",
+                "strapTypeOptions": {
+                    "Handheld": "حمل باليد",
+                    "Shoulder": "كتف",
+                    "Crossbody": "كروس بودي",
+                    "Adjustable": "قابل للتعديل"
+                },
+                "pocketCount": "عدد الجيوب",
+                "compartments": "عدد الأقسام",
+                "waterproof": "مقاوم للماء",
+                "occasion": "المناسبة",
+                "occasionOptions": {
+                    "Evening": "سهرة",
+                    "Wedding": "زفاف",
+                    "Party": "حفلات",
+                    "Formal": "مناسبات رسمية"
+                }
+            }
+        },
+
+        "Baby": {
+            "label": "الأطفال",
+            "heading": "مستلزمات الأطفال",
+            "description": "منتجات ومستلزمات خاصة بالأطفال مثل الملابس والعناية وأدوات الإطعام.",
+            "subCategories": {
+                "clothes": "ملابس أطفال",
+                "care": "عناية يومية",
+                "feeding": "مستلزمات إطعام"
+            },
+            "fields": {
+                "ageGroup": "الفئة العمرية",
+                "material": "الخامة",
+                "brand": "العلامة التجارية"
+            }
+        },
+
+        "Kids": {
+            "label": "ألعاب الأطفال",
+            "heading": "ألعاب ومنتجات الأطفال",
+            "description": "ألعاب ومنتجات تعليمية وترفيهية وخارجية مخصصة للأطفال.",
+            "subCategories": {
+                "educational": "ألعاب تعليمية",
+                "toys": "ألعاب ترفيهية",
+                "outdoor": "ألعاب خارجية"
+            },
+            "fields": {
+                "ageGroup": "الفئة العمرية",
+                "safeMaterial": "مواد آمنة",
+                "material": "الخامة"
+            }
+        },
+
+        "Health": {
+            "label": "الصحة والعناية",
+            "heading": "الصحة والعناية",
+            "description": "منتجات ومستلزمات مرتبطة بالصحة والعناية الشخصية واللياقة البدنية.",
+            "subCategories": {
+                "personalCare": "عناية شخصية",
+                "medical": "مستلزمات طبية",
+                "fitness": "معدات رياضية"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "expiryDate": "تاريخ انتهاء الصلاحية"
+            }
+        },
+
+        "Beauty": {
+            "label": "التجميل",
+            "heading": "مستحضرات التجميل والعناية",
+            "description": "منتجات التجميل والعناية بالبشرة والشعر والعناية الشخصية.",
+            "subCategories": {
+                "makeup": "مكياج",
+                "skincare": "العناية بالبشرة",
+                "hair": "العناية بالشعر"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "expiryDate": "تاريخ انتهاء الصلاحية"
+            }
+        },
+
+        "Watches": {
+            "label": "ساعات",
+            "heading": "الساعات",
+            "description": "ساعات بمختلف الأنواع والتصاميم، بما في ذلك الساعات الكلاسيكية والذكية.",
+            "subCategories": {
+                "classic": "ساعات كلاسيكية",
+                "smart": "ساعات ذكية",
+                "hand": "ساعات يد"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "waterResistant": "مقاومة للماء"
+            }
+        },
+
         "ElectricVehicles": {
             "label": "مركبات كهربائية",
-            "heading": "مركبات كهربائية",
-            "description": "مركبات تعمل بالطاقة الكهربائية.",
+            "heading": "المركبات الكهربائية",
+            "description": "مركبات تعمل بالطاقة الكهربائية مثل السيارات والسكوترات الكهربائية.",
             "subCategories": {
                 "cars": "سيارات كهربائية",
                 "scooters": "سكوترات كهربائية"
             },
-            "year": "السنه",
-            "brand": "العلامه التجاريه",
-            "mileage": "كيلومترات"
-        },
-        "discountsAndOffers": {
-            "common": {
-                "discount": "خصم",
-                "save": "وفر",
-                "errors": {
-                    "fetchFailed": "فشل تحميل المنشورات المخفضة. يرجى المحاولة مرة أخرى لاحقًا."
-                },
-                "viewAll": "عرض الكل"
-            },
-            "categories": {
-                "discountsAndOffers": {
-                    "title": "العروض والخصومات",
-                    "description": "اكتشف خصومات مذهلة على المنتجات المميزة. عروض لفترة محدودة مع توفير كبير!",
-                    "subtitle": "تسوق الآن ووفر الكثير على المنتجات المحددة",
-                    "text1": "عروض حصرية",
-                    "text2": "خصومات لفترة محدودة على المنتجات الأكثر مبيعًا",
-                    "noProducts": "لا توجد منتجات مخفضة متاحة حاليًا. تابعنا قريبًا للحصول على عروض جديدة!",
-                    "viewAll": "عرض جميع العروض",
-                    "ariaLabel": "عرض المنتجات المخفضة"
-                }
+            "fields": {
+                "brand": "العلامة التجارية",
+                "rangeKm": "مدى القيادة بالكيلومترات",
+                "batteryCapacity": "سعة البطارية"
             }
         }
     },
@@ -861,5 +943,66 @@
             "next": "التالي",
             "submit": "إرسال"
         }
+    },
+    "colors": {
+        "White": "أبيض",
+        "Black": "أسود",
+        "Red": "أحمر",
+        "Blue": "أزرق",
+        "Green": "أخضر",
+        "Yellow": "أصفر",
+        "Orange": "برتقالي",
+        "Purple": "بنفسجي",
+        "Brown": "بني",
+        "Pink": "وردي",
+
+        "Gray": "رمادي",
+        "DarkGray": "رمادي داكن",
+        "LightGray": "رمادي فاتح",
+        "Silver": "فضي",
+        "Platinum": "بلاتيني",
+        "MetallicSilver": "فضي معدني",
+
+        "JetBlack": "أسود نفاث",
+        "MatteBlack": "أسود مطفي",
+        "PearlWhite": "أبيض لؤلؤي",
+        "ArcticWhite": "أبيض قطبي",
+        "Gunmetal": "رمادي معدني",
+        "Charcoal": "فحمي",
+
+        "NavyBlue": "أزرق كحلي",
+        "DeepBlue": "أزرق داكن",
+        "MetallicBlue": "أزرق معدني",
+        "SkyBlue": "أزرق سماوي",
+        "SteelBlue": "أزرق فولاذي",
+
+        "DarkRed": "أحمر داكن",
+        "FerrariRed": "أحمر فيراري",
+        "CandyRed": "أحمر حلوى",
+        "Burgundy": "عنابي",
+        "Crimson": "قرمزي",
+
+        "RacingGreen": "أخضر سباق",
+        "DarkGreen": "أخضر داكن",
+        "ForestGreen": "أخضر غابة",
+        "OliveGreen": "أخضر زيتوني",
+        "SeaGreen": "أخضر بحري",
+
+        "DarkBrown": "بني داكن",
+        "Coffee": "بني قهوة",
+        "Tan": "تان",
+        "Wheat": "قمحي",
+        "Sand": "رملي",
+
+        "Gold": "ذهبي",
+        "MetallicGold": "ذهبي معدني",
+        "Bronze": "برونزي",
+        "Champagne": "شامبانيا",
+
+        "SlateGray": "رمادي أردوازي",
+        "CarbonGray": "رمادي كربوني",
+        "DesertSand": "رمل صحراوي",
+        "NardoGray": "رمادي ناردو",
+        "DarkSlate": "رمادي أردوازي داكن"
     }
 }
