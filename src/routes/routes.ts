@@ -6,10 +6,11 @@ export const productsPathes = {
     trucks: '/category/Trucks',
     electricVehicles: '/category/ElectricVehicles',
 
+    // Products
     house: '/category/House',
     garden: '/category/Garden',
-    baby: '/category/Baby',
     electronics: '/category/Electronics',
+    baby: '/category/Baby',
     kids: '/category/Kids',
     beauty: '/category/Beauty',
     cleaning: '/category/Cleaning',
@@ -18,6 +19,13 @@ export const productsPathes = {
     WomenClothes: '/category/WomenClothes',
     MenClothes: '/category/MenClothes',
     WomenBags: '/category/WomenBags',
+
+    // Other
+    art: '/category/Art',
+    gaming: '/category/Gaming',
+    realEstate: '/category/RealEstate',
+    pets: '/category/Pets',
+    furniture: '/category/Furniture',
 
     blog: '/blog',
     brand: '/brands/:brand',
@@ -35,8 +43,8 @@ export enum path {
     Register = '/register',
     Profile = '/profile',
     FeaturedAdsDashboard = '/adsDashboard',
-    ForgotPassword = "/password-recover",
-    ResetPassword = "/reset-password/:token",
+    ForgotPassword = '/password-recover',
+    ResetPassword = '/reset-password/:token',
 
     // Help (SEO gold)
     SellingHelp = '/help/selling',
