@@ -2035,13 +2035,16 @@ const PostDetails: FunctionComponent = () => {
                                                         ]
                                                             .filter(Boolean)
                                                             .join(' ');
-
                                                         const isCurrentUser =
+                                                            !!review.user
+                                                                ?._id &&
+                                                            !!auth?._id &&
                                                             String(
-                                                                review.user
-                                                                    ?._id,
+                                                                review.user._id,
                                                             ) ===
-                                                            String(auth?._id);
+                                                                String(
+                                                                    auth._id,
+                                                                );
 
                                                         return (
                                                             <Card
@@ -2061,8 +2064,28 @@ const PostDetails: FunctionComponent = () => {
                                                                     src={
                                                                         review
                                                                             .user
-                                                                            ?.image?.url ||
+                                                                            ?.image
+                                                                            ?.url ||
                                                                         '/user.png'
+                                                                    }
+                                                                    alt={
+                                                                        [
+                                                                            review
+                                                                                .user
+                                                                                ?.name
+                                                                                ?.first,
+                                                                            review
+                                                                                .user
+                                                                                ?.name
+                                                                                ?.last,
+                                                                        ]
+                                                                            .filter(
+                                                                                Boolean,
+                                                                            )
+                                                                            .join(
+                                                                                ' ',
+                                                                            ) ||
+                                                                        'user'
                                                                     }
                                                                     sx={{
                                                                         width: 44,

@@ -4,10 +4,17 @@ import { CategoryValue } from './postLogicMap';
  * Products interface
  */
 
-type Review = {
+export type Review = {
+    _id?: string;
+
     createdAt: Date | string;
-    user: SellerUser;
-    rating: number;
+
+    updatedAt?: Date | string;
+
+    user?: SellerUser | null;
+
+    rating?: number;
+
     comment: string;
 };
 
@@ -17,14 +24,14 @@ type SellerUser = {
     googleId?: string;
 
     name?: {
-        first: string;
-        last: string;
+        first?: string;
+        last?: string;
     };
 
     slug?: string;
 
     phone?: {
-        phone_1: string;
+        phone_1?: string;
         phone_2?: string;
     };
 
@@ -35,6 +42,7 @@ type SellerUser = {
     };
 
     email?: string;
+
     gender?: 'male' | 'female';
 
     image?: {
