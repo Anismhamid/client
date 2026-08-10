@@ -6,31 +6,57 @@ import { CategoryValue } from './postLogicMap';
 
 type Review = {
     createdAt: Date | string;
-    user: {
-        _id: string;
-        name: {
-            first: string;
-            last: string;
-        };
-        image: string;
-    };
+    user: SellerUser;
     rating: number;
     comment: string;
 };
 
 type SellerUser = {
     _id?: string;
-    slug?: string;
+    id?: string;
+    googleId?: string;
 
     name?: {
         first: string;
         last: string;
     };
 
-    image?: {
-        url: string;
-        alt: string;
+    slug?: string;
+
+    phone?: {
+        phone_1: string;
+        phone_2?: string;
     };
+
+    address?: {
+        city?: string;
+        street?: string;
+        houseNumber?: string;
+    };
+
+    email?: string;
+    gender?: 'male' | 'female';
+
+    image?: {
+        url?: string;
+        alt?: string;
+    };
+
+    role?: 'Admin' | 'Moderator' | 'Client';
+
+    activity?: unknown[];
+
+    registrAt?: string;
+
+    createdAt?: string | Date;
+    updatedAt?: string | Date;
+
+    status?: boolean;
+    messageStatus?: string;
+
+    terms?: string;
+
+    pushTokens?: string[];
 };
 
 export interface Posts {

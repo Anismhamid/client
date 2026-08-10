@@ -71,10 +71,7 @@ import LikeButton from '../../../atoms/like/LikeButton';
 import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 
-import {
-    formatTimeAgo,
-    generatePath,
-} from './helpers/helperFunctions';
+import { formatTimeAgo, generatePath } from './helpers/helperFunctions';
 
 import RelatedProductCard from './RelatedProductCard';
 
@@ -89,13 +86,13 @@ import { easeOut, motion } from 'framer-motion';
 
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
+import PostSpecifications from './PostSpecifications';
 
 /* =========================================================
    BRAND
 ========================================================= */
 
-const BRAND_GRADIENT =
-    'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
 const BRAND_COLOR = '#B8860B';
 
@@ -144,16 +141,10 @@ const sectionCardSx = {
 ========================================================= */
 
 const SectionTitle = memo(
-    ({
-        title,
-        subtitle,
-    }: {
-        title: string;
-        subtitle?: string;
-    }) => (
+    ({ title, subtitle }: { title: string; subtitle?: string }) => (
         <Box sx={{ mb: 3 }}>
             <Typography
-                variant="h5"
+                variant='h5'
                 sx={{
                     fontWeight: 800,
                     mb: 0.5,
@@ -163,10 +154,7 @@ const SectionTitle = memo(
             </Typography>
 
             {subtitle && (
-                <Typography
-                    variant="body2"
-                    color="text.secondary"
-                >
+                <Typography variant='body2' color='text.secondary'>
                     {subtitle}
                 </Typography>
             )}
@@ -193,54 +181,40 @@ const PostDetails: FunctionComponent = () => {
        STATE
     ===================================================== */
 
-    const [post, setPost] = useState(
-        initialProductValue as Posts,
-    );
+    const [post, setPost] = useState(initialProductValue as Posts);
 
     const [loading, setLoading] = useState(true);
 
     const [error, setError] = useState('');
 
-    const [isSubmittingReview, setIsSubmittingReview] =
-        useState(false);
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-    const [productRating, setProductRating] =
-        useState<number>(0);
+    const [productRating, setProductRating] = useState<number>(0);
 
-    const [reviewRating, setReviewRating] =
-        useState<number>(0);
+    const [reviewRating, setReviewRating] = useState<number>(0);
 
     const [comment, setComment] = useState('');
 
-    const [showUpdateModal, setShowUpdateModal] =
-        useState<boolean>(false);
+    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
 
-    const [showDeleteModal, setShowDeleteModal] =
-        useState<boolean>(false);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
-    const [isSharing, setIsSharing] =
-        useState<boolean>(false);
+    const [isSharing, setIsSharing] = useState<boolean>(false);
 
-    const [zoomLevel, setZoomLevel] =
-        useState<number>(1);
+    const [zoomLevel, setZoomLevel] = useState<number>(1);
 
-    const [isZoomed, setIsZoomed] =
-        useState<boolean>(false);
+    const [isZoomed, setIsZoomed] = useState<boolean>(false);
 
-    const [isFullscreen, setIsFullscreen] =
-        useState<boolean>(false);
+    const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
-    const [mousePosition, setMousePosition] =
-        useState({
-            x: 50,
-            y: 50,
-        });
+    const [mousePosition, setMousePosition] = useState({
+        x: 50,
+        y: 50,
+    });
 
-    const [relatedProducts, setRelatedProducts] =
-        useState<Posts[]>([]);
+    const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]);
 
-    const imageContainerRef =
-        useRef<HTMLDivElement | null>(null);
+    const imageContainerRef = useRef<HTMLDivElement | null>(null);
 
     /* =====================================================
        SELLER
@@ -248,17 +222,11 @@ const PostDetails: FunctionComponent = () => {
 
     const sellerDisplayName = useMemo(() => {
         return (
-            [
-                post.seller?.name?.first,
-                post.seller?.name?.last,
-            ]
+            [post.seller?.name?.first, post.seller?.name?.last]
                 .filter(Boolean)
                 .join(' ') || 'user'
         );
-    }, [
-        post.seller?.name?.first,
-        post.seller?.name?.last,
-    ]);
+    }, [post.seller?.name?.first, post.seller?.name?.last]);
 
     /* =====================================================
        CATEGORY
@@ -269,10 +237,7 @@ const PostDetails: FunctionComponent = () => {
             return t('product.category') || 'التصنيف';
         }
 
-        return (
-            categoryLabels[post.category] ||
-            t(post.category)
-        );
+        return categoryLabels[post.category] || t(post.category);
     }, [post.category, t]);
 
     /* =====================================================
@@ -283,29 +248,9 @@ const PostDetails: FunctionComponent = () => {
         return Boolean(
             auth?._id &&
                 post?._id &&
-                String(auth._id) ===
-                    String(post.seller?._id),
+                String(auth._id) === String(post.seller?._id),
         );
-    }, [
-        auth?._id,
-        post?._id,
-        post.seller?._id,
-    ]);
-
-    /* =====================================================
-       SECTION TITLES
-    ===================================================== */
-
-    const SECTION_TITLES = useMemo(
-        () => ({
-            details: {
-                title: 'تفاصيل المنتج',
-                subtitle:
-                    'معلومات منظمة تساعد المستخدم على فهم المنتج ومواصفاته بسرعة.',
-            },
-        }),
-        [],
-    );
+    }, [auth?._id, post?._id, post.seller?._id]);
 
     /* =====================================================
        CONTACT SELLER
@@ -320,30 +265,23 @@ const PostDetails: FunctionComponent = () => {
         }
 
         if (!seller?._id) {
-            showError(
-                'لا يمكن فتح المحادثة، البائع غير متوفر',
-            );
+            showError('لا يمكن فتح المحادثة، البائع غير متوفر');
             return;
         }
 
-        if (
-            String(auth._id) === String(seller._id)
-        ) {
+        if (String(auth._id) === String(seller._id)) {
             showError('لا يمكنك التواصل مع نفسك');
             return;
         }
 
         const initialMessage =
-            `مرحباً، أنا مهتم بمنتجك "${post.product_name}" 💬\n\n` +
+            `مرحباً، أنا مهتم ب"${post.product_name}" 💬\n\n` +
             `📦 السعر: ${formatPrice(post.price)}\n` +
             `📂 التصنيف: ${categoryLabel}\n` +
             `🔗 رابط المنتج: ${window.location.href}\n\n` +
-            `هل المنتج لا يزال متوفراً؟`;
+            `هل لا يزال متوفراً؟`;
 
-        openChat(
-            seller as UserMessage,
-            initialMessage,
-        );
+        openChat(seller as UserMessage, initialMessage);
     }, [
         auth?._id,
         navigate,
@@ -365,34 +303,24 @@ const PostDetails: FunctionComponent = () => {
 
         navigate(
             generatePath(path.CustomerProfile, {
-                slug: encodeURIComponent(
-                    post.seller.slug,
-                ),
+                slug: encodeURIComponent(post.seller.slug),
             }),
         );
-    }, [
-        navigate,
-        post.seller?.slug,
-    ]);
+    }, [navigate, post.seller?.slug]);
 
     /* =====================================================
        ZOOM
     ===================================================== */
 
     const handleZoomIn = useCallback(() => {
-        setZoomLevel((prev) =>
-            Math.min(prev + 0.5, 3),
-        );
+        setZoomLevel((prev) => Math.min(prev + 0.5, 3));
 
         setIsZoomed(true);
     }, []);
 
     const handleZoomOut = useCallback(() => {
         setZoomLevel((prev) => {
-            const nextZoom = Math.max(
-                prev - 0.5,
-                1,
-            );
+            const nextZoom = Math.max(prev - 0.5, 1);
 
             if (nextZoom === 1) {
                 setIsZoomed(false);
@@ -413,34 +341,19 @@ const PostDetails: FunctionComponent = () => {
     }, []);
 
     const handleMouseMove = useCallback(
-        (
-            e: React.MouseEvent<HTMLDivElement>,
-        ) => {
-            if (
-                !isZoomed ||
-                !imageContainerRef.current
-            ) {
+        (e: React.MouseEvent<HTMLDivElement>) => {
+            if (!isZoomed || !imageContainerRef.current) {
                 return;
             }
 
-            const container =
-                imageContainerRef.current;
+            const container = imageContainerRef.current;
 
-            const {
-                left,
-                top,
-                width,
-                height,
-            } =
+            const { left, top, width, height } =
                 container.getBoundingClientRect();
 
-            const x =
-                ((e.clientX - left) / width) *
-                100;
+            const x = ((e.clientX - left) / width) * 100;
 
-            const y =
-                ((e.clientY - top) / height) *
-                100;
+            const y = ((e.clientY - top) / height) * 100;
 
             setMousePosition({
                 x,
@@ -454,38 +367,30 @@ const PostDetails: FunctionComponent = () => {
        FULLSCREEN
     ===================================================== */
 
-    const handleFullscreenToggle =
-        useCallback(async () => {
-            try {
-                if (!document.fullscreenElement) {
-                    await imageContainerRef.current?.requestFullscreen();
+    const handleFullscreenToggle = useCallback(async () => {
+        try {
+            if (!document.fullscreenElement) {
+                await imageContainerRef.current?.requestFullscreen();
 
-                    setIsFullscreen(true);
+                setIsFullscreen(true);
 
-                    return;
-                }
-
-                await document.exitFullscreen();
-
-                setIsFullscreen(false);
-            } catch {
-                showError(
-                    'تعذر تفعيل وضع ملء الشاشة',
-                );
+                return;
             }
-        }, []);
+
+            await document.exitFullscreen();
+
+            setIsFullscreen(false);
+        } catch {
+            showError('تعذر تفعيل وضع ملء الشاشة');
+        }
+    }, []);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
-            setIsFullscreen(
-                Boolean(document.fullscreenElement),
-            );
+            setIsFullscreen(Boolean(document.fullscreenElement));
         };
 
-        document.addEventListener(
-            'fullscreenchange',
-            handleFullscreenChange,
-        );
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
 
         return () => {
             document.removeEventListener(
@@ -499,111 +404,75 @@ const PostDetails: FunctionComponent = () => {
        SHARE
     ===================================================== */
 
-    const handleShare = useCallback(
-        async () => {
-            setIsSharing(true);
+    const handleShare = useCallback(async () => {
+        setIsSharing(true);
 
-            try {
-                const shareData = {
-                    title: `منتج ${post.product_name} رائع`,
-                    text: `شاهد ${post.product_name} الآن على منصة صفقة`,
-                    url: window.location.href,
-                };
+        try {
+            const shareData = {
+                title: `منتج ${post.product_name} رائع`,
+                text: `شاهد ${post.product_name} الآن على منصة صفقة`,
+                url: window.location.href,
+            };
 
-                if (navigator.share) {
-                    await navigator.share(
-                        shareData,
-                    );
+            if (navigator.share) {
+                await navigator.share(shareData);
 
-                    showSuccess(
-                        'تمت مشاركة المنتج بنجاح',
-                    );
+                showSuccess('تمت مشاركة المنتج بنجاح');
 
-                    return;
-                }
-
-                await navigator.clipboard.writeText(
-                    window.location.href,
-                );
-
-                showSuccess(
-                    'تم نسخ رابط المنتج',
-                );
-            } catch (shareError) {
-                if (
-                    (shareError as Error)
-                        .name !== 'AbortError'
-                ) {
-                    showError(
-                        'تعذر تنفيذ المشاركة حالياً',
-                    );
-                }
-            } finally {
-                setIsSharing(false);
+                return;
             }
-        },
-        [post.product_name],
-    );
+
+            await navigator.clipboard.writeText(window.location.href);
+
+            showSuccess('تم نسخ رابط المنتج');
+        } catch (shareError) {
+            if ((shareError as Error).name !== 'AbortError') {
+                showError('تعذر تنفيذ المشاركة حالياً');
+            }
+        } finally {
+            setIsSharing(false);
+        }
+    }, [post.product_name]);
 
     /* =====================================================
        DELETE POST
     ===================================================== */
 
-    const handleDeletePost =
-        useCallback(async () => {
-            if (!postId) {
-                return;
-            }
+    const handleDeletePost = useCallback(async () => {
+        if (!postId) {
+            return;
+        }
 
-            try {
-                await deletePost(postId);
+        try {
+            await deletePost(postId);
 
-                showSuccess(
-                    'تم حذف المنتج بنجاح',
-                );
+            showSuccess('تم حذف المنتج بنجاح');
 
-                const categoryPath =
-                    post.category
-                        ? categoryPathMap[
-                              post.category
-                          ]
-                        : undefined;
+            const categoryPath = post.category
+                ? categoryPathMap[post.category]
+                : undefined;
 
-                navigate(
-                    categoryPath || path.Home,
-                    {
-                        replace: true,
-                    },
-                );
-            } catch (deleteError) {
-                console.error(
-                    'Delete post error:',
-                    deleteError,
-                );
+            navigate(categoryPath || path.Home, {
+                replace: true,
+            });
+        } catch (deleteError) {
+            console.error('Delete post error:', deleteError);
 
-                showError(
-                    deleteError as string,
-                );
-            }
-        }, [
-            navigate,
-            post.category,
-            postId,
-        ]);
+            showError(deleteError as string);
+        }
+    }, [navigate, post.category, postId]);
 
     /* =====================================================
        EDIT
     ===================================================== */
 
-    const handleEditProduct =
-        useCallback(() => {
-            setShowUpdateModal(true);
-        }, []);
+    const handleEditProduct = useCallback(() => {
+        setShowUpdateModal(true);
+    }, []);
 
-    const handleCloseUpdateModal =
-        useCallback(() => {
-            setShowUpdateModal(false);
-        }, []);
+    const handleCloseUpdateModal = useCallback(() => {
+        setShowUpdateModal(false);
+    }, []);
 
     /* =====================================================
        REFRESH POST
@@ -620,14 +489,10 @@ const PostDetails: FunctionComponent = () => {
             .then((res) => {
                 setPost(res);
 
-                setProductRating(
-                    Number(res.rating || 0),
-                );
+                setProductRating(Number(res.rating || 0));
             })
             .catch(() => {
-                setError(
-                    'حدث خطأ أثناء تحميل المنتج',
-                );
+                setError('حدث خطأ أثناء تحميل المنتج');
             })
             .finally(() => {
                 setLoading(false);
@@ -640,9 +505,7 @@ const PostDetails: FunctionComponent = () => {
 
     useEffect(() => {
         if (!postId) {
-            setError(
-                'معرف المنتج غير موجود',
-            );
+            setError('معرف المنتج غير موجود');
 
             setLoading(false);
 
@@ -656,19 +519,12 @@ const PostDetails: FunctionComponent = () => {
             .then((res) => {
                 setPost(res);
 
-                setProductRating(
-                    Number(res.rating || 0),
-                );
+                setProductRating(Number(res.rating || 0));
             })
             .catch((fetchError) => {
-                console.error(
-                    'Error fetching post:',
-                    fetchError,
-                );
+                console.error('Error fetching post:', fetchError);
 
-                setError(
-                    'حدث خطأ أثناء تحميل المنشور',
-                );
+                setError('حدث خطأ أثناء تحميل المنشور');
             })
             .finally(() => {
                 setLoading(false);
@@ -684,22 +540,12 @@ const PostDetails: FunctionComponent = () => {
             return;
         }
 
-        getRelatedPosts(
-            post.category,
-            post._id,
-            4,
-        )
+        getRelatedPosts(post.category, post._id, 4)
             .then(setRelatedProducts)
             .catch((relatedError) => {
-                console.error(
-                    'Related products error:',
-                    relatedError,
-                );
+                console.error('Related products error:', relatedError);
             });
-    }, [
-        post._id,
-        post.category,
-    ]);
+    }, [post._id, post.category]);
 
     /* =====================================================
        LOADING
@@ -707,30 +553,18 @@ const PostDetails: FunctionComponent = () => {
 
     if (loading) {
         return (
-            <Container
-                maxWidth="xl"
-                sx={{ py: 5 }}
-            >
+            <Container maxWidth='xl' sx={{ py: 5 }}>
                 <Stack spacing={3}>
-                    <Skeleton
-                        variant="rounded"
-                        height={90}
-                    />
+                    <Skeleton variant='rounded' height={90} />
 
-                    <Grid
-                        container
-                        spacing={3}
-                    >
+                    <Grid container spacing={3}>
                         <Grid
                             size={{
                                 xs: 12,
                                 lg: 7,
                             }}
                         >
-                            <Skeleton
-                                variant="rounded"
-                                height={520}
-                            />
+                            <Skeleton variant='rounded' height={520} />
                         </Grid>
 
                         <Grid
@@ -740,15 +574,9 @@ const PostDetails: FunctionComponent = () => {
                             }}
                         >
                             <Stack spacing={2}>
-                                <Skeleton
-                                    variant="rounded"
-                                    height={220}
-                                />
+                                <Skeleton variant='rounded' height={220} />
 
-                                <Skeleton
-                                    variant="rounded"
-                                    height={260}
-                                />
+                                <Skeleton variant='rounded' height={260} />
                             </Stack>
                         </Grid>
                     </Grid>
@@ -764,7 +592,7 @@ const PostDetails: FunctionComponent = () => {
     if (error) {
         return (
             <Container
-                maxWidth="md"
+                maxWidth='md'
                 sx={{
                     py: 8,
                     textAlign: 'center',
@@ -778,26 +606,17 @@ const PostDetails: FunctionComponent = () => {
                     }}
                 />
 
-                <Typography
-                    variant="h5"
-                    color="error"
-                    gutterBottom
-                >
+                <Typography variant='h5' color='error' gutterBottom>
                     {error}
                 </Typography>
 
                 <Button
-                    variant="contained"
-                    startIcon={
-                        <ArrowBackIcon />
-                    }
-                    onClick={() =>
-                        navigate(-1)
-                    }
+                    variant='contained'
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate(-1)}
                     sx={{
                         mt: 3,
-                        background:
-                            BRAND_GRADIENT,
+                        background: BRAND_GRADIENT,
                     }}
                 >
                     {t('backOneStep')}
@@ -809,7 +628,7 @@ const PostDetails: FunctionComponent = () => {
     if (!post?._id) {
         return (
             <Container
-                maxWidth="md"
+                maxWidth='md'
                 sx={{
                     py: 8,
                     textAlign: 'center',
@@ -823,27 +642,17 @@ const PostDetails: FunctionComponent = () => {
                     }}
                 />
 
-                <Typography
-                    variant="h5"
-                    color="error"
-                    gutterBottom
-                >
-                    {t('product.notFound') ||
-                        'المنتج غير موجود'}
+                <Typography variant='h5' color='error' gutterBottom>
+                    {t('product.notFound') || 'المنتج غير موجود'}
                 </Typography>
 
                 <Button
-                    variant="contained"
-                    startIcon={
-                        <ArrowBackIcon />
-                    }
-                    onClick={() =>
-                        navigate(-1)
-                    }
+                    variant='contained'
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate(-1)}
                     sx={{
                         mt: 3,
-                        background:
-                            BRAND_GRADIENT,
+                        background: BRAND_GRADIENT,
                     }}
                 >
                     {t('backOneStep')}
@@ -856,12 +665,10 @@ const PostDetails: FunctionComponent = () => {
        SEO
     ===================================================== */
 
-    const productJsonLd =
-        generateSingleProductJsonLd(post);
+    const productJsonLd = generateSingleProductJsonLd(post);
 
     const currentUrl =
-        `${window.location.origin}/product/` +
-        `${post.category}/${post._id}`;
+        `${window.location.origin}/product/` + `${post.category}/${post._id}`;
 
     /* =====================================================
        RENDER
@@ -871,73 +678,45 @@ const PostDetails: FunctionComponent = () => {
         <>
             <JsonLd data={productJsonLd} />
 
-            <title>
-                {post.product_name} | صفقة
-            </title>
+            <title>{post.product_name} | صفقة</title>
 
-            <link
-                rel="canonical"
-                href={currentUrl}
-            />
+            <link rel='canonical' href={currentUrl} />
 
             <meta
-                name="description"
+                name='description'
                 content={
                     `اشتري ${post.product_name} بأفضل سعر على صفقة. ` +
-                    `${post.description?.substring(
-                        0,
-                        120,
-                    ) || ''}`
+                    `${post.description?.substring(0, 120) || ''}`
                 }
             />
 
-            <meta
-                property="og:title"
-                content={post.product_name}
-            />
+            <meta property='og:title' content={post.product_name} />
 
             <meta
-                property="og:description"
-                content={
-                    post.description?.substring(
-                        0,
-                        160,
-                    ) || ''
-                }
+                property='og:description'
+                content={post.description?.substring(0, 160) || ''}
             />
 
-            <meta
-                property="og:image"
-                content={post.image?.url || ''}
-            />
+            <meta property='og:image' content={post.image?.url || ''} />
+
+            <meta property='og:type' content='product' />
 
             <meta
-                property="og:type"
-                content="product"
+                property='product:price:amount'
+                content={String(post.price || 0)}
             />
 
-            <meta
-                property="product:price:amount"
-                content={String(
-                    post.price || 0,
-                )}
-            />
-
-            <meta
-                property="product:price:currency"
-                content="ILS"
-            />
+            <meta property='product:price:currency' content='ILS' />
 
             <Box
-                component="main"
+                component='main'
                 sx={{
-                    backgroundColor:
-                        'background.default',
+                    backgroundColor: 'background.default',
                     pb: 8,
                 }}
             >
                 <Container
-                    maxWidth="xl"
+                    maxWidth='xl'
                     sx={{
                         pt: {
                             xs: 2,
@@ -975,12 +754,12 @@ const PostDetails: FunctionComponent = () => {
                                     xs: 'stretch',
                                     md: 'center',
                                 }}
-                                justifyContent="space-between"
+                                justifyContent='space-between'
                             >
                                 <Stack
-                                    direction="row"
+                                    direction='row'
                                     spacing={2}
-                                    alignItems="center"
+                                    alignItems='center'
                                     sx={{
                                         flex: 1,
                                         minWidth: 0,
@@ -988,32 +767,21 @@ const PostDetails: FunctionComponent = () => {
                                 >
                                     <Avatar
                                         src={
-                                            post.seller
-                                                ?.image
-                                                ?.url ||
+                                            post.seller?.image?.url ||
                                             '/user.png'
                                         }
-                                        alt={
-                                            sellerDisplayName
-                                        }
-                                        onClick={
-                                            goToProfile
-                                        }
+                                        alt={sellerDisplayName}
+                                        onClick={goToProfile}
                                         sx={{
                                             width: 56,
                                             height: 56,
-                                            border:
-                                                '2px solid',
-                                            borderColor:
-                                                BRAND_COLOR,
-                                            cursor:
-                                                'pointer',
-                                            transition:
-                                                'transform 0.2s',
+                                            border: '2px solid',
+                                            borderColor: BRAND_COLOR,
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.2s',
 
                                             '&:hover': {
-                                                transform:
-                                                    'scale(1.05)',
+                                                transform: 'scale(1.05)',
                                             },
                                         }}
                                     />
@@ -1025,53 +793,45 @@ const PostDetails: FunctionComponent = () => {
                                         }}
                                     >
                                         <Stack
-                                            direction="row"
+                                            direction='row'
                                             spacing={1}
-                                            alignItems="center"
-                                            flexWrap="wrap"
+                                            alignItems='center'
+                                            flexWrap='wrap'
                                         >
                                             <Typography
-                                                variant="h6"
+                                                variant='h6'
                                                 sx={{
                                                     fontWeight: 700,
-                                                    fontSize:
-                                                        {
-                                                            xs: '1rem',
-                                                            md: '1.1rem',
-                                                        },
+                                                    fontSize: {
+                                                        xs: '1rem',
+                                                        md: '1.1rem',
+                                                    },
                                                 }}
                                             >
-                                                {
-                                                    sellerDisplayName
-                                                }
+                                                {sellerDisplayName}
                                             </Typography>
 
                                             {isOwner && (
                                                 <Chip
-                                                    label="صاحب المنشور"
-                                                    size="small"
+                                                    label='صاحب المنشور'
+                                                    size='small'
                                                     sx={{
                                                         fontWeight: 700,
                                                         height: 24,
 
-                                                        '& .MuiChip-label':
-                                                            {
-                                                                px: 1.5,
-                                                                fontSize:
-                                                                    '0.7rem',
-                                                            },
+                                                        '& .MuiChip-label': {
+                                                            px: 1.5,
+                                                            fontSize: '0.7rem',
+                                                        },
                                                     }}
                                                 />
                                             )}
 
-                                            {post
-                                                .seller
-                                                ?.slug && (
-                                                <Tooltip title="بائع موثوق">
+                                            {post.seller?.slug && (
+                                                <Tooltip title='بائع موثوق'>
                                                     <VerifiedRounded
                                                         sx={{
-                                                            color:
-                                                                BRAND_COLOR,
+                                                            color: BRAND_COLOR,
                                                             fontSize: 20,
                                                         }}
                                                     />
@@ -1090,14 +850,13 @@ const PostDetails: FunctionComponent = () => {
                                             }}
                                             divider={
                                                 <Divider
-                                                    orientation="vertical"
+                                                    orientation='vertical'
                                                     flexItem
                                                     sx={{
-                                                        display:
-                                                            {
-                                                                xs: 'none',
-                                                                sm: 'block',
-                                                            },
+                                                        display: {
+                                                            xs: 'none',
+                                                            sm: 'block',
+                                                        },
                                                     }}
                                                 />
                                             }
@@ -1106,33 +865,26 @@ const PostDetails: FunctionComponent = () => {
                                             }}
                                         >
                                             <Typography
-                                                variant="body2"
-                                                color="text.secondary"
+                                                variant='body2'
+                                                color='text.secondary'
                                                 sx={{
-                                                    fontSize:
-                                                        '0.8125rem',
+                                                    fontSize: '0.8125rem',
                                                 }}
                                             >
-                                                @
-                                                {post
-                                                    .seller
-                                                    ?.slug ||
-                                                    'seller'}
+                                                @{post.seller?.slug || 'seller'}
                                             </Typography>
 
                                             <Typography
-                                                variant="body2"
-                                                color="text.secondary"
+                                                variant='body2'
+                                                color='text.secondary'
                                                 sx={{
-                                                    fontSize:
-                                                        '0.8125rem',
+                                                    fontSize: '0.8125rem',
                                                 }}
                                             >
                                                 منشور منذ{' '}
                                                 {formatTimeAgo(
                                                     String(
-                                                        post.createdAt ||
-                                                            '',
+                                                        post.createdAt || '',
                                                     ),
                                                     t,
                                                 )}
@@ -1142,28 +894,25 @@ const PostDetails: FunctionComponent = () => {
                                 </Stack>
 
                                 <Stack
-                                    direction="row"
+                                    direction='row'
                                     spacing={1}
                                     sx={{
                                         flexShrink: 0,
 
-                                        '& .MuiButton-root':
-                                            {
-                                                py: 1,
-                                                px: {
-                                                    xs: 1.5,
-                                                    sm: 2.5,
-                                                },
-                                                fontSize:
-                                                    '0.8125rem',
-                                                fontWeight: 600,
-                                                whiteSpace:
-                                                    'nowrap',
+                                        '& .MuiButton-root': {
+                                            py: 1,
+                                            px: {
+                                                xs: 1.5,
+                                                sm: 2.5,
                                             },
+                                            fontSize: '0.8125rem',
+                                            fontWeight: 600,
+                                            whiteSpace: 'nowrap',
+                                        },
                                     }}
                                 >
                                     <Button
-                                        variant="outlined"
+                                        variant='outlined'
                                         startIcon={
                                             <Person
                                                 sx={{
@@ -1171,25 +920,18 @@ const PostDetails: FunctionComponent = () => {
                                                 }}
                                             />
                                         }
-                                        onClick={
-                                            goToProfile
-                                        }
+                                        onClick={goToProfile}
                                         sx={{
-                                            borderColor:
-                                                'divider',
-                                            color:
-                                                'text.secondary',
+                                            borderColor: 'divider',
+                                            color: 'text.secondary',
 
                                             '&:hover': {
-                                                borderColor:
+                                                borderColor: BRAND_COLOR,
+                                                color: BRAND_COLOR,
+                                                bgcolor: alpha(
                                                     BRAND_COLOR,
-                                                color:
-                                                    BRAND_COLOR,
-                                                bgcolor:
-                                                    alpha(
-                                                        BRAND_COLOR,
-                                                        0.04,
-                                                    ),
+                                                    0.04,
+                                                ),
                                             },
                                         }}
                                     >
@@ -1199,7 +941,7 @@ const PostDetails: FunctionComponent = () => {
                                     {isOwner ? (
                                         <>
                                             <Button
-                                                variant="outlined"
+                                                variant='outlined'
                                                 startIcon={
                                                     <EditIcon
                                                         sx={{
@@ -1207,28 +949,23 @@ const PostDetails: FunctionComponent = () => {
                                                         }}
                                                     />
                                                 }
-                                                onClick={
-                                                    handleEditProduct
-                                                }
+                                                onClick={handleEditProduct}
                                                 sx={{
-                                                    borderColor:
-                                                        'warning.main',
+                                                    borderColor: 'warning.main',
 
-                                                    '&:hover':
-                                                        {
-                                                            bgcolor:
-                                                                alpha(
-                                                                    '#ED6C02',
-                                                                    0.04,
-                                                                ),
-                                                        },
+                                                    '&:hover': {
+                                                        bgcolor: alpha(
+                                                            '#ED6C02',
+                                                            0.04,
+                                                        ),
+                                                    },
                                                 }}
                                             >
                                                 تعديل
                                             </Button>
 
                                             <Button
-                                                variant="outlined"
+                                                variant='outlined'
                                                 startIcon={
                                                     <DeleteIcon
                                                         sx={{
@@ -1237,24 +974,18 @@ const PostDetails: FunctionComponent = () => {
                                                     />
                                                 }
                                                 onClick={() =>
-                                                    setShowDeleteModal(
-                                                        true,
-                                                    )
+                                                    setShowDeleteModal(true)
                                                 }
                                                 sx={{
-                                                    borderColor:
-                                                        'error.main',
-                                                    color:
-                                                        'error.main',
+                                                    borderColor: 'error.main',
+                                                    color: 'error.main',
 
-                                                    '&:hover':
-                                                        {
-                                                            bgcolor:
-                                                                alpha(
-                                                                    '#D32F2F',
-                                                                    0.04,
-                                                                ),
-                                                        },
+                                                    '&:hover': {
+                                                        bgcolor: alpha(
+                                                            '#D32F2F',
+                                                            0.04,
+                                                        ),
+                                                    },
                                                 }}
                                             >
                                                 حذف
@@ -1262,7 +993,7 @@ const PostDetails: FunctionComponent = () => {
                                         </>
                                     ) : (
                                         <Button
-                                            variant="outlined"
+                                            variant='outlined'
                                             startIcon={
                                                 <Comment
                                                     sx={{
@@ -1270,28 +1001,20 @@ const PostDetails: FunctionComponent = () => {
                                                     }}
                                                 />
                                             }
-                                            onClick={
-                                                handleContactSeller
-                                            }
+                                            onClick={handleContactSeller}
                                             sx={{
                                                 gap: 1,
-                                                borderColor:
-                                                    'divider',
-                                                color:
-                                                    'text.secondary',
+                                                borderColor: 'divider',
+                                                color: 'text.secondary',
 
-                                                '&:hover':
-                                                    {
-                                                        borderColor:
-                                                            BRAND_COLOR,
-                                                        color:
-                                                            BRAND_COLOR,
-                                                        bgcolor:
-                                                            alpha(
-                                                                BRAND_COLOR,
-                                                                0.04,
-                                                            ),
-                                                    },
+                                                '&:hover': {
+                                                    borderColor: BRAND_COLOR,
+                                                    color: BRAND_COLOR,
+                                                    bgcolor: alpha(
+                                                        BRAND_COLOR,
+                                                        0.04,
+                                                    ),
+                                                },
                                             }}
                                         >
                                             تواصل
@@ -1308,9 +1031,7 @@ const PostDetails: FunctionComponent = () => {
                         <Box>
                             <Breadcrumbs
                                 aria-label={
-                                    t(
-                                        'product.breadcrumbNavigation',
-                                    ) ||
+                                    t('product.breadcrumbNavigation') ||
                                     'مسار التنقل'
                                 }
                                 separator={
@@ -1333,10 +1054,8 @@ const PostDetails: FunctionComponent = () => {
                                         />
                                     }
                                     sx={{
-                                        textTransform:
-                                            'none',
-                                        fontSize:
-                                            '0.875rem',
+                                        textTransform: 'none',
+                                        fontSize: '0.875rem',
                                     }}
                                 >
                                     {t('home')}
@@ -1355,55 +1074,37 @@ const PostDetails: FunctionComponent = () => {
                                             const catPath =
                                                 categoryPathMap[
                                                     post.category
-                                                ] ||
-                                                '';
+                                                ] || '';
 
-                                            if (
-                                                catPath
-                                            ) {
-                                                navigate(
-                                                    catPath,
-                                                );
+                                            if (catPath) {
+                                                navigate(catPath);
                                             }
                                         }}
                                         disabled={
-                                            !categoryPathMap[
-                                                post.category
-                                            ]
+                                            !categoryPathMap[post.category]
                                         }
                                         sx={{
-                                            textTransform:
-                                                'none',
-                                            fontSize:
-                                                '0.875rem',
+                                            textTransform: 'none',
+                                            fontSize: '0.875rem',
                                         }}
                                     >
-                                        {
-                                            categoryLabel
-                                        }
+                                        {categoryLabel}
                                     </Button>
                                 )}
 
                                 <Typography
-                                    variant="body2"
+                                    variant='body2'
                                     sx={{
                                         fontWeight: 700,
-                                        color:
-                                            'text.primary',
-                                        fontSize:
-                                            '0.875rem',
+                                        color: 'text.primary',
+                                        fontSize: '0.875rem',
                                         maxWidth: 200,
-                                        overflow:
-                                            'hidden',
-                                        textOverflow:
-                                            'ellipsis',
-                                        whiteSpace:
-                                            'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
-                                    {
-                                        post.product_name
-                                    }
+                                    {post.product_name}
                                 </Typography>
                             </Breadcrumbs>
                         </Box>
@@ -1412,10 +1113,7 @@ const PostDetails: FunctionComponent = () => {
                             MAIN GRID
                         ================================================= */}
 
-                        <Grid
-                            container
-                            spacing={4}
-                        >
+                        <Grid container spacing={4}>
                             {/* =================================================
                                 LEFT
                             ================================================= */}
@@ -1430,8 +1128,8 @@ const PostDetails: FunctionComponent = () => {
                                     {/* IMAGE */}
                                     <motion.div
                                         variants={fadeUp}
-                                        initial="hidden"
-                                        whileInView="show"
+                                        initial='hidden'
+                                        whileInView='show'
                                         viewport={{
                                             once: true,
                                             amount: 0.2,
@@ -1440,68 +1138,46 @@ const PostDetails: FunctionComponent = () => {
                                         <Card
                                             sx={{
                                                 ...sectionCardSx,
-                                                overflow:
-                                                    'hidden',
+                                                overflow: 'hidden',
                                                 borderRadius: 3,
                                             }}
                                         >
                                             <Box
-                                                ref={
-                                                    imageContainerRef
-                                                }
-                                                onMouseMove={
-                                                    handleMouseMove
-                                                }
+                                                ref={imageContainerRef}
+                                                onMouseMove={handleMouseMove}
                                                 onClick={() =>
-                                                    setIsZoomed(
-                                                        (prev) =>
-                                                            !prev,
-                                                    )
+                                                    setIsZoomed((prev) => !prev)
                                                 }
                                                 sx={{
-                                                    position:
-                                                        'relative',
-                                                    height:
-                                                        {
-                                                            xs: 360,
-                                                            md: 520,
-                                                        },
+                                                    position: 'relative',
+                                                    height: {
+                                                        xs: 360,
+                                                        md: 520,
+                                                    },
                                                     borderRadius: 3,
-                                                    overflow:
-                                                        'hidden',
-                                                    cursor:
-                                                        isZoomed
-                                                            ? 'zoom-out'
-                                                            : 'zoom-in',
+                                                    overflow: 'hidden',
+                                                    cursor: isZoomed
+                                                        ? 'zoom-out'
+                                                        : 'zoom-in',
                                                     background:
                                                         'radial-gradient(circle at top, #f8fafc 0%, #f1ede4 100%)',
 
-                                                    '&::before':
-                                                        {
-                                                            content:
-                                                                '""',
-                                                            position:
-                                                                'absolute',
-                                                            inset: 0,
-                                                            background:
-                                                                `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(184,134,11,.12), transparent 40%)`,
-                                                            pointerEvents:
-                                                                'none',
-                                                            transition:
-                                                                '0.2s',
-                                                        },
+                                                    '&::before': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        inset: 0,
+                                                        background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(184,134,11,.12), transparent 40%)`,
+                                                        pointerEvents: 'none',
+                                                        transition: '0.2s',
+                                                    },
                                                 }}
                                             >
-                                                {post
-                                                    .image
-                                                    ?.url ? (
+                                                {post.image?.url ? (
                                                     <>
                                                         <CardMedia
-                                                            component="img"
+                                                            component='img'
                                                             image={
-                                                                post
-                                                                    .image
-                                                                    .url
+                                                                post.image.url
                                                             }
                                                             alt={
                                                                 post.product_name
@@ -1519,15 +1195,14 @@ const PostDetails: FunctionComponent = () => {
                                                                         ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
                                                                         : 'scale(1)',
 
-                                                                transformOrigin:
-                                                                    `${mousePosition.x}% ${mousePosition.y}%`,
+                                                                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
                                                             }}
                                                         />
 
                                                         {/* IMAGE CONTROLS */}
 
                                                         <Stack
-                                                            direction="row"
+                                                            direction='row'
                                                             spacing={0.5}
                                                             sx={{
                                                                 position:
@@ -1548,11 +1223,11 @@ const PostDetails: FunctionComponent = () => {
                                                             }}
                                                         >
                                                             <Tooltip
-                                                                title="تكبير"
-                                                                placement="top"
+                                                                title='تكبير'
+                                                                placement='top'
                                                             >
                                                                 <IconButton
-                                                                    size="small"
+                                                                    size='small'
                                                                     onClick={(
                                                                         e,
                                                                     ) => {
@@ -1572,12 +1247,12 @@ const PostDetails: FunctionComponent = () => {
                                                             </Tooltip>
 
                                                             <Tooltip
-                                                                title="تصغير"
-                                                                placement="top"
+                                                                title='تصغير'
+                                                                placement='top'
                                                             >
                                                                 <span>
                                                                     <IconButton
-                                                                        size="small"
+                                                                        size='small'
                                                                         disabled={
                                                                             zoomLevel <=
                                                                             1
@@ -1602,7 +1277,7 @@ const PostDetails: FunctionComponent = () => {
                                                             </Tooltip>
 
                                                             <Divider
-                                                                orientation="vertical"
+                                                                orientation='vertical'
                                                                 flexItem
                                                                 sx={{
                                                                     bgcolor:
@@ -1616,10 +1291,10 @@ const PostDetails: FunctionComponent = () => {
                                                                         ? 'إغلاق ملء الشاشة'
                                                                         : 'ملء الشاشة'
                                                                 }
-                                                                placement="top"
+                                                                placement='top'
                                                             >
                                                                 <IconButton
-                                                                    size="small"
+                                                                    size='small'
                                                                     onClick={(
                                                                         e,
                                                                     ) => {
@@ -1650,7 +1325,7 @@ const PostDetails: FunctionComponent = () => {
                                                             {isZoomed && (
                                                                 <>
                                                                     <Divider
-                                                                        orientation="vertical"
+                                                                        orientation='vertical'
                                                                         flexItem
                                                                         sx={{
                                                                             bgcolor:
@@ -1659,11 +1334,11 @@ const PostDetails: FunctionComponent = () => {
                                                                     />
 
                                                                     <Tooltip
-                                                                        title="إعادة الضبط"
-                                                                        placement="top"
+                                                                        title='إعادة الضبط'
+                                                                        placement='top'
                                                                     >
                                                                         <IconButton
-                                                                            size="small"
+                                                                            size='small'
                                                                             onClick={(
                                                                                 e,
                                                                             ) => {
@@ -1736,7 +1411,7 @@ const PostDetails: FunctionComponent = () => {
                                                             }}
                                                         >
                                                             <Typography
-                                                                variant="caption"
+                                                                variant='caption'
                                                                 sx={{
                                                                     fontWeight: 700,
                                                                     color: 'text.secondary',
@@ -1752,28 +1427,27 @@ const PostDetails: FunctionComponent = () => {
                                                     </>
                                                 ) : (
                                                     <Stack
-                                                        justifyContent="center"
-                                                        alignItems="center"
+                                                        justifyContent='center'
+                                                        alignItems='center'
                                                         spacing={1.5}
                                                         sx={{
                                                             height: '100%',
                                                         }}
                                                     >
                                                         <Typography
-                                                            variant="h6"
-                                                            color="text.secondary"
+                                                            variant='h6'
+                                                            color='text.secondary'
                                                         >
-                                                            لا توجد صورة
-                                                            للمنتج
+                                                            لا توجد صورة للمنتج
                                                         </Typography>
 
                                                         <Typography
-                                                            variant="body2"
-                                                            color="text.disabled"
+                                                            variant='body2'
+                                                            color='text.disabled'
                                                         >
                                                             يمكن إضافة صورة
-                                                            لاحقاً لتحسين
-                                                            عرض المنتج.
+                                                            لاحقاً لتحسين عرض
+                                                            المنتج.
                                                         </Typography>
                                                     </Stack>
                                                 )}
@@ -1785,54 +1459,45 @@ const PostDetails: FunctionComponent = () => {
                                                 sx={{
                                                     p: 2,
                                                     borderTop: 1,
-                                                    borderColor:
-                                                        'divider',
-                                                    bgcolor:
-                                                        alpha(
-                                                            '#000',
-                                                            0.01,
-                                                        ),
+                                                    borderColor: 'divider',
+                                                    bgcolor: alpha(
+                                                        '#000',
+                                                        0.01,
+                                                    ),
                                                 }}
                                             >
                                                 <Stack
-                                                    direction="row"
-                                                    justifyContent="space-between"
-                                                    alignItems="center"
-                                                    flexWrap="wrap"
+                                                    direction='row'
+                                                    justifyContent='space-between'
+                                                    alignItems='center'
+                                                    flexWrap='wrap'
                                                     gap={1}
                                                 >
                                                     <Stack
-                                                        direction="row"
+                                                        direction='row'
                                                         spacing={0.5}
                                                     >
                                                         <LikeButton
-                                                            product={
-                                                                post
-                                                            }
-                                                            setProduct={
-                                                                setPost
-                                                            }
+                                                            product={post}
+                                                            setProduct={setPost}
                                                         />
 
                                                         <IconButton
                                                             onClick={
                                                                 handleShare
                                                             }
-                                                            disabled={
-                                                                isSharing
-                                                            }
+                                                            disabled={isSharing}
                                                             sx={{
                                                                 color: 'text.secondary',
 
-                                                                '&:hover':
-                                                                    {
-                                                                        color: BRAND_COLOR,
-                                                                        bgcolor:
-                                                                            alpha(
-                                                                                BRAND_COLOR,
-                                                                                0.08,
-                                                                            ),
-                                                                    },
+                                                                '&:hover': {
+                                                                    color: BRAND_COLOR,
+                                                                    bgcolor:
+                                                                        alpha(
+                                                                            BRAND_COLOR,
+                                                                            0.08,
+                                                                        ),
+                                                                },
                                                             }}
                                                         >
                                                             <ShareIcon />
@@ -1840,35 +1505,31 @@ const PostDetails: FunctionComponent = () => {
                                                     </Stack>
 
                                                     <Typography
-                                                        variant="caption"
-                                                        color="text.secondary"
+                                                        variant='caption'
+                                                        color='text.secondary'
                                                         sx={{
-                                                            fontSize:
-                                                                '0.75rem',
+                                                            fontSize: '0.75rem',
                                                             opacity: 0.7,
                                                         }}
                                                     >
-                                                        اعرض الصورة بوضوح
-                                                        أعلى قبل اتخاذ
-                                                        قرار الشراء.
+                                                        اعرض الصورة بوضوح أعلى
+                                                        قبل اتخاذ قرار الشراء.
                                                     </Typography>
                                                 </Stack>
                                             </Box>
 
                                             {/* OWNER ACTIONS */}
-
+                                            {/* 
                                             {isOwner && (
                                                 <Box
                                                     sx={{
                                                         p: 2,
                                                         borderTop: 1,
-                                                        borderColor:
-                                                            'divider',
-                                                        bgcolor:
-                                                            alpha(
-                                                                '#000',
-                                                                0.01,
-                                                            ),
+                                                        borderColor: 'divider',
+                                                        bgcolor: alpha(
+                                                            '#000',
+                                                            0.01,
+                                                        ),
                                                     }}
                                                 >
                                                     <Stack
@@ -1879,8 +1540,8 @@ const PostDetails: FunctionComponent = () => {
                                                         spacing={1.5}
                                                     >
                                                         <Button
-                                                            variant="contained"
-                                                            color="warning"
+                                                            variant='contained'
+                                                            color='warning'
                                                             startIcon={
                                                                 <EditIcon />
                                                             }
@@ -1893,14 +1554,12 @@ const PostDetails: FunctionComponent = () => {
                                                                 fontWeight: 600,
                                                             }}
                                                         >
-                                                            {t(
-                                                                'edit',
-                                                            )}
+                                                            {t('edit')}
                                                         </Button>
 
                                                         <Button
-                                                            variant="contained"
-                                                            color="error"
+                                                            variant='contained'
+                                                            color='error'
                                                             startIcon={
                                                                 <DeleteIcon />
                                                             }
@@ -1915,13 +1574,11 @@ const PostDetails: FunctionComponent = () => {
                                                                 fontWeight: 600,
                                                             }}
                                                         >
-                                                            {t(
-                                                                'delete',
-                                                            )}
+                                                            {t('delete')}
                                                         </Button>
                                                     </Stack>
                                                 </Box>
-                                            )}
+                                            )} */}
                                         </Card>
                                     </motion.div>
 
@@ -1929,7 +1586,7 @@ const PostDetails: FunctionComponent = () => {
                                         DETAILS
                                     ================================================= */}
 
-                                    <Card
+                                    {/* <Card
                                         sx={{
                                             ...sectionCardSx,
                                             p: {
@@ -2047,8 +1704,280 @@ const PostDetails: FunctionComponent = () => {
                                                 ),
                                             )}
                                         </Grid>
+                                    </Card> */}
+                                    {/* PRODUCT INFO */}
+
+                                    <Card
+                                        sx={{
+                                            ...sectionCardSx,
+                                            p: {
+                                                xs: 2.25,
+                                                md: 3,
+                                            },
+                                            borderRadius: 3,
+                                        }}
+                                    >
+                                        <Stack spacing={2.5}>
+                                            <Box>
+                                                <Typography
+                                                    variant='h4'
+                                                    component='h1'
+                                                    sx={{
+                                                        fontWeight: 900,
+                                                        lineHeight: 1.2,
+                                                        mb: 1.5,
+                                                        fontSize: {
+                                                            xs: '1.5rem',
+                                                            md: '2rem',
+                                                        },
+                                                    }}
+                                                >
+                                                    {post.product_name}
+                                                </Typography>
+
+                                                <Stack
+                                                    direction='row'
+                                                    spacing={1.25}
+                                                    alignItems='center'
+                                                    flexWrap='wrap'
+                                                >
+                                                    {/* PRODUCT RATING
+                                                        READ ONLY */}
+                                                    <Rating
+                                                        value={productRating}
+                                                        precision={0.5}
+                                                        size='medium'
+                                                        readOnly
+                                                    />
+
+                                                    <Typography
+                                                        variant='body2'
+                                                        color='text.secondary'
+                                                    >
+                                                        {post.reviews?.length ??
+                                                            post.reviews
+                                                                ?.length ??
+                                                            0}{' '}
+                                                        {t('reviews') ||
+                                                            'تقييم'}
+                                                    </Typography>
+                                                </Stack>
+                                            </Box>
+
+                                            {/* PRICE */}
+
+                                            <Box
+                                                sx={{
+                                                    p: 3,
+                                                    borderRadius: 2,
+                                                    background: `linear-gradient(135deg, ${alpha(
+                                                        BRAND_COLOR,
+                                                        0.08,
+                                                    )}, ${alpha(
+                                                        BRAND_DARK,
+                                                        0.04,
+                                                    )})`,
+                                                    border: `1px solid ${alpha(
+                                                        BRAND_COLOR,
+                                                        0.12,
+                                                    )}`,
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant='body2'
+                                                    color='text.secondary'
+                                                    sx={{
+                                                        mb: 0.5,
+                                                    }}
+                                                >
+                                                    السعر الحالي
+                                                </Typography>
+
+                                                <Typography
+                                                    variant='h3'
+                                                    sx={{
+                                                        fontWeight: 900,
+                                                        background:
+                                                            BRAND_GRADIENT,
+                                                        WebkitBackgroundClip:
+                                                            'text',
+                                                        WebkitTextFillColor:
+                                                            'transparent',
+                                                        fontSize: {
+                                                            xs: '2rem',
+                                                            md: '2.5rem',
+                                                        },
+                                                    }}
+                                                >
+                                                    {formatPrice(post.price)}
+                                                </Typography>
+
+                                                <Stack
+                                                    direction='row'
+                                                    spacing={1}
+                                                    sx={{
+                                                        mt: 2,
+                                                    }}
+                                                >
+                                                    <Chip
+                                                        label={
+                                                            post.in_stock
+                                                                ? '✅ متوفر'
+                                                                : '❌ غير متوفر'
+                                                        }
+                                                        color={
+                                                            post.in_stock
+                                                                ? 'success'
+                                                                : 'default'
+                                                        }
+                                                        size='small'
+                                                        sx={{
+                                                            fontWeight: 600,
+                                                        }}
+                                                    />
+
+                                                    <Chip
+                                                        label='⚡ رد سريع'
+                                                        size='small'
+                                                        sx={{
+                                                            bgcolor: alpha(
+                                                                BRAND_COLOR,
+                                                                0.1,
+                                                            ),
+                                                            color: BRAND_DARK,
+                                                            fontWeight: 600,
+                                                        }}
+                                                    />
+                                                </Stack>
+                                            </Box>
+
+                                            {/* OPTIONS */}
+
+                                            {post.category && (
+                                                <Box>
+                                                    <Typography
+                                                        variant='h6'
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                            mb: 1.5,
+                                                        }}
+                                                    >
+                                                        {t(
+                                                            'product.availableOptions',
+                                                            'الخيارات المتاحة',
+                                                        )}
+                                                    </Typography>
+
+                                                    <ColorsAndSizes
+                                                        category={post.category}
+                                                    />
+                                                </Box>
+                                            )}
+
+                                            <Divider />
+
+                                            {/* DESCRIPTION */}
+
+                                            {/* ACTIONS */}
+
+                                            <Stack spacing={1.5}>
+                                                {!isOwner && (
+                                                    <Button
+                                                        fullWidth
+                                                        variant='contained'
+                                                        size='large'
+                                                        startIcon={<Comment />}
+                                                        onClick={
+                                                            handleContactSeller
+                                                        }
+                                                        sx={{
+                                                            py: 1.5,
+                                                            background:
+                                                                BRAND_GRADIENT,
+
+                                                            '&:hover': {
+                                                                opacity: 0.9,
+                                                                transform:
+                                                                    'translateY(-2px)',
+                                                                boxShadow:
+                                                                    '0 4px 20px rgba(184,134,11,0.3)',
+                                                            },
+                                                        }}
+                                                    >
+                                                        تواصل مع البائع
+                                                    </Button>
+                                                )}
+
+                                                <Button
+                                                    fullWidth
+                                                    variant='outlined'
+                                                    size='large'
+                                                    startIcon={<Phone />}
+                                                    href={`tel:${post.seller?.phone?.phone_1}`}
+                                                    sx={{
+                                                        py: 1.5,
+                                                        borderColor:
+                                                            BRAND_COLOR,
+                                                        color: BRAND_DARK,
+
+                                                        '&:hover': {
+                                                            borderColor:
+                                                                BRAND_DARK,
+                                                            bgcolor: alpha(
+                                                                BRAND_COLOR,
+                                                                0.04,
+                                                            ),
+                                                        },
+                                                    }}
+                                                >
+                                                    اتصل الآن
+                                                </Button>
+
+                                                <Button
+                                                    fullWidth
+                                                    variant='text'
+                                                    size='large'
+                                                    startIcon={
+                                                        <ArrowBackIcon />
+                                                    }
+                                                    onClick={() => navigate(-1)}
+                                                    sx={{
+                                                        py: 1.25,
+                                                    }}
+                                                >
+                                                    {t('backOneStep')}
+                                                </Button>
+                                            </Stack>
+                                        </Stack>
                                     </Card>
 
+                                    <PostSpecifications
+                                        product={post}
+                                        categoryLabel={categoryLabel}
+                                        t={t}
+                                    />
+                                    <Box>
+                                        <Typography
+                                            variant='h6'
+                                            fontWeight={800}
+                                            mb={1}
+                                        >
+                                            {t('product.description', 'الوصف')}
+                                        </Typography>
+
+                                        <Typography
+                                            color='text.secondary'
+                                            sx={{
+                                                lineHeight: 1.9,
+                                            }}
+                                        >
+                                            {post.description ||
+                                                t(
+                                                    'product.noDescription',
+                                                    'لا يوجد وصف متاح لهذا المنتج',
+                                                )}
+                                        </Typography>
+                                    </Box>
                                     {/* =================================================
                                         REVIEWS
                                     ================================================= */}
@@ -2073,74 +2002,50 @@ const PostDetails: FunctionComponent = () => {
                                         />
 
                                         {!post.reviews ||
-                                        post.reviews.length ===
-                                            0 ? (
+                                        post.reviews.length === 0 ? (
                                             <Alert
-                                                severity="info"
+                                                severity='info'
                                                 sx={{
                                                     mb: 3,
                                                     borderRadius: 2,
-                                                    bgcolor:
-                                                        alpha(
-                                                            '#0288D1',
-                                                            0.04,
-                                                        ),
+                                                    bgcolor: alpha(
+                                                        '#0288D1',
+                                                        0.04,
+                                                    ),
                                                 }}
                                             >
-                                                {t(
-                                                    'review.noReviewsYet',
-                                                )}
+                                                {t('review.noReviewsYet')}
                                             </Alert>
                                         ) : (
                                             <Box
                                                 sx={{
-                                                    display:
-                                                        'flex',
-                                                    flexDirection:
-                                                        'column',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
                                                     gap: 2,
                                                     mb: 3,
                                                 }}
                                             >
                                                 {post.reviews.map(
-                                                    (
-                                                        review,
-                                                        index,
-                                                    ) => {
-                                                        const reviewUserName =
-                                                            [
-                                                                review
-                                                                    .user
-                                                                    ?.name
-                                                                    ?.first,
-                                                                review
-                                                                    .user
-                                                                    ?.name
-                                                                    ?.last,
-                                                            ]
-                                                                .filter(
-                                                                    Boolean,
-                                                                )
-                                                                .join(
-                                                                    ' ',
-                                                                );
+                                                    (review, index) => {
+                                                        const reviewUserName = [
+                                                            review.user?.name
+                                                                ?.first,
+                                                            review.user?.name
+                                                                ?.last,
+                                                        ]
+                                                            .filter(Boolean)
+                                                            .join(' ');
 
                                                         const isCurrentUser =
                                                             String(
-                                                                review
-                                                                    .user
+                                                                review.user
                                                                     ?._id,
                                                             ) ===
-                                                            String(
-                                                                auth?._id,
-                                                            );
+                                                            String(auth?._id);
 
                                                         return (
                                                             <Card
-                                                                key={
-                                                                    review.user._id ||
-                                                                    index
-                                                                }
+                                                                key={index}
                                                                 sx={{
                                                                     ...sectionCardSx,
                                                                     p: 2.5,
@@ -2156,7 +2061,7 @@ const PostDetails: FunctionComponent = () => {
                                                                     src={
                                                                         review
                                                                             .user
-                                                                            ?.image ||
+                                                                            ?.image?.url ||
                                                                         '/user.png'
                                                                     }
                                                                     sx={{
@@ -2165,17 +2070,21 @@ const PostDetails: FunctionComponent = () => {
                                                                     }}
                                                                 />
 
-                                                                <Box
-                                                                    flex={1}
-                                                                >
+                                                                <Box flex={1}>
                                                                     <Stack
-                                                                        direction="row"
-                                                                        justifyContent="space-between"
-                                                                        alignItems="center"
-                                                                        flexWrap="wrap"
-                                                                        gap={0.5}
+                                                                        direction='row'
+                                                                        justifyContent='space-between'
+                                                                        alignItems='center'
+                                                                        flexWrap='wrap'
+                                                                        gap={
+                                                                            0.5
+                                                                        }
                                                                     >
-                                                                        <Typography fontWeight={700}>
+                                                                        <Typography
+                                                                            fontWeight={
+                                                                                700
+                                                                            }
+                                                                        >
                                                                             {isCurrentUser
                                                                                 ? t(
                                                                                       'you',
@@ -2185,8 +2094,8 @@ const PostDetails: FunctionComponent = () => {
                                                                         </Typography>
 
                                                                         <Typography
-                                                                            variant="caption"
-                                                                            color="text.secondary"
+                                                                            variant='caption'
+                                                                            color='text.secondary'
                                                                         >
                                                                             {review.createdAt &&
                                                                                 formatTimeAgo(
@@ -2199,13 +2108,11 @@ const PostDetails: FunctionComponent = () => {
                                                                     </Stack>
 
                                                                     <Rating
-                                                                        value={
-                                                                            Number(
-                                                                                review.rating ||
-                                                                                    0,
-                                                                            )
-                                                                        }
-                                                                        size="small"
+                                                                        value={Number(
+                                                                            review.rating ||
+                                                                                0,
+                                                                        )}
+                                                                        size='small'
                                                                         readOnly
                                                                         precision={
                                                                             0.5
@@ -2216,7 +2123,7 @@ const PostDetails: FunctionComponent = () => {
                                                                     />
 
                                                                     <Typography
-                                                                        variant="body2"
+                                                                        variant='body2'
                                                                         sx={{
                                                                             mt: 1,
                                                                             color: 'text.secondary',
@@ -2242,31 +2149,24 @@ const PostDetails: FunctionComponent = () => {
                                                 multiline
                                                 rows={4}
                                                 fullWidth
-                                                value={
-                                                    comment
-                                                }
-                                                onChange={(
-                                                    event,
-                                                ) =>
+                                                value={comment}
+                                                onChange={(event) =>
                                                     setComment(
-                                                        event
-                                                            .target
-                                                            .value,
+                                                        event.target.value,
                                                     )
                                                 }
                                                 placeholder={t(
                                                     'review.reviewPlaceholder',
                                                 )}
-                                                variant="outlined"
+                                                variant='outlined'
                                                 sx={{
                                                     '& .MuiOutlinedInput-root':
                                                         {
                                                             borderRadius: 2,
-                                                            bgcolor:
-                                                                alpha(
-                                                                    '#000',
-                                                                    0.01,
-                                                                ),
+                                                            bgcolor: alpha(
+                                                                '#000',
+                                                                0.01,
+                                                            ),
                                                         },
                                                 }}
                                             />
@@ -2276,21 +2176,17 @@ const PostDetails: FunctionComponent = () => {
                                                     xs: 'column',
                                                     sm: 'row',
                                                 }}
-                                                justifyContent="space-between"
+                                                justifyContent='space-between'
                                                 alignItems={{
                                                     xs: 'flex-start',
                                                     sm: 'center',
                                                 }}
                                                 spacing={2}
                                             >
-                                                <Stack
-                                                    spacing={
-                                                        0.75
-                                                    }
-                                                >
+                                                <Stack spacing={0.75}>
                                                     <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
+                                                        variant='body2'
+                                                        color='text.secondary'
                                                     >
                                                         {t(
                                                             'review.reviewExperience',
@@ -2298,27 +2194,22 @@ const PostDetails: FunctionComponent = () => {
                                                     </Typography>
 
                                                     <Rating
-                                                        value={
-                                                            reviewRating
-                                                        }
+                                                        value={reviewRating}
                                                         onChange={(
                                                             _,
                                                             newValue,
                                                         ) =>
                                                             setReviewRating(
-                                                                newValue ??
-                                                                    0,
+                                                                newValue ?? 0,
                                                             )
                                                         }
-                                                        precision={
-                                                            0.5
-                                                        }
-                                                        size="large"
+                                                        precision={0.5}
+                                                        size='large'
                                                     />
                                                 </Stack>
 
                                                 <Button
-                                                    variant="contained"
+                                                    variant='contained'
                                                     disabled={
                                                         !comment.trim() ||
                                                         !reviewRating ||
@@ -2332,22 +2223,18 @@ const PostDetails: FunctionComponent = () => {
                                                         py: 1.25,
                                                         fontWeight: 600,
 
-                                                        '&:hover':
-                                                            {
-                                                                opacity: 0.9,
-                                                                transform:
-                                                                    'translateY(-1px)',
-                                                            },
+                                                        '&:hover': {
+                                                            opacity: 0.9,
+                                                            transform:
+                                                                'translateY(-1px)',
+                                                        },
 
-                                                        '&:disabled':
-                                                            {
-                                                                opacity: 0.5,
-                                                            },
+                                                        '&:disabled': {
+                                                            opacity: 0.5,
+                                                        },
                                                     }}
                                                     onClick={async () => {
-                                                        if (
-                                                            !isLoggedIn
-                                                        ) {
+                                                        if (!isLoggedIn) {
                                                             navigate(
                                                                 path.Login,
                                                             );
@@ -2375,10 +2262,8 @@ const PostDetails: FunctionComponent = () => {
                                                                 await submitReview(
                                                                     post._id,
                                                                     {
-                                                                        userId:
-                                                                            auth._id,
-                                                                        rating:
-                                                                            reviewRating,
+                                                                        userId: auth._id,
+                                                                        rating: reviewRating,
                                                                         comment:
                                                                             comment.trim(),
                                                                     },
@@ -2408,16 +2293,19 @@ const PostDetails: FunctionComponent = () => {
                                                                             reviewCount:
                                                                                 Number(
                                                                                     response.reviewCount ??
-                                                                                        prevPost.reviews?.length ??
+                                                                                        prevPost
+                                                                                            .reviews
+                                                                                            ?.length ??
                                                                                         oldReviews.length,
                                                                                 ),
 
-                                                                            rating:
-                                                                                Number(
-                                                                                    response.rating ??
-                                                                                        prevPost.reviews?.[0].rating ??
-                                                                                        0,
-                                                                                ),
+                                                                            rating: Number(
+                                                                                response.rating ??
+                                                                                    prevPost
+                                                                                        .reviews?.[0]
+                                                                                        .rating ??
+                                                                                    0,
+                                                                            ),
                                                                         };
                                                                     },
                                                                 );
@@ -2429,9 +2317,7 @@ const PostDetails: FunctionComponent = () => {
                                                                     ),
                                                                 );
 
-                                                                setComment(
-                                                                    '',
-                                                                );
+                                                                setComment('');
 
                                                                 setReviewRating(
                                                                     0,
@@ -2443,9 +2329,7 @@ const PostDetails: FunctionComponent = () => {
                                                                     ),
                                                                 );
                                                             }
-                                                        } catch (
-                                                            submitError
-                                                        ) {
+                                                        } catch (submitError) {
                                                             console.error(
                                                                 'Submit review error:',
                                                                 submitError,
@@ -2467,31 +2351,25 @@ const PostDetails: FunctionComponent = () => {
                                                     {isSubmittingReview
                                                         ? t(
                                                               'review.submitting',
-                                                          ) ||
-                                                          'جارٍ النشر...'
-                                                        : t(
-                                                              'review.publish',
-                                                          ) ||
+                                                          ) || 'جارٍ النشر...'
+                                                        : t('review.publish') ||
                                                           'نشر التعليق'}
                                                 </Button>
                                             </Stack>
 
                                             {!isLoggedIn && (
                                                 <Alert
-                                                    severity="warning"
+                                                    severity='warning'
                                                     sx={{
                                                         mt: 1,
                                                         borderRadius: 2,
-                                                        bgcolor:
-                                                            alpha(
-                                                                '#ED6C02',
-                                                                0.04,
-                                                            ),
+                                                        bgcolor: alpha(
+                                                            '#ED6C02',
+                                                            0.04,
+                                                        ),
                                                     }}
                                                 >
-                                                    {t(
-                                                        'review.loginToReview',
-                                                    )}
+                                                    {t('review.loginToReview')}
                                                 </Alert>
                                             )}
                                         </Stack>
@@ -2520,301 +2398,6 @@ const PostDetails: FunctionComponent = () => {
                                         },
                                     }}
                                 >
-                                    {/* PRODUCT INFO */}
-
-                                    <Card
-                                        sx={{
-                                            ...sectionCardSx,
-                                            p: {
-                                                xs: 2.25,
-                                                md: 3,
-                                            },
-                                            borderRadius: 3,
-                                        }}
-                                    >
-                                        <Stack spacing={2.5}>
-                                            <Box>
-                                                <Typography
-                                                    variant="h4"
-                                                    component="h1"
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        lineHeight: 1.2,
-                                                        mb: 1.5,
-                                                        fontSize:
-                                                            {
-                                                                xs: '1.5rem',
-                                                                md: '2rem',
-                                                            },
-                                                    }}
-                                                >
-                                                    {
-                                                        post.product_name
-                                                    }
-                                                </Typography>
-
-                                                <Stack
-                                                    direction="row"
-                                                    spacing={1.25}
-                                                    alignItems="center"
-                                                    flexWrap="wrap"
-                                                >
-                                                    {/* PRODUCT RATING
-                                                        READ ONLY */}
-                                                    <Rating
-                                                        value={
-                                                            productRating
-                                                        }
-                                                        precision={
-                                                            0.5
-                                                        }
-                                                        size="medium"
-                                                        readOnly
-                                                    />
-
-                                                    <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
-                                                    >
-                                                        {post.reviews?.length ??
-                                                            post
-                                                                .reviews
-                                                                ?.length ??
-                                                            0}{' '}
-                                                        {t(
-                                                            'reviews',
-                                                        ) ||
-                                                            'تقييم'}
-                                                    </Typography>
-                                                </Stack>
-                                            </Box>
-
-                                            {/* PRICE */}
-
-                                            <Box
-                                                sx={{
-                                                    p: 3,
-                                                    borderRadius: 2,
-                                                    background:
-                                                        `linear-gradient(135deg, ${alpha(
-                                                            BRAND_COLOR,
-                                                            0.08,
-                                                        )}, ${alpha(
-                                                            BRAND_DARK,
-                                                            0.04,
-                                                        )})`,
-                                                    border: `1px solid ${alpha(
-                                                        BRAND_COLOR,
-                                                        0.12,
-                                                    )}`,
-                                                }}
-                                            >
-                                                <Typography
-                                                    variant="body2"
-                                                    color="text.secondary"
-                                                    sx={{
-                                                        mb: 0.5,
-                                                    }}
-                                                >
-                                                    السعر الحالي
-                                                </Typography>
-
-                                                <Typography
-                                                    variant="h3"
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        background:
-                                                            BRAND_GRADIENT,
-                                                        WebkitBackgroundClip:
-                                                            'text',
-                                                        WebkitTextFillColor:
-                                                            'transparent',
-                                                        fontSize:
-                                                            {
-                                                                xs: '2rem',
-                                                                md: '2.5rem',
-                                                            },
-                                                    }}
-                                                >
-                                                    {formatPrice(
-                                                        post.price,
-                                                    )}
-                                                </Typography>
-
-                                                <Stack
-                                                    direction="row"
-                                                    spacing={1}
-                                                    sx={{
-                                                        mt: 2,
-                                                    }}
-                                                >
-                                                    <Chip
-                                                        label={
-                                                            post.in_stock
-                                                                ? '✅ متوفر'
-                                                                : '❌ غير متوفر'
-                                                        }
-                                                        color={
-                                                            post.in_stock
-                                                                ? 'success'
-                                                                : 'default'
-                                                        }
-                                                        size="small"
-                                                        sx={{
-                                                            fontWeight: 600,
-                                                        }}
-                                                    />
-
-                                                    <Chip
-                                                        label="⚡ رد سريع"
-                                                        size="small"
-                                                        sx={{
-                                                            bgcolor:
-                                                                alpha(
-                                                                    BRAND_COLOR,
-                                                                    0.1,
-                                                                ),
-                                                            color:
-                                                                BRAND_DARK,
-                                                            fontWeight: 600,
-                                                        }}
-                                                    />
-                                                </Stack>
-                                            </Box>
-
-                                            {/* OPTIONS */}
-
-                                            {post.category && (
-                                                <Box>
-                                                    <Typography
-                                                        variant="h6"
-                                                        sx={{
-                                                            fontWeight: 700,
-                                                            mb: 1.5,
-                                                        }}
-                                                    >
-                                                        الخيارات المتاحة
-                                                    </Typography>
-
-                                                    <ColorsAndSizes
-                                                        category={
-                                                            post.category
-                                                        }
-                                                    />
-                                                </Box>
-                                            )}
-
-                                            <Divider />
-
-                                            {/* DESCRIPTION */}
-
-                                            <Box>
-                                                <Typography
-                                                    variant="h6"
-                                                    fontWeight={800}
-                                                    mb={1}
-                                                >
-                                                    الوصف
-                                                </Typography>
-
-                                                <Typography
-                                                    color="text.secondary"
-                                                    sx={{
-                                                        lineHeight: 1.9,
-                                                    }}
-                                                >
-                                                    {post.description ||
-                                                        'لا يوجد وصف متاح لهذا المنتج'}
-                                                </Typography>
-                                            </Box>
-
-                                            {/* ACTIONS */}
-
-                                            <Stack spacing={1.5}>
-                                                {!isOwner && (
-                                                    <Button
-                                                        fullWidth
-                                                        variant="contained"
-                                                        size="large"
-                                                        startIcon={
-                                                            <Comment />
-                                                        }
-                                                        onClick={
-                                                            handleContactSeller
-                                                        }
-                                                        sx={{
-                                                            py: 1.5,
-                                                            background:
-                                                                BRAND_GRADIENT,
-
-                                                            '&:hover':
-                                                                {
-                                                                    opacity: 0.9,
-                                                                    transform:
-                                                                        'translateY(-2px)',
-                                                                    boxShadow:
-                                                                        '0 4px 20px rgba(184,134,11,0.3)',
-                                                                },
-                                                        }}
-                                                    >
-                                                        تواصل مع البائع
-                                                    </Button>
-                                                )}
-
-                                                <Button
-                                                    fullWidth
-                                                    variant="outlined"
-                                                    size="large"
-                                                    startIcon={
-                                                        <Phone />
-                                                    }
-                                                    href="tel:0538346915"
-                                                    sx={{
-                                                        py: 1.5,
-                                                        borderColor:
-                                                            BRAND_COLOR,
-                                                        color:
-                                                            BRAND_DARK,
-
-                                                        '&:hover':
-                                                            {
-                                                                borderColor:
-                                                                    BRAND_DARK,
-                                                                bgcolor:
-                                                                    alpha(
-                                                                        BRAND_COLOR,
-                                                                        0.04,
-                                                                    ),
-                                                            },
-                                                    }}
-                                                >
-                                                    اتصل الآن
-                                                </Button>
-
-                                                <Button
-                                                    fullWidth
-                                                    variant="text"
-                                                    size="large"
-                                                    startIcon={
-                                                        <ArrowBackIcon />
-                                                    }
-                                                    onClick={() =>
-                                                        navigate(
-                                                            -1,
-                                                        )
-                                                    }
-                                                    sx={{
-                                                        py: 1.25,
-                                                    }}
-                                                >
-                                                    {t(
-                                                        'backOneStep',
-                                                    )}
-                                                </Button>
-                                            </Stack>
-                                        </Stack>
-                                    </Card>
-
                                     {/* SELLER CARD */}
 
                                     <Card
@@ -2826,54 +2409,44 @@ const PostDetails: FunctionComponent = () => {
                                     >
                                         <Stack spacing={2}>
                                             <Stack
-                                                direction="row"
+                                                direction='row'
                                                 spacing={2}
-                                                alignItems="center"
+                                                alignItems='center'
                                             >
                                                 <Avatar
                                                     src={
-                                                        post
-                                                            .seller
-                                                            ?.image
-                                                            ?.url ||
-                                                        '/user.png'
+                                                        post.seller?.image
+                                                            ?.url || '/user.png'
                                                     }
                                                     sx={{
                                                         width: 56,
                                                         height: 56,
-                                                        border:
-                                                            '2px solid',
+                                                        border: '2px solid',
                                                         borderColor:
                                                             BRAND_COLOR,
                                                     }}
                                                 />
 
-                                                <Box
-                                                    flex={1}
-                                                >
-                                                    <Typography fontWeight={800}>
-                                                        {
-                                                            sellerDisplayName
-                                                        }
+                                                <Box flex={1}>
+                                                    <Typography
+                                                        fontWeight={800}
+                                                    >
+                                                        {sellerDisplayName}
                                                     </Typography>
 
                                                     <Typography
-                                                        variant="body2"
-                                                        color="text.secondary"
+                                                        variant='body2'
+                                                        color='text.secondary'
                                                     >
                                                         بائع • @
-                                                        {
-                                                            post
-                                                                .seller
-                                                                ?.slug
-                                                        }
+                                                        {post.seller?.slug}
                                                     </Typography>
                                                 </Box>
 
                                                 {isOwner && (
                                                     <Chip
-                                                        label="إعلانك"
-                                                        size="small"
+                                                        label='إعلانك'
+                                                        size='small'
                                                         sx={{
                                                             background:
                                                                 BRAND_GRADIENT,
@@ -2889,15 +2462,12 @@ const PostDetails: FunctionComponent = () => {
                                                     px: 1.5,
                                                     py: 1,
                                                     borderRadius: 2,
-                                                    bgcolor:
-                                                        alpha(
-                                                            BRAND_COLOR,
-                                                            0.06,
-                                                        ),
-                                                    display:
-                                                        'flex',
-                                                    alignItems:
-                                                        'center',
+                                                    bgcolor: alpha(
+                                                        BRAND_COLOR,
+                                                        0.06,
+                                                    ),
+                                                    display: 'flex',
+                                                    alignItems: 'center',
                                                     gap: 1,
                                                 }}
                                             >
@@ -2909,7 +2479,7 @@ const PostDetails: FunctionComponent = () => {
                                                 />
 
                                                 <Typography
-                                                    variant="body2"
+                                                    variant='body2'
                                                     sx={{
                                                         fontWeight: 600,
                                                     }}
@@ -2920,28 +2490,20 @@ const PostDetails: FunctionComponent = () => {
 
                                             <Button
                                                 fullWidth
-                                                variant="text"
-                                                startIcon={
-                                                    <ShareIcon />
-                                                }
-                                                onClick={
-                                                    handleShare
-                                                }
-                                                disabled={
-                                                    isSharing
-                                                }
+                                                variant='text'
+                                                startIcon={<ShareIcon />}
+                                                onClick={handleShare}
+                                                disabled={isSharing}
                                                 sx={{
                                                     color: 'text.secondary',
 
-                                                    '&:hover':
-                                                        {
-                                                            color: BRAND_COLOR,
-                                                            bgcolor:
-                                                                alpha(
-                                                                    BRAND_COLOR,
-                                                                    0.04,
-                                                                ),
-                                                        },
+                                                    '&:hover': {
+                                                        color: BRAND_COLOR,
+                                                        bgcolor: alpha(
+                                                            BRAND_COLOR,
+                                                            0.04,
+                                                        ),
+                                                    },
                                                 }}
                                             >
                                                 شارك المنتج
@@ -2956,8 +2518,7 @@ const PostDetails: FunctionComponent = () => {
                             RELATED PRODUCTS
                         ================================================= */}
 
-                        {relatedProducts.length >
-                            0 && (
+                        {relatedProducts.length > 0 && (
                             <Box sx={{ mt: 6 }}>
                                 <SectionTitle
                                     title={t(
@@ -2971,47 +2532,34 @@ const PostDetails: FunctionComponent = () => {
                                 />
 
                                 <Stack
-                                    direction="row"
+                                    direction='row'
                                     spacing={2}
                                     sx={{
-                                        overflowX:
-                                            'auto',
+                                        overflowX: 'auto',
                                         pb: 2,
 
-                                        '&::-webkit-scrollbar':
-                                            {
-                                                display:
-                                                    'none',
-                                            },
+                                        '&::-webkit-scrollbar': {
+                                            display: 'none',
+                                        },
 
-                                        scrollBehavior:
-                                            'smooth',
+                                        scrollBehavior: 'smooth',
                                     }}
                                 >
-                                    {relatedProducts.map(
-                                        (
-                                            product,
-                                        ) => (
-                                            <Box
-                                                key={
-                                                    product._id
-                                                }
-                                                sx={{
-                                                    minWidth:
-                                                        {
-                                                            xs: 200,
-                                                            sm: 260,
-                                                        },
-                                                }}
-                                            >
-                                                <RelatedProductCard
-                                                    product={
-                                                        product
-                                                    }
-                                                />
-                                            </Box>
-                                        ),
-                                    )}
+                                    {relatedProducts.map((product) => (
+                                        <Box
+                                            key={product._id}
+                                            sx={{
+                                                minWidth: {
+                                                    xs: 200,
+                                                    sm: 260,
+                                                },
+                                            }}
+                                        >
+                                            <RelatedProductCard
+                                                product={product}
+                                            />
+                                        </Box>
+                                    ))}
                                 </Stack>
                             </Box>
                         )}
@@ -3024,14 +2572,8 @@ const PostDetails: FunctionComponent = () => {
             ========================================================= */}
 
             <AlertDialogs
-                handleDelete={
-                    handleDeletePost
-                }
-                onHide={() =>
-                    setShowDeleteModal(
-                        false,
-                    )
-                }
+                handleDelete={handleDeletePost}
+                onHide={() => setShowDeleteModal(false)}
                 show={showDeleteModal}
                 title={`حذف ${post.product_name}`}
                 description={`هل أنت متأكد من حذف المنتج "${post.product_name}"؟`}
@@ -3043,15 +2585,9 @@ const PostDetails: FunctionComponent = () => {
 
             <UpdateProductModal
                 show={showUpdateModal}
-                onHide={
-                    handleCloseUpdateModal
-                }
-                postId={
-                    post._id as string
-                }
-                refresh={
-                    handleRefreshPost
-                }
+                onHide={handleCloseUpdateModal}
+                postId={post._id as string}
+                refresh={handleRefreshPost}
             />
         </>
     );
