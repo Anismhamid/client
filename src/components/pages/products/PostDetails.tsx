@@ -2304,40 +2304,70 @@ const PostDetails: FunctionComponent = () => {
                                                                             prevPost.reviews ||
                                                                             [];
 
+                                                                        const updatedReviews =
+                                                                            [
+                                                                                response.review,
+                                                                                ...oldReviews,
+                                                                            ];
+
+                                                                        const calculatedRating =
+                                                                            response.rating !==
+                                                                                undefined &&
+                                                                            response.rating !==
+                                                                                null
+                                                                                ? Number(
+                                                                                      response.rating,
+                                                                                  )
+                                                                                : updatedReviews.length >
+                                                                                    0
+                                                                                  ? updatedReviews.reduce(
+                                                                                        (
+                                                                                            sum,
+                                                                                            review,
+                                                                                        ) =>
+                                                                                            sum +
+                                                                                            Number(
+                                                                                                review.rating ||
+                                                                                                    0,
+                                                                                            ),
+                                                                                        0,
+                                                                                    ) /
+                                                                                    updatedReviews.length
+                                                                                  : 0;
+
                                                                         return {
                                                                             ...prevPost,
 
                                                                             reviews:
-                                                                                [
-                                                                                    response.review,
-                                                                                    ...oldReviews,
-                                                                                ],
+                                                                                updatedReviews,
 
                                                                             reviewCount:
-                                                                                Number(
-                                                                                    response.reviewCount ??
-                                                                                        prevPost
-                                                                                            .reviews
-                                                                                            ?.length ??
-                                                                                        oldReviews.length,
-                                                                                ),
+                                                                                response.reviewCount !==
+                                                                                    undefined &&
+                                                                                response.reviewCount !==
+                                                                                    null
+                                                                                    ? Number(
+                                                                                          response.reviewCount,
+                                                                                      )
+                                                                                    : updatedReviews.length,
 
-                                                                            rating: Number(
-                                                                                response.rating ??
-                                                                                    prevPost
-                                                                                        .reviews?.[0]
-                                                                                        .rating ??
-                                                                                    0,
-                                                                            ),
+                                                                            rating: calculatedRating,
                                                                         };
                                                                     },
                                                                 );
 
                                                                 setProductRating(
-                                                                    Number(
-                                                                        response.rating ??
-                                                                            productRating,
-                                                                    ),
+                                                                    (
+                                                                        prevRating,
+                                                                    ) =>
+                                                                        response.rating !==
+                                                                            undefined &&
+                                                                        response.rating !==
+                                                                            null
+                                                                            ? Number(
+                                                                                  response.rating,
+                                                                              )
+                                                                            : prevRating,
                                                                 );
 
                                                                 setComment('');
