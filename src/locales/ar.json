@@ -658,6 +658,218 @@
                 "batteryCapacity": "سعة البطارية"
             }
         },
+        "Motorcycles": {
+            "label": "دراجات نارية",
+            "heading": "الدراجات النارية",
+            "description": "دراجات نارية بمختلف الأنواع والاستخدامات، بما في ذلك الدراجات الرياضية والكروزر ودراجات الطرق الوعرة والسكوترات.",
+            "subCategories": {
+                "street": "دراجات شوارع",
+                "sport": "دراجات رياضية",
+                "cruiser": "دراجات كروزر",
+                "offRoad": "دراجات للطرق الوعرة",
+                "scooter": "سكوترات",
+                "parts": "قطع غيار الدراجات النارية"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "year": "سنة الصنع",
+                "engineCapacity": "سعة المحرك",
+                "mileage": "المسافة المقطوعة",
+                "fuel": "نوع الوقود",
+                "fuelOptions": {
+                    "gasoline": "بنزين",
+                    "electric": "كهربائي"
+                },
+                "color": "اللون",
+                "partType": "نوع قطعة الغيار"
+            }
+        },
+        "Electronics": {
+            "label": "إلكترونيات",
+            "heading": "الإلكترونيات",
+            "description": "أجهزة إلكترونية متنوعة مثل الهواتف الذكية وأجهزة الكمبيوتر والأجهزة اللوحية والملحقات والصوتيات.",
+            "subCategories": {
+                "smartphones": "هواتف ذكية",
+                "laptops": "أجهزة كمبيوتر محمولة",
+                "tablets": "أجهزة لوحية",
+                "accessories": "ملحقات إلكترونية",
+                "audio": "أجهزة صوتية"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "processor": "المعالج",
+                "ram": "الذاكرة العشوائية (RAM)",
+                "storage": "سعة التخزين",
+                "screenSize": "حجم الشاشة",
+                "resolution": "دقة الشاشة",
+                "operatingSystem": "نظام التشغيل",
+                "condition": "الحالة",
+                "batteryLife": "عمر البطارية بالساعات",
+                "includedAccessories": "الملحقات المرفقة",
+                "networkType": "نوع الاتصال",
+                "color": "اللون",
+                "warranty": "الضمان",
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                },
+                "networkTypeOptions": {
+                    "4G": "4G",
+                    "5G": "5G",
+                    "WiFi": "Wi-Fi",
+                    "Bluetooth": "بلوتوث"
+                }
+            }
+        },
+
+        "Art": {
+            "label": "الفن",
+            "heading": "الفنون والمقتنيات",
+            "description": "أعمال فنية ومقتنيات متنوعة تشمل اللوحات والمنحوتات والتصوير والحرف والمقتنيات الفنية.",
+            "subCategories": {
+                "paintings": "لوحات",
+                "sculptures": "منحوتات",
+                "photography": "تصوير فوتوغرافي",
+                "crafts": "أعمال يدوية",
+                "collectibles": "مقتنيات"
+            },
+            "fields": {
+                "artist": "الفنان",
+                "creationYear": "سنة الإنشاء",
+                "dimensions": "الأبعاد",
+                "technique": "التقنية",
+                "certificate": "شهادة أصالة",
+                "provenance": "مصدر وتاريخ القطعة",
+                "condition": "الحالة",
+                "framed": "مؤطرة"
+            }
+        },
+
+        "Gaming": {
+            "label": "الألعاب",
+            "heading": "الألعاب ومنتجات الألعاب",
+            "description": "أجهزة ومنتجات الألعاب الإلكترونية، بما في ذلك أجهزة الألعاب والألعاب والملحقات وأجهزة الكمبيوتر المخصصة للألعاب.",
+            "subCategories": {
+                "consoles": "أجهزة ألعاب",
+                "games": "ألعاب",
+                "accessories": "ملحقات الألعاب",
+                "pc_gaming": "أجهزة كمبيوتر للألعاب"
+            },
+            "fields": {
+                "platform": "المنصة",
+                "genre": "نوع اللعبة",
+                "edition": "الإصدار",
+                "multiplayer": "تدعم اللعب الجماعي",
+                "rating": "التصنيف",
+                "language": "اللغة",
+                "releaseYear": "سنة الإصدار",
+                "platformOptions": {
+                    "PlayStation": "PlayStation",
+                    "Xbox": "Xbox",
+                    "Nintendo": "Nintendo",
+                    "PC": "الكمبيوتر",
+                    "Mobile": "الهاتف المحمول"
+                }
+            }
+        },
+
+        "RealEstate": {
+            "label": "العقارات",
+            "heading": "العقارات",
+            "description": "عقارات متنوعة للبيع أو الإيجار، بما في ذلك الشقق والمنازل والفلل والأراضي والعقارات التجارية.",
+            "subCategories": {
+                "apartment": "شقق",
+                "house": "منازل",
+                "villa": "فلل",
+                "commercial": "عقارات تجارية",
+                "land": "أراضي"
+            },
+            "fields": {
+                "area": "المساحة بالمتر المربع",
+                "rooms": "عدد الغرف",
+                "bathrooms": "عدد الحمامات",
+                "floors": "عدد الطوابق",
+                "hasParking": "موقف سيارات",
+                "hasElevator": "مصعد",
+                "furnished": "مفروش",
+                "rentalType": "نوع العرض",
+                "propertyAge": "عمر العقار بالسنوات",
+                "geoLocation": "الموقع",
+                "rentalTypeOptions": {
+                    "sale": "للبيع",
+                    "rent": "للإيجار",
+                    "daily": "إيجار يومي"
+                }
+            }
+        },
+
+        "Pets": {
+            "label": "الحيوانات الأليفة",
+            "heading": "الحيوانات الأليفة ومستلزماتها",
+            "description": "حيوانات أليفة متنوعة ومستلزماتها، بما في ذلك الكلاب والقطط والطيور والأسماك والحيوانات الصغيرة.",
+            "subCategories": {
+                "dogs": "كلاب",
+                "cats": "قطط",
+                "birds": "طيور",
+                "fish": "أسماك",
+                "small_animals": "حيوانات صغيرة",
+                "supplies": "مستلزمات الحيوانات"
+            },
+            "fields": {
+                "breed": "السلالة",
+                "age": "العمر بالشهور",
+                "gender": "الجنس",
+                "vaccinated": "مطعم",
+                "neutered": "معقم",
+                "microchipped": "مزود بشريحة إلكترونية",
+                "color": "اللون",
+                "weight": "الوزن بالكيلوغرام",
+                "healthIssues": "المشاكل الصحية",
+                "temperament": "الطبع",
+                "brand": "العلامة التجارية",
+                "size": "الحجم",
+                "material": "الخامة",
+                "genderOptions": {
+                    "male": "ذكر",
+                    "female": "أنثى"
+                }
+            }
+        },
+
+        "Furniture": {
+            "label": "الأثاث",
+            "heading": "الأثاث",
+            "description": "أثاث متنوع للمنزل والمكتب والحديقة، بما في ذلك غرف المعيشة والنوم والطعام والمكاتب والمطابخ.",
+            "subCategories": {
+                "living_room": "غرفة المعيشة",
+                "bedroom": "غرفة النوم",
+                "dining": "غرفة الطعام",
+                "office": "مكتب",
+                "outdoor": "أثاث خارجي",
+                "kitchen": "أثاث المطبخ"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "material": "الخامة",
+                "color": "اللون",
+                "dimensions": "الأبعاد",
+                "weight": "الوزن",
+                "assemblyRequired": "يحتاج إلى تركيب",
+                "condition": "الحالة",
+                "style": "النمط",
+                "includesAccessories": "يشمل ملحقات",
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
         "discountsAndOffers": {
             "common": {
                 "discount": "خصم",

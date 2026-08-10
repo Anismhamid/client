@@ -618,6 +618,218 @@
                 "batteryCapacity": "קיבולת הסוללה"
             }
         },
+        "Motorcycles": {
+            "label": "אופנועים",
+            "heading": "אופנועים",
+            "description": "אופנועים מסוגים שונים ולמגוון שימושים, כולל אופנועי רחוב, אופנועים ספורטיביים, קרוזרים, אופנועי שטח וקטנועים.",
+            "subCategories": {
+                "street": "אופנועי רחוב",
+                "sport": "אופנועים ספורטיביים",
+                "cruiser": "אופנועי קרוזר",
+                "offRoad": "אופנועי שטח",
+                "scooter": "קטנועים",
+                "parts": "חלקי חילוף לאופנועים"
+            },
+            "fields": {
+                "brand": "מותג",
+                "year": "שנת ייצור",
+                "engineCapacity": "נפח מנוע",
+                "mileage": "קילומטראז׳",
+                "fuel": "סוג דלק",
+                "fuelOptions": {
+                    "gasoline": "בנזין",
+                    "electric": "חשמלי"
+                },
+                "color": "צבע",
+                "partType": "סוג חלק חילוף"
+            }
+        },
+        "Electronics": {
+            "label": "אלקטרוניקה",
+            "heading": "אלקטרוניקה",
+            "description": "מגוון מוצרי אלקטרוניקה כגון סמארטפונים, מחשבים ניידים, טאבלטים, אביזרים ומוצרי שמע.",
+            "subCategories": {
+                "smartphones": "סמארטפונים",
+                "laptops": "מחשבים ניידים",
+                "tablets": "טאבלטים",
+                "accessories": "אביזרים אלקטרוניים",
+                "audio": "מוצרי שמע"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "processor": "מעבד",
+                "ram": "זיכרון RAM",
+                "storage": "נפח אחסון",
+                "screenSize": "גודל מסך",
+                "resolution": "רזולוציית מסך",
+                "operatingSystem": "מערכת הפעלה",
+                "condition": "מצב",
+                "batteryLife": "חיי סוללה בשעות",
+                "includedAccessories": "אביזרים כלולים",
+                "networkType": "סוג חיבור",
+                "color": "צבע",
+                "warranty": "אחריות",
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                },
+                "networkTypeOptions": {
+                    "4G": "4G",
+                    "5G": "5G",
+                    "WiFi": "Wi-Fi",
+                    "Bluetooth": "Bluetooth"
+                }
+            }
+        },
+
+        "Art": {
+            "label": "אמנות",
+            "heading": "אמנות ואוספים",
+            "description": "יצירות אמנות ואוספים הכוללים ציורים, פסלים, צילום, עבודות יד ופריטי אספנות.",
+            "subCategories": {
+                "paintings": "ציורים",
+                "sculptures": "פסלים",
+                "photography": "צילום",
+                "crafts": "עבודות יד",
+                "collectibles": "פריטי אספנות"
+            },
+            "fields": {
+                "artist": "אמן",
+                "creationYear": "שנת יצירה",
+                "dimensions": "מידות",
+                "technique": "טכניקה",
+                "certificate": "תעודת מקוריות",
+                "provenance": "מקור והיסטוריית הפריט",
+                "condition": "מצב",
+                "framed": "ממוסגר"
+            }
+        },
+
+        "Gaming": {
+            "label": "גיימינג",
+            "heading": "משחקים ומוצרי גיימינג",
+            "description": "מוצרי גיימינג שונים, כולל קונסולות, משחקים, אביזרים ומחשבי גיימינג.",
+            "subCategories": {
+                "consoles": "קונסולות משחק",
+                "games": "משחקים",
+                "accessories": "אביזרי גיימינג",
+                "pc_gaming": "מחשבי גיימינג"
+            },
+            "fields": {
+                "platform": "פלטפורמה",
+                "genre": "ז'אנר",
+                "edition": "מהדורה",
+                "multiplayer": "משחק מרובה משתתפים",
+                "rating": "דירוג",
+                "language": "שפה",
+                "releaseYear": "שנת יציאה",
+                "platformOptions": {
+                    "PlayStation": "PlayStation",
+                    "Xbox": "Xbox",
+                    "Nintendo": "Nintendo",
+                    "PC": "מחשב",
+                    "Mobile": "נייד"
+                }
+            }
+        },
+
+        "RealEstate": {
+            "label": "נדל״ן",
+            "heading": "נדל״ן",
+            "description": "נכסי נדל״ן למכירה או להשכרה, כולל דירות, בתים, וילות, קרקעות ונכסים מסחריים.",
+            "subCategories": {
+                "apartment": "דירות",
+                "house": "בתים",
+                "villa": "וילות",
+                "commercial": "נכסים מסחריים",
+                "land": "קרקעות"
+            },
+            "fields": {
+                "area": "שטח במ״ר",
+                "rooms": "מספר חדרים",
+                "bathrooms": "מספר חדרי אמבטיה",
+                "floors": "מספר קומות",
+                "hasParking": "חניה",
+                "hasElevator": "מעלית",
+                "furnished": "מרוהט",
+                "rentalType": "סוג עסקה",
+                "propertyAge": "גיל הנכס בשנים",
+                "geoLocation": "מיקום",
+                "rentalTypeOptions": {
+                    "sale": "למכירה",
+                    "rent": "להשכרה",
+                    "daily": "השכרה יומית"
+                }
+            }
+        },
+
+        "Pets": {
+            "label": "חיות מחמד",
+            "heading": "חיות מחמד ואביזרים",
+            "description": "חיות מחמד ואביזרים שונים, כולל כלבים, חתולים, ציפורים, דגים ובעלי חיים קטנים.",
+            "subCategories": {
+                "dogs": "כלבים",
+                "cats": "חתולים",
+                "birds": "ציפורים",
+                "fish": "דגים",
+                "small_animals": "בעלי חיים קטנים",
+                "supplies": "ציוד לחיות מחמד"
+            },
+            "fields": {
+                "breed": "גזע",
+                "age": "גיל בחודשים",
+                "gender": "מין",
+                "vaccinated": "מחוסן",
+                "neutered": "מסורס / מעוקר",
+                "microchipped": "עם שבב",
+                "color": "צבע",
+                "weight": "משקל בק״ג",
+                "healthIssues": "בעיות בריאות",
+                "temperament": "אופי",
+                "brand": "מותג",
+                "size": "מידה",
+                "material": "חומר",
+                "genderOptions": {
+                    "male": "זכר",
+                    "female": "נקבה"
+                }
+            }
+        },
+
+        "Furniture": {
+            "label": "ריהוט",
+            "heading": "ריהוט",
+            "description": "מגוון רהיטים לבית, למשרד ולחוץ, כולל סלון, חדרי שינה, פינת אוכל, משרדים ומטבחים.",
+            "subCategories": {
+                "living_room": "סלון",
+                "bedroom": "חדר שינה",
+                "dining": "פינת אוכל",
+                "office": "משרד",
+                "outdoor": "ריהוט חוץ",
+                "kitchen": "ריהוט מטבח"
+            },
+            "fields": {
+                "brand": "מותג",
+                "material": "חומר",
+                "color": "צבע",
+                "dimensions": "מידות",
+                "weight": "משקל",
+                "assemblyRequired": "דורש הרכבה",
+                "condition": "מצב",
+                "style": "סגנון",
+                "includesAccessories": "כולל אביזרים",
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
         "discountsAndOffers": {
             "common": {
                 "discount": "הנחה",

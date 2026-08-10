@@ -643,6 +643,218 @@
                 "batteryCapacity": "Battery Capacity"
             }
         },
+        "Motorcycles": {
+            "label": "Motorcycles",
+            "heading": "Motorcycles",
+            "description": "Motorcycles of different types and uses, including street bikes, sport bikes, cruisers, off-road motorcycles, and scooters.",
+            "subCategories": {
+                "street": "Street Motorcycles",
+                "sport": "Sport Motorcycles",
+                "cruiser": "Cruiser Motorcycles",
+                "offRoad": "Off-Road Motorcycles",
+                "scooter": "Scooters",
+                "parts": "Motorcycle Parts"
+            },
+            "fields": {
+                "brand": "Brand",
+                "year": "Year",
+                "engineCapacity": "Engine Capacity",
+                "mileage": "Mileage",
+                "fuel": "Fuel Type",
+                "fuelOptions": {
+                    "gasoline": "Gasoline",
+                    "electric": "Electric"
+                },
+                "color": "Color",
+                "partType": "Part Type"
+            }
+        },
+        "Electronics": {
+            "label": "Electronics",
+            "heading": "Electronics",
+            "description": "A variety of electronic products including smartphones, laptops, tablets, accessories, and audio devices.",
+            "subCategories": {
+                "smartphones": "Smartphones",
+                "laptops": "Laptops",
+                "tablets": "Tablets",
+                "accessories": "Electronic Accessories",
+                "audio": "Audio Devices"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "processor": "Processor",
+                "ram": "RAM",
+                "storage": "Storage",
+                "screenSize": "Screen Size",
+                "resolution": "Screen Resolution",
+                "operatingSystem": "Operating System",
+                "condition": "Condition",
+                "batteryLife": "Battery Life in Hours",
+                "includedAccessories": "Included Accessories",
+                "networkType": "Connection Type",
+                "color": "Color",
+                "warranty": "Warranty",
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                },
+                "networkTypeOptions": {
+                    "4G": "4G",
+                    "5G": "5G",
+                    "WiFi": "Wi-Fi",
+                    "Bluetooth": "Bluetooth"
+                }
+            }
+        },
+
+        "Art": {
+            "label": "Art",
+            "heading": "Art & Collectibles",
+            "description": "Various artworks and collectibles including paintings, sculptures, photography, crafts, and collectible items.",
+            "subCategories": {
+                "paintings": "Paintings",
+                "sculptures": "Sculptures",
+                "photography": "Photography",
+                "crafts": "Crafts",
+                "collectibles": "Collectibles"
+            },
+            "fields": {
+                "artist": "Artist",
+                "creationYear": "Creation Year",
+                "dimensions": "Dimensions",
+                "technique": "Technique",
+                "certificate": "Certificate of Authenticity",
+                "provenance": "Provenance",
+                "condition": "Condition",
+                "framed": "Framed"
+            }
+        },
+
+        "Gaming": {
+            "label": "Gaming",
+            "heading": "Gaming & Games",
+            "description": "Gaming products including consoles, games, accessories, and gaming PCs.",
+            "subCategories": {
+                "consoles": "Gaming Consoles",
+                "games": "Games",
+                "accessories": "Gaming Accessories",
+                "pc_gaming": "Gaming PCs"
+            },
+            "fields": {
+                "platform": "Platform",
+                "genre": "Genre",
+                "edition": "Edition",
+                "multiplayer": "Multiplayer",
+                "rating": "Rating",
+                "language": "Language",
+                "releaseYear": "Release Year",
+                "platformOptions": {
+                    "PlayStation": "PlayStation",
+                    "Xbox": "Xbox",
+                    "Nintendo": "Nintendo",
+                    "PC": "PC",
+                    "Mobile": "Mobile"
+                }
+            }
+        },
+
+        "RealEstate": {
+            "label": "Real Estate",
+            "heading": "Real Estate",
+            "description": "Real estate properties for sale or rent, including apartments, houses, villas, land, and commercial properties.",
+            "subCategories": {
+                "apartment": "Apartments",
+                "house": "Houses",
+                "villa": "Villas",
+                "commercial": "Commercial Properties",
+                "land": "Land"
+            },
+            "fields": {
+                "area": "Area in Square Meters",
+                "rooms": "Number of Rooms",
+                "bathrooms": "Number of Bathrooms",
+                "floors": "Number of Floors",
+                "hasParking": "Parking",
+                "hasElevator": "Elevator",
+                "furnished": "Furnished",
+                "rentalType": "Listing Type",
+                "propertyAge": "Property Age in Years",
+                "geoLocation": "Location",
+                "rentalTypeOptions": {
+                    "sale": "For Sale",
+                    "rent": "For Rent",
+                    "daily": "Daily Rental"
+                }
+            }
+        },
+
+        "Pets": {
+            "label": "Pets",
+            "heading": "Pets & Supplies",
+            "description": "Various pets and pet supplies, including dogs, cats, birds, fish, and small animals.",
+            "subCategories": {
+                "dogs": "Dogs",
+                "cats": "Cats",
+                "birds": "Birds",
+                "fish": "Fish",
+                "small_animals": "Small Animals",
+                "supplies": "Pet Supplies"
+            },
+            "fields": {
+                "breed": "Breed",
+                "age": "Age in Months",
+                "gender": "Gender",
+                "vaccinated": "Vaccinated",
+                "neutered": "Neutered / Spayed",
+                "microchipped": "Microchipped",
+                "color": "Color",
+                "weight": "Weight in KG",
+                "healthIssues": "Health Issues",
+                "temperament": "Temperament",
+                "brand": "Brand",
+                "size": "Size",
+                "material": "Material",
+                "genderOptions": {
+                    "male": "Male",
+                    "female": "Female"
+                }
+            }
+        },
+
+        "Furniture": {
+            "label": "Furniture",
+            "heading": "Furniture",
+            "description": "A variety of furniture for homes, offices, and outdoor spaces, including living rooms, bedrooms, dining rooms, offices, and kitchens.",
+            "subCategories": {
+                "living_room": "Living Room",
+                "bedroom": "Bedroom",
+                "dining": "Dining Room",
+                "office": "Office",
+                "outdoor": "Outdoor Furniture",
+                "kitchen": "Kitchen Furniture"
+            },
+            "fields": {
+                "brand": "Brand",
+                "material": "Material",
+                "color": "Color",
+                "dimensions": "Dimensions",
+                "weight": "Weight",
+                "assemblyRequired": "Assembly Required",
+                "condition": "Condition",
+                "style": "Style",
+                "includesAccessories": "Includes Accessories",
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
         "discountsAndOffers": {
             "common": {
                 "discount": "Discount",
