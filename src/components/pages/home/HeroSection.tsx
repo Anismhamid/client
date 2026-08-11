@@ -10,6 +10,7 @@ import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
 import { useEffect } from 'react';
 import SealBadge from './SealBadge';
+import AISearch from '../../../atoms/AISearch';
 // import SealBadge from './SealBadge';
 
 interface HeroSectionProps {
@@ -57,6 +58,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 // backgroundSize: 'contain',
             }}
         >
+            <AISearch />
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
             <Box
                 sx={{
@@ -97,7 +99,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             border: '1px solid',
                             borderColor: 'primary',
                             borderRadius: '11px',
-                           
                         }}
                     >
                         <SealBadge size={22} rotate={-8}>
