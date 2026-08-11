@@ -1,182 +1,192 @@
-@import "../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css";
+@import '../node_modules/bootstrap/dist/css/bootstrap.rtl.min.css';
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@100;200;300;400;500;600;700&display=swap');
-@import "react-toastify/dist/ReactToastify.css";
+@import 'react-toastify/dist/ReactToastify.css';
 
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Heebo";
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Heebo';
 }
 
-
 #root {
-  /* background: radial-gradient(circle at 30% 15%, #eef1f870, transparent 45%),
+    /* background: radial-gradient(circle at 30% 15%, #eef1f870, transparent 45%),
     radial-gradient(circle at 75% 60%, #eff2f883, transparent 50%),
     linear-gradient(180deg, #f0f0f850, #f0f0f852),
     url('./assets/bbblurry.svg'); */
-  /* background: 
+    /* background: 
   radial-gradient(circle at 20% 30%, #e0edef7c 15%, transparent 16%),
     radial-gradient(circle at 80% 70%, #a1dac257 15%, transparent 18%),
     radial-gradient(circle at 40% 80%, #eaddf038 10%, transparent 11%),
     radial-gradient(circle at 60% 20%, #a2c7de6e 10%, transparent 18%); */
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
 }
 
+#hero-section {
+    background: radial-gradient(
+            circle,
+            rgba(245, 159, 11, 0.03) 0%,
+            transparent 70%
+        ),
+        url('/Safqa.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
 
+/* fixed attachment فقط لما الجهاز فعليًا بيدعمه ومش لمسي —
+   عالموبايل/أندرويد بيسبب مشاكل رندر وسكرول */
+/* @media (hover: hover) and (pointer: fine) {
+    #hero-section {
+        background-attachment: fixed;
+    }
+} */
 
 main {
-  min-height: 90vh;
-  /* width: 70%; */
-  
-  margin: 50px auto;
+    min-height: 90vh;
+    /* width: 70%; */
+
+    margin: 50px auto;
 }
 
 .header-image {
-  background-image: url(../public/2d.png);
-  background-position: center;
-  background-size: contain;
-  background-repeat: no-repeat;
-
+    background-image: url(../public/2d.png);
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
-
 .MuiFormGroup-root {
-  margin-bottom: 5px;
-
+    margin-bottom: 5px;
 }
 
 .MuiButtonBase {
-  position: absolute !important;
+    position: absolute !important;
 }
 
-
 .nav-item {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .nav-link {
-  transition: 0.2s ease-in-out;
-  font-size: 1rem;
-  padding: 8px 14px;
-  font-weight: 600;
-  color: #ffffffcc;
-  border-radius: 8px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  -ms-border-radius: 8px;
-  -o-border-radius: 8px;
-  transition: all 0.2s ease-in-out;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  -ms-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
+    transition: 0.2s ease-in-out;
+    font-size: 1rem;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #ffffffcc;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -ms-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  color: #4FC3F7 !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: #4fc3f7 !important;
 }
 
 .nav-link.text-danger {
-  color: #ff5b5b !important;
-  background-color: rgba(255, 255, 255, 0.07);
+    color: #ff5b5b !important;
+    background-color: rgba(255, 255, 255, 0.07);
 }
 
 .MuiBadge-badge {
-  background-color: #4FC3F7 !important;
-  color: #1A1E22;
-  font-weight: bold;
+    background-color: #4fc3f7 !important;
+    color: #1a1e22;
+    font-weight: bold;
 }
 
-
 .login {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  & form {
-    max-width: 350px;
-    padding: 2rem;
-    border-radius: 10px;
-  }
+    & form {
+        max-width: 350px;
+        padding: 2rem;
+        border-radius: 10px;
+    }
 }
 
 .sale-switch:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .link-success:hover {
-  transform: scale(1.2);
-  -webkit-transform: scale(1.2);
-  -moz-transform: scale(1.2);
-  -ms-transform: scale(1.2);
-  -o-transform: scale(1.2);
+    transform: scale(1.2);
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
 }
-
-
-
 
 .scroll-container {
-  -webkit-overflow-scrolling: touch;
-  /* Smooth scrolling on iOS */
-  overscroll-behavior-x: contain;
-  /* Prevent scroll chaining */
+    -webkit-overflow-scrolling: touch;
+    /* Smooth scrolling on iOS */
+    overscroll-behavior-x: contain;
+    /* Prevent scroll chaining */
 }
 
-
 .card-hover:hover {
-  animation: identifier 1s ease-in-out infinite alternate;
-  transition: all 0.3s ease-out;
+    animation: identifier 1s ease-in-out infinite alternate;
+    transition: all 0.3s ease-out;
 }
 
 @keyframes identifier {
-  from {
-    transform: rotateX(0deg);
-  }
+    from {
+        transform: rotateX(0deg);
+    }
 
-  to {
-    transform: rotateX(8deg);
-  }
+    to {
+        transform: rotateX(8deg);
+    }
 }
 
 @keyframes float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
 
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 @keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
 
-  0%,
-  100% {
-    opacity: 1;
-  }
-
-  50% {
-    opacity: 0.7;
-  }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .float-animation {
-  animation: float 3s ease-in-out infinite;
+    animation: float 3s ease-in-out infinite;
 }
 
 .pulse-animation {
-  animation: pulse 2s ease-in-out infinite;
+    animation: pulse 2s ease-in-out infinite;
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
 }

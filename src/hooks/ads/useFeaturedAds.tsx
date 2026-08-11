@@ -15,17 +15,6 @@ export const useHomePageAds = () => {
         axios
             .get(`${api}/homepage`)
             .then(({ data }) => {
-                console.log('✅ بيانات الإعلانات المستلمة:', data);
-                console.log('📊 عدد الإعلانات:', data.length ?? 0);
-                console.log('📋 تفاصيل الإعلانات:', data);
-
-                // تأكد من أن البيانات صحيحة
-                if (data && data.length > 0) {
-                    console.log('✅ تم العثور على إعلانات مميزة!');
-                } else {
-                    console.warn('⚠️ لا توجد إعلانات مميزة في قاعدة البيانات');
-                }
-
                 setHomePageAds(data);
             })
             .catch((err) => {
@@ -47,12 +36,9 @@ export const useHighlightAds = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log('🚀 جلب الإعلانات المضيئة من:', `${api}/highlight`);
-
         axios
             .get(`${api}/highlight`)
             .then(({ data }) => {
-                console.log('✅ بيانات الإعلانات المضيئة:', data);
                 setAds(data);
                 setError(null);
             })
@@ -66,19 +52,15 @@ export const useHighlightAds = () => {
     return { ads, loading, error };
 };
 
-// Hook for top ads
 export const useTopAds = () => {
     const [ads, setAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        console.log('🚀 جلب أفضل الإعلانات من:', `${api}/top`);
-
         axios
             .get(`${api}/top`)
             .then(({ data }) => {
-                console.log('✅ بيانات أفضل الإعلانات:', data);
                 setAds(data);
                 setError(null);
             })

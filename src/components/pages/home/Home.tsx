@@ -1,6 +1,7 @@
 // pages/Home.tsx
 import { FunctionComponent, lazy, Suspense, useEffect, useState } from 'react';
 import {
+    Box,
     // Alert,
     // AlertTitle,
     Button,
@@ -180,7 +181,7 @@ const Home: FunctionComponent = () => {
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
-            <section
+            {/* <section
                 id='help-section'
                 style={{
                     margin: 'auto',
@@ -249,6 +250,114 @@ const Home: FunctionComponent = () => {
                         })}
                     </Grid>
                 </Paper>
+            </section> */}
+            <section id='help-section' style={{ margin: 'auto' }}>
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: { xs: 2, md: 3 },
+                        m: { xs: 1.5, md: 2 },
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: '16px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            insetInlineStart: 0,
+                            insetInlineEnd: 0,
+                            height: 4,
+                            background: GRADIENT,
+                        },
+                    }}
+                >
+                    <Typography
+                        variant='h6'
+                        gutterBottom
+                        fontWeight='bold'
+                        textAlign='center'
+                        sx={{
+                            pt: 0.5,
+                            fontSize: { xs: '1.05rem', md: '1.25rem' },
+                        }}
+                    >
+                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
+                    </Typography>
+
+                    <Grid container spacing={1.5} mt={0.5}>
+                        {QUICK_HELP_LINKS.map((link) => {
+                            const Icon = link.icon;
+                            const to = link.pathKey
+                                ? path[link.pathKey]
+                                : link.to!;
+                            return (
+                                <Grid key={link.key} size={{ xs: 4, md: 4 }}>
+                                    <Button
+                                        fullWidth
+                                        component={RouterLink}
+                                        to={to}
+                                        disableRipple={false}
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            gap: 0.75,
+                                            py: 1.5,
+                                            px: 1,
+                                            minHeight: 84,
+                                            borderRadius: '14px',
+                                            border: '1px solid',
+                                            borderColor: 'divider',
+                                            color: 'text.primary',
+                                            textTransform: 'none',
+                                            WebkitTapHighlightColor:
+                                                'transparent',
+                                            transition:
+                                                'transform 0.15s ease, border-color 0.2s ease',
+                                            '&:hover': {
+                                                borderColor: '#8B4513',
+                                                bgcolor: 'primary.50',
+                                            },
+                                            '&:active': {
+                                                transform: 'scale(0.96)',
+                                            },
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: 38,
+                                                height: 38,
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: GRADIENT,
+                                                color: '#fff',
+                                            }}
+                                        >
+                                            <Icon fontSize='small' />
+                                        </Box>
+                                        <Typography
+                                            sx={{
+                                                fontSize: {
+                                                    xs: '0.72rem',
+                                                    sm: '0.85rem',
+                                                },
+                                                fontWeight: 600,
+                                                lineHeight: 1.3,
+                                                textAlign: 'center',
+                                            }}
+                                        >
+                                            {t(link.key, link.fallback)}
+                                        </Typography>
+                                    </Button>
+                                </Grid>
+                            );
+                        })}
+                    </Grid>
+                </Paper>
             </section>
             {/* ─── STATS ─── */}
             <section id='StatsStrip-section'>
@@ -260,6 +369,8 @@ const Home: FunctionComponent = () => {
 
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />
+                </Suspense>
+                <Suspense fallback={<Loader />}>
                     <PostsGrid
                         posts={posts}
                         featured={false}
@@ -272,6 +383,8 @@ const Home: FunctionComponent = () => {
                         }}
                         onLikeToggle={handleLikeToggle}
                     />
+                </Suspense>
+                <Suspense fallback={<Loader />}>
                     <ContactCTA />
                 </Suspense>
             </main>
@@ -289,7 +402,7 @@ const Home: FunctionComponent = () => {
                     show={showDeleteModal}
                     onHide={() => setShowDeleteModal(false)}
                     title='⚠️ تنبيه مهم!'
-                    description={`هل أنت متأكد من رغبتك في حذف المنتج "${postToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
+                    description={`هل أنت متأكد من رغبتك في حذف "${postToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
                     handleDelete={() => handleDelete(postToDelete)}
                 />
             </Suspense>

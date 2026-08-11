@@ -38,18 +38,23 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
 
     return (
         <Box
+            id='hero-section'
             dir={direction}
             sx={{
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                py: { xs: 5, md: 7 },
+                py: { xs: 5, md: 10 },
                 px: { xs: 2, md: 4 },
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden',
                 bgcolor: 'background.paper',
-                background:
-                    'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%)',
+                // background:
+                //     'radial-gradient(circle, rgba(245, 159, 11, 0.030) 0%, transparent 70%),url(public/safqa_playstore_header.jpg)',
+                // backgroundPosition: 'center',
+                // backgroundRepeat: 'no-repeat',
+                // backgroundAttachment: 'fixed',
+                // backgroundSize: 'contain',
             }}
         >
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
@@ -90,9 +95,9 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             py: 0.75,
                             mb: 3,
                             border: '1px solid',
-                            borderColor: 'primary.light',
-                            borderRadius: '99px',
-                            bgcolor: 'primary.50',
+                            borderColor: 'primary',
+                            borderRadius: '11px',
+                           
                         }}
                     >
                         <SealBadge size={22} rotate={-8}>
@@ -101,7 +106,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                         <Typography
                             variant='caption'
                             sx={{
-                                color: 'primary.main',
+                                color: 'primary',
                                 fontWeight: 600,
                                 letterSpacing: 0.4,
                             }}

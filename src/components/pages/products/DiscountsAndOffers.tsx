@@ -228,14 +228,13 @@ const DiscountsAndOffers: FunctionComponent = () => {
                             <Swiper
                                 modules={[Autoplay, Navigation, Pagination]}
                                 autoplay={{
-                                    delay: 1000,
+                                    delay: 4000,
                                     disableOnInteraction: false,
                                     pauseOnMouseEnter: true,
                                 }}
                                 loop={postsInDiscount.length > slidesPerView}
                                 navigation={!isMobile}
-                                pagination={ true 
-                                }
+                                pagination={true}
                                 spaceBetween={24}
                                 slidesPerView={slidesPerView}
                                 grabCursor={true}
