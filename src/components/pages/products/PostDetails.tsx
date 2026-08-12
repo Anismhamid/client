@@ -550,10 +550,10 @@ const PostDetails: FunctionComponent = () => {
 
     // Call this when the post details page loads
     useEffect(() => {
-        if (postId && !isOwner) {
-            incrementViewCount(postId);
+        if (post && post._id) {
+            incrementViewCount(post._id);
         }
-    }, [isOwner, postId]);
+    }, [ post, post._id]);
 
     /* =====================================================
        LOADING
