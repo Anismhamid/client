@@ -248,16 +248,11 @@ export const submitReview = async (
 };
 
 export const incrementViewCount = async (postId: string) => {
-    const token = localStorage.getItem('token');
     try {
-        const result = await axios.post(
+        const result = await axios.patch(
             `${api}/posts/${postId}/increment-views`,
-            {
-                headers: {
-                    Authorization: token,
-                },
-            },
         );
+
         return result.data;
     } catch (error) {
         console.error('Failed to increment view count:', error);
