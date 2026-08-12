@@ -246,3 +246,14 @@ export const submitReview = async (
         return [];
     }
 };
+
+export const incrementViewCount = async (postId: string) => {
+    try {
+        const result = await axios.post(
+            `${api}/posts/${postId}/increment-views`,
+        );
+        return result.data;
+    } catch (error) {
+        console.error('Failed to increment view count:', error);
+    }
+};

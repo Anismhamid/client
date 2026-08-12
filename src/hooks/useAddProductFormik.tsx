@@ -6,7 +6,7 @@ import { Posts } from '../interfaces/Posts';
 import { useState } from 'react';
 import { uploadImage } from '../services/uploadImage';
 
-const useAddPostFormik = (onHide: () => void) => {
+const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
     const { t } = useTranslation();
     const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -30,12 +30,6 @@ const useAddPostFormik = (onHide: () => void) => {
             location: '',
             featured: false,
             createdAt: '',
-            // seller: {
-            //     _id: '',
-            //     slug: '',
-            //     name: { first: '', last: '' },
-            //     image: { url: '', alt: '' },
-            // },
         },
         validationSchema: yup.object({
             product_name: yup
@@ -92,6 +86,7 @@ const useAddPostFormik = (onHide: () => void) => {
                 resetForm();
                 setImageFile(null);
                 setImageData(null);
+                onSuccess?.();
                 onHide?.();
             } catch (error) {
                 console.error(error);

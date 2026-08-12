@@ -11,11 +11,13 @@ export const generatePath = (path: string, params: Record<string, string>) => {
 };
 
 export const getAverageRating = (post: Posts) => {
-  if (!post.reviews?.length) return 0;
-  const sum = post.reviews.reduce((acc, review) => acc + review.rating, 0);
-  return sum / post.reviews.length;
-}
-
+    if (!post.reviews?.length) return 0;
+    const sum = post.reviews.reduce(
+        (acc, review) => acc + (review.rating ?? 0),
+        0,
+    );
+    return sum / post.reviews.length;
+};
 
 export const formatTimeAgo = (createdAt: string, t: TFunction) => {
     const now = new Date();
@@ -40,4 +42,3 @@ export const handleShare = async () => {
         return;
     }
 };
-

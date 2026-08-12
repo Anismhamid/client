@@ -78,7 +78,7 @@ const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
     const direction = handleRTL();
-    const { posts: initialPosts } = usePosts();
+    const { posts: initialPosts, refetch } = usePosts();
     const location = useLocation();
 
     // Modals state
@@ -87,7 +87,6 @@ const Home: FunctionComponent = () => {
     const [postIdToUpdate, setPostIdToUpdate] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
-    const [, setRefresh] = useState(false);
     const [posts, setPosts] = useState<Posts[]>([]);
 
     useEffect(() => {
@@ -391,7 +390,7 @@ const Home: FunctionComponent = () => {
             <Suspense fallback={<Loader />}>
                 {/* ─── MODALS ─── */}
                 <UpdateProductModal
-                    refresh={() => setRefresh((r) => !r)}
+                    refresh={refetch}
                     postId={postIdToUpdate}
                     show={showUpdateModal}
                     onHide={() => setShowUpdateModal(false)}
@@ -410,6 +409,7 @@ const Home: FunctionComponent = () => {
                 <AddProductModal
                     show={showAddModal}
                     onHide={() => setShowAddModal(false)}
+                    onSuccess={refetch}
                 />
             </Suspense>
         </>

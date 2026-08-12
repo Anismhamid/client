@@ -538,6 +538,12 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             color: 'primary.main',
                             fontSize: '1.125rem',
                             lineHeight: 1,
+                            px: 1,
+                            py: 0.5,
+                            border: '1px dashed',
+                            borderColor: 'primary.light',
+                            borderRadius: '6px',
+                            display: 'inline-block',
                         }}
                         itemProp='offers'
                         itemScope
@@ -790,6 +796,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     py: 0.75,
                     borderTop: '0.5px solid',
                     borderColor: 'divider',
+                    borderTopStyle: 'dashed',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
@@ -808,15 +815,22 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     <FavoriteBorder sx={{ fontSize: 13 }} />
                     {post.likes?.length || 0} إعجاب
                 </Typography>
+                <Typography
+                    variant='caption'
+                    sx={{ color: 'text.disabled', fontSize: '0.75rem' }}
+                >
+                    تعليقات {post?.reviews?.[0]?.comment?.length || 0}
+                </Typography>
                 <Stack direction='row' alignItems='center' spacing={0.5}>
                     <VisibilityRounded
                         sx={{ fontSize: 13, color: 'text.disabled' }}
                     />
+
                     <Typography
                         variant='caption'
                         sx={{ color: 'text.disabled', fontSize: '0.75rem' }}
                     >
-                        129
+                        {post.views || 0}
                     </Typography>
                 </Stack>
             </Box>
@@ -856,6 +870,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             startIcon={
                                 <Comment sx={{ fontSize: '16px !important' }} />
                             }
+                            onClick={() => navigate(productUrl)}
                             sx={{
                                 color: 'text.secondary',
                                 py: 1,
@@ -863,14 +878,14 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 textTransform: 'none',
                                 fontSize: '0.8125rem',
                                 fontWeight: 500,
-                                gap: 0.5,
+                                gap: 1,
                                 '&:hover': {
                                     bgcolor: 'action.hover',
                                     color: 'text.primary',
                                 },
                             }}
                         >
-                            تعليق
+                            {t('review.comments')}
                         </Button>
                     </Box>
 

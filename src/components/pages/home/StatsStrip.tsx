@@ -5,12 +5,11 @@ import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
 import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
 import handleRTL from '../../../locales/handleRTL';
 import { useTranslation } from 'react-i18next';
+import SealBadge from './SealBadge';
 
 interface StatsStripProps {
     postsCount: number;
 }
-
-const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
 const StatsStrip = ({ postsCount }: StatsStripProps) => {
     const direction = handleRTL();
@@ -26,58 +25,49 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
         <Box
             dir={direction}
             sx={{
-                bgcolor: 'background.default',
+                bgcolor: 'background.paper',
                 borderBottom: '1px solid',
                 borderColor: 'divider',
-                py: { xs: 2, md: 2.5 },
-                px: { xs: 1.5, md: 4 },
+                position: 'relative',
             }}
         >
-            <Container maxWidth='lg'>
+            <Container maxWidth='lg' sx={{ px: { xs: 1.5, md: 4 } }}>
                 <Box
                     sx={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: { xs: 1, sm: 2 },
+                        position: 'relative',
+                        // خط الدفتر الأفقي الخفيف، نفس تكسچر الـ Hero
+                        backgroundImage:
+                            'repeating-linear-gradient(rgba(139,69,19,0.05) 0px, rgba(139,69,19,0.05) 1px, transparent 1px, transparent 26px)',
                     }}
                 >
-                    {STATS(postsCount).map((stat) => {
+                    {STATS(postsCount).map((stat, i) => {
                         const { Icon } = stat;
                         return (
                             <Box
                                 key={stat.label}
                                 sx={{
                                     textAlign: 'center',
-                                    py: { xs: 1.25, sm: 1.5 },
+                                    py: { xs: 2, sm: 2.5 },
                                     px: { xs: 0.5, sm: 1.5 },
-                                    borderRadius: '14px',
-                                    bgcolor: (theme) =>
-                                        theme.palette.mode === 'dark'
-                                            ? 'rgba(184,134,11,0.08)'
-                                            : 'rgba(184,134,11,0.06)',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
+                                    position: 'relative',
+                                    // خط متقطع عمودي بين البنود، مو صندوق كامل
+                                    ...(i !== 0 && {
+                                        borderInlineStart: '1px dashed',
+                                        borderColor: 'divider',
+                                    }),
                                 }}
                             >
-                                <Box
-                                    sx={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        width: { xs: 30, sm: 34 },
-                                        height: { xs: 30, sm: 34 },
-                                        borderRadius: '50%',
-                                        background: GRADIENT,
-                                        color: '#fff',
-                                        mb: 0.75,
-                                    }}
-                                >
-                                    <Icon sx={{ fontSize: { xs: 16, sm: 18 } }} />
+                                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                                    <SealBadge size={30} rotate={i % 2 === 0 ? -6 : 6} tone='outline'>
+                                        <Icon sx={{ fontSize: 15 }} />
+                                    </SealBadge>
                                 </Box>
                                 <Typography
                                     sx={{
                                         fontWeight: 800,
-                                        fontSize: { xs: '1.05rem', sm: '1.3rem' },
+                                        fontSize: { xs: '1.1rem', sm: '1.35rem' },
                                         color: 'text.primary',
                                         lineHeight: 1.2,
                                     }}
@@ -101,6 +91,16 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
                     })}
                 </Box>
             </Container>
+
+            <Box
+                sx={{
+                    height: 8,
+                    backgroundImage: (theme) =>
+                        `radial-gradient(circle at 8px 0, transparent 7px, ${theme.palette.background.paper} 7.5px)`,
+                    backgroundSize: '16px 8px',
+                    backgroundRepeat: 'repeat-x',
+                }}
+            />
         </Box>
     );
 };

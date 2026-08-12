@@ -73,7 +73,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     pointerEvents: 'none',
                 }}
             />
-
             <Box
                 sx={{
                     position: 'relative',

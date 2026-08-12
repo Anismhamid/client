@@ -90,6 +90,8 @@ export interface Posts {
     price: number;
     description: string;
 
+    views?: number;
+
     image: {
         url: string;
         publicId: string;
@@ -106,6 +108,7 @@ export interface Posts {
 export const initialProductValue: Partial<Posts> = {
     location: 'אום אל פחם',
     featured: false,
+    views: 0,
     seller: {
         _id: '',
         slug: '',

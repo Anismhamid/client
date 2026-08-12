@@ -79,6 +79,7 @@ import {
     deletePost,
     getPostById,
     getRelatedPosts,
+    incrementViewCount,
     submitReview,
 } from '../../../services/postsServices';
 
@@ -546,6 +547,13 @@ const PostDetails: FunctionComponent = () => {
                 console.error('Related products error:', relatedError);
             });
     }, [post._id, post.category]);
+
+    // Call this when the post details page loads
+    useEffect(() => {
+        if (postId && !isOwner) {
+            incrementViewCount(postId);
+        }
+    }, [isOwner, postId]);
 
     /* =====================================================
        LOADING
