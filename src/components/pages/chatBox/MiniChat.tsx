@@ -1,11 +1,6 @@
-import {
-    Paper,
-    Avatar,
-    Box,
-    Typography,
-    keyframes,
-} from '@mui/material';
+import { Paper, Avatar, Box, Typography, keyframes } from '@mui/material';
 import { BaseUser } from '../../../interfaces/chat/chatUser';
+import { memo } from 'react';
 
 interface Props {
     user: BaseUser;
@@ -26,7 +21,6 @@ const slideIn = keyframes`
 
 const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
     const { name, image, status } = user;
-
     const statusLabel = status ? 'Online' : 'Offline';
 
     return (
@@ -41,23 +35,19 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
                     onOpen();
                 }
             }}
-            aria-label={`Open chat with ${name?.first} ${name?.last}`}
+            aria-label={`Open chat with ${name?.first || 'Unknown'} ${name?.last || ''}`}
             sx={{
                 animation: `${slideIn} 0.3s ease-out`,
                 position: 'relative',
                 left: 50,
                 width: 220,
-                height: 50,
+                height: 40,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 px: 2,
                 cursor: 'pointer',
-                borderRadius: 1,
-                backgroundImage: 'linear-gradient(#51636e7a, #52799757)',
-                backdropFilter: 'blur(10px)',
                 boxShadow: 5,
-                border: 1,
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
                     transform: 'scale(1.02)',
@@ -74,21 +64,24 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
                 },
             }}
         >
+            <Avatar src={image?.url}>{name?.first?.[0]}</Avatar>
             <Box>
                 <Typography fontWeight={600} noWrap>
                     {name?.first} {name?.last}
                 </Typography>
             </Box>
 
-            <Typography
-                color={status ? 'success.main' : 'error.main'}
-                fontWeight={100}
-                variant='caption'
-                noWrap
-            >
-                {statusLabel}
-            </Typography>
-            <Avatar src={image?.url}>{name?.first?.[0]}</Avatar>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                    sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: status ? 'success.main' : 'error.main',
+                    }}
+                />
+                <Typography variant='caption'>{statusLabel}</Typography>
+            </Box>
 
             {Boolean(unreadCount) && unreadCount! > 0 && (
                 <Box
@@ -115,4 +108,4 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
     );
 };
 
-export default MiniChat;
+export default memo(MiniChat);

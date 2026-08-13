@@ -9,13 +9,21 @@ import { useUser } from '../../../hooks/useUSer';
 import ChatBox from './ChatBox';
 import { mapUserMessageToChatBox } from './MessagesPage';
 import MiniChat from './MiniChat';
+import { useEffect } from 'react';
 
 const FloatingChats = () => {
-    const { chats, minimizeChat, closeChat, openChat } = useChatWindow();
+    const { chats, minimizeChat, closeChat,clearChats, openChat } = useChatWindow();
 
     const { auth } = useUser();
     const token = localStorage.getItem('token') ?? '';
-    if (!auth) return null;
+    
+    useEffect(() => {
+        if (!auth || !token) {
+            clearChats?.();
+        }
+    }, [auth, token, clearChats]);
+
+    if (!auth || !token) return null;
 
     const currentUser = {
         _id: auth._id,
@@ -54,7 +62,6 @@ const FloatingChats = () => {
                         <MiniChat
                             user={chat.user}
                             onOpen={() => openChat(chat.user)}
-                            
                         />
                     ) : (
                         <Paper
@@ -63,7 +70,6 @@ const FloatingChats = () => {
                                 flexDirection: 'column',
                                 borderRadius: 1,
                                 overflow: 'hidden',
-                                border: 1,
                                 // maxWidth: 360,
                                 width: { xs: '100vw', sm: 360 },
                                 height: { xs: '100vh', sm: 500 },

@@ -4,7 +4,6 @@ import {
     useState,
     ReactNode,
     useCallback,
-    useEffect,
 } from 'react';
 
 import { UserMessage } from '../interfaces/chat/usersMessages';
@@ -22,15 +21,14 @@ interface ChatWindowContextType {
     closeChat: (id: string) => void;
     getInitialMessage: (userId: string) => string | undefined;
     clearInitialMessage: (userId: string) => void;
+    clearChats: () => void;
 }
 
 const ChatWindowContext = createContext<ChatWindowContextType | null>(null);
 
 export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
     const [chats, setChats] = useState<ChatWindow[]>([]);
-useEffect(() => {
-    console.log(chats);
-}, [chats]);
+
     const openChat = (user: UserMessage, initialMessage?: string) => {
         const userId = user._id || user.from?._id;
         console.log('openChat', initialMessage);
@@ -67,6 +65,10 @@ useEffect(() => {
             ];
         });
     };
+
+    const clearChats = useCallback(() => {
+        setChats([]);
+    }, []);
 
     const minimizeChat = useCallback((id: string) => {
         setChats((prev) =>
@@ -125,6 +127,7 @@ useEffect(() => {
                 closeChat,
                 getInitialMessage,
                 clearInitialMessage,
+                clearChats,
             }}
         >
             {children}
