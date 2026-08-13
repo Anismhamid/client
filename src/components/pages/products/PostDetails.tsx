@@ -53,7 +53,7 @@ import {
 } from '@mui/icons-material';
 
 import { initialProductValue, Posts } from '../../../interfaces/Posts';
-import { path } from '../../../routes/routes';
+import { path, productsPathes } from '../../../routes/routes';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import ColorsAndSizes from '../../../atoms/productsManage/ColorsAndSizes';
 import { useTranslation } from 'react-i18next';
@@ -275,23 +275,17 @@ const PostDetails: FunctionComponent = () => {
             return;
         }
 
+        const productUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
+
         const initialMessage =
             `مرحباً، أنا مهتم ب"${post.product_name}" 💬\n\n` +
             `📦 السعر: ${formatPrice(post.price)}\n` +
             `📂 التصنيف: ${categoryLabel}\n` +
-            `🔗 رابط المنتج: ${window.location.href}\n\n` +
+            `🔗 رابط المنتج: ${productUrl}\n\n` +
             `هل لا يزال متوفراً؟`;
 
         openChat(seller as UserMessage, initialMessage);
-    }, [
-        auth?._id,
-        navigate,
-        openChat,
-        post.price,
-        post.product_name,
-        post.seller,
-        categoryLabel,
-    ]);
+    }, [post.seller, post.category, post.brand, post._id, post.product_name, post.price, auth._id, categoryLabel, openChat, navigate]);
 
     /* =====================================================
        PROFILE
@@ -553,7 +547,7 @@ const PostDetails: FunctionComponent = () => {
         if (post && post._id) {
             incrementViewCount(post._id);
         }
-    }, [ post, post._id]);
+    }, [post, post._id]);
 
     /* =====================================================
        LOADING

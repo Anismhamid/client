@@ -52,6 +52,7 @@ import { GradientSwitch } from './GradientSwitch';
 import MobileDrawer from './MobileDrawer';
 import SafqaLogo from '../../../atoms/SafqaLogo';
 import { useChat } from '../../../hooks/useChat';
+import AISearch from '../../../atoms/AISearch';
 
 interface ThemeProps {
     mode: PaletteMode;
@@ -487,7 +488,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Box>
 
                                 {/* My Listings - only if logged in */}
-                                {isLoggedIn && (
+                                {isLoggedIn ? (
                                     <Box component='li' role='listitem'>
                                         <StyledNavLink
                                             to={`${path.CustomerProfile.replace(':slug', '')}/${auth?.slug}`}
@@ -497,7 +498,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             <ListIcon sx={{ fontSize: 20 }} />
                                         </StyledNavLink>
                                     </Box>
-                                )}
+                                ) : null}
 
                                 {/* Help */}
                                 <Box component='li' role='listitem'>
@@ -511,7 +512,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Box>
 
                                 {/* Admin Panel - only if admin */}
-                                {isAdmin && (
+                                {isAdmin ? (
                                     <Box component='li' role='listitem'>
                                         <StyledNavLink
                                             to={path.UsersManagement}
@@ -538,7 +539,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             />
                                         </StyledNavLink>
                                     </Box>
-                                )}
+                                ):null}
                             </Box>
                         </Box>
 
@@ -686,6 +687,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             )}
                         </Box>
                     </Toolbar>
+                    <AISearch />
                 </Container>
             </AppBar>
 

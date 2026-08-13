@@ -1,6 +1,5 @@
-// components/AISearch.tsx
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 
-import { useState, type KeyboardEvent } from 'react';
 import axios from 'axios';
 
 import {
@@ -11,15 +10,18 @@ import {
     Button,
     CircularProgress,
     Chip,
-    Typography,
-    Card,
-    CardMedia,
-    CardContent,
     Stack,
+    Paper,
+    Typography,
+    Fade,
 } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+
+import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { path } from '../routes/routes';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -40,86 +42,123 @@ interface SearchFilters {
     nearMe: boolean | null;
 }
 
-interface PostImage {
-    url?: string;
-    publicId?: string;
-}
-
-interface Post {
-    _id: string;
-    product_name?: string;
-    description?: string;
-    price?: number;
-    location?: string;
-    image?: PostImage;
-}
-
 interface SearchResponse {
     success: boolean;
     filters: SearchFilters;
     count: number;
-    posts: Post[];
 }
 
 const AISearch = () => {
-    const [query, setQuery] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [results, setResults] = useState<Post[]>([]);
-    const [filters, setFilters] =
-        useState<SearchFilters | null>(null);
-    const [searched, setSearched] =
-        useState<boolean>(false);
+    const [query, setQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [filters, setFilters] = useState<SearchFilters | null>(null);
+    const [openSuggestions, setOpenSuggestions] = useState(false);
 
-    const handleSearch = async (): Promise<void> => {
-        const value = query.trim();
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
-        if (!value || loading) {
-            return;
+    const { t } = useTranslation();
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    /**
+     * --------------------------------------------------------
+     * Clear search when route changes
+     * --------------------------------------------------------
+     */
+    useEffect(() => {
+        setQuery('');
+        setFilters(null);
+        setOpenSuggestions(false);
+    }, [location.pathname]);
+
+    /**
+     * --------------------------------------------------------
+     * Execute AI Search
+     * --------------------------------------------------------
+     */
+   const handleSearch = async (searchValue?: string) => {
+    const value = (searchValue ?? query).trim();
+
+    if (!value || loading) {
+        return;
+    }
+
+    try {
+        setLoading(true);
+
+        console.log('🔎 Search:', value);
+        console.log('🌐 API:', `${API_URL}/ai/search`);
+
+        const response = await axios.post<SearchResponse>(
+            `${API_URL}/ai/search`,
+            {
+                query: value,
+            },
+        );
+
+        console.log('✅ AI response:', response.data);
+
+        setFilters(response.data?.filters ?? null);
+
+        // مهم: الانتقال حتى لو ما رجعت posts
+        navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
+        setOpenSuggestions(false);
+    } catch (error: unknown) {
+        console.error('❌ AI search failed:', error);
+
+        if (axios.isAxiosError(error)) {
+            console.error('Status:', error.response?.status);
+            console.error('Data:', error.response?.data);
+            console.error('URL:', error.config?.url);
         }
 
-        try {
-            setLoading(true);
-            setSearched(true);
+        // ننتقل إلى صفحة البحث حتى لو الـ API فشل
+        navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
+    } finally {
+        setLoading(false);
+    }
+};
 
-            const response =
-                await axios.post<SearchResponse>(
-                    `${API_URL}/ai/search`,
-                    {
-                        query: value,
-                    }
-                );
-
-            setResults(response.data.posts || []);
-            setFilters(response.data.filters || null);
-        } catch (error) {
-            console.error(
-                'AI search error:',
-                error
-            );
-
-            setResults([]);
-            setFilters(null);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleKeyDown = (
-        event: KeyboardEvent<
-            HTMLDivElement
-        >
-    ): void => {
+    /**
+     * --------------------------------------------------------
+     * Keyboard
+     * --------------------------------------------------------
+     */
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         if (event.key === 'Enter') {
+            event.preventDefault();
             handleSearch();
         }
+
+        if (event.key === 'Escape') {
+            setOpenSuggestions(false);
+        }
     };
 
-    const clearSearch = (): void => {
+    /**
+     * --------------------------------------------------------
+     * Clear
+     * --------------------------------------------------------
+     */
+    const clearSearch = () => {
         setQuery('');
-        setResults([]);
         setFilters(null);
-        setSearched(false);
+        setOpenSuggestions(false);
+
+        inputRef.current?.focus();
     };
+
+    /**
+     * --------------------------------------------------------
+     * Example searches
+     * --------------------------------------------------------
+     */
+    const examples = [
+        'آيفون 15 برو 256 جيجا',
+        'بدي سيارة هيونداي بنزين',
+        'מחפש אייפון 15 פרו',
+        'Samsung S24 256GB',
+    ];
 
     return (
         <Box
@@ -128,13 +167,20 @@ const AISearch = () => {
                 maxWidth: 1100,
                 mx: 'auto',
                 px: {
-                    xs: 2,
+                    xs: 1,
+                    sm: 2,
                     md: 3,
                 },
-                py: 3,
+                py: {
+                    xs: 1.5,
+                    md: 2,
+                },
+                position: 'relative',
             }}
         >
+            {/* ================================================= */}
             {/* SEARCH BAR */}
+            {/* ================================================= */}
 
             <Box
                 sx={{
@@ -144,30 +190,53 @@ const AISearch = () => {
                 }}
             >
                 <TextField
+                    inputRef={inputRef}
                     fullWidth
                     value={query}
-                    onChange={(event) =>
-                        setQuery(
-                            event.target.value
-                        )
-                    }
+                    onChange={(event) => {
+                        setQuery(event.target.value);
+                        setOpenSuggestions(
+                            event.target.value.trim().length > 0,
+                        );
+                    }}
+                    onFocus={() => {
+                        if (query.trim()) {
+                            setOpenSuggestions(true);
+                        }
+                    }}
                     onKeyDown={handleKeyDown}
                     disabled={loading}
-                    placeholder="ابحث عن أي شيء... سيارة، آيفون، شقة، لابتوب..."
+                    placeholder={t('search.placeholder', {
+                        defaultValue:
+                            'ماذا تبحث؟ آيفون 15 برو، سيارة هيونداي...',
+                    })}
+                    inputProps={{
+                        'aria-label': t('search.placeholder', {
+                            defaultValue: 'البحث في صفقة',
+                        }),
+                    }}
                     sx={{
                         '& .MuiOutlinedInput-root': {
-                            borderRadius: 3,
-                            backgroundColor:
-                                'background.paper',
+                            borderRadius: 4,
+                            backgroundColor: 'background.paper',
+                            minHeight: 54,
+
+                            transition: 'all .25s ease',
+
+                            '&:hover': {
+                                boxShadow: '0 4px 20px rgba(245, 159, 11, .12)',
+                            },
+
+                            '&.Mui-focused': {
+                                boxShadow: '0 4px 25px rgba(245, 159, 11, .18)',
+                            },
                         },
                     }}
                     InputProps={{
                         startAdornment: (
-                            <InputAdornment position="start">
+                            <InputAdornment position='start'>
                                 {loading ? (
-                                    <CircularProgress
-                                        size={22}
-                                    />
+                                    <CircularProgress size={22} />
                                 ) : (
                                     <SearchIcon />
                                 )}
@@ -175,15 +244,11 @@ const AISearch = () => {
                         ),
 
                         endAdornment: query ? (
-                            <InputAdornment position="end">
+                            <InputAdornment position='end'>
                                 <IconButton
-                                    onClick={
-                                        clearSearch
-                                    }
-                                    disabled={
-                                        loading
-                                    }
-                                    aria-label="مسح البحث"
+                                    onClick={clearSearch}
+                                    disabled={loading}
+                                    aria-label='مسح البحث'
                                 >
                                     <CloseIcon />
                                 </IconButton>
@@ -193,257 +258,158 @@ const AISearch = () => {
                 />
 
                 <Button
-                    variant="contained"
-                    onClick={handleSearch}
-                    disabled={
-                        loading ||
-                        !query.trim()
-                    }
+                    variant='contained'
+                    onClick={() => handleSearch()}
+                    disabled={loading || !query.trim()}
                     sx={{
-                        height: 56,
+                        height: 54,
                         px: {
                             xs: 2,
                             md: 4,
                         },
-                        borderRadius: 3,
-                        whiteSpace:
-                            'nowrap',
+                        borderRadius: 4,
+                        whiteSpace: 'nowrap',
                         fontWeight: 700,
                     }}
                 >
                     {loading ? (
-                        <CircularProgress
-                            size={22}
-                            color="inherit"
-                        />
+                        <CircularProgress size={22} color='inherit' />
                     ) : (
-                        'بحث'
+                        t('searchin', {
+                            defaultValue: 'بحث',
+                        })
                     )}
                 </Button>
             </Box>
 
-            {/* DETECTED FILTERS */}
+            {/* ================================================= */}
+            {/* SUGGESTIONS */}
+            {/* ================================================= */}
 
-            {filters && (
-                <Box sx={{ mt: 2 }}>
-                    <Stack
-                        direction="row"
-                        spacing={1}
-                        flexWrap="wrap"
-                        useFlexGap
-                    >
-                        {filters.category && (
-                            <Chip
-                                label={
-                                    filters.category
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.type && (
-                            <Chip
-                                label={
-                                    filters.type
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.brand && (
-                            <Chip
-                                label={
-                                    filters.brand
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.model && (
-                            <Chip
-                                label={
-                                    filters.model
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.storage && (
-                            <Chip
-                                label={
-                                    filters.storage
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.condition && (
-                            <Chip
-                                label={
-                                    filters.condition
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.fuel && (
-                            <Chip
-                                label={
-                                    filters.fuel
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.minPrice !==
-                            null && (
-                            <Chip
-                                label={`من ${filters.minPrice}`}
-                                size="small"
-                            />
-                        )}
-
-                        {filters.maxPrice !==
-                            null && (
-                            <Chip
-                                label={`حتى ${filters.maxPrice}`}
-                                size="small"
-                            />
-                        )}
-
-                        {filters.location && (
-                            <Chip
-                                label={
-                                    filters.location
-                                }
-                                size="small"
-                            />
-                        )}
-
-                        {filters.nearMe && (
-                            <Chip
-                                label="قريب مني"
-                                size="small"
-                            />
-                        )}
-                    </Stack>
-                </Box>
-            )}
-
-            {/* RESULTS */}
-
-            {searched && !loading && (
-                <Typography
+            <Fade in={openSuggestions}>
+                <Paper
+                    elevation={8}
                     sx={{
-                        mt: 3,
-                        mb: 2,
-                        fontWeight: 700,
+                        position: 'absolute',
+                        top: 'calc(100% - 4px)',
+                        left: {
+                            xs: 8,
+                            sm: 16,
+                            md: 24,
+                        },
+                        right: {
+                            xs: 8,
+                            sm: 16,
+                            md: 24,
+                        },
+                        zIndex: 1500,
+                        borderRadius: 3,
+                        overflow: 'hidden',
                     }}
                 >
-                    {results.length === 0
-                        ? 'لا توجد نتائج'
-                        : `${results.length} نتيجة`}
-                </Typography>
-            )}
+                    <Box sx={{ p: 2 }}>
+                        <Typography
+                            variant='caption'
+                            color='text.secondary'
+                            sx={{
+                                display: 'block',
+                                mb: 1.5,
+                                fontWeight: 700,
+                            }}
+                        >
+                            اقتراحات البحث
+                        </Typography>
 
-            {/* RESULTS GRID */}
+                        <Stack
+                            direction='row'
+                            spacing={1}
+                            flexWrap='wrap'
+                            useFlexGap
+                        >
+                            {examples.map((example) => (
+                                <Chip
+                                    key={example}
+                                    label={example}
+                                    icon={<SearchIcon />}
+                                    onClick={() => {
+                                        setQuery(example);
+                                        handleSearch(example);
+                                    }}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        mb: 0.5,
+                                    }}
+                                />
+                            ))}
+                        </Stack>
 
-            <Box
-                sx={{
-                    display: 'grid',
-                    gridTemplateColumns: {
-                        xs: '1fr',
-                        sm: 'repeat(2, 1fr)',
-                        md: 'repeat(3, 1fr)',
-                        lg: 'repeat(4, 1fr)',
-                    },
-                    gap: 2,
-                }}
-            >
-                {results.map((post) => (
-                    <Card
-                        key={post._id}
-                        sx={{
-                            borderRadius: 3,
-                            overflow: 'hidden',
-                            height: '100%',
-                        }}
-                    >
-                        {post.image?.url && (
-                            <CardMedia
-                                component="img"
-                                height="220"
-                                image={
-                                    post.image.url
-                                }
-                                alt={
-                                    post.product_name ||
-                                    'Product'
-                                }
-                                sx={{
-                                    objectFit:
-                                        'cover',
-                                }}
-                            />
+                        {/* Detected filters */}
+                        {filters && (
+                            <Box sx={{ mt: 2 }}>
+                                <Typography
+                                    variant='caption'
+                                    color='text.secondary'
+                                    sx={{
+                                        display: 'block',
+                                        mb: 1,
+                                    }}
+                                >
+                                    الفلاتر المكتشفة
+                                </Typography>
+
+                                <Stack
+                                    direction='row'
+                                    spacing={1}
+                                    flexWrap='wrap'
+                                    useFlexGap
+                                >
+                                    {filters.category && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.category}
+                                        />
+                                    )}
+
+                                    {filters.brand && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.brand}
+                                        />
+                                    )}
+
+                                    {filters.model && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.model}
+                                        />
+                                    )}
+
+                                    {filters.storage && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.storage}
+                                        />
+                                    )}
+
+                                    {filters.fuel && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.fuel}
+                                        />
+                                    )}
+
+                                    {filters.condition && (
+                                        <Chip
+                                            size='small'
+                                            label={filters.condition}
+                                        />
+                                    )}
+                                </Stack>
+                            </Box>
                         )}
-
-                        <CardContent>
-                            <Typography
-                                variant="h6"
-                                fontWeight={700}
-                                noWrap
-                            >
-                                {
-                                    post.product_name
-                                }
-                            </Typography>
-
-                            {post.description && (
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{
-                                        mt: 1,
-                                    }}
-                                >
-                                    {
-                                        post.description
-                                    }
-                                </Typography>
-                            )}
-
-                            {post.price !==
-                                undefined && (
-                                <Typography
-                                    variant="h6"
-                                    fontWeight={800}
-                                    sx={{
-                                        mt: 2,
-                                    }}
-                                >
-                                    {post.price.toLocaleString()}{' '}
-                                    ₪
-                                </Typography>
-                            )}
-
-                            {post.location && (
-                                <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                    sx={{
-                                        mt: 1,
-                                    }}
-                                >
-                                    📍{' '}
-                                    {
-                                        post.location
-                                    }
-                                </Typography>
-                            )}
-                        </CardContent>
-                    </Card>
-                ))}
-            </Box>
+                    </Box>
+                </Paper>
+            </Fade>
         </Box>
     );
 };

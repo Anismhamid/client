@@ -35,6 +35,7 @@ const Messages = lazy(() => import('../components/settings/Messages'));
 import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins';
 import ForgotPassword from '../components/settings/ForgotPassword';
 import ResetPassword from '../components/settings/ResetPassword';
+import SearchPage from '../atoms/SearchPage';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -135,6 +136,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 path={`${path.FeaturedAds}`}
                 element={<HomepageFeaturedSection />}
             />
+            <Route path='/search' element={<SearchPage />} />
 
             <Route path='/payment/success' element={<PaymentSuccess />} />
             <Route path='/password-recover' element={<ForgotPassword />} />

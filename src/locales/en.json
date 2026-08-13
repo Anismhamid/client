@@ -239,7 +239,7 @@
     "customer": "Customer",
     "email": "Email",
     "address": "Address",
-    "searchin": "Search for product name",
+    "searchin": "Search",
     "SpeedDial": {
         "actions": {
             "addProduct": "Add Product",

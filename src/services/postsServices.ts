@@ -199,9 +199,15 @@ export const getCustomerProfilePostsBySlug = async (
     slug: string,
 ): Promise<Posts[]> => {
     try {
-        const res = await axios.get(`${api}/posts/customer/${slug}`);
-        return res.data;
-    } catch {
+        const res = await axios.get(`${api}/users/customer/${slug}/posts`);
+
+        if (Array.isArray(res.data?.posts)) {
+            return res.data.posts;
+        }
+
+        return [];
+    } catch (error) {
+        console.error('Failed to get customer posts:', error);
         return [];
     }
 };

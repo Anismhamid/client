@@ -83,7 +83,6 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Tooltip title={t('account-management') || 'Account Settings'}>
                     <IconButton
-                    
                         onClick={handleClick}
                         size='small'
                         aria-controls={open ? 'account-menu' : undefined}
@@ -127,7 +126,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 elevation={8}
                 PaperProps={{
                     elevation: 8,
-                    
+
                     sx: {
                         overflow: 'hidden',
                         mt: 1.5,
@@ -243,26 +242,25 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 </MenuItem>
 
                 {/* Admin / Moderator section */}
-                {isPrivileged && (
-                    <>
-                        <Divider />
-                        <Typography
-                            variant='caption'
-                            sx={{
-                                display: 'block',
-                                px: 2,
-                                pt: 1,
-                                pb: 0.5,
-                                color: 'text.secondary',
-                                fontWeight: 600,
-                                letterSpacing: 0.5,
-                                textTransform: 'uppercase',
-                            }}
-                        >
-                            {getRoleLabel()}
-                        </Typography>
-                    </>
-                )}
+                {isPrivileged && [
+                    <Divider key='privileged-divider' />,
+                    <Typography
+                        key='privileged-title'
+                        variant='caption'
+                        sx={{
+                            display: 'block',
+                            px: 2,
+                            pt: 1,
+                            pb: 0.5,
+                            color: 'text.secondary',
+                            fontWeight: 600,
+                            letterSpacing: 0.5,
+                            textTransform: 'uppercase',
+                        }}
+                    >
+                        {getRoleLabel()}
+                    </Typography>,
+                ]}
                 {isAdmin && (
                     <MenuItem
                         onClick={() => navigateTo(path.Messages)}
