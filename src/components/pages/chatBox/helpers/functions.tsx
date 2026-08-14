@@ -11,18 +11,21 @@ import { UserMessage } from '../../../../interfaces/chat/usersMessages';
 
 const api = import.meta.env.VITE_API_URL;
 
-export const getStatusIcon = (
-    status: 'seen' | 'delivered' | 'sent' | 'pending' | 'error',
-) => {
+// تعريف نوع الحالة
+type MessageStatus = 'seen' | 'delivered' | 'sent' | 'pending' | 'error';
+
+export const getStatusIcon = (status: MessageStatus) => {
+    console.log('Getting status icon for:', status);
+    
     switch (status) {
         case 'seen':
-            return <DoneAllIcon sx={{ fontSize: 14, color: '#2196f3' }} />; // כחול (נקרא)
+            return <DoneAllIcon sx={{ fontSize: 14, color: '#2196f3' }} />;
         case 'delivered':
-            return <DoneAllIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />; // אפור כפול (הגיע ליעד)
+            return <DoneAllIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />;
         case 'sent':
-            return <CheckIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />; // אפור יחיד (נשלח מהטלפון)
+            return <CheckIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />;
         case 'pending':
-            return <AccessTimeIcon sx={{ fontSize: 12, color: '#9e9e9e' }} />; // שעון (בטעינה)
+            return <AccessTimeIcon sx={{ fontSize: 12, color: '#9e9e9e' }} />;
         case 'error':
             return (
                 <Typography sx={{ color: 'error.main', fontSize: 12 }}>
@@ -37,13 +40,23 @@ export const getStatusIcon = (
 export const scrollToBottom = (
     behavior: ScrollBehavior = 'smooth',
     chatContainerRef: RefObject<HTMLDivElement | null>,
+    delay: number = 0,
 ) => {
     if (!chatContainerRef.current) return;
 
-    chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior,
-    });
+    const scroll = () => {
+        if (!chatContainerRef.current) return;
+        chatContainerRef.current.scrollTo({
+            top: chatContainerRef.current.scrollHeight,
+            behavior,
+        });
+    };
+
+    if (delay > 0) {
+        setTimeout(scroll, delay);
+    } else {
+        requestAnimationFrame(scroll);
+    }
 };
 
 /**
@@ -54,16 +67,17 @@ export const scrollToBottom = (
 export const reconcileMessage = (
     prev: LocalMessage[],
     incoming: LocalMessage,
-): LocalMessage[] =>
-    prev.map((m) => {
+): LocalMessage[] => {
+    return prev.map((m): LocalMessage => {
         if (m.tempId && incoming.tempId && m.tempId === incoming.tempId) {
             return { ...incoming };
         }
         if (m._id === incoming._id) {
-            return { ...m, status: incoming.status };
+            return { ...m, status: incoming.status as MessageStatus };
         }
         return m;
     });
+};
 
 export const sendMessage = async (
     text: string,
@@ -82,6 +96,8 @@ export const sendMessage = async (
     const messageText = text.trim();
     const tempId = `temp-${Date.now()}-${Math.random()}`;
 
+    console.log('Sending message:', { messageText, tempId });
+
     const tempMessage: LocalMessage = {
         _id: tempId,
         from: currentUser,
@@ -97,28 +113,62 @@ export const sendMessage = async (
         text: '',
     };
 
+    // إضافة الرسالة محلياً
     addMessageForUser(otherUser?._id ?? '', tempMessage);
     setInput('');
-    socket.emit('user:stopTyping', {
-        to: otherUser._id,
-        from: currentUser._id,
-    });
+    
+    // إيقاف حالة الكتابة
+    if (socket) {
+        socket.emit('user:stopTyping', {
+            to: otherUser._id,
+            from: currentUser._id,
+        });
+    }
+    
+    // التمرير للأسفل
     setTimeout(() => scrollToBottom('smooth', chatContainerRef), 0);
 
     try {
-        await axios.post(
+        const response = await axios.post(
             `${api}/messages`,
-            { toUserId: otherUser._id, message: messageText, tempId },
-            { headers: { Authorization: token } },
+            { 
+                toUserId: otherUser._id, 
+                message: messageText, 
+                tempId 
+            },
+            { 
+                headers: { Authorization: token } 
+            },
         );
+        
+        console.log('Message sent successfully:', response.data);
+        
+        // تحديث الرسالة بالـ ID الحقيقي والحالة
+        if (response.data._id && setMessagesForUser) {
+            setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
+                return prev.map((m): LocalMessage => {
+                    if (m.tempId === tempId) {
+                        return { 
+                            ...response.data, 
+                            status: 'sent' as const,
+                            tempId: tempId
+                        };
+                    }
+                    return m;
+                });
+            });
+        }
     } catch (err) {
-        console.error('Failed to send:', err);
+        console.error('Failed to send message:', err);
         // نعلّم الرسالة كخطأ بدل ما تضل عالقة على "pending" للأبد
-        setMessagesForUser?.(otherUser?._id ?? '', (prev) =>
-            prev.map((m) =>
-                m.tempId === tempId ? { ...m, status: 'error' } : m,
-            ),
-        );
+        setMessagesForUser?.(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
+            return prev.map((m): LocalMessage => {
+                if (m.tempId === tempId) {
+                    return { ...m, status: 'error' as const };
+                }
+                return m;
+            });
+        });
     }
 };
 
