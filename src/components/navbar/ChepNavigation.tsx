@@ -29,11 +29,9 @@ const ChipNavigation = () => {
                 position: 'sticky',
                 top: 0,
                 zIndex: 200,
-                bgcolor: 'background.paper',
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-                py: 1,
-                
+                bgcolor: 'transparent',
+
+                p: 1,
             }}
         >
             <JsonLd
@@ -59,12 +57,12 @@ const ChipNavigation = () => {
                 sx={{
                     position: 'absolute',
                     left: 4,
-                    top: '50%',
+                    top: '30%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     bgcolor: 'background.paper',
                     border: '1px solid',
-                    borderColor: 'divider',
+
                     width: 28,
                     height: 28,
                     '&:hover': {
@@ -86,9 +84,9 @@ const ChipNavigation = () => {
                     gap: 0,
                     listStyle: 'none',
                     overflowX: 'auto',
-                    scrollbarWidth: 'none',
+                    scrollbarWidth: 'thin',
                     px: 5,
-                    '&::-webkit-scrollbar': { display: 'none' },
+                    '&::-webkit-scrollbar': { display: 'block' },
                     maskImage:
                         'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
                     WebkitMaskImage:
@@ -102,10 +100,9 @@ const ChipNavigation = () => {
                         role='listitem'
                         sx={{
                             display: 'flex',
-                            flexDirection: 'column',
                             alignItems: 'center',
                             flexShrink: 0,
-                            minWidth: 72,
+                            minWidth: 100,
                         }}
                     >
                         <NavLink
@@ -142,10 +139,10 @@ const ChipNavigation = () => {
                                     <Box
                                         component='img'
                                         src={category.icon}
-                                        alt={`${t(category.labelKey)} - تصنيف`}
+                                        alt={`${t(category.labelKey)} - category`}
                                         sx={{
-                                            width: 32,
-                                            height: 32,
+                                            width: 40,
+                                            height: 40,
                                             objectFit: 'contain',
                                             filter: isActive
                                                 ? 'none'
@@ -182,12 +179,12 @@ const ChipNavigation = () => {
                 sx={{
                     position: 'absolute',
                     right: 4,
-                    top: '50%',
+                    top: '30%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     bgcolor: 'background.paper',
                     border: '1px solid',
-                    borderColor: 'divider',
+                    // borderColor: 'divider',
                     width: 28,
                     height: 28,
                     '&:hover': {

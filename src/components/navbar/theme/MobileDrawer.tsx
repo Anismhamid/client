@@ -28,6 +28,7 @@ import {
     Help as HelpIcon,
     Dashboard as DashboardIcon,
     ChatBubble,
+    Delete,
 } from '@mui/icons-material';
 import { FunctionComponent, SyntheticEvent } from 'react';
 import { Collapse, FormGroup } from '@mui/material';
@@ -189,6 +190,33 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
+
+                    {/* How to delete your account in safqa */}
+
+                    <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                            component={NavLink}
+                            to={path.DeleteAccount}
+                            onClick={handleNavLinkClick}
+                            sx={{
+                                borderRadius: '8px',
+                                '&.active': {
+                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                                    color: '#f59f0b',
+                                    fontWeight: 'bold',
+                                },
+                            }}
+                        >
+                            <Delete sx={{ ml: 1 }} />
+                            <ListItemText
+                                primary={t('Delete account') || 'حذف الحساب'}
+                                primaryTypographyProps={{
+                                    sx: { fontWeight: 500 },
+                                    'aria-label': 'حذف الحساب - موقع صفقة',
+                                }}
+                            />
+                        </ListItemButton>
+                    </ListItem>
                     {/* Messages page */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         {isLoggedIn && (

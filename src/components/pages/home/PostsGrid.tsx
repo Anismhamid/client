@@ -1,4 +1,5 @@
 // components/home/ProductsGrid.tsx
+
 import {
     useRef,
     useMemo,
@@ -7,31 +8,35 @@ import {
     FunctionComponent,
     useCallback,
 } from 'react';
+
 import {
     Box,
     CircularProgress,
     Container,
     Grid,
-    InputAdornment,
-    TextField,
     Typography,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+
 import SearchOffIcon from '@mui/icons-material/SearchOff';
+
 import { motion, AnimatePresence } from 'framer-motion';
+
 import { useTranslation } from 'react-i18next';
+
 import { Posts } from '../../../interfaces/Posts';
-import { productsAndCategories } from '../../navbar/navCategoryies';
-import ChipNavigation from '../../navbar/ChepNavigation';
+
 import PostCard from '../products/PostsCard';
+
 import JsonLd from '../../../../utils/JsonLd';
 import { generateProductsItemListJsonLd } from '../../../../utils/structuredData';
+
 import SealBadge from './SealBadge';
 
 interface PostGridProps {
     posts: Posts[];
     canEdit: boolean;
     featured?: boolean;
+
     onSetPostIdToUpdate: (id: string) => void;
     onShowUpdateModal: () => void;
     onOpenDeleteModal: (name: string) => void;
@@ -51,138 +56,107 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
 }) => {
     const { t } = useTranslation();
 
-    const [searchQuery, setSearchQuery] = useState('');
-    const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
+    const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE);
+
     const observerRef = useRef<HTMLDivElement | null>(null);
 
-    /* ---------------- SAFE POSTS ---------------- */
+    /* =========================================================
+       SAFE POSTS
+       ========================================================= */
+
     const safePosts = useMemo(() => {
-        return Array.isArray(posts)
-            ? posts.filter((p): p is Posts & { _id: string } => Boolean(p?._id))
-            : [];
+        if (!Array.isArray(posts)) {
+            return [];
+        }
+
+        return posts.filter((post): post is Posts & { _id: string } =>
+            Boolean(post?._id),
+        );
     }, [posts]);
 
-    /* ---------------- FILTER ---------------- */
-    const filteredProducts = useMemo(() => {
-        const q = searchQuery.trim().toLowerCase();
-        if (!safePosts.length) return [];
-
-        if (!q) return safePosts;
-
-        if (q === 'عروض') {
-            return safePosts.filter((p) => p.sale === true);
-        }
-
-        const categoryKeys = productsAndCategories.map((cat) =>
-            t(cat.labelKey),
-        );
-
-        if (categoryKeys.includes(searchQuery)) {
-            return safePosts.filter((p) =>
-                (p.category || '').toLowerCase().includes(q),
-            );
-        }
-
-        return safePosts.filter((p) => {
-            return (
-                (p.product_name || '').toLowerCase().includes(q) ||
-                (p.description || '').toLowerCase().includes(q) ||
-                (p.category || '').toLowerCase().includes(q) ||
-                String(p.price || '').includes(q) ||
-                (p.seller?.name?.first || '').toLowerCase().includes(q)
-            );
-        });
-    }, [safePosts, searchQuery, t]);
-
-    /* ---------------- PAGINATION ---------------- */
     const visibleProducts = useMemo(() => {
-        return filteredProducts.slice(0, visibleCount);
-    }, [filteredProducts, visibleCount]);
+        return safePosts.slice(0, visibleCount);
+    }, [safePosts, visibleCount]);
 
+    /* =========================================================
+       LOAD MORE
+       ========================================================= */
+
+    const hasMore = visibleCount < safePosts.length;
 
     const handleLoadMore = useCallback(() => {
-        setVisibleCount((prev) => {
-            if (prev >= filteredProducts.length) return prev;
-            return prev + LOAD_MORE_STEP;
-        });
-    }, [filteredProducts.length]);
+        setVisibleCount((previousCount) => {
+            if (previousCount >= safePosts.length) {
+                return previousCount;
+            }
 
-    /* ---------------- INFINITE SCROLL ---------------- */
+            return Math.min(previousCount + LOAD_MORE_STEP, safePosts.length);
+        });
+    }, [safePosts.length]);
+
+    /* =========================================================
+       INFINITE SCROLL
+       ========================================================= */
+
     useEffect(() => {
-        if (!observerRef.current) return;
+        const target = observerRef.current;
+
+        if (!target || !hasMore) {
+            return;
+        }
 
         const observer = new IntersectionObserver(
             (entries) => {
-                if (entries[0].isIntersecting) {
+                const entry = entries[0];
+
+                if (entry?.isIntersecting) {
                     handleLoadMore();
                 }
             },
-            { threshold: 0.1, rootMargin: '150px' },
+            {
+                threshold: 0.1,
+                rootMargin: '150px',
+            },
         );
 
-        observer.observe(observerRef.current);
-        return () => observer.disconnect();
-    }, [handleLoadMore]);
+        observer.observe(target);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [handleLoadMore, hasMore]);
+
+    const isEmpty = safePosts.length === 0;
 
     return (
-        <>
-            <JsonLd data={generateProductsItemListJsonLd(posts.slice(0, 20))} />
+        <Container>
+            {/* =================================================
+                SEO
+               ================================================= */}
 
-            {/* SEARCH */}
-            <Box
+            <JsonLd
+                data={generateProductsItemListJsonLd(safePosts.slice(0, 20))}
+            />
+
+           
+            {/* =================================================
+                PRODUCTS
+               ================================================= */}
+
+            <Container
+                maxWidth='lg'
                 sx={{
-                    pt: 4,
-                    pb: 2,
-                    px: { xs: 2, md: 4 },
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    position: 'sticky',
-                    top: 0,
-                    zIndex: 10,
-                    bgcolor: 'background.paper',
+                    py: 4,
                 }}
             >
-                <Container maxWidth='lg'>
-                    <Box
-                        sx={{
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            borderRadius: '14px',
-                            p: 1,
-                            bgcolor: 'background.default',
-                        }}
-                    >
-                        <TextField
-                            fullWidth
-                            size='small'
-                            placeholder={t('search')}
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position='start'>
-                                        <SearchIcon fontSize='small' />
-                                    </InputAdornment>
-                                ),
-                                sx: {
-                                    borderRadius: '10px',
-                                    bgcolor: 'background.paper',
-                                },
-                            }}
-                        />
-                    </Box>
-                    <Box sx={{ mt: 1.5 }}>
-                        <ChipNavigation />
-                    </Box>
-                </Container>
-            </Box>
-
-            {/* GRID */}
-            <Container maxWidth='lg' sx={{ py: 4 }}>
                 <AnimatePresence mode='wait'>
-                    {visibleProducts.length > 0 ? (
+                    {!isEmpty ? (
                         <Grid container spacing={2.5}>
                             {visibleProducts.map((post, index) => {
+                                /* -------------------------
+                                       DISCOUNT
+                                       ------------------------- */
+
                                 const discountedPrice = post.sale
                                     ? post.price -
                                       (post.price * (post.discount || 0)) / 100
@@ -191,14 +165,30 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                 return (
                                     <Grid
                                         key={post._id}
-                                        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                                        size={{
+                                            xs: 12,
+                                            sm: 6,
+                                            md: 4,
+                                            lg: 3,
+                                        }}
                                     >
                                         <motion.div
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
+                                            initial={{
+                                                opacity: 0,
+                                                y: 10,
+                                            }}
+                                            animate={{
+                                                opacity: 1,
+                                                y: 0,
+                                            }}
                                             transition={{
                                                 duration: 0.35,
-                                                delay: Math.min(index % LOAD_MORE_STEP, 12) * 0.03,
+
+                                                delay:
+                                                    Math.min(
+                                                        index % LOAD_MORE_STEP,
+                                                        12,
+                                                    ) * 0.03,
                                             }}
                                         >
                                             <PostCard
@@ -228,41 +218,80 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             })}
                         </Grid>
                     ) : (
+                        /* =================================================
+                           EMPTY STATE
+                           ================================================= */
+
                         <Box
                             sx={{
                                 textAlign: 'center',
+
                                 py: 8,
                                 px: 3,
+
                                 border: '1px dashed',
                                 borderColor: 'divider',
+
                                 borderRadius: '16px',
                             }}
                         >
-                            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    mb: 2,
+                                }}
+                            >
                                 <SealBadge size={56} rotate={0} tone='outline'>
-                                    <SearchOffIcon sx={{ fontSize: 24 }} />
+                                    <SearchOffIcon
+                                        sx={{
+                                            fontSize: 24,
+                                        }}
+                                    />
                                 </SealBadge>
                             </Box>
-                            <Typography variant='h6'>لا توجد نتائج</Typography>
+
+                            <Typography variant='h6' fontWeight={600}>
+                                {t('search.noResults', 'لا توجد نتائج')}
+                            </Typography>
+
+                            <Typography
+                                variant='body2'
+                                color='text.secondary'
+                                sx={{
+                                    mt: 1,
+                                }}
+                            >
+                                {t(
+                                    'search.tryAnother',
+                                    'جرّب البحث باستخدام كلمات أخرى',
+                                )}
+                            </Typography>
                         </Box>
                     )}
                 </AnimatePresence>
 
-                {/* LOADER */}
-                {visibleCount < filteredProducts.length && (
+                {/* =================================================
+                    INFINITE SCROLL LOADER
+                   ================================================= */}
+
+                {hasMore && (
                     <Box
                         ref={observerRef}
                         sx={{
                             py: 4,
+
                             display: 'flex',
                             justifyContent: 'center',
+
+                            minHeight: 60,
                         }}
                     >
                         <CircularProgress size={20} />
                     </Box>
                 )}
             </Container>
-        </>
+        </Container>
     );
 };
 

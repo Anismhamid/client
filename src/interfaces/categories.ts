@@ -24,7 +24,6 @@ export const CATEGORIES = {
     RealEstate: 'RealEstate',
     Pets: 'Pets',
     Furniture: 'Furniture',
-    
 } as const;
 
 export type Category = keyof typeof CATEGORIES;

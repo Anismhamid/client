@@ -36,6 +36,7 @@ import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins'
 import ForgotPassword from '../components/settings/ForgotPassword';
 import ResetPassword from '../components/settings/ResetPassword';
 import SearchPage from '../atoms/SearchPage';
+import DeleteAccount from '../components/DeleteAccount';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -141,6 +142,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path='/payment/success' element={<PaymentSuccess />} />
             <Route path='/password-recover' element={<ForgotPassword />} />
             <Route path='/reset-password/:token' element={<ResetPassword />} />
+            <Route path='/delete-account' element={<DeleteAccount />} />
 
             <Route path={'*'} element={<PageNotFound />} />
         </Routes>

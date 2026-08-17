@@ -84,6 +84,8 @@
         "successMessage": "Welcome back {{name}}!",
         "password": "Password",
         "loginButton": "Login",
+        "or":"or",
+        "continueWithGoogle": "Continue with Google",
         "googleLoginError": "Google login failed",
         "noAccount": "Don't have an account yet?",
         "register": "Click to register",

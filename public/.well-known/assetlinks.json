@@ -2,7 +2,7 @@
   "relation": ["delegate_permission/common.get_login_creds"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.safqa.app",
+    "package_name": "com.safqa.c2c",
     "sha256_cert_fingerprints": ["0D:57:0A:2C:C9:C4:45:F3:0C:07:99:67:5C:FE:C1:A8:42:A8:CA:4A:4E:21:89:A5:87:AF:F9:DC:DC:08:87:A3"]
   }
 }]

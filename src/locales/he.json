@@ -86,6 +86,8 @@
         "description": "התחבר לחשבונך כדי להמשיך מהמקום שבו הפסקת",
         "successMessage": "ברוכים הבאים {{name}}!",
         "loginButton": "התחברות",
+        "or":"או",
+        "continueWithGoogle": "המשך באמצעות Google",
         "googleLoginError": "התחברות עם Google נכשלה",
         "noAccount": "אין לך חשבון עדיין?",
         "register": "לחץ להרשמה",

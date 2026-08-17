@@ -56,8 +56,6 @@ import { DecodedGooglePayload } from '../../interfaces/googleValues';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
-// ✅ إزالة import registerPush - usePushSync سيتعامل معها
-// import { registerPush } from '../../services/pushNotifications';
 import { Preferences } from '@capacitor/preferences';
 import { SavePassword } from '@capgo/capacitor-autofill-save-password';
 
@@ -77,10 +75,17 @@ interface CredentialHelperPlugin {
 const CredentialHelper =
     registerPlugin<CredentialHelperPlugin>('CredentialHelper');
 
-// interface AutofillHelperPlugin {
-//     commit(): Promise<void>;
-// }
-// const AutofillHelper = registerPlugin<AutofillHelperPlugin>('AutofillHelper');
+// ✅ لوق بس بوضع التطوير — ما بيطلع شي بالبرودكشن، ولا بيسرّب تفاصيل داخلية
+const devLog = (...args: any[]) => {
+    if (import.meta.env.DEV) {
+        console.log(...args);
+    }
+};
+const devError = (...args: any[]) => {
+    if (import.meta.env.DEV) {
+        console.error(...args);
+    }
+};
 
 const GoogleIcon: FunctionComponent = () => (
     <svg width='18' height='18' viewBox='0 0 18 18'>
@@ -103,6 +108,8 @@ const GoogleIcon: FunctionComponent = () => (
     </svg>
 );
 
+const REMEMBER_KEY = 'remembered_email';
+
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
     const { setAfterDecode } = useToken();
@@ -112,6 +119,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const { setAuth, setIsLoggedIn } = useUser();
     const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
+    const [rememberMe, setRememberMe] = useState<boolean>(false);
+    const [savedEmail, setSavedEmail] = useState<string>('');
 
     const { t } = useTranslation();
 
@@ -122,10 +131,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         password?: string,
     ) => {
         try {
-            // 1. حفظ التوكن
+            // ⚠️ ملاحظة أمان: التوكن مخزّن بـ localStorage وهو عرضة لهجمات XSS
+            // (أي سكريبت خبيث ينفّذ بالصفحة فيقدر ياخده). الحل الصح للويب هو
+            // httpOnly + Secure cookie من السيرفر بدل ما الفرونت يخزّنه بنفسه.
+            // هيدا تغيير بالباك إند مش بس بهاد الملف — احكيلي إذا بدك ننفذه.
             localStorage.setItem('token', token);
 
-            // 2. فك تشفير التوكن
             const decoded = jwtDecode<AuthValues>(token);
             setAfterDecode(token);
             setAuth(decoded);
@@ -144,22 +155,23 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                         password,
                     });
                 } catch (e) {
-                    console.log('Save password prompt failed', e);
+                    devLog('Save password prompt failed', e);
                 }
             }
 
-            // 4. عرض رسالة نجاح
             showSuccess(
                 t('login.successMessage', {
-                    name: decoded.name?.first || '',
-                }) || 'Login successful',
+                    name: `${decoded.name?.first ?? ''} ${decoded.name?.last ?? ''}`.trim(),
+                }),
             );
 
-            // 5. التوجيه للصفحة الرئيسية
             navigate(path.Home);
         } catch (error: any) {
-            console.error('Login handler error:', error);
-            showError(error.message || 'Login failed');
+            devError('Login handler error:', error);
+            // ما منعرض تفاصيل الخطأ التقني للمستخدم
+            showError(
+                t('login.error') || 'Something went wrong. Please try again.',
+            );
         }
     };
 
@@ -181,10 +193,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
             const idToken = (res.result as any)?.idToken;
             if (!idToken) {
-                throw new Error(
-                    t('login.errors.missingGoogleCredential') ||
-                        'Missing Google credential',
-                );
+                throw new Error('missing_credential');
             }
 
             const decodedGoogle = jwtDecode<DecodedGooglePayload>(idToken);
@@ -200,7 +209,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     null,
                 );
                 if (token) {
-                    // ✅ استخدام الدالة الموحدة
                     await handleSuccessfulLogin(token);
                 }
             } else {
@@ -208,14 +216,17 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setShowModal(true);
             }
         } catch (error: any) {
-            console.error('Google login error:', error);
+            devError('Google login error:', error);
             if (error.message?.includes('16')) {
+                setShowSignOutButton(true);
                 showError(
-                    'Account reauthentication needed. Please sign out of Google and try again.',
+                    t('login.errors.googleReauthNeeded') ||
+                        'Account reauthentication needed. Please sign out of Google and try again.',
                 );
             } else {
                 showError(
-                    t('login.errors.googleLoginError') + ': ' + error.message,
+                    t('login.errors.googleLoginError') ||
+                        'Google sign-in failed. Please try again.',
                 );
             }
         }
@@ -237,7 +248,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 }
             } catch (error) {
                 localStorage.removeItem('token');
-                console.log(error);
+                devLog(error);
             }
         }
     }, [navigate]);
@@ -247,7 +258,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             yup.object({
                 email: yup
                     .string()
+                    .trim()
+                    .lowercase()
                     .email(t('login.validation.emailInvalid'))
+                    .max(254, t('login.validation.emailInvalid'))
                     .required(t('login.validation.emailRequired')),
                 password: yup
                     .string()
@@ -264,7 +278,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     ): Promise<FormErrors | null> => {
         try {
             const values = {
-                email: formData.get('email') as string,
+                email: (formData.get('email') as string)?.trim().toLowerCase(),
                 password: formData.get('password') as string,
             };
 
@@ -273,7 +287,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             const token = await loginUser(values as UserLogin);
 
             if (token) {
-                // ✅ استخدام الدالة الموحدة
                 await handleSuccessfulLogin(
                     token,
                     values.email,
@@ -281,14 +294,15 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 );
                 return null;
             } else {
-                throw new Error('Something is wrong please try again');
+                throw new Error('login_failed');
             }
         } catch (err: any) {
-            console.error('Login error:', err);
+            devError('Login error:', err);
 
             const errors: FormErrors = {};
 
             if (err.inner) {
+                // أخطاء تحقق الحقول (email/password) آمنة نعرضها زي ما هي
                 err.inner.forEach((error: any) => {
                     if (error.path === 'email') {
                         errors.email = error.message;
@@ -297,10 +311,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     }
                 });
             } else {
+                // ⚠️ أمان: ما منعرض رسالة الباك إند الحرفية (ممكن تسرّب تفاصيل
+                // داخلية أو تفرق بين "الإيميل مش موجود" و"كلمة السر غلط" وهيدا
+                // بيسهّل عملية enumeration لحسابات المستخدمين). رسالة عامة بس.
                 errors.general =
-                    err.message ||
                     t('login.errors.loginFailed') ||
-                    'Login failed';
+                    'Invalid email or password.';
             }
 
             return Object.keys(errors).length > 0 ? errors : null;
@@ -314,10 +330,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
     const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
         if (!response.credential) {
-            throw new Error(
-                t('login.errors.missingGoogleCredential') ||
-                    'Missing Google credential',
+            devError('Missing Google credential');
+            showError(
+                t('login.errors.googleLoginError') ||
+                    'Google sign-in failed. Please try again.',
             );
+            return;
         }
         try {
             setShowSignOutButton(false);
@@ -329,7 +347,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             if (userExists) {
                 const token = await handleGoogleLogin(response, null);
                 if (token) {
-                    // ✅ استخدام الدالة الموحدة
                     await handleSuccessfulLogin(token);
                 }
             } else {
@@ -338,8 +355,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setShowSignOutButton(false);
             }
         } catch (error: any) {
+            devError('Google login error:', error);
             showError(
-                t('login.errors.googleLoginError') + ': ' + error.message,
+                t('login.errors.googleLoginError') ||
+                    'Google sign-in failed. Please try again.',
             );
         }
     };
@@ -356,12 +375,16 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             setIsLoggedIn(false);
             setShowSignOutButton(false);
             showSuccess(
-                'Signed out successfully. Please try logging in again.',
+                t('login.signOutSuccess') ||
+                    'Signed out successfully. Please try logging in again.',
             );
             window.location.reload();
         } catch (error) {
-            console.error('Sign out error:', error);
-            showError('Failed to sign out. Please try manually.');
+            devError('Sign out error:', error);
+            showError(
+                t('login.errors.signOutFailed') ||
+                    'Failed to sign out. Please try manually.',
+            );
         }
     };
 
@@ -372,21 +395,22 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 userExtraData,
             );
             if (!token) {
-                showError('Please try again');
+                showError(
+                    t('login.errors.loginFailed') ||
+                        'Something went wrong. Please try again.',
+                );
                 return;
             }
-            // ✅ استخدام الدالة الموحدة
             await handleSuccessfulLogin(token);
         } catch (error: any) {
-            showError(error.message);
+            devError('User info submit error:', error);
+            showError(
+                t('login.errors.loginFailed') ||
+                    'Something went wrong. Please try again.',
+            );
             setShowModal(false);
         }
     };
-
-    const REMEMBER_KEY = 'remembered_email';
-
-    const [rememberMe, setRememberMe] = useState<boolean>(false);
-    const [savedEmail, setSavedEmail] = useState<string>('');
 
     // ✅ مصدر واحد موحّد للإيميل المحفوظ: native credential أولاً، وإلا remembered email
     useEffect(() => {
@@ -398,7 +422,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     const cred = await CredentialHelper.getSavedPassword();
                     email = cred.username;
                 } catch (e) {
-                    console.log('No saved credential found', e);
+                    devLog('No saved credential found', e);
                 }
             }
 
@@ -517,6 +541,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         variant='outlined'
                                         disabled={isPending}
                                         color='primary'
+                                        inputProps={{ maxLength: 254 }}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position='start'>
@@ -548,6 +573,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         margin='normal'
                                         variant='outlined'
                                         color='primary'
+                                        disabled={isPending}
+                                        inputProps={{ maxLength: 60 }}
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position='start'>
@@ -557,12 +584,25 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             endAdornment: (
                                                 <InputAdornment position='end'>
                                                     <IconButton
+                                                        aria-label={
+                                                            showPassword
+                                                                ? t(
+                                                                      'login.hidePassword',
+                                                                      'إخفاء كلمة السر',
+                                                                  )
+                                                                : t(
+                                                                      'login.showPassword',
+                                                                      'إظهار كلمة السر',
+                                                                  )
+                                                        }
                                                         onClick={() =>
                                                             setShowPassword(
                                                                 !showPassword,
                                                             )
                                                         }
                                                         edge='end'
+                                                        type='button'
+                                                        tabIndex={-1}
                                                     >
                                                         {showPassword ? (
                                                             <VisibilityOff />
@@ -589,6 +629,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         <Typography
                                             color='error'
                                             sx={{ mt: 2 }}
+                                            role='alert'
                                         >
                                             {error.general}
                                         </Typography>
@@ -724,9 +765,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     },
                                                 }}
                                             >
-                                                {t(
-                                                    'login.continueWithGoogle',
-                                                ) || 'Continue with Google'}
+                                                {t('login.continueWithGoogle', {
+                                                    defaultValue:
+                                                        'Continue with Google',
+                                                })}
                                             </Button>
                                         ) : (
                                             <GoogleLogin
@@ -766,11 +808,15 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     sx={{ mb: 1 }}
                                                 >
                                                     <AlertTitle>
-                                                        Reauthentication
-                                                        Required
+                                                        {t(
+                                                            'login.reauthTitle',
+                                                            'Reauthentication Required',
+                                                        )}
                                                     </AlertTitle>
-                                                    Please sign out of Google
-                                                    and try again.
+                                                    {t(
+                                                        'login.reauthBody',
+                                                        'Please sign out of Google and try again.',
+                                                    )}
                                                 </Alert>
                                                 <Button
                                                     variant='outlined'
@@ -794,7 +840,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                         },
                                                     }}
                                                 >
-                                                    Sign out of Google
+                                                    {t(
+                                                        'login.signOutGoogle',
+                                                        'Sign out of Google',
+                                                    )}
                                                 </Button>
                                             </Box>
                                         )}

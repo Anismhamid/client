@@ -70,9 +70,9 @@ export enum path {
     TermOfUse = '/term-of-use',
     Contact = '/contact',
     About = '/about',
+    DeleteAccount = '/delete-account',
 
     // Ecommerce
-    Cart = '/cart',
     Favorite = '/favorites',
     DiscountsAndOffers = '/discounts-and-offers',
 

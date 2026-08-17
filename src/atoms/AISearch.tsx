@@ -76,48 +76,48 @@ const AISearch = () => {
      * Execute AI Search
      * --------------------------------------------------------
      */
-   const handleSearch = async (searchValue?: string) => {
-    const value = (searchValue ?? query).trim();
+    const handleSearch = async (searchValue?: string) => {
+        const value = (searchValue ?? query).trim();
 
-    if (!value || loading) {
-        return;
-    }
-
-    try {
-        setLoading(true);
-
-        console.log('🔎 Search:', value);
-        console.log('🌐 API:', `${API_URL}/ai/search`);
-
-        const response = await axios.post<SearchResponse>(
-            `${API_URL}/ai/search`,
-            {
-                query: value,
-            },
-        );
-
-        console.log('✅ AI response:', response.data);
-
-        setFilters(response.data?.filters ?? null);
-
-        // مهم: الانتقال حتى لو ما رجعت posts
-        navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
-        setOpenSuggestions(false);
-    } catch (error: unknown) {
-        console.error('❌ AI search failed:', error);
-
-        if (axios.isAxiosError(error)) {
-            console.error('Status:', error.response?.status);
-            console.error('Data:', error.response?.data);
-            console.error('URL:', error.config?.url);
+        if (!value || loading) {
+            return;
         }
 
-        // ننتقل إلى صفحة البحث حتى لو الـ API فشل
-        navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
-    } finally {
-        setLoading(false);
-    }
-};
+        try {
+            setLoading(true);
+
+            console.log('🔎 Search:', value);
+            console.log('🌐 API:', `${API_URL}/ai/search`);
+
+            const response = await axios.post<SearchResponse>(
+                `${API_URL}/ai/search`,
+                {
+                    query: value,
+                },
+            );
+
+            console.log('✅ AI response:', response.data);
+
+            setFilters(response.data?.filters ?? null);
+
+            // مهم: الانتقال حتى لو ما رجعت posts
+            navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
+            setOpenSuggestions(false);
+        } catch (error: unknown) {
+            console.error('❌ AI search failed:', error);
+
+            if (axios.isAxiosError(error)) {
+                console.error('Status:', error.response?.status);
+                console.error('Data:', error.response?.data);
+                console.error('URL:', error.config?.url);
+            }
+
+            // ننتقل إلى صفحة البحث حتى لو الـ API فشل
+            navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     /**
      * --------------------------------------------------------
@@ -165,6 +165,7 @@ const AISearch = () => {
             sx={{
                 width: '100%',
                 maxWidth: 1100,
+
                 mx: 'auto',
                 px: {
                     xs: 1,

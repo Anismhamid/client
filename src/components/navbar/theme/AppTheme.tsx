@@ -33,6 +33,7 @@ import {
     Help as HelpIcon,
     Dashboard as DashboardIcon,
     ChatBubble,
+    DeleteSharp,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { path } from '../../../routes/routes';
@@ -331,6 +332,21 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         title={`${t('home')} - صفقة`}
                                     >
                                         <HomeIcon sx={{ fontSize: 20 }} />
+                                    </StyledNavLink>
+                                </Box>
+
+                                {/* How to delete your account in safqa */}
+                                <Box
+                                    component='li'
+                                    role='listitem'
+                                    sx={{ flexShrink: 0 }}
+                                >
+                                    <StyledNavLink
+                                        to={path.DeleteAccount}
+                                        aria-label={`${t('delete account')} - صفقة`}
+                                        title={`${t('delete account')} - صفقة`}
+                                    >
+                                        <DeleteSharp sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
 

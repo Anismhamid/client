@@ -3,9 +3,7 @@ import Style from "./loader.module.css";
 import {Box, Typography} from "@mui/material";
 import {useTranslation} from "react-i18next";
 
-interface LoaderProps {}
-
-const Loader: FunctionComponent<LoaderProps> = () => {
+const Loader: FunctionComponent = () => {
 	const {t} = useTranslation();
 	return (
 		<Box component={"main"} role='status' aria-live='polite'>

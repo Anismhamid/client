@@ -1,9 +1,14 @@
 // pages/Home.tsx
-import { FunctionComponent, lazy, Suspense, useEffect, useState } from 'react';
+import {
+    FunctionComponent,
+    lazy,
+    Suspense,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 import {
     Box,
-    // Alert,
-    // AlertTitle,
     Button,
     Grid,
     Paper,
@@ -41,10 +46,10 @@ import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
 import { deletePost } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
-import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
 import { Posts } from '../../../interfaces/Posts';
+import ChipNavigation from '../../navbar/ChepNavigation';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
@@ -79,7 +84,6 @@ const Home: FunctionComponent = () => {
     const { t } = useTranslation();
     const direction = handleRTL();
     const { posts: initialPosts, refetch } = usePosts();
-    const location = useLocation();
 
     // Modals state
     const [showAddModal, setShowAddModal] = useState(false);
@@ -93,24 +97,28 @@ const Home: FunctionComponent = () => {
         setPosts(initialPosts);
     }, [initialPosts]);
 
-    const handleLikeToggle = async (postId: string) => {
-        if (!auth?._id) return;
-        const userId = auth._id;
+    const handleLikeToggle = useCallback(
+        async (postId: string) => {
+            if (!auth?._id) return;
+            const userId = auth._id;
 
-        // optimistic update
-        setPosts((prev) =>
-            prev.map((p) => {
-                if (p._id !== postId) return p;
-                const liked = p.likes?.includes(userId);
-                return {
-                    ...p,
-                    likes: liked
-                        ? p.likes!.filter((id) => id !== userId)
-                        : [...(p.likes || []), userId],
-                };
-            }),
-        );
-    };
+            // optimistic update
+            setPosts((prev) =>
+                prev.map((p) => {
+                    if (p._id !== postId) return p;
+                    const liked = p.likes?.includes(userId);
+                    return {
+                        ...p,
+                        likes: liked
+                            ? p.likes!.filter((id) => id !== userId)
+                            : [...(p.likes || []), userId],
+                    };
+                }),
+            );
+        },
+        [auth?._id],
+    );
+
     const isAdmin = auth?.role === RoleType.Admin;
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
@@ -127,7 +135,7 @@ const Home: FunctionComponent = () => {
 
     // if (loading) return <Loader />;
 
-    const currentUrl = `https://client-qqq1.vercel.app${location.pathname}`;
+    const currentUrl = window.location.origin;
 
     return (
         <>
@@ -138,6 +146,8 @@ const Home: FunctionComponent = () => {
                 name='description'
                 content='صفقة منصة إلكترونية لبيع وشراء المنتجات الجديدة والمستعملة بسهولة وأمان'
             />
+            <link rel='icon' href='/d3.png' />
+            <link rel='apple-touch-icon' href='/d3.png' />
             <link rel='canonical' href={currentUrl} />
             <meta property='og:title' content='بيع وشراء جديد ومستعمل | صفقة' />
             <meta
@@ -148,7 +158,7 @@ const Home: FunctionComponent = () => {
                 property='og:image'
                 content='https://client-qqq1.vercel.app/d3.png'
             />
-            <meta property='og:url' content='https://client-qqq1.vercel.app' />
+            <meta property='og:url' content={currentUrl} />
             <meta property='og:type' content='website' />
             <JsonLd
                 data={{
@@ -159,14 +169,14 @@ const Home: FunctionComponent = () => {
                             '@id': 'https://client-qqq1.vercel.app/#website',
                             name: 'صفقة',
                             alternateName: 'Safqa',
-                            url: 'https://client-qqq1.vercel.app',
+                            url: { currentUrl },
                         },
                         {
                             '@type': 'Organization',
                             '@id': 'https://client-qqq1.vercel.app/#organization',
                             name: 'صفقة',
                             alternateName: 'Safqa',
-                            url: 'https://client-qqq1.vercel.app',
+                            url: { currentUrl },
                             logo: {
                                 '@type': 'ImageObject',
                                 url: 'https://client-qqq1.vercel.app/d3.png',
@@ -369,6 +379,34 @@ const Home: FunctionComponent = () => {
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />
                 </Suspense>
+                {/* =================================================
+            CATEGORY NAVIGATION
+               ================================================= */}
+                <Box
+                    sx={{
+                        pt: 4,
+                        pb: 2,
+                        px: {
+                            xs: 2,
+                            md: 4,
+                        },
+
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+
+                        position: 'sticky',
+                        top: 0,
+                        l: 0,
+                        r: 0,
+
+                        zIndex: 10,
+
+                        bgcolor: 'background.paper',
+                    }}
+                >
+                    <ChipNavigation />
+                </Box>
+
                 <Suspense fallback={<Loader />}>
                     <PostsGrid
                         posts={posts}

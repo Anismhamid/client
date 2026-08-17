@@ -1,12 +1,11 @@
 apply plugin: 'com.android.application'
 
 
-
 android {
-    namespace = "com.safqa.app"
+    namespace = "com.safqa.c2c"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.safqa.app"
+        applicationId "com.safqa.c2c"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -48,7 +47,7 @@ dependencies {
 
 
     // Firebase
-    implementation platform('com.google.firebase:firebase-bom:34.16.0')
+    implementation platform('com.google.firebase:firebase-bom:34.17.0')
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-analytics'
 
