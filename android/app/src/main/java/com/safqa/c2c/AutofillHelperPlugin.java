@@ -1,4 +1,4 @@
-package com.safqa.app;
+package com.safqa.c2c;
 
 import android.view.autofill.AutofillManager;
 import com.getcapacitor.Plugin;

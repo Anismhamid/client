@@ -1,4 +1,4 @@
-package com.safqa.app;
+package com.safqa.c2c;
 
 import android.content.Intent;
 import android.net.Uri;

@@ -1,9 +1,9 @@
-package com.safqa.app;
+package com.safqa.c2c;
 
 import android.os.Bundle;
 
 import com.getcapacitor.BridgeActivity;
-import com.safqa.app.SettingsPlugin;
+import com.safqa.c2c.SettingsPlugin;
 
 public class MainActivity extends BridgeActivity {
 
