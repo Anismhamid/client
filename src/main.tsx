@@ -20,8 +20,11 @@ if (Capacitor.isNativePlatform()) {
     SocialLogin.initialize({
         google: {
             webClientId: import.meta.env.VITE_API_GOOGLE_API,
+            mode: 'online',
         },
-    }).catch((err) => console.error('SocialLogin init failed', err));
+    }).catch((err) => {
+        console.error('SocialLogin init failed:', err);
+    });
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

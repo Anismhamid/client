@@ -178,25 +178,30 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const handleNativeGoogleLogin = async () => {
         try {
             setShowSignOutButton(false);
+
             const res = await SocialLogin.login({
                 provider: 'google',
                 options: {
-                    webClientId: import.meta.env.VITE_API_GOOGLE_API,
-                    mode: 'online',
-                    ...({
-                        additionalParameters: {
-                            prompt: 'select_account',
-                        },
-                    } as any),
+                    filterByAuthorizedAccounts: false,
+                    scopes: ['profile', 'email'],
                 },
             });
 
+            devLog('Google login result:', res);
+
             const idToken = (res.result as any)?.idToken;
+
             if (!idToken) {
                 throw new Error('missing_credential');
             }
 
             const decodedGoogle = jwtDecode<DecodedGooglePayload>(idToken);
+
+            devLog('Google user:', {
+                sub: decodedGoogle.sub,
+                email: decodedGoogle.email,
+            });
+
             const userExists = await verifyGoogleUser(decodedGoogle.sub);
 
             const fakeCredentialResponse = {
@@ -208,6 +213,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     fakeCredentialResponse,
                     null,
                 );
+
                 if (token) {
                     await handleSuccessfulLogin(token);
                 }
@@ -217,16 +223,24 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             }
         } catch (error: any) {
             devError('Google login error:', error);
-            if (error.message?.includes('16')) {
+
+            const message = String(error?.message ?? error);
+
+            if (message.includes('16')) {
                 setShowSignOutButton(true);
+
                 showError(
-                    t('login.errors.googleReauthNeeded') ||
-                        'Account reauthentication needed. Please sign out of Google and try again.',
+                    t(
+                        'login.errors.googleReauthNeeded',
+                        'Google authentication needs to be refreshed. Please try again.',
+                    ),
                 );
             } else {
                 showError(
-                    t('login.errors.googleLoginError') ||
+                    t(
+                        'login.errors.googleLoginError',
                         'Google sign-in failed. Please try again.',
+                    ),
                 );
             }
         }
