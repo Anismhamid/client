@@ -260,7 +260,7 @@ const AISearch = () => {
                     {loading ? (
                         <CircularProgress size={22} color='inherit' />
                     ) : (
-                        t('searchPage.search.searchButton')
+                        t('searchPage.search.button')
                     )}
                 </Button>
             </Box>
