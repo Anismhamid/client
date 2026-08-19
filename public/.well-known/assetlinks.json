@@ -5,7 +5,11 @@
             "namespace": "android_app",
             "package_name": "com.safqa.c2c",
             "sha256_cert_fingerprints": [
+<<<<<<< HEAD
                 "F2:5B:75:34:A2:F2:5F:FA:FC:0B:9E:C3:48:58:C2:6D:45:DD:D3:97:39:6A:01:90:FB:10:5A:49:17:3B:09:93"
+=======
+                "F2:7B:60:58:0F:D9:E0:1F:81:CE:4F:E6:09:3A:88:3A:25:B4:6F:82:79:5D:D0:99:D1:72:39:B9:B3:AD:D1:F6"
+>>>>>>> bf84ddcf6e854fa5ce3dbdfa00241ec5fb3f3f93
             ]
         }
     }
