@@ -277,12 +277,12 @@ const Contact: FunctionComponent = () => {
                                         }
                                         secondary={
                                             <MuiLink
-                                                href='mailto:anesmhamed100@gmail.com'
+                                                href='mailto:anesmhamed1@gmail.com'
                                                 color='primary'
                                                 underline='hover'
                                                 sx={{ fontWeight: 500 }}
                                             >
-                                                anesmhamed100@gmail.com
+                                                anesmhamed1@gmail.com
                                             </MuiLink>
                                         }
                                     />

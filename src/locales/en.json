@@ -37,7 +37,7 @@
     "webPageName": "safqa",
     "bestOffers": "The best deals in one place",
     "browse-posts": "Browse posts",
-    "create-post": "New post",
+    "create-post": "Create post",
     "allRightsReserved": "All rights reserved.",
     "help": "Help",
     "favorites": "favorites",
@@ -84,12 +84,12 @@
         "successMessage": "Welcome back {{name}}!",
         "password": "Password",
         "loginButton": "Login",
-        "or":"or",
+        "or": "or",
         "continueWithGoogle": "Continue with Google",
         "googleLoginError": "Google login failed",
         "noAccount": "Don't have an account yet?",
         "register": "Click to register",
-        "loading":"Loading...",
+        "loading": "Loading...",
         "privacyPolicy": "Privacy Policy",
         "termsOfUse": "Terms of Use",
         "rememberMe": "Remember Me",
@@ -206,6 +206,7 @@
         "typing": "Typing...",
         "outOf": "of",
         "viewOf": "View",
+        "step": "Step",
         "countOfPosts": "listings available",
         "endOfPosts": "You have reached the end of the listings",
         "back": "Previous",
@@ -999,66 +1000,346 @@
             "backToHome": "Back to Home"
         },
         "privacy": {
-            "title": "Privacy Policy",
-            "lastUpdated": "Last updated {{date}}",
+            "title": "Privacy Policy | Safqa",
+            "lastUpdated": "Last updated: {{date}}",
+
             "intro": {
                 "title": "Introduction",
-                "text": "In our Corner Market app, we respect your privacy and understand the importance of protecting your personal information. This policy explains how we collect, use, and protect your information, including when you log in using Google."
+                "text": "At Safqa, we respect your privacy and are committed to protecting your personal information. This policy explains how we collect, use, protect, and keep your information confidential."
             },
+
             "collectedInfo": {
-                "title": "What Information Do We Collect?",
-                "text": "When logging in via Google, we obtain the following information from your account:",
+                "title": "Information We Collect",
+                "text": "We may collect information necessary to provide Safqa services and improve the user experience, including:",
                 "info": {
-                    "name": "First and last name – as specified in your Google profile.",
-                    "email": "Email – your address used for registration.",
-                    "image": "Profile picture – if available, it will be displayed in your profile inside the app."
+                    "name": "Name or username.",
+                    "email": "Email address and contact information associated with the account.",
+                    "image": "Profile picture or images that the user chooses to upload to the platform."
                 },
-                "technical": "Additionally, we may store technical information such as IP address, browser type, and operating system for security and service improvement purposes."
+                "technical": "Technical information such as device type, operating system, IP address, and usage data required to operate and improve the service."
             },
+
             "usage": {
-                "title": "How Do We Use the Information?",
+                "title": "How We Use Information",
                 "points": {
-                    "p1": "To register the user and verify identity.",
-                    "p2": "To improve the in-app user experience.",
-                    "p3": "To send notifications, updates, or relevant reminders.",
-                    "p4": "To protect the system and secure your account."
+                    "p1": "Create and manage user accounts and provide platform services.",
+                    "p2": "Allow users to publish listings, communicate, and complete buying and selling transactions.",
+                    "p3": "Improve platform performance, develop features and services, and enhance the user experience.",
+                    "p4": "Protect the platform and users from fraud, abuse, and unauthorized activity."
                 }
             },
+
             "consent": {
-                "title": "Transparency & Consent",
-                "text": "When logging in via Google, you will be asked to consent to sharing your information. We request only the necessary permissions to operate the service, with full transparency."
+                "title": "User Consent",
+                "text": "By using Safqa and creating an account, you acknowledge that you have read this Privacy Policy and understand how your information is collected and used in accordance with this policy."
             },
+
             "sharing": {
-                "title": "Sharing Information with Third Parties",
+                "title": "Information Sharing",
                 "points": {
-                    "external": "External services: Information is transferred only to providers necessary for app operation.",
-                    "law": "Legal compliance: We share information only if legally required."
+                    "external": "We do not sell users' personal information. Information may be shared with trusted service providers when necessary to operate the platform and provide its services.",
+                    "law": "We may disclose information when required by law, in response to a valid legal request, or to protect the rights of the platform and its users."
                 }
             },
+
             "protection": {
                 "title": "Information Protection",
-                "text": "We take advanced technical and organizational measures to protect your information. However, no protection is absolute, so we recommend not sharing passwords and choosing a strong password."
+                "text": "We use appropriate technical and organizational measures to help protect user information from unauthorized access, alteration, disclosure, or destruction. However, no electronic system can be guaranteed to be completely secure."
             },
+
             "updates": {
-                "title": "Policy Updates",
-                "text": "This policy may be amended from time to time. We will notify you in-app or via direct notification. Continued use of the app constitutes acceptance of the changes."
+                "title": "Privacy Policy Updates",
+                "text": "We may update this Privacy Policy from time to time to reflect changes to our services or legal requirements. The updated version will be published on this page together with the updated policy date."
             },
+
             "rights": {
-                "title": "Your Rights",
+                "title": "User Rights",
                 "points": {
-                    "p1": "The right to access personal information stored about you.",
-                    "p2": "The right to correct incorrect or incomplete information.",
-                    "p3": "The right to request deletion of information – as long as there is no legal obligation to retain it."
+                    "p1": "Request information about the personal information associated with your account.",
+                    "p2": "Request correction or updating of inaccurate information.",
+                    "p3": "Request deletion of your account and personal information, subject to legal requirements and obligations necessary to provide the service."
                 }
             },
-            "contact": {
-                "title": "Contact Information",
-                "text": "For any inquiry or request regarding privacy, you can contact via phone:",
-                "phone": "053-834-6915"
-            },
+
             "userConsent": {
-                "title": "User Consent",
-                "text": "By using the app, you agree that you have read, understood, and accepted this privacy policy. If you do not agree, please do not use the app."
+                "title": "User Consent for Communications",
+                "text": "We may contact you regarding your account, listings, transactions, security, important notifications, or service updates. You can manage certain types of notifications through your account settings."
+            },
+
+            "contact": {
+                "title": "Contact Us",
+                "text": "If you have questions or requests regarding this Privacy Policy or your personal information, you can contact the Safqa team through the Contact page.",
+                "phone": "You may also use the official contact methods available within the Safqa platform."
+            }
+        },
+        "disputes": {
+            "title": "Resolve Disputes",
+            "subtitle": "Your trust matters to us. We are here to support you when a dispute occurs and ensure a transparent and fair process for everyone.",
+
+            "processTitle": "Dispute Resolution Steps",
+            "processSubtitle": "Follow these steps to resolve any dispute quickly and fairly",
+
+            "step1": {
+                "title": "Communicate First",
+                "desc": "In most cases, disputes can be resolved through direct communication and mutual respect. Try to negotiate wisely and be patient with the other party.",
+                "duration": "24-48 hours",
+                "tip1": "Be clear and specific about your requests",
+                "tip2": "Keep records of conversations"
+            },
+
+            "step2": {
+                "title": "Report the Problem",
+                "desc": "If no solution is reached, use the report button within the transaction. Provide clear evidence such as photos, conversations, and product details.",
+                "duration": "1-3 business days",
+                "tip1": "Attach all required evidence",
+                "tip2": "Write a detailed description of the problem"
+            },
+
+            "step3": {
+                "title": "Dispute Review",
+                "desc": "The Safqa team reviews the details and compares the information provided by both parties. We verify the evidence and apply the platform policies.",
+                "duration": "3-7 business days",
+                "tip1": "Be prepared to provide additional information",
+                "tip2": "Act transparently and honestly"
+            },
+
+            "step4": {
+                "title": "Support and Assistance",
+                "desc": "We contact you to find a fair solution that protects the rights of all parties. We provide recommendations and final decisions based on our policies.",
+                "duration": "2-5 business days",
+                "tip1": "Respect the final decision",
+                "tip2": "Make sure you understand the outcome"
+            },
+
+            "required": "Required",
+
+            "issuesTitle": "Common Disputes",
+            "issue1": "Product does not match the description",
+            "issue2": "Unexplained delivery delay",
+            "issue3": "Payment was made but the product was not received",
+            "issue4": "Defective or damaged product",
+            "issue5": "Price differs from the agreed price",
+            "issue6": "Inappropriate or fraudulent behavior",
+
+            "resolutionTitle": "Resolution Methods",
+            "resolutionSubtitle": "We offer several ways to resolve disputes depending on the nature of the problem",
+
+            "resolution1": {
+                "title": "Amicable Settlement",
+                "desc": "An agreement between both parties on a mutually acceptable solution with platform supervision.",
+                "time": "1 week"
+            },
+
+            "resolution2": {
+                "title": "Direct Intervention",
+                "desc": "A decision by the support team based on the available evidence and applicable policies.",
+                "time": "2 weeks"
+            },
+
+            "resolution3": {
+                "title": "Final Resolution",
+                "desc": "A final decision with disciplinary measures when necessary, such as account suspension.",
+                "time": "3 weeks"
+            },
+
+            "estimatedTime": "Estimated time",
+
+            "importantNote": "Important Information",
+            "finalNote": "Our goal at Safqa is to build a fair, transparent, and secure C2C marketplace for everyone. We remain neutral and act based on the available evidence and published policies.",
+
+            "reportDispute": "Report a Dispute",
+            "contactSupport": "Contact Support",
+
+            "successRate": "Dispute Resolution Success Rate",
+            "averageResolution": "Average resolution time: 5-7 business days"
+        },
+        "safety": {
+            "title": "Safety First",
+            "subtitle": "At Safqa, we are committed to providing a safe buying and selling experience for everyone. Follow these guidelines to help ensure safe and secure transactions.",
+            "guaranteed": "Safe & Secure",
+            "tip": "Safety Tip",
+
+            "tip1": {
+                "title": "Verify the Other Party",
+                "desc": "Review the user's ratings and activity history before completing a transaction. Check previous reviews and the number of successful transactions."
+            },
+
+            "tip2": {
+                "title": "Avoid Upfront Payments",
+                "desc": "Do not transfer money before receiving the product or verifying its condition. Prefer payment upon delivery or secure payment methods for larger transactions."
+            },
+
+            "tip3": {
+                "title": "Choose a Safe Location",
+                "desc": "For in-person delivery, meet in a public and well-lit place such as a shopping center or a designated meeting location. Avoid isolated areas."
+            },
+
+            "tip4": {
+                "title": "Watch Out for Suspicious Offers",
+                "desc": "An unusually low price or unjustified urgency may be a sign of fraud. Inspect the product personally when possible and make sure it matches the description."
+            },
+
+            "tags": {
+                "verification": "Identity Verification",
+                "reviews": "Reviews",
+                "payment": "Payment",
+                "secure": "Secure",
+                "meeting": "Meeting Place",
+                "public": "Public",
+                "fraud": "Fraud",
+                "alert": "Alert"
+            },
+
+            "warningSigns": "Warning Signs",
+
+            "warning1": "Request to pay outside the platform",
+            "warning2": "Pressure to complete the transaction quickly",
+            "warning3": "Avoiding an in-person meeting without a reason",
+            "warning4": "Used products that appear brand new",
+            "warning5": "Suspicious social media or communication links",
+            "warning6": "Sudden changes to the transaction terms",
+
+            "levels": {
+                "title": "Safety Levels",
+                "subtitle": "Choose the appropriate safety level for your transactions",
+
+                "high": "High",
+                "highDesc": "Hand-to-hand delivery in a public place",
+
+                "medium": "Medium",
+                "mediumDesc": "Shipping with tracking and insurance",
+
+                "low": "Low",
+                "lowDesc": "Upfront payment without guarantees"
+            },
+
+            "importantNote": "Important Note",
+
+            "finalNote": "Safqa is a C2C marketplace. Following our safety guidelines helps us maintain a trusted community. Direct transaction safety is the responsibility of both the buyer and seller, while we work to provide tools that help support safer transactions.",
+
+            "reportText": "Seen suspicious behavior?",
+            "reportButton": "Report a Problem",
+            "level": "Safety Level"
+        },
+        "help": {
+            "selling": {
+                "title": "How to Sell on Safqa",
+                "description": "Follow these simple steps to sell your products quickly and safely",
+                "subtitle": "Follow these simple steps to sell your products quickly and safely",
+                "guideLabel": "Selling Guide",
+
+                "step1Title": "Create Your Listing",
+                "step1Desc": "Start by adding a clear photo and an attractive title for your product.",
+                "step1Tip1": "Use a clean background",
+                "step1Tip2": "Add photos from multiple angles",
+
+                "step2Title": "Describe Your Product",
+                "step2Desc": "Add a short and accurate description with the important details for the buyer.",
+                "step2Tip1": "Mention any defects",
+                "step2Tip2": "Add technical specifications",
+
+                "step3Title": "Set the Price",
+                "step3Desc": "Set an appropriate price. You can add discounts to attract buyers.",
+                "step3Tip1": "Compare with market prices",
+                "step3Tip2": "Leave room for negotiation",
+
+                "step4Title": "Publish Your Listing",
+                "step4Desc": "Review all the information and then click publish. Your listing will be visible to buyers.",
+                "step4Tip1": "Choose the appropriate category",
+                "step4Tip2": "Make sure your contact information is correct",
+
+                "tipsTitle": "Quick Tips for Success",
+
+                "quickTip1": "Fast response = more sales",
+                "quickTip2": "High-quality photos increase sales",
+                "quickTip3": "Accurate descriptions reduce questions",
+                "quickTip4": "Competitive price = faster sale",
+
+                "needHelpTitle": "Need Help?",
+                "needHelpDesc": "Our support team is ready to help you at every step of your selling journey. We are here to ensure you have the best experience possible.",
+                "contactSupport": "Contact Support",
+
+                "lastUpdated": "Last updated: November 2023"
+            }
+        },
+        "terms": {
+            "title": "Terms of Use",
+            "description": "Terms and conditions for using the Safqa platform",
+            "subtitle": "Please read these terms carefully before using the Safqa platform",
+            "lastUpdated": "Last updated: 15/04/2025",
+
+            "importantPoints": {
+                "age": "You must be 12 or older to use the platform.",
+                "registration": "Registration is required to publish listings.",
+                "c2c": "Safqa is a C2C platform, and users are responsible for their buying and selling transactions.",
+                "legalAddress": "The platform is subject to the laws and regulations applicable within its legal jurisdiction."
+            },
+
+            "sections": {
+                "eligibility": {
+                    "title": "Eligibility",
+                    "text": "You must be 12 years old or older to use the platform. By using the platform, you acknowledge and confirm that you meet these requirements."
+                },
+
+                "registration": {
+                    "title": "Registration and Account Creation",
+                    "text": "You are required to create an account in order to publish listings and posts on the platform. You are responsible for providing accurate and up-to-date information and for keeping your password confidential. We reserve the right to suspend or delete any account in the event of suspicious activity or a violation of our Privacy Policy.",
+                    "privacyPolicy": "Privacy Policy"
+                },
+
+                "products": {
+                    "title": "Products and Listings",
+                    "text": "Prices, product availability, and descriptions may change at any time. We operate as an intermediary platform and do not guarantee the accuracy of information provided in listings."
+                },
+
+                "responsibility": {
+                    "title": "Responsibility and Warranties",
+
+                    "platform": {
+                        "title": "Platform Location and Nature",
+                        "text": "Safqa is a C2C (consumer-to-consumer) platform that allows users to list and purchase products directly from one another. We do not store products and do not provide delivery or pickup services."
+                    },
+
+                    "legalAddress": {
+                        "title": "Legal Headquarters",
+                        "addressLabel": "Address:",
+                        "address": "Ein Al-Durrah Street, Umm al-Fahm, Israel.",
+                        "noteLabel": "Note:",
+                        "note": "This address is considered the official legal address for all legal notices and correspondence."
+                    }
+                },
+
+                "userConduct": {
+                    "title": "User Conduct",
+                    "points": [
+                        "Do not use the platform for illegal purposes.",
+                        "Do not impersonate another person or provide false information.",
+                        "Do not upload malicious code or interfere with the proper operation of the platform.",
+                        "Do not attempt to access systems that you are not authorized to use."
+                    ],
+                    "warning": "Violation of these terms may result in account suspension, banning, or legal action."
+                }
+            },
+
+            "sidebar": {
+                "title": "Important Links",
+                "privacy": "Privacy Policy",
+                "contact": "Contact Us",
+                "safety": "Safety Tips",
+
+                "questions": {
+                    "title": "Have Questions?",
+                    "text": "If you have any questions regarding these Terms of Use, please feel free to contact us.",
+                    "button": "Contact Us"
+                },
+
+                "home": "Back to Home"
+            },
+
+            "actions": {
+                "title": "Agree to the Terms?",
+                "register": "Create a New Account",
+                "login": "Log In"
             }
         }
     },
@@ -1126,7 +1407,7 @@
         "contact": "Contact Us",
         "phone": "Phone",
         "followUs": "Follow Us",
-        "version": "Version 1.0.0"
+        "version": "Version {{version}}"
     },
     "color": "Color",
     "removeAccount": {
@@ -1275,5 +1556,72 @@
         "DesertSand": "Desert Sand",
         "NardoGray": "Nardo Gray",
         "DarkSlate": "Dark Slate"
+    },
+    "contactCTA": {
+        "title": "We're Here to Help",
+        "description": "Our support team is available around the clock to answer all your questions and provide you with the best shopping experience possible.",
+        "button": "Contact Us"
+    },
+    "postCard": {
+        "seller": "Seller",
+        "public": "Public",
+        "share": "Share",
+        "report": "Report",
+        "edit": "Edit",
+        "delete": "Delete",
+        "featured": "Featured Listing",
+        "outOfStock": "Out of Stock",
+        "new": "New",
+        "used": "Used",
+        "more": "More",
+        "hide": "Hide",
+        "likes": "Likes",
+        "comments": "Comments",
+        "save": "Save",
+        "waze": "Waze",
+        "listing": "Listing",
+        "priceCurrency": "ILS",
+        "shareSuccess": "Shared successfully",
+        "shareFailed": "Failed to share",
+        "linkCopied": "Link copied",
+        "copyFailed": "Failed to copy link",
+        "reportSuccess": "The listing has been reported",
+        "outOfStockError": "This product is currently unavailable"
+    },
+    "searchPage": {
+        "title": "Search Results",
+        "searchFor": "Search for:",
+        "detectedFilters": "Detected Filters",
+        "resultsCount": "{{count}} results",
+        "error": "An error occurred while performing the search.",
+        "product": "Product",
+        "noResults": "No results found",
+        "tryDifferent": "Try different search terms.",
+        "filters": {
+            "category": "Category",
+            "type": "Type",
+            "brand": "Brand",
+            "model": "Model",
+            "storage": "Storage",
+            "condition": "Condition",
+            "fuel": "Fuel",
+            "minPrice": "From",
+            "maxPrice": "Up to",
+            "location": "Location",
+            "nearMe": "Near me"
+        },
+        "search": {
+            "button": "Search",
+            "clear": "Clear search",
+            "suggestions": "Search suggestions",
+            "detectedFilters": "Detected filters",
+            "placeholder": "What are you looking for? iPhone 15 Pro, Hyundai car...",
+            "examples": {
+                "iphone": "iPhone 15 Pro 256GB",
+                "car": "Looking for a Hyundai gasoline car",
+                "hebrew": "Looking for iPhone 15 Pro",
+                "samsung": "Samsung S24 256GB"
+            }
+        }
     }
 }

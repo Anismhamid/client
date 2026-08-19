@@ -86,17 +86,12 @@ const AISearch = () => {
         try {
             setLoading(true);
 
-            console.log('🔎 Search:', value);
-            console.log('🌐 API:', `${API_URL}/ai/search`);
-
             const response = await axios.post<SearchResponse>(
                 `${API_URL}/ai/search`,
                 {
                     query: value,
                 },
             );
-
-            console.log('✅ AI response:', response.data);
 
             setFilters(response.data?.filters ?? null);
 
@@ -105,12 +100,6 @@ const AISearch = () => {
             setOpenSuggestions(false);
         } catch (error: unknown) {
             console.error('❌ AI search failed:', error);
-
-            if (axios.isAxiosError(error)) {
-                console.error('Status:', error.response?.status);
-                console.error('Data:', error.response?.data);
-                console.error('URL:', error.config?.url);
-            }
 
             // ننتقل إلى صفحة البحث حتى لو الـ API فشل
             navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
@@ -154,10 +143,10 @@ const AISearch = () => {
      * --------------------------------------------------------
      */
     const examples = [
-        'آيفون 15 برو 256 جيجا',
-        'بدي سيارة هيونداي بنزين',
-        'מחפש אייפון 15 פרו',
-        'Samsung S24 256GB',
+        t('searchPage.search.examples.iphone'),
+        t('searchPage.search.examples.car'),
+        t('searchPage.search.examples.hebrew'),
+        t('searchPage.search.examples.samsung'),
     ];
 
     return (
@@ -207,14 +196,9 @@ const AISearch = () => {
                     }}
                     onKeyDown={handleKeyDown}
                     disabled={loading}
-                    placeholder={t('search.placeholder', {
-                        defaultValue:
-                            'ماذا تبحث؟ آيفون 15 برو، سيارة هيونداي...',
-                    })}
+                    placeholder={t('searchPage.search.placeholder')}
                     inputProps={{
-                        'aria-label': t('search.placeholder', {
-                            defaultValue: 'البحث في صفقة',
-                        }),
+                        'aria-label': t('searchPage.search.placeholder'),
                     }}
                     sx={{
                         '& .MuiOutlinedInput-root': {
@@ -249,7 +233,7 @@ const AISearch = () => {
                                 <IconButton
                                     onClick={clearSearch}
                                     disabled={loading}
-                                    aria-label='مسح البحث'
+                                    aria-label={t('searchPage.search.clear')}
                                 >
                                     <CloseIcon />
                                 </IconButton>
@@ -276,9 +260,7 @@ const AISearch = () => {
                     {loading ? (
                         <CircularProgress size={22} color='inherit' />
                     ) : (
-                        t('searchin', {
-                            defaultValue: 'بحث',
-                        })
+                        t('searchPage.search.searchButton')
                     )}
                 </Button>
             </Box>
@@ -318,7 +300,7 @@ const AISearch = () => {
                                 fontWeight: 700,
                             }}
                         >
-                            اقتراحات البحث
+                            {t('searchPage.search.suggestions')}{' '}
                         </Typography>
 
                         <Stack
@@ -355,7 +337,7 @@ const AISearch = () => {
                                         mb: 1,
                                     }}
                                 >
-                                    الفلاتر المكتشفة
+                                    {t('searchPage.search.detectedFilters')}
                                 </Typography>
 
                                 <Stack
@@ -367,42 +349,42 @@ const AISearch = () => {
                                     {filters.category && (
                                         <Chip
                                             size='small'
-                                            label={filters.category}
+                                            label={`${t('search.filters.category')}: ${filters.category}`}
                                         />
                                     )}
 
                                     {filters.brand && (
                                         <Chip
                                             size='small'
-                                            label={filters.brand}
+                                            label={`${t('search.filters.brand')}: ${filters.brand}`}
                                         />
                                     )}
 
                                     {filters.model && (
                                         <Chip
                                             size='small'
-                                            label={filters.model}
+                                            label={`${t('search.filters.model')}: ${filters.model}`}
                                         />
                                     )}
 
                                     {filters.storage && (
                                         <Chip
                                             size='small'
-                                            label={filters.storage}
+                                            label={`${t('search.filters.storage')}: ${filters.storage}`}
                                         />
                                     )}
 
                                     {filters.fuel && (
                                         <Chip
                                             size='small'
-                                            label={filters.fuel}
+                                            label={`${t('search.filters.fuel')}: ${filters.fuel}`}
                                         />
                                     )}
 
                                     {filters.condition && (
                                         <Chip
                                             size='small'
-                                            label={filters.condition}
+                                            label={`${t('search.filters.condition')}: ${filters.condition}`}
                                         />
                                     )}
                                 </Stack>

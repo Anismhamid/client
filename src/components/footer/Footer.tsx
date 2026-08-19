@@ -124,21 +124,21 @@ const Footer: FunctionComponent = () => {
                             >
                                 {t('footer.contact')}:
                                 <MuiLink
-                                    href='mailto:support@sfqa.com'
+                                    href='mailto:anesmhamed1@gmail.com'
                                     color='primary.main'
                                     sx={{ ml: 1, textDecoration: 'none' }}
                                 >
-                                    support@sfqa.com
+                                    anesmhamed1@gmail.com
                                 </MuiLink>
                             </Typography>
                             <Typography variant='body2' color='text.secondary'>
                                 {t('footer.phone')}:
                                 <MuiLink
-                                    href='tel:+9746310374'
+                                    href='tel:++972538316915'
                                     color='primary.main'
                                     sx={{ ml: 1, textDecoration: 'none' }}
                                 >
-                                    046310374
+                                    0538346915
                                 </MuiLink>
                             </Typography>
                         </Box>
@@ -196,7 +196,7 @@ const Footer: FunctionComponent = () => {
                         display='block'
                         mt={1}
                     >
-                        {t('footer.version') || 'الإصدار 1.0.0'}
+                        {t('footer.version', { version: '1.3' })}
                     </Typography>
                 </Box>
             </Container>

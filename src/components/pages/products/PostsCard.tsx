@@ -108,7 +108,11 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 
     const handleShare = () => {
         const shareUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
-        const shareText = `${post.product_name} - ${post.price} شيكل`;
+
+        const shareText = `${post.product_name} - ${post.price} ${t(
+            'postCard.priceCurrency',
+        )}`;
+
         if (navigator.share) {
             navigator
                 .share({
@@ -116,17 +120,32 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     text: shareText,
                     url: shareUrl,
                 })
-                .then(() => showSuccess('تمت المشاركة بنجاح'))
-                .catch(() => showError('فشل المشاركة'));
-        } else {
+                .then(() => {
+                    showSuccess(t('postCard.shareSuccess'));
+                })
+                .catch((error) => {
+                    // إلغاء نافذة المشاركة لا يعتبر خطأ
+                    if (error?.name !== 'AbortError') {
+                        showError(t('postCard.shareFailed'));
+                    }
+                });
+        } else if (navigator.clipboard) {
             navigator.clipboard
                 .writeText(shareUrl)
-                .then(() => showSuccess('تم نسخ الرابط'))
-                .catch(() => showError('فشل نسخ الرابط'));
+                .then(() => {
+                    showSuccess(t('postCard.copySuccess'));
+                })
+                .catch(() => {
+                    showError(t('postCard.copyFailed'));
+                });
+        } else {
+            showError(t('postCard.copyFailed'));
         }
+
         handleMenuClose();
     };
 
+    // TODO: handle card report
     const handleReport = () => {
         showSuccess('تم الإبلاغ عن المنتج');
         handleMenuClose();
@@ -205,7 +224,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
             itemScope
             itemType='https://schema.org/Product'
             role='article'
-            aria-label={`اعلان: ${post.product_name}`}
+            aria-label={`${t('postCard.listing')}: ${post.product_name}`}
         >
             <JsonLd data={jsonLdData} />
 
@@ -305,7 +324,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             >
                                 ·
                             </Typography>
-                            <Tooltip title='عام للجميع'>
+                            <Tooltip title={t('postCard.public')}>
                                 <Typography
                                     variant='caption'
                                     sx={{ fontSize: '0.7rem' }}
@@ -317,99 +336,95 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     </Box>
                 </Link>
 
-                {isOwnPost && (
-                    <IconButton
-                        size='small'
-                        onClick={handleMenuOpen}
-                        ref={menuRef}
-                        sx={{
-                            color: 'text.disabled',
-                            width: 30,
-                            height: 30,
-                            '&:hover': {
-                                bgcolor: 'action.hover',
-                                color: 'text.secondary',
-                            },
-                        }}
-                    >
-                        <MoreHoriz sx={{ fontSize: 18 }} />
-                    </IconButton>
-                )}
+                <IconButton
+                    size='small'
+                    onClick={handleMenuOpen}
+                    ref={menuRef}
+                    sx={{
+                        color: 'text.disabled',
+                        width: 30,
+                        height: 30,
+                        '&:hover': {
+                            bgcolor: 'action.hover',
+                            color: 'text.secondary',
+                        },
+                    }}
+                >
+                    <MoreHoriz sx={{ fontSize: 18 }} />
+                </IconButton>
 
-                {isOwnPost && (
-                    <Menu
-                        anchorEl={menuAnchor}
-                        open={Boolean(menuAnchor)}
-                        onClose={handleMenuClose}
-                        PaperProps={{
-                            sx: {
-                                borderRadius: '10px',
-                                border: '0.5px solid',
-                                borderColor: 'divider',
-                                boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-                                minWidth: 160,
-                            },
-                        }}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
+                <Menu
+                    anchorEl={menuAnchor}
+                    open={Boolean(menuAnchor)}
+                    onClose={handleMenuClose}
+                    PaperProps={{
+                        sx: {
+                            borderRadius: '10px',
+                            border: '0.5px solid',
+                            borderColor: 'divider',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                            minWidth: 160,
+                        },
+                    }}
+                    anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                >
+                    <MenuItem
+                        onClick={handleShare}
+                        sx={{ fontSize: '0.8125rem', gap: 1 }}
                     >
+                        <ShareIcon sx={{ fontSize: 16 }} />
+                        {t('postCard.share')}
+                    </MenuItem>
+                    <MenuItem
+                        onClick={handleReport}
+                        sx={{ fontSize: '0.8125rem', gap: 1 }}
+                    >
+                        <Report sx={{ fontSize: 16, color: 'error.main' }} />
+                        <Typography color='error' variant='inherit'>
+                            {t('postCard.report')}
+                        </Typography>
+                    </MenuItem>
+
+                    {canEdit && <Divider />}
+
+                    {canEdit && (
                         <MenuItem
-                            onClick={handleShare}
+                            onClick={() => {
+                                setPostIdToUpdate(post._id as string);
+                                onShowUpdateProductModal();
+                                handleMenuClose();
+                            }}
                             sx={{ fontSize: '0.8125rem', gap: 1 }}
                         >
-                            <ShareIcon sx={{ fontSize: 16 }} /> مشاركة
+                            <EditIcon sx={{ fontSize: 16 }} />{' '}
+                            {t('postCard.edit')}
                         </MenuItem>
+                    )}
+
+                    {canEdit && (
                         <MenuItem
-                            onClick={handleReport}
+                            onClick={() => {
+                                openDeleteModal(post._id as string);
+                                handleMenuClose();
+                            }}
                             sx={{ fontSize: '0.8125rem', gap: 1 }}
                         >
-                            <Report
+                            <DeleteIcon
                                 sx={{ fontSize: 16, color: 'error.main' }}
                             />
                             <Typography color='error' variant='inherit'>
-                                الإبلاغ
+                                {t('postCard.delete')}
                             </Typography>
                         </MenuItem>
-
-                        {canEdit && <Divider />}
-
-                        {canEdit && (
-                            <MenuItem
-                                onClick={() => {
-                                    setPostIdToUpdate(post._id as string);
-                                    onShowUpdateProductModal();
-                                    handleMenuClose();
-                                }}
-                                sx={{ fontSize: '0.8125rem', gap: 1 }}
-                            >
-                                <EditIcon sx={{ fontSize: 16 }} /> تعديل
-                            </MenuItem>
-                        )}
-
-                        {canEdit && (
-                            <MenuItem
-                                onClick={() => {
-                                    openDeleteModal(post._id as string);
-                                    handleMenuClose();
-                                }}
-                                sx={{ fontSize: '0.8125rem', gap: 1 }}
-                            >
-                                <DeleteIcon
-                                    sx={{ fontSize: 16, color: 'error.main' }}
-                                />
-                                <Typography color='error' variant='inherit'>
-                                    حذف
-                                </Typography>
-                            </MenuItem>
-                        )}
-                    </Menu>
-                )}
+                    )}
+                </Menu>
             </Box>
 
             {/* ── PRODUCT NAME ── */}
@@ -438,7 +453,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     onClick={(e) => {
                         if (isOutOfStock) {
                             e.preventDefault();
-                            showError('هذا المنتج غير متوفر حالياً');
+                            showError(t('postCard.outOfStockError'));
                         }
                     }}
                     style={{ display: 'block' }}
@@ -499,13 +514,13 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             lineHeight: 1.6,
                         }}
                     >
-                        غير متوفر
+                        {t('postCard.outOfStock')}
                     </Box>
                 )}
 
                 {/* Featured badge on image — the seal stamp */}
                 {featured && (
-                    <Tooltip title='إعلان مميز'>
+                    <Tooltip title={t('postCard.featured')}>
                         <Box
                             sx={{
                                 position: 'absolute',
@@ -620,7 +635,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                     },
                                 }}
                             >
-                                {expanded ? 'إخفاء' : 'المزيد'}
+                                {expanded ? t('postCard.hide') : t('postCard.more')}
                             </Button>
                         )}
                     </Box>
@@ -690,7 +705,11 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 
                     {post.isNew !== undefined && (
                         <Chip
-                            label={post.isNew ? '🆕 جديد' : '🔄 مستعمل'}
+                            label={
+                                post.isNew
+                                    ? `🆕 ${t('postCard.new')}`
+                                    : `🔄 ${t('postCard.used')}`
+                            }
                             size='small'
                             sx={{
                                 height: 22,
@@ -769,7 +788,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     >
                         <Chip
                             icon={<img src='/waze.png' width={14} alt='waze' />}
-                            label='Waze'
+                            label={t('postCard.waze')}
                             size='small'
                             variant='outlined'
                             sx={{
@@ -813,13 +832,14 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     }}
                 >
                     <FavoriteBorder sx={{ fontSize: 13 }} />
-                    {post.likes?.length || 0} إعجاب
+                    {post.likes?.length || 0} {t('postCard.likes')}
                 </Typography>
                 <Typography
                     variant='caption'
                     sx={{ color: 'text.disabled', fontSize: '0.75rem' }}
                 >
-                    تعليقات {post?.reviews?.[0]?.comment?.length || 0}
+                    {t('postCard.comments')}
+                    {post?.reviews?.[0]?.comment?.length || 0}
                 </Typography>
                 <Stack direction='row' alignItems='center' spacing={0.5}>
                     <VisibilityRounded
@@ -929,7 +949,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 '&:hover': { bgcolor: 'action.hover' },
                             }}
                         >
-                            حفظ
+                            {t('postCard.save')}
                         </Button>
                     </Box>
                 </Box>

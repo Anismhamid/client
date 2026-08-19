@@ -216,7 +216,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                 onClick={() =>
                                     document
                                         .getElementById('products-section')
-                                        ?.scrollIntoView({ behavior: 'smooth' })
+                                        ?.scrollIntoView({ behavior: 'smooth'})
                                 }
                             >
                                 {t('browse-posts') || 'تصفح المنتجات'}

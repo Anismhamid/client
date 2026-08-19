@@ -167,6 +167,7 @@ const SectionTitle = memo(
    COMPONENT
 ========================================================= */
 
+// TODO: handle profile report
 const PostDetails: FunctionComponent = () => {
     const { t } = useTranslation();
 
@@ -285,7 +286,18 @@ const PostDetails: FunctionComponent = () => {
             `هل لا يزال متوفراً؟`;
 
         openChat(seller as UserMessage, initialMessage);
-    }, [post.seller, post.category, post.brand, post._id, post.product_name, post.price, auth._id, categoryLabel, openChat, navigate]);
+    }, [
+        post.seller,
+        post.category,
+        post.brand,
+        post._id,
+        post.product_name,
+        post.price,
+        auth._id,
+        categoryLabel,
+        openChat,
+        navigate,
+    ]);
 
     /* =====================================================
        PROFILE

@@ -138,7 +138,6 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                 data={generateProductsItemListJsonLd(safePosts.slice(0, 20))}
             />
 
-           
             {/* =================================================
                 PRODUCTS
                ================================================= */}
@@ -148,6 +147,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                 sx={{
                     py: 4,
                 }}
+                id={'products-section'}
             >
                 <AnimatePresence mode='wait'>
                     {!isEmpty ? (

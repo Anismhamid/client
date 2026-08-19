@@ -5,9 +5,11 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import SealBadge from './SealBadge';
+import { useTranslation } from 'react-i18next';
 
 const ContactCTA = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     return (
         <Box
@@ -64,8 +66,11 @@ const ContactCTA = () => {
                         <HeadsetMicIcon sx={{ fontSize: 26 }} />
                     </SealBadge>
                 </Box>
-                <Typography variant="h5" sx={{ fontWeight: 700, mb: 1.5, color: 'text.primary' }}>
-                    نحن هنا لخدمتكم
+                <Typography
+                    variant='h5'
+                    sx={{ fontWeight: 700, mb: 1.5, color: 'text.primary' }}
+                >
+                    {t('contactCTA.title')}
                 </Typography>
 
                 {/* الفقرة صارت "بند دفتر" بخط متقطع فوق وتحت، مو نص عائم بس */}
@@ -81,14 +86,13 @@ const ContactCTA = () => {
                     }}
                 >
                     <Typography
-                        variant="body1"
+                        variant='body1'
                         sx={{
                             color: 'text.secondary',
                             lineHeight: 1.75,
                         }}
                     >
-                        فريق الدعم لدينا متواجد على مدار الساعة لإجابة على جميع أسئلتك وتقديم أفضل
-                        تجربة تسوق ممكنة
+                        {t('contactCTA.description')}
                     </Typography>
                 </Box>
 
@@ -98,24 +102,26 @@ const ContactCTA = () => {
                     whileTap={{ scale: 0.98 }}
                 >
                     <Button
-                        variant="contained"
-                        size="large"
+                        variant='contained'
+                        size='large'
                         onClick={() => navigate(path.Contact)}
                         sx={{
                             px: 4,
                             py: 1.25,
                             borderRadius: '10px',
                             fontWeight: 700,
-                            background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                            background:
+                                'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
                             boxShadow: 'none',
                             '&:hover': {
                                 boxShadow: 'none',
                                 filter: 'brightness(1.06)',
-                                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                                background:
+                                    'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
                             },
                         }}
                     >
-                        تواصل معنا
+                        {t('contactCTA.button')}
                     </Button>
                 </motion.div>
             </motion.div>

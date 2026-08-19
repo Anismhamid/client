@@ -15,6 +15,7 @@ import {
 import { useUser } from '../../hooks/useUSer';
 import { handleLike, HandleLikeParams } from '../../helpers/handleLike';
 import { Posts } from '../../interfaces/Posts';
+import { path } from '../../routes/routes';
 
 interface LikeButtonProps {
     product: Posts;
@@ -68,7 +69,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
     const handleClick = async () => {
         // If no auth, do nothing
         if (!auth || !auth._id) {
-            console.warn('User authentication data is not available');
+            navigate(path.Login)
             return;
         }
 
@@ -95,9 +96,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
                 handleClick();
                 if (!userLiked) {
                     playNotificationSound();
-                    console.log(product);
                 }
-                console.log(product);
             }}
             disabled={isLiking || !auth}
             sx={{

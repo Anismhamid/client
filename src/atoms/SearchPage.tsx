@@ -16,6 +16,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 import { Posts } from '../interfaces/Posts';
 import { productsPathes } from '../routes/routes';
+import handleRTL from '../locales/handleRTL';
+import { useTranslation } from 'react-i18next';
+import { formatPrice } from '../helpers/dateAndPriceFormat';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -53,6 +56,9 @@ const SearchPage = () => {
     const [filters, setFilters] = useState<SearchFilters | null>(null);
     const [error, setError] = useState(false);
 
+    const { t } = useTranslation();
+    const direction = handleRTL();
+
     useEffect(() => {
         if (!query) {
             setResults([]);
@@ -72,10 +78,7 @@ const SearchPage = () => {
                     },
                 );
 
-                console.log(
-                    '🔎 SearchPage AI response:',
-                    response.data,
-                );
+                console.log('🔎 SearchPage AI response:', response.data);
 
                 setResults(
                     Array.isArray(response.data?.posts)
@@ -110,6 +113,7 @@ const SearchPage = () => {
     return (
         <Box
             component='main'
+            dir={direction}
             sx={{
                 width: '100%',
                 maxWidth: 1400,
@@ -131,16 +135,11 @@ const SearchPage = () => {
                     mb: 1,
                 }}
             >
-                نتائج البحث
+                {t('searchPage.title')}
             </Typography>
 
-            <Typography
-                color='text.secondary'
-                sx={{
-                    mb: 3,
-                }}
-            >
-                البحث عن:{' '}
+            <Typography color='text.secondary' sx={{ mb: 3 }}>
+                {t('searchPage.searchFor')}{' '}
                 <Typography
                     component='span'
                     fontWeight={700}
@@ -173,7 +172,7 @@ const SearchPage = () => {
                         py: 5,
                     }}
                 >
-                    حدث خطأ أثناء تنفيذ البحث.
+                    {t('searchPage.error')}
                 </Typography>
             )}
 
@@ -188,7 +187,7 @@ const SearchPage = () => {
                             mb: 1.5,
                         }}
                     >
-                        الفلاتر المكتشفة
+                        {t('searchPage.detectedFilters')}
                     </Typography>
 
                     <Stack
@@ -199,66 +198,70 @@ const SearchPage = () => {
                     >
                         {filters.category && (
                             <Chip
-                                label={`الفئة: ${filters.category}`}
+                                label={`${t('searchPage.filters.category')}: ${filters.category}`}
                             />
                         )}
 
                         {filters.type && (
                             <Chip
-                                label={`النوع: ${filters.type}`}
+                                label={`${t('searchPage.filters.type')}: ${filters.type}`}
                             />
                         )}
 
                         {filters.brand && (
                             <Chip
-                                label={`العلامة: ${filters.brand}`}
+                                label={`${t('searchPage.filters.brand')}: ${filters.brand}`}
                             />
                         )}
 
                         {filters.model && (
                             <Chip
-                                label={`الموديل: ${filters.model}`}
+                                label={`${t('searchPage.filters.model')}: ${filters.model}`}
                             />
                         )}
 
                         {filters.storage && (
                             <Chip
-                                label={`التخزين: ${filters.storage}`}
+                                label={`${t('searchPage.filters.storage')}: ${filters.storage}`}
                             />
                         )}
 
                         {filters.condition && (
                             <Chip
-                                label={`الحالة: ${filters.condition}`}
+                                label={`${t('searchPage.filters.condition')}: ${filters.condition}`}
                             />
                         )}
 
                         {filters.fuel && (
                             <Chip
-                                label={`الوقود: ${filters.fuel}`}
+                                label={`${t('searchPage.filters.fuel')}: ${filters.fuel}`}
                             />
                         )}
 
                         {filters.minPrice !== null && (
                             <Chip
-                                label={`من ${filters.minPrice}`}
+                                label={`${t('searchPage.filters.minPrice')} ${filters.minPrice} ${t(
+                                    'postCard.priceCurrency',
+                                )}`}
                             />
                         )}
 
                         {filters.maxPrice !== null && (
                             <Chip
-                                label={`حتى ${filters.maxPrice}`}
+                                label={`${t('searchPage.filters.maxPrice')} ${filters.maxPrice} ${t(
+                                    'postCard.priceCurrency',
+                                )}`}
                             />
                         )}
 
                         {filters.location && (
                             <Chip
-                                label={`الموقع: ${filters.location}`}
+                                label={`${t('searchPage.filters.location')}: ${filters.location}`}
                             />
                         )}
 
                         {filters.nearMe && (
-                            <Chip label='قريب مني' />
+                            <Chip label={t('searchPage.filters.nearMe')} />
                         )}
                     </Stack>
                 </Box>
@@ -274,156 +277,138 @@ const SearchPage = () => {
                         mb: 2,
                     }}
                 >
-                    {results.length} نتيجة
+                    {t('searchPage.resultsCount', { count: results.length })}
                 </Typography>
             )}
 
             {/* RESULTS */}
 
-            {!loading &&
-                !error &&
-                results.length > 0 && (
-                    <Box
-                        sx={{
-                            display: 'grid',
-                            gridTemplateColumns: {
-                                xs: '1fr',
-                                sm: 'repeat(2, 1fr)',
-                                md: 'repeat(3, 1fr)',
-                                lg: 'repeat(4, 1fr)',
-                            },
-                            gap: 2,
-                        }}
-                    >
-                        {results.map((post) => (
-                            <Link
-                                key={post._id}
-                                to={getProductUrl(post)}
-                                style={{
-                                    textDecoration: 'none',
-                                    color: 'inherit',
+            {!loading && !error && results.length > 0 && (
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            sm: 'repeat(2, 1fr)',
+                            md: 'repeat(3, 1fr)',
+                            lg: 'repeat(4, 1fr)',
+                        },
+                        gap: 2,
+                    }}
+                >
+                    {results.map((post) => (
+                        <Link
+                            key={post._id}
+                            to={getProductUrl(post)}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit',
+                            }}
+                        >
+                            <Card
+                                sx={{
+                                    height: '100%',
+                                    borderRadius: 3,
+                                    overflow: 'hidden',
+                                    transition:
+                                        'transform .2s ease, box-shadow .2s ease',
+
+                                    '&:hover': {
+                                        transform: 'translateY(-4px)',
+                                        boxShadow: 5,
+                                    },
                                 }}
                             >
-                                <Card
-                                    sx={{
-                                        height: '100%',
-                                        borderRadius: 3,
-                                        overflow: 'hidden',
-                                        transition:
-                                            'transform .2s ease, box-shadow .2s ease',
+                                {post.image?.url?.trim() && (
+                                    <CardMedia
+                                        component='img'
+                                        height='220'
+                                        image={post.image.url}
+                                        alt={
+                                            post.product_name ||
+                                            t('searchPage.product')
+                                        }
+                                        sx={{
+                                            objectFit: 'cover',
+                                        }}
+                                    />
+                                )}
 
-                                        '&:hover': {
-                                            transform:
-                                                'translateY(-4px)',
-                                            boxShadow: 5,
-                                        },
-                                    }}
-                                >
-                                    {post.image?.url?.trim() && (
-                                        <CardMedia
-                                            component='img'
-                                            height='220'
-                                            image={post.image.url}
-                                            alt={
-                                                post.product_name ||
-                                                'Product'
-                                            }
+                                <CardContent>
+                                    <Typography
+                                        variant='h6'
+                                        fontWeight={800}
+                                        noWrap
+                                    >
+                                        {formatPrice(post.price)}{' '}
+                                        {t('postCard.priceCurrency')}
+                                    </Typography>
+
+                                    {post.description && (
+                                        <Typography
+                                            variant='body2'
+                                            color='text.secondary'
                                             sx={{
-                                                objectFit: 'cover',
+                                                mt: 1,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
                                             }}
-                                        />
+                                        >
+                                            {post.description}
+                                        </Typography>
                                     )}
 
-                                    <CardContent>
+                                    {typeof post.price === 'number' &&
+                                        Number.isFinite(post.price) && (
+                                            <Typography
+                                                variant='h6'
+                                                fontWeight={900}
+                                                sx={{
+                                                    mt: 2,
+                                                }}
+                                            >
+                                                {formatPrice(post.price)}
+                                            </Typography>
+                                        )}
+
+                                    {post.location && (
                                         <Typography
-                                            variant='h6'
-                                            fontWeight={800}
-                                            noWrap
+                                            variant='body2'
+                                            color='text.secondary'
+                                            sx={{
+                                                mt: 1,
+                                            }}
                                         >
-                                            {post.product_name}
+                                            📍 {post.location}
                                         </Typography>
-
-                                        {post.description && (
-                                            <Typography
-                                                variant='body2'
-                                                color='text.secondary'
-                                                sx={{
-                                                    mt: 1,
-                                                    display:
-                                                        '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient:
-                                                        'vertical',
-                                                    overflow:
-                                                        'hidden',
-                                                }}
-                                            >
-                                                {post.description}
-                                            </Typography>
-                                        )}
-
-                                        {typeof post.price ===
-                                            'number' &&
-                                            Number.isFinite(
-                                                post.price,
-                                            ) && (
-                                                <Typography
-                                                    variant='h6'
-                                                    fontWeight={900}
-                                                    sx={{
-                                                        mt: 2,
-                                                    }}
-                                                >
-                                                    {post.price.toLocaleString()}{' '}
-                                                    ₪
-                                                </Typography>
-                                            )}
-
-                                        {post.location && (
-                                            <Typography
-                                                variant='body2'
-                                                color='text.secondary'
-                                                sx={{
-                                                    mt: 1,
-                                                }}
-                                            >
-                                                📍 {post.location}
-                                            </Typography>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            </Link>
-                        ))}
-                    </Box>
-                )}
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                </Box>
+            )}
 
             {/* NO RESULTS */}
 
-            {!loading &&
-                !error &&
-                query &&
-                results.length === 0 && (
-                    <Box
-                        sx={{
-                            textAlign: 'center',
-                            py: 8,
-                        }}
-                    >
-                        <Typography
-                            variant='h6'
-                            fontWeight={700}
-                        >
-                            لم يتم العثور على نتائج
-                        </Typography>
+            {!loading && !error && query && results.length === 0 && (
+                <Box
+                    sx={{
+                        textAlign: 'center',
+                        py: 8,
+                    }}
+                >
+                    <Typography variant='h6' fontWeight={700}>
+                        {t('searchPage.noResults')}
+                    </Typography>
 
-                        <Typography
-                            color='text.secondary'
-                            sx={{ mt: 1 }}
-                        >
-                            جرّب كلمات بحث مختلفة.
-                        </Typography>
-                    </Box>
-                )}
+                    <Typography color='text.secondary' sx={{ mt: 1 }}>
+                        {t('searchPage.tryDifferent')}
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 };
