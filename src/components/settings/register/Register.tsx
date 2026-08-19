@@ -5,7 +5,6 @@ import { path } from '../../../routes/routes';
 import {
     registerNewUser,
     checkSlugAvailability,
-    // loginUser,
 } from '../../../services/usersServices';
 import {
     Autocomplete,
@@ -33,6 +32,7 @@ import {
     Stepper,
     Step,
     StepLabel,
+    alpha,
 } from '@mui/material';
 import {
     Visibility,
@@ -56,14 +56,7 @@ import {
     registerInitialValues,
     UserRegisterFormValues,
 } from './registerSchema';
-// import useToken from "../../hooks/useToken";
-// import {showSuccess} from "../../atoms/toasts/ReactToast";
-// import { useUser } from "../../context/useUSer";
 
-/**
- * Register new user
- * @returns Input fields for registering a user
- */
 const Register: FunctionComponent = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -73,8 +66,6 @@ const Register: FunctionComponent = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
     const [checkingSlug, setCheckingSlug] = useState<boolean>(false);
-    // const {setAuth, setIsLoggedIn} = useUser();
-    // const {decodedToken, setAfterDecode} = useToken();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const theme = useTheme();
@@ -92,7 +83,6 @@ const Register: FunctionComponent = () => {
 
     const dir = handleRTL();
 
-    // checking slug debounce
     const checkSlug = useMemo(
         () =>
             debounce(async (slug: string) => {
@@ -115,7 +105,6 @@ const Register: FunctionComponent = () => {
         [],
     );
 
-    // تنظيف debounce عند unmount
     useEffect(() => {
         return () => {
             checkSlug.cancel();
@@ -174,9 +163,7 @@ const Register: FunctionComponent = () => {
             registerNewUser(dataToSend)
                 .then((data) => {
                     localStorage.setItem('token', data);
-
                     setSubmitSuccess(true);
-
                     setTimeout(() => {
                         navigate(path.Home);
                     }, 1500);
@@ -199,7 +186,6 @@ const Register: FunctionComponent = () => {
         },
     });
 
-    // توليد slug تلقائياً من الاسم
     const generateSlugFromName = () => {
         const firstName = formik.values.name.first || '';
         const lastName = formik.values.name.last || '';
@@ -221,7 +207,6 @@ const Register: FunctionComponent = () => {
         checkSlug(generatedSlug);
     };
 
-    // استدعاء checkSlug عند تغيير slug
     useEffect(() => {
         if (formik.values.slug && formik.values.slug.length >= 3) {
             checkSlug(formik.values.slug);
@@ -274,7 +259,6 @@ const Register: FunctionComponent = () => {
         if (validateCurrentStep()) {
             setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
         } else {
-            // Touch all fields in current step
             steps[currentStep].fields.forEach((field) => {
                 if (field === 'address') {
                     formik.setFieldTouched('address.city', true);
@@ -289,6 +273,8 @@ const Register: FunctionComponent = () => {
     const handleBack = () => {
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
+
+    // ================ مكونات مساعدة محسنة ================
 
     const PasswordStrengthIndicator = ({ password }: { password: string }) => {
         const getStrength = (pass: string) => {
@@ -311,9 +297,18 @@ const Register: FunctionComponent = () => {
             t('register.passwordStrength.veryStrong'),
         ];
 
+        const strengthColors = [
+            theme.palette.error.main,
+            theme.palette.warning.main,
+            theme.palette.info.main,
+            theme.palette.success.main,
+            theme.palette.success.dark,
+            theme.palette.success.dark,
+        ];
+
         return (
             <Box dir={dir} sx={{ mt: 1, mb: 2 }}>
-                <Typography variant='caption' color='text.secondary'>
+                <Typography variant="caption" color="text.secondary">
                     {strengthLabels[strength]}
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
@@ -326,14 +321,9 @@ const Register: FunctionComponent = () => {
                                 borderRadius: 1,
                                 bgcolor:
                                     i < strength
-                                        ? [
-                                              'error',
-                                              'warning',
-                                              'info',
-                                              'success',
-                                              'success',
-                                          ][strength - 1] || 'grey.300'
-                                        : 'grey.200',
+                                        ? strengthColors[strength - 1]
+                                        : theme.palette.divider,
+                                transition: 'background-color 0.3s ease',
                             }}
                         />
                     ))}
@@ -358,7 +348,7 @@ const Register: FunctionComponent = () => {
                     }}
                 >
                     <CircularProgress size={16} />
-                    <Typography variant='caption' color='text.secondary'>
+                    <Typography variant="caption" color="text.secondary">
                         {t('register.checkingSlug')}
                     </Typography>
                 </Box>
@@ -375,8 +365,8 @@ const Register: FunctionComponent = () => {
                         mt: 1,
                     }}
                 >
-                    <CheckIcon sx={{ color: 'success.main', fontSize: 16 }} />
-                    <Typography variant='caption' color='success.main'>
+                    <CheckIcon sx={{ color: theme.palette.success.main, fontSize: 16 }} />
+                    <Typography variant="caption" sx={{ color: theme.palette.success.main }}>
                         {t('register.slugAvailable')}
                     </Typography>
                 </Box>
@@ -393,8 +383,8 @@ const Register: FunctionComponent = () => {
                         mt: 1,
                     }}
                 >
-                    <CloseIcon sx={{ color: 'error.main', fontSize: 16 }} />
-                    <Typography variant='caption' color='error.main'>
+                    <CloseIcon sx={{ color: theme.palette.error.main, fontSize: 16 }} />
+                    <Typography variant="caption" sx={{ color: theme.palette.error.main }}>
                         {t('register.slugTaken')}
                     </Typography>
                 </Box>
@@ -404,12 +394,42 @@ const Register: FunctionComponent = () => {
         return null;
     };
 
+    // ================ مكون حقل الإدخال المنسق ================
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const StyledTextField = (props: any) => (
+        <TextField
+            {...props}
+            sx={{
+                '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    transition: 'all 0.2s ease',
+                    '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: 2,
+                    },
+                    '&:hover fieldset': {
+                        borderColor: theme.palette.primary.light,
+                    },
+                },
+                '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                        color: theme.palette.primary.main,
+                    },
+                },
+                ...props.sx,
+            }}
+        />
+    );
+
+    // ================ شاشة النجاح ================
+
     if (submitSuccess) {
         return (
             <>
                 <title>{t('register.success.title')} | صفقة</title>
                 <meta
-                    name='description'
+                    name="description"
                     content={t('register.success.description')}
                 />
                 <Box
@@ -420,6 +440,7 @@ const Register: FunctionComponent = () => {
                         alignItems: 'center',
                         minHeight: '80vh',
                         px: 2,
+                        bgcolor: theme.palette.background.default,
                     }}
                 >
                     <Card
@@ -428,8 +449,10 @@ const Register: FunctionComponent = () => {
                             maxWidth: 500,
                             p: 4,
                             textAlign: 'center',
-                            borderRadius: 3,
-                            boxShadow: 6,
+                            borderRadius: 4,
+                            boxShadow: `0 8px 40px ${alpha(theme.palette.primary.main, 0.15)}`,
+                            border: `1px solid ${theme.palette.divider}`,
+                            bgcolor: theme.palette.background.paper,
                         }}
                     >
                         <motion.div
@@ -440,38 +463,56 @@ const Register: FunctionComponent = () => {
                             <CheckCircle
                                 sx={{
                                     fontSize: 80,
-                                    color: 'success.main',
+                                    color: theme.palette.success.main,
                                     mb: 3,
                                 }}
                             />
                         </motion.div>
                         <Typography
-                            variant='h4'
+                            variant="h4"
                             gutterBottom
-                            sx={{ fontWeight: 700 }}
+                            sx={{ fontWeight: 700, color: theme.palette.text.primary }}
                         >
                             {t('register.success.title')}
                         </Typography>
                         <Typography
-                            variant='body1'
-                            color='text.secondary'
+                            variant="body1"
+                            color="text.secondary"
                             paragraph
                         >
                             {t('register.success.message')}
                         </Typography>
                         <Typography
-                            variant='body2'
-                            color='text.secondary'
+                            variant="body2"
+                            color="text.secondary"
                             paragraph
                         >
-                            رابط ملفك الشخصي:
-                            <strong>
-                                safqa.com/users/customer/{formik.values.slug}
-                            </strong>
+                            {t('register.success.profileLink')}:
                         </Typography>
+                        <Box
+                            sx={{
+                                display: 'inline-block',
+                                px: 2,
+                                py: 1,
+                                borderRadius: 2,
+                                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                                mb: 2,
+                            }}
+                        >
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: theme.palette.primary.main,
+                                    fontWeight: 600,
+                                }}
+                            >
+                                {window.location.origin}/customer/{formik.values.slug}
+                            </Typography>
+                        </Box>
                         <Typography
-                            variant='body2'
-                            color='text.secondary'
+                            variant="body2"
+                            color="text.secondary"
                             paragraph
                         >
                             {t('register.success.redirect')}
@@ -482,14 +523,17 @@ const Register: FunctionComponent = () => {
             </>
         );
     }
+
     const currentUrl = `https://client-qqq1.vercel.app/register`;
+
+    // ================ الشاشة الرئيسية ================
 
     return (
         <>
-            <link rel='canonical' href={currentUrl} />
+            <link rel="canonical" href={currentUrl} />
             <title>{t('register.title')} | صفقة</title>
             <meta
-                name='description'
+                name="description"
                 content={`${t('register.title')} | صفقة`}
             />
 
@@ -497,8 +541,11 @@ const Register: FunctionComponent = () => {
                 dir={dir}
                 sx={{
                     minHeight: '100vh',
-                    py: 4,
-                    px: 2,
+                    py: { xs: 2, md: 4 },
+                    px: { xs: 1, md: 2 },
+                    bgcolor: theme.palette.mode === 'dark'
+                        ? theme.palette.background.default
+                        : '#f0f4f8',
                 }}
             >
                 <motion.div
@@ -506,25 +553,52 @@ const Register: FunctionComponent = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <Grid container justifyContent='center'>
+                    <Grid container justifyContent="center">
                         <Grid size={{ xs: 12, md: 10, lg: 8 }}>
                             <Paper
-                                elevation={24}
+                                elevation={theme.palette.mode === 'dark' ? 8 : 24}
                                 sx={{
                                     borderRadius: 4,
                                     overflow: 'hidden',
-                                    // background: "rgba(255, 255, 255, 0.95)",
                                     backdropFilter: 'blur(10px)',
+                                    border: `1px solid ${theme.palette.divider}`,
+                                    bgcolor: theme.palette.background.paper,
+                                    boxShadow: theme.palette.mode === 'dark'
+                                        ? `0 8px 32px ${alpha(theme.palette.common.black, 0.6)}`
+                                        : `0 8px 40px ${alpha(theme.palette.primary.main, 0.08)}`,
                                 }}
                             >
+                                {/* ===== HEADER ===== */}
                                 <Box
                                     sx={{
-                                        background:
-                                            'linear-gradient(45deg, #2195f367 30%, #21CBF3 90%)',
-
-                                        color: 'white',
-                                        p: 3,
+                                        background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 40%, ${theme.palette.secondary.main} 100%)`,
+                                        color: '#fff',
+                                        p: { xs: 2, md: 3 },
                                         textAlign: 'center',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&::before': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            top: '-50%',
+                                            right: '-20%',
+                                            width: '80%',
+                                            height: '200%',
+                                            background: alpha(theme.palette.common.white, 0.04),
+                                            transform: 'rotate(15deg)',
+                                            pointerEvents: 'none',
+                                        },
+                                        '&::after': {
+                                            content: '""',
+                                            position: 'absolute',
+                                            bottom: '-60%',
+                                            left: '-30%',
+                                            width: '60%',
+                                            height: '200%',
+                                            background: alpha(theme.palette.common.white, 0.03),
+                                            transform: 'rotate(-20deg)',
+                                            pointerEvents: 'none',
+                                        },
                                     }}
                                 >
                                     <Box
@@ -532,60 +606,156 @@ const Register: FunctionComponent = () => {
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'space-between',
+                                            position: 'relative',
+                                            zIndex: 1,
                                         }}
                                     >
                                         <IconButton
                                             onClick={() => navigate(-1)}
-                                            sx={{ color: 'white' }}
+                                            sx={{
+                                                color: 'white',
+                                                bgcolor: alpha(theme.palette.common.white, 0.15),
+                                                '&:hover': {
+                                                    bgcolor: alpha(theme.palette.common.white, 0.25),
+                                                },
+                                            }}
                                             aria-label={t('common.back')}
                                         >
-                                            {dir === 'rtl' ? (
-                                                <ArrowForward />
-                                            ) : (
-                                                <ArrowBack />
-                                            )}
+                                            {dir === 'rtl' ? <ArrowForward /> : <ArrowBack />}
                                         </IconButton>
                                         <Typography
-                                            variant='h4'
-                                            sx={{ fontWeight: 700 }}
+                                            variant="h4"
+                                            sx={{
+                                                fontWeight: 700,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                            }}
                                         >
-                                            <PersonAdd
-                                                sx={{
-                                                    mr: 1,
-                                                    verticalAlign: 'middle',
-                                                }}
-                                            />
+                                            <PersonAdd sx={{ fontSize: 32 }} />
                                             {t('register.title')}
                                         </Typography>
                                         <Box sx={{ width: 40 }} />
                                     </Box>
                                     <Typography
-                                        variant='body1'
-                                        sx={{ mt: 1, opacity: 0.9 }}
+                                        variant="body1"
+                                        sx={{
+                                            mt: 1,
+                                            opacity: 0.9,
+                                            position: 'relative',
+                                            zIndex: 1,
+                                        }}
                                     >
                                         {t('register.subtitle')}
                                     </Typography>
                                 </Box>
 
                                 <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-                                    {/* Progress Stepper */}
+                                    {/* ===== Stepper ===== */}
                                     {!isMobile && (
                                         <Stepper
                                             activeStep={currentStep}
-                                            sx={{ mb: 4 }}
+                                            sx={{
+                                                mb: 4,
+                                                '& .MuiStepLabel-root .Mui-completed': {
+                                                    color: theme.palette.success.main,
+                                                },
+                                                '& .MuiStepLabel-root .Mui-active': {
+                                                    color: theme.palette.primary.main,
+                                                },
+                                                '& .MuiStepConnector-line': {
+                                                    borderColor: theme.palette.divider,
+                                                },
+                                            }}
                                             alternativeLabel
                                         >
                                             {steps.map((step) => (
                                                 <Step key={step.label}>
-                                                    <StepLabel>
-                                                        {step.label}
+                                                    <StepLabel
+                                                        StepIconProps={{
+                                                            sx: {
+                                                                '&.Mui-active': {
+                                                                    color: theme.palette.primary.main,
+                                                                },
+                                                                '&.Mui-completed': {
+                                                                    color: theme.palette.success.main,
+                                                                },
+                                                            },
+                                                        }}
+                                                    >
+                                                        <Typography
+                                                            variant="caption"
+                                                            sx={{
+                                                                color: currentStep === steps.indexOf(step)
+                                                                    ? theme.palette.primary.main
+                                                                    : theme.palette.text.secondary,
+                                                                fontWeight: currentStep === steps.indexOf(step)
+                                                                    ? 600
+                                                                    : 400,
+                                                            }}
+                                                        >
+                                                            {step.label}
+                                                        </Typography>
                                                     </StepLabel>
                                                 </Step>
                                             ))}
                                         </Stepper>
                                     )}
 
-                                    {/* Error/Success Messages */}
+                                    {/* ===== Mobile Step Indicator ===== */}
+                                    {isMobile && (
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                                mb: 3,
+                                                pb: 2,
+                                                borderBottom: `1px solid ${theme.palette.divider}`,
+                                            }}
+                                        >
+                                            {steps.map((step, index) => (
+                                                <Box
+                                                    key={step.label}
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: 1,
+                                                    }}
+                                                >
+                                                    <Box
+                                                        sx={{
+                                                            width: 10,
+                                                            height: 10,
+                                                            borderRadius: '50%',
+                                                            bgcolor:
+                                                                index === currentStep
+                                                                    ? theme.palette.primary.main
+                                                                    : index < currentStep
+                                                                    ? theme.palette.success.main
+                                                                    : theme.palette.divider,
+                                                            transition: 'all 0.3s ease',
+                                                        }}
+                                                    />
+                                                    {index < steps.length - 1 && (
+                                                        <Box
+                                                            sx={{
+                                                                width: 20,
+                                                                height: 2,
+                                                                bgcolor:
+                                                                    index < currentStep
+                                                                        ? theme.palette.success.main
+                                                                        : theme.palette.divider,
+                                                            }}
+                                                        />
+                                                    )}
+                                                </Box>
+                                            ))}
+                                        </Box>
+                                    )}
+
+                                    {/* ===== Error Alert ===== */}
                                     {submitError && (
                                         <motion.div
                                             initial={{ opacity: 0, y: -20 }}
@@ -593,11 +763,17 @@ const Register: FunctionComponent = () => {
                                             exit={{ opacity: 0, y: -20 }}
                                         >
                                             <Alert
-                                                severity='error'
-                                                sx={{ mb: 3 }}
-                                                onClose={() =>
-                                                    setSubmitError(null)
-                                                }
+                                                severity="error"
+                                                sx={{
+                                                    mb: 3,
+                                                    borderRadius: 2,
+                                                    '& .MuiAlert-icon': {
+                                                        color: theme.palette.error.main,
+                                                    },
+                                                    borderLeft: `4px solid ${theme.palette.error.main}`,
+                                                    bgcolor: alpha(theme.palette.error.main, 0.05),
+                                                }}
+                                                onClose={() => setSubmitError(null)}
                                                 icon={<ErrorIcon />}
                                             >
                                                 {submitError}
@@ -606,11 +782,11 @@ const Register: FunctionComponent = () => {
                                     )}
 
                                     <form
-                                        autoComplete='off'
+                                        autoComplete="off"
                                         noValidate
                                         onSubmit={formik.handleSubmit}
                                     >
-                                        <AnimatePresence mode='wait'>
+                                        <AnimatePresence mode="wait">
                                             <motion.div
                                                 key={currentStep}
                                                 initial={{ opacity: 0, x: 50 }}
@@ -618,738 +794,378 @@ const Register: FunctionComponent = () => {
                                                 exit={{ opacity: 0, x: -50 }}
                                                 transition={{ duration: 0.3 }}
                                             >
-                                                {/* Step 1: Personal Information */}
+                                                {/* ===== STEP 1: Personal Information ===== */}
                                                 {currentStep === 0 && (
                                                     <Grid container spacing={3}>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
-                                                            <TextField
+                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                            <StyledTextField
                                                                 autoFocus
-                                                                label={t(
-                                                                    'register.firstName',
-                                                                )}
-                                                                name='name.first'
-                                                                type='text'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .name
-                                                                        .first
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                                label={t('register.firstName')}
+                                                                name="name.first"
+                                                                type="text"
+                                                                value={formik.values.name.first}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .name
-                                                                        ?.first &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .name
-                                                                            ?.first,
-                                                                    )
+                                                                    formik.touched.name?.first &&
+                                                                    Boolean(formik.errors.name?.first)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .name
-                                                                        ?.first &&
-                                                                    formik
-                                                                        .errors
-                                                                        .name
-                                                                        ?.first
+                                                                    formik.touched.name?.first &&
+                                                                    formik.errors.name?.first
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.lastName',
-                                                                )}
-                                                                name='name.last'
-                                                                type='text'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .name
-                                                                        .last
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                            <StyledTextField
+                                                                label={t('register.lastName')}
+                                                                name="name.last"
+                                                                type="text"
+                                                                value={formik.values.name.last}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .name
-                                                                        ?.last &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .name
-                                                                            ?.last,
-                                                                    )
+                                                                    formik.touched.name?.last &&
+                                                                    Boolean(formik.errors.name?.last)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .name
-                                                                        ?.last &&
-                                                                    formik
-                                                                        .errors
-                                                                        .name
-                                                                        ?.last
+                                                                    formik.touched.name?.last &&
+                                                                    formik.errors.name?.last
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
                                                             <Box
                                                                 sx={{
-                                                                    display:
-                                                                        'flex',
-                                                                    alignItems:
-                                                                        'flex-start',
+                                                                    display: 'flex',
+                                                                    alignItems: 'flex-start',
                                                                     gap: 2,
+                                                                    flexWrap: { xs: 'wrap', sm: 'nowrap' },
                                                                 }}
                                                             >
-                                                                <Box
-                                                                    sx={{
-                                                                        flex: 1,
-                                                                    }}
-                                                                >
-                                                                    <TextField
-                                                                        label={t(
-                                                                            'register.slug',
-                                                                        )}
-                                                                        name='slug'
-                                                                        type='text'
-                                                                        placeholder={t(
-                                                                            'register.slug',
-                                                                        )}
-                                                                        value={
-                                                                            formik
-                                                                                .values
-                                                                                .slug
-                                                                        }
-                                                                        onChange={(
-                                                                            e,
-                                                                        ) => {
-                                                                            const value =
-                                                                                e.target.value
-                                                                                    .toLowerCase()
-                                                                                    .replace(
-                                                                                        /[^a-z0-9-]/g,
-                                                                                        '',
-                                                                                    );
-                                                                            formik.setFieldValue(
-                                                                                'slug',
-                                                                                value,
-                                                                            );
+                                                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                                    <StyledTextField
+                                                                        label={t('register.slug')}
+                                                                        name="slug"
+                                                                        type="text"
+                                                                        placeholder={t('register.slug')}
+                                                                        value={formik.values.slug}
+                                                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                                                        onChange={(e:any) => {
+                                                                            const value = e.target.value
+                                                                                .toLowerCase()
+                                                                                .replace(/[^a-z0-9-]/g, '');
+                                                                            formik.setFieldValue('slug', value);
                                                                         }}
-                                                                        onBlur={
-                                                                            formik.handleBlur
-                                                                        }
+                                                                        onBlur={formik.handleBlur}
                                                                         error={
-                                                                            formik
-                                                                                .touched
-                                                                                .slug &&
-                                                                            Boolean(
-                                                                                formik
-                                                                                    .errors
-                                                                                    .slug,
-                                                                            )
+                                                                            formik.touched.slug &&
+                                                                            Boolean(formik.errors.slug)
                                                                         }
                                                                         helperText={
-                                                                            formik
-                                                                                .touched
-                                                                                .slug &&
-                                                                            formik
-                                                                                .errors
-                                                                                .slug
-                                                                                ? formik
-                                                                                      .errors
-                                                                                      .slug
-                                                                                : t(
-                                                                                      'register.slugHint',
-                                                                                  )
+                                                                            formik.touched.slug && formik.errors.slug
+                                                                                ? formik.errors.slug
+                                                                                : t('register.slugHint')
                                                                         }
                                                                         fullWidth
-                                                                        variant='outlined'
-                                                                        size='medium'
+                                                                        variant="outlined"
+                                                                        size="medium"
                                                                         InputProps={{
-                                                                            startAdornment:
-                                                                                (
-                                                                                    <InputAdornment position='start'>
-                                                                                        <Tag color='action' />
-                                                                                    </InputAdornment>
-                                                                                ),
+                                                                            startAdornment: (
+                                                                                <InputAdornment position="start">
+                                                                                    <Tag sx={{ color: theme.palette.action.active }} />
+                                                                                </InputAdornment>
+                                                                            ),
                                                                         }}
                                                                     />
                                                                     <SlugAvailabilityIndicator />
                                                                 </Box>
                                                                 <Button
-                                                                    variant='outlined'
-                                                                    onClick={
-                                                                        generateSlugFromName
-                                                                    }
+                                                                    variant="outlined"
+                                                                    onClick={generateSlugFromName}
                                                                     disabled={
-                                                                        !formik
-                                                                            .values
-                                                                            .name
-                                                                            .first &&
-                                                                        !formik
-                                                                            .values
-                                                                            .name
-                                                                            .last
+                                                                        !formik.values.name.first &&
+                                                                        !formik.values.name.last
                                                                     }
                                                                     sx={{
                                                                         mt: 1,
+                                                                        flexShrink: 0,
+                                                                        borderColor: theme.palette.primary.main,
+                                                                        color: theme.palette.primary.main,
+                                                                        '&:hover': {
+                                                                            borderColor: theme.palette.primary.dark,
+                                                                            bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                                                        },
                                                                     }}
                                                                 >
-                                                                    {t(
-                                                                        'register.generateSlug',
-                                                                    )}
+                                                                    {t('register.generateSlug')}
                                                                 </Button>
                                                             </Box>
                                                             <Typography
-                                                                variant='caption'
-                                                                color='text.secondary'
-                                                                sx={{
-                                                                    display:
-                                                                        'block',
-                                                                    mt: 1,
-                                                                }}
+                                                                variant="caption"
+                                                                color="text.secondary"
+                                                                sx={{ display: 'block', mt: 1 }}
                                                             >
-                                                                {t(
-                                                                    'register.slugExample',
-                                                                )}
+                                                                {t('register.slugExample')}
                                                             </Typography>
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.email',
-                                                                )}
-                                                                name='email'
-                                                                type='email'
-                                                                autoComplete='email'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .email
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                            <StyledTextField
+                                                                label={t('register.email')}
+                                                                name="email"
+                                                                type="email"
+                                                                autoComplete="email"
+                                                                value={formik.values.email}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .email &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .email,
-                                                                    )
+                                                                    formik.touched.email &&
+                                                                    Boolean(formik.errors.email)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .email &&
-                                                                    formik
-                                                                        .errors
-                                                                        .email
+                                                                    formik.touched.email && formik.errors.email
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
-                                                            <TextField
+                                                            <StyledTextField
                                                                 select
-                                                                label={t(
-                                                                    'register.gender',
-                                                                )}
-                                                                name='gender'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .gender
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                                label={t('register.gender')}
+                                                                name="gender"
+                                                                value={formik.values.gender}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .gender &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .gender,
-                                                                    )
+                                                                    formik.touched.gender &&
+                                                                    Boolean(formik.errors.gender)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .gender &&
-                                                                    formik
-                                                                        .errors
-                                                                        .gender
+                                                                    formik.touched.gender && formik.errors.gender
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             >
-                                                                <MenuItem value=''>
-                                                                    {t(
-                                                                        'register.selectGender',
-                                                                    )}
+                                                                <MenuItem value="">
+                                                                    {t('register.selectGender')}
                                                                 </MenuItem>
-                                                                <MenuItem value='male'>
-                                                                    {t(
-                                                                        'register.male',
-                                                                    )}
+                                                                <MenuItem value="male">
+                                                                    {t('register.male')}
                                                                 </MenuItem>
-                                                                <MenuItem value='female'>
-                                                                    {t(
-                                                                        'register.female',
-                                                                    )}
+                                                                <MenuItem value="female">
+                                                                    {t('register.female')}
                                                                 </MenuItem>
-                                                            </TextField>
+                                                            </StyledTextField>
                                                         </Grid>
                                                     </Grid>
                                                 )}
 
-                                                {/* Step 2: Contact Information */}
+                                                {/* ===== STEP 2: Contact Information ===== */}
                                                 {currentStep === 1 && (
                                                     <Grid container spacing={3}>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.phone1',
-                                                                )}
-                                                                name='phone.phone_1'
-                                                                type='tel'
-                                                                placeholder='05x-xxxxxxx'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .phone
-                                                                        .phone_1
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                            <StyledTextField
+                                                                label={t('register.phone1')}
+                                                                name="phone.phone_1"
+                                                                type="tel"
+                                                                placeholder="05x-xxxxxxx"
+                                                                value={formik.values.phone.phone_1}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .phone
-                                                                        ?.phone_1 &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .phone
-                                                                            ?.phone_1,
-                                                                    )
+                                                                    formik.touched.phone?.phone_1 &&
+                                                                    Boolean(formik.errors.phone?.phone_1)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .phone
-                                                                        ?.phone_1 &&
-                                                                    formik
-                                                                        .errors
-                                                                        .phone
-                                                                        ?.phone_1
+                                                                    formik.touched.phone?.phone_1 &&
+                                                                    formik.errors.phone?.phone_1
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.phone2',
-                                                                )}
-                                                                name='phone.phone_2'
-                                                                type='tel'
-                                                                placeholder='05x-xxxxxxx (اختياري)'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .phone
-                                                                        .phone_2
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                            <StyledTextField
+                                                                label={t('register.phone2')}
+                                                                name="phone.phone_2"
+                                                                type="tel"
+                                                                placeholder="05x-xxxxxxx (اختياري)"
+                                                                value={formik.values.phone.phone_2}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .phone
-                                                                        ?.phone_2 &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .phone
-                                                                            ?.phone_2,
-                                                                    )
+                                                                    formik.touched.phone?.phone_2 &&
+                                                                    Boolean(formik.errors.phone?.phone_2)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .phone
-                                                                        ?.phone_2 &&
-                                                                    formik
-                                                                        .errors
-                                                                        .phone
-                                                                        ?.phone_2
+                                                                    formik.touched.phone?.phone_2 &&
+                                                                    formik.errors.phone?.phone_2
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 4,
-                                                            }}
-                                                        >
+                                                        <Grid size={{ xs: 12, md: 4 }}>
                                                             <Autocomplete
                                                                 options={cities}
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .address
-                                                                        .city ||
-                                                                    null
-                                                                }
-                                                                onChange={(
-                                                                    _event,
-                                                                    value,
-                                                                ) =>
-                                                                    formik.setFieldValue(
-                                                                        'address.city',
-                                                                        value,
-                                                                    )
+                                                                value={formik.values.address.city || null}
+                                                                onChange={(_event, value) =>
+                                                                    formik.setFieldValue('address.city', value)
                                                                 }
                                                                 onBlur={() =>
-                                                                    formik.setFieldTouched(
-                                                                        'address.city',
-                                                                        true,
-                                                                    )
+                                                                    formik.setFieldTouched('address.city', true)
                                                                 }
-                                                                renderInput={(
-                                                                    params,
-                                                                ) => (
-                                                                    <TextField
+                                                                renderInput={(params) => (
+                                                                    <StyledTextField
                                                                         {...params}
-                                                                        label={t(
-                                                                            'register.city',
-                                                                        )}
-                                                                        variant='outlined'
+                                                                        label={t('register.city')}
+                                                                        variant="outlined"
                                                                         error={
-                                                                            formik
-                                                                                .touched
-                                                                                .address
-                                                                                ?.city &&
-                                                                            Boolean(
-                                                                                formik
-                                                                                    .errors
-                                                                                    .address
-                                                                                    ?.city,
-                                                                            )
+                                                                            formik.touched.address?.city &&
+                                                                            Boolean(formik.errors.address?.city)
                                                                         }
                                                                         helperText={
-                                                                            formik
-                                                                                .touched
-                                                                                .address
-                                                                                ?.city &&
-                                                                            formik
-                                                                                .errors
-                                                                                .address
-                                                                                ?.city
+                                                                            formik.touched.address?.city &&
+                                                                            formik.errors.address?.city
                                                                         }
                                                                         fullWidth
-                                                                        size='medium'
+                                                                        size="medium"
                                                                     />
                                                                 )}
                                                             />
                                                         </Grid>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
+                                                        <Grid size={{ xs: 12, md: 6 }}>
                                                             <Autocomplete
-                                                                options={
-                                                                    streets
-                                                                }
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .address
-                                                                        .street ||
-                                                                    null
-                                                                }
-                                                                onChange={(
-                                                                    _event,
-                                                                    value,
-                                                                ) =>
-                                                                    formik.setFieldValue(
-                                                                        'address.street',
-                                                                        value,
-                                                                    )
+                                                                options={streets}
+                                                                value={formik.values.address.street || null}
+                                                                onChange={(_event, value) =>
+                                                                    formik.setFieldValue('address.street', value)
                                                                 }
                                                                 onBlur={() =>
-                                                                    formik.setFieldTouched(
-                                                                        'address.street',
-                                                                        true,
-                                                                    )
+                                                                    formik.setFieldTouched('address.street', true)
                                                                 }
                                                                 disabled={
-                                                                    !formik
-                                                                        .values
-                                                                        .address
-                                                                        .city ||
+                                                                    !formik.values.address.city ||
                                                                     loadingStreets
                                                                 }
-                                                                loading={
-                                                                    loadingStreets
-                                                                }
-                                                                renderInput={(
-                                                                    params,
-                                                                ) => (
-                                                                    <TextField
+                                                                loading={loadingStreets}
+                                                                renderInput={(params) => (
+                                                                    <StyledTextField
                                                                         {...params}
-                                                                        label={t(
-                                                                            'register.street',
-                                                                        )}
-                                                                        variant='outlined'
+                                                                        label={t('register.street')}
+                                                                        variant="outlined"
                                                                         error={
-                                                                            formik
-                                                                                .touched
-                                                                                .address
-                                                                                ?.street &&
-                                                                            Boolean(
-                                                                                formik
-                                                                                    .errors
-                                                                                    .address
-                                                                                    ?.street,
-                                                                            )
+                                                                            formik.touched.address?.street &&
+                                                                            Boolean(formik.errors.address?.street)
                                                                         }
                                                                         helperText={
-                                                                            formik
-                                                                                .touched
-                                                                                .address
-                                                                                ?.street &&
-                                                                            formik
-                                                                                .errors
-                                                                                .address
-                                                                                ?.street
+                                                                            formik.touched.address?.street &&
+                                                                            formik.errors.address?.street
                                                                         }
                                                                         fullWidth
-                                                                        size='medium'
+                                                                        size="medium"
                                                                     />
                                                                 )}
                                                             />
                                                         </Grid>
-                                                        <Grid
-                                                            size={{
-                                                                xs: 12,
-                                                                md: 6,
-                                                            }}
-                                                        >
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.houseNumber',
-                                                                )}
-                                                                name='address.houseNumber'
-                                                                type='text'
-                                                                placeholder='اختياري'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .address
-                                                                        .houseNumber
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                            <StyledTextField
+                                                                label={t('register.houseNumber')}
+                                                                name="address.houseNumber"
+                                                                type="text"
+                                                                placeholder="اختياري"
+                                                                value={formik.values.address.houseNumber}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .address
-                                                                        ?.houseNumber &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .address
-                                                                            ?.houseNumber,
-                                                                    )
+                                                                    formik.touched.address?.houseNumber &&
+                                                                    Boolean(formik.errors.address?.houseNumber)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .address
-                                                                        ?.houseNumber &&
-                                                                    formik
-                                                                        .errors
-                                                                        .address
-                                                                        ?.houseNumber
+                                                                    formik.touched.address?.houseNumber &&
+                                                                    formik.errors.address?.houseNumber
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
-                                                            <TextField
-                                                                label={t(
-                                                                    'register.imageUrl',
-                                                                )}
-                                                                name='image.url'
-                                                                type='url'
-                                                                placeholder='https://example.com/image.jpg (اختياري)'
-                                                                value={
-                                                                    formik
-                                                                        .values
-                                                                        .image
-                                                                        .url
-                                                                }
-                                                                onChange={
-                                                                    formik.handleChange
-                                                                }
-                                                                onBlur={
-                                                                    formik.handleBlur
-                                                                }
+                                                            <StyledTextField
+                                                                label={t('register.imageUrl')}
+                                                                name="image.url"
+                                                                type="url"
+                                                                placeholder="https://example.com/image.jpg (اختياري)"
+                                                                value={formik.values.image.url}
+                                                                onChange={formik.handleChange}
+                                                                onBlur={formik.handleBlur}
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .image
-                                                                        ?.url &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .image
-                                                                            ?.url,
-                                                                    )
+                                                                    formik.touched.image?.url &&
+                                                                    Boolean(formik.errors.image?.url)
                                                                 }
                                                                 helperText={
-                                                                    formik
-                                                                        .touched
-                                                                        .image
-                                                                        ?.url &&
-                                                                    formik
-                                                                        .errors
-                                                                        .image
-                                                                        ?.url
+                                                                    formik.touched.image?.url &&
+                                                                    formik.errors.image?.url
                                                                 }
                                                                 fullWidth
-                                                                variant='outlined'
-                                                                size='medium'
+                                                                variant="outlined"
+                                                                size="medium"
                                                             />
                                                         </Grid>
                                                     </Grid>
                                                 )}
 
-                                                {/* Step 3: Security */}
+                                                {/* ===== STEP 3: Security ===== */}
                                                 {currentStep === 2 && (
                                                     <Grid container spacing={3}>
                                                         <Grid size={{ xs: 12 }}>
                                                             <FormControl
-                                                                variant='outlined'
+                                                                variant="outlined"
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .password &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .password,
-                                                                    )
+                                                                    formik.touched.password &&
+                                                                    Boolean(formik.errors.password)
                                                                 }
                                                                 fullWidth
                                                             >
-                                                                <InputLabel htmlFor='password'>
-                                                                    {t(
-                                                                        'register.password',
-                                                                    )}
+                                                                <InputLabel htmlFor="password">
+                                                                    {t('register.password')}
                                                                 </InputLabel>
                                                                 <OutlinedInput
-                                                                    id='password'
-                                                                    type={
-                                                                        showPassword
-                                                                            ? 'text'
-                                                                            : 'password'
-                                                                    }
-                                                                    autoComplete='new-password'
+                                                                    id="password"
+                                                                    type={showPassword ? 'text' : 'password'}
+                                                                    autoComplete="new-password"
+                                                                    sx={{
+                                                                        borderRadius: 2,
+                                                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                                            borderColor: theme.palette.primary.main,
+                                                                            borderWidth: 2,
+                                                                        },
+                                                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                                            borderColor: theme.palette.primary.light,
+                                                                        },
+                                                                    }}
                                                                     endAdornment={
-                                                                        <InputAdornment position='end'>
+                                                                        <InputAdornment position="end">
                                                                             <IconButton
                                                                                 aria-label={
                                                                                     showPassword
                                                                                         ? 'إخفاء كلمة المرور'
                                                                                         : 'إظهار كلمة المرور'
                                                                                 }
-                                                                                onClick={
-                                                                                    handleClickShowPassword
-                                                                                }
-                                                                                onMouseDown={
-                                                                                    handleMouseDownPassword
-                                                                                }
-                                                                                edge='end'
+                                                                                onClick={handleClickShowPassword}
+                                                                                onMouseDown={handleMouseDownPassword}
+                                                                                edge="end"
                                                                             >
                                                                                 {showPassword ? (
                                                                                     <VisibilityOff />
@@ -1359,92 +1175,62 @@ const Register: FunctionComponent = () => {
                                                                             </IconButton>
                                                                         </InputAdornment>
                                                                     }
-                                                                    label={t(
-                                                                        'register.password',
-                                                                    )}
-                                                                    name='password'
-                                                                    value={
-                                                                        formik
-                                                                            .values
-                                                                            .password
-                                                                    }
-                                                                    onChange={
-                                                                        formik.handleChange
-                                                                    }
-                                                                    onBlur={
-                                                                        formik.handleBlur
-                                                                    }
+                                                                    label={t('register.password')}
+                                                                    name="password"
+                                                                    value={formik.values.password}
+                                                                    onChange={formik.handleChange}
+                                                                    onBlur={formik.handleBlur}
                                                                 />
-                                                                {formik.touched
-                                                                    .password &&
-                                                                    formik
-                                                                        .errors
-                                                                        .password && (
-                                                                        <FormHelperText
-                                                                            error
-                                                                        >
-                                                                            {
-                                                                                formik
-                                                                                    .errors
-                                                                                    .password
-                                                                            }
+                                                                {formik.touched.password &&
+                                                                    formik.errors.password && (
+                                                                        <FormHelperText error>
+                                                                            {formik.errors.password}
                                                                         </FormHelperText>
                                                                     )}
-                                                                {formik.values
-                                                                    .password && (
+                                                                {formik.values.password && (
                                                                     <PasswordStrengthIndicator
-                                                                        password={
-                                                                            formik
-                                                                                .values
-                                                                                .password
-                                                                        }
+                                                                        password={formik.values.password}
                                                                     />
                                                                 )}
                                                             </FormControl>
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
                                                             <FormControl
-                                                                variant='outlined'
+                                                                variant="outlined"
                                                                 error={
-                                                                    formik
-                                                                        .touched
-                                                                        .confirmPassword &&
-                                                                    Boolean(
-                                                                        formik
-                                                                            .errors
-                                                                            .confirmPassword,
-                                                                    )
+                                                                    formik.touched.confirmPassword &&
+                                                                    Boolean(formik.errors.confirmPassword)
                                                                 }
                                                                 fullWidth
                                                             >
-                                                                <InputLabel htmlFor='confirmPassword'>
-                                                                    {t(
-                                                                        'register.confirmPassword',
-                                                                    )}
+                                                                <InputLabel htmlFor="confirmPassword">
+                                                                    {t('register.confirmPassword')}
                                                                 </InputLabel>
                                                                 <OutlinedInput
-                                                                    id='confirmPassword'
-                                                                    type={
-                                                                        showConfirmPassword
-                                                                            ? 'text'
-                                                                            : 'password'
-                                                                    }
-                                                                    autoComplete='new-password'
+                                                                    id="confirmPassword"
+                                                                    type={showConfirmPassword ? 'text' : 'password'}
+                                                                    autoComplete="new-password"
+                                                                    sx={{
+                                                                        borderRadius: 2,
+                                                                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                                            borderColor: theme.palette.primary.main,
+                                                                            borderWidth: 2,
+                                                                        },
+                                                                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                                                                            borderColor: theme.palette.primary.light,
+                                                                        },
+                                                                    }}
                                                                     endAdornment={
-                                                                        <InputAdornment position='end'>
+                                                                        <InputAdornment position="end">
                                                                             <IconButton
                                                                                 aria-label={
                                                                                     showConfirmPassword
                                                                                         ? 'إخفاء تأكيد كلمة المرور'
                                                                                         : 'إظهار تأكيد كلمة المرور'
                                                                                 }
-                                                                                onClick={
-                                                                                    handleClickShowConfirmPassword
-                                                                                }
-                                                                                onMouseDown={
-                                                                                    handleMouseDownPassword
-                                                                                }
-                                                                                edge='end'
+                                                                                onClick={handleClickShowConfirmPassword}
+                                                                                onMouseDown={handleMouseDownPassword}
+                                                                                edge="end"
                                                                             >
                                                                                 {showConfirmPassword ? (
                                                                                     <VisibilityOff />
@@ -1454,35 +1240,16 @@ const Register: FunctionComponent = () => {
                                                                             </IconButton>
                                                                         </InputAdornment>
                                                                     }
-                                                                    label={t(
-                                                                        'register.confirmPassword',
-                                                                    )}
-                                                                    name='confirmPassword'
-                                                                    value={
-                                                                        formik
-                                                                            .values
-                                                                            .confirmPassword
-                                                                    }
-                                                                    onChange={
-                                                                        formik.handleChange
-                                                                    }
-                                                                    onBlur={
-                                                                        formik.handleBlur
-                                                                    }
+                                                                    label={t('register.confirmPassword')}
+                                                                    name="confirmPassword"
+                                                                    value={formik.values.confirmPassword}
+                                                                    onChange={formik.handleChange}
+                                                                    onBlur={formik.handleBlur}
                                                                 />
-                                                                {formik.touched
-                                                                    .confirmPassword &&
-                                                                    formik
-                                                                        .errors
-                                                                        .confirmPassword && (
-                                                                        <FormHelperText
-                                                                            error
-                                                                        >
-                                                                            {
-                                                                                formik
-                                                                                    .errors
-                                                                                    .confirmPassword
-                                                                            }
+                                                                {formik.touched.confirmPassword &&
+                                                                    formik.errors.confirmPassword && (
+                                                                        <FormHelperText error>
+                                                                            {formik.errors.confirmPassword}
                                                                         </FormHelperText>
                                                                     )}
                                                             </FormControl>
@@ -1490,209 +1257,167 @@ const Register: FunctionComponent = () => {
                                                     </Grid>
                                                 )}
 
-                                                {/* Step 4: Agreements */}
+                                                {/* ===== STEP 4: Agreements ===== */}
                                                 {currentStep === 3 && (
                                                     <Grid container spacing={3}>
                                                         <Grid size={{ xs: 12 }}>
                                                             <FormControlLabel
                                                                 control={
                                                                     <Checkbox
-                                                                        id='terms'
-                                                                        name='terms'
-                                                                        color='primary'
-                                                                        checked={
-                                                                            formik
-                                                                                .values
-                                                                                .terms
-                                                                        }
-                                                                        onChange={
-                                                                            formik.handleChange
-                                                                        }
-                                                                        onBlur={
-                                                                            formik.handleBlur
-                                                                        }
+                                                                        id="terms"
+                                                                        name="terms"
+                                                                        color="primary"
+                                                                        checked={formik.values.terms}
+                                                                        onChange={formik.handleChange}
+                                                                        onBlur={formik.handleBlur}
+                                                                        sx={{
+                                                                            '&.Mui-checked': {
+                                                                                color: theme.palette.primary.main,
+                                                                            },
+                                                                        }}
                                                                     />
                                                                 }
                                                                 label={
                                                                     <>
-                                                                        {t(
-                                                                            'register.agreeTo',
-                                                                        )}{' '}
+                                                                        {t('register.agreeTo')}{' '}
                                                                         <Link
-                                                                            to={
-                                                                                path.TermOfUse
-                                                                            }
-                                                                            target='_blank'
-                                                                            rel='noopener noreferrer'
+                                                                            to={path.TermOfUse}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
                                                                             style={{
-                                                                                color: theme
-                                                                                    .palette
-                                                                                    .primary
-                                                                                    .main,
+                                                                                color: theme.palette.primary.main,
                                                                                 fontWeight: 600,
+                                                                                textDecoration: 'none',
+                                                                            }}
+                                                                            onMouseEnter={(e) => {
+                                                                                e.currentTarget.style.textDecoration = 'underline';
+                                                                            }}
+                                                                            onMouseLeave={(e) => {
+                                                                                e.currentTarget.style.textDecoration = 'none';
                                                                             }}
                                                                         >
-                                                                            {t(
-                                                                                'register.termsOfService',
-                                                                            )}
+                                                                            {t('register.termsOfService')}
                                                                         </Link>{' '}
-                                                                        {t(
-                                                                            'register.and',
-                                                                        )}{' '}
+                                                                        {t('register.and')}{' '}
                                                                         <Link
-                                                                            to={
-                                                                                path.PrivacyAndPolicy
-                                                                            }
-                                                                            target='_blank'
-                                                                            rel='noopener noreferrer'
+                                                                            to={path.PrivacyAndPolicy}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
                                                                             style={{
-                                                                                color: theme
-                                                                                    .palette
-                                                                                    .primary
-                                                                                    .main,
+                                                                                color: theme.palette.primary.main,
                                                                                 fontWeight: 600,
+                                                                                textDecoration: 'none',
+                                                                            }}
+                                                                            onMouseEnter={(e) => {
+                                                                                e.currentTarget.style.textDecoration = 'underline';
+                                                                            }}
+                                                                            onMouseLeave={(e) => {
+                                                                                e.currentTarget.style.textDecoration = 'none';
                                                                             }}
                                                                         >
-                                                                            {t(
-                                                                                'register.privacyPolicy',
-                                                                            )}
+                                                                            {t('register.privacyPolicy')}
                                                                         </Link>
                                                                     </>
                                                                 }
                                                             />
-                                                            {formik.touched
-                                                                .terms &&
-                                                                formik.errors
-                                                                    .terms && (
+                                                            {formik.touched.terms &&
+                                                                formik.errors.terms && (
                                                                     <Typography
-                                                                        color='error'
-                                                                        variant='caption'
-                                                                        sx={{
-                                                                            display:
-                                                                                'block',
-                                                                            mt: 1,
-                                                                        }}
+                                                                        color="error"
+                                                                        variant="caption"
+                                                                        sx={{ display: 'block', mt: 1 }}
                                                                     >
-                                                                        {
-                                                                            formik
-                                                                                .errors
-                                                                                .terms
-                                                                        }
+                                                                        {formik.errors.terms}
                                                                     </Typography>
                                                                 )}
                                                         </Grid>
                                                         <Grid size={{ xs: 12 }}>
                                                             <Typography
-                                                                variant='body2'
-                                                                color='text.secondary'
+                                                                variant="body2"
+                                                                color="text.secondary"
                                                                 sx={{
                                                                     mt: 2,
                                                                     lineHeight: 1.6,
+                                                                    p: 2,
+                                                                    borderRadius: 2,
+                                                                    bgcolor: alpha(theme.palette.primary.main, 0.03),
+                                                                    border: `1px solid ${alpha(theme.palette.primary.main, 0.06)}`,
                                                                 }}
                                                             >
-                                                                {t(
-                                                                    'register.privacyNote',
-                                                                )}
+                                                                {t('register.privacyNote')}
                                                             </Typography>
                                                         </Grid>
-                                                        {/* Show user profile preview */}
+                                                        {/* Profile Preview */}
                                                         <Grid size={{ xs: 12 }}>
                                                             <Paper
-                                                                variant='outlined'
+                                                                variant="outlined"
                                                                 sx={{
-                                                                    p: 2,
+                                                                    p: 3,
                                                                     mt: 2,
-                                                                    bgcolor:
-                                                                        'grey.50',
+                                                                    borderRadius: 3,
+                                                                    borderColor: alpha(theme.palette.primary.main, 0.15),
+                                                                    bgcolor: alpha(theme.palette.primary.main, 0.02),
                                                                 }}
                                                             >
                                                                 <Typography
-                                                                    variant='subtitle2'
+                                                                    variant="subtitle2"
                                                                     gutterBottom
-                                                                    color='primary'
+                                                                    sx={{
+                                                                        color: theme.palette.primary.main,
+                                                                        fontWeight: 600,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        gap: 1,
+                                                                    }}
                                                                 >
-                                                                    {t(
-                                                                        'register.profilePreview',
-                                                                    )}
+                                                                    {t('register.profilePreview')}
                                                                 </Typography>
                                                                 <Box
                                                                     sx={{
-                                                                        display:
-                                                                            'flex',
-                                                                        alignItems:
-                                                                            'center',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
                                                                         gap: 2,
                                                                     }}
                                                                 >
                                                                     <Box
                                                                         sx={{
-                                                                            width: 60,
-                                                                            height: 60,
-                                                                            borderRadius:
-                                                                                '50%',
-                                                                            bgcolor:
-                                                                                'grey.300',
-                                                                            display:
-                                                                                'flex',
-                                                                            alignItems:
-                                                                                'center',
-                                                                            justifyContent:
-                                                                                'center',
+                                                                            width: 56,
+                                                                            height: 56,
+                                                                            borderRadius: '50%',
+                                                                            bgcolor: alpha(theme.palette.primary.main, 0.12),
+                                                                            display: 'flex',
+                                                                            alignItems: 'center',
+                                                                            justifyContent: 'center',
+                                                                            color: theme.palette.primary.main,
+                                                                            fontWeight: 600,
+                                                                            fontSize: 24,
                                                                         }}
                                                                     >
-                                                                        {formik
-                                                                            .values
-                                                                            .name
-                                                                            .first
-                                                                            ? formik.values.name.first
-                                                                                  .charAt(
-                                                                                      0,
-                                                                                  )
-                                                                                  .toUpperCase()
+                                                                        {formik.values.name.first
+                                                                            ? formik.values.name.first.charAt(0).toUpperCase()
                                                                             : 'U'}
                                                                     </Box>
                                                                     <Box>
-                                                                        <Typography
-                                                                            variant='body1'
-                                                                            fontWeight='medium'
-                                                                        >
-                                                                            {
-                                                                                formik
-                                                                                    .values
-                                                                                    .name
-                                                                                    .first
-                                                                            }{' '}
-                                                                            {
-                                                                                formik
-                                                                                    .values
-                                                                                    .name
-                                                                                    .last
-                                                                            }
+                                                                        <Typography variant="body1" fontWeight="medium">
+                                                                            {formik.values.name.first}{' '}
+                                                                            {formik.values.name.last}
                                                                         </Typography>
-                                                                        <Typography
-                                                                            variant='caption'
-                                                                            color='text.secondary'
-                                                                        >
-                                                                            @
-                                                                            {formik
-                                                                                .values
-                                                                                .slug ||
-                                                                                'username'}
+                                                                        <Typography variant="caption" color="text.secondary">
+                                                                            @{formik.values.slug || 'username'}
                                                                         </Typography>
                                                                         <br />
-                                                                        <Typography
-                                                                            variant='caption'
-                                                                            color='text.secondary'
-                                                                        >
-                                                                            {t(
-                                                                                'register.profileLink',
-                                                                            )}
-                                                                            :
-                                                                            safqa.com/users/customer
-                                                                            {formik
-                                                                                .values
-                                                                                .slug ||
-                                                                                'username'}
+                                                                        <Typography variant="caption" color="text.secondary">
+                                                                            {t('register.profileLink')}:{' '}
+                                                                            <Box
+                                                                                component="span"
+                                                                                sx={{
+                                                                                    color: theme.palette.primary.main,
+                                                                                    fontWeight: 500,
+                                                                                }}
+                                                                            >
+                                                                                safqa.com/users/customer
+                                                                                {formik.values.slug || 'username'}
+                                                                            </Box>
                                                                         </Typography>
                                                                     </Box>
                                                                 </Box>
@@ -1703,104 +1428,121 @@ const Register: FunctionComponent = () => {
                                             </motion.div>
                                         </AnimatePresence>
 
-                                        {/* Navigation Buttons */}
+                                        {/* ===== Navigation Buttons ===== */}
                                         <Box
                                             sx={{
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 mt: 4,
                                                 pt: 3,
-                                                borderTop: 1,
-                                                borderColor: 'divider',
+                                                borderTop: `1px solid ${theme.palette.divider}`,
                                             }}
                                         >
                                             <Button
-                                                variant='outlined'
+                                                variant="outlined"
                                                 onClick={handleBack}
-                                                disabled={
-                                                    currentStep === 0 ||
-                                                    isLoading
-                                                }
-                                                startIcon={
-                                                    dir === 'rtl' ? (
-                                                        <ArrowForward />
-                                                    ) : (
-                                                        <ArrowBack />
-                                                    )
-                                                }
-                                                sx={{ minWidth: 120, gap: 1 }}
+                                                disabled={currentStep === 0 || isLoading}
+                                                startIcon={dir === 'rtl' ? <ArrowForward /> : <ArrowBack />}
+                                                sx={{
+                                                    minWidth: 120,
+                                                    gap: 1,
+                                                    borderColor: theme.palette.primary.main,
+                                                    color: theme.palette.primary.main,
+                                                    '&:hover': {
+                                                        borderColor: theme.palette.primary.dark,
+                                                        bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                                    },
+                                                    '&:disabled': {
+                                                        borderColor: theme.palette.action.disabledBackground,
+                                                        color: theme.palette.action.disabled,
+                                                    },
+                                                }}
                                             >
                                                 {t('common.back')}
                                             </Button>
 
                                             {currentStep < steps.length - 1 ? (
                                                 <Button
-                                                    variant='contained'
+                                                    variant="contained"
                                                     onClick={handleNext}
-                                                    sx={{ minWidth: 120 }}
+                                                    sx={{
+                                                        minWidth: 120,
+                                                        bgcolor: theme.palette.primary.main,
+                                                        '&:hover': {
+                                                            bgcolor: theme.palette.primary.dark,
+                                                            boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.4)}`,
+                                                        },
+                                                    }}
                                                 >
                                                     {t('common.next')}
                                                 </Button>
                                             ) : (
                                                 <Button
-                                                    variant='contained'
-                                                    color='success'
-                                                    type='submit'
+                                                    variant="contained"
+                                                    type="submit"
                                                     disabled={
                                                         isLoading ||
                                                         !formik.isValid ||
                                                         slugAvailable === false
                                                     }
-                                                    sx={{ minWidth: 120 }}
+                                                    sx={{
+                                                        minWidth: 160,
+                                                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                                                        '&:hover': {
+                                                            background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+                                                            boxShadow: `0 4px 24px ${alpha(theme.palette.primary.main, 0.5)}`,
+                                                        },
+                                                        '&:disabled': {
+                                                            background: theme.palette.action.disabledBackground,
+                                                            color: theme.palette.action.disabled,
+                                                        },
+                                                    }}
                                                     startIcon={
                                                         isLoading ? (
-                                                            <CircularProgress
-                                                                size={20}
-                                                                color='inherit'
-                                                            />
+                                                            <CircularProgress size={20} color="inherit" />
                                                         ) : null
                                                     }
                                                 >
                                                     {isLoading
-                                                        ? t(
-                                                              'register.creatingAccount',
-                                                          )
-                                                        : t(
-                                                              'register.completeRegistration',
-                                                          )}
+                                                        ? t('register.creatingAccount')
+                                                        : t('register.completeRegistration')}
                                                 </Button>
                                             )}
                                         </Box>
                                     </form>
 
-                                    {/* Login Link */}
+                                    {/* ===== Login Link ===== */}
                                     <Box
                                         sx={{
                                             textAlign: 'center',
                                             mt: 4,
                                             pt: 3,
-                                            borderTop: 1,
-                                            borderColor: 'divider',
+                                            borderTop: `1px solid ${theme.palette.divider}`,
                                         }}
                                     >
                                         <Typography
-                                            variant='body1'
-                                            color='text.secondary'
-                                            sx={{ mb: 2 }}
+                                            variant="body1"
+                                            color="text.secondary"
+                                            sx={{ mb: 1 }}
                                         >
                                             {t('register.haveAccount')}
                                         </Typography>
                                         <Button
-                                            variant='text'
-                                            color='primary'
+                                            variant="text"
                                             onClick={() => navigate(path.Login)}
-                                            sx={{ fontWeight: 600 }}
+                                            sx={{
+                                                fontWeight: 600,
+                                                color: theme.palette.primary.main,
+                                                '&:hover': {
+                                                    bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                                },
+                                            }}
                                         >
                                             {t('register.loginHere')}
                                         </Button>
                                     </Box>
 
-                                    {/* Quick Links */}
+                                    {/* ===== Quick Links ===== */}
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -1810,23 +1552,19 @@ const Register: FunctionComponent = () => {
                                             flexWrap: 'wrap',
                                         }}
                                     >
-                                        {/* <Link
-											to={path.FAQ}
-											style={{
-												textDecoration: "none",
-												color: theme.palette.text.secondary,
-												fontSize: "0.875rem",
-											}}
-										>
-											{t("common.faq")}
-										</Link> */}
                                         <Link
                                             to={path.Contact}
                                             style={{
                                                 textDecoration: 'none',
-                                                color: theme.palette.text
-                                                    .secondary,
+                                                color: theme.palette.text.secondary,
                                                 fontSize: '0.875rem',
+                                                transition: 'color 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color = theme.palette.primary.main;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color = theme.palette.text.secondary;
                                             }}
                                         >
                                             {t('common.contact')}
@@ -1835,9 +1573,15 @@ const Register: FunctionComponent = () => {
                                             to={path.About}
                                             style={{
                                                 textDecoration: 'none',
-                                                color: theme.palette.text
-                                                    .secondary,
+                                                color: theme.palette.text.secondary,
                                                 fontSize: '0.875rem',
+                                                transition: 'color 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color = theme.palette.primary.main;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color = theme.palette.text.secondary;
                                             }}
                                         >
                                             {t('common.about')}

@@ -40,6 +40,8 @@ import {
     AlertTitle,
     Checkbox,
     FormControlLabel,
+    alpha,
+    useTheme,
 } from '@mui/material';
 import {
     Visibility,
@@ -75,7 +77,6 @@ interface CredentialHelperPlugin {
 const CredentialHelper =
     registerPlugin<CredentialHelperPlugin>('CredentialHelper');
 
-// ✅ لوق بس بوضع التطوير — ما بيطلع شي بالبرودكشن، ولا بيسرّب تفاصيل داخلية
 const devLog = (...args: any[]) => {
     if (import.meta.env.DEV) {
         console.log(...args);
@@ -112,6 +113,7 @@ const REMEMBER_KEY = 'remembered_email';
 
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
+    const theme = useTheme();
     const { setAfterDecode } = useToken();
     const [showModal, setShowModal] = useState<boolean>(false);
     const [googleResponse, setGoogleResponse] = useState<any>(null);
@@ -125,17 +127,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
     const { t } = useTranslation();
 
-    // ✅ دالة موحدة لتسجيل الدخول
     const handleSuccessfulLogin = async (
         token: string,
         email?: string,
         password?: string,
     ) => {
         try {
-            // ⚠️ ملاحظة أمان: التوكن مخزّن بـ localStorage وهو عرضة لهجمات XSS
-            // (أي سكريبت خبيث ينفّذ بالصفحة فيقدر ياخده). الحل الصح للويب هو
-            // httpOnly + Secure cookie من السيرفر بدل ما الفرونت يخزّنه بنفسه.
-            // هيدا تغيير بالباك إند مش بس بهاد الملف — احكيلي إذا بدك ننفذه.
             localStorage.setItem('token', token);
 
             const decoded = jwtDecode<AuthValues>(token);
@@ -169,7 +166,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             navigate(path.Home);
         } catch (error: any) {
             devError('Login handler error:', error);
-            // ما منعرض تفاصيل الخطأ التقني للمستخدم
             showError(
                 t('login.error') || 'Something went wrong. Please try again.',
             );
@@ -310,7 +306,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             const errors: FormErrors = {};
 
             if (err.inner) {
-                // أخطاء تحقق الحقول (email/password) آمنة نعرضها زي ما هي
                 err.inner.forEach((error: any) => {
                     if (error.path === 'email') {
                         errors.email = error.message;
@@ -319,9 +314,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     }
                 });
             } else {
-                // ⚠️ أمان: ما منعرض رسالة الباك إند الحرفية (ممكن تسرّب تفاصيل
-                // داخلية أو تفرق بين "الإيميل مش موجود" و"كلمة السر غلط" وهيدا
-                // بيسهّل عملية enumeration لحسابات المستخدمين). رسالة عامة بس.
                 errors.general =
                     t('login.errors.loginFailed') ||
                     'Invalid email or password.';
@@ -424,7 +416,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
         }
     };
 
-    // ✅ مصدر واحد موحّد للإيميل المحفوظ: native credential أولاً، وإلا remembered email
     useEffect(() => {
         (async () => {
             let email = '';
@@ -455,6 +446,43 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const currentUrl = `https://client-qqq1.vercel.app/login`;
     const dire = handleRTL();
 
+    // ================ نمط الحقل الموحد ================
+    const textFieldSx = {
+        '& .MuiOutlinedInput-root': {
+            borderRadius: 3,
+            transition: 'all 0.2s ease',
+            '&:hover fieldset': {
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: theme.palette.primary.main,
+                borderWidth: 2,
+            },
+        },
+        '& .MuiInputLabel-root.Mui-focused': {
+            color: theme.palette.primary.main,
+        },
+    };
+
+    // ================ نمط الزر الموحد ================
+    const primaryButtonSx = {
+        borderRadius: 3,
+        py: 1.5,
+        fontSize: '1.1rem',
+        fontWeight: 600,
+        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+        boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+        '&:hover': {
+            background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
+            boxShadow: `0 6px 28px ${alpha(theme.palette.primary.main, 0.4)}`,
+        },
+        '&:disabled': {
+            opacity: 0.7,
+            background: theme.palette.action.disabledBackground,
+        },
+    };
+
     return (
         <>
             <link rel='canonical' href={currentUrl} />
@@ -474,7 +502,15 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             />
             <meta property='og:url' content={currentUrl} />
 
-            <Container dir={dire} maxWidth='md' sx={{ py: 8 }}>
+            <Container
+                dir={dire}
+                maxWidth='md'
+                sx={{
+                    py: 8,
+                    bgcolor: theme.palette.background.default,
+                    minHeight: '100vh',
+                }}
+            >
                 <Box
                     sx={{
                         display: 'flex',
@@ -491,7 +527,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     p: { xs: 3, sm: 4, md: 5 },
                                     borderRadius: 4,
                                     backdropFilter: 'blur(20px)',
-                                    border: `2px solid ${mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+                                    border: `1px solid ${theme.palette.divider}`,
+                                    bgcolor: theme.palette.background.paper,
                                     position: 'relative',
                                     overflow: 'hidden',
                                     transform: isHovered
@@ -499,11 +536,13 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         : 'translateY(0)',
                                     transition:
                                         'transform 0.3s ease, box-shadow 0.3s ease',
+                                    boxShadow: mode === 'dark'
+                                        ? `0 8px 32px ${alpha(theme.palette.common.black, 0.5)}`
+                                        : `0 8px 40px ${alpha(theme.palette.primary.main, 0.08)}`,
                                     '&:hover': {
-                                        boxShadow:
-                                            mode === 'dark'
-                                                ? '0 20px 60px rgba(0, 0, 0, 0.4)'
-                                                : '0 20px 60px rgba(0, 0, 0, 0.1)',
+                                        boxShadow: mode === 'dark'
+                                            ? `0 12px 48px ${alpha(theme.palette.common.black, 0.6)}`
+                                            : `0 12px 48px ${alpha(theme.palette.primary.main, 0.12)}`,
                                     },
                                     '&::before': {
                                         content: '""',
@@ -512,8 +551,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         left: 0,
                                         right: 0,
                                         height: '6px',
-                                        background:
-                                            'linear-gradient(90deg, #4FC3F7 0%, #29B6F6 50%, #0288D1 100%)',
+                                        background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 50%, ${theme.palette.secondary.main} 100%)`,
                                         borderRadius: '4px 4px 0 0',
                                     },
                                 }}
@@ -527,10 +565,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     sx={{
                                         mb: 4,
                                         fontWeight: 700,
-                                        color:
-                                            mode === 'dark'
-                                                ? 'primary.light'
-                                                : 'primary.main',
+                                        color: theme.palette.primary.main,
                                     }}
                                 >
                                     {t('login.loginButton')}
@@ -557,27 +592,17 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         InputProps={{
                                             startAdornment: (
                                                 <InputAdornment position='start'>
-                                                    <Email />
+                                                    <Email color='action' />
                                                 </InputAdornment>
                                             ),
                                         }}
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                borderRadius: 3,
-                                                '&:hover fieldset': {
-                                                    borderColor: 'primary.main',
-                                                    borderWidth: 2,
-                                                },
-                                            },
-                                        }}
+                                        sx={textFieldSx}
                                         autoComplete='email'
                                     />
 
                                     <TextField
                                         label={t('login.password')}
-                                        type={
-                                            showPassword ? 'text' : 'password'
-                                        }
+                                        type={showPassword ? 'text' : 'password'}
                                         name='password'
                                         error={Boolean(error?.password)}
                                         helperText={error?.password}
@@ -625,15 +650,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 </InputAdornment>
                                             ),
                                         }}
-                                        sx={{
-                                            '& .MuiOutlinedInput-root': {
-                                                borderRadius: 3,
-                                                '&:hover fieldset': {
-                                                    borderColor: 'primary.main',
-                                                    borderWidth: 2,
-                                                },
-                                            },
-                                        }}
+                                        sx={textFieldSx}
                                         autoComplete='current-password'
                                     />
 
@@ -646,6 +663,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             {error.general}
                                         </Typography>
                                     )}
+
                                     <FormControlLabel
                                         control={
                                             <Checkbox
@@ -655,12 +673,18 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                         e.target.checked,
                                                     )
                                                 }
+                                                sx={{
+                                                    '&.Mui-checked': {
+                                                        color: theme.palette.primary.main,
+                                                    },
+                                                }}
                                             />
                                         }
                                         label={
                                             t('login.rememberMe') || 'تذكرني'
                                         }
                                     />
+
                                     <Box sx={{ mt: 4 }}>
                                         <Button
                                             color='primary'
@@ -679,33 +703,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 )
                                             }
                                             disabled={isPending}
-                                            sx={{
-                                                borderRadius: 3,
-                                                py: 1.5,
-                                                fontSize: '1.1rem',
-                                                fontWeight: 600,
-                                                background:
-                                                    mode === 'dark'
-                                                        ? 'linear-gradient(45deg, #29B6F6 30%, #0288D1 90%)'
-                                                        : 'linear-gradient(45deg, #0288D1 30%, #0277BD 90%)',
-                                                boxShadow:
-                                                    mode === 'dark'
-                                                        ? '0 3px 15px rgba(41, 182, 246, 0.3)'
-                                                        : '0 3px 15px rgba(2, 136, 209, 0.3)',
-                                                '&:hover': {
-                                                    background:
-                                                        mode === 'dark'
-                                                            ? 'linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)'
-                                                            : 'linear-gradient(45deg, #0277BD 30%, #01579B 90%)',
-                                                    boxShadow:
-                                                        mode === 'dark'
-                                                            ? '0 6px 20px rgba(41, 182, 246, 0.4)'
-                                                            : '0 6px 20px rgba(2, 136, 209, 0.4)',
-                                                },
-                                                '&:disabled': {
-                                                    opacity: 0.7,
-                                                },
-                                            }}
+                                            sx={primaryButtonSx}
                                         >
                                             {isPending
                                                 ? t('login.loading')
@@ -718,12 +716,18 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             to={path.ForgotPassword}
                                             style={{
                                                 textDecoration: 'none',
-                                                color:
-                                                    mode === 'dark'
-                                                        ? '#90caf9'
-                                                        : '#1976d2',
+                                                color: theme.palette.primary.main,
                                                 fontSize: '0.9rem',
                                                 fontWeight: 500,
+                                                transition: 'color 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color = theme.palette.primary.dark;
+                                                e.currentTarget.style.textDecoration = 'underline';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color = theme.palette.primary.main;
+                                                e.currentTarget.style.textDecoration = 'none';
                                             }}
                                         >
                                             {t('login.forgotPassword') ||
@@ -735,10 +739,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         <Typography
                                             variant='body2'
                                             sx={{
-                                                color:
-                                                    mode === 'dark'
-                                                        ? 'text.secondary'
-                                                        : 'text.primary',
+                                                color: theme.palette.text.secondary,
                                                 px: 2,
                                             }}
                                         >
@@ -757,9 +758,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         {Capacitor.isNativePlatform() ? (
                                             <Button
                                                 variant='outlined'
-                                                onClick={
-                                                    handleNativeGoogleLogin
-                                                }
+                                                onClick={handleNativeGoogleLogin}
                                                 fullWidth
                                                 size='large'
                                                 startIcon={
@@ -786,6 +785,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     '&:hover': {
                                                         bgcolor: '#f7f8f8',
                                                         border: '1px solid #dadce0',
+                                                        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
                                                     },
                                                     '&:disabled': {
                                                         opacity: 0.7,
@@ -825,7 +825,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                             justifyContent:
                                                                 'center',
                                                             bgcolor:
-                                                                'rgba(255, 255, 255, 0.7)',
+                                                                alpha(
+                                                                    theme.palette
+                                                                        .common
+                                                                        .white,
+                                                                    0.7,
+                                                                ),
                                                             borderRadius: 50,
                                                             zIndex: 1,
                                                         }}
@@ -872,7 +877,11 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             >
                                                 <Alert
                                                     severity='warning'
-                                                    sx={{ mb: 1 }}
+                                                    sx={{
+                                                        mb: 1,
+                                                        borderRadius: 2,
+                                                        borderLeft: `4px solid ${theme.palette.warning.main}`,
+                                                    }}
                                                 >
                                                     <AlertTitle>
                                                         {t(
@@ -897,13 +906,21 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                         borderRadius: 50,
                                                         textTransform: 'none',
                                                         fontWeight: 600,
-                                                        borderColor: '#d32f2f',
-                                                        color: '#d32f2f',
+                                                        borderColor: theme
+                                                            .palette.error
+                                                            .main,
+                                                        color: theme.palette
+                                                            .error.main,
                                                         '&:hover': {
-                                                            borderColor:
-                                                                '#b71c1c',
-                                                            background:
-                                                                'rgba(211, 47, 47, 0.04)',
+                                                            borderColor: theme
+                                                                .palette.error
+                                                                .dark,
+                                                            bgcolor: alpha(
+                                                                theme.palette
+                                                                    .error
+                                                                    .main,
+                                                                0.04,
+                                                            ),
                                                         },
                                                     }}
                                                 >
@@ -917,7 +934,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     </Box>
 
                                     <Box mt={2} textAlign='center'>
-                                        <Typography variant='body2'>
+                                        <Typography
+                                            variant='body2'
+                                            color='text.secondary'
+                                        >
                                             {t(
                                                 'login.noAccount',
                                                 "Don't have an account?",
@@ -926,6 +946,18 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 to={path.Register}
                                                 style={{
                                                     marginLeft: '4px',
+                                                    color: theme.palette
+                                                        .primary.main,
+                                                    fontWeight: 600,
+                                                    textDecoration: 'none',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.textDecoration =
+                                                        'underline';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.textDecoration =
+                                                        'none';
                                                 }}
                                             >
                                                 {t(
@@ -943,19 +975,25 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             gap: 4,
                                             mt: 4,
                                             pt: 3,
-                                            borderTop: `1px solid ${mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'}`,
+                                            borderTop: `1px solid ${theme.palette.divider}`,
                                         }}
                                     >
                                         <Link
                                             to={path.PrivacyAndPolicy}
                                             style={{
                                                 textDecoration: 'none',
-                                                color:
-                                                    mode === 'dark'
-                                                        ? '#90caf9'
-                                                        : '#1976d2',
-                                                fontSize: '0.9rem',
-                                                fontWeight: 500,
+                                                color: theme.palette.text
+                                                    .secondary,
+                                                fontSize: '0.875rem',
+                                                transition: 'color 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color =
+                                                    theme.palette.primary.main;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color =
+                                                    theme.palette.text.secondary;
                                             }}
                                         >
                                             {t('login.privacyPolicy')}
@@ -964,12 +1002,18 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             to={path.TermOfUse}
                                             style={{
                                                 textDecoration: 'none',
-                                                color:
-                                                    mode === 'dark'
-                                                        ? '#90caf9'
-                                                        : '#1976d2',
-                                                fontSize: '0.9rem',
-                                                fontWeight: 500,
+                                                color: theme.palette.text
+                                                    .secondary,
+                                                fontSize: '0.875rem',
+                                                transition: 'color 0.2s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.color =
+                                                    theme.palette.primary.main;
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.color =
+                                                    theme.palette.text.secondary;
                                             }}
                                         >
                                             {t('login.termsOfUse')}
@@ -978,17 +1022,21 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                 </form>
                             </Paper>
                         </Grid>
+
+                        {/* ===== الفاصل العمودي ===== */}
                         <Box
                             sx={{
                                 display: { xs: 'none', md: 'block' },
                                 width: '5px',
                                 height: '70vh',
                                 mx: 'auto',
-                                background:
-                                    'linear-gradient(to bottom, #48C1F7, #103365)',
+                                background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
                                 borderRadius: '10px',
+                                opacity: 0.6,
                             }}
                         />
+
+                        {/* ===== الجانب الأيمن ===== */}
                         <Grid size={{ xs: 12, md: 5 }}>
                             <Fade in={true} timeout={800}>
                                 <Box
@@ -1006,12 +1054,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         component='h1'
                                         sx={{
                                             fontWeight: 800,
-                                            background:
-                                                mode === 'dark'
-                                                    ? 'linear-gradient(45deg, #4FC3F7 30%, #29B6F6 90%)'
-                                                    : 'linear-gradient(45deg, #0288D1 30%, #0277BD 90%)',
-                                            WebkitBackgroundClip: 'text',
-                                            WebkitTextFillColor: 'transparent',
                                             mb: 2,
                                             fontSize: {
                                                 xs: '2.5rem',
@@ -1024,10 +1066,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     <Typography
                                         variant='h6'
                                         sx={{
-                                            color:
-                                                mode === 'dark'
-                                                    ? 'text.secondary'
-                                                    : 'text.primary',
+                                            color: theme.palette.text.secondary,
                                             mb: 3,
                                             lineHeight: 1.6,
                                         }}
@@ -1043,8 +1082,17 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             px: 4,
                                             py: 1,
                                             borderWidth: 2,
+                                            borderColor: theme.palette.primary
+                                                .main,
+                                            color: theme.palette.primary.main,
                                             '&:hover': {
                                                 borderWidth: 2,
+                                                borderColor: theme.palette
+                                                    .primary.dark,
+                                                bgcolor: alpha(
+                                                    theme.palette.primary.main,
+                                                    0.04,
+                                                ),
                                             },
                                         }}
                                     >
