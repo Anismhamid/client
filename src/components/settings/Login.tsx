@@ -121,6 +121,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [savedEmail, setSavedEmail] = useState<string>('');
+    const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
 
     const { t } = useTranslation();
 
@@ -176,6 +177,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     };
 
     const handleNativeGoogleLogin = async () => {
+        setIsGoogleLoading(true);
         try {
             setShowSignOutButton(false);
 
@@ -222,27 +224,19 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setShowModal(true);
             }
         } catch (error: any) {
-            devError('Google login error:', error);
+            console.error(
+                'json:',
+                JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+            );
 
-            const message = String(error?.message ?? error);
-
-            if (message.includes('16')) {
-                setShowSignOutButton(true);
-
-                showError(
-                    t(
-                        'login.errors.googleReauthNeeded',
-                        'Google authentication needs to be refreshed. Please try again.',
-                    ),
-                );
-            } else {
-                showError(
-                    t(
-                        'login.errors.googleLoginError',
-                        'Google sign-in failed. Please try again.',
-                    ),
-                );
-            }
+            showError(
+                t(
+                    'login.errors.googleLoginError',
+                    'Google sign-in failed. Please try again.',
+                ),
+            );
+        } finally {
+            setIsGoogleLoading(false);
         }
     };
 
@@ -351,6 +345,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             );
             return;
         }
+
+        setIsGoogleLoading(true);
         try {
             setShowSignOutButton(false);
             const decodedGoogle = jwtDecode<DecodedGooglePayload>(
@@ -374,6 +370,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 t('login.errors.googleLoginError') ||
                     'Google sign-in failed. Please try again.',
             );
+        } finally {
+            setIsGoogleLoading(false);
         }
     };
 
@@ -764,7 +762,19 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 }
                                                 fullWidth
                                                 size='large'
-                                                startIcon={<GoogleIcon />}
+                                                startIcon={
+                                                    isGoogleLoading ? (
+                                                        <CircularProgress
+                                                            size={20}
+                                                            color='inherit'
+                                                        />
+                                                    ) : (
+                                                        <GoogleIcon />
+                                                    )
+                                                }
+                                                disabled={
+                                                    isGoogleLoading || isPending
+                                                }
                                                 sx={{
                                                     maxWidth: 300,
                                                     borderRadius: 50,
@@ -777,37 +787,80 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                         bgcolor: '#f7f8f8',
                                                         border: '1px solid #dadce0',
                                                     },
+                                                    '&:disabled': {
+                                                        opacity: 0.7,
+                                                    },
                                                 }}
                                             >
-                                                {t('login.continueWithGoogle', {
-                                                    defaultValue:
-                                                        'Continue with Google',
-                                                })}
+                                                {isGoogleLoading
+                                                    ? t(
+                                                          'login.loading',
+                                                          'جاري التحميل...',
+                                                      )
+                                                    : t(
+                                                          'login.continueWithGoogle',
+                                                          'Continue with Google',
+                                                      )}
                                             </Button>
                                         ) : (
-                                            <GoogleLogin
-                                                ux_mode='popup'
-                                                shape='pill'
-                                                theme='filled_blue'
-                                                size='large'
-                                                width={300}
-                                                text='signin_with'
-                                                logo_alignment='center'
-                                                onSuccess={
-                                                    handleGoogleLoginSuccess
-                                                }
-                                                onError={() => {
-                                                    setShowSignOutButton(true);
-                                                    showError(
-                                                        t(
-                                                            'login.googleLoginError',
-                                                        ) ||
-                                                            'Google login failed',
-                                                    );
+                                            <Box
+                                                sx={{
+                                                    position: 'relative',
+                                                    maxWidth: 300,
+                                                    width: '100%',
                                                 }}
-                                                useOneTap={false}
-                                                auto_select={false}
-                                            />
+                                            >
+                                                {isGoogleLoading && (
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            bottom: 0,
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
+                                                            bgcolor:
+                                                                'rgba(255, 255, 255, 0.7)',
+                                                            borderRadius: 50,
+                                                            zIndex: 1,
+                                                        }}
+                                                    >
+                                                        <CircularProgress
+                                                            size={28}
+                                                        />
+                                                    </Box>
+                                                )}
+                                                <GoogleLogin
+                                                    ux_mode='popup'
+                                                    shape='pill'
+                                                    theme='filled_blue'
+                                                    size='large'
+                                                    width={300}
+                                                    text='signin_with'
+                                                    logo_alignment='center'
+                                                    onSuccess={
+                                                        handleGoogleLoginSuccess
+                                                    }
+                                                    onError={() => {
+                                                        setShowSignOutButton(
+                                                            true,
+                                                        );
+                                                        showError(
+                                                            t(
+                                                                'login.googleLoginError',
+                                                            ) ||
+                                                                'Google login failed',
+                                                        );
+                                                    }}
+                                                    useOneTap={false}
+                                                    auto_select={false}
+                                                />
+                                            </Box>
                                         )}
 
                                         {showSignOutButton && (
@@ -861,6 +914,26 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 </Button>
                                             </Box>
                                         )}
+                                    </Box>
+
+                                    <Box mt={2} textAlign='center'>
+                                        <Typography variant='body2'>
+                                            {t(
+                                                'login.noAccount',
+                                                "Don't have an account?",
+                                            )}
+                                            <Link
+                                                to={path.Register}
+                                                style={{
+                                                    marginLeft: '4px',
+                                                }}
+                                            >
+                                                {t(
+                                                    'login.register',
+                                                    'Register Now',
+                                                )}
+                                            </Link>
+                                        </Typography>
                                     </Box>
 
                                     <Box

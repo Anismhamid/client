@@ -89,6 +89,7 @@
         "googleLoginError": "Google login failed",
         "noAccount": "Don't have an account yet?",
         "register": "Click to register",
+        "loading":"Loading...",
         "privacyPolicy": "Privacy Policy",
         "termsOfUse": "Terms of Use",
         "rememberMe": "Remember Me",

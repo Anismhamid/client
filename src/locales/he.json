@@ -91,6 +91,7 @@
         "googleLoginError": "התחברות עם Google נכשלה",
         "noAccount": "אין לך חשבון עדיין?",
         "register": "לחץ להרשמה",
+        "loading":"טוען...",
         "privacyPolicy": "מדיניות פרטיות",
         "termsOfUse": "תנאי שימוש",
         "rememberMe": "זכור אותי",
