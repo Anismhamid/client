@@ -368,6 +368,7 @@ export const updateAccountStatus = async (
         {
             accountStatus,
         },
+        { headers: { Authorization: localStorage.getItem('token') } },
     );
 
     return response.data;
@@ -387,6 +388,7 @@ export const updateUserPermissions = async (
     const response = await axios.patch(
         `${api}/permissions/${userId}`,
         permissions,
+        { headers: { Authorization: localStorage.getItem('token') } },
     );
 
     return response.data;
