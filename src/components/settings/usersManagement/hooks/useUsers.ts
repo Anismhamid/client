@@ -4,9 +4,23 @@ import {
     deleteUserById,
     getAllUsers,
     patchUserRole,
+    updateAccountStatus,
+    updateUserPermissions,
 } from '../../../../services/usersServices';
+
 import { UserRegister } from '../../../../interfaces/User';
 import { showError } from '../../../../atoms/toasts/ReactToast';
+
+export type AccountStatus = 'active' | 'disabled';
+
+export interface UserPermissions {
+    canLogin: boolean;
+    canCreatePosts: boolean;
+    canSendMessages: boolean;
+    canSendOffers: boolean;
+    canUseAccount: boolean;
+    canAccessExistingData: boolean;
+}
 
 export const useUsers = (t: (key: string) => string) => {
     const [users, setUsers] = useState<UserRegister[]>([]);
@@ -34,7 +48,14 @@ export const useUsers = (t: (key: string) => string) => {
         loadUsers();
     }, [loadUsers]);
 
-    const updateUserRole = async (email: string, role: string) => {
+    // =========================
+    // Update User Role
+    // =========================
+
+    const updateUserRole = async (
+        email: string,
+        role: string,
+    ) => {
         try {
             await patchUserRole(email, role);
 
@@ -57,11 +78,19 @@ export const useUsers = (t: (key: string) => string) => {
         }
     };
 
+    // =========================
+    // Delete User
+    // =========================
+
     const deleteUser = async (userId: string) => {
         try {
             await deleteUserById(userId);
 
-            setUsers((prev) => prev.filter((user) => user._id !== userId));
+            setUsers((prev) =>
+                prev.filter(
+                    (user) => user._id !== userId,
+                ),
+            );
 
             return true;
         } catch (error) {
@@ -75,7 +104,14 @@ export const useUsers = (t: (key: string) => string) => {
         }
     };
 
-    const updateUserStatus = (userId: string, status: boolean) => {
+    // =========================
+    // Online / Offline Status
+    // =========================
+
+    const updateUserStatus = (
+        userId: string,
+        status: boolean,
+    ) => {
         setUsers((prev) =>
             prev.map((user) =>
                 user._id === userId
@@ -88,13 +124,104 @@ export const useUsers = (t: (key: string) => string) => {
         );
     };
 
+    // =========================
+    // Account Active / Disabled
+    // =========================
+
+    const handleAccountStatus = async (
+        userId: string,
+        isActive: boolean,
+    ) => {
+        try {
+            const accountStatus: AccountStatus =
+                isActive ? 'active' : 'disabled';
+
+            const response =
+                await updateAccountStatus(
+                    userId,
+                    accountStatus,
+                );
+
+            setUsers((prev) =>
+                prev.map((user) =>
+                    user._id === userId
+                        ? {
+                              ...user,
+                              accountStatus:
+                                  response.user
+                                      .accountStatus,
+                          }
+                        : user,
+                ),
+            );
+
+            return true;
+        } catch (error) {
+            showError(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update account status',
+            );
+
+            return false;
+        }
+    };
+
+    // =========================
+    // Update Permissions
+    // =========================
+
+    const handleUserPermission = async (
+        userId: string,
+        permission: keyof UserPermissions,
+        value: boolean,
+    ) => {
+        try {
+            const response =
+                await updateUserPermissions(
+                    userId,
+                    {
+                        [permission]: value,
+                    },
+                );
+
+            setUsers((prev) =>
+                prev.map((user) =>
+                    user._id === userId
+                        ? {
+                              ...user,
+                              permissions:
+                                  response.user
+                                      .permissions,
+                          }
+                        : user,
+                ),
+            );
+
+            return true;
+        } catch (error) {
+            showError(
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to update permission',
+            );
+
+            return false;
+        }
+    };
+
     return {
         users,
         setUsers,
         loading,
         loadUsers,
+
         updateUserRole,
         deleteUser,
+
         updateUserStatus,
+
+        handleAccountStatus,
+        handleUserPermission,
     };
 };

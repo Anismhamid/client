@@ -41,8 +41,14 @@ const UsersManagement: FunctionComponent = () => {
 
     const direction = handleRTL();
 
-    const { users, loading, updateUserRole, deleteUser, updateUserStatus } =
-        useUsers(t);
+    const {
+        users,
+        loading,
+        updateUserRole,
+        deleteUser,
+        updateUserStatus,
+        handleAccountStatus,
+    } = useUsers(t);
 
     useUsersRealtime(updateUserStatus);
 
@@ -268,6 +274,7 @@ const UsersManagement: FunctionComponent = () => {
             {/* ================= TABLE ================= */}
 
             <UsersTable
+                onAccountStatusChange={handleAccountStatus}
                 users={paginatedUsers}
                 loading={loading}
                 selectedUserIds={selectedUserIds}

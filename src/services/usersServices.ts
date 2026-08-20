@@ -358,3 +358,36 @@ export const resetPassword = async (
     });
     return data.message;
 };
+
+export const updateAccountStatus = async (
+    userId: string,
+    accountStatus: 'active' | 'disabled',
+) => {
+    const response = await axios.patch(
+        `${api}/account-status/${userId}`,
+        {
+            accountStatus,
+        },
+    );
+
+    return response.data;
+};
+
+export const updateUserPermissions = async (
+    userId: string,
+    permissions: Partial<{
+        canLogin: boolean;
+        canCreatePosts: boolean;
+        canSendMessages: boolean;
+        canSendOffers: boolean;
+        canUseAccount: boolean;
+        canAccessExistingData: boolean;
+    }>,
+) => {
+    const response = await axios.patch(
+        `${api}/permissions/${userId}`,
+        permissions,
+    );
+
+    return response.data;
+};
