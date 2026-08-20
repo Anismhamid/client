@@ -36,7 +36,7 @@ import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins'
 import ForgotPassword from '../components/settings/ForgotPassword';
 import ResetPassword from '../components/settings/ResetPassword';
 import SearchPage from '../atoms/SearchPage';
-import DeleteAccount from '../components/DeleteAccount';
+import DeleteAccount from '../components/settings/DeleteAccount';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );

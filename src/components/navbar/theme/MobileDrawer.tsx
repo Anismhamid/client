@@ -41,7 +41,7 @@ import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
 import { useChat } from '../../../hooks/useChat';
 import { Capacitor } from '@capacitor/core';
-import { AppSettings } from '../../appSettings';
+import { AppSettings } from '../../settings/appSettings';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 
 const openAppSettings = async () => {

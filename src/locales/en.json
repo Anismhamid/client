@@ -1445,6 +1445,77 @@
                 "subtitle": "Start your journey in the world of e-commerce with a trusted platform that puts your needs first."
             }
         },
+        "deleteAccount": {
+            "title": "Safqa Account Deletion",
+            "subtitle": "You can delete your Safqa account and associated data at any time.",
+
+            "intro": {
+                "title": "How to delete your account",
+                "text": "To permanently delete your account, sign in to your Safqa account, open your Profile page, and follow the account deletion steps.",
+                "loginButton": "Sign in and delete account"
+            },
+
+            "steps": {
+                "title": "Account deletion steps",
+
+                "step1": {
+                    "title": "Sign in",
+                    "text": "Sign in to your Safqa account using your account credentials."
+                },
+
+                "step2": {
+                    "title": "Open your Profile",
+                    "text": "Open your Profile page from within the application."
+                },
+
+                "step3": {
+                    "title": "Select account deletion",
+                    "text": "Scroll to the \"Delete Account\" section and select the permanent deletion option."
+                },
+
+                "step4": {
+                    "title": "Confirm deletion",
+                    "text": "Review the confirmation message and confirm that you want to permanently delete your account."
+                }
+            },
+
+            "data": {
+                "title": "Data that is deleted",
+                "intro": "When your account is deleted, data associated with your account is deleted or removed according to Safqa policies. This may include:",
+
+                "account": "Account information and personal information associated with your account.",
+
+                "listings": "Listings and information associated with listings you created.",
+
+                "images": "Images and media that you uploaded to your listings.",
+
+                "messages": "Data associated with communication and messaging features, subject to applicable data retention requirements."
+            },
+
+            "retention": {
+                "title": "Data that may be retained",
+                "text": "Some information may be retained for a limited period when required or permitted by law, for security purposes, fraud prevention, dispute resolution, or legal compliance."
+            },
+
+            "warning": {
+                "title": "Important",
+                "text": "Account deletion is permanent and may not be reversible after the deletion process is completed."
+            },
+
+            "support": {
+                "title": "Unable to access your account?",
+                "text": "If you cannot sign in to your account, use the Safqa support contact method available in the application to request deletion of your account and associated data."
+            },
+
+            "privacy": {
+                "title": "Privacy and data security",
+                "text": "We handle user data according to Safqa privacy and security practices."
+            },
+
+            "back": "Back",
+
+            "footer": "Safqa — Marketplace for buying and selling between users"
+        },
         "favorites": {
             "title": "Favorites",
             "empty": "No favorite products yet ❤️"
