@@ -1516,6 +1516,131 @@
 
             "footer": "Safqa — Marketplace for buying and selling between users"
         },
+
+        "usersManagement": {
+            "title": "Users Management",
+            "subtitle": "Manage users, roles, account status, permissions, and user activity.",
+
+            "search": "Search by name or email",
+            "tableLabel": "Users management table",
+
+            "columns": {
+                "name": "Name",
+                "email": "Email",
+                "role": "Role",
+                "status": "Status",
+                "actions": "Actions"
+            },
+
+            "stats": {
+                "total": "Total Users",
+                "active": "Active Users",
+                "inactive": "Inactive Users",
+                "admins": "Administrators"
+            },
+
+            "roles": {
+                "all": "All Roles",
+                "admin": "Administrator",
+                "moderator": "Moderator",
+                "delivery": "Delivery",
+                "client": "User"
+            },
+
+            "status": {
+                "all": "All Statuses",
+                "active": "Active",
+                "inactive": "Inactive"
+            },
+
+            "filters": {
+                "title": "Filters",
+                "search": "Search users",
+                "role": "Filter by role",
+                "status": "Filter by status",
+                "reset": "Reset Filters",
+                "apply": "Apply Filters"
+            },
+
+            "bulk": {
+                "selected": "{{count}} users selected",
+                "activate": "Activate",
+                "deactivate": "Deactivate",
+                "delete": "Delete Selected",
+                "changeRole": "Change Role",
+                "applyRole": "Apply Role",
+                "clear": "Clear Selection",
+                "confirmActivate": "Are you sure you want to activate the selected users?",
+                "confirmDeactivate": "Are you sure you want to deactivate the selected users?",
+                "confirmDelete": "Are you sure you want to permanently delete the selected users?"
+            },
+
+            "pagination": {
+                "previous": "Previous",
+                "next": "Next",
+                "page": "Page {{page}} of {{totalPages}}",
+                "showing": "Showing {{from}}–{{to}} of {{total}} users",
+                "rowsPerPage": "Rows per page"
+            },
+
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete",
+                "view": "View Profile"
+            },
+
+            "statusActions": {
+                "activate": "Activate User",
+                "deactivate": "Deactivate User"
+            },
+
+            "editTitle": "Edit User Profile",
+            "close": "Close",
+
+            "delete": {
+                "title": "Delete User",
+                "message": "Are you sure you want to permanently delete {{name}}?",
+                "warning": "This action cannot be undone.",
+                "confirm": "Delete User",
+                "cancel": "Cancel",
+                "confirmBulk": "Are you sure you want to delete the selected users?"
+            },
+
+            "empty": "No users matching your search or filters were found.",
+            "loading": "Loading users...",
+            "noSelection": "No users selected.",
+
+            "errors": {
+                "load": "Failed to load users.",
+                "role": "Failed to update user role.",
+                "status": "Failed to update user status.",
+                "delete": "Failed to delete user.",
+                "bulkDelete": "Failed to delete selected users.",
+                "bulkStatus": "Failed to update selected users.",
+                "bulkRole": "Failed to update roles for selected users."
+            },
+
+            "success": {
+                "role": "User role updated successfully.",
+                "activated": "User activated successfully.",
+                "deactivated": "User deactivated successfully.",
+                "deleted": "User deleted successfully.",
+                "bulkActivated": "Selected users were activated successfully.",
+                "bulkDeactivated": "Selected users were deactivated successfully.",
+                "bulkDeleted": "Selected users were deleted successfully.",
+                "bulkRole": "Roles updated successfully."
+            },
+
+            "realtime": {
+                "online": "Online",
+                "offline": "Offline"
+            },
+
+            "header": {
+                "manage": "Manage users and permissions",
+                "total": "{{count}} users"
+            }
+        },
         "favorites": {
             "title": "Favorites",
             "empty": "No favorite products yet ❤️"

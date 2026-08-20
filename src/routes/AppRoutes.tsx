@@ -10,7 +10,10 @@ import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSec
 import PaymentSuccess from '../components/pages/payment/Success';
 
 const UsersManagement = lazy(
-    () => import('../components/settings/UsersManagement'),
+    () =>
+        import(
+            '../components/settings/usersManagement/components/UsersManagement'
+        ),
 );
 const Home = lazy(() => import('../components/pages/home/Home'));
 const Login = lazy(() => import('../components/settings/Login'));
