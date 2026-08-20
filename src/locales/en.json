@@ -1348,6 +1348,106 @@
                 "register": "Create a New Account",
                 "login": "Log In"
             }
+        },
+        "about": {
+            "title": "About Safqa",
+            "subtitle": "Safqa is an online marketplace that connects buyers and sellers in a simple and secure way.",
+
+            "what-we-are": {
+                "safqa": "What is Safqa?",
+                "subtitle": "Safqa is an online buying and selling platform that allows users to list their products and easily find what they are looking for."
+            },
+
+            "buy-and-sell": {
+                "title": "Buy & Sell",
+                "subtitle": "Buy the products you are looking for, list your products for sale, and communicate directly with buyers and sellers."
+            },
+
+            "what-we-have": {
+                "title": "What Do We Offer?",
+                "subtitle": "We offer a variety of tools and features that make the buying and selling experience easier and more secure."
+            },
+
+            "control": {
+                "title": "Full Control",
+                "subtitle": "Manage your listings and products and communicate easily with buyers and sellers."
+            },
+
+            "trust": {
+                "title": "Trust & Safety",
+                "subtitle": "We work to provide a trusted and secure environment for all Safqa platform users."
+            },
+
+            "why-register": {
+                "title": "Why Register?",
+                "subtitle": "Creating an account allows you to list products, communicate with users, manage your listings, and enjoy all Safqa features."
+            },
+
+            "locations": {
+                "title": "Your Location",
+                "subtitle": "Find products and services near you and make communication and pickup easier."
+            },
+
+            "callUs": "Contact Us",
+            "joinUs": "Join Us",
+            "team": "Our Team",
+            "faq": "Frequently Asked Questions",
+            "startFree": "Start for Free",
+
+            "teamMembers": {
+                "anis": {
+                    "name": "Anis Mhamid",
+                    "role": "Founder & CEO"
+                },
+                "sara": {
+                    "name": "Sara Aghbaria",
+                    "role": "Technology Manager"
+                },
+                "mohammed": {
+                    "name": "Mohammed Khaled Mhamid",
+                    "role": "Marketing Manager"
+                },
+                "fatima": {
+                    "name": "Fatima Mahajneh",
+                    "role": "Customer Service Manager"
+                }
+            },
+
+            "faqItems": {
+                "sell": {
+                    "question": "How do I start selling my products?",
+                    "answer": "Create an account, add your product with clear photos and an accurate description, and start selling!"
+                },
+                "fees": {
+                    "question": "Are there any selling fees?",
+                    "answer": "No, personal use of the platform is completely free."
+                },
+                "safety": {
+                    "question": "How can I make sure the purchase process is safe?",
+                    "answer": "We provide a rating and review system along with secure communication between buyers and sellers."
+                },
+                "return": {
+                    "question": "Can I return a product?",
+                    "answer": "Yes, according to the return policy of each seller."
+                }
+            },
+
+            "stats": {
+                "title": "Our Numbers Speak for Themselves",
+                "users": "Active Users",
+                "products": "Listed Products",
+                "satisfaction": "Customer Satisfaction",
+                "support": "Technical Support"
+            },
+
+            "cta": {
+                "title": "Join the Safqa Community Today",
+                "subtitle": "Start your journey in the world of e-commerce with a trusted platform that puts your needs first."
+            }
+        },
+        "favorites": {
+            "title": "Favorites",
+            "empty": "No favorite products yet ❤️"
         }
     },
     "accountMenu": {
@@ -1363,46 +1463,6 @@
         "ads": "Manage ads"
     },
 
-    "about": {
-        "title": "About Us",
-        "subtitle": "Safqa — a simple and secure platform for buying and selling between individuals",
-
-        "what-we-are": {
-            "safqa": "Our Idea",
-            "title": "Buy and Sell Without Complication",
-            "subtitle": "We created Safqa to provide an organized space that connects sellers and buyers directly, without chaos or middlemen"
-        },
-
-        "buy-and-sell": {
-            "title": "How It Works",
-            "subtitle": "An easy interface, clear steps, and direct communication to help you complete deals quickly and comfortably"
-        },
-
-        "what-we-have": {
-            "title": "What You’ll Find on Safqa",
-            "subtitle": "A variety of products from real users — from everyday items to unique pieces"
-        },
-
-        "control": {
-            "title": "You’re in Control",
-            "subtitle": "You decide the price, presentation, and communication — we simply make the process easier"
-        },
-
-        "trust": {
-            "title": "Building Trust Step by Step",
-            "subtitle": "We provide tools that help reduce fake listings and improve the buying and selling experience"
-        },
-
-        "why-register": {
-            "title": "Get Started Easily",
-            "subtitle": "A quick account setup opens the door to buying or selling within minutes"
-        },
-
-        "locations": {
-            "title": "Close to You",
-            "subtitle": "Find deals in your area or explore offers from other locations with ease"
-        }
-    },
     "footer": {
         "siteName": "Sfqa Website",
         "quickLinks": "Quick Links",

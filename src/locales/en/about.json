@@ -1,28 +1,46 @@
 {
-	"title": "About Us",
-	"subtitle": "A marketplace connecting buyers and sellers easily and securely",
+    "title": "About Safqa",
+    "subtitle": "A trusted marketplace that connects buyers and sellers and makes buying and selling simple, secure, and convenient.",
 
-	"descriptionTitle": "Description",
-	"descriptionText": "We are an online marketplace that enables users to buy and sell products directly with each other, offering a smooth experience built on transparency and trust.",
+    "what-we-are": {
+        "safqa": "What is Safqa?",
+        "subtitle": "Safqa is a modern marketplace that brings buyers and sellers together in one simple and secure platform."
+    },
 
-	"ideaTitle": "Platform Concept",
-	"ideaText": "We are not a traditional store, but a bridge between sellers and buyers, allowing users to list products, set prices, and communicate directly.",
+    "buy-and-sell": {
+        "title": "Buy & Sell",
+        "subtitle": "Buy products you need or list your products for sale and reach potential buyers easily."
+    },
 
-	"productsTitle": "Products",
-	"productsText": "Products vary based on user listings and cover multiple categories to meet different needs.",
+    "what-we-have": {
+        "title": "Everything in One Place",
+        "subtitle": "Discover a wide variety of products and categories through an easy-to-use marketplace."
+    },
 
-	"securityTitle": "Security & Trust",
-	"securityText": "We provide a safe environment through user management systems and tools designed to reduce fraud.",
+    "control": {
+        "title": "Safety & Control",
+        "subtitle": "We provide tools that help users communicate, manage listings, and make safer transactions."
+    },
 
-	"roleTitle": "Our Role",
-	"roleText": "Our role is limited to providing the technical infrastructure and managing the platform, while transactions occur between users.",
+    "trust": {
+        "title": "Trust & Transparency",
+        "subtitle": "Ratings, reviews, and clear communication help build trust between buyers and sellers."
+    },
 
-	"supportTitle": "User Support",
-	"supportText": "We continuously improve the platform and offer technical support for a seamless experience.",
+    "why-register": {
+        "title": "Why Register?",
+        "subtitle": "Create an account to publish listings, communicate with users, manage your products, and enjoy the full Safqa experience."
+    },
 
-	"joinTitle": "Join Us",
-	"joinText": "Join our marketplace and start a flexible and simple buying and selling experience.",
+    "locations": {
+        "title": "Local Marketplace",
+        "subtitle": "Find products and opportunities around you and connect with sellers in your area."
+    },
+    "team": "Our Team",
 
-	"locationTitle": "Our Location",
-	"locationText": "Buy & Sell, Umm Al-Fahm, Ein Al-Darwa Street"
+    "faq": "Frequently Asked Questions",
+
+    "callUs": "Contact Us",
+    "joinUs": "Join Us",
+    "startFree": "Get Started for Free"
 }

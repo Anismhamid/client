@@ -40,7 +40,7 @@ const FavoritesPosts: FunctionComponent = () => {
         return (
             <Box sx={{ textAlign: 'center', py: 6 }}>
                 <Typography variant='h6' color='text.secondary'>
-                    لا توجد منتجات مفضلة ❤️
+                    {t('pages.favorites.empty')}
                 </Typography>
             </Box>
         );
@@ -95,11 +95,11 @@ const FavoritesPosts: FunctionComponent = () => {
         <>
             <JsonLd data={productsList} />
             <link rel='canonical' href={currentUrl} />
-            <title>{t('favorites')} | صفقه</title>
-            <meta name='description' content={t('favorites')} />
+            <title>{t('pages.favorites.title')} | صفقة</title>
+            <meta name='description' content={t('pages.favorites.title')} />
 
             <Box dir={direction} sx={{ px: { xs: 2, md: 4 }, py: 4 }}>
-                <h1>{t('favorites')}</h1>
+                <h1>{t('pages.favorites.title')}</h1>
                 <Grid container spacing={3}>
                     {posts.map((Post) => (
                         <Grid
