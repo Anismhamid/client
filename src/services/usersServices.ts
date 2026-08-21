@@ -8,6 +8,22 @@ import { DecodedGooglePayload } from '../interfaces/google';
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
+export type UserPermission =
+    | 'canLogin'
+    | 'canCreatePosts'
+    | 'canSendMessages'
+    | 'canSendOffers'
+    | 'canUseAccount'
+    | 'canAccessExistingData';
+
+export interface UpdatePermissionResponse {
+    success: boolean;
+    message: string;
+    permission: UserPermission;
+    enabled: boolean;
+    user: UserRegister;
+}
+
 /**
  * Register a new user
  * @param newUserData - New user registration data
@@ -374,22 +390,66 @@ export const updateAccountStatus = async (
     return response.data;
 };
 
-export const updateUserPermissions = async (
-    userId: string,
-    permissions: Partial<{
-        canLogin: boolean;
-        canCreatePosts: boolean;
-        canSendMessages: boolean;
-        canSendOffers: boolean;
-        canUseAccount: boolean;
-        canAccessExistingData: boolean;
-    }>,
-) => {
-    const response = await axios.patch(
-        `${api}/permissions/${userId}`,
-        permissions,
-        { headers: { Authorization: localStorage.getItem('token') } },
-    );
+// export const updateUserPermissions = async (
+//     userId: string,
+//     permissions: Partial<{
+//         canLogin: boolean;
+//         canCreatePosts: boolean;
+//         canSendMessages: boolean;
+//         canSendOffers: boolean;
+//         canUseAccount: boolean;
+//         canAccessExistingData: boolean;
+//     }>,
+// ) => {
+//     const response = await axios.patch(
+//         `${api}/permissions/${userId}`,
+//         permissions,
+//         { headers: { Authorization: localStorage.getItem('token') } },
+//     );
 
-    return response.data;
+//     return response.data;
+// };
+
+/*
+|--------------------------------------------------------------------------
+| UPDATE USER PERMISSION
+|--------------------------------------------------------------------------
+*/
+
+const permissionEndpoints: Record<UserPermission, string> = {
+    canLogin: 'login',
+    canCreatePosts: 'create-posts',
+    canSendMessages: 'messages',
+    canSendOffers: 'offers',
+    canUseAccount: 'use-account',
+    canAccessExistingData: 'access-existing-data',
+};
+
+export const updateUserPermission = async (
+    userId: string,
+    permission: UserPermission,
+    enabled: boolean,
+): Promise<UpdatePermissionResponse> => {
+    try {
+        const endpoint = permissionEndpoints[permission];
+
+        const response = await axios.patch<UpdatePermissionResponse>(
+            `${api}/permissions/${userId}/${endpoint}`,
+            {
+                enabled,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: localStorage.getItem('token'),
+                },
+            },
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error(`Error updating permission "${permission}":`, error);
+
+        throw error;
+    }
 };

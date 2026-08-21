@@ -5,22 +5,14 @@ import {
     getAllUsers,
     patchUserRole,
     updateAccountStatus,
-    updateUserPermissions,
+    updateUserPermission,
+    UserPermission,
 } from '../../../../services/usersServices';
 
 import { UserRegister } from '../../../../interfaces/User';
 import { showError } from '../../../../atoms/toasts/ReactToast';
 
 export type AccountStatus = 'active' | 'disabled';
-
-export interface UserPermissions {
-    canLogin: boolean;
-    canCreatePosts: boolean;
-    canSendMessages: boolean;
-    canSendOffers: boolean;
-    canUseAccount: boolean;
-    canAccessExistingData: boolean;
-}
 
 export const useUsers = (t: (key: string) => string) => {
     const [users, setUsers] = useState<UserRegister[]>([]);
@@ -168,21 +160,20 @@ export const useUsers = (t: (key: string) => string) => {
     };
 
     // =========================
-    // Update Permissions
+    // Update Single Permission
     // =========================
 
     const handleUserPermission = async (
         userId: string,
-        permission: keyof UserPermissions,
-        value: boolean,
+        permission: UserPermission,
+        enabled: boolean,
     ) => {
         try {
             const response =
-                await updateUserPermissions(
+                await updateUserPermission(
                     userId,
-                    {
-                        [permission]: value,
-                    },
+                    permission,
+                    enabled,
                 );
 
             setUsers((prev) =>

@@ -48,6 +48,7 @@ const UsersManagement: FunctionComponent = () => {
         deleteUser,
         updateUserStatus,
         handleAccountStatus,
+        handleUserPermission,
     } = useUsers(t);
 
     useUsersRealtime(updateUserStatus);
@@ -282,6 +283,7 @@ const UsersManagement: FunctionComponent = () => {
                 onEdit={setSelectedUserId}
                 onDelete={setDeleteTarget}
                 onRoleChange={updateUserRole}
+                onPermissionChange={handleUserPermission}
             />
 
             {/* ================= PAGINATION ================= */}

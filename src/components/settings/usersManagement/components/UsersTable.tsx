@@ -8,6 +8,7 @@ import {
     FormControl,
     MenuItem,
     Select,
+    Switch,
     Table,
     TableBody,
     TableCell,
@@ -25,6 +26,7 @@ import RoleType from '../../../../interfaces/UserType';
 import { UserRegister } from '../../../../interfaces/User';
 import { fontAwesomeIcon } from '../../../../FontAwesome/Icons';
 import UserStatusSwitch from './UserStatusSwitch';
+import { UserPermission } from '../../../../services/usersServices';
 
 interface UsersTableProps {
     users: UserRegister[];
@@ -45,6 +47,12 @@ interface UsersTableProps {
         userId: string,
         isActive: boolean,
     ) => Promise<boolean>;
+
+    onPermissionChange: (
+        userId: string,
+        permission: UserPermission,
+        enabled: boolean,
+    ) => Promise<boolean>;
 }
 
 const UsersTable: FunctionComponent<UsersTableProps> = ({
@@ -56,6 +64,7 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
     onDelete,
     onRoleChange,
     onAccountStatusChange,
+    onPermissionChange,
 }) => {
     const theme = useTheme();
     const allSelected =
@@ -218,6 +227,17 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                 fontWeight: 700,
                             }}
                         >
+                            الصلاحيات
+                        </TableCell>
+
+                        <TableCell
+                            align='center'
+                            sx={{
+                                bgcolor: 'primary.main',
+                                color: 'primary.contrastText',
+                                fontWeight: 700,
+                            }}
+                        >
                             الإجراءات
                         </TableCell>
                     </TableRow>
@@ -269,6 +289,107 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                             sx={{
                                                 fontWeight: 700,
                                             }}
+                                        />
+                                    </Box>
+                                </TableCell>
+                                <TableCell align='center'>
+                                    <Box
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 0.5,
+                                            minWidth: 180,
+                                        }}
+                                    >
+                                        <PermissionRow
+                                            label='تسجيل الدخول'
+                                            enabled={
+                                                user.permissions?.canLogin ??
+                                                true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canLogin',
+                                                    enabled,
+                                                )
+                                            }
+                                        />
+
+                                        <PermissionRow
+                                            label='إنشاء المنشورات'
+                                            enabled={
+                                                user.permissions
+                                                    ?.canCreatePosts ?? true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canCreatePosts',
+                                                    enabled,
+                                                )
+                                            }
+                                        />
+
+                                        <PermissionRow
+                                            label='إرسال الرسائل'
+                                            enabled={
+                                                user.permissions
+                                                    ?.canSendMessages ?? true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canSendMessages',
+                                                    enabled,
+                                                )
+                                            }
+                                        />
+
+                                        <PermissionRow
+                                            label='إرسال العروض'
+                                            enabled={
+                                                user.permissions
+                                                    ?.canSendOffers ?? true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canSendOffers',
+                                                    enabled,
+                                                )
+                                            }
+                                        />
+
+                                        <PermissionRow
+                                            label='استخدام الحساب'
+                                            enabled={
+                                                user.permissions
+                                                    ?.canUseAccount ?? true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canUseAccount',
+                                                    enabled,
+                                                )
+                                            }
+                                        />
+
+                                        <PermissionRow
+                                            label='الوصول للبيانات'
+                                            enabled={
+                                                user.permissions
+                                                    ?.canAccessExistingData ??
+                                                true
+                                            }
+                                            onChange={(enabled) =>
+                                                onPermissionChange(
+                                                    user._id!,
+                                                    'canAccessExistingData',
+                                                    enabled,
+                                                )
+                                            }
                                         />
                                     </Box>
                                 </TableCell>
@@ -404,6 +525,49 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                 </TableBody>
             </Table>
         </TableContainer>
+    );
+};
+
+interface PermissionRowProps {
+    label: string;
+    enabled: boolean;
+    onChange: (enabled: boolean) => Promise<boolean>;
+}
+
+const PermissionRow: FunctionComponent<PermissionRowProps> = ({
+    label,
+    enabled,
+    onChange,
+}) => {
+    const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await onChange(event.target.checked);
+    };
+
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 1,
+                px: 1,
+                py: 0.25,
+                borderRadius: 1.5,
+                bgcolor: 'action.hover',
+            }}
+        >
+            <Typography
+                variant='body2'
+                fontWeight={600}
+                sx={{
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                {label}
+            </Typography>
+
+            <Switch size='small' checked={enabled} onChange={handleChange} />
+        </Box>
     );
 };
 
