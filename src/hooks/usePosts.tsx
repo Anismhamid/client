@@ -5,7 +5,11 @@ import {
     useCallback,
 } from 'react';
 
-import { getAllPosts } from '../services/postsServices';
+import {
+    getAllPosts,
+    getpostsByCategory,
+} from '../services/postsServices';
+
 import { Posts } from '../interfaces/Posts';
 
 interface ApiError {
@@ -24,7 +28,7 @@ const isApiError = (error: unknown): error is ApiError => {
     );
 };
 
-export const usePosts = () => {
+export const usePosts = (category?: string) => {
     const [posts, setPosts] = useState<Posts[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -36,7 +40,9 @@ export const usePosts = () => {
             setLoading(true);
             setError(null);
 
-            const data = await getAllPosts();
+            const data = category
+                ? await getpostsByCategory(category)
+                : await getAllPosts();
 
             if (isMounted.current) {
                 setPosts(data);
@@ -60,7 +66,7 @@ export const usePosts = () => {
                 setLoading(false);
             }
         }
-    }, []);
+    }, [category]);
 
     useEffect(() => {
         isMounted.current = true;

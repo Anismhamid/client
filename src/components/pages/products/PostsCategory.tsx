@@ -7,10 +7,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import {
-    deletePost,
-    getpostsByCategory,
-} from '../../../services/postsServices';
+import { deletePost } from '../../../services/postsServices';
 import { useUser } from '../../../hooks/useUSer';
 import Loader from '../../../atoms/loader/Loader';
 import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
@@ -34,6 +31,7 @@ import { path } from '../../../routes/routes';
 import SearchBox from '../../../atoms/productsManage/SearchBox';
 import { Posts } from '../../../interfaces/Posts';
 import PostCard from './PostsCard';
+import { usePosts } from '../../../hooks/usePosts';
 
 interface PostsCategoryProps {
     category: string;
@@ -43,21 +41,19 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     category,
 }: PostsCategoryProps) => {
     const [postIdToUpdate, setPostIdToUpdate] = useState<string>('');
-    const [visibleProducts, setVisibleProducts] = useState<Posts[]>([]);
-    const [products, setProducts] = useState<Posts[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [visibleCount, setVisibleCount] = useState(12); // const [products, setProducts] = useState<Posts[]>([]);
+    // const [loading, setLoading] = useState<boolean>(true);
+    const { posts, setPosts, loading, refetch } = usePosts(category);
     const { auth } = useUser();
     const [showUpdateProductModal, setOnShowUpdateProductModal] =
         useState<boolean>(false);
     const [productToDelete, setProductToDelete] = useState<string>('');
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [refresh, setRefresh] = useState<boolean>(false);
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>(
         {},
     );
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-    const observerRef = useRef<IntersectionObserver | null>(null);
     const loadMoreRef = useRef<HTMLDivElement>(null);
 
     const { t } = useTranslation();
@@ -66,7 +62,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
     const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
 
-    const refreshAfterChange = () => setRefresh(!refresh);
+    const refreshAfterChange = () => {
+        refetch();
+    };
 
     const openDeleteModal = (productId: string) => {
         setProductToDelete(productId);
@@ -76,13 +74,13 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const closeDeleteModal = () => setShowDeleteModal(false);
 
     const filteredProducts = useMemo(() => {
-        return products.filter((post) => {
+        const searchLower = searchQuery.toLowerCase().trim();
+
+        return [...posts].reverse().filter((post) => {
             const productName = post.product_name || '';
             const productDescription = post.description || '';
             const productBrand = post.brand || '';
             const productPrice = post.price?.toString() || '';
-
-            const searchLower = searchQuery.toLowerCase();
 
             return (
                 productName.toLowerCase().includes(searchLower) ||
@@ -91,34 +89,32 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 productPrice.includes(searchQuery)
             );
         });
-    }, [products, searchQuery]);
+    }, [posts, searchQuery]);
+
+    const visibleProducts = useMemo(() => {
+        return filteredProducts.slice(0, visibleCount);
+    }, [filteredProducts, visibleCount]);
 
     const handleShowMore = useCallback(() => {
-        if (isLoadingMore || visibleProducts.length >= filteredProducts.length)
+        if (isLoadingMore || visibleCount >= filteredProducts.length) {
             return;
+        }
 
         setIsLoadingMore(true);
 
         setTimeout(() => {
-            const nextVisibleCount = Math.min(
-                visibleProducts.length + 12,
-                filteredProducts.length,
+            setVisibleCount((prev) =>
+                Math.min(prev + 12, filteredProducts.length),
             );
-            const newVisibleProducts = filteredProducts.slice(
-                0,
-                nextVisibleCount,
-            );
-            setVisibleProducts(newVisibleProducts);
+
             setIsLoadingMore(false);
         }, 300);
-    }, [isLoadingMore, visibleProducts.length, filteredProducts]);
+    }, [isLoadingMore, visibleCount, filteredProducts.length]);
 
     useEffect(() => {
-        if (
-            !loadMoreRef.current ||
-            visibleProducts.length >= filteredProducts.length
-        )
+        if (!loadMoreRef.current || visibleCount >= filteredProducts.length) {
             return;
+        }
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -135,14 +131,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
         observer.observe(loadMoreRef.current);
 
         return () => {
-            if (observer) observer.disconnect();
+            observer.disconnect();
         };
-    }, [
-        handleShowMore,
-        isLoadingMore,
-        visibleProducts.length,
-        filteredProducts.length,
-    ]);
+    }, [handleShowMore, isLoadingMore, visibleCount, filteredProducts.length]);
 
     const navigate = useNavigate();
 
@@ -154,41 +145,27 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
         const userId = auth._id;
 
-        setProducts((prev) =>
-            prev.map((p) =>
-                p._id === productId
+        setPosts((prev) =>
+            prev.map((post) =>
+                post._id === productId
                     ? {
-                          ...p,
+                          ...post,
                           likes: liked
-                              ? [...(p.likes || []), userId]
-                              : (p.likes || []).filter((id) => id !== userId),
+                              ? [...(post.likes || []), userId]
+                              : (post.likes || []).filter(
+                                    (id) => id !== userId,
+                                ),
                       }
-                    : p,
-            ),
-        );
-
-        setVisibleProducts((prev) =>
-            prev.map((p) =>
-                p._id === productId
-                    ? {
-                          ...p,
-                          likes: liked
-                              ? [...(p.likes || []), userId]
-                              : (p.likes || []).filter((id) => id !== userId),
-                      }
-                    : p,
+                    : post,
             ),
         );
     };
 
-    const handleDelete = (productId: string) => {
-        deletePost(productId)
+    const handleDelete = (postId: string) => {
+        deletePost(postId)
             .then(() => {
-                setProducts((prevProducts) =>
-                    prevProducts.filter((p) => p._id !== productId),
-                );
-                setVisibleProducts((prev) =>
-                    prev.filter((p) => p._id !== productId),
+                setPosts((prevPosts) =>
+                    prevPosts.filter((post) => post._id !== postId),
                 );
             })
             .catch((err) => {
@@ -196,19 +173,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 showError('خطأ في حذف المنتج');
             });
     };
-
-    useEffect(() => {
-        getpostsByCategory(category)
-            .then((res) => {
-                setProducts(res);
-                setVisibleProducts(res.slice(0, 12));
-            })
-            .catch((err) => {
-                console.error(err);
-                showError('حدث خطأ في تحميل المنتجات');
-            })
-            .finally(() => setLoading(false));
-    }, [category]);
 
     const isAdmin = auth?.role === RoleType.Admin;
     const isModerator = auth?.role === RoleType.Moderator;
@@ -219,22 +183,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const categoryDescription = t(`categories.${category}.description`);
     const currentUrl = `${window.location.origin}/category/${category}`;
 
-    if (loading) {
-        return (
-            <Box
-                sx={{
-                    minHeight: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}
-            >
-                <Loader />
-            </Box>
-        );
-    }
+    if (loading) return <Loader />;
 
-    if (!loading && products.length === 0)
+    if (!loading && posts.length === 0)
         return (
             <main>
                 {/* React 19: these tags are hoisted to <head> automatically */}
@@ -266,7 +217,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
             </main>
         );
 
-    const generateCategory = generateCategoryJsonLd(category, products);
+    const generateCategory = generateCategoryJsonLd(category, posts);
 
     return (
         <main>
@@ -336,47 +287,34 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                 : post.price;
 
                             return (
-                                <Grid size={{ xs: 12, md: 4, lg: 3 }}>
-                                    <Box ref={observerRef}>
-                                        <PostCard
-                                            key={post._id}
-                                            featured={post.featured}
-                                            post={post}
-                                            discountedPrice={discountedPrice}
-                                            canEdit={canEdit}
-                                            setPostIdToUpdate={
-                                                setPostIdToUpdate
-                                            }
-                                            onShowUpdateProductModal={
-                                                onShowUpdateProductModal
-                                            }
-                                            openDeleteModal={openDeleteModal}
-                                            setLoadedImages={setLoadedImages}
-                                            loadedImages={loadedImages}
-                                            category={category}
-                                            onLikeToggle={handleToggleLike}
-                                            updateProductInList={(
-                                                updatedPost,
-                                            ) => {
-                                                setProducts((prev) =>
-                                                    prev.map((p) =>
-                                                        p._id ===
-                                                        updatedPost._id
-                                                            ? updatedPost
-                                                            : p,
-                                                    ),
-                                                );
-                                                setVisibleProducts((prev) =>
-                                                    prev.map((p) =>
-                                                        p._id ===
-                                                        updatedPost._id
-                                                            ? updatedPost
-                                                            : p,
-                                                    ),
-                                                );
-                                            }}
-                                        />
-                                    </Box>
+                                <Grid
+                                    key={post._id}
+                                    size={{ xs: 12, md: 4, lg: 3 }}
+                                >
+                                    <PostCard
+                                        featured={post.featured}
+                                        post={post}
+                                        discountedPrice={discountedPrice}
+                                        canEdit={canEdit}
+                                        setPostIdToUpdate={setPostIdToUpdate}
+                                        onShowUpdateProductModal={
+                                            onShowUpdateProductModal
+                                        }
+                                        openDeleteModal={openDeleteModal}
+                                        setLoadedImages={setLoadedImages}
+                                        loadedImages={loadedImages}
+                                        category={category}
+                                        onLikeToggle={handleToggleLike}
+                                        updateProductInList={(updatedPost) => {
+                                            setPosts((prev) =>
+                                                prev.map((post) =>
+                                                    post._id === updatedPost._id
+                                                        ? updatedPost
+                                                        : post,
+                                                ),
+                                            );
+                                        }}
+                                    />
                                 </Grid>
                             );
                         })}

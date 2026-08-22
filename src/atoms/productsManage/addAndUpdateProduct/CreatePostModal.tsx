@@ -17,6 +17,9 @@ import handleRTL from '../../../locales/handleRTL';
 import PostForm from './PostForm';
 import useAddProductFormik from '../../../hooks/useAddProductFormik';
 
+const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+const INK = '#12161C';
+
 interface AddProductModalProps {
     show: boolean;
     onHide: () => void;
@@ -46,10 +49,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                 backdrop: {
                     timeout: 300,
                     sx: {
-                        backgroundColor: alpha(
-                            theme.palette.common.black,
-                            0.85,
-                        ),
+                        backgroundColor: alpha(INK, 0.85),
                         backdropFilter: 'blur(8px)',
                     },
                 },
@@ -58,22 +58,19 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                 display: 'flex',
                 alignItems: isMobile ? 'flex-end' : 'center',
                 justifyContent: 'center',
-                // zIndex: 2000,
             }}
         >
-            <Fade in={show} timeout={300}>
+            <Fade in={show} timeout={200}>
                 <Paper
                     elevation={0}
                     sx={{
                         position: 'relative',
                         width: '100%',
                         maxWidth: isMobile
-                            ? '100%'
+                            ? '95%'
                             : {
                                   xs: '95%',
-                                  sm: '90%',
-                                  md: '800px',
-                                  lg: '900px',
+                                  md: '600px',
                               },
                         maxHeight: isMobile ? '92vh' : '90vh',
                         borderRadius: isMobile ? '28px 28px 0 0' : '28px',
@@ -85,11 +82,11 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                         backdropFilter: 'blur(10px)',
                         border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
                         boxShadow: isMobile
-                            ? `0 -20px 40px -12px ${alpha(theme.palette.common.black, 0.3)}`
-                            : `0 30px 60px -20px ${alpha(theme.palette.common.black, 0.4)}`,
+                            ? `0 -20px 40px -12px ${alpha(INK, 0.4)}`
+                            : `0 30px 60px -20px ${alpha(INK, 0.5)}`,
                     }}
                 >
-                    {/* Animated gradient top bar */}
+                    {/* Animated brand gradient top bar */}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -97,10 +94,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             left: 0,
                             right: 0,
                             height: '3px',
-                            background: `linear-gradient(90deg, 
-                                ${theme.palette.primary.main}, 
-                                ${theme.palette.secondary.main}, 
-                                ${theme.palette.primary.main})`,
+                            background: `linear-gradient(90deg, #B8860B, #8B4513, #B8860B)`,
                             backgroundSize: '200% 100%',
                             animation: 'gradientMove 2s ease infinite',
                             '@keyframes gradientMove': {
@@ -135,26 +129,16 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                         </Box>
                     )}
 
-                    {/* Header */}
+                    {/* Header — dark ink header per brand system */}
                     <Box
                         sx={{
                             position: 'sticky',
                             top: 0,
                             zIndex: 20,
                             px: isMobile ? 2.5 : { xs: 3, sm: 4 },
-                            py: isMobile ? 2 : 3,
-                            background:
-                                theme.palette.mode === 'dark'
-                                    ? alpha(
-                                          theme.palette.background.paper,
-                                          0.95,
-                                      )
-                                    : alpha(
-                                          theme.palette.background.paper,
-                                          0.95,
-                                      ),
-                            backdropFilter: 'blur(20px)',
-                            borderBottom: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                            py: isMobile ? 2 : 2.5,
+                            background: BRAND_GRADIENT,
+                            borderBottom: `1px solid ${alpha('#B8860B', 0.25)}`,
                         }}
                     >
                         <Box
@@ -180,11 +164,11 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                             width: 44,
                                             height: 44,
                                             borderRadius: '16px',
-                                            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                                            background: BRAND_GRADIENT,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            boxShadow: `0 8px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+                                            boxShadow: `0 8px 20px ${alpha('#B8860B', 0.4)}`,
                                         }}
                                     >
                                         <AddCircleOutline
@@ -205,7 +189,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                                 ? '1.3rem'
                                                 : '1.6rem',
                                             letterSpacing: '-0.5px',
-                                            background: `linear-gradient(135deg, ${theme.palette.text.primary}, ${theme.palette.primary.main})`,
+                                            background: `linear-gradient(135deg, #fff, #D4A85A)`,
                                             backgroundClip: 'text',
                                             WebkitBackgroundClip: 'text',
                                             color: 'transparent',
@@ -217,10 +201,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     <Typography
                                         variant='caption'
                                         sx={{
-                                            color: alpha(
-                                                theme.palette.text.secondary,
-                                                0.8,
-                                            ),
+                                            color: alpha('#fff', 0.6),
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: 0.5,
@@ -244,17 +225,11 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             <IconButton
                                 onClick={onHide}
                                 sx={{
-                                    color: theme.palette.text.secondary,
-                                    backgroundColor: alpha(
-                                        theme.palette.action.hover,
-                                        0.5,
-                                    ),
+                                    color: alpha('#fff', 0.7),
+                                    backgroundColor: alpha('#fff', 0.06),
                                     '&:hover': {
-                                        backgroundColor: alpha(
-                                            theme.palette.primary.main,
-                                            0.1,
-                                        ),
-                                        color: theme.palette.primary.main,
+                                        backgroundColor: alpha('#B8860B', 0.2),
+                                        color: '#D4A85A',
                                         transform: 'rotate(90deg)',
                                     },
                                     transition:
@@ -285,21 +260,14 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                 borderRadius: 3,
                             },
                             '&::-webkit-scrollbar-thumb': {
-                                background: alpha(
-                                    theme.palette.primary.main,
-                                    0.4,
-                                ),
+                                background: alpha('#B8860B', 0.4),
                                 borderRadius: 3,
                                 '&:hover': {
-                                    background: alpha(
-                                        theme.palette.primary.main,
-                                        0.6,
-                                    ),
+                                    background: alpha('#B8860B', 0.6),
                                 },
                             },
                         }}
                     >
-                        {/* Form Container with subtle background */}
                         <Box
                             sx={{
                                 background:
@@ -348,7 +316,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     width: 4,
                                     height: 4,
                                     borderRadius: '50%',
-                                    bgcolor: theme.palette.primary.main,
+                                    background: BRAND_GRADIENT,
                                 }}
                             />
                             {t('modals.addProductModal.footerNote') ||
@@ -358,7 +326,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     width: 4,
                                     height: 4,
                                     borderRadius: '50%',
-                                    bgcolor: theme.palette.primary.main,
+                                    background: BRAND_GRADIENT,
                                 }}
                             />
                         </Typography>
