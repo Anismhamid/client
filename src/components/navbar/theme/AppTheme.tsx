@@ -314,7 +314,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     flexShrink: 1,
                                     flexWrap: 'nowrap',
                                     overflowX: 'auto',
-                                    '&::-webkit-scrollbar': { display: 'none' }, // إخفاء شريط التمرير
+                                    '&::-webkit-scrollbar': { display: 'none' }, 
                                     scrollbarWidth: 'none',
                                 }}
                                 aria-label='روابط التنقل الرئيسية'
@@ -328,8 +328,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 >
                                     <StyledNavLink
                                         to={path.Home}
-                                        aria-label={`${t('home')} - صفقة`}
-                                        title={`${t('home')} - صفقة`}
+                                        aria-label={t('home')}
+                                        title={t('home')}
                                     >
                                         <HomeIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
@@ -343,8 +343,10 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 >
                                     <StyledNavLink
                                         to={path.DeleteAccount}
-                                        aria-label={`${t('delete account')} - صفقة`}
-                                        title={`${t('delete account')} - صفقة`}
+                                        aria-label={t(
+                                            'pages.deleteAccount.title',
+                                        )}
+                                        title={t('pages.deleteAccount.title')}
                                     >
                                         <DeleteSharp sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
@@ -477,7 +479,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             <StyledNavLink
                                                 to={path.MessagesPage}
                                                 aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
-                                                title={`${t('links.Messages')} الرسائل موقع صفقة`}
+                                                title={t('links.messages')}
                                             >
                                                 <ChatBubble
                                                     sx={{ fontSize: 20 }}
@@ -495,8 +497,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 >
                                     <StyledNavLink
                                         to={path.Contact}
-                                        aria-label={`${t('links.contact')} خدمة عملاء موقع صفقة`}
-                                        title={`${t('links.contact')} خدمة عملاء موقع صفقة`}
+                                        aria-label={t('links.contact')}
+                                        title={t('links.contact')}
                                     >
                                         <ContactIcon sx={{ fontSize: 18 }} />
                                         <Typography component='span'></Typography>
@@ -521,7 +523,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <StyledNavLink
                                         to={path.SellingHelp}
                                         // aria-label='صفحة مساعدة - '
-                                        aria-label={`${t('help')} مساعدة موقع صفقة`}
+                                        aria-label={t('help')}
                                     >
                                         <HelpIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
@@ -532,8 +534,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <Box component='li' role='listitem'>
                                         <StyledNavLink
                                             to={path.UsersManagement}
-                                            aria-label={`${t('users-management')} ادارة المستخدمين موقع صفقة`}
-                                            title={`${t('users-management')} ادارة المستخدمين موقع صفقة`}
+                                            aria-label={t('users-management')}
+                                            title={t('users-management')}
                                             sx={{
                                                 backgroundColor:
                                                     mode === 'dark'
@@ -555,7 +557,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             />
                                         </StyledNavLink>
                                     </Box>
-                                ):null}
+                                ) : null}
                             </Box>
                         </Box>
 
@@ -572,8 +574,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             <Tooltip
                                 title={
                                     mode === 'dark'
-                                        ? 'الوضع النهاري'
-                                        : 'الوضع الليلي'
+                                        ? t('lightMode')
+                                        : t('darkMode')
                                 }
                             >
                                 <motion.div

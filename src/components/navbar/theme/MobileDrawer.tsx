@@ -209,10 +209,12 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                         >
                             <Delete sx={{ ml: 1 }} />
                             <ListItemText
-                                primary={t('Delete account') || 'حذف الحساب'}
+                                primary={t('pages.deleteAccount.title')}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label': 'حذف الحساب - موقع صفقة',
+                                    'aria-label': t(
+                                        'pages.deleteAccount.title',
+                                    ),
                                 }}
                             />
                         </ListItemButton>
@@ -647,7 +649,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             <Brightness7 sx={{ color: '#ffd000' }} />
                         )}
                         <Typography variant='body2'>
-                            {mode === 'dark' ? 'الوضع الليلي' : 'الوضع النهاري'}
+                            {mode === 'dark' ? t('darkMode') : t('lightMode')}
                         </Typography>
                     </Box>
                     <FormGroup>

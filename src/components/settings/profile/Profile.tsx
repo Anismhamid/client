@@ -58,6 +58,7 @@ import QuickActionsTab from './tabs/QuickActionsTab';
 import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
 import Loader from '../../../atoms/loader/Loader';
+import handleRTL from '../../../locales/handleRTL';
 
 const INK = 'primary'; // '#12161C';
 const ACCENT = '#f59e0b'; // brand amber, used across navbar/switch/active states
@@ -306,6 +307,8 @@ const Profile: FunctionComponent = () => {
         },
     ];
 
+    const dir = handleRTL();
+
     return (
         <>
             <link rel='canonical' href={currentUrl} />
@@ -327,7 +330,10 @@ const Profile: FunctionComponent = () => {
             />
             <meta property='og:image' content={user.image?.url} />
 
-            <Box sx={{ minHeight: '100vh', py: 4, px: { xs: 2, sm: 3 } }}>
+            <Box
+                dir={dir}
+                sx={{ minHeight: '100vh', py: 4, px: { xs: 2, sm: 3 } }}
+            >
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -801,7 +807,7 @@ const Profile: FunctionComponent = () => {
                                                 </Box>
                                             </Box>
                                             <Typography
-                                            mt={3}
+                                                mt={3}
                                                 variant='body2'
                                                 color='text.secondary'
                                             >
@@ -876,130 +882,8 @@ const Profile: FunctionComponent = () => {
                                 <Grid container spacing={3}>
                                     <Grid size={{ xs: 12, lg: 8 }}>
                                         <PersonalInformation user={user} />
-                                        <QuickActionsTab user={user} />
                                     </Grid>
 
-                                    {/* Activity History */}
-                                    {/* <Grid size={{ xs: 12, lg: 4 }}>
-                                        <Card
-                                            variant='outlined'
-                                            sx={{
-                                                borderRadius: 3,
-                                                height: '100%',
-                                            }}
-                                        >
-                                            <CardContent>
-                                                <Stack
-                                                    direction='row'
-                                                    alignItems='center'
-                                                    spacing={1}
-                                                    mb={2}
-                                                >
-                                                    <HistoryIcon
-                                                        fontSize='small'
-                                                        sx={{
-                                                            color: 'text.secondary',
-                                                        }}
-                                                    />
-                                                    <Typography
-                                                        variant='h6'
-                                                        fontWeight={800}
-                                                    >
-                                                        سجل النشاط
-                                                    </Typography>
-                                                </Stack>
-                                                {user.activity?.length ? (
-                                                    <Box
-                                                        sx={{
-                                                            position:
-                                                                'relative',
-                                                            mt: 2,
-                                                        }}
-                                                    >
-                                                        <Box
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                top: 6,
-                                                                bottom: 6,
-                                                                insetInlineStart: 15,
-                                                                width: '2px',
-                                                                bgcolor:
-                                                                    'divider',
-                                                            }}
-                                                        />
-                                                        <Stack spacing={2.5}>
-                                                            {user.activity
-                                                                .slice(-5)
-                                                                .reverse()
-                                                                .map(
-                                                                    (
-                                                                        timestamp,
-                                                                        index,
-                                                                    ) => (
-                                                                        <Box
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                            sx={{
-                                                                                position:
-                                                                                    'relative',
-                                                                                pInlineStart:
-                                                                                    '38px',
-                                                                                pl: '38px',
-                                                                            }}
-                                                                        >
-                                                                            <Box
-                                                                                sx={{
-                                                                                    position:
-                                                                                        'absolute',
-                                                                                    insetInlineStart: 9,
-                                                                                    top: 4,
-                                                                                    width: 14,
-                                                                                    height: 14,
-                                                                                    borderRadius:
-                                                                                        '50%',
-                                                                                    bgcolor:
-                                                                                        'background.paper',
-                                                                                    border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
-                                                                                }}
-                                                                            />
-                                                                            <Typography
-                                                                                variant='body2'
-                                                                                fontWeight={
-                                                                                    600
-                                                                                }
-                                                                            >
-                                                                                {getRelativeDate(
-                                                                                    timestamp,
-                                                                                )}
-                                                                            </Typography>
-                                                                            <Typography
-                                                                                variant='caption'
-                                                                                color='text.secondary'
-                                                                            >
-                                                                                {t(
-                                                                                    'login.lastLogin',
-                                                                                )}
-                                                                            </Typography>
-                                                                        </Box>
-                                                                    ),
-                                                                )}
-                                                        </Stack>
-                                                    </Box>
-                                                ) : (
-                                                    <Typography
-                                                        sx={{ py: 4 }}
-                                                        color='text.secondary'
-                                                        textAlign='center'
-                                                    >
-                                                        لا يوجد نشاطات حديثة
-                                                    </Typography>
-                                                )}
-                                            </CardContent>
-                                        </Card>
-                                    </Grid> */}
-                                    {/* Activity History */}
                                     {/* Activity History */}
                                     <Grid size={{ xs: 12, lg: 4 }}>
                                         <Card
@@ -1290,6 +1174,7 @@ const Profile: FunctionComponent = () => {
                                                         )}
                                                     </Button>
                                                 </Stack>
+                                                <QuickActionsTab user={user} />
                                             </Card>
                                         </Grid>
                                     </Grid>

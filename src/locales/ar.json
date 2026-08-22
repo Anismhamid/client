@@ -16,6 +16,8 @@
     "address": "العنوان",
     "userType": "نوع المستخدم",
     "email": "البريد الإلكتروني",
+    "darkMode": "الوضع الليلي",
+    "lightMode": "الوضع النهاري",
     "review": {
         "questionsAndReviews": "الأسئلة والتقييمات",
         "questionsAndReviewsSubtitle": "شجّع الزوار على مشاركة انطباعاتهم وطرح الأسئلة قبل الشراء",
@@ -917,7 +919,8 @@
         "about": "من نحن",
         "contact": "اتصل بنا",
         "login": "دخول",
-        "logout": "تسجيل الخروج"
+        "logout": "تسجيل الخروج",
+        "messages": "المحادثات"
     },
     "pages": {
         "contact": {
@@ -1631,13 +1634,28 @@
         "myPosts": "اعلاناتي",
         "myFavorites": "حالات الاعجاب",
         "ratings": "التقييم",
-        "completed":"اكتمال الملف الشخصي",
-        "settings":"الإعدادات",
-        "accountSettings":"إعدادات الحساب",
-        "dataPrivacy":" خصوصية البيانات",
-        "appearanceSettings":"إعدادات الظهور",
-        "accountPrivacy":"خصوصية الحساب",
-        "mailNotifications":"إشعارات البريد"
+        "completed": "اكتمال الملف الشخصي",
+        "settings": "الإعدادات",
+        "accountSettings": "إعدادات الحساب",
+        "dataPrivacy": " خصوصية البيانات",
+        "appearanceSettings": "إعدادات الظهور",
+        "accountPrivacy": "خصوصية الحساب",
+        "mailNotifications": "إشعارات البريد",
+        "quickProcedures": "إجراءات سريعة",
+        "changePassword": "تغيير كلمه المرور",
+        "dataExport": "تصدير البيانات",
+        "technicalSupport": "دعم الفني",
+        "myBusinessPage": "صفحتي التجارية",
+        "roles": {
+            "admin": "مدير ومشرف",
+            "moderator": "مشرف",
+            "user": "مستخدم"
+        },
+        "address": {
+            "city": "البلد",
+            "street": "الشارع",
+            "houseNumber": "رقم البيت"
+        }
     },
     "footer": {
         "siteName": "موقع صفقه",

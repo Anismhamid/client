@@ -10,12 +10,14 @@ import { useNavigate } from 'react-router-dom';
 import { path } from '../../../../routes/routes';
 import { showSuccess } from '../../../../atoms/toasts/ReactToast';
 import { User } from '../../../../interfaces/chat/usersMessages';
+import { useTranslation } from 'react-i18next';
 
 interface QuickActionsTabProps {
     user: User;
 }
 
 const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const contactSupport = () => {
@@ -30,7 +32,7 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
         <Card variant='outlined' sx={{ borderRadius: 3, mt: 3 }}>
             <CardContent>
                 <Typography variant='h6' gutterBottom fontWeight={800}>
-                    إجراءات سريعة
+                    {t('profile.quickProcedures')}
                 </Typography>
                 <Grid container spacing={1.5}>
                     <Grid size={{ xs: 12, sm: 6 }}>
@@ -39,9 +41,14 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             fullWidth
                             disabled
                             startIcon={<SecurityIcon />}
-                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
+                            sx={{
+                                py: 1.25,
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                                borderRadius: 999,
+                            }}
                         >
-                            تغيير كلمة المرور (قريبأ)
+                            {t('profile.changePassword')}
                         </Button>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
@@ -50,9 +57,14 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             fullWidth
                             startIcon={<SupportIcon />}
                             onClick={contactSupport}
-                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
+                            sx={{
+                                py: 1.25,
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                                borderRadius: 999,
+                            }}
                         >
-                            دعم فني
+                            {t('profile.technicalSupport')}
                         </Button>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
@@ -62,9 +74,14 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             disabled
                             startIcon={<Download />}
                             onClick={handleExportData}
-                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
+                            sx={{
+                                py: 1.25,
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                                borderRadius: 999,
+                            }}
                         >
-                            تصدير البيانات (قريبأ)
+                            {t('profile.dataExport')}
                         </Button>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6 }}>
@@ -72,10 +89,17 @@ const QuickActionsTab: FunctionComponent<QuickActionsTabProps> = ({ user }) => {
                             variant='outlined'
                             fullWidth
                             startIcon={<QrCode />}
-                            onClick={() => navigate(`/users/customer/${user?.slug}`)}
-                            sx={{ py: 1.25, justifyContent: 'flex-start', gap: 2, borderRadius: 999 }}
+                            onClick={() =>
+                                navigate(`/users/customer/${user?.slug}`)
+                            }
+                            sx={{
+                                py: 1.25,
+                                justifyContent: 'flex-start',
+                                gap: 2,
+                                borderRadius: 999,
+                            }}
                         >
-                            الصفحتي التجارية
+                            {t('profile.myBusinessPages')}
                         </Button>
                     </Grid>
                 </Grid>

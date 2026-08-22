@@ -13,6 +13,8 @@
     "fullName": "Full Name",
     "secondaryPhone": "Secondary Phone",
     "userType": "User Type",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
     "review": {
         "questionsAndReviews": "Questions & Reviews",
         "questionsAndReviewsSubtitle": "Encourage visitors to share their impressions and ask questions before purchasing",
@@ -912,7 +914,8 @@
         "login": "Login",
         "logout": "Logout",
         "orders": "Orders",
-        "receipts": "Receipts"
+        "receipts": "Receipts",
+        "messages": "Chat"
     },
     "orders": {
         "status": {
@@ -1667,10 +1670,10 @@
     },
     "profile": {
         "title": "Profile",
-        "membershipCard": "Membership Card · Safqa",
-        "memberSinse": "Member Since",
-        "myPosts": "My Posts",
-        "myFavorites": "Liked Posts",
+        "membershipCard": "Membership Card · صفقة",
+        "memberSinse": "Member since",
+        "myPosts": "My Listings",
+        "myFavorites": "My Favorites",
         "ratings": "Rating",
         "completed": "Profile Completion",
         "settings": "Settings",
@@ -1678,7 +1681,23 @@
         "dataPrivacy": "Data Privacy",
         "appearanceSettings": "Appearance Settings",
         "accountPrivacy": "Account Privacy",
-        "mailNotifications": "Email Notifications"
+        "mailNotifications": "Email Notifications",
+        "quickProcedures": "Quick Actions",
+        "changePassword": "Change Password",
+        "dataExport": "Export Data",
+        "technicalSupport": "Technical Support",
+        "myBusinessPage": "My Business Page",
+           "roles": {
+        "admin": "Admin",
+        "moderator": "Moderator",
+        "user": "User"
+    },
+    "address": {
+        "city": "City",
+        "street": "Street",
+        "houseNumber": "House number"
+    }
+
     },
 
     "footer": {
