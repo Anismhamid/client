@@ -1627,26 +1627,37 @@
         "storeStatistics": "סטטיסטיקות החנות",
         "ads": "קידום"
     },
-   "profile": {
-    "title": "פרופיל",
-    "membershipCard": "כרטיס חבר · صفقة",
-    "memberSinse": "חבר מאז",
-    "myPosts": "המודעות שלי",
-    "myFavorites": "המועדפים שלי",
-    "ratings": "דירוג",
-    "completed": "השלמת הפרופיל",
-    "settings": "הגדרות",
-    "accountSettings": "הגדרות החשבון",
-    "dataPrivacy": "פרטיות הנתונים",
-    "appearanceSettings": "הגדרות תצוגה",
-    "accountPrivacy": "פרטיות החשבון",
-    "mailNotifications": "התראות בדוא״ל",
-    "quickProcedures": "פעולות מהירות",
-    "changePassword": "שינוי סיסמה",
-    "dataExport": "ייצוא נתונים",
-    "technicalSupport": "תמיכה טכנית",
-    "myBusinessPage": "הדף העסקי שלי"
-},
+    "profile": {
+        "title": "פרופיל",
+        "membershipCard": "כרטיס חבר · صفقة",
+        "memberSinse": "חבר מאז",
+        "myPosts": "המודעות שלי",
+        "myFavorites": "המועדפים שלי",
+        "ratings": "דירוג",
+        "completed": "השלמת הפרופיל",
+        "settings": "הגדרות",
+        "accountSettings": "הגדרות החשבון",
+        "dataPrivacy": "פרטיות הנתונים",
+        "appearanceSettings": "הגדרות תצוגה",
+        "accountPrivacy": "פרטיות החשבון",
+        "mailNotifications": "התראות בדוא״ל",
+        "quickProcedures": "פעולות מהירות",
+        "changePassword": "שינוי סיסמה",
+        "dataExport": "ייצוא נתונים",
+        "technicalSupport": "תמיכה טכנית",
+        "myBusinessPage": "הדף העסקי שלי",
+
+        "roles": {
+            "admin": "מנהל ומפקח",
+            "moderator": "מפקח",
+            "user": "משתמש"
+        },
+        "address": {
+            "city": "יישוב",
+            "street": "רחוב",
+            "houseNumber": "מספר בית"
+        }
+    },
 
     "footer": {
         "siteName": "אתר ספקה",
