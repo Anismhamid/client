@@ -63,6 +63,13 @@
         "inactive": "غير نشط",
         "lastActivity": "اخر ظهور"
     },
+    "activity": {
+        "title": "سجل النشاط",
+        "empty": "لا يوجد نشاطات حديثة",
+        "lastLogin": "آخر تسجيل دخول",
+        "today": "اليوم",
+        "yesterday": "أمس"
+    },
     "messages": {
         "welcome": "دردشة موقع صفقه",
         "chooseChat": "اختر محادثة من القائمة للبدء",
@@ -343,8 +350,8 @@
         }
     },
     "loader": {
-        "welcome": "مرحبًا بكم في موقع صفقه",
-        "message": "قد تستغرق عملية التحميل الأولى حتى 50 ثانية لأن الخادم مجاني. يرجى التحلي بالصبر"
+        "welcome": "مرحبًا بكم في موقع صفقة",
+        "message": "جاري تجهيز كل شي إلك... ثانية وبنكون جاهزين"
     },
 
     "categories": {
@@ -1616,6 +1623,21 @@
         "siteModerator": "مشرف الموقع",
         "storeStatistics": "إحصائيات المتجر",
         "ads": "الترويج"
+    },
+    "profile": {
+        "title": "الملف الشخصي",
+        "membershipCard": "بطاقة عضوية · صفقة",
+        "memberSinse": "عضو منذ",
+        "myPosts": "اعلاناتي",
+        "myFavorites": "حالات الاعجاب",
+        "ratings": "التقييم",
+        "completed":"اكتمال الملف الشخصي",
+        "settings":"الإعدادات",
+        "accountSettings":"إعدادات الحساب",
+        "dataPrivacy":" خصوصية البيانات",
+        "appearanceSettings":"إعدادات الظهور",
+        "accountPrivacy":"خصوصية الحساب",
+        "mailNotifications":"إشعارات البريد"
     },
     "footer": {
         "siteName": "موقع صفقه",

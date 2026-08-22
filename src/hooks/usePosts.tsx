@@ -1,58 +1,86 @@
-// shared/hooks/usePosts.ts
-import { useEffect, useRef, useState, useCallback } from "react";
-import { getAllPosts } from "../services/postsServices";
-import { Posts } from "../interfaces/Posts";
+import {
+    useEffect,
+    useRef,
+    useState,
+    useCallback,
+} from 'react';
+
+import { getAllPosts } from '../services/postsServices';
+import { Posts } from '../interfaces/Posts';
+
+interface ApiError {
+    response?: {
+        data?: {
+            message?: string;
+        };
+    };
+}
+
+const isApiError = (error: unknown): error is ApiError => {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error
+    );
+};
 
 export const usePosts = () => {
-	const [posts, setPosts] = useState<Posts[]>([]);
-	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState<boolean>(true);
+    const [posts, setPosts] = useState<Posts[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
-	const isMounted = useRef(true);
+    const isMounted = useRef(true);
 
-	const fetchPosts = useCallback(async () => {
-		try {
-			setLoading(true);
-			setError(null);
+    const fetchPosts = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError(null);
 
-			const data = await getAllPosts();
+            const data = await getAllPosts();
 
-			if (isMounted.current) {
-				setPosts(data);
-			}
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		} catch (err: any) {
-			console.error(err);
+            if (isMounted.current) {
+                setPosts(data);
+            }
+        } catch (err: unknown) {
+            console.error(err);
 
-			if (isMounted.current) {
-				setError(err?.response?.data?.message || "Failed to load posts");
-			}
-		} finally {
-			if (isMounted.current) {
-				setLoading(false);
-			}
-		}
-	}, []);
+            if (isMounted.current) {
+                let errorMessage = 'Failed to load posts';
 
-	useEffect(() => {
-		isMounted.current = true;
+                if (isApiError(err)) {
+                    errorMessage =
+                        err.response?.data?.message ||
+                        errorMessage;
+                }
 
-		fetchPosts();
+                setError(errorMessage);
+            }
+        } finally {
+            if (isMounted.current) {
+                setLoading(false);
+            }
+        }
+    }, []);
 
-		return () => {
-			isMounted.current = false;
-		};
-	}, [fetchPosts]);
+    useEffect(() => {
+        isMounted.current = true;
 
-	// 🔥 refetch function
-	const refetch = () => {
-		fetchPosts();
-	};
+        fetchPosts();
 
-	return {
-		posts,
-		error,
-		loading,
-		refetch,
-	};
+        return () => {
+            isMounted.current = false;
+        };
+    }, [fetchPosts]);
+
+    const refetch = useCallback(() => {
+        fetchPosts();
+    }, [fetchPosts]);
+
+    return {
+        posts,
+        setPosts,
+        error,
+        loading,
+        refetch,
+    };
 };

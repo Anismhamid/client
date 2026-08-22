@@ -56,7 +56,9 @@
         "title": "סטטוס",
         "active": "פעיל",
         "inactive": "לא פעיל",
-        "lastActivity": "פעילות אחרונה"
+        "lastActivity": "פעילות אחרונה",
+        "today": "היום",
+        "yesterday": "אתמול"
     },
     "description": "אתר ספקה - זירת מסחר מקוונת לקנייה ומכירה של מוצרים",
     "messages": {
@@ -303,8 +305,8 @@
         }
     },
     "loader": {
-        "welcome": "ברוכים הבאים לאתרספקה",
-        "message": "הטענה ראשונית עשויה לקחת עד 50 שניות מכיוון שהשרת חינמי. אנא סבלנות."
+        "welcome": "ברוכים הבאים לאתר ספקה",
+        "message": "אנחנו מכינים הכול בשבילכם... עוד שנייה ואנחנו מוכנים!"
     },
 
     "categories": {
@@ -883,6 +885,11 @@
             "shipped": "סופק",
             "cancelled": "בוטל"
         }
+    },
+    "activity": {
+        "title": "سجل النشاط",
+        "empty": "لا يوجد نشاطات حديثة",
+        "lastLogin": "آخر تسجيل دخول"
     },
     "pages": {
         "receipts": {
@@ -1618,6 +1625,21 @@
         "siteModerator": "מפקח האתר",
         "storeStatistics": "סטטיסטיקות החנות",
         "ads": "קידום"
+    },
+    "profile": {
+        "title": "הפרופיל האישי",
+        "membershipCard": "כרטיס חברות · ספקה",
+        "memberSinse": "חבר מאז",
+        "myPosts": "המודעות שלי",
+        "myFavorites": "פוסטים שאהבתי",
+        "ratings": "דירוג",
+        "completed": "השלמת הפרופיל",
+        "settings": "הגדרות",
+        "accountSettings": "הגדרות החשבון",
+        "dataPrivacy": "פרטיות הנתונים",
+        "appearanceSettings": "הגדרות תצוגה",
+        "accountPrivacy": "פרטיות החשבון",
+        "mailNotifications": "התראות באימייל"
     },
 
     "footer": {

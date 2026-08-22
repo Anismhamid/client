@@ -43,6 +43,7 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
 import { useUserPosts } from '../../../hooks/useUserPosts';
+import { usePosts } from '../../../hooks/usePosts';
 import useToken from '../../../hooks/useToken';
 import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
@@ -56,6 +57,7 @@ import EditUserData from '../../navbar/userManage/EditUserData';
 import QuickActionsTab from './tabs/QuickActionsTab';
 import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
+import Loader from '../../../atoms/loader/Loader';
 
 const INK = 'primary'; // '#12161C';
 const ACCENT = '#f59e0b'; // brand amber, used across navbar/switch/active states
@@ -68,28 +70,6 @@ const getCompletionColor = (percentage: number) => {
     if (percentage >= 80) return '#22c55e';
     if (percentage >= 50) return ACCENT;
     return '#ef4444';
-};
-
-/**
- * Human-friendly relative date for the activity feed: "اليوم"، "أمس"، or
- * a short date for anything older.
- */
-const getRelativeDate = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const today = new Date();
-    const diffDays = Math.floor(
-        (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
-            86400000,
-    );
-
-    const time = date.toLocaleTimeString('ar', {
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-    if (diffDays === 0) return `اليوم، ${time}`;
-    if (diffDays === 1) return `أمس، ${time}`;
-    return `${date.toLocaleDateString('ar', { day: 'numeric', month: 'short' })}، ${time}`;
 };
 
 /**
@@ -117,6 +97,27 @@ const Profile: FunctionComponent = () => {
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
         });
+    };
+    /**
+     * Human-friendly relative date for the activity feed: "اليوم"، "أمس"، or
+     * a short date for anything older.
+     */
+    const getRelativeDate = (timestamp: string) => {
+        const date = new Date(timestamp);
+        const today = new Date();
+        const diffDays = Math.floor(
+            (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
+                86400000,
+        );
+
+        const time = date.toLocaleTimeString('ar', {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+
+        if (diffDays === 0) return `${t('activity.today')}، ${time}`;
+        if (diffDays === 1) return `${t('activity.yesterday')}، ${time}`;
+        return `${date.toLocaleDateString('ar', { day: 'numeric', month: 'short' })}، ${time}`;
     };
 
     const { id } = useParams();
@@ -154,6 +155,7 @@ const Profile: FunctionComponent = () => {
     });
 
     const { userPosts, loading: productsLoading } = useUserPosts(user.slug);
+    const { posts } = usePosts();
 
     const calculateProfileCompletion = (user: User) => {
         const fields = [
@@ -174,13 +176,15 @@ const Profile: FunctionComponent = () => {
     const calculateRating = (products: Posts[]) => {
         if (!products.length) return 0;
 
-        const ratings = products.flatMap(
-            (p) => p.reviews?.map((r) => r.rating) || [],
-        );
+        const ratings = products
+            .flatMap((p) => p.reviews?.map((review) => review.rating) ?? [])
+            .filter((rating): rating is number => rating !== undefined);
 
         if (!ratings.length) return 0;
 
-        const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
+        const avg =
+            ratings.reduce((sum: number, rating: number) => sum + rating, 0) /
+            ratings.length;
         return Number(avg.toFixed(1));
     };
 
@@ -188,7 +192,7 @@ const Profile: FunctionComponent = () => {
         const profileUrl = `${window.location.origin}/users/customer/${user.slug}`;
         if (navigator.share) {
             navigator.share({
-                title: `الملف الشخصي لـ ${user.name.first} ${user.name.last}`,
+                title: `${t('profile.title')} ${user.name.first} ${user.name.last}`,
                 text: `اطلع على ملفي الشخصي على موقع صفقه`,
                 url: profileUrl,
             });
@@ -226,10 +230,19 @@ const Profile: FunctionComponent = () => {
     }, [id, decodedToken, targetId]);
 
     const stats = useMemo(() => {
+        const viewerId = decodedToken?._id;
+        const totalFavorites = viewerId
+            ? posts.filter(
+                  (post) =>
+                      Array.isArray(post.likes) &&
+                      post.likes.includes(viewerId),
+              ).length
+            : 0;
+
         if (!user)
             return {
                 totalProducts: userPosts.length,
-                totalFavorites: 0,
+                totalFavorites,
                 rating: 0,
                 totalLikesOnMyProducts: 0,
                 completionPercentage: 0,
@@ -237,11 +250,11 @@ const Profile: FunctionComponent = () => {
 
         return {
             totalProducts: userPosts.length,
-            totalFavorites: 0,
+            totalFavorites,
             rating: calculateRating(userPosts || []),
             completionPercentage: calculateProfileCompletion(user),
         };
-    }, [user, userPosts]);
+    }, [user, userPosts, posts, decodedToken]);
 
     const handleDeleteAccount = () => {
         if (!decodedToken?._id) return;
@@ -259,39 +272,12 @@ const Profile: FunctionComponent = () => {
         setActiveTab(newValue);
     };
 
-    if (loading || productsLoading) {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    minHeight: '80vh',
-                    gap: 3,
-                }}
-            >
-                <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: 'linear',
-                    }}
-                >
-                    <CircularProgress size={60} thickness={3} />
-                </motion.div>
-                <Typography variant='h6' color='text.secondary'>
-                    جاري تحميل الملف الشخصي...
-                </Typography>
-            </Box>
-        );
-    }
+    if (loading || productsLoading) return <Loader />;
 
     const tabs = [
-        { label: 'الملف الشخصي', icon: <Person /> },
-        { label: 'المفضلة', icon: <Favorite /> },
-        { label: 'الإعدادات', icon: <Settings /> },
+        { label: t('profile.title'), icon: <Person /> },
+        { label: t('profile.myFavorites'), icon: <Favorite /> },
+        { label: t('profile.settings'), icon: <Settings /> },
     ];
     const currentUrl = `https://client-qqq1.vercel.app/profile`;
 
@@ -302,20 +288,21 @@ const Profile: FunctionComponent = () => {
             icon: <ShoppingCart sx={{ fontSize: 24 }} />,
             color: theme.palette.primary.main,
             value: userPosts.length || 0,
-            label: 'منشوراتي',
+            label: t('profile.myPosts'),
             to: `/users/customer/${user.slug}`,
         },
         {
             icon: <Favorite sx={{ fontSize: 24 }} />,
             color: '#ef4444',
             value: stats.totalFavorites,
-            label: t('favorites'),
+            label: t('profile.myFavorites'),
+            to: path.Favorite,
         },
         {
             icon: <Star sx={{ fontSize: 24 }} />,
             color: ACCENT,
             value: stats.rating.toFixed(1),
-            label: 'تقييم',
+            label: t('profile.ratings'),
         },
     ];
 
@@ -400,7 +387,7 @@ const Profile: FunctionComponent = () => {
                                         fontWeight: 700,
                                     }}
                                 >
-                                    بطاقة عضوية · صفقة
+                                    {t('profile.membershipCard')}
                                 </Typography>
                                 <Stack direction='row' gap={1}>
                                     <Tooltip title='مشاركة'>
@@ -551,10 +538,12 @@ const Profile: FunctionComponent = () => {
                                         <Chip
                                             label={
                                                 user.role === 'Admin'
-                                                    ? 'مدير'
+                                                    ? t('accountMenu.admin')
                                                     : user.role === 'Moderator'
-                                                      ? 'مشرف'
-                                                      : 'مستخدم'
+                                                      ? t(
+                                                            'accountMenu.moderator',
+                                                        )
+                                                      : t('accountMenu.client')
                                             }
                                             size='small'
                                             sx={{
@@ -565,8 +554,8 @@ const Profile: FunctionComponent = () => {
                                         <Chip
                                             label={
                                                 user.status === true
-                                                    ? 'نشط'
-                                                    : 'غير نشط'
+                                                    ? t('status.active')
+                                                    : t('status.inActive')
                                             }
                                             size='small'
                                             sx={{
@@ -641,7 +630,7 @@ const Profile: FunctionComponent = () => {
                                                     sx={{ opacity: 0.6 }}
                                                 />
                                                 <Typography variant='body2'>
-                                                    عضو منذ:{' '}
+                                                    {t('profile.memberSinse')} :
                                                     {formatDate(user.createdAt)}
                                                 </Typography>
                                             </Box>
@@ -747,55 +736,77 @@ const Profile: FunctionComponent = () => {
                                     }}
                                 >
                                     <Tooltip
-                                        title={`اكتمال الملف الشخصي: ${stats.completionPercentage}%`}
+                                        title={`${t('profile.complete')}: ${stats.completionPercentage}%`}
                                     >
                                         <Box
                                             sx={{
-                                                position: 'relative',
-                                                display: 'inline-flex',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: 0.5,
                                             }}
                                         >
-                                            <CircularProgress
-                                                variant='determinate'
-                                                value={100}
-                                                size={64}
-                                                thickness={4}
-                                                sx={{
-                                                    color: alpha(
-                                                        completionColor,
-                                                        0.15,
-                                                    ),
-                                                    position: 'absolute',
-                                                }}
-                                            />
-                                            <CircularProgress
-                                                variant='determinate'
-                                                value={
-                                                    stats.completionPercentage
-                                                }
-                                                size={64}
-                                                thickness={4}
-                                                sx={{
-                                                    color: completionColor,
-                                                }}
-                                            />
                                             <Box
                                                 sx={{
-                                                    position: 'absolute',
-                                                    inset: 0,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
+                                                    position: 'relative',
+                                                    display: 'inline-flex',
                                                 }}
                                             >
-                                                <Typography
-                                                    variant='caption'
-                                                    fontWeight={800}
+                                                <CircularProgress
+                                                    variant='determinate'
+                                                    value={100}
+                                                    size={64}
+                                                    thickness={4}
+                                                    sx={{
+                                                        color: alpha(
+                                                            completionColor,
+                                                            0.15,
+                                                        ),
+                                                        position: 'absolute',
+                                                    }}
+                                                />
+
+                                                <CircularProgress
+                                                    variant='determinate'
+                                                    value={
+                                                        stats.completionPercentage
+                                                    }
+                                                    size={64}
+                                                    thickness={4}
+                                                    sx={{
+                                                        color: completionColor,
+                                                    }}
+                                                />
+
+                                                <Box
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        inset: 0,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent:
+                                                            'center',
+                                                    }}
                                                 >
-                                                    {stats.completionPercentage}
-                                                    %
-                                                </Typography>
+                                                    <Typography
+                                                        variant='caption'
+                                                        fontWeight={800}
+                                                    >
+                                                        {
+                                                            stats.completionPercentage
+                                                        }
+                                                        %
+                                                    </Typography>
+                                                </Box>
                                             </Box>
+                                            <Typography
+                                            mt={3}
+                                                variant='body2'
+                                                color='text.secondary'
+                                            >
+                                                {t('profile.completed')}
+                                            </Typography>
                                         </Box>
                                     </Tooltip>
                                 </Grid>
@@ -869,7 +880,7 @@ const Profile: FunctionComponent = () => {
                                     </Grid>
 
                                     {/* Activity History */}
-                                    <Grid size={{ xs: 12, lg: 4 }}>
+                                    {/* <Grid size={{ xs: 12, lg: 4 }}>
                                         <Card
                                             variant='outlined'
                                             sx={{
@@ -987,6 +998,219 @@ const Profile: FunctionComponent = () => {
                                                 )}
                                             </CardContent>
                                         </Card>
+                                    </Grid> */}
+                                    {/* Activity History */}
+                                    {/* Activity History */}
+                                    <Grid size={{ xs: 12, lg: 4 }}>
+                                        <Card
+                                            variant='outlined'
+                                            sx={{
+                                                borderRadius: 3,
+                                                height: '100%',
+                                                overflow: 'hidden',
+                                                position: 'relative',
+                                                '&::before': {
+                                                    content: '""',
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    height: '4px',
+                                                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${ACCENT})`,
+                                                },
+                                            }}
+                                        >
+                                            <CardContent sx={{ pt: 3 }}>
+                                                <Stack
+                                                    direction='row'
+                                                    alignItems='center'
+                                                    spacing={1.5}
+                                                    mb={3}
+                                                >
+                                                    <Box
+                                                        sx={{
+                                                            width: 36,
+                                                            height: 36,
+                                                            borderRadius: '50%',
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
+                                                            bgcolor: alpha(
+                                                                theme.palette
+                                                                    .primary
+                                                                    .main,
+                                                                0.12,
+                                                            ),
+                                                            color: theme.palette
+                                                                .primary.main,
+                                                        }}
+                                                    >
+                                                        <HistoryIcon fontSize='small' />
+                                                    </Box>
+                                                    <Typography
+                                                        variant='h6'
+                                                        fontWeight={800}
+                                                    >
+                                                        {t('activity.title')}
+                                                    </Typography>
+                                                </Stack>
+
+                                                {user.activity?.length ? (
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'relative',
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                position:
+                                                                    'absolute',
+                                                                top: 6,
+                                                                bottom: 6,
+                                                                insetInlineStart: 15,
+                                                                width: '2px',
+                                                                background: `linear-gradient(180deg, ${ACCENT}, ${alpha(theme.palette.divider, 0.5)})`,
+                                                            }}
+                                                        />
+                                                        <Stack spacing={2.5}>
+                                                            {user.activity
+                                                                .slice(-5)
+                                                                .reverse()
+                                                                .map(
+                                                                    (
+                                                                        timestamp,
+                                                                        index,
+                                                                    ) => (
+                                                                        <Box
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            sx={{
+                                                                                position:
+                                                                                    'relative',
+                                                                                paddingInlineStart:
+                                                                                    '38px',
+                                                                            }}
+                                                                        >
+                                                                            <Box
+                                                                                sx={{
+                                                                                    position:
+                                                                                        'absolute',
+                                                                                    insetInlineStart: 6,
+                                                                                    top: 2,
+                                                                                    width: 20,
+                                                                                    height: 20,
+                                                                                    borderRadius:
+                                                                                        '50%',
+                                                                                    display:
+                                                                                        'flex',
+                                                                                    alignItems:
+                                                                                        'center',
+                                                                                    justifyContent:
+                                                                                        'center',
+                                                                                    bgcolor:
+                                                                                        index ===
+                                                                                        0
+                                                                                            ? ACCENT
+                                                                                            : theme
+                                                                                                  .palette
+                                                                                                  .background
+                                                                                                  .paper,
+                                                                                    border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
+                                                                                    boxShadow:
+                                                                                        index ===
+                                                                                        0
+                                                                                            ? `0 0 0 4px ${alpha(ACCENT, 0.15)}`
+                                                                                            : 'none',
+                                                                                }}
+                                                                            >
+                                                                                {index ===
+                                                                                    0 && (
+                                                                                    <Box
+                                                                                        sx={{
+                                                                                            width: 6,
+                                                                                            height: 6,
+                                                                                            borderRadius:
+                                                                                                '50%',
+                                                                                            bgcolor:
+                                                                                                '#fff',
+                                                                                        }}
+                                                                                    />
+                                                                                )}
+                                                                            </Box>
+                                                                            <Typography
+                                                                                variant='body2'
+                                                                                fontWeight={
+                                                                                    600
+                                                                                }
+                                                                            >
+                                                                                {getRelativeDate(
+                                                                                    timestamp,
+                                                                                )}
+                                                                            </Typography>
+                                                                            <Typography
+                                                                                variant='caption'
+                                                                                color='text.secondary'
+                                                                            >
+                                                                                {t(
+                                                                                    'activity.lastLogin',
+                                                                                )}
+                                                                            </Typography>
+                                                                        </Box>
+                                                                    ),
+                                                                )}
+                                                        </Stack>
+                                                    </Box>
+                                                ) : (
+                                                    <Box
+                                                        sx={{
+                                                            py: 5,
+                                                            display: 'flex',
+                                                            flexDirection:
+                                                                'column',
+                                                            alignItems:
+                                                                'center',
+                                                            gap: 1,
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                width: 48,
+                                                                height: 48,
+                                                                borderRadius:
+                                                                    '50%',
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                                justifyContent:
+                                                                    'center',
+                                                                bgcolor: alpha(
+                                                                    theme
+                                                                        .palette
+                                                                        .text
+                                                                        .secondary,
+                                                                    0.08,
+                                                                ),
+                                                                color: 'text.secondary',
+                                                            }}
+                                                        >
+                                                            <HistoryIcon />
+                                                        </Box>
+                                                        <Typography
+                                                            color='text.secondary'
+                                                            textAlign='center'
+                                                        >
+                                                            {t(
+                                                                'activity.empty',
+                                                            )}
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </CardContent>
+                                        </Card>
                                     </Grid>
                                 </Grid>
                             </motion.div>
@@ -1002,7 +1226,7 @@ const Profile: FunctionComponent = () => {
                                         gutterBottom
                                         fontWeight={800}
                                     >
-                                        إعدادات الحساب
+                                        {t('profile.accountSettings')}
                                     </Typography>
                                     <Grid container spacing={3}>
                                         <Grid size={{ xs: 12, md: 6 }}>
@@ -1015,7 +1239,7 @@ const Profile: FunctionComponent = () => {
                                                     fontWeight={700}
                                                     gutterBottom
                                                 >
-                                                    خصوصية البيانات
+                                                    {t('profile.dataPrivacy')}
                                                 </Typography>
                                                 <Stack spacing={1.5}>
                                                     <Button
@@ -1031,7 +1255,9 @@ const Profile: FunctionComponent = () => {
                                                             borderRadius: 999,
                                                         }}
                                                     >
-                                                        إعدادات الظهور
+                                                        {t(
+                                                            'profile.appearanceSettings',
+                                                        )}
                                                     </Button>
                                                     <Button
                                                         disabled
@@ -1044,7 +1270,9 @@ const Profile: FunctionComponent = () => {
                                                             borderRadius: 999,
                                                         }}
                                                     >
-                                                        خصوصية الحساب
+                                                        {t(
+                                                            'profile.accountPrivacy',
+                                                        )}
                                                     </Button>
                                                     <Button
                                                         disabled
@@ -1057,66 +1285,9 @@ const Profile: FunctionComponent = () => {
                                                             borderRadius: 999,
                                                         }}
                                                     >
-                                                        إشعارات البريد
-                                                    </Button>
-                                                </Stack>
-                                            </Card>
-                                        </Grid>
-                                        <Grid size={{ xs: 12, md: 6 }}>
-                                            <Card
-                                                variant='outlined'
-                                                sx={{ p: 2, borderRadius: 3 }}
-                                            >
-                                                <Typography
-                                                    variant='subtitle1'
-                                                    fontWeight={700}
-                                                    gutterBottom
-                                                >
-                                                    معلومات الدفع
-                                                </Typography>
-                                                <Stack spacing={1.5}>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={
-                                                            <ShoppingCart />
-                                                        }
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        البطاقات المصرفية
-                                                    </Button>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={
-                                                            <HistoryIcon />
-                                                        }
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        سجل الدفع (قريبأ)
-                                                    </Button>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={<Settings />}
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        إعدادات الدفع (قريبأ)
+                                                        {t(
+                                                            'profile.mailNotifications',
+                                                        )}
                                                     </Button>
                                                 </Stack>
                                             </Card>

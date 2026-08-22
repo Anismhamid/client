@@ -60,6 +60,7 @@ import handleRTL from '../../locales/handleRTL';
 import SafqaLogo from '../../atoms/SafqaLogo';
 import { Preferences } from '@capacitor/preferences';
 import { SavePassword } from '@capgo/capacitor-autofill-save-password';
+import Loader from '../../atoms/loader/Loader';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -124,6 +125,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [savedEmail, setSavedEmail] = useState<string>('');
     const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
+    const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+    const [isLoadingSavedCreds, setIsLoadingSavedCreds] =
+        useState<boolean>(true);
+    const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
+    const [isSubmittingUserInfo, setIsSubmittingUserInfo] =
+        useState<boolean>(false);
 
     const { t } = useTranslation();
 
@@ -247,6 +254,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
                 if (!isExpired) {
                     navigate(path.Home, { replace: true });
+                    return;
                 } else {
                     localStorage.removeItem('token');
                 }
@@ -255,6 +263,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 devLog(error);
             }
         }
+        setIsCheckingAuth(false);
     }, [navigate]);
 
     const loginSchema = useMemo(
@@ -368,6 +377,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     };
 
     const handleGoogleSignOut = async () => {
+        setIsSigningOut(true);
         try {
             if (Capacitor.isNativePlatform()) {
                 await SocialLogin.logout({
@@ -389,10 +399,13 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 t('login.errors.signOutFailed') ||
                     'Failed to sign out. Please try manually.',
             );
+        } finally {
+            setIsSigningOut(false);
         }
     };
 
     const handleUserInfoSubmit = async (userExtraData: any) => {
+        setIsSubmittingUserInfo(true);
         try {
             const token = await handleGoogleLogin(
                 googleResponse,
@@ -413,6 +426,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     'Something went wrong. Please try again.',
             );
             setShowModal(false);
+        } finally {
+            setIsSubmittingUserInfo(false);
         }
     };
 
@@ -440,6 +455,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                 setSavedEmail(email);
                 setRememberMe(true);
             }
+            setIsLoadingSavedCreds(false);
         })();
     }, []);
 
@@ -482,6 +498,11 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
             background: theme.palette.action.disabledBackground,
         },
     };
+
+    // لسا عم نتحقق من التوكن المخزن قبل ما نعرض فورم اللوجين
+    if (isCheckingAuth) {
+        return <Loader />;
+    }
 
     return (
         <>
@@ -586,7 +607,9 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         fullWidth
                                         margin='normal'
                                         variant='outlined'
-                                        disabled={isPending}
+                                        disabled={
+                                            isPending || isLoadingSavedCreds
+                                        }
                                         color='primary'
                                         inputProps={{ maxLength: 254 }}
                                         InputProps={{
@@ -595,6 +618,13 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     <Email color='action' />
                                                 </InputAdornment>
                                             ),
+                                            endAdornment: isLoadingSavedCreds ? (
+                                                <InputAdornment position='end'>
+                                                    <CircularProgress
+                                                        size={16}
+                                                    />
+                                                </InputAdornment>
+                                            ) : undefined,
                                         }}
                                         sx={textFieldSx}
                                         autoComplete='email'
@@ -902,6 +932,15 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     }
                                                     fullWidth
                                                     size='medium'
+                                                    disabled={isSigningOut}
+                                                    startIcon={
+                                                        isSigningOut ? (
+                                                            <CircularProgress
+                                                                size={18}
+                                                                color='inherit'
+                                                            />
+                                                        ) : undefined
+                                                    }
                                                     sx={{
                                                         borderRadius: 50,
                                                         textTransform: 'none',
@@ -921,6 +960,9 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                                     .main,
                                                                 0.04,
                                                             ),
+                                                        },
+                                                        '&:disabled': {
+                                                            opacity: 0.7,
                                                         },
                                                     }}
                                                 >
@@ -1109,7 +1151,9 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
                 <UserInfoModal
                     isOpen={showModal}
+                    isSubmitting={isSubmittingUserInfo}
                     onClose={() => {
+                        if (isSubmittingUserInfo) return;
                         setShowModal(false);
                         setGoogleResponse(null);
                     }}

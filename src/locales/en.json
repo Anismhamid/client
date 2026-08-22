@@ -57,6 +57,13 @@
         "inactive": "Inactive",
         "lastActivity": "Last activity"
     },
+    "activity": {
+        "title": "Activity Log",
+        "empty": "No recent activity",
+        "lastLogin": "Last login",
+        "today": "Today",
+        "yesterday": "Yesterday"
+    },
     "messages": {
         "main": "Messages",
         "search": "Search messages",
@@ -335,8 +342,8 @@
     },
 
     "loader": {
-        "welcome": "Welcome to Safqa Marketplace",
-        "message": "The first load may take up to 50 seconds because the server is free. Please be patient."
+        "welcome": "Welcome to Safqa",
+        "message": "We're getting everything ready for you... Just a second and we'll be ready!"
     },
 
     "categories": {
@@ -1657,6 +1664,21 @@
         "siteModerator": "Site Moderator",
         "storeStatistics": "Store Statistics",
         "ads": "Manage ads"
+    },
+    "profile": {
+        "title": "Profile",
+        "membershipCard": "Membership Card · Safqa",
+        "memberSinse": "Member Since",
+        "myPosts": "My Posts",
+        "myFavorites": "Liked Posts",
+        "ratings": "Rating",
+        "completed": "Profile Completion",
+        "settings": "Settings",
+        "accountSettings": "Account Settings",
+        "dataPrivacy": "Data Privacy",
+        "appearanceSettings": "Appearance Settings",
+        "accountPrivacy": "Account Privacy",
+        "mailNotifications": "Email Notifications"
     },
 
     "footer": {
