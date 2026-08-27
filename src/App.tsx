@@ -12,7 +12,7 @@ import AppRoutes from './routes/AppRoutes.tsx';
 import Theme from './components/navbar/theme/AppTheme.tsx';
 import SpeedDialComponent from './atoms/productsManage/SpeedDialComponent.tsx';
 import useSocketEvents from './hooks/socket/useSocketEvents.ts';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import handleRTL from './locales/handleRTL.ts';
 import { Suspense } from 'react';
 import Loader from './atoms/loader/Loader.tsx';
@@ -23,6 +23,8 @@ import { Capacitor } from '@capacitor/core';
 import { setupNotificationNavigation } from './services/pushNotifications.service';
 import { useNavigate } from 'react-router-dom';
 import NotificationListener from './components/settings/NotificationListener.tsx';
+import axios from 'axios';
+const api = import.meta.env.VITE_API_URL;
 
 function App() {
     const { auth } = useUser();
@@ -33,6 +35,13 @@ function App() {
 
     // ✅ تفعيل Socket Events
     useSocketEvents();
+    const pingServer = useCallback(async () => {
+        await axios.get(api);
+    }, []);
+
+    useEffect(() => {
+        pingServer();
+    }, [pingServer]);
 
     // Manage theme mode state
     const getInitialMode = (): PaletteMode => {
@@ -55,7 +64,6 @@ function App() {
             });
         }
     }, [navigate]);
-
 
     // ✅ تحديث التوكن بشكل دوري (كل 5 دقائق)
     useEffect(() => {
