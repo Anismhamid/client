@@ -53,7 +53,7 @@ import {
 } from '@mui/icons-material';
 
 import { initialProductValue, Posts } from '../../../interfaces/Posts';
-import { path, productsPathes } from '../../../routes/routes';
+import { path } from '../../../routes/routes';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import ColorsAndSizes from '../../../atoms/productsManage/ColorsAndSizes';
 import { useTranslation } from 'react-i18next';
@@ -88,6 +88,8 @@ import { easeOut, motion } from 'framer-motion';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import PostSpecifications from './PostSpecifications';
+
+const SITE_URL = 'https://client-qqq1.vercel.app';
 
 /* =========================================================
    BRAND
@@ -276,8 +278,7 @@ const PostDetails: FunctionComponent = () => {
             return;
         }
 
-        const productUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
-
+        const productUrl = `${SITE_URL}${location.pathname}`;
         const initialMessage =
             `مرحباً، أنا مهتم ب"${post.product_name}" 💬\n\n` +
             `📦 السعر: ${formatPrice(post.price)}\n` +
@@ -288,9 +289,6 @@ const PostDetails: FunctionComponent = () => {
         openChat(seller as UserMessage, initialMessage);
     }, [
         post.seller,
-        post.category,
-        post.brand,
-        post._id,
         post.product_name,
         post.price,
         auth._id,
@@ -413,12 +411,12 @@ const PostDetails: FunctionComponent = () => {
 
     const handleShare = useCallback(async () => {
         setIsSharing(true);
-
+        const shareUrl = `${SITE_URL}${location.pathname}`;
         try {
             const shareData = {
                 title: `منتج ${post.product_name} رائع`,
                 text: `شاهد ${post.product_name} الآن على منصة صفقة`,
-                url: window.location.href,
+                url: shareUrl,
             };
 
             if (navigator.share) {
@@ -429,7 +427,7 @@ const PostDetails: FunctionComponent = () => {
                 return;
             }
 
-            await navigator.clipboard.writeText(window.location.href);
+            await navigator.clipboard.writeText(shareUrl);
 
             showSuccess('تم نسخ رابط المنتج');
         } catch (shareError) {
@@ -681,8 +679,7 @@ const PostDetails: FunctionComponent = () => {
 
     const productJsonLd = generateSingleProductJsonLd(post);
 
-    const currentUrl =
-        `${window.location.origin}/product/` + `${post.category}/${post._id}`;
+    const currentUrl = `${SITE_URL}${location.pathname}`;
 
     /* =====================================================
        RENDER
@@ -698,10 +695,7 @@ const PostDetails: FunctionComponent = () => {
 
             <meta
                 name='description'
-                content={
-                    `اشتري ${post.product_name} بأفضل سعر على صفقة. ` +
-                    `${post.description?.substring(0, 120) || ''}`
-                }
+                content={post.description?.slice(0, 160)}
             />
 
             <meta property='og:title' content={post.product_name} />
@@ -975,7 +969,7 @@ const PostDetails: FunctionComponent = () => {
                                                     },
                                                 }}
                                             >
-                                                تعديل
+                                                {t('edit')}
                                             </Button>
 
                                             <Button

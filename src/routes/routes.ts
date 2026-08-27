@@ -27,7 +27,6 @@ export const productsPathes = {
     pets: '/category/Pets',
     furniture: '/category/Furniture',
 
-    blog: '/blog',
     brand: '/brands/:brand',
     categories: '/categories',
 
