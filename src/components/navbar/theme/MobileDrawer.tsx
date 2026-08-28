@@ -43,6 +43,7 @@ import { useChat } from '../../../hooks/useChat';
 import { Capacitor } from '@capacitor/core';
 import { AppSettings } from '../../settings/appSettings';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import AISearch from '../../../atoms/AISearch';
 
 const openAppSettings = async () => {
     if (!Capacitor.isNativePlatform()) return;
@@ -134,9 +135,35 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     aria-label='القائمة الرئيسية'
                     sx={{ pt: 0 }}
                 >
-                    <IconButton onClick={openAppSettings}>
-                        <NotificationsActiveIcon />
-                    </IconButton>
+                    {/* Search */}
+                    <ListItem disablePadding sx={{ mb: 1 }}>
+                        <Box sx={{ width: '100%' }}>
+                            <AISearch  />
+                        </Box>
+                    </ListItem>
+                    {/* Notification settings - native only */}
+                    {Capacitor.isNativePlatform() && (
+                        <ListItem disablePadding sx={{ mb: 1 }}>
+                            <ListItemButton
+                                onClick={openAppSettings}
+                                sx={{
+                                    borderRadius: '8px',
+                                }}
+                            >
+                                <NotificationsActiveIcon sx={{ ml: 1 }} />
+
+                                <ListItemText
+                                    primary={
+                                        t('notificationSettings') ||
+                                        'إعدادات الإشعارات'
+                                    }
+                                    primaryTypographyProps={{
+                                        sx: { fontWeight: 500 },
+                                    }}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
                     {/* Home */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
@@ -190,9 +217,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
-
                     {/* How to delete your account in safqa */}
-
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}

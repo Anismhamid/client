@@ -153,11 +153,11 @@ const AISearch = () => {
         <Box
             sx={{
                 width: '100%',
-                maxWidth: 1100,
+                maxWidth: 400,
 
                 mx: 'auto',
                 px: {
-                    xs: 1,
+                    xs: 4,
                     sm: 2,
                     md: 3,
                 },

@@ -314,7 +314,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     flexShrink: 1,
                                     flexWrap: 'nowrap',
                                     overflowX: 'auto',
-                                    '&::-webkit-scrollbar': { display: 'none' }, 
+                                    '&::-webkit-scrollbar': { display: 'none' },
                                     scrollbarWidth: 'none',
                                 }}
                                 aria-label='روابط التنقل الرئيسية'
@@ -560,7 +560,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 ) : null}
                             </Box>
                         </Box>
-
+                        <AISearch />
                         {/* Left side: Theme toggle, language switcher, and account */}
                         <Box
                             sx={{
@@ -571,97 +571,103 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             }}
                         >
                             {/* Theme Toggle */}
-                            <Tooltip
-                                title={
-                                    mode === 'dark'
-                                        ? t('lightMode')
-                                        : t('darkMode')
-                                }
-                            >
-                                <motion.div
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
+                            {!isMobile && (
+                                <Tooltip
+                                    title={
+                                        mode === 'dark'
+                                            ? t('lightMode')
+                                            : t('darkMode')
+                                    }
                                 >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 1,
-                                        }}
+                                    <motion.div
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.95 }}
                                     >
-                                        <FormGroup>
-                                            <FormControlLabel
-                                                checked={mode === 'dark'}
-                                                onChange={handleThemeChange}
-                                                control={
-                                                    <GradientSwitch
-                                                        sx={{ m: 0 }}
-                                                    />
-                                                }
-                                                label=''
-                                                aria-label='تبديل وضع السمة'
-                                            />
-                                        </FormGroup>
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 1,
+                                            }}
+                                        >
+                                            <FormGroup>
+                                                <FormControlLabel
+                                                    checked={mode === 'dark'}
+                                                    onChange={handleThemeChange}
+                                                    control={
+                                                        <GradientSwitch
+                                                            sx={{ m: 0 }}
+                                                        />
+                                                    }
+                                                    label=''
+                                                    aria-label='تبديل وضع السمة'
+                                                />
+                                            </FormGroup>
 
-                                        <AnimatePresence mode='wait'>
-                                            <motion.div
-                                                key={mode}
-                                                initial={{
-                                                    opacity: 0,
-                                                    scale: 0.8,
-                                                }}
-                                                animate={{
-                                                    opacity: 1,
-                                                    scale: 1,
-                                                }}
-                                                exit={{
-                                                    opacity: 0,
-                                                    scale: 0.8,
-                                                }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {mode === 'dark' ? (
-                                                    <Brightness4
-                                                        sx={{
-                                                            color: '#ffffff',
-                                                            fontSize: {
-                                                                xs: 24,
-                                                                md: 28,
-                                                            },
-                                                            display: {
-                                                                xs: 'none',
-                                                                sm: 'block',
-                                                            },
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    <Brightness7
-                                                        sx={{
-                                                            color: '#ffd000',
-                                                            fontSize: {
-                                                                xs: 24,
-                                                                md: 28,
-                                                            },
-                                                            display: {
-                                                                xs: 'none',
-                                                                sm: 'block',
-                                                            },
-                                                        }}
-                                                    />
-                                                )}
-                                            </motion.div>
-                                        </AnimatePresence>
-                                    </Box>
-                                </motion.div>
-                            </Tooltip>
+                                            <AnimatePresence mode='wait'>
+                                                <motion.div
+                                                    key={mode}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        scale: 0.8,
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        scale: 1,
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        scale: 0.8,
+                                                    }}
+                                                    transition={{
+                                                        duration: 0.3,
+                                                    }}
+                                                >
+                                                    {mode === 'dark' ? (
+                                                        <Brightness4
+                                                            sx={{
+                                                                color: '#ffffff',
+                                                                fontSize: {
+                                                                    xs: 24,
+                                                                    md: 28,
+                                                                },
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'block',
+                                                                },
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <Brightness7
+                                                            sx={{
+                                                                color: '#ffd000',
+                                                                fontSize: {
+                                                                    xs: 24,
+                                                                    md: 28,
+                                                                },
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'block',
+                                                                },
+                                                            }}
+                                                        />
+                                                    )}
+                                                </motion.div>
+                                            </AnimatePresence>
+                                        </Box>
+                                    </motion.div>
+                                </Tooltip>
+                            )}
 
                             {/* Language Switcher */}
-                            <motion.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <LanguageSwitcher />
-                            </motion.div>
+                            {!isMobile && (
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    <LanguageSwitcher />
+                                </motion.div>
+                            )}
 
                             {/* Account Menu / Login Button - Desktop only */}
                             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
@@ -705,7 +711,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             )}
                         </Box>
                     </Toolbar>
-                    <AISearch />
                 </Container>
             </AppBar>
 
