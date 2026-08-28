@@ -62,7 +62,7 @@ const ContactCTA = () => {
                 style={{ position: 'relative' }}
             >
                 <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
-                    <SealBadge size={56} rotate={-6}>
+                    <SealBadge size={56} rotate={-6} pulse>
                         <HeadsetMicIcon sx={{ fontSize: 26 }} />
                     </SealBadge>
                 </Box>

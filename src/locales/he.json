@@ -1,5 +1,9 @@
 {
     "you": "אתה",
+    "post": " {{count}} פרסומת",
+    "loadMore": "טען עוד",
+    "latessProducts": "המודעות האחרונות",
+    "featuredAdvertisement": "פרסומות נבחרות",
     "ActivePost": "פוסט פעיל",
     "ContinuousSupport": "תמיכה מתמשכת",
     "SafeAndReliable": "בטוח ואמין",
@@ -1871,6 +1875,8 @@
         "search": {
             "button": "חיפוש",
             "clear": "נקה חיפוש",
+            "tryAgain": "נסה לחפש באמצעות מילות מפתח אחרות",
+            "noResults": "לא נמצאו מודעות תואמות",
             "suggestions": "הצעות חיפוש",
             "detectedFilters": "מסננים שזוהו",
             "examples": {

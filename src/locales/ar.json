@@ -1,5 +1,9 @@
 {
     "you": "انت",
+    "post": "{{count}} إعلان",
+    "loadMore":"تحميل المزيد",
+    "latessProducts": "أحدث الاعلانات",
+    "featuredAdvertisement": "الإعلانات المميزة",
     "SafeAndReliable": "آمن وموثوق",
     "ActivePost": "اعلان نشط",
     "ContinuousSupport": "دعم متواصل",
@@ -1874,6 +1878,8 @@
         },
         "search": {
             "button": "بحث",
+            "tryAgain":"حاول البحث باستخدام كلمات أخرى",
+            "noResults":"لم يتم العثور على اعلانات مطابقة",
             "clear": "مسح البحث",
             "suggestions": "اقتراحات البحث",
             "detectedFilters": "الفلاتر المكتشفة",

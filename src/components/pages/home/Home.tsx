@@ -7,16 +7,11 @@ import {
     useEffect,
     useState,
 } from 'react';
-import {
-    Box,
-    Button,
-    Grid,
-    Paper,
-    Typography,
-} from '@mui/material';
+import { Box, Button, Fab, Fade, Grid, Paper, Typography } from '@mui/material';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
+import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -93,9 +88,27 @@ const Home: FunctionComponent = () => {
     const [postToDelete, setPostToDelete] = useState('');
     const [posts, setPosts] = useState<Posts[]>([]);
 
+    // Scroll progress + back-to-top FAB
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [showBackToTop, setShowBackToTop] = useState(false);
+
     useEffect(() => {
         setPosts(initialPosts);
     }, [initialPosts]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const docHeight =
+                document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            setScrollProgress(progress);
+            setShowBackToTop(scrollTop > 600);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const handleLikeToggle = useCallback(
         async (postId: string) => {
@@ -185,81 +198,34 @@ const Home: FunctionComponent = () => {
                     ],
                 }}
             />
+
+            {/* ─── SCROLL PROGRESS ─── */}
+            <Box
+                sx={{
+                    position: 'fixed',
+                    top: 0,
+                    insetInlineStart: 0,
+                    insetInlineEnd: 0,
+                    height: 3,
+                    zIndex: (theme) => theme.zIndex.appBar + 1,
+                    pointerEvents: 'none',
+                }}
+            >
+                <Box
+                    sx={{
+                        height: '100%',
+                        width: `${scrollProgress}%`,
+                        background: GRADIENT,
+                        transition: 'width 0.1s linear',
+                    }}
+                />
+            </Box>
+
             {/* ─── HERO ─── */}
             <header>
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
             {/* help section */}
-            {/* <section
-                id='help-section'
-                style={{
-                    margin: 'auto',
-                }}
-            >
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: { xs: 2.5, md: 3 },
-                        m: 2,
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: '16px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            insetInlineStart: 0,
-                            insetInlineEnd: 0,
-                            height: 4,
-                            background: GRADIENT,
-                        },
-                    }}
-                >
-                    <Typography
-                        variant='h6'
-                        gutterBottom
-                        fontWeight='bold'
-                        textAlign='center'
-                        sx={{ pt: 0.5 }}
-                    >
-                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
-                    </Typography>
-
-                    <Grid container spacing={2} mt={1}>
-                        {QUICK_HELP_LINKS.map((link) => {
-                            const Icon = link.icon;
-                            const to = link.pathKey
-                                ? path[link.pathKey]
-                                : link.to!;
-                            return (
-                                <Grid key={link.key} size={{ xs: 6, md: 4 }}>
-                                    <Button
-                                        fullWidth
-                                        variant='outlined'
-                                        component={RouterLink}
-                                        to={to}
-                                        startIcon={<Icon fontSize='small' />}
-                                        sx={{
-                                            py: 1.1,
-                                            borderRadius: '10px',
-                                            borderColor: 'divider',
-                                            color: 'text.primary',
-                                            '&:hover': {
-                                                borderColor: '#8B4513',
-                                                bgcolor: 'primary.50',
-                                            },
-                                        }}
-                                    >
-                                        {t(link.key, link.fallback)}
-                                    </Button>
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
-                </Paper>
-            </section> */}
             <section id='help-section' style={{ margin: 'auto' }}>
                 <Paper
                     elevation={0}
@@ -382,30 +348,8 @@ const Home: FunctionComponent = () => {
                 {/* =================================================
             CATEGORY NAVIGATION
                ================================================= */}
-                <Box
-                    sx={{
-                        pt: 4,
-                        pb: 2,
-                        px: {
-                            xs: 2,
-                            md: 4,
-                        },
 
-                        borderBottom: '1px solid',
-                        borderColor: 'divider',
-
-                        position: 'sticky',
-                        top: 0,
-                        l: 0,
-                        r: 0,
-
-                        zIndex: 10,
-
-                        bgcolor: 'background.paper',
-                    }}
-                >
-                    <ChipNavigation />
-                </Box>
+                <ChipNavigation />
 
                 <Suspense fallback={<Loader />}>
                     <PostsGrid
@@ -425,6 +369,32 @@ const Home: FunctionComponent = () => {
                     <ContactCTA />
                 </Suspense>
             </main>
+
+            {/* ─── BACK TO TOP ─── */}
+            <Fade in={showBackToTop}>
+                <Fab
+                    size='small'
+                    onClick={() =>
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
+                    aria-label={t('common.backToTop', 'العودة للأعلى')}
+                    sx={{
+                        position: 'fixed',
+                        bottom: 20,
+                        insetInlineStart: 20,
+                        background: GRADIENT,
+                        color: '#fff',
+                        boxShadow: '0 8px 20px -6px rgba(139,69,19,0.6)',
+                        '&:hover': {
+                            background: GRADIENT,
+                            filter: 'brightness(1.1)',
+                        },
+                    }}
+                >
+                    <KeyboardArrowUpRoundedIcon />
+                </Fab>
+            </Fade>
+
             <Suspense fallback={<Loader />}>
                 {/* ─── MODALS ─── */}
                 <UpdateProductModal

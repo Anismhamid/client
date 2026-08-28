@@ -1,5 +1,9 @@
 {
     "you": "You",
+    "post": "Advertisement {{count}} ",
+    "loadMode": "Load more",
+    "latessProducts": "Latest advertisements",
+    "featuredAdvertisement": "Featured Advertisements",
     "ActivePost": "Active Posts",
     "ContinuousSupport": "Continuous support",
     "SafeAndReliable": "Safe and reliable",
@@ -1687,17 +1691,16 @@
         "dataExport": "Export Data",
         "technicalSupport": "Technical Support",
         "myBusinessPage": "My Business Page",
-           "roles": {
-        "admin": "Admin",
-        "moderator": "Moderator",
-        "user": "User"
-    },
-    "address": {
-        "city": "City",
-        "street": "Street",
-        "houseNumber": "House number"
-    }
-
+        "roles": {
+            "admin": "Admin",
+            "moderator": "Moderator",
+            "user": "User"
+        },
+        "address": {
+            "city": "City",
+            "street": "Street",
+            "houseNumber": "House number"
+        }
     },
 
     "footer": {
@@ -1917,6 +1920,8 @@
         "search": {
             "button": "Search",
             "clear": "Clear search",
+            "tryAgain": "Try searching with different keywords",
+            "noResults": "No matching listings were found",
             "suggestions": "Search suggestions",
             "detectedFilters": "Detected filters",
             "placeholder": "What are you looking for? iPhone 15 Pro, Hyundai car...",

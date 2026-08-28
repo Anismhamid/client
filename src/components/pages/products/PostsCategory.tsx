@@ -335,10 +335,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                             color='primary.main'
                             sx={{ mb: 2 }}
                         >
-                            لم يتم العثور على منتجات مطابقة لمعايير البحث
+                           {t('searchPage.search.noResults')}
                         </Typography>
                         <Typography variant='body2' color='primary.main'>
-                            حاول البحث باستخدام كلمات أخرى
+                           {t("searchPage.search.tryAgain")}
                         </Typography>
                     </Box>
                 )}
@@ -379,7 +379,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                     },
                                 }}
                             >
-                                تحميل المزيد
+                               {t('loadMore')}
                             </Button>
                         )}
                     </Box>

@@ -26,12 +26,17 @@ const ChipNavigation = () => {
             component='nav'
             aria-label='Main Categories'
             sx={{
+                borderBottom: '1px solid',
+                borderColor: 'divider',
                 position: 'sticky',
                 top: 0,
-                zIndex: 200,
-                bgcolor: 'transparent',
+                l: 0,
+                r: 0,
 
-                p: 1,
+                zIndex: 10,
+
+                bgcolor: '#05050511',
+                backdropFilter: 'blur(8px)',
             }}
         >
             <JsonLd
@@ -56,15 +61,15 @@ const ChipNavigation = () => {
                 size='small'
                 sx={{
                     position: 'absolute',
-                    left: 4,
-                    top: '30%',
+                    left: 0,
+                    top: '50%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     bgcolor: 'background.paper',
                     border: '1px solid',
 
-                    width: 28,
-                    height: 28,
+                    width: 20,
+                    height: 20,
                     '&:hover': {
                         bgcolor: 'background.default',
                         borderColor: 'text.secondary',
@@ -81,11 +86,9 @@ const ChipNavigation = () => {
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 0,
                     listStyle: 'none',
                     overflowX: 'auto',
-                    scrollbarWidth: 'thin',
-                    px: 5,
+                    scrollbarWidth: 'unset',
                     '&::-webkit-scrollbar': { display: 'block' },
                     maskImage:
                         'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
@@ -102,7 +105,8 @@ const ChipNavigation = () => {
                             display: 'flex',
                             alignItems: 'center',
                             flexShrink: 0,
-                            minWidth: 100,
+                            minWidth: 120,
+                            pt:2
                         }}
                     >
                         <NavLink
@@ -116,9 +120,7 @@ const ChipNavigation = () => {
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
-                                        gap: 0.5,
-                                        px: 1,
-                                        py: 0.75,
+                                        gap: 1,
                                         borderRadius: '10px',
                                         cursor: 'pointer',
                                         bgcolor: isActive
@@ -141,8 +143,9 @@ const ChipNavigation = () => {
                                         src={category.icon}
                                         alt={`${t(category.labelKey)} - category`}
                                         sx={{
-                                            width: 40,
-                                            height: 40,
+                                            width: '100%',
+                                            height: '100%',
+                                            maxHeight: 50,
                                             objectFit: 'contain',
                                             filter: isActive
                                                 ? 'none'
@@ -178,15 +181,15 @@ const ChipNavigation = () => {
                 size='small'
                 sx={{
                     position: 'absolute',
-                    right: 4,
-                    top: '30%',
+                    right: 0,
+                    top: '50%',
                     transform: 'translateY(-50%)',
                     zIndex: 2,
                     bgcolor: 'background.paper',
                     border: '1px solid',
                     // borderColor: 'divider',
-                    width: 28,
-                    height: 28,
+                    width: 20,
+                    height: 20,
                     '&:hover': {
                         bgcolor: 'background.default',
                         borderColor: 'text.secondary',

@@ -20,26 +20,6 @@
     background-position: center;
 }
 
-#hero-section {
-    background: radial-gradient(
-            circle,
-            rgba(245, 159, 11, 0.03) 0%,
-            transparent 70%
-        ),
-        url('/Safqa.jpg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-}
-
-/* fixed attachment فقط لما الجهاز فعليًا بيدعمه ومش لمسي —
-   عالموبايل/أندرويد بيسبب مشاكل رندر وسكرول */
-/* @media (hover: hover) and (pointer: fine) {
-    #hero-section {
-        background-attachment: fixed;
-    }
-} */
-
 main {
     min-height: 90vh;
     /* width: 70%; */
