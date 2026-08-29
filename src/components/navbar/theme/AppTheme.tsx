@@ -530,7 +530,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Box>
 
                                 {/* Admin Panel - only if admin */}
-                                {isAdmin ? (
+                                {RoleType.Admin || RoleType.Moderator ? (
                                     <Box component='li' role='listitem'>
                                         <StyledNavLink
                                             to={path.UsersManagement}
@@ -552,7 +552,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             <DashboardIcon
                                                 sx={{
                                                     fontSize: 20,
-                                                    color: '#2196f3',
+                                                   
                                                 }}
                                             />
                                         </StyledNavLink>
