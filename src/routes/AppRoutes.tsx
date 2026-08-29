@@ -40,6 +40,7 @@ import ForgotPassword from '../components/settings/ForgotPassword';
 import ResetPassword from '../components/settings/ResetPassword';
 import SearchPage from '../atoms/SearchPage';
 import DeleteAccount from '../components/settings/DeleteAccount';
+import MessageInvestigation from '../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -146,7 +147,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path='/password-recover' element={<ForgotPassword />} />
             <Route path='/reset-password/:token' element={<ResetPassword />} />
             <Route path='/delete-account' element={<DeleteAccount />} />
-
+            <Route
+                path={path.MessageInvestigation}
+                element={<MessageInvestigation />}
+            />
             <Route path={'*'} element={<PageNotFound />} />
         </Routes>
     );

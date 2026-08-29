@@ -35,6 +35,7 @@ import { calculateUserStats } from '../utils/userStats';
 import handleRTL from '../../../../locales/handleRTL';
 
 import RoleType from '../../../../interfaces/UserType';
+import MessageInvestigation from './MessageInvestigation/MessageInvestigation';
 
 const UsersManagement: FunctionComponent = () => {
     const { t } = useTranslation();
@@ -304,6 +305,8 @@ const UsersManagement: FunctionComponent = () => {
                 direction={direction}
                 onClose={() => setSelectedUserId(null)}
             />
+
+            <MessageInvestigation />
 
             {/* ================= DELETE USER ================= */}
 

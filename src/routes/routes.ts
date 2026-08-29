@@ -70,7 +70,8 @@ export enum path {
     Contact = '/contact',
     About = '/about',
     DeleteAccount = '/delete-account',
-
+    MessageInvestigation = '/admin/message-investigation',
+    
     // Ecommerce
     Favorite = '/favorites',
     DiscountsAndOffers = '/discounts-and-offers',
