@@ -123,25 +123,34 @@
     "register": {
         "title": "Create New Account",
         "subtitle": "Join the Safqa community and start your trading journey today",
+
         "steps": {
             "personalInfo": "Personal Information",
             "contactInfo": "Contact Information",
             "security": "Security",
             "agreements": "Agreements"
         },
+
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email",
+        "personalEmail": "Personal Email",
+
         "phone1": "Phone",
         "phone2": "Additional Phone (Optional)",
+
         "city": "City",
         "street": "Street",
         "houseNumber": "House Number (Optional)",
-        "imageUrl": "Photo",
+
+        "imageUrl": "Profile Photo",
+
         "password": "Password",
         "confirmPassword": "Confirm Password",
+
         "haveAccount": "Already have an account?",
         "loginHere": "Log in now",
+
         "slug": "Username",
         "slugHint": "A unique name that appears in your profile URL",
         "slugExample": "Example: john-doe or ahmad-saleh",
@@ -149,8 +158,10 @@
         "checkingSlug": "Checking username availability...",
         "slugAvailable": "This username is available ✓",
         "slugTaken": "This username is already taken ✗",
+
         "profilePreview": "Profile Preview",
         "profileLink": "Your Profile Link",
+
         "passwordStrength": {
             "veryWeak": "Very Weak",
             "weak": "Weak",
@@ -159,35 +170,57 @@
             "strong": "Strong",
             "veryStrong": "Very Strong"
         },
+
         "agreeTo": "I agree to the",
         "termsOfService": "Terms of Service",
         "and": "and",
         "privacyPolicy": "Privacy Policy",
+
         "privacyNote": "We respect your privacy and are committed to protecting your personal data in accordance with our Privacy Policy.",
+
         "creatingAccount": "Creating account...",
         "completeRegistration": "Complete Registration",
+
         "success": {
             "title": "Registration Successful!",
             "message": "Your account has been created successfully. You can now log in and start using Safqa's services.",
             "description": "Account created successfully",
-            "redirect": "You will be automatically redirected to the login page..."
+            "profileLink": "Your profile link",
+            "redirect": "You will be automatically redirected to the home page..."
         },
+
         "errors": {
-            "EMAIL_EXISTS": "Please use a different email address",
-            "serverError": "A server error occurred. Please try again.",
-            "networkError": "Network connection error. Please check your internet connection.",
+            "EMAIL_EXISTS": "An account with this email already exists. Please use a different email address.",
+            "SLUG_EXISTS": "This username is already taken. Please choose another one.",
+            "slugExists": "This username is already taken. Please choose another one.",
             "slugUnavailable": "This username is not available. Please choose another one.",
+            "WEAK_PASSWORD": "The password is too weak. Please choose a stronger password.",
+            "weakPassword": "The password is too weak. Please choose a stronger password.",
+            "INVALID_PHONE": "The phone number is invalid. Please check the number and try again.",
+            "invalidPhone": "The phone number is invalid. Please check the number and try again.",
+            "NETWORK_ERROR": "Network connection error. Please check your internet connection.",
+            "networkError": "Network connection error. Please check your internet connection.",
+            "RATE_LIMITED": "Too many requests. Please wait a moment and try again.",
+            "rateLimited": "Too many requests. Please wait a moment and try again.",
+            "invalidGender": "Please select a valid gender.",
+            "genderRequired": "Gender is required.",
+            "serverError": "A server error occurred. Please try again.",
             "createPostFailed": "An error occurred while publishing the product. Please try again."
         },
+
         "validation": {
             "firstNameRequired": "First name is required",
             "firstNameMin": "First name must be at least 2 characters",
+
             "lastNameRequired": "Last name is required",
             "lastNameMin": "Last name must be at least 2 characters",
 
             "emailRequired": "Email is required",
             "emailMin": "Email is too short",
             "emailInvalid": "Invalid email address",
+
+            "personalEmailRequired": "Personal email is required",
+            "personalEmailInvalid": "Invalid personal email address",
 
             "genderRequired": "Gender is required",
 
@@ -201,26 +234,34 @@
             "confirmPasswordMatch": "Passwords do not match",
 
             "nameLettersOnly": "Name must contain letters only",
+
             "phone1Format": "Phone number must start with 05 and contain 9-10 digits",
             "phone2Format": "Phone number must start with 05 and contain 9-10 digits or be left empty",
+
             "houseNumberDigits": "House number must contain digits only",
+
             "passwordLowercase": "Password must contain at least one lowercase letter",
             "passwordUppercase": "Password must contain at least one uppercase letter",
             "passwordNumber": "Password must contain at least one number",
             "passwordSpecial": "Password must contain at least one special character (!@#$%^&*(),.?\":{}|<>)",
+
             "slugRequired": "Username is required in English",
             "slugMin": "Username must be at least 3 characters",
             "slugMax": "Username must not exceed 30 characters",
             "slugFormat": "Username must contain only lowercase English letters, numbers, and hyphens",
             "slugNoSpaces": "Username must not contain spaces",
             "slugNoSpecial": "Username must not contain special characters",
+
             "termsRequired": "Please agree to the Terms of Service and Privacy Policy to continue",
+
             "emailNotValid": "Please use a different email address"
         },
+
         "gender": "Gender",
         "selectGender": "Select Gender",
         "male": "Male",
-        "female": "Female"
+        "female": "Female",
+        "other": "Other"
     },
     "common": {
         "typing": "Typing...",
@@ -1026,71 +1067,87 @@
 
             "intro": {
                 "title": "Introduction",
-                "text": "At Safqa, we respect your privacy and are committed to protecting your personal information. This policy explains how we collect, use, protect, and keep your information confidential."
+                "text": "At Safqa, we take your privacy seriously and are committed to protecting your personal information. This policy explains how we collect, use, protect, and maintain the confidentiality of your information."
             },
 
             "collectedInfo": {
                 "title": "Information We Collect",
-                "text": "We may collect information necessary to provide Safqa services and improve the user experience, including:",
+                "text": "We may collect information necessary to provide Safqa's services and improve the user experience, including:",
                 "info": {
                     "name": "Name or username.",
                     "email": "Email address and contact information associated with the account.",
                     "image": "Profile picture or images that the user chooses to upload to the platform."
                 },
-                "technical": "Technical information such as device type, operating system, IP address, and usage data required to operate and improve the service."
+                "technical": "Technical information such as device type, operating system, IP address, and usage data necessary to operate and improve the service."
             },
 
             "usage": {
                 "title": "How We Use Information",
                 "points": {
-                    "p1": "Create and manage user accounts and provide platform services.",
-                    "p2": "Allow users to publish listings, communicate, and complete buying and selling transactions.",
-                    "p3": "Improve platform performance, develop features and services, and enhance the user experience.",
-                    "p4": "Protect the platform and users from fraud, abuse, and unauthorized activity."
+                    "p1": "Creating and managing user accounts and providing platform services.",
+                    "p2": "Enabling users to publish listings, communicate, and complete buying and selling transactions.",
+                    "p3": "Improving platform performance, developing features and services, and enhancing the user experience.",
+                    "p4": "Protecting the platform and its users from fraud, misuse, and unauthorized activities."
                 }
             },
 
             "consent": {
                 "title": "User Consent",
-                "text": "By using Safqa and creating an account, you acknowledge that you have read this Privacy Policy and understand how your information is collected and used in accordance with this policy."
+                "text": "By using the Safqa platform and creating an account, you acknowledge that you have read this Privacy Policy and understand how your information is collected and used in accordance with this policy."
             },
 
             "sharing": {
                 "title": "Information Sharing",
                 "points": {
-                    "external": "We do not sell users' personal information. Information may be shared with trusted service providers when necessary to operate the platform and provide its services.",
+                    "external": "We do not sell users' personal information. Some information may be shared with trusted service providers when necessary to operate the platform and provide its services.",
                     "law": "We may disclose information when required by law, in response to a valid legal request, or to protect the rights of the platform and its users."
                 }
             },
 
             "protection": {
-                "title": "Information Protection",
+                "title": "Information Security",
                 "text": "We use appropriate technical and organizational measures to help protect user information from unauthorized access, alteration, disclosure, or destruction. However, no electronic system can be guaranteed to be completely secure."
             },
 
             "updates": {
                 "title": "Privacy Policy Updates",
-                "text": "We may update this Privacy Policy from time to time to reflect changes to our services or legal requirements. The updated version will be published on this page together with the updated policy date."
+                "text": "We may update this Privacy Policy from time to time to reflect changes in our services or legal requirements. The updated version will be published on this page together with the date of the latest revision."
             },
 
             "rights": {
                 "title": "User Rights",
                 "points": {
-                    "p1": "Request information about the personal information associated with your account.",
+                    "p1": "Request information about the personal data associated with your account.",
                     "p2": "Request correction or updating of inaccurate information.",
-                    "p3": "Request deletion of your account and personal information, subject to legal requirements and obligations necessary to provide the service."
+                    "p3": "Request deletion of your account and personal information, subject to legal requirements and obligations necessary to provide the service.",
+                    "p4": "File a complaint with the Israeli Privacy Protection Authority if you believe that the processing of your information violates applicable law."
                 }
             },
 
+            "retention": {
+                "title": "Data Retention Period",
+                "text": "We retain your personal information for as long as your account remains active on the platform. When an account is deleted, the information may be deleted or anonymized within a reasonable period, except where retention is required for legal, accounting, or dispute resolution purposes."
+            },
+
+            "messages": {
+                "title": "Messages Between Users",
+                "text": "We do not routinely monitor the content of private messages between users. Message records may be retained for a limited period for operational and security purposes. Message content will not be disclosed to any external party except pursuant to a court order or an official request from a competent authority in accordance with applicable law."
+            },
+
+            "external": {
+                "title": "Service Providers and Data Transfers",
+                "text": "We do not sell users' personal information. Information may be shared with service providers necessary to operate the platform, such as payment, hosting, sign-in, and notification service providers. As a result, some information may be transferred to servers outside Israel, subject to appropriate data protection standards and safeguards."
+            },
+
             "userConsent": {
-                "title": "User Consent for Communications",
-                "text": "We may contact you regarding your account, listings, transactions, security, important notifications, or service updates. You can manage certain types of notifications through your account settings."
+                "title": "User Consent to Communications",
+                "text": "We may contact you regarding your account, listings, transactions, security, important notifications, or service-related updates. You can manage certain types of notifications through your account settings."
             },
 
             "contact": {
                 "title": "Contact Us",
-                "text": "If you have questions or requests regarding this Privacy Policy or your personal information, you can contact the Safqa team through the Contact page.",
-                "phone": "You may also use the official contact methods available within the Safqa platform."
+                "text": "If you have any questions or requests regarding this Privacy Policy or your personal information, you can contact the Safqa team through the Contact Us page.",
+                "phone": "You may also use the official communication channels available within the Safqa platform."
             }
         },
         "disputes": {
@@ -1287,44 +1344,64 @@
             "title": "Terms of Use",
             "description": "Terms and conditions for using the Safqa platform",
             "subtitle": "Please read these terms carefully before using the Safqa platform",
+
             "lastUpdated": "Last updated: 15/04/2025",
 
             "importantPoints": {
-                "age": "You must be 12 or older to use the platform.",
+                "age": "You must be 12 years of age or older to use the platform.",
                 "registration": "Registration is required to publish listings.",
-                "c2c": "Safqa is a C2C platform, and users are responsible for their buying and selling transactions.",
-                "legalAddress": "The platform is subject to the laws and regulations applicable within its legal jurisdiction."
+                "c2c": "Safqa is a C2C platform, and users are responsible for buying and selling transactions between themselves.",
+                "legalAddress": "The platform is subject to the laws and regulations applicable within its relevant jurisdiction."
+            },
+
+            "prohibitedItems": {
+                "title": "Prohibited Products and Activities",
+                "text": "The publication, sale, or purchase of any of the following through the Safqa platform is strictly prohibited. We reserve the right to remove any violating listing and suspend the responsible account without prior notice:",
+                "points": [
+                    "Firearms, ammunition, and weapon parts, unless permitted under a valid official license issued by the competent authorities.",
+                    "Drugs and any substances whose trade is prohibited under Israeli law.",
+                    "Prescription medications or any pharmaceutical products that are not licensed for sale to the public.",
+                    "Counterfeit products or products that infringe intellectual property rights or trademarks.",
+                    "Stolen goods or goods of illegal or undocumented origin.",
+                    "Alcohol or tobacco products intended for minors.",
+                    "Hazardous, flammable, or explosive materials and fireworks.",
+                    "Live animals or products derived from endangered species, in violation of applicable laws.",
+                    "Sexually explicit or pornographic content or products.",
+                    "Official documents, personal identification information, or personal information belonging to third parties.",
+                    "Tickets or services whose resale is prohibited by law.",
+                    "Any other product or service prohibited by Israeli law or requiring a license that the seller has not obtained."
+                ]
             },
 
             "sections": {
                 "eligibility": {
                     "title": "Eligibility",
-                    "text": "You must be 12 years old or older to use the platform. By using the platform, you acknowledge and confirm that you meet these requirements."
+                    "text": "You must be 12 years of age or older to use the platform. By using the platform, you represent and confirm that you meet this requirement."
                 },
 
                 "registration": {
                     "title": "Registration and Account Creation",
-                    "text": "You are required to create an account in order to publish listings and posts on the platform. You are responsible for providing accurate and up-to-date information and for keeping your password confidential. We reserve the right to suspend or delete any account in the event of suspicious activity or a violation of our Privacy Policy.",
+                    "text": "You are required to create an account in order to publish listings and posts on the platform. You are responsible for providing accurate and up-to-date information and for keeping your password confidential. We reserve the right to suspend or delete an account in cases of suspicious activity or violations of our Privacy Policy.",
                     "privacyPolicy": "Privacy Policy"
                 },
 
                 "products": {
                     "title": "Products and Listings",
-                    "text": "Prices, product availability, and descriptions may change at any time. We operate as an intermediary platform and do not guarantee the accuracy of information provided in listings."
+                    "text": "Product prices, availability, and descriptions may change at any time. We operate as an intermediary platform and do not guarantee the accuracy of the information provided in listings."
                 },
 
                 "responsibility": {
-                    "title": "Responsibility and Warranties",
+                    "title": "Responsibility and Disclaimers",
 
                     "platform": {
-                        "title": "Platform Location and Nature",
-                        "text": "Safqa is a C2C (consumer-to-consumer) platform that allows users to list and purchase products directly from one another. We do not store products and do not provide delivery or pickup services."
+                        "title": "Platform and Nature of the Service",
+                        "text": "Safqa is a C2C (consumer-to-consumer) platform that allows users to list and purchase products directly from one another. We do not store the products and do not provide delivery or pickup services."
                     },
 
                     "legalAddress": {
-                        "title": "Legal Headquarters",
+                        "title": "Legal Address",
                         "addressLabel": "Address:",
-                        "address": "Ein Al-Durrah Street, Umm al-Fahm, Israel.",
+                        "address": "Ein Al-Darwa Street, Umm al-Fahm, Israel.",
                         "noteLabel": "Note:",
                         "note": "This address is considered the official legal address for all legal notices and correspondence."
                     }
@@ -1332,13 +1409,15 @@
 
                 "userConduct": {
                     "title": "User Conduct",
+
                     "points": [
                         "Do not use the platform for illegal purposes.",
                         "Do not impersonate another person or provide false information.",
                         "Do not upload malicious code or interfere with the proper operation of the platform.",
                         "Do not attempt to access systems that you are not authorized to use."
                     ],
-                    "warning": "Violation of these terms may result in account suspension, banning, or legal action."
+
+                    "warning": "Violations of these terms may result in account suspension, account termination, or legal action."
                 }
             },
 
@@ -1350,7 +1429,7 @@
 
                 "questions": {
                     "title": "Have Questions?",
-                    "text": "If you have any questions regarding these Terms of Use, please feel free to contact us.",
+                    "text": "If you have any questions about these Terms of Use, please feel free to contact us.",
                     "button": "Contact Us"
                 },
 
@@ -1358,7 +1437,7 @@
             },
 
             "actions": {
-                "title": "Agree to the Terms?",
+                "title": "Do you agree to the terms?",
                 "register": "Create a New Account",
                 "login": "Log In"
             }

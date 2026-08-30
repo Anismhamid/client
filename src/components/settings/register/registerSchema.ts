@@ -1,20 +1,24 @@
 import * as yup from 'yup';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
-type TFunction = ReturnType<typeof useTranslation>["t"];
+type TFunction = ReturnType<typeof useTranslation>['t'];
+
+export type Gender = 'male' | 'female';
 
 export interface UserRegisterFormValues {
     name: { first: string; last: string };
     phone: { phone_1: string; phone_2?: string };
     address: { city: string; street: string; houseNumber?: string };
     email: string;
+    personalEmail: string;
     password: string;
     confirmPassword: string;
-    gender: string;
+    gender: Gender;
     slug: string;
     terms: boolean;
     image: { url?: string; alt?: string };
 }
+
 
 export const registerValidationSchema = (t: TFunction) => {
     return yup.object({
@@ -40,6 +44,9 @@ export const registerValidationSchema = (t: TFunction) => {
             houseNumber: yup.string().notRequired(),
         }),
         email: yup.string().required(t('register.validation.emailRequired')),
+        personalEmail: yup
+            .string()
+            .required(t('register.validation.emailRequired')),
         password: yup
             .string()
             .required(t('register.validation.passwordRequired')),
@@ -65,15 +72,40 @@ export const registerValidationSchema = (t: TFunction) => {
     });
 };
 
+
 export const registerInitialValues: UserRegisterFormValues = {
-    name: { first: '', last: '' },
-    phone: { phone_1: '', phone_2: '' },
-    address: { city: '', street: '', houseNumber: '' },
+    name: {
+        first: '',
+        last: '',
+    },
+
+    phone: {
+        phone_1: '',
+        phone_2: '',
+    },
+
+    address: {
+        city: '',
+        street: '',
+        houseNumber: '',
+    },
+
     email: '',
+
+    personalEmail: '',
+
     password: '',
+
     confirmPassword: '',
-    gender: '',
-    image: { url: '', alt: '' },
+
+    gender: 'male',
+
     slug: '',
+
+    image: {
+        url: '',
+        alt: '',
+    },
+
     terms: false,
 };
