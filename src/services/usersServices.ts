@@ -5,6 +5,7 @@ import { showError, showSuccess } from '../atoms/toasts/ReactToast';
 import { jwtDecode } from 'jwt-decode';
 import { CompleteUserPayload } from '../interfaces/completeProfile';
 import { DecodedGooglePayload } from '../interfaces/google';
+import { CredentialResponse } from '@react-oauth/google';
 
 const api = `${import.meta.env.VITE_API_URL}/users`;
 
@@ -50,10 +51,26 @@ export const registerNewUser = async (newUserData: UserRegister) => {
  * @param response
  * @returns userData
  */
-export const handleGoogleLogin = async (response: any, extraData: any) => {
+export const handleGoogleLogin = async (
+    response: CredentialResponse,
+    extraData: any,
+) => {
     try {
-        const decoded = jwtDecode<DecodedGooglePayload>(response.credential);
-        const { email, given_name, family_name, picture, sub } = decoded;
+        if (!response?.credential) {
+            throw new Error('Missing Google credential');
+        }
+
+        const decoded = jwtDecode<DecodedGooglePayload>(
+            response.credential,
+        );
+
+        const {
+            email,
+            given_name,
+            family_name,
+            picture,
+            sub,
+        } = decoded;
 
         if (!email || !sub) {
             throw new Error('Missing required Google user info');
@@ -63,35 +80,53 @@ export const handleGoogleLogin = async (response: any, extraData: any) => {
             credentialToken: response.credential,
             email,
             name: {
-                first: given_name,
-                last: family_name,
+                first: given_name ?? '',
+                last: family_name ?? '',
             },
             image: {
-                url: picture,
-                alt: given_name,
+                url: picture ?? '',
+                alt: given_name ?? '',
             },
             phone: {
-                phone_1: extraData ? extraData.phone_1 : '',
-                phone_2: extraData ? extraData.phone_2 : '',
+                phone_1: extraData?.phone_1 ?? '',
+                phone_2: extraData?.phone_2 ?? '',
             },
             address: {
-                city: extraData ? extraData.city : '',
-                street: extraData ? extraData.street : '',
-                houseNumber: extraData ? extraData.houseNumber : '',
-                slug: extraData ? extraData.slug : '',
+                city: extraData?.city ?? '',
+                street: extraData?.street ?? '',
+                houseNumber: extraData?.houseNumber ?? '',
+                slug: extraData?.slug ?? '',
             },
         };
 
-        const res = await axios.post(`${api}/google`, userData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        console.log('Google userData:', {
+            ...userData,
+            credentialToken: '[HIDDEN]',
         });
-        // res.data is the token
+
+        const res = await axios.post(
+            `${api}/google`,
+            userData,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            },
+        );
+
         localStorage.setItem('token', res.data);
+
         return res.data;
     } catch (error) {
-        console.log(error);
+        if (axios.isAxiosError(error)) {
+            console.error('Google API error:', {
+                status: error.response?.status,
+                data: error.response?.data,
+                message: error.message,
+            });
+        } else {
+            console.error('Google login error:', error);
+        }
 
         return null;
     }

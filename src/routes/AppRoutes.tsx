@@ -97,7 +97,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.UsersManagement}
                 element={
-                    (auth && auth.role === RoleType.Admin) ||
+                    (auth && auth.role === RoleType.Admin) &&
                     (RoleType.Moderator && <UsersManagement />)
                 }
             />
