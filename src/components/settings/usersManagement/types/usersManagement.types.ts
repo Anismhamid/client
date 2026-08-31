@@ -1,9 +1,6 @@
 import RoleType from '../../../../interfaces/UserType';
 
-export type UserFilterStatus =
-    | 'all'
-    | 'active'
-    | 'inactive';
+export type UserFilterStatus = 'all' | 'active' | 'inactive';
 
 export type UserFilterRole =
     | 'all'
@@ -16,6 +13,8 @@ export interface UsersStatsData {
     active: number;
     inactive: number;
     admins: number;
+    moderators: number;
+    clients: number;
 }
 
 export interface UsersFiltersState {

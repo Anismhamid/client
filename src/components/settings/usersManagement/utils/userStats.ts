@@ -1,8 +1,8 @@
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import { UsersStatsData } from '../types/usersManagement.types';
 
 export const calculateUserStats = (
-    users: UserRegister[],
+    users: User[],
 ): UsersStatsData => {
     return {
         total: users.length,

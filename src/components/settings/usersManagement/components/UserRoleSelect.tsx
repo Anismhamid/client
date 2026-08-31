@@ -10,11 +10,11 @@ import {
 
 
 import { useTranslation } from 'react-i18next';
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import RoleType from '../../../../interfaces/UserType';
 
 interface Props {
-    user: UserRegister;
+    user: User;
     onChange: (
         email: string,
         role: string,

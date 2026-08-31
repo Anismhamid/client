@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
-import { EditUserProfile, UserLogin, UserRegister } from '../interfaces/User';
+import { EditUserProfile, User, UserLogin, UserRegister } from '../interfaces/User';
 import { showError, showSuccess } from '../atoms/toasts/ReactToast';
 import { jwtDecode } from 'jwt-decode';
 import { CompleteUserPayload } from '../interfaces/completeProfile';
@@ -22,7 +22,7 @@ export interface UpdatePermissionResponse {
     message: string;
     permission: UserPermission;
     enabled: boolean;
-    user: UserRegister;
+    user: User;
 }
 
 /**

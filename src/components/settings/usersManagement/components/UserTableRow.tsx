@@ -13,11 +13,11 @@ import { useNavigate } from 'react-router-dom';
 import UserStatusChip from './UserStatusChip';
 import UserRoleSelect from './UserRoleSelect';
 import UserActions from './UserActions';
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import { path } from '../../../../routes/routes';
 
 interface Props {
-    user: UserRegister;
+    user: User;
 
     onEdit: (
         userId: string,

@@ -19,7 +19,7 @@ export interface InvestigationUser {
 
     slug?: string;
 
-    accountStatus?: 'active' | 'disabled';
+    accountStatus: 'active' | 'disabled';
 }
 
 export interface InvestigationMessage {
@@ -82,7 +82,9 @@ export interface AuditLog {
         createdAt: string;
     } | null;
 
-    action: 'VIEW_MESSAGE' | 'VIEW_CONVERSATION';
+    action:
+        | 'VIEW_MESSAGE'
+        | 'VIEW_CONVERSATION';
 
     reason: string;
 
@@ -95,15 +97,17 @@ export interface AuditLog {
     updatedAt: string;
 }
 
+export interface AuditLogsPagination {
+    total: number;
+    limit: number;
+    skip: number;
+    hasMore: boolean;
+}
+
 export interface AuditLogsResponse {
     success: boolean;
 
     logs: AuditLog[];
 
-    pagination: {
-        limit: number;
-        skip: number;
-        count: number;
-        hasMore: boolean;
-    };
+    pagination: AuditLogsPagination;
 }

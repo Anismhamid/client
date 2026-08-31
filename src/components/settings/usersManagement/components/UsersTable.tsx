@@ -1,6 +1,7 @@
-import { FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 
 import {
+    Avatar,
     Box,
     Button,
     Checkbox,
@@ -8,7 +9,7 @@ import {
     FormControl,
     MenuItem,
     Select,
-    Switch,
+    Stack,
     Table,
     TableBody,
     TableCell,
@@ -17,19 +18,20 @@ import {
     TableRow,
     Paper,
     CircularProgress,
+    Tooltip,
     Typography,
     useTheme,
     alpha,
 } from '@mui/material';
 
 import RoleType from '../../../../interfaces/UserType';
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import { fontAwesomeIcon } from '../../../../FontAwesome/Icons';
 import UserStatusSwitch from './UserStatusSwitch';
 import { UserPermission } from '../../../../services/usersServices';
 
 interface UsersTableProps {
-    users: UserRegister[];
+    users: User[];
 
     loading: boolean;
 
@@ -55,6 +57,37 @@ interface UsersTableProps {
     ) => Promise<boolean>;
 }
 
+const ROLE_LABELS: Record<RoleType, string> = {
+    [RoleType.Admin]: 'مدير',
+    [RoleType.Moderator]: 'مشرف',
+    [RoleType.Delivery]: 'مرسل',
+    [RoleType.Client]: 'مستخدم',
+};
+
+const PERMISSION_FIELDS: {
+    key: UserPermission;
+    label: string;
+    icon: React.ReactNode;
+}[] = [
+     { key: 'canLogin', label: 'تسجيل الدخول', icon: fontAwesomeIcon.loginLock },
+    { key: 'canCreatePosts', label: 'إنشاء المنشورات', icon: fontAwesomeIcon.postLock },
+    { key: 'canSendMessages', label: 'إرسال الرسائل', icon: fontAwesomeIcon.messageLock },
+    { key: 'canSendOffers', label: 'إرسال العروض', icon: fontAwesomeIcon.offerLock },
+    { key: 'canUseAccount', label: 'استخدام الحساب', icon: fontAwesomeIcon.loginLock },
+    {
+        key: 'canAccessExistingData',
+        label: 'الوصول للبيانات',
+        icon: fontAwesomeIcon.databaseLock,
+    },
+];
+
+const HEAD_CELL_SX = {
+    bgcolor: 'primary.main',
+    color: 'primary.contrastText',
+    fontWeight: 700,
+    whiteSpace: 'nowrap',
+} as const;
+
 const UsersTable: FunctionComponent<UsersTableProps> = ({
     users,
     loading,
@@ -67,6 +100,7 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
     onPermissionChange,
 }) => {
     const theme = useTheme();
+
     const allSelected =
         users.length > 0 &&
         users.every((user) => selectedUserIds.includes(user._id!));
@@ -153,103 +187,67 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                 borderRadius: 3,
                 border: `1px solid ${theme.palette.divider}`,
                 overflowX: 'auto',
+                maxHeight: 640,
             }}
         >
-            <Table>
+            <Table stickyHeader size='small'>
                 <TableHead>
                     <TableRow>
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                            }}
-                        >
+                        <TableCell align='center' sx={HEAD_CELL_SX} padding='checkbox'>
                             <Checkbox
                                 checked={allSelected}
                                 indeterminate={someSelected}
                                 onChange={handleSelectAll}
-                                sx={{
-                                    color: 'white',
-                                }}
+                                sx={{ color: 'inherit' }}
                             />
                         </TableCell>
 
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
-                            الاسم
+                        <TableCell align='right' sx={HEAD_CELL_SX}>
+                            المستخدم
                         </TableCell>
 
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
-                            البريد الإلكتروني
-                        </TableCell>
-
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
+                        <TableCell align='center' sx={HEAD_CELL_SX}>
                             الدور
                         </TableCell>
 
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
-                            الحالة
+                        <TableCell align='center' sx={HEAD_CELL_SX}>
+                            حالة الحساب
                         </TableCell>
 
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
+                        <TableCell align='center' sx={HEAD_CELL_SX}>
+                            النشاط
+                        </TableCell>
+
+                        <TableCell align='center' sx={HEAD_CELL_SX}>
                             الصلاحيات
                         </TableCell>
 
-                        <TableCell
-                            align='center'
-                            sx={{
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                fontWeight: 700,
-                            }}
-                        >
+                        <TableCell align='center' sx={HEAD_CELL_SX}>
                             الإجراءات
                         </TableCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody>
-                    {users.map((user) => {
+                    {users.map((user, index) => {
                         const selected = selectedUserIds.includes(user._id!);
 
                         return (
-                            <TableRow key={user._id} hover selected={selected}>
-                                <TableCell align='center'>
+                            <TableRow
+                                key={user._id}
+                                hover
+                                selected={selected}
+                                sx={{
+                                    bgcolor:
+                                        index % 2 === 0
+                                            ? 'transparent'
+                                            : alpha(
+                                                  theme.palette.action.hover,
+                                                  0.4,
+                                              ),
+                                }}
+                            >
+                                <TableCell align='center' padding='checkbox'>
                                     <Checkbox
                                         checked={selected}
                                         onChange={() =>
@@ -257,14 +255,84 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                         }
                                     />
                                 </TableCell>
+
+                                {/* المستخدم: الاسم + الإيميل بخلية وحدة */}
+                                <TableCell align='right'>
+                                    <Stack
+                                        direction='row'
+                                        spacing={1.5}
+                                        alignItems='center'
+                                    >
+                                        <Avatar
+                                            sx={{
+                                                width: 36,
+                                                height: 36,
+                                                fontSize: 14,
+                                                fontWeight: 700,
+                                                bgcolor: user.status
+                                                    ? 'success.light'
+                                                    : 'grey.400',
+                                            }}
+                                        >
+                                            {user.name.first?.[0]}
+                                        </Avatar>
+
+                                        <Box sx={{ minWidth: 0 }}>
+                                            <Typography
+                                                variant='body2'
+                                                fontWeight={700}
+                                                noWrap
+                                            >
+                                                {user.name.first}{' '}
+                                                {user.name.last}
+                                            </Typography>
+
+                                            <Typography
+                                                variant='caption'
+                                                color='text.secondary'
+                                                noWrap
+                                                sx={{ display: 'block' }}
+                                            >
+                                                {user.email}
+                                            </Typography>
+                                        </Box>
+                                    </Stack>
+                                </TableCell>
+
+                                {/* الدور */}
                                 <TableCell align='center'>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: 1,
-                                        }}
+                                    <FormControl size='small' sx={{ minWidth: 130 }}>
+                                        <Select
+                                            value={user.role}
+                                            onChange={(event) =>
+                                                onRoleChange(
+                                                    user.email,
+                                                    event.target.value,
+                                                )
+                                            }
+                                            sx={{ borderRadius: 2 }}
+                                        >
+                                            {Object.entries(ROLE_LABELS).map(
+                                                ([value, label]) => (
+                                                    <MenuItem
+                                                        key={value}
+                                                        value={value}
+                                                    >
+                                                        {label}
+                                                    </MenuItem>
+                                                ),
+                                            )}
+                                        </Select>
+                                    </FormControl>
+                                </TableCell>
+
+                                {/* حالة الحساب */}
+                                <TableCell align='center'>
+                                    <Stack
+                                        direction='row'
+                                        spacing={0.5}
+                                        alignItems='center'
+                                        justifyContent='center'
                                     >
                                         <UserStatusSwitch
                                             userId={user._id!}
@@ -277,8 +345,8 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                         <Chip
                                             label={
                                                 user.accountStatus === 'active'
-                                                    ? 'الحساب نشط'
-                                                    : 'الحساب معطل'
+                                                    ? 'نشط'
+                                                    : 'معطل'
                                             }
                                             color={
                                                 user.accountStatus === 'active'
@@ -286,238 +354,145 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                                     : 'error'
                                             }
                                             size='small'
-                                            sx={{
-                                                fontWeight: 700,
-                                            }}
+                                            sx={{ fontWeight: 700 }}
                                         />
-                                    </Box>
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            gap: 0.5,
-                                            minWidth: 180,
-                                        }}
-                                    >
-                                        <PermissionRow
-                                            label='تسجيل الدخول'
-                                            enabled={
-                                                user.permissions?.canLogin ??
-                                                true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canLogin',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-
-                                        <PermissionRow
-                                            label='إنشاء المنشورات'
-                                            enabled={
-                                                user.permissions
-                                                    ?.canCreatePosts ?? true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canCreatePosts',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-
-                                        <PermissionRow
-                                            label='إرسال الرسائل'
-                                            enabled={
-                                                user.permissions
-                                                    ?.canSendMessages ?? true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canSendMessages',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-
-                                        <PermissionRow
-                                            label='إرسال العروض'
-                                            enabled={
-                                                user.permissions
-                                                    ?.canSendOffers ?? true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canSendOffers',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-
-                                        <PermissionRow
-                                            label='استخدام الحساب'
-                                            enabled={
-                                                user.permissions
-                                                    ?.canUseAccount ?? true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canUseAccount',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-
-                                        <PermissionRow
-                                            label='الوصول للبيانات'
-                                            enabled={
-                                                user.permissions
-                                                    ?.canAccessExistingData ??
-                                                true
-                                            }
-                                            onChange={(enabled) =>
-                                                onPermissionChange(
-                                                    user._id!,
-                                                    'canAccessExistingData',
-                                                    enabled,
-                                                )
-                                            }
-                                        />
-                                    </Box>
-                                </TableCell>
-                                <TableCell align='center'>
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            gap: 1,
-                                            cursor: 'pointer',
-                                            fontWeight: 700,
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 10,
-                                                height: 10,
-                                                borderRadius: '50%',
-                                                bgcolor: user.status
-                                                    ? 'success.main'
-                                                    : 'error.main',
-                                                boxShadow: user.status
-                                                    ? `0 0 0 4px ${alpha(
-                                                          theme.palette.success
-                                                              .main,
-                                                          0.12,
-                                                      )}`
-                                                    : `0 0 0 4px ${alpha(
-                                                          theme.palette.error
-                                                              .main,
-                                                          0.12,
-                                                      )}`,
-                                            }}
-                                        />
-                                        {user.name.first} {user.name.last}
-                                    </Box>
+                                    </Stack>
                                 </TableCell>
 
-                                <TableCell align='center'>
-                                    {user.email}
-                                </TableCell>
-
-                                <TableCell align='center'>
-                                    <FormControl
-                                        size='small'
-                                        sx={{
-                                            minWidth: 140,
-                                        }}
-                                    >
-                                        <Select
-                                            value={user.role}
-                                            onChange={(event) =>
-                                                onRoleChange(
-                                                    user.email,
-                                                    event.target.value,
-                                                )
-                                            }
-                                            sx={{
-                                                borderRadius: 2,
-                                            }}
-                                        >
-                                            <MenuItem value={RoleType.Admin}>
-                                                مدير
-                                            </MenuItem>
-
-                                            <MenuItem
-                                                value={RoleType.Moderator}
-                                            >
-                                                مشرف
-                                            </MenuItem>
-
-                                            <MenuItem value={RoleType.Delivery}>
-                                                مرسل
-                                            </MenuItem>
-
-                                            <MenuItem value={RoleType.Client}>
-                                                مستخدم
-                                            </MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </TableCell>
-
+                                {/* النشاط */}
                                 <TableCell align='center'>
                                     <Chip
-                                        label={user.status ? 'نشط' : 'غير نشط'}
-                                        color={
-                                            user.status ? 'success' : 'error'
+                                        icon={
+                                            <Box
+                                                sx={{
+                                                    width: 8,
+                                                    height: 8,
+                                                    borderRadius: '50%',
+                                                    bgcolor: user.status
+                                                        ? 'success.main'
+                                                        : 'error.main',
+                                                    ml: '6px',
+                                                }}
+                                            />
                                         }
+                                        label={
+                                            user.status ? 'متصل' : 'غير متصل'
+                                        }
+                                        variant='outlined'
                                         size='small'
-                                        sx={{
-                                            fontWeight: 700,
-                                        }}
+                                        sx={{ fontWeight: 600 }}
                                     />
                                 </TableCell>
 
+                                {/* الصلاحيات: شبكة مضغوطة بدل 6 صفوف */}
                                 <TableCell align='center'>
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            gap: 1,
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: 0.5,
+                                            width: 140,
+                                            mx: 'auto',
                                         }}
                                     >
-                                        <Button
-                                            variant='outlined'
-                                            color='warning'
-                                            onClick={() => onEdit(user._id!)}
-                                            sx={{
-                                                minWidth: 42,
-                                                borderRadius: 2,
-                                            }}
-                                        >
-                                            {fontAwesomeIcon.edit}
-                                        </Button>
+                                        {PERMISSION_FIELDS.map((field) => {
+                                            const enabled =
+                                                user.permissions?.[
+                                                    field.key
+                                                ] ?? true;
 
-                                        <Button
-                                            variant='outlined'
-                                            color='error'
-                                            onClick={() => onDelete(user._id!)}
-                                            sx={{
-                                                minWidth: 42,
-                                                borderRadius: 2,
-                                            }}
-                                        >
-                                            {fontAwesomeIcon.trash}
-                                        </Button>
+                                            return (
+                                                <Tooltip
+                                                    key={field.key}
+                                                    title={field.label}
+                                                    arrow
+                                                >
+                                                    <Box
+                                                        onClick={() =>
+                                                            onPermissionChange(
+                                                                user._id!,
+                                                                field.key,
+                                                                !enabled,
+                                                            )
+                                                        }
+                                                        sx={{
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
+                                                            height: 28,
+                                                            borderRadius: 1.5,
+                                                            fontSize: 12,
+                                                            cursor: 'pointer',
+                                                            userSelect: 'none',
+                                                            bgcolor: enabled
+                                                                ? alpha(
+                                                                      theme
+                                                                          .palette
+                                                                          .success
+                                                                          .main,
+                                                                      0.12,
+                                                                  )
+                                                                : alpha(
+                                                                      theme
+                                                                          .palette
+                                                                          .error
+                                                                          .main,
+                                                                      0.1,
+                                                                  ),
+                                                            color: enabled
+                                                                ? 'success.dark'
+                                                                : 'error.dark',
+                                                        }}
+                                                    >
+                                                        {field.icon}
+                                                    </Box>
+                                                </Tooltip>
+                                            );
+                                        })}
                                     </Box>
+                                </TableCell>
+
+                                {/* الإجراءات */}
+                                <TableCell align='center'>
+                                    <Stack
+                                        direction='row'
+                                        spacing={1}
+                                        justifyContent='center'
+                                    >
+                                        <Tooltip title='تعديل'>
+                                            <Button
+                                                variant='outlined'
+                                                color='warning'
+                                                onClick={() =>
+                                                    onEdit(user._id!)
+                                                }
+                                                sx={{
+                                                    minWidth: 40,
+                                                    borderRadius: 2,
+                                                }}
+                                            >
+                                                {fontAwesomeIcon.edit}
+                                            </Button>
+                                        </Tooltip>
+
+                                        <Tooltip title='حذف'>
+                                            <Button
+                                                variant='outlined'
+                                                color='error'
+                                                onClick={() =>
+                                                    onDelete(user._id!)
+                                                }
+                                                sx={{
+                                                    minWidth: 40,
+                                                    borderRadius: 2,
+                                                }}
+                                            >
+                                                {fontAwesomeIcon.trash}
+                                            </Button>
+                                        </Tooltip>
+                                    </Stack>
                                 </TableCell>
                             </TableRow>
                         );
@@ -525,49 +500,6 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                 </TableBody>
             </Table>
         </TableContainer>
-    );
-};
-
-interface PermissionRowProps {
-    label: string;
-    enabled: boolean;
-    onChange: (enabled: boolean) => Promise<boolean>;
-}
-
-const PermissionRow: FunctionComponent<PermissionRowProps> = ({
-    label,
-    enabled,
-    onChange,
-}) => {
-    const handleChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        await onChange(event.target.checked);
-    };
-
-    return (
-        <Box
-            sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 1,
-                px: 1,
-                py: 0.25,
-                borderRadius: 1.5,
-                bgcolor: 'action.hover',
-            }}
-        >
-            <Typography
-                variant='body2'
-                fontWeight={600}
-                sx={{
-                    whiteSpace: 'nowrap',
-                }}
-            >
-                {label}
-            </Typography>
-
-            <Switch size='small' checked={enabled} onChange={handleChange} />
-        </Box>
     );
 };
 

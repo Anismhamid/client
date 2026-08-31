@@ -9,13 +9,13 @@ import {
     UserPermission,
 } from '../../../../services/usersServices';
 
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import { showError } from '../../../../atoms/toasts/ReactToast';
 
 export type AccountStatus = 'active' | 'disabled';
 
 export const useUsers = (t: (key: string) => string) => {
-    const [users, setUsers] = useState<UserRegister[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
 
     const loadUsers = useCallback(async () => {
@@ -56,7 +56,7 @@ export const useUsers = (t: (key: string) => string) => {
                     user.email === email
                         ? {
                               ...user,
-                              role: role as UserRegister['role'],
+                              role: role as User['role'],
                           }
                         : user,
                 ),

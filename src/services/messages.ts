@@ -1,28 +1,62 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import axios from 'axios';
 import { UserMessage } from '../interfaces/chat/usersMessages';
+import {
+    AuditLogsResponse,
+    ConversationResponse,
+    InvestigationMessage,
+    InvestigationUser,
+} from '../interfaces/InvestigationMessage';
+
+// ======================================================
+// API
+// ======================================================
 
 const API_URL = import.meta.env.VITE_API_URL;
-const api = `${API_URL}/messages`;
 
-// إضافة interceptor للتعامل مع التوكن بشكل مركزي
 const axiosInstance = axios.create({
-    baseURL: api,
+    baseURL: `${API_URL}/messages`,
 });
 
-// Interceptor لإضافة التوكن تلقائياً
+// ======================================================
+// Authorization Interceptor
+// ======================================================
+
 axiosInstance.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('token');
+
         if (token) {
             config.headers.Authorization = token;
         }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    },
+    (error) => Promise.reject(error),
 );
+
+// ======================================================
+// Error Helper
+// ======================================================
+
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (axios.isAxiosError(error)) {
+        return (
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            error.message ||
+            fallback
+        );
+    }
+
+    return fallback;
+};
+
+// ======================================================
+// SEND MESSAGE
+// POST /messages
+// ======================================================
 
 export const postMessage = async (data: {
     toUserId: string;
@@ -31,170 +65,302 @@ export const postMessage = async (data: {
     isImportant?: boolean;
     replyTo?: string;
 }): Promise<UserMessage> => {
-    const token = localStorage.getItem('token');
     try {
-        const response = await axios.post(api, data, {
-            headers: { Authorization: token },
-        });
-        return response.data;
-    } catch (error: any) {
-        // تحسين رسالة الخطأ
-        const errorMessage =
-            error.response?.data?.message ||
-            error.response?.data?.error ||
-            error.message ||
-            'فشل إرسال الرسالة';
+        const response = await axiosInstance.post<{
+            success: boolean;
+            message: UserMessage;
+        }>('/', data);
 
+        return response.data.message;
+    } catch (error: any) {
         console.error('❌ Error in postMessage service:', {
             status: error.response?.status,
-            statusText: error.response?.statusText,
             data: error.response?.data,
-            message: errorMessage,
+            message: getErrorMessage(error, 'فشل إرسال الرسالة'),
         });
 
         throw error;
     }
 };
 
-interface MessagesResponse {
+// ======================================================
+// GET CONVERSATION
+// GET /messages/conversation/:otherUserId
+// ======================================================
+
+export interface ConversationMessagesResponse {
     messages: UserMessage[];
-    pagination: {
-        total: number;
-        pages: number;
-        currentPage: number;
-        perPage: number;
-    };
+
+    hasMore: boolean;
+
+    unreadCount: number;
 }
 
 export const getUserMessages = async (
     userId: string,
-    page: number = 1,
-    limit: number = 20,
-): Promise<MessagesResponse> => {
+    limit = 20,
+    skip = 0,
+): Promise<ConversationMessagesResponse> => {
     try {
-        const response = await axiosInstance.get<MessagesResponse>(
-            `/${userId}`,
+        const response = await axiosInstance.get<ConversationMessagesResponse>(
+            `/conversation/${userId}`,
             {
-                params: { page, limit },
+                params: {
+                    limit,
+                    skip,
+                },
             },
         );
 
         return response.data;
     } catch (error: any) {
-        // تسجيل الخطأ بشكل منظم
-        if (axios.isAxiosError(error)) {
-            console.error('❌ Error fetching messages:', {
-                status: error.response?.status,
-                statusText: error.response?.statusText,
-                data: error.response?.data,
-                message: error.message,
-                userId,
-                page,
-                limit,
-            });
-        } else {
-            console.error('❌ Unexpected error in getUserMessages:', error);
-        }
+        console.error('❌ Error fetching conversation:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            userId,
+            limit,
+            skip,
+            message: getErrorMessage(error, 'Failed to fetch conversation'),
+        });
 
-        // إعادة هيكل فارغ مع pagination صحيح
         return {
             messages: [],
-            pagination: {
-                total: 0,
-                pages: 0,
-                currentPage: page,
-                perPage: limit,
-            },
+            hasMore: false,
+            unreadCount: 0,
         };
     }
 };
 
-// دالة إضافية لجلب محادثة محددة
-export const getMessageById = async (
-    messageId: string,
-): Promise<UserMessage | null> => {
+// ======================================================
+// MARK MESSAGES AS SEEN
+// PATCH /messages/mark-as-seen/:fromUserId
+// ======================================================
+
+export const markMessagesAsSeen = async (
+    fromUserId: string,
+): Promise<boolean> => {
     try {
-        const response = await axiosInstance.get<UserMessage>(
-            `/messages/single/${messageId}`,
-        );
-        return response.data;
+        await axiosInstance.patch(`/mark-as-seen/${fromUserId}`);
+
+        return true;
     } catch (error: any) {
-        console.error('❌ Error fetching message by ID:', {
-            messageId,
-            error: error.response?.data || error.message,
+        console.error('❌ Error marking messages as seen:', {
+            fromUserId,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to mark messages as seen'),
         });
-        return null;
+
+        return false;
     }
 };
 
-// دالة لتحديث حالة الرسالة (مقروءة/غير مقروءة)
-export const updateMessageStatus = async (
-    messageId: string,
-    status: string,
-): Promise<UserMessage | null> => {
+// ======================================================
+// GET ALL CONVERSATIONS
+// GET /messages/conversations
+// ======================================================
+
+export interface ConversationItem {
+    user: InvestigationUser | UserMessage['from'];
+
+    lastMessage: UserMessage;
+
+    unreadCount: number;
+}
+
+export const getAllConversations = async (): Promise<ConversationItem[]> => {
     try {
-        const response = await axiosInstance.patch<UserMessage>(
-            `/messages/${messageId}/status`,
-            { status },
-        );
-        return response.data;
+        const response = await axiosInstance.get<{
+            conversations: ConversationItem[];
+        }>('/conversations');
+
+        return response.data.conversations || [];
     } catch (error: any) {
-        console.error('❌ Error updating message status:', {
-            messageId,
-            status,
-            error: error.response?.data || error.message,
+        console.error('❌ Error fetching conversations:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to fetch conversations'),
         });
-        return null;
+
+        return [];
     }
 };
 
-// دالة لحذف رسالة
+// ======================================================
+// DELETE MESSAGE
+// DELETE /messages/:messageId
+// ======================================================
+
 export const deleteMessage = async (messageId: string): Promise<boolean> => {
     try {
-        await axiosInstance.delete(`${messageId}`, {
-            headers: { Authorization: localStorage.getItem('token') },
-        });
+        await axiosInstance.delete(`/${messageId}`);
+
         return true;
     } catch (error: any) {
         console.error('❌ Error deleting message:', {
-            error: error.response?.data || error.message,
+            messageId,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to delete message'),
         });
+
         return false;
     }
 };
 
-// دالة لجلب المحادثات غير المقروءة
-export const getUnreadMessagesCount = async (
-    userId: string,
-): Promise<number> => {
+// ======================================================
+// ADMIN - SEARCH USERS
+// GET /messages/admin/users/search
+// ======================================================
+
+export const searchInvestigationUsers = async (
+    search: string,
+): Promise<InvestigationUser[]> => {
     try {
-        const response = await axiosInstance.get<{ count: number }>(
-            `/messages/${userId}/unread/count`,
+        if (search.trim().length < 2) {
+            return [];
+        }
+
+        const response = await axiosInstance.get<{
+            success: boolean;
+            users: InvestigationUser[];
+        }>('/admin/users/search', {
+            params: {
+                search: search.trim(),
+            },
+        });
+
+        return response.data.users || [];
+    } catch (error: any) {
+        console.error('❌ Error searching investigation users:', {
+            search,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to search users'),
+        });
+
+        return [];
+    }
+};
+
+// ======================================================
+// ADMIN - VIEW CONVERSATION
+// POST /messages/admin/conversation
+// ======================================================
+
+export const viewInvestigationConversation = async (
+    user1Id: string,
+    user2Id: string,
+    reason: string,
+): Promise<ConversationResponse> => {
+    try {
+        const response = await axiosInstance.post<ConversationResponse>(
+            '/admin/conversation',
+            {
+                user1Id,
+                user2Id,
+                reason: reason.trim(),
+            },
         );
-        return response.data.count;
+
+        return response.data;
     } catch (error: any) {
-        console.error('❌ Error fetching unread messages count:', error);
-        return 0;
+        console.error('❌ Error viewing investigation conversation:', {
+            user1Id,
+            user2Id,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to retrieve conversation'),
+        });
+
+        throw error;
     }
 };
 
-// دالة لوضع علامة مقروءة على جميع رسائل مستخدم
-export const markAllAsRead = async (userId: string): Promise<boolean> => {
+// ======================================================
+// ADMIN - VIEW ONE MESSAGE
+// POST /messages/admin/view/:messageId
+// ======================================================
+
+export const viewInvestigationMessage = async (
+    messageId: string,
+    reason: string,
+): Promise<InvestigationMessage> => {
     try {
-        await axiosInstance.patch(`/messages/${userId}/read-all`);
-        return true;
+        const response = await axiosInstance.post<{
+            success: boolean;
+            message: InvestigationMessage;
+        }>(`/admin/view/${messageId}`, {
+            reason: reason.trim(),
+        });
+
+        return response.data.message;
     } catch (error: any) {
-        console.error('❌ Error marking all messages as read:', error);
-        return false;
+        console.error('❌ Error viewing investigation message:', {
+            messageId,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to retrieve message'),
+        });
+
+        throw error;
     }
 };
+
+// ======================================================
+// ADMIN - AUDIT LOGS
+// GET /messages/admin/audit-logs
+// ======================================================
+
+export const getAuditLogs = async (
+    limit = 50,
+    skip = 0,
+): Promise<AuditLogsResponse> => {
+    try {
+        const response = await axiosInstance.get<AuditLogsResponse>(
+            '/admin/audit-logs',
+            {
+                params: {
+                    limit,
+                    skip,
+                },
+            },
+        );
+
+        return response.data;
+    } catch (error: any) {
+        console.error('❌ Error fetching audit logs:', {
+            limit,
+            skip,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to retrieve audit logs'),
+        });
+
+        throw error;
+    }
+};
+
+// ======================================================
+// DEFAULT EXPORT
+// ======================================================
 
 export default {
     postMessage,
+
     getUserMessages,
-    getMessageById,
-    updateMessageStatus,
+
+    markMessagesAsSeen,
+
+    getAllConversations,
+
     deleteMessage,
-    getUnreadMessagesCount,
-    markAllAsRead,
+
+    searchInvestigationUsers,
+
+    viewInvestigationConversation,
+
+    viewInvestigationMessage,
+
+    getAuditLogs,
 };

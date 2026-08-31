@@ -11,119 +11,83 @@ import {
 
 import LockIcon from '@mui/icons-material/Lock';
 
-import {
-    useState,
-} from 'react';
+import { useState } from 'react';
 
 import UserSearchField from './UserSearchField';
 
 import ConversationViewer from './ConversationViewer';
 import handleRTL from '../../../../../locales/handleRTL';
-import { InvestigationMessage, InvestigationUser } from '../../../../../interfaces/InvestigationMessage';
+import {
+    InvestigationMessage,
+    InvestigationUser,
+} from '../../../../../interfaces/InvestigationMessage';
 import { viewInvestigationConversation } from '../../../../../services/messageInvestigationService';
-
-
 
 const MessageInvestigation = () => {
     const direction = handleRTL();
 
-    const [
-        user1,
-        setUser1,
-    ] = useState<InvestigationUser | null>(
-        null,
-    );
+    const [user1, setUser1] = useState<InvestigationUser | null>(null);
 
-    const [
-        user2,
-        setUser2,
-    ] = useState<InvestigationUser | null>(
-        null,
-    );
+    const [user2, setUser2] = useState<InvestigationUser | null>(null);
 
-    const [
-        reason,
-        setReason,
-    ] = useState('');
+    const [reason, setReason] = useState('');
 
-    const [
-        messages,
-        setMessages,
-    ] = useState<InvestigationMessage[]>(
-        [],
-    );
+    const [messages, setMessages] = useState<InvestigationMessage[]>([]);
 
-    const [
-        loading,
-        setLoading,
-    ] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [
-        error,
-        setError,
-    ] = useState('');
+    const [error, setError] = useState('');
 
-    const [
-        investigated,
-        setInvestigated,
-    ] = useState(false);
+    const [investigated, setInvestigated] = useState(false);
 
-    const handleViewConversation =
-        async () => {
-            setError('');
+    const handleViewConversation = async () => {
+        setError('');
 
-            if (!user1 || !user2) {
-                setError(
-                    'Please select both users.',
-                );
-                return;
-            }
+        if (!user1 || !user2) {
+            setError('Please select both users.');
+            return;
+        }
 
-            if (user1._id === user2._id) {
-                setError(
-                    'Users must be different.',
-                );
-                return;
-            }
+        if (user1._id === user2._id) {
+            setError('Users must be different.');
+            return;
+        }
 
-            if (reason.trim().length < 5) {
-                setError(
-                    'Please provide a valid reason for accessing this conversation.',
-                );
-                return;
-            }
+        const trimmedReason = reason.trim();
 
-            try {
-                setLoading(true);
+        if (trimmedReason.length < 5) {
+            setError(
+                'Please provide a valid reason for accessing this conversation.',
+            );
+            return;
+        }
 
-                const response =
-                    await viewInvestigationConversation(
-                        user1._id,
-                        user2._id,
-                        reason.trim(),
-                    );
+        try {
+            setLoading(true);
 
-                setMessages(
-                    response.messages,
-                );
+            const response = await viewInvestigationConversation(
+                user1._id,
+                user2._id,
+                trimmedReason,
+            );
 
-                setInvestigated(true);
+            setMessages(response.messages || []);
+
+            setInvestigated(true);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            } catch (error: any) {
-                console.error(
-                    'Investigation error:',
-                    error,
-                );
+        } catch (error: any) {
+            console.error('Investigation error:', error);
 
-                setError(
-                    error?.response?.data
-                        ?.message ||
-                        'Failed to retrieve conversation.',
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
+            setError(
+                error?.response?.data?.message ||
+                    'Failed to retrieve conversation.',
+            );
+
+            setInvestigated(false);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleReset = () => {
         setUser1(null);
@@ -139,8 +103,7 @@ const MessageInvestigation = () => {
             dir={direction}
             sx={{
                 minHeight: '100vh',
-                bgcolor:
-                    'background.default',
+                bgcolor: 'background.default',
                 py: {
                     xs: 3,
                     md: 5,
@@ -157,29 +120,17 @@ const MessageInvestigation = () => {
                 {/* ========================================== */}
 
                 <Box>
-                    <Stack
-                        direction="row"
-                        spacing={1.5}
-                        alignItems="center"
-                    >
-                        <LockIcon color="warning" />
+                    <Stack direction='row' spacing={1.5} alignItems='center'>
+                        <LockIcon color='warning' />
 
-                        <Typography
-                            variant="h4"
-                            fontWeight={800}
-                        >
+                        <Typography variant='h4' fontWeight={800}>
                             Message Investigation
                         </Typography>
                     </Stack>
 
-                    <Typography
-                        mt={1}
-                        color="text.secondary"
-                    >
-                        Authorized access to
-                        user conversations.
-                        Every access is recorded
-                        in the audit log.
+                    <Typography mt={1} color='text.secondary'>
+                        Authorized access to user conversations. Every access is
+                        recorded in the audit log.
                     </Typography>
                 </Box>
 
@@ -187,11 +138,9 @@ const MessageInvestigation = () => {
                 {/* Warning */}
                 {/* ========================================== */}
 
-                <Alert severity="warning">
-                    Message access is a
-                    privileged administrative
-                    action. A reason is required
-                    and every access is logged.
+                <Alert severity='warning'>
+                    Message access is a privileged administrative action. A
+                    reason is required and every access is logged.
                 </Alert>
 
                 {/* ========================================== */}
@@ -206,27 +155,23 @@ const MessageInvestigation = () => {
                             md: 3,
                         },
                         border: '1px solid',
-                        borderColor:
-                            'divider',
+                        borderColor: 'divider',
                     }}
                 >
                     <Stack spacing={3}>
-                        <Typography
-                            variant="h6"
-                            fontWeight={700}
-                        >
+                        <Typography variant='h6' fontWeight={700}>
                             Select conversation
                         </Typography>
 
                         <UserSearchField
-                            label="User A"
+                            label='User A'
                             value={user1}
                             onChange={setUser1}
                             disabled={loading}
                         />
 
                         <UserSearchField
-                            label="User B"
+                            label='User B'
                             value={user2}
                             onChange={setUser2}
                             disabled={loading}
@@ -236,27 +181,18 @@ const MessageInvestigation = () => {
                             fullWidth
                             multiline
                             minRows={3}
-                            label="Reason for access"
-                            placeholder="Explain why you need to access this conversation..."
+                            label='Reason for access'
+                            placeholder='Explain why you need to access this conversation...'
                             value={reason}
                             disabled={loading}
-                            onChange={(event) =>
-                                setReason(
-                                    event.target
-                                        .value,
-                                )
-                            }
+                            onChange={(event) => setReason(event.target.value)}
                             helperText={`${reason.length}/1000`}
                             inputProps={{
                                 maxLength: 1000,
                             }}
                         />
 
-                        {error && (
-                            <Alert severity="error">
-                                {error}
-                            </Alert>
-                        )}
+                        {error && <Alert severity='error'>{error}</Alert>}
 
                         <Stack
                             direction={{
@@ -266,15 +202,13 @@ const MessageInvestigation = () => {
                             spacing={2}
                         >
                             <Button
-                                variant="contained"
-                                color="warning"
+                                variant='contained'
+                                color='warning'
                                 startIcon={
                                     loading ? (
                                         <CircularProgress
-                                            size={
-                                                18
-                                            }
-                                            color="inherit"
+                                            size={18}
+                                            color='inherit'
                                         />
                                     ) : (
                                         <LockIcon />
@@ -284,27 +218,17 @@ const MessageInvestigation = () => {
                                     loading ||
                                     !user1 ||
                                     !user2 ||
-                                    reason.trim()
-                                        .length <
-                                        5
+                                    reason.trim().length < 5
                                 }
-                                onClick={
-                                    handleViewConversation
-                                }
+                                onClick={handleViewConversation}
                             >
-                                {loading
-                                    ? 'Loading...'
-                                    : 'View Conversation'}
+                                {loading ? 'Loading...' : 'View Conversation'}
                             </Button>
 
                             <Button
-                                variant="outlined"
-                                disabled={
-                                    loading
-                                }
-                                onClick={
-                                    handleReset
-                                }
+                                variant='outlined'
+                                disabled={loading}
+                                onClick={handleReset}
                             >
                                 Reset
                             </Button>
@@ -316,13 +240,7 @@ const MessageInvestigation = () => {
                 {/* Conversation */}
                 {/* ========================================== */}
 
-                {investigated && (
-                    <ConversationViewer
-                        messages={
-                            messages
-                        }
-                    />
-                )}
+                {investigated && <ConversationViewer messages={messages} />}
             </Stack>
         </Box>
     );
