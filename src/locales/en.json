@@ -385,6 +385,54 @@
                 "imageUrlRequired": "Image URL is required",
                 "imageUrlInvalid": "Image URL must be valid"
             }
+        },
+        "report": {
+            "title": "Report",
+            "subtitle": "Please select a reason for your report and provide additional details if necessary.",
+            "reason": "Report reason",
+            "reasonRequired": "Please select a report reason",
+            "description": "Additional details",
+            "descriptionPlaceholder": "Provide additional details about the report...",
+            "submit": "Submit Report",
+            "reportThis": "Report",
+            "alreadyReported": "You have already reported this",
+            "cancel": "Cancel",
+
+            "types": {
+                "user": "User",
+                "post": "Post",
+                "message": "Message",
+                "comment": "Comment"
+            },
+
+            "status": {
+                "pending": "Pending",
+                "reviewing": "Under Review",
+                "resolved": "Resolved",
+                "rejected": "Rejected"
+            },
+
+            "actions": {
+                "warn": "Warn User",
+                "block": "Block User",
+                "delete_post": "Delete Post",
+                "delete_message": "Delete Message",
+                "delete_comment": "Delete Comment",
+                "ignore": "Ignore Report"
+            },
+
+            "reasons": {
+                "spam": "Spam or unwanted content",
+                "harassment": "Harassment or bullying",
+                "inappropriate_content": "Inappropriate content",
+                "fake_account": "Fake account",
+                "scam": "Scam or fraud",
+                "violence": "Violence or threats",
+                "hate_speech": "Hate speech",
+                "nudity": "Nudity or sexual content",
+                "copyright": "Copyright infringement",
+                "other": "Other"
+            }
         }
     },
 

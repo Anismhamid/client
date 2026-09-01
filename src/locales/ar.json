@@ -394,6 +394,53 @@
                 "imageUrlRequired": "رابط الصورة حقل مطلوب",
                 "imageUrlInvalid": "يجب أن يكون رابط الصورة رابط صحيح"
             }
+        },
+        "report": {
+            "title": "الإبلاغ",
+            "subtitle": "يرجى اختيار سبب الإبلاغ وإضافة تفاصيل إضافية إذا لزم الأمر.",
+            "reason": "سبب الإبلاغ",
+            "reasonRequired": "يرجى اختيار سبب الإبلاغ",
+            "description": "تفاصيل إضافية",
+            "descriptionPlaceholder": "اكتب تفاصيل إضافية عن البلاغ...",
+            "submit": "إرسال البلاغ",
+            "reportThis": "الإبلاغ",
+            "alreadyReported": "لقد قمت بالإبلاغ عن هذا مسبقًا",
+            "cancel": "إلغاء",
+            "types": {
+                "user": "مستخدم",
+                "post": "إعلان",
+                "message": "رسالة",
+                "comment": "تعليق"
+            },
+
+            "status": {
+                "pending": "قيد الانتظار",
+                "reviewing": "قيد المراجعة",
+                "resolved": "تم الحل",
+                "rejected": "مرفوض"
+            },
+
+            "actions": {
+                "warn": "تحذير المستخدم",
+                "block": "حظر المستخدم",
+                "delete_post": "حذف الإعلان",
+                "delete_message": "حذف الرسالة",
+                "delete_comment": "حذف التعليق",
+                "ignore": "تجاهل البلاغ"
+            },
+
+            "reasons": {
+                "spam": "محتوى مزعج أو غير مرغوب فيه",
+                "harassment": "مضايقة أو تنمر",
+                "inappropriate_content": "محتوى غير لائق",
+                "fake_account": "حساب مزيف",
+                "scam": "احتيال أو خداع",
+                "violence": "عنف أو تهديد",
+                "hate_speech": "خطاب كراهية",
+                "nudity": "تعري أو محتوى جنسي",
+                "copyright": "انتهاك حقوق النشر",
+                "other": "سبب آخر"
+            }
         }
     },
     "loader": {

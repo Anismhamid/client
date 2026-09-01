@@ -381,6 +381,54 @@
                 "imageUrlRequired": "קישור לתמונה נדרש",
                 "imageUrlInvalid": "קישור חייב להיות תקין"
             }
+        },
+        "report": {
+            "title": "דיווח",
+            "subtitle": "בחר את סיבת הדיווח והוסף פרטים נוספים במידת הצורך.",
+            "reason": "סיבת הדיווח",
+            "reasonRequired": "יש לבחור סיבה לדיווח",
+            "description": "פרטים נוספים",
+            "descriptionPlaceholder": "כתוב פרטים נוספים בנוגע לדיווח...",
+            "submit": "שליחת דיווח",
+            "reportThis": "דווח",
+            "alreadyReported": "כבר דיווחת על כך",
+            "cancel": "ביטול",
+
+            "types": {
+                "user": "משתמש",
+                "post": "מודעה",
+                "message": "הודעה",
+                "comment": "תגובה"
+            },
+
+            "status": {
+                "pending": "ממתין",
+                "reviewing": "בבדיקה",
+                "resolved": "טופל",
+                "rejected": "נדחה"
+            },
+
+            "actions": {
+                "warn": "הזהרת המשתמש",
+                "block": "חסימת המשתמש",
+                "delete_post": "מחיקת מודעה",
+                "delete_message": "מחיקת הודעה",
+                "delete_comment": "מחיקת תגובה",
+                "ignore": "התעלמות מהדיווח"
+            },
+
+            "reasons": {
+                "spam": "ספאם או תוכן לא רצוי",
+                "harassment": "הטרדה או בריונות",
+                "inappropriate_content": "תוכן בלתי הולם",
+                "fake_account": "חשבון מזויף",
+                "scam": "הונאה או תרמית",
+                "violence": "אלימות או איומים",
+                "hate_speech": "דברי שנאה",
+                "nudity": "עירום או תוכן מיני",
+                "copyright": "הפרת זכויות יוצרים",
+                "other": "סיבה אחרת"
+            }
         }
     },
     "loader": {

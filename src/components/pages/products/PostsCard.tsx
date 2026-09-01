@@ -25,7 +25,6 @@ import {
     MoreHoriz,
     Share as ShareIcon,
     LocationOn,
-    Report,
     VisibilityRounded,
     FavoriteBorder,
 } from '@mui/icons-material';
@@ -51,6 +50,7 @@ import { useUser } from '../../../hooks/useUSer';
 import SealBadge from '../home/SealBadge';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
+import ReportButton from '../../reports/ReportButton';
 
 interface PostCardProps {
     post: Posts;
@@ -142,12 +142,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
             showError(t('postCard.copyFailed'));
         }
 
-        handleMenuClose();
-    };
-
-    // TODO: handle card report
-    const handleReport = () => {
-        showSuccess('تم الإبلاغ عن المنتج');
         handleMenuClose();
     };
 
@@ -383,13 +377,14 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         {t('postCard.share')}
                     </MenuItem>
                     <MenuItem
-                        onClick={handleReport}
+                        // onClick={handleReport}
                         sx={{ fontSize: '0.8125rem', gap: 1 }}
                     >
-                        <Report sx={{ fontSize: 16, color: 'error.main' }} />
-                        <Typography color='error' variant='inherit'>
-                            {t('postCard.report')}
-                        </Typography>
+                        
+                        <ReportButton
+                            targetId={post._id as string}
+                            type='post'
+                        />
                     </MenuItem>
 
                     {canEdit && <Divider />}
@@ -635,7 +630,9 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                     },
                                 }}
                             >
-                                {expanded ? t('postCard.hide') : t('postCard.more')}
+                                {expanded
+                                    ? t('postCard.hide')
+                                    : t('postCard.more')}
                             </Button>
                         )}
                     </Box>
