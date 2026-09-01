@@ -34,13 +34,11 @@ export const useReport = () => {
 
     const [reports, setReports] = useState<UserReportUnion[]>([]);
 
-    const [blockedUsers, setBlockedUsers] =
-        useState<BlockedUserInfo[]>([]);
+    const [blockedUsers, setBlockedUsers] = useState<BlockedUserInfo[]>([]);
 
     const [totalReports, setTotalReports] = useState(0);
 
-    const [stats, setStats] =
-        useState<ReportStats | null>(null);
+    const [stats, setStats] = useState<ReportStats | null>(null);
 
     // =====================================================
     // Reports
@@ -51,23 +49,15 @@ export const useReport = () => {
             setLoading(true);
 
             try {
-                const report =
-                    await createReportApi(payload);
+                const report = await createReportApi(payload);
 
-                setReports((prev) => [
-                    report,
-                    ...prev,
-                ]);
+                setReports((prev) => [report, ...prev]);
 
-                showSuccess(
-                    t('report.created'),
-                );
+                showSuccess(t('report.created'));
 
                 return report;
             } catch (error) {
-                showError(
-                    t('report.createError'),
-                );
+                showError(t('report.createError'));
 
                 throw error;
             } finally {
@@ -81,29 +71,23 @@ export const useReport = () => {
     // My Reports
     // =====================================================
 
-    const fetchMyReports = useCallback(
-        async () => {
-            setLoading(true);
+    const fetchMyReports = useCallback(async () => {
+        setLoading(true);
 
-            try {
-                const data =
-                    await getMyReports();
+        try {
+            const data = await getMyReports();
 
-                setReports(data);
+            setReports(data);
 
-                return data;
-            } catch (error) {
-                showError(
-                    t('report.fetchError'),
-                );
+            return data;
+        } catch (error) {
+            showError(t('report.fetchError'));
 
-                throw error;
-            } finally {
-                setLoading(false);
-            }
-        },
-        [t],
-    );
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }, [t]);
 
     // =====================================================
     // All Reports - Admin
@@ -120,8 +104,7 @@ export const useReport = () => {
             setLoading(true);
 
             try {
-                const data =
-                    await getAllReports(params);
+                const data = await getAllReports(params);
 
                 setReports(data.reports);
 
@@ -129,9 +112,7 @@ export const useReport = () => {
 
                 return data;
             } catch (error) {
-                showError(
-                    t('report.fetchError'),
-                );
+                showError(t('report.fetchError'));
 
                 throw error;
             } finally {
@@ -146,36 +127,27 @@ export const useReport = () => {
     // =====================================================
 
     const updateReportStatus = useCallback(
-        async (
-            reportId: string,
-            payload: UpdateReportPayload,
-        ) => {
+        async (reportId: string, payload: UpdateReportPayload) => {
             setLoading(true);
 
             try {
-                const updated =
-                    await updateReportApi(
-                        reportId,
-                        payload,
-                    );
+                const response = await updateReportApi(reportId, payload);
+
+                // إذا الـ API يرجع:
+                // { success, message, report, actionResult }
+                const updatedReport = response.report;
 
                 setReports((prev) =>
                     prev.map((report) =>
-                        report._id === reportId
-                            ? updated
-                            : report,
+                        report._id === reportId ? updatedReport : report,
                     ),
                 );
 
-                showSuccess(
-                    t('report.updated'),
-                );
+                showSuccess(response.message);
 
-                return updated;
+                return response;
             } catch (error) {
-                showError(
-                    t('report.updateError'),
-                );
+                showError(t('report.updateError'));
 
                 throw error;
             } finally {
@@ -184,7 +156,6 @@ export const useReport = () => {
         },
         [t],
     );
-
     // =====================================================
     // Delete Report
     // =====================================================
@@ -194,24 +165,15 @@ export const useReport = () => {
             setLoading(true);
 
             try {
-                await deleteReportApi(
-                    reportId,
-                );
+                await deleteReportApi(reportId);
 
                 setReports((prev) =>
-                    prev.filter(
-                        (report) =>
-                            report._id !== reportId,
-                    ),
+                    prev.filter((report) => report._id !== reportId),
                 );
 
-                showSuccess(
-                    t('report.deleted'),
-                );
+                showSuccess(t('report.deleted'));
             } catch (error) {
-                showError(
-                    t('report.deleteError'),
-                );
+                showError(t('report.deleteError'));
 
                 throw error;
             } finally {
@@ -225,36 +187,26 @@ export const useReport = () => {
     // Statistics
     // =====================================================
 
-    const fetchStats = useCallback(
-        async () => {
-            try {
-                const data =
-                    await getReportStats();
+    const fetchStats = useCallback(async () => {
+        try {
+            const data = await getReportStats();
 
-                setStats(data);
+            setStats(data);
 
-                return data;
-            } catch {
-                return null;
-            }
-        },
-        [],
-    );
+            return data;
+        } catch {
+            return null;
+        }
+    }, []);
 
     // =====================================================
     // Check Report
     // =====================================================
 
     const hasUserReported = useCallback(
-        async (
-            type: UserReportType,
-            targetId: string,
-        ): Promise<boolean> => {
+        async (type: UserReportType, targetId: string): Promise<boolean> => {
             try {
-                return await hasUserReportedApi(
-                    type,
-                    targetId,
-                );
+                return await hasUserReportedApi(type, targetId);
             } catch {
                 return false;
             }
@@ -267,31 +219,19 @@ export const useReport = () => {
     // =====================================================
 
     const blockUser = useCallback(
-        async (
-            payload: BlockUserPayload,
-        ) => {
+        async (payload: BlockUserPayload) => {
             setLoading(true);
 
             try {
-                const blocked =
-                    await blockUserApi(
-                        payload,
-                    );
+                const blocked = await blockUserApi(payload);
 
-                setBlockedUsers((prev) => [
-                    ...prev,
-                    blocked,
-                ]);
+                setBlockedUsers((prev) => [...prev, blocked]);
 
-                showSuccess(
-                    t('report.userBlocked'),
-                );
+                showSuccess(t('report.userBlocked'));
 
                 return blocked;
             } catch (error) {
-                showError(
-                    t('report.blockError'),
-                );
+                showError(t('report.blockError'));
 
                 throw error;
             } finally {
@@ -310,24 +250,15 @@ export const useReport = () => {
             setLoading(true);
 
             try {
-                await unblockUserApi(
-                    userId,
-                );
+                await unblockUserApi(userId);
 
                 setBlockedUsers((prev) =>
-                    prev.filter(
-                        (user) =>
-                            user._id !== userId,
-                    ),
+                    prev.filter((user) => user._id !== userId),
                 );
 
-                showSuccess(
-                    t('report.userUnblocked'),
-                );
+                showSuccess(t('report.userUnblocked'));
             } catch (error) {
-                showError(
-                    t('report.unblockError'),
-                );
+                showError(t('report.unblockError'));
 
                 throw error;
             } finally {
@@ -341,44 +272,32 @@ export const useReport = () => {
     // Get Blocked Users
     // =====================================================
 
-    const fetchBlockedUsers = useCallback(
-        async () => {
-            setLoading(true);
+    const fetchBlockedUsers = useCallback(async () => {
+        setLoading(true);
 
-            try {
-                const data =
-                    await getBlockedUsers();
+        try {
+            const data = await getBlockedUsers();
 
-                setBlockedUsers(data);
+            setBlockedUsers(data);
 
-                return data;
-            } catch (error) {
-                showError(
-                    t(
-                        'report.fetchBlockedError',
-                    ),
-                );
+            return data;
+        } catch (error) {
+            showError(t('report.fetchBlockedError'));
 
-                throw error;
-            } finally {
-                setLoading(false);
-            }
-        },
-        [t],
-    );
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }, [t]);
 
     // =====================================================
     // Check Block
     // =====================================================
 
     const checkIfBlocked = useCallback(
-        async (
-            userId: string,
-        ): Promise<boolean> => {
+        async (userId: string): Promise<boolean> => {
             try {
-                return await isUserBlocked(
-                    userId,
-                );
+                return await isUserBlocked(userId);
             } catch {
                 return false;
             }

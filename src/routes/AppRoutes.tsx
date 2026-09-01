@@ -41,6 +41,7 @@ import ResetPassword from '../components/settings/ResetPassword';
 import SearchPage from '../atoms/SearchPage';
 import DeleteAccount from '../components/settings/DeleteAccount';
 import MessageInvestigation from '../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation';
+import ReportManagement from '../components/reports/ReportManagement';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -97,15 +98,36 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.UsersManagement}
                 element={
-                    (auth && auth.role === RoleType.Admin) &&
-                    (RoleType.Moderator && <UsersManagement />)
+                    auth?.role === RoleType.Admin ||
+                    auth?.role === RoleType.Moderator ? (
+                        <UsersManagement />
+                    ) : (
+                        <PageNotFound />
+                    )
                 }
             />
+
             <Route
                 path={path.AdminSettings}
                 element={
-                    (auth && auth.role === RoleType.Admin) ||
-                    (RoleType.Moderator && <AdminSettings />)
+                    auth?.role === RoleType.Admin ||
+                    auth?.role === RoleType.Moderator ? (
+                        <AdminSettings />
+                    ) : (
+                        <PageNotFound />
+                    )
+                }
+            />
+
+            <Route
+                path={path.ReportsManagement}
+                element={
+                    auth?.role === RoleType.Admin ||
+                    auth?.role === RoleType.Moderator ? (
+                        <ReportManagement />
+                    ) : (
+                        <PageNotFound />
+                    )
                 }
             />
             <Route path={path.Contact} element={<Contact />} />

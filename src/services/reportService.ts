@@ -8,6 +8,7 @@ import {
     CreateReportPayload,
     UpdateReportPayload,
     ReportStats,
+    UpdateReportResponse,
 } from '../interfaces/report.types';
 
 // ===============================
@@ -81,8 +82,8 @@ export const getReportById = async (
 export const updateReport = async (
     reportId: string,
     payload: UpdateReportPayload,
-): Promise<UserReportUnion> => {
-    const response = await axios.patch<UserReportUnion>(
+): Promise<UpdateReportResponse> => {
+    const response = await axios.patch<UpdateReportResponse>(
         `${REPORTS_BASE}/${reportId}`,
         payload,
         { headers: getAuthHeaders() },

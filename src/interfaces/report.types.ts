@@ -1,7 +1,10 @@
 // src/interfaces/report.types.ts
 
-import { UserName, UserImage, UserRole } from "./User";
-
+import {
+    UserName,
+    UserImage,
+    UserRole,
+} from './User';
 
 /* =========================
    Report Types
@@ -59,90 +62,94 @@ export interface UserReport {
    User Report
 ========================= */
 
-export interface UserReportUser extends UserReport {
+export interface UserReportUser
+    extends UserReport {
     type: 'user';
 
-    targetUser: {
+    targetUser?: {
         _id: string;
-        name: UserName;
-        email: string;
-        slug: string;
+        name?: UserName;
+        email?: string;
+        slug?: string;
         image?: UserImage;
-        role: UserRole;
-    };
+        role?: UserRole;
+    } | null;
 }
 
 /* =========================
    Post Report
 ========================= */
 
-export interface UserReportPost extends UserReport {
+export interface UserReportPost
+    extends UserReport {
     type: 'post';
 
-    targetPost: {
+    targetPost?: {
         _id: string;
-        product_name: string;
-        category: string;
+        product_name?: string;
+        category?: string;
 
-        seller: {
+        seller?: {
             _id: string;
-            name: UserName;
-            slug: string;
-        };
+            name?: UserName;
+            slug?: string;
+        } | null;
 
         image?: UserImage;
-    };
+    } | null;
 }
 
 /* =========================
    Message Report
 ========================= */
 
-export interface UserReportMessage extends UserReport {
+export interface UserReportMessage
+    extends UserReport {
     type: 'message';
 
-    targetMessage: {
+    targetMessage?: {
         _id: string;
 
-        message: string;
+        message?: string;
 
-        from: {
+        from?: {
             _id: string;
-            name: UserName;
-            email: string;
-        };
+            name?: UserName;
+            email?: string;
+        } | null;
 
-        to: {
+        to?: {
             _id: string;
-            name: UserName;
-            email: string;
-        };
+            name?: UserName;
+            email?: string;
+        } | null;
 
         createdAt: Date | string;
-    };
+    } | null;
 }
 
 /* =========================
    Comment Report
 ========================= */
 
-export interface UserReportComment extends UserReport {
+export interface UserReportComment
+    extends UserReport {
     type: 'comment';
 
-    targetComment: {
+    targetComment?: {
         _id: string;
 
-        content: string;
+        content?: string;
 
-        user: {
+        user?: {
             _id: string;
-            name: UserName;
-            slug: string;
+            name?: UserName;
+            slug?: string;
             image?: UserImage;
-        };
+        } | null;
 
         createdAt: Date | string;
-    };
+    } | null;
 }
 
 /* =========================
@@ -204,9 +211,15 @@ export interface ReportStats {
 
     rejected: number;
 
-    byType: Record<UserReportType, number>;
+    byType: Record<
+        UserReportType,
+        number
+    >;
 
-    byReason: Record<UserReportReason, number>;
+    byReason: Record<
+        UserReportReason,
+        number
+    >;
 }
 
 /* =========================
@@ -230,7 +243,7 @@ export interface BlockedUserInfo {
 
     reason?: string;
 
-    expiresAt?: Date | string;
+    expiresAt?: Date | string | null;
 
     isPermanent: boolean;
 }
@@ -244,7 +257,9 @@ export interface BlockUserPayload {
 
     reason?: string;
 
-    expiresAt?: Date | string;
+    expiresAt?: Date | string | null;
+
+    isPermanent?: boolean;
 }
 
 /* =========================
@@ -262,7 +277,22 @@ export interface Block {
 
     createdAt: Date | string;
 
-    expiresAt?: Date | string;
+    updatedAt?: Date | string;
+
+    expiresAt?: Date | string | null;
 
     isPermanent: boolean;
+}
+
+export interface UpdateReportResponse {
+    success: boolean;
+    message: string;
+    report: UserReportUnion;
+    actionResult?: unknown;
+}
+
+export interface CreateReportResponse {
+    success: boolean;
+    message: string;
+    report: UserReportUnion;
 }

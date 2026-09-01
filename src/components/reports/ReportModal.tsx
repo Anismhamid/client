@@ -1,25 +1,50 @@
-import { useState } from 'react';
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
+    FunctionComponent,
+    useState,
+} from 'react';
+
+import {
+    Alert,
+    Box,
     Button,
-    TextField,
-    MenuItem,
-    Stack,
-    Typography,
-    IconButton,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    Stack,
+    TextField,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
+
 import { useTranslation } from 'react-i18next';
-import { UserReportReason, UserReportType } from '../../interfaces/report.types';
+
+import {
+    UserReportType,
+    UserReportReason,
+} from '../../interfaces/report.types';
+
 import useReport from '../../hooks/useReport';
 
-const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+interface ReportModalProps {
+    open: boolean;
 
-const REASONS: UserReportReason[] = [
+    onClose: () => void;
+
+    type: UserReportType;
+
+    targetId: string;
+
+    onSuccess?: () => void;
+}
+
+const reasons: UserReportReason[] = [
     'spam',
     'harassment',
     'inappropriate_content',
@@ -32,118 +57,247 @@ const REASONS: UserReportReason[] = [
     'other',
 ];
 
-interface ReportModalProps {
-    open: boolean;
-    onClose: () => void;
-    targetId: string;
-    type: UserReportType;
-    onSuccess?: () => void;
-}
-
-const ReportModal = ({ open, onClose, targetId, type, onSuccess }: ReportModalProps) => {
+const ReportModal: FunctionComponent<
+    ReportModalProps
+> = ({
+    open,
+    onClose,
+    type,
+    targetId,
+    onSuccess,
+}) => {
     const { t } = useTranslation();
-    const { createReport, loading } = useReport();
-    const [reason, setReason] = useState<UserReportReason | ''>('');
-    const [description, setDescription] = useState('');
-    const [touched, setTouched] = useState(false);
 
-    const resetAndClose = () => {
+    const { createReport, loading } = useReport();
+
+    const [reason, setReason] =
+        useState<UserReportReason | ''>('');
+
+    const [description, setDescription] =
+        useState('');
+
+    const [error, setError] =
+        useState('');
+
+    // =====================================================
+    // Reason
+    // =====================================================
+
+    const handleReasonChange = (
+        event: SelectChangeEvent,
+    ) => {
+        setReason(
+            event.target.value as UserReportReason,
+        );
+
+        setError('');
+    };
+
+    // =====================================================
+    // Close
+    // =====================================================
+
+    const handleClose = () => {
+        if (loading) return;
+
         setReason('');
         setDescription('');
-        setTouched(false);
+        setError('');
+
         onClose();
     };
 
+    // =====================================================
+    // Submit
+    // =====================================================
+
     const handleSubmit = async () => {
-        setTouched(true);
-        if (!reason) return;
+        if (!reason) {
+            setError(
+                t(
+                    'reports.reasonRequired',
+                    'Please select a reason.',
+                ),
+            );
+
+            return;
+        }
 
         try {
+            setError('');
+
             await createReport({
                 type,
                 targetId,
                 reason,
-                description: description.trim() || undefined,
+                description:
+                    description.trim() || undefined,
             });
+
+            setReason('');
+            setDescription('');
+            setError('');
+
             onSuccess?.();
-            resetAndClose();
-        } catch {
-            // useReport already surfaces a toast on failure
+
+            onClose();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (err: any) {
+            console.error(
+                'Create report error:',
+                err,
+            );
+
+            if (
+                err?.response?.status === 409
+            ) {
+                setError(
+                    t(
+                        'reports.alreadyReported',
+                        'You have already reported this.',
+                    ),
+                );
+            } else {
+                setError(
+                    err?.response?.data?.message ||
+                        t(
+                            'reports.failed',
+                            'Failed to submit report.',
+                        ),
+                );
+            }
         }
     };
 
     return (
         <Dialog
             open={open}
-            onClose={loading ? undefined : resetAndClose}
+            onClose={handleClose}
             fullWidth
             maxWidth="sm"
-            PaperProps={{ sx: { borderRadius: 2 } }}
         >
-            <DialogTitle sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pb: 1 }}>
-                <Typography variant="h6" fontWeight={700} color="#12161C">
-                    {t('modals.report.title')}
-                </Typography>
-                <IconButton onClick={resetAndClose} disabled={loading} size="small">
-                    <CloseIcon fontSize="small" />
-                </IconButton>
+            <DialogTitle>
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
+                >
+                    <FlagOutlinedIcon />
+
+                    <Box>
+                        {t(
+                            'reports.title',
+                            'Report',
+                        )}
+                    </Box>
+                </Stack>
             </DialogTitle>
 
             <DialogContent>
-                <Stack spacing={2} sx={{ mt: 1 }}>
-                    <Typography variant="body2" color="text.secondary">
-                        {t('modals.report.subtitle')}
-                    </Typography>
+                <Stack spacing={2.5} mt={1}>
+                    {error && (
+                        <Alert severity="error">
+                            {error}
+                        </Alert>
+                    )}
+
+                    <FormControl fullWidth>
+                        <InputLabel>
+                            {t(
+                                'reports.reason',
+                                'Reason',
+                            )}
+                        </InputLabel>
+
+                        <Select
+                            value={reason}
+                            label={t(
+                                'reports.reason',
+                                'Reason',
+                            )}
+                            onChange={
+                                handleReasonChange
+                            }
+                        >
+                            {reasons.map(
+                                (item) => (
+                                    <MenuItem
+                                        key={item}
+                                        value={item}
+                                    >
+                                        {t(
+                                            `reports.reasons.${item}`,
+                                            item,
+                                        )}
+                                    </MenuItem>
+                                ),
+                            )}
+                        </Select>
+                    </FormControl>
 
                     <TextField
-                        select
-                        required
-                        fullWidth
-                        label={t('modals.report.reason')}
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value as UserReportReason)}
-                        error={touched && !reason}
-                        helperText={touched && !reason ? t('modals.report.reasonRequired') : ' '}
-                    >
-                        {REASONS.map((r) => (
-                            <MenuItem key={r} value={r}>
-                                {t(`modals.report.reasons.${r}`)}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-
-                    <TextField
-                        fullWidth
-                        multiline
-                        minRows={3}
-                        maxRows={6}
-                        label={t('modals.report.description')}
-                        placeholder={t('modals.report.descriptionPlaceholder') ?? ''}
+                        label={t(
+                            'reports.description',
+                            'Description',
+                        )}
+                        placeholder={t(
+                            'reports.descriptionPlaceholder',
+                            'Tell us more about the problem...',
+                        )}
                         value={description}
-                        onChange={(e) => setDescription(e.target.value.slice(0, 500))}
+                        onChange={(event) =>
+                            setDescription(
+                                event.target.value.slice(
+                                    0,
+                                    500,
+                                ),
+                            )
+                        }
+                        multiline
+                        rows={5}
+                        fullWidth
                         helperText={`${description.length}/500`}
                     />
                 </Stack>
             </DialogContent>
 
-            <DialogActions sx={{ px: 3, pb: 3,display: 'flex', justifyContent: 'space-between', gap: 1 }}>
-                <Button onClick={resetAndClose} disabled={loading} color="inherit">
-                    {t('modals.report.cancel')}
-                </Button>
+            <DialogActions sx={{ p: 2 }}>
                 <Button
-                    onClick={handleSubmit}
-                    disabled={loading || !reason}
-                    variant="contained"
-                    disableElevation
-                    sx={{
-                        background: GRADIENT,
-                        color: '#fff',
-                        px: 3,
-                        '&:hover': { background: GRADIENT, filter: 'brightness(0.95)' },
-                        '&.Mui-disabled': { background: 'action.disabledBackground' },
-                    }}
+                    onClick={handleClose}
+                    disabled={loading}
                 >
-                    {loading ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('modals.report.submit')}
+                    {t(
+                        'common.cancel',
+                        'Cancel',
+                    )}
+                </Button>
+
+                <Button
+                    variant="contained"
+                    onClick={handleSubmit}
+                    disabled={
+                        loading || !reason
+                    }
+                    startIcon={
+                        loading ? (
+                            <CircularProgress
+                                size={18}
+                                color="inherit"
+                            />
+                        ) : (
+                            <FlagOutlinedIcon />
+                        )
+                    }
+                >
+                    {loading
+                        ? t(
+                              'common.sending',
+                              'Sending...',
+                          )
+                        : t(
+                              'reports.submit',
+                              'Submit report',
+                          )}
                 </Button>
             </DialogActions>
         </Dialog>
