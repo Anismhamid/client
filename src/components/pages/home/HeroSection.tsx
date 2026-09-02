@@ -14,6 +14,7 @@ import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
 import { useEffect } from 'react';
 import SealBadge from './SealBadge';
+import AISearch from '../../../atoms/AISearch';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
@@ -75,6 +76,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 backgroundPosition: 'center',
             }}
         >
+              <AISearch />
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
             <Box
                 sx={{

@@ -53,7 +53,6 @@ import { GradientSwitch } from './GradientSwitch';
 import MobileDrawer from './MobileDrawer';
 import SafqaLogo from '../../../atoms/SafqaLogo';
 import { useChat } from '../../../hooks/useChat';
-import AISearch from '../../../atoms/AISearch';
 
 interface ThemeProps {
     mode: PaletteMode;
@@ -560,7 +559,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 ) : null}
                             </Box>
                         </Box>
-                        <AISearch />
+                       
                         {/* Left side: Theme toggle, language switcher, and account */}
                         <Box
                             sx={{

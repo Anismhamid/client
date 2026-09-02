@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-
-import axios from 'axios';
+import { useRef, useState, type KeyboardEvent } from 'react';
 
 import {
     Box,
@@ -8,7 +6,6 @@ import {
     InputAdornment,
     IconButton,
     Button,
-    CircularProgress,
     Chip,
     Stack,
     Paper,
@@ -20,10 +17,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { path } from '../routes/routes';
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 interface SearchFilters {
     query: string | null;
@@ -42,70 +37,29 @@ interface SearchFilters {
     nearMe: boolean | null;
 }
 
-interface SearchResponse {
-    success: boolean;
-    filters: SearchFilters;
-    count: number;
-}
-
 const AISearch = () => {
     const [query, setQuery] = useState('');
-    const [loading, setLoading] = useState(false);
     const [filters, setFilters] = useState<SearchFilters | null>(null);
     const [openSuggestions, setOpenSuggestions] = useState(false);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const { t } = useTranslation();
-    const location = useLocation();
     const navigate = useNavigate();
 
     /**
      * --------------------------------------------------------
-     * Clear search when route changes
+     * Execute Search
      * --------------------------------------------------------
      */
-    useEffect(() => {
-        setQuery('');
-        setFilters(null);
-        setOpenSuggestions(false);
-    }, [location.pathname]);
-
-    /**
-     * --------------------------------------------------------
-     * Execute AI Search
-     * --------------------------------------------------------
-     */
-    const handleSearch = async (searchValue?: string) => {
+    const handleSearch = (searchValue?: string) => {
         const value = (searchValue ?? query).trim();
 
-        if (!value || loading) {
-            return;
-        }
+        if (!value) return;
 
-        try {
-            setLoading(true);
+        setOpenSuggestions(false);
 
-            const response = await axios.post<SearchResponse>(
-                `${API_URL}/ai/search`,
-                {
-                    query: value,
-                },
-            );
-
-            setFilters(response.data?.filters ?? null);
-
-            // مهم: الانتقال حتى لو ما رجعت posts
-            navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
-            setOpenSuggestions(false);
-        } catch (error: unknown) {
-            console.error('❌ AI search failed:', error);
-
-            // ننتقل إلى صفحة البحث حتى لو الـ API فشل
-            navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
-        } finally {
-            setLoading(false);
-        }
+        navigate(`${path.Search}?q=${encodeURIComponent(value)}`);
     };
 
     /**
@@ -153,8 +107,7 @@ const AISearch = () => {
         <Box
             sx={{
                 width: '100%',
-                maxWidth: 400,
-
+                maxWidth: 500,
                 mx: 'auto',
                 px: {
                     xs: 4,
@@ -165,7 +118,9 @@ const AISearch = () => {
                     xs: 1.5,
                     md: 2,
                 },
-                position: 'relative',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1000,
             }}
         >
             {/* ================================================= */}
@@ -184,10 +139,10 @@ const AISearch = () => {
                     fullWidth
                     value={query}
                     onChange={(event) => {
-                        setQuery(event.target.value);
-                        setOpenSuggestions(
-                            event.target.value.trim().length > 0,
-                        );
+                        const value = event.target.value;
+
+                        setQuery(value);
+                        setOpenSuggestions(value.trim().length > 0);
                     }}
                     onFocus={() => {
                         if (query.trim()) {
@@ -195,7 +150,6 @@ const AISearch = () => {
                         }
                     }}
                     onKeyDown={handleKeyDown}
-                    disabled={loading}
                     placeholder={t('searchPage.search.placeholder')}
                     inputProps={{
                         'aria-label': t('searchPage.search.placeholder'),
@@ -220,11 +174,7 @@ const AISearch = () => {
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position='start'>
-                                {loading ? (
-                                    <CircularProgress size={22} />
-                                ) : (
-                                    <SearchIcon />
-                                )}
+                                <SearchIcon />
                             </InputAdornment>
                         ),
 
@@ -232,7 +182,6 @@ const AISearch = () => {
                             <InputAdornment position='end'>
                                 <IconButton
                                     onClick={clearSearch}
-                                    disabled={loading}
                                     aria-label={t('searchPage.search.clear')}
                                 >
                                     <CloseIcon />
@@ -245,7 +194,7 @@ const AISearch = () => {
                 <Button
                     variant='contained'
                     onClick={() => handleSearch()}
-                    disabled={loading || !query.trim()}
+                    disabled={!query.trim()}
                     sx={{
                         height: 54,
                         px: {
@@ -257,11 +206,7 @@ const AISearch = () => {
                         fontWeight: 700,
                     }}
                 >
-                    {loading ? (
-                        <CircularProgress size={22} color='inherit' />
-                    ) : (
-                        t('searchPage.search.button')
-                    )}
+                    {t('searchPage.search.button')}
                 </Button>
             </Box>
 
@@ -300,7 +245,7 @@ const AISearch = () => {
                                 fontWeight: 700,
                             }}
                         >
-                            {t('searchPage.search.suggestions')}{' '}
+                            {t('searchPage.search.suggestions')}
                         </Typography>
 
                         <Stack
@@ -327,6 +272,7 @@ const AISearch = () => {
                         </Stack>
 
                         {/* Detected filters */}
+
                         {filters && (
                             <Box sx={{ mt: 2 }}>
                                 <Typography
@@ -349,42 +295,54 @@ const AISearch = () => {
                                     {filters.category && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.category')}: ${filters.category}`}
+                                            label={`${t(
+                                                'search.filters.category',
+                                            )}: ${filters.category}`}
                                         />
                                     )}
 
                                     {filters.brand && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.brand')}: ${filters.brand}`}
+                                            label={`${t(
+                                                'search.filters.brand',
+                                            )}: ${filters.brand}`}
                                         />
                                     )}
 
                                     {filters.model && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.model')}: ${filters.model}`}
+                                            label={`${t(
+                                                'search.filters.model',
+                                            )}: ${filters.model}`}
                                         />
                                     )}
 
                                     {filters.storage && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.storage')}: ${filters.storage}`}
+                                            label={`${t(
+                                                'search.filters.storage',
+                                            )}: ${filters.storage}`}
                                         />
                                     )}
 
                                     {filters.fuel && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.fuel')}: ${filters.fuel}`}
+                                            label={`${t(
+                                                'search.filters.fuel',
+                                            )}: ${filters.fuel}`}
                                         />
                                     )}
 
                                     {filters.condition && (
                                         <Chip
                                             size='small'
-                                            label={`${t('search.filters.condition')}: ${filters.condition}`}
+                                            label={`${t(
+                                                'search.filters.condition',
+                                            )}: ${filters.condition}`}
                                         />
                                     )}
                                 </Stack>

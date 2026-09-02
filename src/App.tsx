@@ -165,6 +165,7 @@ function App() {
             />
             <Theme mode={mode} setMode={setMode} />
             <TransitionAlerts />
+          
             <SpeedDialComponent />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
