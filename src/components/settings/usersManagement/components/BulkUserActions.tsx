@@ -151,12 +151,6 @@ const BulkUserActions: FunctionComponent<BulkUserActionsProps> = ({
                         )}
                     </MenuItem>
 
-                    <MenuItem value={RoleType.Delivery}>
-                        {t(
-                            'pages.usersManagement.roles.delivery',
-                        )}
-                    </MenuItem>
-
                     <MenuItem value={RoleType.Client}>
                         {t(
                             'pages.usersManagement.roles.client',

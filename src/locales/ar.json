@@ -1741,6 +1741,38 @@
         "favorites": {
             "title": "المفضلة",
             "empty": "لا توجد منتجات مفضلة ❤️"
+        },
+        "messageAuditLogs": {
+            "title": "سجل مراقبة الرسائل",
+            "subtitle": "متابعة عمليات وصول الإدارة إلى الرسائل والمحادثات",
+            "records": "سجل",
+            "searchPlaceholder": "ابحث بالسبب، المستخدم...",
+            "actionType": "نوع العملية",
+            "allActions": "جميع العمليات",
+            "viewConversation": "فتح محادثة",
+            "viewMessage": "فتح رسالة",
+            "action": "العملية",
+            "admin": "الأدمن",
+            "users": "المستخدمون",
+            "usersInfo": "معلومات المستخدمين",
+            "reason": "السبب",
+            "date": "التاريخ",
+            "time": "الوقت",
+            "details": "التفاصيل",
+            "viewDetails": "عرض التفاصيل",
+            "detailsTitle": "تفاصيل سجل الوصول",
+            "noRecords": "لا توجد سجلات مطابقة",
+            "export": "تصدير البيانات",
+            "error": "حدث خطأ في تحميل السجلات",
+            "processInfo": "معلومات العملية",
+            "technicalInfo": "معلومات تقنية",
+            "additionalInfo": "معلومات إضافية",
+            "ipAddress": "عنوان IP",
+            "userAgent": "متصفح المستخدم",
+            "messageId": "معرف الرسالة",
+            "auditId": "معرف سجل المراقبة",
+            "userOne": "المستخدم الأول",
+            "userTwo": "المستخدم الثاني"
         }
     },
     "accountMenu": {

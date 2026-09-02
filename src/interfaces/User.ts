@@ -89,6 +89,9 @@ export interface UserLogin {
 // ===============================
 
 export interface User {
+    updatedAt: string | number | Date;
+    createdAt: string | number | Date;
+    lastActivity: any;
     _id: string;
 
     role: UserRole;

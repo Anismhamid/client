@@ -107,7 +107,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const handleMenuClose = () => setMenuAnchor(null);
 
     const handleShare = () => {
-        const shareUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
+        const shareUrl = `${window.location.origin}${productsPathes.postsDetails}/${post.category}/${post?.brand}/${post._id}`;
 
         const shareText = `${post.product_name} - ${post.price} ${t(
             'postCard.priceCurrency',
@@ -171,7 +171,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
         openChat(sellerUser as UserMessage);
     };
 
-    const productUrl = `${productsPathes.postsDetails}/${post.category}/${post.brand}/${post._id}`;
+    const productUrl = `${productsPathes.postsDetails}/${post.category}/${post?.brand}/${post._id}`;
     const isOutOfStock = post.in_stock === false;
     const isOwnPost = auth._id === post.seller?._id;
 
@@ -380,7 +380,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         // onClick={handleReport}
                         sx={{ fontSize: '0.8125rem', gap: 1 }}
                     >
-                        
                         <ReportButton
                             targetId={post._id as string}
                             type='post'

@@ -50,6 +50,13 @@ import {
     VerifiedRounded,
     ZoomIn,
     ZoomOut,
+    WhatsApp,
+    Email,
+    LocationOn,
+    CalendarToday,
+    Visibility as ViewIcon,
+    ThumbUp as ThumbUpIcon,
+    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 
 import { initialProductValue, Posts } from '../../../interfaces/Posts';
@@ -88,6 +95,7 @@ import { easeOut, motion } from 'framer-motion';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import PostSpecifications from './PostSpecifications';
+import handleRTL from '../../../locales/handleRTL';
 
 const SITE_URL = 'https://client-qqq1.vercel.app';
 
@@ -96,9 +104,7 @@ const SITE_URL = 'https://client-qqq1.vercel.app';
 ========================================================= */
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
-
 const BRAND_COLOR = '#B8860B';
-
 const BRAND_DARK = '#8B4513';
 
 /* =========================================================
@@ -106,21 +112,15 @@ const BRAND_DARK = '#8B4513';
 ========================================================= */
 
 const fadeUp = {
-    hidden: {
-        opacity: 0,
-        y: 24,
-    },
-
+    hidden: { opacity: 0, y: 24 },
     show: {
         opacity: 1,
         y: 0,
-
-        transition: {
-            duration: 0.5,
-            ease: easeOut,
-        },
+        transition: { duration: 0.5, ease: easeOut },
     },
 };
+
+// ✅ تم إزالة staggerContainer لأنه غير مستخدم
 
 /* =========================================================
    COMMON CARD STYLE
@@ -133,7 +133,6 @@ const sectionCardSx = {
     borderColor: 'divider',
     boxShadow: '0 4px 20px rgba(0,0,0,.04)',
     transition: 'all .3s cubic-bezier(.4,0,.2,1)',
-
     '&:hover': {
         boxShadow: '0 8px 40px rgba(0,0,0,.08)',
     },
@@ -165,58 +164,66 @@ const SectionTitle = memo(
     ),
 );
 
+SectionTitle.displayName = 'SectionTitle';
+
+/* =========================================================
+   STATS BADGE
+========================================================= */
+
+const StatsBadge = memo(
+    ({
+        icon,
+        label,
+        value,
+    }: {
+        icon: React.ReactNode;
+        label: string;
+        value: string | number;
+    }) => (
+        <Tooltip title={label} arrow>
+            <Stack direction='row' spacing={0.5} alignItems='center'>
+                {icon}
+                <Typography variant='caption' fontWeight={600}>
+                    {value}
+                </Typography>
+            </Stack>
+        </Tooltip>
+    ),
+);
+
+StatsBadge.displayName = 'StatsBadge';
+
 /* =========================================================
    COMPONENT
 ========================================================= */
 
-// TODO: handle profile report
 const PostDetails: FunctionComponent = () => {
     const { t } = useTranslation();
-
     const { postId } = useParams<{ postId: string }>();
-
     const navigate = useNavigate();
-
     const { isLoggedIn, auth } = useUser();
-
     const { openChat } = useChatWindow();
-
+    const dir = handleRTL();
     /* =====================================================
        STATE
     ===================================================== */
 
     const [post, setPost] = useState(initialProductValue as Posts);
-
     const [loading, setLoading] = useState(true);
-
     const [error, setError] = useState('');
-
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-
     const [productRating, setProductRating] = useState<number>(0);
-
     const [reviewRating, setReviewRating] = useState<number>(0);
-
     const [comment, setComment] = useState('');
-
     const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
-
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-
     const [isSharing, setIsSharing] = useState<boolean>(false);
-
     const [zoomLevel, setZoomLevel] = useState<number>(1);
-
     const [isZoomed, setIsZoomed] = useState<boolean>(false);
-
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-
-    const [mousePosition, setMousePosition] = useState({
-        x: 50,
-        y: 50,
-    });
-
+    const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]);
+    // const [isLiked, setIsLiked] = useState<boolean>(post.likes?.includes(auth._id!) || false);
 
     const imageContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -240,7 +247,6 @@ const PostDetails: FunctionComponent = () => {
         if (!post.category) {
             return t('product.category') || 'التصنيف';
         }
-
         return categoryLabels[post.category] || t(post.category);
     }, [post.category, t]);
 
@@ -305,7 +311,6 @@ const PostDetails: FunctionComponent = () => {
         if (!post.seller?.slug) {
             return;
         }
-
         navigate(
             generatePath(path.CustomerProfile, {
                 slug: encodeURIComponent(post.seller.slug),
@@ -319,18 +324,15 @@ const PostDetails: FunctionComponent = () => {
 
     const handleZoomIn = useCallback(() => {
         setZoomLevel((prev) => Math.min(prev + 0.5, 3));
-
         setIsZoomed(true);
     }, []);
 
     const handleZoomOut = useCallback(() => {
         setZoomLevel((prev) => {
             const nextZoom = Math.max(prev - 0.5, 1);
-
             if (nextZoom === 1) {
                 setIsZoomed(false);
             }
-
             return nextZoom;
         });
     }, []);
@@ -338,11 +340,7 @@ const PostDetails: FunctionComponent = () => {
     const handleResetZoom = useCallback(() => {
         setZoomLevel(1);
         setIsZoomed(false);
-
-        setMousePosition({
-            x: 50,
-            y: 50,
-        });
+        setMousePosition({ x: 50, y: 50 });
     }, []);
 
     const handleMouseMove = useCallback(
@@ -350,20 +348,12 @@ const PostDetails: FunctionComponent = () => {
             if (!isZoomed || !imageContainerRef.current) {
                 return;
             }
-
             const container = imageContainerRef.current;
-
             const { left, top, width, height } =
                 container.getBoundingClientRect();
-
             const x = ((e.clientX - left) / width) * 100;
-
             const y = ((e.clientY - top) / height) * 100;
-
-            setMousePosition({
-                x,
-                y,
-            });
+            setMousePosition({ x, y });
         },
         [isZoomed],
     );
@@ -376,14 +366,10 @@ const PostDetails: FunctionComponent = () => {
         try {
             if (!document.fullscreenElement) {
                 await imageContainerRef.current?.requestFullscreen();
-
                 setIsFullscreen(true);
-
                 return;
             }
-
             await document.exitFullscreen();
-
             setIsFullscreen(false);
         } catch {
             showError('تعذر تفعيل وضع ملء الشاشة');
@@ -394,9 +380,7 @@ const PostDetails: FunctionComponent = () => {
         const handleFullscreenChange = () => {
             setIsFullscreen(Boolean(document.fullscreenElement));
         };
-
         document.addEventListener('fullscreenchange', handleFullscreenChange);
-
         return () => {
             document.removeEventListener(
                 'fullscreenchange',
@@ -421,14 +405,11 @@ const PostDetails: FunctionComponent = () => {
 
             if (navigator.share) {
                 await navigator.share(shareData);
-
                 showSuccess('تمت مشاركة المنتج بنجاح');
-
                 return;
             }
 
             await navigator.clipboard.writeText(shareUrl);
-
             showSuccess('تم نسخ رابط المنتج');
         } catch (shareError) {
             if ((shareError as Error).name !== 'AbortError') {
@@ -447,22 +428,17 @@ const PostDetails: FunctionComponent = () => {
         if (!postId) {
             return;
         }
-
         try {
             await deletePost(postId);
-
             showSuccess('تم حذف المنتج بنجاح');
-
             const categoryPath = post.category
                 ? categoryPathMap[post.category]
                 : undefined;
-
             navigate(categoryPath || path.Home, {
                 replace: true,
             });
         } catch (deleteError) {
             console.error('Delete post error:', deleteError);
-
             showError(deleteError as string);
         }
     }, [navigate, post.category, postId]);
@@ -487,14 +463,12 @@ const PostDetails: FunctionComponent = () => {
         if (!postId) {
             return;
         }
-
         setLoading(true);
-
         getPostById(postId)
             .then((res) => {
                 setPost(res);
-
-                setProductRating(Number(res.rating || 0));
+                setProductRating(res.rating || 0);
+                // setIsLiked(res.likes?.includes(auth._id) || false);
             })
             .catch(() => {
                 setError('حدث خطأ أثناء تحميل المنتج');
@@ -511,9 +485,7 @@ const PostDetails: FunctionComponent = () => {
     useEffect(() => {
         if (!postId) {
             setError('معرف المنتج غير موجود');
-
             setLoading(false);
-
             return;
         }
 
@@ -523,18 +495,17 @@ const PostDetails: FunctionComponent = () => {
         getPostById(postId)
             .then((res) => {
                 setPost(res);
-
                 setProductRating(Number(res.rating || 0));
+                // setIsLiked(res.likes?.includes(auth._id) || false);
             })
             .catch((fetchError) => {
                 console.error('Error fetching post:', fetchError);
-
                 setError('حدث خطأ أثناء تحميل المنشور');
             })
             .finally(() => {
                 setLoading(false);
             });
-    }, [postId]);
+    }, [auth._id, postId]);
 
     /* =====================================================
        RELATED PRODUCTS
@@ -544,7 +515,6 @@ const PostDetails: FunctionComponent = () => {
         if (!post._id || !post.category) {
             return;
         }
-
         getRelatedPosts(post.category, post._id, 4)
             .then(setRelatedProducts)
             .catch((relatedError) => {
@@ -552,7 +522,10 @@ const PostDetails: FunctionComponent = () => {
             });
     }, [post._id, post.category]);
 
-    // Call this when the post details page loads
+    /* =====================================================
+       VIEW COUNT
+    ===================================================== */
+
     useEffect(() => {
         if (post && post._id) {
             incrementViewCount(post._id);
@@ -568,26 +541,13 @@ const PostDetails: FunctionComponent = () => {
             <Container maxWidth='xl' sx={{ py: 5 }}>
                 <Stack spacing={3}>
                     <Skeleton variant='rounded' height={90} />
-
                     <Grid container spacing={3}>
-                        <Grid
-                            size={{
-                                xs: 12,
-                                lg: 7,
-                            }}
-                        >
+                        <Grid size={{ xs: 12, lg: 7 }}>
                             <Skeleton variant='rounded' height={520} />
                         </Grid>
-
-                        <Grid
-                            size={{
-                                xs: 12,
-                                lg: 5,
-                            }}
-                        >
+                        <Grid size={{ xs: 12, lg: 5 }}>
                             <Stack spacing={2}>
                                 <Skeleton variant='rounded' height={220} />
-
                                 <Skeleton variant='rounded' height={260} />
                             </Stack>
                         </Grid>
@@ -603,33 +563,16 @@ const PostDetails: FunctionComponent = () => {
 
     if (error) {
         return (
-            <Container
-                maxWidth='md'
-                sx={{
-                    py: 8,
-                    textAlign: 'center',
-                }}
-            >
-                <ErrorIcon
-                    sx={{
-                        fontSize: 64,
-                        color: 'error.main',
-                        mb: 3,
-                    }}
-                />
-
+            <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
+                <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
                 <Typography variant='h5' color='error' gutterBottom>
                     {error}
                 </Typography>
-
                 <Button
                     variant='contained'
                     startIcon={<ArrowBackIcon />}
                     onClick={() => navigate(-1)}
-                    sx={{
-                        mt: 3,
-                        background: BRAND_GRADIENT,
-                    }}
+                    sx={{ mt: 3, background: BRAND_GRADIENT }}
                 >
                     {t('backOneStep')}
                 </Button>
@@ -639,33 +582,16 @@ const PostDetails: FunctionComponent = () => {
 
     if (!post?._id) {
         return (
-            <Container
-                maxWidth='md'
-                sx={{
-                    py: 8,
-                    textAlign: 'center',
-                }}
-            >
-                <ErrorIcon
-                    sx={{
-                        fontSize: 64,
-                        color: 'error.main',
-                        mb: 3,
-                    }}
-                />
-
+            <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
+                <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
                 <Typography variant='h5' color='error' gutterBottom>
                     {t('product.notFound') || 'المنتج غير موجود'}
                 </Typography>
-
                 <Button
                     variant='contained'
                     startIcon={<ArrowBackIcon />}
                     onClick={() => navigate(-1)}
-                    sx={{
-                        mt: 3,
-                        background: BRAND_GRADIENT,
-                    }}
+                    sx={{ mt: 3, background: BRAND_GRADIENT }}
                 >
                     {t('backOneStep')}
                 </Button>
@@ -678,7 +604,6 @@ const PostDetails: FunctionComponent = () => {
     ===================================================== */
 
     const productJsonLd = generateSingleProductJsonLd(post);
-
     const currentUrl = `${SITE_URL}${location.pathname}`;
 
     /* =====================================================
@@ -688,51 +613,31 @@ const PostDetails: FunctionComponent = () => {
     return (
         <>
             <JsonLd data={productJsonLd} />
-
             <title>{post.product_name} | صفقة</title>
-
             <link rel='canonical' href={currentUrl} />
-
             <meta
                 name='description'
                 content={post.description?.slice(0, 160)}
             />
-
             <meta property='og:title' content={post.product_name} />
-
             <meta
                 property='og:description'
                 content={post.description?.substring(0, 160) || ''}
             />
-
             <meta property='og:image' content={post.image?.url || ''} />
-
             <meta property='og:type' content='product' />
-
             <meta
                 property='product:price:amount'
                 content={String(post.price || 0)}
             />
-
             <meta property='product:price:currency' content='ILS' />
 
             <Box
                 component='main'
-                sx={{
-                    backgroundColor: 'background.default',
-                    pb: 8,
-                }}
+                sx={{ backgroundColor: 'background.default', pb: 8 }}
+                dir={dir}
             >
-                <Container
-                    maxWidth='xl'
-                    sx={{
-                        pt: {
-                            xs: 2,
-                            md: 5,
-                        },
-                        pb: 10,
-                    }}
-                >
+                <Container maxWidth='xl' sx={{ pt: { xs: 2, md: 5 }, pb: 10 }}>
                     <Stack spacing={4}>
                         {/* =================================================
                             SELLER TOP BAR
@@ -742,36 +647,21 @@ const PostDetails: FunctionComponent = () => {
                             elevation={0}
                             sx={{
                                 ...sectionCardSx,
-                                p: {
-                                    xs: 2,
-                                    md: 3,
-                                },
+                                p: { xs: 2, md: 3 },
                                 borderRadius: 3,
                             }}
                         >
                             <Stack
-                                direction={{
-                                    xs: 'column',
-                                    md: 'row',
-                                }}
-                                spacing={{
-                                    xs: 2,
-                                    md: 2,
-                                }}
-                                alignItems={{
-                                    xs: 'stretch',
-                                    md: 'center',
-                                }}
+                                direction={{ xs: 'column', md: 'row' }}
+                                spacing={{ xs: 2, md: 2 }}
+                                alignItems={{ xs: 'stretch', md: 'center' }}
                                 justifyContent='space-between'
                             >
                                 <Stack
                                     direction='row'
                                     spacing={2}
                                     alignItems='center'
-                                    sx={{
-                                        flex: 1,
-                                        minWidth: 0,
-                                    }}
+                                    sx={{ flex: 1, minWidth: 0 }}
                                 >
                                     <Avatar
                                         src={
@@ -787,19 +677,13 @@ const PostDetails: FunctionComponent = () => {
                                             borderColor: BRAND_COLOR,
                                             cursor: 'pointer',
                                             transition: 'transform 0.2s',
-
                                             '&:hover': {
                                                 transform: 'scale(1.05)',
                                             },
                                         }}
                                     />
 
-                                    <Box
-                                        sx={{
-                                            minWidth: 0,
-                                            flex: 1,
-                                        }}
-                                    >
+                                    <Box sx={{ minWidth: 0, flex: 1 }}>
                                         <Stack
                                             direction='row'
                                             spacing={1}
@@ -826,7 +710,6 @@ const PostDetails: FunctionComponent = () => {
                                                     sx={{
                                                         fontWeight: 700,
                                                         height: 24,
-
                                                         '& .MuiChip-label': {
                                                             px: 1.5,
                                                             fontSize: '0.7rem',
@@ -852,10 +735,7 @@ const PostDetails: FunctionComponent = () => {
                                                 xs: 'column',
                                                 sm: 'row',
                                             }}
-                                            spacing={{
-                                                xs: 0.5,
-                                                sm: 1.5,
-                                            }}
+                                            spacing={{ xs: 0.5, sm: 1.5 }}
                                             divider={
                                                 <Divider
                                                     orientation='vertical'
@@ -868,16 +748,12 @@ const PostDetails: FunctionComponent = () => {
                                                     }}
                                                 />
                                             }
-                                            sx={{
-                                                mt: 0.5,
-                                            }}
+                                            sx={{ mt: 0.5 }}
                                         >
                                             <Typography
                                                 variant='body2'
                                                 color='text.secondary'
-                                                sx={{
-                                                    fontSize: '0.8125rem',
-                                                }}
+                                                sx={{ fontSize: '0.8125rem' }}
                                             >
                                                 @{post.seller?.slug || 'seller'}
                                             </Typography>
@@ -885,9 +761,7 @@ const PostDetails: FunctionComponent = () => {
                                             <Typography
                                                 variant='body2'
                                                 color='text.secondary'
-                                                sx={{
-                                                    fontSize: '0.8125rem',
-                                                }}
+                                                sx={{ fontSize: '0.8125rem' }}
                                             >
                                                 منشور منذ{' '}
                                                 {formatTimeAgo(
@@ -897,6 +771,26 @@ const PostDetails: FunctionComponent = () => {
                                                     t,
                                                 )}
                                             </Typography>
+
+                                            {/* ✅ إحصائيات صحيحة */}
+                                            <StatsBadge
+                                                icon={
+                                                    <ViewIcon
+                                                        sx={{ fontSize: 14 }}
+                                                    />
+                                                }
+                                                label='عدد المشاهدات'
+                                                value={post.views ?? 0}
+                                            />
+                                            <StatsBadge
+                                                icon={
+                                                    <ThumbUpIcon
+                                                        sx={{ fontSize: 14 }}
+                                                    />
+                                                }
+                                                label='عدد الإعجابات'
+                                                value={post.likes?.length || 0}
+                                            />
                                         </Stack>
                                     </Box>
                                 </Stack>
@@ -906,33 +800,46 @@ const PostDetails: FunctionComponent = () => {
                                     spacing={1}
                                     sx={{
                                         flexShrink: 0,
-
                                         '& .MuiButton-root': {
                                             py: 1,
-                                            px: {
-                                                xs: 1.5,
-                                                sm: 2.5,
-                                            },
+                                            px: { xs: 1.5, sm: 2.5 },
                                             fontSize: '0.8125rem',
                                             fontWeight: 600,
                                             whiteSpace: 'nowrap',
                                         },
                                     }}
                                 >
+                                    {/* ✅ زر تحديث */}
+                                    <Tooltip title='تحديث البيانات'>
+                                        <IconButton
+                                            onClick={handleRefreshPost}
+                                            size='small'
+                                            sx={{
+                                                borderColor: 'divider',
+                                                color: 'text.secondary',
+                                                '&:hover': {
+                                                    borderColor: BRAND_COLOR,
+                                                    color: BRAND_COLOR,
+                                                    bgcolor: alpha(
+                                                        BRAND_COLOR,
+                                                        0.04,
+                                                    ),
+                                                },
+                                            }}
+                                        >
+                                            <RefreshIcon />
+                                        </IconButton>
+                                    </Tooltip>
+
                                     <Button
                                         variant='outlined'
                                         startIcon={
-                                            <Person
-                                                sx={{
-                                                    fontSize: 20,
-                                                }}
-                                            />
+                                            <Person sx={{ fontSize: 20 }} />
                                         }
                                         onClick={goToProfile}
                                         sx={{
                                             borderColor: 'divider',
                                             color: 'text.secondary',
-
                                             '&:hover': {
                                                 borderColor: BRAND_COLOR,
                                                 color: BRAND_COLOR,
@@ -943,7 +850,7 @@ const PostDetails: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        الملف الشخصي
+                                        {t('profile.title')}
                                     </Button>
 
                                     {isOwner ? (
@@ -952,15 +859,12 @@ const PostDetails: FunctionComponent = () => {
                                                 variant='outlined'
                                                 startIcon={
                                                     <EditIcon
-                                                        sx={{
-                                                            fontSize: 20,
-                                                        }}
+                                                        sx={{ fontSize: 20 }}
                                                     />
                                                 }
                                                 onClick={handleEditProduct}
                                                 sx={{
                                                     borderColor: 'warning.main',
-
                                                     '&:hover': {
                                                         bgcolor: alpha(
                                                             '#ED6C02',
@@ -969,16 +873,14 @@ const PostDetails: FunctionComponent = () => {
                                                     },
                                                 }}
                                             >
-                                                {t('edit')}
+                                                {t('postCard.edit')}
                                             </Button>
 
                                             <Button
                                                 variant='outlined'
                                                 startIcon={
                                                     <DeleteIcon
-                                                        sx={{
-                                                            fontSize: 20,
-                                                        }}
+                                                        sx={{ fontSize: 20 }}
                                                     />
                                                 }
                                                 onClick={() =>
@@ -987,7 +889,6 @@ const PostDetails: FunctionComponent = () => {
                                                 sx={{
                                                     borderColor: 'error.main',
                                                     color: 'error.main',
-
                                                     '&:hover': {
                                                         bgcolor: alpha(
                                                             '#D32F2F',
@@ -996,7 +897,7 @@ const PostDetails: FunctionComponent = () => {
                                                     },
                                                 }}
                                             >
-                                                حذف
+                                                {t('postCard.delete')}
                                             </Button>
                                         </>
                                     ) : (
@@ -1004,9 +905,7 @@ const PostDetails: FunctionComponent = () => {
                                             variant='outlined'
                                             startIcon={
                                                 <Comment
-                                                    sx={{
-                                                        fontSize: 20,
-                                                    }}
+                                                    sx={{ fontSize: 20 }}
                                                 />
                                             }
                                             onClick={handleContactSeller}
@@ -1014,7 +913,6 @@ const PostDetails: FunctionComponent = () => {
                                                 gap: 1,
                                                 borderColor: 'divider',
                                                 color: 'text.secondary',
-
                                                 '&:hover': {
                                                     borderColor: BRAND_COLOR,
                                                     color: BRAND_COLOR,
@@ -1055,11 +953,7 @@ const PostDetails: FunctionComponent = () => {
                                     component={Link}
                                     to={path.Home}
                                     startIcon={
-                                        <HomeIcon
-                                            sx={{
-                                                fontSize: 18,
-                                            }}
-                                        />
+                                        <HomeIcon sx={{ fontSize: 18 }} />
                                     }
                                     sx={{
                                         textTransform: 'none',
@@ -1072,18 +966,13 @@ const PostDetails: FunctionComponent = () => {
                                 {post.category && (
                                     <Button
                                         startIcon={
-                                            <StoreIcon
-                                                sx={{
-                                                    fontSize: 18,
-                                                }}
-                                            />
+                                            <StoreIcon sx={{ fontSize: 18 }} />
                                         }
                                         onClick={() => {
                                             const catPath =
                                                 categoryPathMap[
                                                     post.category
                                                 ] || '';
-
                                             if (catPath) {
                                                 navigate(catPath);
                                             }
@@ -1123,25 +1012,17 @@ const PostDetails: FunctionComponent = () => {
 
                         <Grid container spacing={4}>
                             {/* =================================================
-                                LEFT
+                                LEFT COLUMN
                             ================================================= */}
 
-                            <Grid
-                                size={{
-                                    xs: 12,
-                                    lg: 7,
-                                }}
-                            >
+                            <Grid size={{ xs: 12, lg: 7 }}>
                                 <Stack spacing={3}>
                                     {/* IMAGE */}
                                     <motion.div
                                         variants={fadeUp}
                                         initial='hidden'
                                         whileInView='show'
-                                        viewport={{
-                                            once: true,
-                                            amount: 0.2,
-                                        }}
+                                        viewport={{ once: true, amount: 0.2 }}
                                     >
                                         <Card
                                             sx={{
@@ -1169,7 +1050,6 @@ const PostDetails: FunctionComponent = () => {
                                                         : 'zoom-in',
                                                     background:
                                                         'radial-gradient(circle at top, #f8fafc 0%, #f1ede4 100%)',
-
                                                     '&::before': {
                                                         content: '""',
                                                         position: 'absolute',
@@ -1197,18 +1077,15 @@ const PostDetails: FunctionComponent = () => {
                                                                     'contain',
                                                                 transition:
                                                                     'transform 0.3s ease',
-
                                                                 transform:
                                                                     isZoomed
                                                                         ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
                                                                         : 'scale(1)',
-
                                                                 transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
                                                             }}
                                                         />
 
                                                         {/* IMAGE CONTROLS */}
-
                                                         <Stack
                                                             direction='row'
                                                             spacing={0.5}
@@ -1307,7 +1184,6 @@ const PostDetails: FunctionComponent = () => {
                                                                         e,
                                                                     ) => {
                                                                         e.stopPropagation();
-
                                                                         void handleFullscreenToggle();
                                                                     }}
                                                                     sx={{
@@ -1340,7 +1216,6 @@ const PostDetails: FunctionComponent = () => {
                                                                                 'rgba(255,255,255,0.2)',
                                                                         }}
                                                                     />
-
                                                                     <Tooltip
                                                                         title='إعادة الضبط'
                                                                         placement='top'
@@ -1351,7 +1226,6 @@ const PostDetails: FunctionComponent = () => {
                                                                                 e,
                                                                             ) => {
                                                                                 e.stopPropagation();
-
                                                                                 handleResetZoom();
                                                                             }}
                                                                             sx={{
@@ -1372,7 +1246,6 @@ const PostDetails: FunctionComponent = () => {
                                                         </Stack>
 
                                                         {/* ZOOM LEVEL */}
-
                                                         {isZoomed && (
                                                             <Box
                                                                 sx={{
@@ -1400,7 +1273,6 @@ const PostDetails: FunctionComponent = () => {
                                                         )}
 
                                                         {/* ZOOM HINT */}
-
                                                         <Box
                                                             sx={{
                                                                 position:
@@ -1438,9 +1310,7 @@ const PostDetails: FunctionComponent = () => {
                                                         justifyContent='center'
                                                         alignItems='center'
                                                         spacing={1.5}
-                                                        sx={{
-                                                            height: '100%',
-                                                        }}
+                                                        sx={{ height: '100%' }}
                                                     >
                                                         <Typography
                                                             variant='h6'
@@ -1448,7 +1318,6 @@ const PostDetails: FunctionComponent = () => {
                                                         >
                                                             لا توجد صورة للمنتج
                                                         </Typography>
-
                                                         <Typography
                                                             variant='body2'
                                                             color='text.disabled'
@@ -1462,7 +1331,6 @@ const PostDetails: FunctionComponent = () => {
                                             </Box>
 
                                             {/* ACTIONS */}
-
                                             <Box
                                                 sx={{
                                                     p: 2,
@@ -1497,7 +1365,6 @@ const PostDetails: FunctionComponent = () => {
                                                             disabled={isSharing}
                                                             sx={{
                                                                 color: 'text.secondary',
-
                                                                 '&:hover': {
                                                                     color: BRAND_COLOR,
                                                                     bgcolor:
@@ -1525,203 +1392,14 @@ const PostDetails: FunctionComponent = () => {
                                                     </Typography>
                                                 </Stack>
                                             </Box>
-
-                                            {/* OWNER ACTIONS */}
-                                            {/* 
-                                            {isOwner && (
-                                                <Box
-                                                    sx={{
-                                                        p: 2,
-                                                        borderTop: 1,
-                                                        borderColor: 'divider',
-                                                        bgcolor: alpha(
-                                                            '#000',
-                                                            0.01,
-                                                        ),
-                                                    }}
-                                                >
-                                                    <Stack
-                                                        direction={{
-                                                            xs: 'column',
-                                                            sm: 'row',
-                                                        }}
-                                                        spacing={1.5}
-                                                    >
-                                                        <Button
-                                                            variant='contained'
-                                                            color='warning'
-                                                            startIcon={
-                                                                <EditIcon />
-                                                            }
-                                                            onClick={
-                                                                handleEditProduct
-                                                            }
-                                                            fullWidth
-                                                            sx={{
-                                                                py: 1.25,
-                                                                fontWeight: 600,
-                                                            }}
-                                                        >
-                                                            {t('edit')}
-                                                        </Button>
-
-                                                        <Button
-                                                            variant='contained'
-                                                            color='error'
-                                                            startIcon={
-                                                                <DeleteIcon />
-                                                            }
-                                                            onClick={() =>
-                                                                setShowDeleteModal(
-                                                                    true,
-                                                                )
-                                                            }
-                                                            fullWidth
-                                                            sx={{
-                                                                py: 1.25,
-                                                                fontWeight: 600,
-                                                            }}
-                                                        >
-                                                            {t('delete')}
-                                                        </Button>
-                                                    </Stack>
-                                                </Box>
-                                            )} */}
                                         </Card>
                                     </motion.div>
 
-                                    {/* =================================================
-                                        DETAILS
-                                    ================================================= */}
-
-                                    {/* <Card
-                                        sx={{
-                                            ...sectionCardSx,
-                                            p: {
-                                                xs: 2.25,
-                                                md: 3,
-                                            },
-                                            borderRadius: 3,
-                                        }}
-                                    >
-                                        <SectionTitle
-                                            {...SECTION_TITLES.details}
-                                        />
-
-                                        <Grid
-                                            container
-                                            spacing={2}
-                                        >
-                                            {Object.entries({
-                                                التصنيف:
-                                                    categoryLabel,
-                                                السعر:
-                                                    formatPrice(
-                                                        post.price,
-                                                    ),
-                                                البائع:
-                                                    sellerDisplayName,
-                                                الحالة:
-                                                    post.in_stock
-                                                        ? '✅ متوفر'
-                                                        : '❌ غير متوفر',
-                                                التقييم:
-                                                    `${productRating.toFixed(
-                                                        1,
-                                                    )}/5 ⭐`,
-                                            }).map(
-                                                ([
-                                                    key,
-                                                    value,
-                                                ]) => (
-                                                    <Grid
-                                                        size={{
-                                                            xs: 6,
-                                                            md: 4,
-                                                        }}
-                                                        key={
-                                                            key
-                                                        }
-                                                    >
-                                                        <Box
-                                                            sx={{
-                                                                p: 2,
-                                                                borderRadius: 2,
-                                                                bgcolor:
-                                                                    alpha(
-                                                                        '#000',
-                                                                        0.02,
-                                                                    ),
-                                                                border:
-                                                                    '1px solid',
-                                                                borderColor:
-                                                                    'divider',
-                                                                transition:
-                                                                    '0.2s',
-
-                                                                '&:hover':
-                                                                    {
-                                                                        bgcolor:
-                                                                            alpha(
-                                                                                BRAND_COLOR,
-                                                                                0.04,
-                                                                            ),
-                                                                        borderColor:
-                                                                            BRAND_COLOR,
-                                                                    },
-                                                            }}
-                                                        >
-                                                            <Typography
-                                                                variant="caption"
-                                                                color="text.secondary"
-                                                                sx={{
-                                                                    display:
-                                                                        'block',
-                                                                    fontSize:
-                                                                        '0.6875rem',
-                                                                    textTransform:
-                                                                        'uppercase',
-                                                                    letterSpacing: 0.5,
-                                                                    fontWeight: 600,
-                                                                }}
-                                                            >
-                                                                {
-                                                                    key
-                                                                }
-                                                            </Typography>
-
-                                                            <Typography
-                                                                sx={{
-                                                                    fontWeight: 700,
-                                                                    fontSize:
-                                                                        '0.9375rem',
-                                                                    mt: 0.5,
-                                                                    color:
-                                                                        key ===
-                                                                        'السعر'
-                                                                            ? BRAND_COLOR
-                                                                            : 'text.primary',
-                                                                }}
-                                                            >
-                                                                {
-                                                                    value
-                                                                }
-                                                            </Typography>
-                                                        </Box>
-                                                    </Grid>
-                                                ),
-                                            )}
-                                        </Grid>
-                                    </Card> */}
                                     {/* PRODUCT INFO */}
-
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
-                                            p: {
-                                                xs: 2.25,
-                                                md: 3,
-                                            },
+                                            p: { xs: 2.25, md: 3 },
                                             borderRadius: 3,
                                         }}
                                     >
@@ -1749,8 +1427,6 @@ const PostDetails: FunctionComponent = () => {
                                                     alignItems='center'
                                                     flexWrap='wrap'
                                                 >
-                                                    {/* PRODUCT RATING
-                                                        READ ONLY */}
                                                     <Rating
                                                         value={productRating}
                                                         precision={0.5}
@@ -1763,8 +1439,6 @@ const PostDetails: FunctionComponent = () => {
                                                         color='text.secondary'
                                                     >
                                                         {post.reviews?.length ??
-                                                            post.reviews
-                                                                ?.length ??
                                                             0}{' '}
                                                         {t('reviews') ||
                                                             'تقييم'}
@@ -1773,30 +1447,18 @@ const PostDetails: FunctionComponent = () => {
                                             </Box>
 
                                             {/* PRICE */}
-
                                             <Box
                                                 sx={{
                                                     p: 3,
                                                     borderRadius: 2,
-                                                    background: `linear-gradient(135deg, ${alpha(
-                                                        BRAND_COLOR,
-                                                        0.08,
-                                                    )}, ${alpha(
-                                                        BRAND_DARK,
-                                                        0.04,
-                                                    )})`,
-                                                    border: `1px solid ${alpha(
-                                                        BRAND_COLOR,
-                                                        0.12,
-                                                    )}`,
+                                                    background: `linear-gradient(135deg, ${alpha(BRAND_COLOR, 0.08)}, ${alpha(BRAND_DARK, 0.04)})`,
+                                                    border: `1px solid ${alpha(BRAND_COLOR, 0.12)}`,
                                                 }}
                                             >
                                                 <Typography
                                                     variant='body2'
                                                     color='text.secondary'
-                                                    sx={{
-                                                        mb: 0.5,
-                                                    }}
+                                                    sx={{ mb: 0.5 }}
                                                 >
                                                     السعر الحالي
                                                 </Typography>
@@ -1823,9 +1485,7 @@ const PostDetails: FunctionComponent = () => {
                                                 <Stack
                                                     direction='row'
                                                     spacing={1}
-                                                    sx={{
-                                                        mt: 2,
-                                                    }}
+                                                    sx={{ mt: 2 }}
                                                 >
                                                     <Chip
                                                         label={
@@ -1839,9 +1499,7 @@ const PostDetails: FunctionComponent = () => {
                                                                 : 'default'
                                                         }
                                                         size='small'
-                                                        sx={{
-                                                            fontWeight: 600,
-                                                        }}
+                                                        sx={{ fontWeight: 600 }}
                                                     />
 
                                                     <Chip
@@ -1860,7 +1518,6 @@ const PostDetails: FunctionComponent = () => {
                                             </Box>
 
                                             {/* OPTIONS */}
-
                                             {post.category && (
                                                 <Box>
                                                     <Typography
@@ -1875,7 +1532,6 @@ const PostDetails: FunctionComponent = () => {
                                                             'الخيارات المتاحة',
                                                         )}
                                                     </Typography>
-
                                                     <ColorsAndSizes
                                                         category={post.category}
                                                     />
@@ -1885,9 +1541,30 @@ const PostDetails: FunctionComponent = () => {
                                             <Divider />
 
                                             {/* DESCRIPTION */}
+                                            <Box>
+                                                <Typography
+                                                    variant='h6'
+                                                    fontWeight={800}
+                                                    mb={1}
+                                                >
+                                                    {t(
+                                                        'product.description',
+                                                        'الوصف',
+                                                    )}
+                                                </Typography>
+                                                <Typography
+                                                    color='text.secondary'
+                                                    sx={{ lineHeight: 1.9 }}
+                                                >
+                                                    {post.description ||
+                                                        t(
+                                                            'product.noDescription',
+                                                            'لا يوجد وصف متاح لهذا المنتج',
+                                                        )}
+                                                </Typography>
+                                            </Box>
 
                                             {/* ACTIONS */}
-
                                             <Stack spacing={1.5}>
                                                 {!isOwner && (
                                                     <Button
@@ -1902,7 +1579,6 @@ const PostDetails: FunctionComponent = () => {
                                                             py: 1.5,
                                                             background:
                                                                 BRAND_GRADIENT,
-
                                                             '&:hover': {
                                                                 opacity: 0.9,
                                                                 transform:
@@ -1927,7 +1603,6 @@ const PostDetails: FunctionComponent = () => {
                                                         borderColor:
                                                             BRAND_COLOR,
                                                         color: BRAND_DARK,
-
                                                         '&:hover': {
                                                             borderColor:
                                                                 BRAND_DARK,
@@ -1949,9 +1624,7 @@ const PostDetails: FunctionComponent = () => {
                                                         <ArrowBackIcon />
                                                     }
                                                     onClick={() => navigate(-1)}
-                                                    sx={{
-                                                        py: 1.25,
-                                                    }}
+                                                    sx={{ py: 1.25 }}
                                                 >
                                                     {t('backOneStep')}
                                                 </Button>
@@ -1959,33 +1632,13 @@ const PostDetails: FunctionComponent = () => {
                                         </Stack>
                                     </Card>
 
+                                    {/* SPECIFICATIONS */}
                                     <PostSpecifications
                                         product={post}
                                         categoryLabel={categoryLabel}
                                         t={t}
                                     />
-                                    <Box>
-                                        <Typography
-                                            variant='h6'
-                                            fontWeight={800}
-                                            mb={1}
-                                        >
-                                            {t('product.description', 'الوصف')}
-                                        </Typography>
 
-                                        <Typography
-                                            color='text.secondary'
-                                            sx={{
-                                                lineHeight: 1.9,
-                                            }}
-                                        >
-                                            {post.description ||
-                                                t(
-                                                    'product.noDescription',
-                                                    'لا يوجد وصف متاح لهذا المنتج',
-                                                )}
-                                        </Typography>
-                                    </Box>
                                     {/* =================================================
                                         REVIEWS
                                     ================================================= */}
@@ -1993,10 +1646,7 @@ const PostDetails: FunctionComponent = () => {
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
-                                            p: {
-                                                xs: 2.25,
-                                                md: 3,
-                                            },
+                                            p: { xs: 2.25, md: 3 },
                                             borderRadius: 3,
                                         }}
                                     >
@@ -2174,7 +1824,6 @@ const PostDetails: FunctionComponent = () => {
                                         )}
 
                                         {/* REVIEW FORM */}
-
                                         <Stack spacing={2.5}>
                                             <TextField
                                                 multiline
@@ -2223,7 +1872,6 @@ const PostDetails: FunctionComponent = () => {
                                                             'review.reviewExperience',
                                                         )}
                                                     </Typography>
-
                                                     <Rating
                                                         value={reviewRating}
                                                         onChange={(
@@ -2253,13 +1901,11 @@ const PostDetails: FunctionComponent = () => {
                                                         px: 4,
                                                         py: 1.25,
                                                         fontWeight: 600,
-
                                                         '&:hover': {
                                                             opacity: 0.9,
                                                             transform:
                                                                 'translateY(-1px)',
                                                         },
-
                                                         '&:disabled': {
                                                             opacity: 0.5,
                                                         },
@@ -2269,7 +1915,6 @@ const PostDetails: FunctionComponent = () => {
                                                             navigate(
                                                                 path.Login,
                                                             );
-
                                                             return;
                                                         }
 
@@ -2280,7 +1925,6 @@ const PostDetails: FunctionComponent = () => {
                                                             showError(
                                                                 'بيانات المستخدم أو المنتج غير متوفرة',
                                                             );
-
                                                             return;
                                                         }
 
@@ -2311,7 +1955,6 @@ const PostDetails: FunctionComponent = () => {
                                                                         const oldReviews =
                                                                             prevPost.reviews ||
                                                                             [];
-
                                                                         const updatedReviews =
                                                                             [
                                                                                 response.review,
@@ -2345,10 +1988,8 @@ const PostDetails: FunctionComponent = () => {
 
                                                                         return {
                                                                             ...prevPost,
-
                                                                             reviews:
                                                                                 updatedReviews,
-
                                                                             reviewCount:
                                                                                 response.reviewCount !==
                                                                                     undefined &&
@@ -2358,7 +1999,6 @@ const PostDetails: FunctionComponent = () => {
                                                                                           response.reviewCount,
                                                                                       )
                                                                                     : updatedReviews.length,
-
                                                                             rating: calculatedRating,
                                                                         };
                                                                     },
@@ -2379,11 +2019,9 @@ const PostDetails: FunctionComponent = () => {
                                                                 );
 
                                                                 setComment('');
-
                                                                 setReviewRating(
                                                                     0,
                                                                 );
-
                                                                 showSuccess(
                                                                     t(
                                                                         'review.submitted',
@@ -2395,7 +2033,6 @@ const PostDetails: FunctionComponent = () => {
                                                                 'Submit review error:',
                                                                 submitError,
                                                             );
-
                                                             showError(
                                                                 t(
                                                                     'review.submitError',
@@ -2439,28 +2076,18 @@ const PostDetails: FunctionComponent = () => {
                             </Grid>
 
                             {/* =================================================
-                                RIGHT
+                                RIGHT COLUMN
                             ================================================= */}
 
-                            <Grid
-                                size={{
-                                    xs: 12,
-                                    lg: 5,
-                                }}
-                            >
+                            <Grid size={{ xs: 12, lg: 5 }}>
                                 <Stack
                                     spacing={3}
                                     sx={{
-                                        position: {
-                                            lg: 'sticky',
-                                        },
-                                        top: {
-                                            lg: 24,
-                                        },
+                                        position: { lg: 'sticky' },
+                                        top: { lg: 24 },
                                     }}
                                 >
                                     {/* SELLER CARD */}
-
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
@@ -2494,7 +2121,6 @@ const PostDetails: FunctionComponent = () => {
                                                     >
                                                         {sellerDisplayName}
                                                     </Typography>
-
                                                     <Typography
                                                         variant='body2'
                                                         color='text.secondary'
@@ -2538,16 +2164,56 @@ const PostDetails: FunctionComponent = () => {
                                                         fontSize: 20,
                                                     }}
                                                 />
-
                                                 <Typography
                                                     variant='body2'
-                                                    sx={{
-                                                        fontWeight: 600,
-                                                    }}
+                                                    sx={{ fontWeight: 600 }}
                                                 >
                                                     بائع موثوق • رد سريع
                                                 </Typography>
                                             </Box>
+
+                                            <Stack direction='row' spacing={1}>
+                                                <Button
+                                                    fullWidth
+                                                    variant='outlined'
+                                                    startIcon={<WhatsApp />}
+                                                    sx={{
+                                                        borderColor: '#25D366',
+                                                        color: '#25D366',
+                                                        '&:hover': {
+                                                            bgcolor: alpha(
+                                                                '#25D366',
+                                                                0.04,
+                                                            ),
+                                                            borderColor:
+                                                                '#128C7E',
+                                                        },
+                                                    }}
+                                                    href={`https://wa.me/${post.seller?.phone?.phone_1}`}
+                                                    target='_blank'
+                                                >
+                                                    واتساب
+                                                </Button>
+                                                <Button
+                                                    fullWidth
+                                                    variant='outlined'
+                                                    startIcon={<Email />}
+                                                    sx={{
+                                                        borderColor:
+                                                            'info.main',
+                                                        color: 'info.main',
+                                                        '&:hover': {
+                                                            bgcolor: alpha(
+                                                                '#0288D1',
+                                                                0.04,
+                                                            ),
+                                                        },
+                                                    }}
+                                                    href={`mailto:${post.seller?.email}`}
+                                                >
+                                                    بريد
+                                                </Button>
+                                            </Stack>
 
                                             <Button
                                                 fullWidth
@@ -2557,7 +2223,6 @@ const PostDetails: FunctionComponent = () => {
                                                 disabled={isSharing}
                                                 sx={{
                                                     color: 'text.secondary',
-
                                                     '&:hover': {
                                                         color: BRAND_COLOR,
                                                         bgcolor: alpha(
@@ -2569,6 +2234,84 @@ const PostDetails: FunctionComponent = () => {
                                             >
                                                 شارك المنتج
                                             </Button>
+                                        </Stack>
+                                    </Card>
+
+                                    {/* ✅ معلومات إضافية */}
+                                    <Card
+                                        sx={{
+                                            ...sectionCardSx,
+                                            p: 3,
+                                            borderRadius: 3,
+                                        }}
+                                    >
+                                        <Typography
+                                            variant='subtitle2'
+                                            fontWeight={700}
+                                            gutterBottom
+                                        >
+                                            📋 معلومات إضافية
+                                        </Typography>
+                                        <Stack spacing={1.5}>
+                                            <Stack
+                                                direction='row'
+                                                spacing={1}
+                                                alignItems='center'
+                                            >
+                                                <LocationOn
+                                                    sx={{
+                                                        fontSize: 18,
+                                                        color: 'text.secondary',
+                                                    }}
+                                                />
+                                                <Typography
+                                                    variant='body2'
+                                                    color='text.secondary'
+                                                >
+                                                    {post.location ||
+                                                        'غير محدد'}
+                                                </Typography>
+                                            </Stack>
+                                            <Stack
+                                                direction='row'
+                                                spacing={1}
+                                                alignItems='center'
+                                            >
+                                                <CalendarToday
+                                                    sx={{
+                                                        fontSize: 18,
+                                                        color: 'text.secondary',
+                                                    }}
+                                                />
+                                                <Typography
+                                                    variant='body2'
+                                                    color='text.secondary'
+                                                >
+                                                    تاريخ النشر:{' '}
+                                                    {formatTimeAgo(
+                                                        String(post.createdAt),
+                                                        t,
+                                                    )}
+                                                </Typography>
+                                            </Stack>
+                                            <Stack
+                                                direction='row'
+                                                spacing={1}
+                                                alignItems='center'
+                                            >
+                                                <ViewIcon
+                                                    sx={{
+                                                        fontSize: 18,
+                                                        color: 'text.secondary',
+                                                    }}
+                                                />
+                                                <Typography
+                                                    variant='body2'
+                                                    color='text.secondary'
+                                                >
+                                                    {post.views ?? 0} مشاهدة
+                                                </Typography>
+                                            </Stack>
                                         </Stack>
                                     </Card>
                                 </Stack>
@@ -2598,11 +2341,9 @@ const PostDetails: FunctionComponent = () => {
                                     sx={{
                                         overflowX: 'auto',
                                         pb: 2,
-
                                         '&::-webkit-scrollbar': {
                                             display: 'none',
                                         },
-
                                         scrollBehavior: 'smooth',
                                     }}
                                 >
@@ -2610,10 +2351,7 @@ const PostDetails: FunctionComponent = () => {
                                         <Box
                                             key={product._id}
                                             sx={{
-                                                minWidth: {
-                                                    xs: 200,
-                                                    sm: 260,
-                                                },
+                                                minWidth: { xs: 200, sm: 260 },
                                             }}
                                         >
                                             <RelatedProductCard

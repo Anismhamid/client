@@ -17,9 +17,6 @@ import UsersPagination from './UsersPagination';
 import UserDetailsDialog from './UserDetailsDialog';
 import DeleteUserDialog from './DeleteUserDialog';
 
-import MessageInvestigation from './MessageInvestigation/MessageInvestigation';
-import MessageAuditLogs from './MessageInvestigation/MessageAuditLogs';
-
 // ======================================================
 // Hooks
 // ======================================================
@@ -27,7 +24,6 @@ import MessageAuditLogs from './MessageInvestigation/MessageAuditLogs';
 import { useUsers } from '../hooks/useUsers';
 import { useUsersRealtime } from '../hooks/useUsersRealtime';
 import { useUsersFilters } from '../hooks/useUsersFilters';
-import useMessageAuditLogs from '../hooks/useMessageAuditLogs';
 
 // ======================================================
 // Types
@@ -80,7 +76,6 @@ const UsersManagement: FunctionComponent = () => {
     // Message Audit Logs
     // ==================================================
 
-    const { logs } = useMessageAuditLogs();
 
     // ==================================================
     // Filters
@@ -370,21 +365,12 @@ const UsersManagement: FunctionComponent = () => {
                             direction={direction}
                         />
 
-                        {/* ==========================================
-                            Message Investigation
-                        ========================================== */}
 
-                        <MessageInvestigation />
 
-                        {/* ==========================================
-                            Message Audit Logs
-                        ========================================== */}
-
-                        <MessageAuditLogs logs={logs} />
                     </Stack>
                 </Grid>
 
-                <Grid size={{xs:12,md:6}}>
+                <Grid size={{xs:12}}>
                     <Stack spacing={3}>
                         {/* ==========================================
                             Users Table

@@ -45,6 +45,8 @@ export enum path {
     ForgotPassword = '/password-recover',
     ResetPassword = '/reset-password/:token',
     ReportsManagement = '/reports-management',
+    MessageAuditLogs = '/message-audit-logs',
+
     Search = '/search',
 
     // Help (SEO gold)
@@ -72,7 +74,7 @@ export enum path {
     About = '/about',
     DeleteAccount = '/delete-account',
     MessageInvestigation = '/admin/message-investigation',
-    
+
     // Ecommerce
     Favorite = '/favorites',
     DiscountsAndOffers = '/discounts-and-offers',

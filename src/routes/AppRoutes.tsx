@@ -42,6 +42,7 @@ import SearchPage from '../atoms/SearchPage';
 import DeleteAccount from '../components/settings/DeleteAccount';
 import MessageInvestigation from '../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation';
 import ReportManagement from '../components/reports/ReportManagement';
+import MessageAuditLogs from '../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -125,6 +126,17 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                     auth?.role === RoleType.Admin ||
                     auth?.role === RoleType.Moderator ? (
                         <ReportManagement />
+                    ) : (
+                        <PageNotFound />
+                    )
+                }
+            />
+            <Route
+                path={path.MessageAuditLogs}
+                element={
+                    auth?.role === RoleType.Admin ||
+                    auth?.role === RoleType.Moderator ? (
+                        <MessageAuditLogs />
                     ) : (
                         <PageNotFound />
                     )

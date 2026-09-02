@@ -214,17 +214,32 @@ export const getCustomerProfilePostsBySlug = async (
 
 export const toggleLike = async (postId: string) => {
     const token = localStorage.getItem('token');
+
+    console.log('🔐 Like token exists:', !!token);
+    console.log('🔐 Like token prefix:', token?.slice(0, 20));
+
+    if (!token) {
+        throw new Error('Authentication token is missing');
+    }
+
     try {
         const res = await axios.patch(
             `${api}/posts/${postId}/like`,
             {},
             {
-                headers: { Authorization: token },
+                headers: {
+                    Authorization: token,
+                },
             },
         );
-        return res.data; // { liked: true/false, totalLikes: number }
-    } catch {
-        return [];
+
+        return res.data;
+    } catch (error: any) {
+        console.error('❌ Like API Error:', error);
+        console.error('Status:', error?.response?.status);
+        console.error('Data:', error?.response?.data);
+
+        throw error;
     }
 };
 
