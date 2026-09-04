@@ -1,7 +1,4 @@
-import {
-    FunctionComponent,
-    useState,
-} from 'react';
+import { FunctionComponent, useState } from 'react';
 
 import {
     Alert,
@@ -25,12 +22,11 @@ import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 
 import { useTranslation } from 'react-i18next';
 
-import {
-    UserReportType,
-    UserReportReason,
-} from '../../interfaces/report.types';
+
 
 import useReport from '../../hooks/useReport';
+import { UserReportReason, UserReportType } from '../../interfaces/report.types';
+import handleRTL from '../../locales/handleRTL';
 
 interface ReportModalProps {
     open: boolean;
@@ -57,9 +53,7 @@ const reasons: UserReportReason[] = [
     'other',
 ];
 
-const ReportModal: FunctionComponent<
-    ReportModalProps
-> = ({
+const ReportModal: FunctionComponent<ReportModalProps> = ({
     open,
     onClose,
     type,
@@ -70,25 +64,18 @@ const ReportModal: FunctionComponent<
 
     const { createReport, loading } = useReport();
 
-    const [reason, setReason] =
-        useState<UserReportReason | ''>('');
+    const [reason, setReason] = useState<UserReportReason | ''>('');
 
-    const [description, setDescription] =
-        useState('');
+    const [description, setDescription] = useState('');
 
-    const [error, setError] =
-        useState('');
+    const [error, setError] = useState('');
 
     // =====================================================
     // Reason
     // =====================================================
 
-    const handleReasonChange = (
-        event: SelectChangeEvent,
-    ) => {
-        setReason(
-            event.target.value as UserReportReason,
-        );
+    const handleReasonChange = (event: SelectChangeEvent) => {
+        setReason(event.target.value as UserReportReason);
 
         setError('');
     };
@@ -113,12 +100,7 @@ const ReportModal: FunctionComponent<
 
     const handleSubmit = async () => {
         if (!reason) {
-            setError(
-                t(
-                    'reports.reasonRequired',
-                    'Please select a reason.',
-                ),
-            );
+            setError(t('modals.report.reasonRequired', 'Please select a reason.'));
 
             return;
         }
@@ -130,8 +112,7 @@ const ReportModal: FunctionComponent<
                 type,
                 targetId,
                 reason,
-                description:
-                    description.trim() || undefined,
+                description: description.trim() || undefined,
             });
 
             setReason('');
@@ -139,119 +120,70 @@ const ReportModal: FunctionComponent<
             setError('');
 
             onSuccess?.();
-
             onClose();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            console.error(
-                'Create report error:',
-                err,
-            );
+            console.error('Create report error:', err);
 
-            if (
-                err?.response?.status === 409
-            ) {
+            if (err?.response?.status === 409) {
                 setError(
                     t(
-                        'reports.alreadyReported',
+                        'modals.report.alreadyReported',
                         'You have already reported this.',
                     ),
                 );
             } else {
                 setError(
                     err?.response?.data?.message ||
-                        t(
-                            'reports.failed',
-                            'Failed to submit report.',
-                        ),
+                        t('modals.report.failed', 'Failed to submit modals.report.'),
                 );
             }
         }
     };
 
-    return (
-        <Dialog
-            open={open}
-            onClose={handleClose}
-            fullWidth
-            maxWidth="sm"
-        >
-            <DialogTitle>
-                <Stack
-                    direction="row"
-                    spacing={1}
-                    alignItems="center"
-                >
-                    <FlagOutlinedIcon />
+    const dir = handleRTL()
 
-                    <Box>
-                        {t(
-                            'reports.title',
-                            'Report',
-                        )}
+    return (
+        <Dialog dir={dir} open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+            <DialogTitle>
+                <Stack direction='row' spacing={1} alignItems='center'>
+                    <FlagOutlinedIcon color='error' />
+
+                    <Box sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
+                        {t('modals.report.title', 'Report')}
                     </Box>
                 </Stack>
             </DialogTitle>
 
             <DialogContent>
                 <Stack spacing={2.5} mt={1}>
-                    {error && (
-                        <Alert severity="error">
-                            {error}
-                        </Alert>
-                    )}
+                    {error && <Alert severity='error'>{error}</Alert>}
 
                     <FormControl fullWidth>
-                        <InputLabel>
-                            {t(
-                                'reports.reason',
-                                'Reason',
-                            )}
-                        </InputLabel>
+                        <InputLabel>{t('modals.report.reason', 'Reason')}</InputLabel>
 
                         <Select
                             value={reason}
-                            label={t(
-                                'reports.reason',
-                                'Reason',
-                            )}
-                            onChange={
-                                handleReasonChange
-                            }
+                            label={t('modals.report.reason', 'Reason')}
+                            onChange={handleReasonChange}
                         >
-                            {reasons.map(
-                                (item) => (
-                                    <MenuItem
-                                        key={item}
-                                        value={item}
-                                    >
-                                        {t(
-                                            `reports.reasons.${item}`,
-                                            item,
-                                        )}
-                                    </MenuItem>
-                                ),
-                            )}
+                            {reasons.map((item) => (
+                                <MenuItem key={item} value={item}>
+                                    {t(`modals.report.reasons.${item}`, item)}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
                     <TextField
-                        label={t(
-                            'reports.description',
-                            'Description',
-                        )}
+                        label={t('modals.report.description', 'Description')}
                         placeholder={t(
-                            'reports.descriptionPlaceholder',
+                            'modals.report.descriptionPlaceholder',
                             'Tell us more about the problem...',
                         )}
                         value={description}
                         onChange={(event) =>
-                            setDescription(
-                                event.target.value.slice(
-                                    0,
-                                    500,
-                                ),
-                            )
+                            setDescription(event.target.value.slice(0, 500))
                         }
                         multiline
                         rows={5}
@@ -262,42 +194,25 @@ const ReportModal: FunctionComponent<
             </DialogContent>
 
             <DialogActions sx={{ p: 2 }}>
-                <Button
-                    onClick={handleClose}
-                    disabled={loading}
-                >
-                    {t(
-                        'common.cancel',
-                        'Cancel',
-                    )}
+                <Button onClick={handleClose} disabled={loading}>
+                    {t('common.cancel', 'Cancel')}
                 </Button>
 
                 <Button
-                    variant="contained"
+                    variant='contained'
                     onClick={handleSubmit}
-                    disabled={
-                        loading || !reason
-                    }
+                    disabled={loading || !reason}
                     startIcon={
                         loading ? (
-                            <CircularProgress
-                                size={18}
-                                color="inherit"
-                            />
+                            <CircularProgress size={18} color='inherit' />
                         ) : (
                             <FlagOutlinedIcon />
                         )
                     }
                 >
                     {loading
-                        ? t(
-                              'common.sending',
-                              'Sending...',
-                          )
-                        : t(
-                              'reports.submit',
-                              'Submit report',
-                          )}
+                        ? t('common.sending', 'Sending...')
+                        : t('modals.report.submit', 'Submit report')}
                 </Button>
             </DialogActions>
         </Dialog>

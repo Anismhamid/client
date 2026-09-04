@@ -10,8 +10,8 @@ import {
     Avatar,
     alpha,
     Container,
-    Tooltip,
-    Button,
+    Menu,
+    MenuItem,
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ForumTwoToneIcon from '@mui/icons-material/ForumTwoTone';
@@ -30,6 +30,8 @@ import socket from '../../../socket/globalSocket';
 // import ChatModal from './ChatModal';
 // import ChatBox from './ChatBox';
 import { useChatWindow } from '../../../context/ChatWindowContext';
+import BlockButton from '../../reports/BlockButton';
+import ReportModal from '../../reports/ReportModal';
 // import { BaseUser } from '../../../interfaces/chat/chatUser';
 // import socket from '../../../socket/globalSocket';
 
@@ -92,6 +94,8 @@ const MessagesPage = () => {
     // const [chatOpen, setChatOpen] = useState(false);
     // const [chatMinimized, setChatMinimized] = useState(false);
     const { openChat } = useChatWindow();
+    const [optionsAnchor, setOptionsAnchor] = useState<null | HTMLElement>(null);
+    const [reportOpen, setReportOpen] = useState(false);
 
     useEffect(() => {
         const handleStatusChanged = ({
@@ -135,7 +139,8 @@ const MessagesPage = () => {
         <Box
             dir={dir}
             sx={{
-                height: '90vh',
+                height: '100dvh',
+                minHeight: '100svh',
                 width: '100%',
                 overflow: 'hidden',
                 bgcolor: 'background.default',
@@ -249,6 +254,7 @@ const MessagesPage = () => {
                                             >
                                                 {isMobile && (
                                                     <IconButton
+                                                        aria-label={t('messages.backToList') || 'Back to conversations'}
                                                         onClick={() =>
                                                             setSelectedUser(
                                                                 null,
@@ -340,19 +346,44 @@ const MessagesPage = () => {
                                                     </Box>
                                                 </Box>
                                             </Box>
-                                            <Tooltip title='More options'>
-                                                <IconButton size='small'>
-                                                    <MoreVertIcon />
-                                                </IconButton>
-                                            </Tooltip>
+                                            <IconButton
+                                            sx={{ display:"block" }}
+                                                aria-label={t('messages.options') || 'Conversation options'}
+                                                onClick={(event) =>
+                                                    setOptionsAnchor(event.currentTarget)
+                                                }
+                                                size='small'
+                                            >
+                                                <MoreVertIcon />
+                                            </IconButton>
+                                            <Menu
+                                                anchorEl={optionsAnchor}
+                                                open={Boolean(optionsAnchor)}
+                                                onClose={() => setOptionsAnchor(null)}
+                                            >
+                                                <MenuItem
+                                                    onClick={() => {
+                                                        setOptionsAnchor(null);
+                                                        setReportOpen(true);
+                                                    }}
+                                                >
+                                                    {t('modals.report.reportThis') || 'Report user'}
+                                                </MenuItem>
+                                                <MenuItem disableRipple>
+                                                    <BlockButton
+                                                        userId={selectedUser._id as string}
+                                                        variant='text'
+                                                    />
+                                                </MenuItem>
+                                            </Menu>
+                                            <ReportModal
+                                                open={reportOpen}
+                                                onClose={() => setReportOpen(false)}
+                                                targetId={selectedUser._id as string}
+                                                type='user'
+                                                onSuccess={() => setReportOpen(false)}
+                                            />
                                         </Box>
-                                        <Button
-                                            onClick={() =>
-                                                openChat(selectedUser)
-                                            }
-                                        >
-                                            {t('messages.openChat')}
-                                        </Button>
                                     </motion.div>
                                 </AnimatePresence>
                             ) : (

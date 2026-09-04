@@ -85,8 +85,6 @@ async function setupAndroidChannels() {
 function setupListeners(authToken: string) {
     // Registration / Token refresh
     PushNotifications.addListener('registration', async (token: Token) => {
-        console.log('📱 FCM Token received:', token.value.substring(0, 20) + '...');
-        
         // Skip if token hasn't changed
         if (currentToken === token.value) {
             console.log('ℹ️ Token unchanged, skipping save');

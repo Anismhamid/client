@@ -22,9 +22,12 @@ import {
     InvestigationUser,
 } from '../../../../../interfaces/InvestigationMessage';
 import { viewInvestigationConversation } from '../../../../../services/messageInvestigationService';
+import { useUser } from '../../../../../hooks/useUSer';
+import RoleType from '../../../../../interfaces/UserType';
 
 const MessageInvestigation = () => {
     const direction = handleRTL();
+    const { auth } = useUser();
 
     const [user1, setUser1] = useState<InvestigationUser | null>(null);
 
@@ -97,6 +100,12 @@ const MessageInvestigation = () => {
         setError('');
         setInvestigated(false);
     };
+
+    if (auth.role !== RoleType.Admin && auth.role !== RoleType.Moderator) {
+        return (
+            <Alert severity='error'>You are not authorized to access this page.</Alert>
+        );
+    }
 
     return (
         <Box

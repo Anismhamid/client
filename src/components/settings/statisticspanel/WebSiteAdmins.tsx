@@ -17,7 +17,6 @@ import {
     SupervisorAccount,
     Person,
 } from '@mui/icons-material';
-import * as XLSX from 'xlsx';
 import {
     Box,
     Button,
@@ -55,54 +54,57 @@ import { ProductsTable } from './DashboardTables';
 import { SellersTable } from './DashboardTables';
 import { ProductsGrowthChart, CategoryDonutChart } from './DashboardCharts';
 
-// ─── Excel export ─────────────────────────────────────────────────────────────
+// ─── Spreadsheet-compatible CSV export ────────────────────────────────────────
+
+const csvCell = (value: string | number) =>
+    `"${String(value).replaceAll('"', '""')}"`;
+
+const csvRow = (values: Array<string | number>) => values.map(csvCell).join(',');
 
 const exportToExcel = (data: Statistics) => {
-    const summary = [
-        {
-            'إجمالي المنتجات': data.totalProducts,
-            'المنتجات النشطة': data.activeProducts,
-            'المنتجات المباعة': data.soldPosts,
-            'إجمالي المستخدمين': data.totalUsers,
-            'المستخدمين المتصلين': data.onlineUsers,
-            'إجمالي الإعجابات': data.totalLikes,
-            'القيمة الإجمالية': data.totalProductValue,
-            'متوسط السعر': data.averageProductPrice,
-            'أعلى سعر': data.highestPricedProduct,
-            'إجمالي الخصومات': data.totalDiscountValue,
-        },
+    const lines = [
+        csvRow(['ملخص']),
+        csvRow([
+            'إجمالي المنتجات', 'المنتجات النشطة', 'المنتجات المباعة',
+            'إجمالي المستخدمين', 'المستخدمين المتصلين', 'إجمالي الإعجابات',
+            'القيمة الإجمالية', 'متوسط السعر', 'أعلى سعر', 'إجمالي الخصومات',
+        ]),
+        csvRow([
+            data.totalProducts, data.activeProducts, data.soldPosts,
+            data.totalUsers, data.onlineUsers, data.totalLikes,
+            data.totalProductValue, data.averageProductPrice,
+            data.highestPricedProduct, data.totalDiscountValue,
+        ]),
+        '',
+        csvRow(['الفئات']),
+        csvRow(['الفئة', 'العدد', 'النسبة %', 'القيمة الإجمالية']),
+        ...data.productsByCategory.map((category) =>
+            csvRow([
+                getCategoryName(category.category), category.count,
+                category.percentage.toFixed(1), category.totalValue,
+            ]),
+        ),
+        '',
+        csvRow(['البائعون']),
+        csvRow(['البائع', 'المنتجات', 'الإعجابات', 'القيمة الإجمالية']),
+        ...data.topSellers.map((seller) =>
+            csvRow([
+                seller.name, seller.productsCount, seller.totalLikes,
+                seller.totalValue,
+            ]),
+        ),
     ];
 
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summary), 'ملخص');
-    XLSX.utils.book_append_sheet(
-        wb,
-        XLSX.utils.json_to_sheet(
-            data.productsByCategory.map((c) => ({
-                الفئة: getCategoryName(c.category),
-                العدد: c.count,
-                'النسبة %': c.percentage.toFixed(1),
-                'القيمة الإجمالية': c.totalValue,
-            })),
-        ),
-        'الفئات',
-    );
-    XLSX.utils.book_append_sheet(
-        wb,
-        XLSX.utils.json_to_sheet(
-            data.topSellers.map((s) => ({
-                البائع: s.name,
-                المنتجات: s.productsCount,
-                الإعجابات: s.totalLikes,
-                'القيمة الإجمالية': s.totalValue,
-            })),
-        ),
-        'البائعون',
-    );
-
-    // Safe filename (no slashes)
     const dateStr = new Date().toISOString().split('T')[0];
-    XLSX.writeFile(wb, `تقرير_صفقة_${dateStr}.xlsx`);
+    const file = new Blob([`\uFEFF${lines.join('\r\n')}`], {
+        type: 'text/csv;charset=utf-8',
+    });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `تقرير_صفقة_${dateStr}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
 };
 
 // ─── Role helpers ─────────────────────────────────────────────────────────────

@@ -1,5 +1,4 @@
 import {FunctionComponent} from "react";
-import {Helmet} from "react-helmet";
 
 interface SeoProps {
 	title: string;
@@ -17,7 +16,7 @@ const Seo: FunctionComponent<SeoProps> = ({
 	type = "website",
 }) => {
 	return (
-		<Helmet>
+		<>
 			<title>{title}</title>
 			<meta name='description' content={description} />
 			<meta name='keywords' content={keywords} />
@@ -27,7 +26,7 @@ const Seo: FunctionComponent<SeoProps> = ({
 			<meta property='og:description' content={description} />
 			<link rel='icon' type='image/svg+xml' href={image} />
 			<meta property='og:type' content={type} />
-		</Helmet>
+		</>
 	);
 };
 

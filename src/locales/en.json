@@ -71,18 +71,22 @@
         "yesterday": "Yesterday"
     },
     "messages": {
+        "welcome": "Make a contact with other users",
+        "chooseChat": "Choose a conversation from the list to get started",
+        "subtitle": "Stay connected with users and manage your deals easily",
         "main": "Messages",
-        "search": "Search messages",
-        "welcome": "Safqa Site Chat",
-        "chooseChat": "Choose a conversation from the list to start",
-        "subtitle": "Stay connected with users and manage your deals with ease",
+        "openChat": "Full screen",
+        "search": "Search users",
         "all": "All",
-        "unread": "Unread",
+        "unread": "Unread messages",
         "directMessage": "Direct message",
-        "contactWith": "Contact with ",
+        "contactWith": "Contact ",
         "delete": "Delete",
-        "deleteAll": "Delete All",
-        "typeMessage": "Type your message here..."
+        "deleteAll": "Delete all",
+        "typeMessage": "Type your message here...",
+        "minimize": "Minimize",
+        "options": "Options",
+        "reportHint": "Report inappropriate behavior"
     },
     "roles": {
         "title": "Role",
@@ -388,37 +392,38 @@
         },
         "report": {
             "title": "Report",
-            "subtitle": "Please select a reason for your report and provide additional details if necessary.",
+            "subtitle": "Please select a reason for the report and add additional details if necessary.",
             "reason": "Report reason",
-            "reasonRequired": "Please select a report reason",
+            "reasonRequired": "Please select a reason for the report",
             "description": "Additional details",
-            "descriptionPlaceholder": "Provide additional details about the report...",
-            "submit": "Submit Report",
+            "descriptionPlaceholder": "Enter additional details about the report...",
+            "submit": "Submit report",
             "reportThis": "Report",
             "alreadyReported": "You have already reported this",
+            "failed": "Failed to submit report",
             "cancel": "Cancel",
 
             "types": {
                 "user": "User",
-                "post": "Post",
+                "post": "Listing",
                 "message": "Message",
                 "comment": "Comment"
             },
 
             "status": {
                 "pending": "Pending",
-                "reviewing": "Under Review",
+                "reviewing": "Under review",
                 "resolved": "Resolved",
                 "rejected": "Rejected"
             },
 
             "actions": {
-                "warn": "Warn User",
-                "block": "Block User",
-                "delete_post": "Delete Post",
-                "delete_message": "Delete Message",
-                "delete_comment": "Delete Comment",
-                "ignore": "Ignore Report"
+                "warn": "Warn user",
+                "block": "Block user",
+                "delete_post": "Delete listing",
+                "delete_message": "Delete message",
+                "delete_comment": "Delete comment",
+                "ignore": "Ignore report"
             },
 
             "reasons": {

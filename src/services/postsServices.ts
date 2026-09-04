@@ -215,9 +215,6 @@ export const getCustomerProfilePostsBySlug = async (
 export const toggleLike = async (postId: string) => {
     const token = localStorage.getItem('token');
 
-    console.log('🔐 Like token exists:', !!token);
-    console.log('🔐 Like token prefix:', token?.slice(0, 20));
-
     if (!token) {
         throw new Error('Authentication token is missing');
     }
@@ -235,10 +232,7 @@ export const toggleLike = async (postId: string) => {
 
         return res.data;
     } catch (error: any) {
-        console.error('❌ Like API Error:', error);
-        console.error('Status:', error?.response?.status);
-        console.error('Data:', error?.response?.data);
-
+        console.error('❌ Like API Error:', error.response?.data || error.message);
         throw error;
     }
 };

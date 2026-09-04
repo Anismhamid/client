@@ -1050,6 +1050,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                 <Zoom in={showScrollBtn}>
                     <Fab
+                        aria-label={t('messages.scrollToLatest') || 'Scroll to latest messages'}
                         color='primary'
                         size='small'
                         onClick={() =>
@@ -1080,6 +1081,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 <input
                     type='file'
                     hidden
+                    aria-label={t('messages.attachFile') || 'Attach a file'}
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     accept='image/*,.pdf,.doc,.docx'
@@ -1088,6 +1090,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <IconButton
                         color='primary'
+                        aria-label={t('messages.attachFile') || 'Attach a file'}
+                        title={t('messages.attachFile') || 'Attach an image, PDF, or Word document'}
                         onClick={() => fileInputRef.current?.click()}
                     >
                         <AttachFileIcon />
@@ -1101,11 +1105,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         value={input}
                         onChange={handleInputChange}
                         placeholder={t('messages.typeMessage')}
+                        helperText={t('messages.attachmentHint') || 'Attachments: images, PDF, or Word documents'}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position='end'>
                                     <IconButton
                                         color='primary'
+                                        aria-label={t('messages.send') || 'Send message'}
                                         onClick={() =>
                                             sendMessage(
                                                 input,

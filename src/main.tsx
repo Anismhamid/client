@@ -71,7 +71,7 @@ const AppWithProviders = () => {
 };
 
 createRoot(document.getElementById('root')!).render(
-    <GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_API_GOOGLE_API as string}>
         <UserProvider>
             <AppWithProviders />
         </UserProvider>

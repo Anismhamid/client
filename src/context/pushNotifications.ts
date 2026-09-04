@@ -2,7 +2,7 @@ import { PushNotifications, Token } from '@capacitor/push-notifications';
 
 import axios from 'axios';
 
-const api = `${import.meta.env.VITE_API_URL}/users`;
+const api = `${process.env.VITE_API_URL}/users`;
 
 export async function initPushNotifications(authToken: string) {
     await PushNotifications.removeAllListeners();
@@ -10,10 +10,9 @@ export async function initPushNotifications(authToken: string) {
     await PushNotifications.addListener(
         'registration',
         async (token: Token) => {
-            console.log('🔥 TOKEN:', token.value);
 
             try {
-                const res = await axios.patch(
+                await axios.patch(
                     `${api}/push-token`,
                     {
                         pushToken: token.value,
@@ -24,12 +23,9 @@ export async function initPushNotifications(authToken: string) {
                         },
                     },
                 );
-
-                console.log('✅ SAVED:', res.data);
-
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
-                console.log('❌ ERROR:', error.response?.data || error.message);
+                console.error('❌ ERROR:', error.response?.data || error.message);
             }
         },
     );

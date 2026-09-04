@@ -240,6 +240,19 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         {t('accountMenu.profile') || 'Profile'}
                     </Typography>
                 </MenuItem>
+                <MenuItem
+                    onClick={() => navigateTo(path.BlockedUsers)}
+                    sx={menuItemSx()}
+                >
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                        <PersonOutlineIcon
+                            sx={{ fontSize: 20, color: 'text.secondary' }}
+                        />
+                    </ListItemIcon>
+                    <Typography variant='body2'>
+                        {t('accountMenu.profile') || 'Profile'}
+                    </Typography>
+                </MenuItem>
 
                 {/* Admin / Moderator section */}
                 {isPrivileged && [

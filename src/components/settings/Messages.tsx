@@ -5,10 +5,7 @@ import {
     Typography,
     TextField,
     Button,
-    Select,
-    MenuItem,
     FormControl,
-    InputLabel,
     Alert,
     Checkbox,
     FormControlLabel,
@@ -28,6 +25,7 @@ import {
     Tooltip,
     Drawer,
     useMediaQuery,
+    Autocomplete,
 } from '@mui/material';
 import {
     Send as SendIcon,
@@ -98,7 +96,6 @@ const MessagingPage: React.FC = () => {
     const [status, setStatus] = useState<string>('');
     const [page, setPage] = useState<number>(1);
     const [totalPages, setTotalPages] = useState<number>(1);
-    const [searchTerm, setSearchTerm] = useState<string>('');
 
     const direction = handleRTL();
 
@@ -109,10 +106,7 @@ const MessagingPage: React.FC = () => {
             const usersData = await getAllUsers();
             setUsers(usersData);
 
-            const { messages, pagination } = await getUserMessages(
-                auth._id,
-                page,
-            );
+            const { messages } = await getUserMessages(auth._id, page);
 
             // تصفية الرسائل حسب المستخدم الحالي
             const incoming = messages.filter((msg) => msg.to._id === auth._id);
@@ -122,7 +116,7 @@ const MessagingPage: React.FC = () => {
 
             setUserMessages(incoming);
             setSentMessages(outgoing);
-            setTotalPages(pagination.pages);
+            setTotalPages(1);
         } catch (error) {
             console.error('Error loading data:', error);
         } finally {
@@ -131,19 +125,30 @@ const MessagingPage: React.FC = () => {
     }, [auth._id, page]);
 
     useEffect(() => {
+        if (!auth._id) return;
+
         loadData();
-    }, [loadData, page]);
+    }, [loadData, auth._id]);
 
     useEffect(() => {
         if (!socket || !auth._id) return;
 
         const handleNewMessage = (newMessage: UserMessage) => {
-            if (newMessage.to._id === auth._id) {
-                setUserMessages((prev) => [newMessage, ...prev]);
-                showSuccess(
-                    `📩 رسالة جديدة من ${getUserDisplayName(newMessage.from)}`,
+            if (newMessage.to?._id !== auth._id) return;
+
+            setUserMessages((prev) => {
+                const exists = prev.some(
+                    (message) => message._id === newMessage._id,
                 );
-            }
+
+                if (exists) return prev;
+
+                return [newMessage, ...prev];
+            });
+
+            showSuccess(
+                `📩 رسالة جديدة من ${getUserDisplayName(newMessage.from)}`,
+            );
         };
 
         socket.on('message:received', handleNewMessage);
@@ -151,7 +156,7 @@ const MessagingPage: React.FC = () => {
         return () => {
             socket.off('message:received', handleNewMessage);
         };
-    }, [loadData, auth?._id]);
+    }, [auth._id]);
 
     const validateRecipient = useCallback(
         (recipientId: string) => {
@@ -182,26 +187,67 @@ const MessagingPage: React.FC = () => {
         setToUserId('');
         setReplyTo('');
         setSelectedMessage(null);
+        setStatus('');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        const trimmedMessage = message.trim();
+
+        if (!auth._id) {
+            showError('يجب تسجيل الدخول أولاً');
+            return;
+        }
+
+        if (!toUserId) {
+            showError('يرجى اختيار المستلم');
+            return;
+        }
+
+        if (toUserId === auth._id) {
+            showError('لا يمكنك إرسال رسالة إلى نفسك');
+            return;
+        }
+
+        if (trimmedMessage.length < 2) {
+            showError('الرسالة قصيرة جداً');
+            return;
+        }
+
+        if (!validateRecipient(toUserId)) {
+            showError('ليس لديك صلاحية لإرسال رسالة إلى هذا المستخدم');
+            return;
+        }
+
         setStatus('');
         setSending(true);
 
         try {
             const sentMessageFromServer: UserMessage = await postMessage({
                 toUserId,
-                message,
+                message: trimmedMessage,
                 warning,
                 isImportant,
                 replyTo: replyTo || undefined,
             });
 
+            setSentMessages((prev) => {
+                const exists = prev.some(
+                    (msg) => msg._id === sentMessageFromServer._id,
+                );
+
+                if (exists) return prev;
+
+                return [sentMessageFromServer, ...prev];
+            });
+
             resetTheFields();
-            setSentMessages((prev) => [sentMessageFromServer, ...prev]);
+
             setStatus('✅ تم إرسال الرسالة بنجاح');
+
             showSuccess('تم إرسال الرسالة بنجاح');
+
             setTabValue(1);
         } catch (err: unknown) {
             let errorMsg = 'فشل إرسال الرسالة';
@@ -210,7 +256,8 @@ const MessagingPage: React.FC = () => {
                 errorMsg =
                     err.response?.data?.error ||
                     err.response?.data?.message ||
-                    err.message;
+                    err.message ||
+                    errorMsg;
             } else if (err instanceof Error) {
                 errorMsg = err.message;
             }
@@ -247,23 +294,13 @@ const MessagingPage: React.FC = () => {
         return `${user.email}`;
     };
 
-    // const getUserEmail = (
-    // 	user?:
-    // 		| {_id?: string; email?: string; first?: string; last?: string; role?: string}
-    // 		| User
-    // 		| null,
-    // ) => {
-    // 	if (!user) return "بريد غير معروف";
-    // 	if ("email" in user && user.email) return user.email;
-    // 	return "بريد غير متوفر";
-    // };
-
     const getUserAvatar = (
         user?:
             | {
                   _id?: string;
                   email?: string;
                   first?: string;
+                  image?: { url?: string; alt: string } | null;
                   last?: string;
                   role?: string;
               }
@@ -285,7 +322,14 @@ const MessagingPage: React.FC = () => {
             lastName = user.email || '';
         }
 
-        return `https://ui-avatars.com/api/?name=${firstName}+${lastName}&background=random&length=2`;
+        const name = `${firstName} ${lastName}`.trim();
+
+        return (
+            user.image?.url ||
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                name || 'User',
+            )}&background=random&length=2`
+        );
     };
 
     const getUserRole = (
@@ -342,29 +386,28 @@ const MessagingPage: React.FC = () => {
         }
     };
 
-    const filteredUsers = users
-        .filter((user) => validateRecipient(user._id as string))
-        .filter(
-            (user) =>
-                user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                user.name?.first
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                user.name?.last
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()),
-        );
+    const filteredUsers = users.filter((user) => {
+        if (!user._id) return false;
+
+        // لا تسمح للمستخدم بإرسال رسالة لنفسه
+        if (user._id === auth._id) return false;
+
+        return validateRecipient(user._id);
+    });
 
     useEffect(() => {
-        if (auth.role === RoleType.Client && users.length > 0 && !toUserId) {
-            const firstModerator = users.find(
-                (user) => user.role === RoleType.Moderator,
-            );
-            if (firstModerator) {
-                setToUserId(firstModerator._id || '');
-            }
+        if (auth.role !== RoleType.Client || users.length === 0 || toUserId) {
+            return;
         }
-    }, [auth.role, users, toUserId]);
+
+        const firstModerator = users.find(
+            (user) => user.role === RoleType.Moderator && user._id !== auth._id,
+        );
+
+        if (firstModerator?._id) {
+            setToUserId(firstModerator._id);
+        }
+    }, [auth.role, users, toUserId, auth._id]);
 
     const MessageCard = ({
         msg,
@@ -619,87 +662,132 @@ const MessagingPage: React.FC = () => {
     const renderComposeForm = () => (
         <Box component='form' onSubmit={handleSubmit} sx={{ width: '100%' }}>
             <FormControl fullWidth margin='normal'>
-                <InputLabel id='to-user-label'>إلى</InputLabel>
-                <Select
-                    labelId='to-user-label'
-                    value={toUserId}
-                    label='إلى'
-                    onChange={(e) => setToUserId(e.target.value)}
-                    required
+                <Autocomplete
+                    fullWidth
+                    options={filteredUsers}
+                    value={
+                        filteredUsers.find((user) => user._id === toUserId) ||
+                        null
+                    }
+                    onChange={(_, user) => {
+                        setToUserId(user?._id || '');
+                    }}
                     disabled={sending}
-                    sx={{ borderRadius: 2 }}
-                >
-                    <Box
-                        sx={{
-                            p: 2,
-                            borderBottom: `1px solid ${theme.palette.divider}`,
-                        }}
-                    >
-                        <TextField
-                            fullWidth
-                            size='small'
-                            placeholder='بحث عن مستخدم...'
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                    </Box>
-                    {filteredUsers.map((user) => {
-                        const displayName =
-                            `${user.name.first || ''} ${user.name.last || ''}`.trim();
+                    getOptionLabel={(user) => {
+                        const name = `${user.name?.first || ''} ${
+                            user.name?.last || ''
+                        }`.trim();
+
+                        return name || user.email || 'مستخدم';
+                    }}
+                    isOptionEqualToValue={(option, value) =>
+                        option._id === value._id
+                    }
+                    filterOptions={(options, { inputValue }) => {
+                        const search = inputValue.trim().toLowerCase();
+
+                        if (!search) return options;
+
+                        return options.filter((user) => {
+                            const first = user.name?.first?.toLowerCase() || '';
+                            const last = user.name?.last?.toLowerCase() || '';
+                            const email = user.email?.toLowerCase() || '';
+
+                            return (
+                                first.includes(search) ||
+                                last.includes(search) ||
+                                `${first} ${last}`.includes(search) ||
+                                email.includes(search)
+                            );
+                        });
+                    }}
+                    renderOption={(props, user) => {
+                        const displayName = `${user.name?.first || ''} ${
+                            user.name?.last || ''
+                        }`.trim();
+
                         const avatarUrl = getUserAvatar(user);
                         const userRole = getUserRole(user);
 
                         return (
-                            <MenuItem
+                            <Box
+                                component='li'
+                                {...props}
                                 key={user._id}
-                                value={user._id}
-                                sx={{ py: 1.5 }}
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1.5,
+                                    py: 1.5,
+                                }}
                             >
-                                <Box
+                                <Avatar
+                                    src={avatarUrl}
                                     sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1.5,
-                                        width: '100%',
+                                        width: 36,
+                                        height: 36,
                                     }}
                                 >
-                                    <Avatar
-                                        src={avatarUrl}
-                                        sx={{ width: 32, height: 32 }}
+                                    {displayName.charAt(0).toUpperCase()}
+                                </Avatar>
+
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                    <Typography
+                                        variant='body2'
+                                        sx={{
+                                            fontWeight: 600,
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                        }}
                                     >
-                                        {displayName.charAt(0)}
-                                    </Avatar>
-                                    <Box sx={{ flex: 1 }}>
-                                        <Typography
-                                            variant='body2'
-                                            sx={{ fontWeight: 500 }}
-                                        >
-                                            {displayName || user.email}
-                                        </Typography>
-                                        <Typography
-                                            variant='caption'
-                                            color='text.secondary'
-                                        >
-                                            {user.email}
-                                        </Typography>
-                                    </Box>
-                                    {userRole && (
-                                        <Chip
-                                            label={userRole}
-                                            size='small'
-                                            sx={{
-                                                ml: 'auto',
-                                                backgroundColor: `${getRoleColor(userRole)}20`,
-                                                color: getRoleColor(userRole),
-                                            }}
-                                        />
-                                    )}
+                                        {displayName || user.email}
+                                    </Typography>
+
+                                    <Typography
+                                        variant='caption'
+                                        color='text.secondary'
+                                        sx={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                            display: 'block',
+                                        }}
+                                    >
+                                        {user.email}
+                                    </Typography>
                                 </Box>
-                            </MenuItem>
+
+                                {userRole && (
+                                    <Chip
+                                        label={userRole}
+                                        size='small'
+                                        sx={{
+                                            flexShrink: 0,
+                                            backgroundColor: `${getRoleColor(
+                                                userRole,
+                                            )}20`,
+                                            color: getRoleColor(userRole),
+                                        }}
+                                    />
+                                )}
+                            </Box>
                         );
-                    })}
-                </Select>
+                    }}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label='إلى'
+                            placeholder='ابحث عن مستخدم...'
+                            required
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                },
+                            }}
+                        />
+                    )}
+                />
             </FormControl>
 
             {replyTo && (
@@ -744,7 +832,10 @@ const MessagingPage: React.FC = () => {
                 fullWidth
                 margin='normal'
                 value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                onChange={(e) => {
+                    e.preventDefault();
+                    setMessage(e.target.value);
+                }}
                 required
                 disabled={sending}
                 placeholder='اكتب رسالتك هنا...'

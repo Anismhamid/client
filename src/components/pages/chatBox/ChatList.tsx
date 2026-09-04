@@ -14,8 +14,10 @@ import {
     alpha,
     useTheme,
     Avatar,
+    IconButton,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import { useChat } from '../../../hooks/useChat';
@@ -362,6 +364,17 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                                     />
                                 </InputAdornment>
                             ),
+                            endAdornment: searchTerm ? (
+                                <InputAdornment position='end'>
+                                    <IconButton
+                                        aria-label={t('common.clear') || 'Clear search'}
+                                        size='small'
+                                        onClick={() => setSearchTerm('')}
+                                    >
+                                        <CloseIcon fontSize='small' />
+                                    </IconButton>
+                                </InputAdornment>
+                            ) : undefined,
                             sx: {
                                 borderRadius: '12px',
                                 bgcolor: alpha(

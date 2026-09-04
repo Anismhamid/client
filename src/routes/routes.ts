@@ -46,6 +46,7 @@ export enum path {
     ResetPassword = '/reset-password/:token',
     ReportsManagement = '/reports-management',
     MessageAuditLogs = '/message-audit-logs',
+     BlockedUsers= '/blocked-users',
 
     Search = '/search',
 

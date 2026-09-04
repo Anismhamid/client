@@ -91,7 +91,7 @@ export interface UserLogin {
 export interface User {
     updatedAt: string | number | Date;
     createdAt: string | number | Date;
-    lastActivity: any;
+    lastActivity: string | number | Date | null;
     _id: string;
 
     role: UserRole;

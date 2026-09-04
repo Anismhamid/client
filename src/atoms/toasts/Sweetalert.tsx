@@ -1,54 +1,80 @@
-import {FunctionComponent, useEffect} from "react";
-import Swal from "sweetalert2";
+import { FunctionComponent, useEffect } from 'react';
+import Swal from 'sweetalert2';
 
 interface AlertDialogProps {
-	show: boolean;
-	handleDelete: () => void;
-	onHide: () => void;
-	title: string;
-	description: string;
+    show: boolean;
+    onConfirm: () => void;
+    onHide: () => void;
+    title: string;
+    description: string;
+    confirmText?: string;
+    cancelText?: string;
+    successText?: string;
 }
 
 const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
-	title,
-	description,
-	show,
-	onHide,
-	handleDelete,
+    title,
+    description,
+    show,
+    onHide,
+    onConfirm,
+    confirmText = 'Yes',
+    cancelText = 'Cancel',
+    successText = 'Done',
 }) => {
-	useEffect(() => {
-		if (show) {
-			const swalWithBootstrapButtons = Swal.mixin({
-				customClass: {
-					confirmButton: "btn btn-outline-success",
-					cancelButton: "btn btn-outline-danger ms-5",
-				},
-				buttonsStyling: true,
-			});
+    useEffect(() => {
+        if (!show) return;
 
-			swalWithBootstrapButtons
-				.fire({
-					title,
-					text: description,
-					icon: "warning",
-					confirmButtonText: "نعم",
-					showCancelButton: true,
-					cancelButtonText: "الغاء",
-					reverseButtons: false,
-				})
-				.then((result) => {
-					if (result.isConfirmed) {
-						handleDelete();
-						swalWithBootstrapButtons.fire({
-							text: "تم الحذف بنجاح",
-							icon: "success",
-						});
-					}
-					onHide();
-				});
-		}
-	}, [description, handleDelete, onHide, show, title]);
-	return null;
+        let isMounted = true;
+
+        const swalWithBootstrapButtons = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-outline-success',
+                cancelButton: 'btn btn-outline-danger ms-5',
+            },
+            buttonsStyling: true,
+        });
+
+        swalWithBootstrapButtons
+            .fire({
+                title,
+                text: description,
+                icon: 'warning',
+                confirmButtonText: confirmText,
+                showCancelButton: true,
+                cancelButtonText: cancelText,
+                reverseButtons: false,
+            })
+            .then(async (result) => {
+                if (!isMounted) return;
+
+                if (result.isConfirmed) {
+                    onConfirm();
+
+                    await swalWithBootstrapButtons.fire({
+                        text: successText,
+                        icon: 'success',
+                    });
+                }
+
+                onHide();
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [
+        description,
+        onConfirm,
+        onHide,
+        show,
+        title,
+        confirmText,
+        cancelText,
+        successText,
+    ]);
+
+    return null;
 };
 
 export default AlertDialogs;

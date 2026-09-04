@@ -43,6 +43,7 @@ import DeleteAccount from '../components/settings/DeleteAccount';
 import MessageInvestigation from '../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation';
 import ReportManagement from '../components/reports/ReportManagement';
 import MessageAuditLogs from '../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs';
+import BlockedUsers from '../components/pages/BlockedUsers';
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -182,10 +183,18 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path='/payment/success' element={<PaymentSuccess />} />
             <Route path='/password-recover' element={<ForgotPassword />} />
             <Route path='/reset-password/:token' element={<ResetPassword />} />
-            <Route path='/delete-account' element={<DeleteAccount />} />
+            <Route path={path.DeleteAccount} element={<DeleteAccount />} />
+            <Route path={path.BlockedUsers} element={<BlockedUsers />} />
             <Route
                 path={path.MessageInvestigation}
-                element={<MessageInvestigation />}
+                element={
+                    auth?.role === RoleType.Admin ||
+                    auth?.role === RoleType.Moderator ? (
+                        <MessageInvestigation />
+                    ) : (
+                        <PageNotFound />
+                    )
+                }
             />
             <Route path={'*'} element={<PageNotFound />} />
         </Routes>

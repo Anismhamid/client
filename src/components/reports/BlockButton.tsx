@@ -25,14 +25,21 @@ interface BlockButtonProps {
     onChange?: (isBlocked: boolean) => void;
 }
 
-const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: BlockButtonProps) => {
+const BlockButton = ({
+    userId,
+    initialBlocked,
+    variant = 'text',
+    onChange,
+}: BlockButtonProps) => {
     const { t } = useTranslation();
     const { blockUser, unblockUser, checkIfBlocked, loading } = useReport();
 
     const [isBlocked, setIsBlocked] = useState(initialBlocked ?? false);
     const [checking, setChecking] = useState(initialBlocked === undefined);
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [duration, setDuration] = useState<'7' | '30' | 'permanent'>('permanent');
+    const [duration, setDuration] = useState<'7' | '30' | 'permanent'>(
+        'permanent',
+    );
     const [reason, setReason] = useState('');
 
     useEffect(() => {
@@ -64,9 +71,15 @@ const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: Blo
             const expiresAt =
                 duration === 'permanent'
                     ? undefined
-                    : new Date(Date.now() + Number(duration) * 24 * 60 * 60 * 1000).toISOString();
+                    : new Date(
+                          Date.now() + Number(duration) * 24 * 60 * 60 * 1000,
+                      ).toISOString();
 
-            await blockUser({ userId, reason: reason.trim() || undefined, expiresAt });
+            await blockUser({
+                userId,
+                reason: reason.trim() || undefined,
+                expiresAt,
+            });
             setIsBlocked(true);
             onChange?.(true);
             setConfirmOpen(false);
@@ -84,7 +97,7 @@ const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: Blo
     return (
         <>
             <Button
-                size="small"
+                size='small'
                 variant={variant === 'text' ? 'outlined' : 'text'}
                 color={isBlocked ? 'success' : 'error'}
                 startIcon={isBlocked ? <LockOpenIcon /> : <BlockIcon />}
@@ -102,11 +115,25 @@ const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: Blo
                 {isBlocked ? t('block.unblock') : t('block.block')}
             </Button>
 
-            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{ fontWeight: 700, color: '#12161C' }}>{t('block.confirmTitle')}</DialogTitle>
+            <Dialog
+                open={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                maxWidth='xs'
+                slotProps={{
+                    root: {
+                        sx: {
+                            zIndex: 6000,
+                        },
+                    },
+                }}
+                fullWidth
+            >
+                <DialogTitle sx={{ fontWeight: 700, color: '#12161C' }}>
+                    {t('block.confirmTitle')}
+                </DialogTitle>
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant='body2' color='text.secondary'>
                             {t('block.confirmBody')}
                         </Typography>
 
@@ -114,12 +141,18 @@ const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: Blo
                             value={duration}
                             exclusive
                             fullWidth
-                            size="small"
+                            size='small'
                             onChange={(_, value) => value && setDuration(value)}
                         >
-                            <ToggleButton value="7">{t('block.days7')}</ToggleButton>
-                            <ToggleButton value="30">{t('block.days30')}</ToggleButton>
-                            <ToggleButton value="permanent">{t('block.permanent')}</ToggleButton>
+                            <ToggleButton value='7'>
+                                {t('block.days7')}
+                            </ToggleButton>
+                            <ToggleButton value='30'>
+                                {t('block.days30')}
+                            </ToggleButton>
+                            <ToggleButton value='permanent'>
+                                {t('block.permanent')}
+                            </ToggleButton>
                         </ToggleButtonGroup>
 
                         <TextField
@@ -128,22 +161,35 @@ const BlockButton = ({ userId, initialBlocked, variant = 'text', onChange }: Blo
                             minRows={2}
                             label={t('block.reasonOptional')}
                             value={reason}
-                            onChange={(e) => setReason(e.target.value.slice(0, 300))}
+                            onChange={(e) =>
+                                setReason(e.target.value.slice(0, 300))
+                            }
                         />
                     </Stack>
                 </DialogContent>
                 <DialogActions sx={{ px: 3, pb: 3 }}>
-                    <Button onClick={() => setConfirmOpen(false)} color="inherit" disabled={loading}>
+                    <Button
+                        onClick={() => setConfirmOpen(false)}
+                        color='inherit'
+                        disabled={loading}
+                    >
                         {t('common.cancel')}
                     </Button>
                     <Button
                         onClick={handleConfirmBlock}
-                        variant="contained"
-                        color="error"
+                        variant='contained'
+                        color='error'
                         disableElevation
                         disabled={loading}
                     >
-                        {loading ? <CircularProgress size={20} sx={{ color: '#fff' }} /> : t('block.block')}
+                        {loading ? (
+                            <CircularProgress
+                                size={20}
+                                sx={{ color: '#fff' }}
+                            />
+                        ) : (
+                            t('block.block')
+                        )}
                     </Button>
                 </DialogActions>
             </Dialog>
