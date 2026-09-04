@@ -80,7 +80,7 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
         fontWeight: 'bold',
         backgroundColor:
             theme.palette.mode === 'dark'
-                ? 'rgba(220, 145, 53, 0.1)'
+                ? 'rgba(255, 142, 3, 0.884)'
                 : 'rgb(245, 159, 11)',
     },
 }));
@@ -333,7 +333,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <HomeIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* How to delete your account in safqa */}
                                 <Box
                                     component='li'
@@ -350,7 +349,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <DeleteSharp sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* Favorites */}
                                 {auth._id && (
                                     <Box
@@ -371,7 +369,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         </StyledNavLink>
                                     </Box>
                                 )}
-
                                 {/* Products with mega menu wrapper */}
                                 <Box
                                     component='li'
@@ -428,7 +425,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         />
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* Placed OUTSIDE the trigger box to prevent parent event bubbling closure traps */}
                                 <MegaMenu
                                     anchorEl={megaAnchor}
@@ -447,7 +443,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     categories={productsAndCategories}
                                     mode={mode}
                                 />
-
                                 {/* About */}
                                 <Box
                                     component='li'
@@ -462,7 +457,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <InfoIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* Messages */}
                                 {isLoggedIn && (
                                     <Box
@@ -487,7 +481,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         </Badge>
                                     </Box>
                                 )}
-
                                 {/* Contact */}
                                 <Box
                                     component='li'
@@ -503,7 +496,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <Typography component='span'></Typography>
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* My Listings - only if logged in */}
                                 {isLoggedIn ? (
                                     <Box component='li' role='listitem'>
@@ -516,7 +508,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         </StyledNavLink>
                                     </Box>
                                 ) : null}
-
                                 {/* Help */}
                                 <Box component='li' role='listitem'>
                                     <StyledNavLink
@@ -527,9 +518,10 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <HelpIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
-
                                 {/* Admin Panel - only if admin */}
-                                {RoleType.Admin || RoleType.Moderator ? (
+
+                                {isAdmin ||
+                                auth?.role === RoleType.Moderator ? (
                                     <Box component='li' role='listitem'>
                                         <StyledNavLink
                                             to={path.UsersManagement}
@@ -549,17 +541,14 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             }}
                                         >
                                             <DashboardIcon
-                                                sx={{
-                                                    fontSize: 20,
-                                                   
-                                                }}
+                                                sx={{ fontSize: 20 }}
                                             />
                                         </StyledNavLink>
                                     </Box>
                                 ) : null}
                             </Box>
                         </Box>
-                       
+
                         {/* Left side: Theme toggle, language switcher, and account */}
                         <Box
                             sx={{
@@ -669,7 +658,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             )}
 
                             {/* Account Menu / Login Button - Desktop only */}
-                            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                            <Box sx={{ display: { xs: 'block' } }}>
                                 {!isLoggedIn ? (
                                     <Button
                                         variant='contained'

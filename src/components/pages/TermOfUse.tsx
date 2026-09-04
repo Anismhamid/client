@@ -413,6 +413,52 @@ const TermOfUse: FunctionComponent = () => {
                                 </Box>
                             </Box>
 
+                            <Clause
+                                number={7}
+                                title={t('pages.terms.sections.blocking.title')}
+                            >
+                                <Typography
+                                    sx={{
+                                        color: INK,
+                                        lineHeight: 1.9,
+                                        mb: 2,
+                                    }}
+                                >
+                                    {t('pages.terms.sections.blocking.text')}
+                                </Typography>
+
+                                <Stack spacing={1}>
+                                    {getStringArray(
+                                        'pages.terms.sections.blocking.points',
+                                    ).map((item, i) => (
+                                        <Stack
+                                            key={i}
+                                            direction='row'
+                                            spacing={1.2}
+                                            alignItems='flex-start'
+                                        >
+                                            <Block
+                                                sx={{
+                                                    fontSize: 16,
+                                                    color: '#B0413E',
+                                                    mt: 0.4,
+                                                }}
+                                            />
+
+                                            <Typography
+                                                variant='body2'
+                                                sx={{
+                                                    color: INK,
+                                                    lineHeight: 1.8,
+                                                }}
+                                            >
+                                                {item}
+                                            </Typography>
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                            </Clause>
+
                             {/* Signature line */}
                             <Box
                                 sx={{

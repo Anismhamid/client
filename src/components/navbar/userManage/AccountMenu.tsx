@@ -250,7 +250,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         />
                     </ListItemIcon>
                     <Typography variant='body2'>
-                        {t('accountMenu.profile') || 'Profile'}
+                        {t('accountMenu.blockedUsers') || 'Blocked Users'}
                     </Typography>
                 </MenuItem>
 

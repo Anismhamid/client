@@ -112,7 +112,7 @@ const BlockButton = ({
                 }}
                 sx={{ borderRadius: 1, textTransform: 'none' }}
             >
-                {isBlocked ? t('block.unblock') : t('block.block')}
+                {isBlocked ? t('modals.block.unblock') : t('modals.block.block')}
             </Button>
 
             <Dialog
@@ -129,12 +129,12 @@ const BlockButton = ({
                 fullWidth
             >
                 <DialogTitle sx={{ fontWeight: 700, color: '#12161C' }}>
-                    {t('block.confirmTitle')}
+                    {t('modals.block.confirmTitle')}
                 </DialogTitle>
                 <DialogContent>
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         <Typography variant='body2' color='text.secondary'>
-                            {t('block.confirmBody')}
+                            {t('modals.block.confirmBody')}
                         </Typography>
 
                         <ToggleButtonGroup
@@ -145,13 +145,13 @@ const BlockButton = ({
                             onChange={(_, value) => value && setDuration(value)}
                         >
                             <ToggleButton value='7'>
-                                {t('block.days7')}
+                                {t('modals.block.days7')}
                             </ToggleButton>
                             <ToggleButton value='30'>
-                                {t('block.days30')}
+                                {t('modals.block.days30')}
                             </ToggleButton>
                             <ToggleButton value='permanent'>
-                                {t('block.permanent')}
+                                {t('modals.block.permanent')}
                             </ToggleButton>
                         </ToggleButtonGroup>
 
@@ -159,7 +159,7 @@ const BlockButton = ({
                             fullWidth
                             multiline
                             minRows={2}
-                            label={t('block.reasonOptional')}
+                            label={t('modals.block.reasonOptional')}
                             value={reason}
                             onChange={(e) =>
                                 setReason(e.target.value.slice(0, 300))
@@ -188,7 +188,7 @@ const BlockButton = ({
                                 sx={{ color: '#fff' }}
                             />
                         ) : (
-                            t('block.block')
+                            t('modals.block.block')
                         )}
                     </Button>
                 </DialogActions>

@@ -135,7 +135,7 @@ const BlockedUsers: FunctionComponent = () => {
             }
 
             setError(
-                t('blockedUsers.loadError') ||
+                t('modals.blockedUsers.loadError') ||
                     'Failed to load blocked users',
             );
         } finally {
@@ -164,7 +164,7 @@ const BlockedUsers: FunctionComponent = () => {
 
             return (
                 `${first} ${last}`.trim() ||
-                t('blockedUsers.user') ||
+                t('modals.blockedUsers.user') ||
                 'User'
             );
         },
@@ -221,12 +221,12 @@ const BlockedUsers: FunctionComponent = () => {
                 !user.expiresAt
             ) {
                 return (
-                    t('blockedUsers.permanent') ||
+                    t('modals.blockedUsers.permanent') ||
                     'Permanent block'
                 );
             }
 
-            return `${t('blockedUsers.until') || 'Until'} ${formatDate(
+            return `${t('modals.blockedUsers.until') || 'Until'} ${formatDate(
                 user.expiresAt,
             )}`;
         },
@@ -302,7 +302,7 @@ const BlockedUsers: FunctionComponent = () => {
                 }
 
                 setError(
-                    t('blockedUsers.unblockError') ||
+                    t('modals.blockedUsers.unblockError') ||
                         'Failed to unblock user',
                 );
 
@@ -401,7 +401,7 @@ const BlockedUsers: FunctionComponent = () => {
                             fontWeight={700}
                         >
                             {t(
-                                'blockedUsers.title',
+                                'modals.blockedUsers.title',
                             ) || 'Blocked Users'}
                         </Typography>
                     </Stack>
@@ -411,10 +411,11 @@ const BlockedUsers: FunctionComponent = () => {
                         color='text.secondary'
                         sx={{
                             mt: 0.5,
+                            
                         }}
                     >
                         {t(
-                            'blockedUsers.description',
+                            'modals.blockedUsers.description',
                         ) ||
                             'Manage the users you have blocked.'}
                     </Typography>
@@ -423,7 +424,7 @@ const BlockedUsers: FunctionComponent = () => {
                 <Tooltip
                     title={
                         t(
-                            'blockedUsers.refresh',
+                            'modals.blockedUsers.refresh',
                         ) || 'Refresh'
                     }
                 >
@@ -483,6 +484,7 @@ const BlockedUsers: FunctionComponent = () => {
                                 fontSize: 60,
                                 color: 'text.disabled',
                                 mb: 2,
+                                
                             }}
                         />
 
@@ -492,7 +494,7 @@ const BlockedUsers: FunctionComponent = () => {
                             gutterBottom
                         >
                             {t(
-                                'blockedUsers.empty',
+                                'modals.blockedUsers.empty',
                             ) ||
                                 'No blocked users'}
                         </Typography>
@@ -502,7 +504,7 @@ const BlockedUsers: FunctionComponent = () => {
                             color='text.secondary'
                         >
                             {t(
-                                'blockedUsers.emptyDescription',
+                                'modals.blockedUsers.emptyDescription',
                             ) ||
                                 'You have not blocked any users.'}
                         </Typography>
@@ -640,7 +642,7 @@ const BlockedUsers: FunctionComponent = () => {
                                                         >
                                                             •{' '}
                                                             {t(
-                                                                'blockedUsers.blockedOn',
+                                                                'modals.blockedUsers.blockedOn',
                                                             )}{' '}
                                                             {formatDate(
                                                                 user.blockedAt,
@@ -660,7 +662,7 @@ const BlockedUsers: FunctionComponent = () => {
                                                         }}
                                                     >
                                                         {t(
-                                                            'blockedUsers.reason',
+                                                            'modals.blockedUsers.reason',
                                                         )}
                                                         :{' '}
                                                         {
@@ -675,6 +677,7 @@ const BlockedUsers: FunctionComponent = () => {
 
                                         <Button
                                             variant='outlined'
+                                            
                                             color='error'
                                             startIcon={
                                                 isUnblocking ? (
@@ -700,15 +703,16 @@ const BlockedUsers: FunctionComponent = () => {
                                             sx={{
                                                 minWidth: 130,
                                                 flexShrink: 0,
+                                                gap:1
                                             }}
                                         >
                                             {isUnblocking
                                                 ? t(
-                                                      'blockedUsers.unblocking',
+                                                      'modals.blockedUsers.unblocking',
                                                   ) ||
                                                   'Unblocking...'
                                                 : t(
-                                                      'blockedUsers.unblock',
+                                                      'modals.blockedUsers.unblock',
                                                   ) ||
                                                   'Unblock'}
                                         </Button>
@@ -733,18 +737,18 @@ const BlockedUsers: FunctionComponent = () => {
                 }
                 title={
                     t(
-                        'blockedUsers.confirmUnblockTitle',
+                        'modals.blockedUsers.confirmUnblockTitle',
                     ) || 'Unblock User'
                 }
                 description={
                     selectedUser
                         ? `${t(
-                              'blockedUsers.confirmUnblock',
+                              'modals.blockedUsers.confirmUnblock',
                           ) || 'Are you sure you want to unblock this user?'} ${getUserName(
                               selectedUser,
                           )}?`
                         : t(
-                              'blockedUsers.confirmUnblock',
+                              'modals.blockedUsers.confirmUnblock',
                           ) ||
                           'Are you sure you want to unblock this user?'
                 }
@@ -758,7 +762,7 @@ const BlockedUsers: FunctionComponent = () => {
                 }
                 successText={
                     t(
-                        'blockedUsers.unblockedSuccessfully',
+                        'modals.blockedUsers.unblockedSuccessfully',
                     ) ||
                     'User unblocked successfully'
                 }

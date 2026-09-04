@@ -285,7 +285,8 @@
         "year": "Model Year",
         "fuel": "Fuel Type",
         "mileage": "Mileage",
-        "color": "Exterior Color"
+        "color": "Exterior Color",
+        "cancel": "Cancel"
     },
     "price": "Price",
     "quantity": "Quantity",
@@ -438,6 +439,16 @@
                 "copyright": "Copyright infringement",
                 "other": "Other"
             }
+        },
+        "block": {
+            "block": "Block",
+            "unblock": "Unblock",
+            "confirmTitle": "Block User",
+            "confirmBody": "Are you sure you want to block this user?",
+            "days7": "7 Days",
+            "days30": "30 Days",
+            "permanent": "Permanent",
+            "reasonOptional": "Reason (optional)"
         }
     },
 
@@ -1457,6 +1468,18 @@
                         "address": "Ein Al-Darwa Street, Umm al-Fahm, Israel.",
                         "noteLabel": "Note:",
                         "note": "This address is considered the official legal address for all legal notices and correspondence."
+                    },
+                    "blocking": {
+                        "title": "Blocking and User Interactions",
+                        "text": "Users may block other users to protect their privacy and prevent unwanted interactions. When a block is active, it applies to both parties according to Safqa's blocking system.",
+                        "points": [
+                            "When a user blocks another user, both parties are prevented from messaging, sending offers, or directly interacting with each other.",
+                            "Listings belonging to a blocked user are hidden from the user who initiated the block, and vice versa.",
+                            "Blocked listings are excluded from search results, categories, and related listings for the other party.",
+                            "A user cannot access the other party's listings through direct listing URLs while the block is active.",
+                            "Users can manage their blocked-user list and remove a block at any time.",
+                            "Safqa may retain blocking records when necessary for security and abuse-prevention purposes."
+                        ]
                     }
                 },
 
@@ -1826,17 +1849,18 @@
         }
     },
     "accountMenu": {
-        "messages": "Messages",
-        "account": "My Account",
-        "profile": "My Profile",
-        "settings": "Settings",
-        "logout": "Logout",
-        "admin": "Site Admin",
-        "client": "Customer",
+        "admin": "Administrator",
         "siteModerator": "Site Moderator",
-        "storeStatistics": "Store Statistics",
-        "ads": "Manage ads"
+        "client": "User",
+        "profile": "Profile",
+        "blockedUsers": "Blocked Users",
+        "messages": "Admin Messages",
+        "settings": "Settings",
+        "storeStatistics": "Site Statistics",
+        "ads": "Ads",
+        "logout": "Logout"
     },
+
     "profile": {
         "title": "Profile",
         "membershipCard": "Membership Card · صفقة",

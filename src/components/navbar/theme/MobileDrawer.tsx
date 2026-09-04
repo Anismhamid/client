@@ -11,7 +11,6 @@ import {
     PaletteMode,
     useTheme,
     Badge,
-    Button,
 } from '@mui/material';
 import {
     Brightness4,
@@ -32,7 +31,7 @@ import {
 } from '@mui/icons-material';
 import { FunctionComponent, SyntheticEvent } from 'react';
 import { Collapse, FormGroup } from '@mui/material';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
 import { path } from '../../../routes/routes';
@@ -44,6 +43,7 @@ import { Capacitor } from '@capacitor/core';
 import { AppSettings } from '../../settings/appSettings';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AISearch from '../../../atoms/AISearch';
+import { motion } from 'framer-motion';
 
 const openAppSettings = async () => {
     if (!Capacitor.isNativePlatform()) return;
@@ -79,7 +79,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 }) => {
     const { t } = useTranslation();
     const theme = useTheme();
-    const navigate = useNavigate();
     const handleMobileMenuToggle = (menu: string) => {
         setExpandedMobileMenu(expandedMobileMenu === menu ? false : menu);
     };
@@ -99,9 +98,8 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                 height: '100%',
                 background:
                     mode === 'dark'
-                        ? 'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)'
+                        ? `radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%), ${theme.palette.background.paper}`
                         : theme.palette.background.paper,
-                color: mode === 'dark' ? '#e2e8f0' : '#4a5568',
                 display: 'flex',
                 flexDirection: 'column',
             }}
@@ -119,13 +117,19 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                 <Typography variant='h6' sx={{ fontWeight: 700 }}>
                     {t('navigationMenu') || 'قائمة التنقل'}
                 </Typography>
-                <IconButton
-                    onClick={handleDrawerToggle}
-                    aria-label='إغلاق القائمة'
-                    sx={{ color: mode === 'dark' ? '#e2e8f0' : '#4a5568' }}
+                <motion.div
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.85 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 15 }}
                 >
-                    <CloseIcon />
-                </IconButton>
+                    <IconButton
+                        onClick={handleDrawerToggle}
+                        aria-label='إغلاق القائمة'
+                        sx={{ color: mode === 'dark' ? '#e2e8f0' : '#4a5568' }}
+                    >
+                        <CloseIcon />
+                    </IconButton>
+                </motion.div>
             </Box>
 
             {/* Scrollable content */}
@@ -138,7 +142,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     {/* Search */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <Box sx={{ width: '100%' }}>
-                            <AISearch  />
+                            <AISearch />
                         </Box>
                     </ListItem>
                     {/* Notification settings - native only */}
@@ -244,9 +248,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
-                    {/* Messages page */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
-                        {isLoggedIn && (
+                    {/* Messages page */}{' '}
+                    {isLoggedIn && (
+                        <ListItem disablePadding sx={{ mb: 1 }}>
                             <ListItemButton
                                 component={NavLink}
                                 to={path.MessagesPage}
@@ -280,8 +284,8 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                     }}
                                 />
                             </ListItemButton>
-                        )}
-                    </ListItem>
+                        </ListItem>
+                    )}
                     {/* Products with categories - IMPLEMENTED */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
@@ -696,9 +700,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     <LanguageSwitcher />
                 </Box>
 
-                {/* Login/Logout button */}
-                <Box sx={{ mt: 2 }}>
-                    {!isLoggedIn && (
+                {/* Login/Logout button
+                {!isLoggedIn && (
+                    <Box sx={{ mt: 2 }}>
                         <Button
                             fullWidth
                             variant='contained'
@@ -720,8 +724,8 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                         >
                             {t('links.login')}
                         </Button>
-                    )}
-                </Box>
+                    </Box>
+                )} */}
 
                 {/* Copyright */}
                 <Typography
