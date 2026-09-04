@@ -80,7 +80,7 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
         fontWeight: 'bold',
         backgroundColor:
             theme.palette.mode === 'dark'
-                ? 'rgba(255, 142, 3, 0.884)'
+                ? 'rgba(255, 255, 255, 0.884)'
                 : 'rgb(245, 159, 11)',
     },
 }));
@@ -333,6 +333,68 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <HomeIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
+
+                                {/* Products with mega menu wrapper */}
+
+                                <Box
+                                    component='li'
+                                    role='listitem'
+                                    sx={{ flexShrink: 0, position: 'relative' }}
+                                    onMouseEnter={
+                                        !isMobile
+                                            ? (e) =>
+                                                  setMegaAnchor(e.currentTarget)
+                                            : undefined
+                                    }
+                                    onMouseLeave={
+                                        !isMobile
+                                            ? () => setMegaAnchor(null)
+                                            : undefined
+                                    }
+                                    onClick={
+                                        isMobile
+                                            ? (e) =>
+                                                  setMegaAnchor(e.currentTarget)
+                                            : undefined
+                                    }
+                                    aria-haspopup='true'
+                                    aria-expanded={openMega ? 'true' : 'false'}
+                                >
+                                    <KeyboardArrowDownIcon
+                                        sx={{
+                                            transition:
+                                                'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            transform: openMega
+                                                ? 'rotate(180deg)'
+                                                : 'rotate(0deg)',
+                                        }}
+                                    />
+                                    <CategoryIcon sx={{ fontSize: 20 }} />
+                                    {/* <Typography
+                                        variant='body2'
+                                        sx={{ fontWeight: 500 }}
+                                    >
+                                        {t('links.products')}
+                                    </Typography> */}
+                                </Box>
+                                {/* Placed OUTSIDE the trigger box to prevent parent event bubbling closure traps */}
+                                <MegaMenu
+                                    anchorEl={megaAnchor}
+                                    open={openMega}
+                                    onClose={() => setMegaAnchor(null)}
+                                    onMouseEnter={
+                                        !isMobile
+                                            ? () => setMegaAnchor(megaAnchor)
+                                            : undefined
+                                    }
+                                    onMouseLeave={
+                                        !isMobile
+                                            ? () => setMegaAnchor(null)
+                                            : undefined
+                                    }
+                                    categories={productsAndCategories}
+                                    mode={mode}
+                                />
                                 {/* How to delete your account in safqa */}
                                 <Box
                                     component='li'
@@ -369,80 +431,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         </StyledNavLink>
                                     </Box>
                                 )}
-                                {/* Products with mega menu wrapper */}
-                                <Box
-                                    component='li'
-                                    role='listitem'
-                                    sx={{ flexShrink: 0, position: 'relative' }}
-                                    onMouseEnter={
-                                        !isMobile
-                                            ? (e) =>
-                                                  setMegaAnchor(e.currentTarget)
-                                            : undefined
-                                    }
-                                    onMouseLeave={
-                                        !isMobile
-                                            ? () => setMegaAnchor(null)
-                                            : undefined
-                                    }
-                                    onClick={
-                                        isMobile
-                                            ? (e) =>
-                                                  setMegaAnchor(e.currentTarget)
-                                            : undefined
-                                    }
-                                    aria-haspopup='true'
-                                    aria-expanded={openMega ? 'true' : 'false'}
-                                >
-                                    <StyledNavLink
-                                        to='#'
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            if (isMobile)
-                                                setMegaAnchor(e.currentTarget);
-                                        }}
-                                        aria-label={t('links.products')}
-                                        title={t('links.products')}
-                                    >
-                                        <CategoryIcon sx={{ fontSize: 20 }} />
 
-                                        {/* Added missing label text node for readability and layout structure */}
-                                        <Typography
-                                            variant='body2'
-                                            sx={{ fontWeight: 500 }}
-                                        >
-                                            {t('links.products')}
-                                        </Typography>
-
-                                        <KeyboardArrowDownIcon
-                                            sx={{
-                                                transition:
-                                                    'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                transform: openMega
-                                                    ? 'rotate(180deg)'
-                                                    : 'rotate(0deg)',
-                                            }}
-                                        />
-                                    </StyledNavLink>
-                                </Box>
-                                {/* Placed OUTSIDE the trigger box to prevent parent event bubbling closure traps */}
-                                <MegaMenu
-                                    anchorEl={megaAnchor}
-                                    open={openMega}
-                                    onClose={() => setMegaAnchor(null)}
-                                    onMouseEnter={
-                                        !isMobile
-                                            ? () => setMegaAnchor(megaAnchor)
-                                            : undefined
-                                    }
-                                    onMouseLeave={
-                                        !isMobile
-                                            ? () => setMegaAnchor(null)
-                                            : undefined
-                                    }
-                                    categories={productsAndCategories}
-                                    mode={mode}
-                                />
                                 {/* About */}
                                 <Box
                                     component='li'
@@ -682,21 +671,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <AccountMenu logout={logout} />
                                 )}
                             </Box>
-
-                            {/* Mobile account icon */}
-                            {isLoggedIn && (
-                                <Box
-                                    sx={{
-                                        display: { xs: 'block', md: 'none' },
-                                    }}
-                                >
-                                    <AccountMenu
-                                        logout={logout}
-                                        // mobileView
-                                        // handleNavClick={handleDrawerToggle}
-                                    />
-                                </Box>
-                            )}
                         </Box>
                     </Toolbar>
                 </Container>

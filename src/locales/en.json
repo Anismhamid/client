@@ -42,8 +42,8 @@
     "navigationMenu": "menu",
     "webPageName": "safqa",
     "bestOffers": "The best deals in one place",
-    "browse-posts": "Browse posts",
-    "create-post": "Create post",
+    "browse-posts": "Browse Listings",
+    "create-post": "Create Listing",
     "allRightsReserved": "All rights reserved.",
     "help": "Help",
     "favorites": "favorites",
@@ -1445,7 +1445,7 @@
 
                 "registration": {
                     "title": "Registration and Account Creation",
-                    "text": "You are required to create an account in order to publish listings and posts on the platform. You are responsible for providing accurate and up-to-date information and for keeping your password confidential. We reserve the right to suspend or delete an account in cases of suspicious activity or violations of our Privacy Policy.",
+                    "text": "You are required to create an account in order to publish listings and Listings on the platform. You are responsible for providing accurate and up-to-date information and for keeping your password confidential. We reserve the right to suspend or delete an account in cases of suspicious activity or violations of our Privacy Policy.",
                     "privacyPolicy": "Privacy Policy"
                 },
 
