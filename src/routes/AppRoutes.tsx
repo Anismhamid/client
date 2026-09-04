@@ -100,8 +100,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.UsersManagement}
                 element={
-                    auth?.role === RoleType.Admin ||
-                    auth?.role === RoleType.Moderator ? (
+                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
                         <UsersManagement />
                     ) : (
                         <PageNotFound />
@@ -112,8 +111,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.AdminSettings}
                 element={
-                    auth?.role === RoleType.Admin ||
-                    auth?.role === RoleType.Moderator ? (
+                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
                         <AdminSettings />
                     ) : (
                         <PageNotFound />
@@ -124,8 +122,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.ReportsManagement}
                 element={
-                    auth?.role === RoleType.Admin ||
-                    auth?.role === RoleType.Moderator ? (
+                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
                         <ReportManagement />
                     ) : (
                         <PageNotFound />
@@ -135,8 +132,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.MessageAuditLogs}
                 element={
-                    auth?.role === RoleType.Admin ||
-                    auth?.role === RoleType.Moderator ? (
+                    auth?.role === RoleType.Admin ||RoleType.Moderator ? (
                         <MessageAuditLogs />
                     ) : (
                         <PageNotFound />
