@@ -29,6 +29,16 @@ export const postsCategory = [
     { id: 'RealEstate' },
     { id: 'Pets' },
     { id: 'Furniture' },
+
+    // New categories
+    { id: 'Cameras' },
+    { id: 'Books' },
+    { id: 'MusicalInstruments' },
+    { id: 'ConstructionEquipment' },
+    { id: 'IndustrialEquipment' },
+    { id: 'WeldingEquipment' },
+    { id: 'OfficeEquipment' },
+    { id: 'Services' },
 ];
 
 // ----- Category Labels -----
@@ -55,29 +65,52 @@ export const categoryLabels: Record<Category, string> = {
     RealEstate: 'عقارات',
     Pets: 'حيوانات ومستلزماتها',
     Furniture: 'أثاث',
+    Cameras: 'كاميرات وتصوير',
+    Books: 'كتب',
+    MusicalInstruments: 'آلات موسيقية',
+    ConstructionEquipment: 'معدات إنشائية',
+    IndustrialEquipment: 'معدات صناعية',
+    WeldingEquipment: 'معدات لحام',
+    OfficeEquipment: 'معدات مكتبية',
+    Services: 'خدمات',
 };
+
 
 export const categoryPathMap: Record<Category, string> = {
     House: productsPathes.house,
     Garden: productsPathes.garden,
     Electronics: productsPathes.electronics,
+
     Kids: productsPathes.kids,
     Baby: productsPathes.baby,
     Beauty: productsPathes.beauty,
     Cleaning: productsPathes.cleaning,
     Health: productsPathes.health,
     Watches: productsPathes.watches,
+
     MenClothes: productsPathes.MenClothes,
     WomenClothes: productsPathes.WomenClothes,
     WomenBags: productsPathes.WomenBags,
+
     Cars: productsPathes.cars,
     Motorcycles: productsPathes.motorcycles,
     Trucks: productsPathes.trucks,
     Bikes: productsPathes.bikes,
     ElectricVehicles: productsPathes.electricVehicles,
+
     Art: productsPathes.art,
     Gaming: productsPathes.gaming,
     RealEstate: productsPathes.realEstate,
     Pets: productsPathes.pets,
     Furniture: productsPathes.furniture,
+
+    // New
+    Cameras: productsPathes.Camera,
+    Books: productsPathes.Books,
+    MusicalInstruments: productsPathes.MusicalInstruments,
+    ConstructionEquipment: productsPathes.ConstructionEquipment,
+    IndustrialEquipment: productsPathes.IndustrialEquipment,
+    WeldingEquipment: productsPathes.WeldingEquipment,
+    OfficeEquipment: productsPathes.OfficeEquipment,
+    Services: productsPathes.Services,
 } as const;

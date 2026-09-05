@@ -50,7 +50,7 @@ interface PostFormProps {
 
 export interface DynamicField {
     name: string;
-    type: 'text' | 'number' | 'select' | 'boolean' | 'date' | 'color';
+    type: 'text' | 'number' | 'select' | 'boolean' | 'date' | 'color' | 'array';
     required?: boolean;
     options?: string[];
     min?: number;
@@ -189,9 +189,20 @@ const PostForm: FunctionComponent<PostFormProps> = ({
         const newSubcat = e.target.value;
         const category = formik.values.category as CategoryValue;
         const oldSubcat = formik.values.subcategory;
+
         if (oldSubcat && categoriesLogic[category][oldSubcat]) {
             categoriesLogic[category][oldSubcat].forEach((field) => {
-                formik.setFieldValue(field.name, undefined);
+                let defaultValue: unknown = '';
+
+                if (field.type === 'boolean') {
+                    defaultValue = false;
+                }
+
+                if (field.type === 'array') {
+                    defaultValue = [];
+                }
+
+                formik.setFieldValue(field.name, defaultValue);
             });
         }
         formik.setFieldValue('subcategory', newSubcat);
@@ -210,6 +221,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
     const renderDynamicField = (field: DynamicField) => {
         const fieldName = field.name as keyof Posts;
         const rawValue = formik.values[fieldName];
+
         let fieldValue: string | number = '';
 
         if (typeof rawValue === 'string' || typeof rawValue === 'number') {
@@ -254,18 +266,24 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                         name={field.name}
                         label={fieldLabel}
                         value={fieldValue}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            formik.setFieldValue(
+                                field.name,
+                                value === '' ? '' : Number(value),
+                            );
+                        }}
                         onBlur={formik.handleBlur}
                         error={Boolean(error)}
                         helperText={error as string}
                         required={isRequired}
                         inputProps={{
-                            min: field.min || 0,
-                            step: field.step || 1,
+                            min: field.min ?? 0,
+                            step: field.step ?? 1,
                         }}
                     />
                 );
-
             case 'select':
                 return (
                     <FormControl
@@ -411,6 +429,75 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                             </Stack>
                         )}
                     </Stack>
+                );
+            }
+            case 'array': {
+                const arrayValue = Array.isArray(rawValue) ? rawValue : [];
+
+                return (
+                    <FormControl
+                        fullWidth
+                        size='small'
+                        error={Boolean(error)}
+                        required={isRequired}
+                    >
+                        <InputLabel>{fieldLabel}</InputLabel>
+
+                        <Select
+                            multiple
+                            name={field.name}
+                            value={arrayValue}
+                            label={fieldLabel}
+                            onChange={(e) => {
+                                const value = e.target.value;
+
+                                formik.setFieldValue(
+                                    field.name,
+                                    typeof value === 'string'
+                                        ? value.split(',')
+                                        : value,
+                                );
+                            }}
+                            onBlur={formik.handleBlur}
+                            renderValue={(selected) => (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        flexWrap: 'wrap',
+                                        gap: 0.5,
+                                    }}
+                                >
+                                    {(selected as string[]).map((value) => (
+                                        <Chip
+                                            key={value}
+                                            label={t(
+                                                `categories.${category}.fields.${field.name}Options.${value}`,
+                                                {
+                                                    defaultValue: value,
+                                                },
+                                            )}
+                                            size='small'
+                                        />
+                                    ))}
+                                </Box>
+                            )}
+                        >
+                            {field.options?.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {t(
+                                        `categories.${category}.fields.${field.name}Options.${option}`,
+                                        {
+                                            defaultValue: option,
+                                        },
+                                    )}
+                                </MenuItem>
+                            ))}
+                        </Select>
+
+                        {error && (
+                            <FormHelperText>{error as string}</FormHelperText>
+                        )}
+                    </FormControl>
                 );
             }
             case 'boolean':

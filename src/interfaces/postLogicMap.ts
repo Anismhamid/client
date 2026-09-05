@@ -20,11 +20,19 @@ export type CategoryValue =
     | 'Gaming'
     | 'RealEstate'
     | 'Pets'
-    | 'Furniture';
+    | 'Furniture'
+    | 'Cameras'
+    | 'Books'
+    | 'MusicalInstruments'
+    | 'ConstructionEquipment'
+    | 'IndustrialEquipment'
+    | 'WeldingEquipment'
+    | 'OfficeEquipment'
+    | 'Services';
 
 export interface Field {
     name: string;
-    type: 'text' | 'number' | 'boolean' | 'select' | 'date' | 'color';
+    type: 'text' | 'number' | 'boolean' | 'select' | 'date' | 'color' | 'array';
     required?: boolean;
     options?: string[];
 }
@@ -74,6 +82,21 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
         plants: [
             { name: 'brand', type: 'text' },
             { name: 'plantType', type: 'text', required: true },
+            {
+                name: 'season',
+                type: 'select',
+                options: ['spring', 'summer', 'autumn', 'winter'],
+            },
+            { name: 'sunExposure', type: 'text' },
+        ],
+
+        trees: [
+            { name: 'brand', type: 'text' },
+            { name: 'treeType', type: 'text', required: true },
+            { name: 'height', type: 'number' },
+            { name: 'ageYears', type: 'number' },
+            { name: 'fruitBearing', type: 'boolean' },
+            { name: 'fruitType', type: 'text' },
             {
                 name: 'season',
                 type: 'select',
@@ -664,12 +687,17 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'hasParking', type: 'boolean' },
             { name: 'hasElevator', type: 'boolean' },
             { name: 'furnished', type: 'boolean' },
+
             {
                 name: 'rentalType',
                 type: 'select',
                 options: ['sale', 'rent', 'daily'],
             },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
             { name: 'propertyAge', type: 'number' },
+            { name: 'utilitiesIncluded', type: 'boolean' },
         ],
 
         house: [
@@ -680,12 +708,17 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'hasParking', type: 'boolean' },
             { name: 'hasElevator', type: 'boolean' },
             { name: 'furnished', type: 'boolean' },
+
             {
                 name: 'rentalType',
                 type: 'select',
                 options: ['sale', 'rent', 'daily'],
             },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
             { name: 'propertyAge', type: 'number' },
+            { name: 'utilitiesIncluded', type: 'boolean' },
         ],
 
         villa: [
@@ -696,12 +729,17 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'hasParking', type: 'boolean' },
             { name: 'hasElevator', type: 'boolean' },
             { name: 'furnished', type: 'boolean' },
+
             {
                 name: 'rentalType',
                 type: 'select',
                 options: ['sale', 'rent', 'daily'],
             },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
             { name: 'propertyAge', type: 'number' },
+            { name: 'utilitiesIncluded', type: 'boolean' },
         ],
 
         commercial: [
@@ -712,21 +750,62 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'hasParking', type: 'boolean' },
             { name: 'hasElevator', type: 'boolean' },
             { name: 'furnished', type: 'boolean' },
+
             {
                 name: 'rentalType',
                 type: 'select',
                 options: ['sale', 'rent', 'daily'],
             },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
             { name: 'propertyAge', type: 'number' },
+            { name: 'utilitiesIncluded', type: 'boolean' },
         ],
 
         land: [
             { name: 'area', type: 'number', required: true },
+
             {
                 name: 'rentalType',
                 type: 'select',
                 options: ['sale', 'rent', 'daily'],
             },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
+            { name: 'propertyAge', type: 'number' },
+            { name: 'utilitiesIncluded', type: 'boolean' },
+        ],
+
+        room: [
+            { name: 'area', type: 'number', required: true },
+            { name: 'rooms', type: 'number' },
+            { name: 'bathrooms', type: 'number' },
+            { name: 'furnished', type: 'boolean' },
+
+            {
+                name: 'roomType',
+                type: 'select',
+                options: ['private_room', 'shared_room', 'master_room'],
+            },
+
+            {
+                name: 'rentalType',
+                type: 'select',
+                options: ['sale', 'rent', 'daily'],
+            },
+
+            { name: 'monthlyRent', type: 'number' },
+            { name: 'availableFrom', type: 'date' },
+
+            {
+                name: 'genderPreference',
+                type: 'select',
+                options: ['male', 'female', 'any'],
+            },
+
+            { name: 'utilitiesIncluded', type: 'boolean' },
             { name: 'propertyAge', type: 'number' },
         ],
     },
@@ -769,6 +848,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
 
         birds: [
             { name: 'breed', type: 'text' },
+            { name: 'birdType', type: 'text' },
             { name: 'age', type: 'number' },
             {
                 name: 'gender',
@@ -776,6 +856,8 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
                 options: ['male', 'female'],
             },
             { name: 'vaccinated', type: 'boolean' },
+            { name: 'neutered', type: 'boolean' },
+            { name: 'microchipped', type: 'boolean' },
             { name: 'color', type: 'color' },
             { name: 'weight', type: 'number' },
             { name: 'healthIssues', type: 'text' },
@@ -915,6 +997,1046 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             },
             { name: 'style', type: 'text' },
             { name: 'includesAccessories', type: 'boolean' },
+        ],
+    },
+    /* ================== Cameras ================== */
+    Cameras: {
+        cameras: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+
+            {
+                name: 'cameraType',
+                type: 'select',
+                options: [
+                    'dslr',
+                    'mirrorless',
+                    'compact',
+                    'action',
+                    'security',
+                    'professional_video',
+                ],
+            },
+
+            { name: 'sensorType', type: 'text' },
+            { name: 'megapixels', type: 'number' },
+            { name: 'resolution', type: 'text' },
+            { name: 'videoResolution', type: 'text' },
+            { name: 'lensMount', type: 'text' },
+            { name: 'focalLength', type: 'text' },
+
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+
+            { name: 'warranty', type: 'text' },
+            { name: 'includedAccessories', type: 'array' },
+        ],
+
+        lenses: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'lensMount', type: 'text' },
+            { name: 'focalLength', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+            { name: 'includedAccessories', type: 'array' },
+        ],
+
+        video: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'resolution', type: 'text' },
+            { name: 'videoResolution', type: 'text' },
+            { name: 'sensorType', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+            { name: 'includedAccessories', type: 'array' },
+        ],
+
+        accessories: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+            { name: 'includedAccessories', type: 'array' },
+        ],
+    },
+
+    /* ================== Books ================== */
+    Books: {
+        school: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        university: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        novels: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        children: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        religious: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        language: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        business: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+
+        other: [
+            { name: 'title', type: 'text', required: true },
+            { name: 'author', type: 'text' },
+            { name: 'publisher', type: 'text' },
+            { name: 'edition', type: 'text' },
+            { name: 'publicationYear', type: 'number' },
+            { name: 'language', type: 'text' },
+            { name: 'isbn', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'good', 'fair'],
+            },
+        ],
+    },
+
+    /* ================== Musical Instruments ================== */
+    MusicalInstruments: {
+        guitars: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        pianos: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        keyboards: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        drums: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        violins: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        wind: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        percussion: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        other: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'material', type: 'text' },
+            { name: 'color', type: 'color' },
+            { name: 'size', type: 'text' },
+            { name: 'electric', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+    },
+
+    /* ================== Construction Equipment ================== */
+    ConstructionEquipment: {
+        excavators: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        loaders: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        cranes: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        concrete_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        scaffolding: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        cutting_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        compaction_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        other: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            { name: 'enginePower', type: 'number' },
+            {
+                name: 'fuelType',
+                type: 'select',
+                options: ['diesel', 'gasoline', 'electric', 'hybrid'],
+            },
+            { name: 'weight', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+    },
+
+    /* ================== Industrial Equipment ================== */
+    IndustrialEquipment: {
+        industrial_machines: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        compressors: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        generators: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        production_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        packaging_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        material_handling: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        other: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'year', type: 'number' },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'capacity', type: 'number' },
+            { name: 'operatingHours', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+    },
+
+    /* ================== Welding Equipment ================== */
+    WeldingEquipment: {
+        welding_machines: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'weldingType',
+                type: 'select',
+                options: ['mig', 'mag', 'tig', 'arc', 'plasma', 'spot'],
+            },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'amperage', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        plasma_cutters: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'weldingType',
+                type: 'select',
+                options: ['plasma'],
+            },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'amperage', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        welding_accessories: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        protective_equipment: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+
+        other: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            {
+                name: 'weldingType',
+                type: 'select',
+                options: ['mig', 'mag', 'tig', 'arc', 'plasma', 'spot'],
+            },
+            { name: 'power', type: 'number' },
+            { name: 'voltage', type: 'number' },
+            { name: 'amperage', type: 'number' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'accessories', type: 'array' },
+        ],
+    },
+
+    /* ================== Office Equipment ================== */
+    OfficeEquipment: {
+        printers: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'printTechnology',
+                type: 'select',
+                options: ['laser', 'inkjet', 'thermal', 'other'],
+            },
+            { name: 'colorPrinting', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        scanners: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'printTechnology',
+                type: 'select',
+                options: ['laser', 'inkjet', 'thermal', 'other'],
+            },
+            { name: 'colorPrinting', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        copiers: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'printTechnology',
+                type: 'select',
+                options: ['laser', 'inkjet', 'thermal', 'other'],
+            },
+            { name: 'colorPrinting', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        projectors: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            { name: 'colorPrinting', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        shredders: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        laminators: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+
+        other: [
+            { name: 'brand', type: 'text' },
+            { name: 'model', type: 'text' },
+            { name: 'connectivity', type: 'text' },
+            {
+                name: 'printTechnology',
+                type: 'select',
+                options: ['laser', 'inkjet', 'thermal', 'other'],
+            },
+            { name: 'colorPrinting', type: 'boolean' },
+            {
+                name: 'condition',
+                type: 'select',
+                options: ['new', 'like_new', 'excellent', 'good', 'fair'],
+            },
+            { name: 'warranty', type: 'text' },
+        ],
+    },
+
+    /* ================== Services ================== */
+    Services: {
+        maintenance: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            {
+                name: 'availableDays',
+                type: 'array',
+                options: [
+                    'sunday',
+                    'monday',
+                    'tuesday',
+                    'wednesday',
+                    'thursday',
+                    'friday',
+                    'saturday',
+                ],
+            },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        electrical: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        plumbing: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        cleaning: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        transportation: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        moving: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        automotive: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        programming: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        design: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        photography: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        marketing: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        education: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        beauty: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
+        ],
+
+        other: [
+            { name: 'serviceTitle', type: 'text', required: true },
+            { name: 'providerName', type: 'text' },
+            { name: 'experienceYears', type: 'number' },
+            { name: 'priceFrom', type: 'number' },
+            { name: 'priceTo', type: 'number' },
+            {
+                name: 'pricingType',
+                type: 'select',
+                options: ['hourly', 'fixed', 'daily', 'monthly', 'negotiable'],
+            },
+            { name: 'availableDays', type: 'array' },
+            { name: 'availableHours', type: 'text' },
+            { name: 'serviceArea', type: 'text' },
+            { name: 'emergencyService', type: 'boolean' },
         ],
     },
 };

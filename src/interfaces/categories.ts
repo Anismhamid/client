@@ -18,12 +18,21 @@ export const CATEGORIES = {
     Bikes: 'Bikes',
     ElectricVehicles: 'ElectricVehicles',
 
-    // New categories
     Art: 'Art',
     Gaming: 'Gaming',
     RealEstate: 'RealEstate',
     Pets: 'Pets',
     Furniture: 'Furniture',
+
+    // New categories
+    Cameras: 'Cameras',
+    Books: 'Books',
+    MusicalInstruments: 'MusicalInstruments',
+    ConstructionEquipment: 'ConstructionEquipment',
+    IndustrialEquipment: 'IndustrialEquipment',
+    WeldingEquipment: 'WeldingEquipment',
+    OfficeEquipment: 'OfficeEquipment',
+    Services: 'Services',
 } as const;
 
 export type Category = keyof typeof CATEGORIES;

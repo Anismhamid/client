@@ -19,7 +19,14 @@ export const productsPathes = {
     WomenClothes: '/category/WomenClothes',
     MenClothes: '/category/MenClothes',
     WomenBags: '/category/WomenBags',
-
+    Camera: '/category/cameras',
+    Books: '/category/books',
+    MusicalInstruments: '/category//musical-instruments',
+    ConstructionEquipment: '/category/construction-equipment',
+    IndustrialEquipment: '/category/industrial-equipment',
+    WeldingEquipment: '/category/welding-equipment',
+    OfficeEquipment: '/category/office-equipment',
+    Services: '/services',
     // Other
     art: '/category/Art',
     gaming: '/category/Gaming',
