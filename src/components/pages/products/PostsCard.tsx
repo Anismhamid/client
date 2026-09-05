@@ -383,6 +383,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <ReportButton
                             targetId={post._id as string}
                             type='post'
+                            showLabel
                         />
                     </MenuItem>
 

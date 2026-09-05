@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import TopAdsSection from '../ads/TopAdsSection';
-import HomepageFeaturedSection from '../ads/HomepageFeaturedSection ';
+import HomepageFeaturedSection from '../ads/HomepageFeaturedSection';
 import SealBadge from './SealBadge';
 
 const AdsSection = () => {

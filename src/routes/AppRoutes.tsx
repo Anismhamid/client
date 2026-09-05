@@ -6,14 +6,14 @@ import RoleType from '../interfaces/UserType';
 import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
 import MyAdsDashboard from '../components/pages/ads/MyAdsDashboard ';
-import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSection ';
+import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSection';
 import PaymentSuccess from '../components/pages/payment/Success';
+import JobsPage from '../components/pages/Jobs/JobsPage';
+import JobDetails from '../components/pages/Jobs/JobDetails';
 
 const UsersManagement = lazy(
     () =>
-        import(
-            '../components/settings/usersManagement/components/UsersManagement'
-        ),
+        import('../components/settings/usersManagement/components/UsersManagement'),
 );
 const Home = lazy(() => import('../components/pages/home/Home'));
 const Login = lazy(() => import('../components/settings/Login'));
@@ -44,6 +44,9 @@ import MessageInvestigation from '../components/settings/usersManagement/compone
 import ReportManagement from '../components/reports/ReportManagement';
 import MessageAuditLogs from '../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs';
 import BlockedUsers from '../components/pages/BlockedUsers';
+import CreateJob from '../components/pages/Jobs/CreateJob';
+import EditJob from '../components/pages/Jobs/EditJob';
+
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -86,6 +89,11 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path={path.CustomerProfile} element={<CustomerProfile />} />
             <Route path={`${path.Profile}/:id`} element={<Profile />} />
             <Route path={`${path.Favorite}`} element={<Favorite />} />
+            <Route path={`${path.Favorite}`} element={<Favorite />} />
+            <Route path={`${path.jobs}`} element={<JobsPage />} />
+            <Route path={`${path.createJob}`} element={<CreateJob />} />
+            <Route path={`${path.editJob}`} element={<EditJob />} />
+            <Route path={`/jobs/:id`} element={<JobDetails />} />
 
             <Route path={path.Register} element={<Register />} />
             <Route path={path.Messages} element={<Messages />} />
@@ -132,7 +140,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.MessageAuditLogs}
                 element={
-                    auth?.role === RoleType.Admin ||RoleType.Moderator ? (
+                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
                         <MessageAuditLogs />
                     ) : (
                         <PageNotFound />

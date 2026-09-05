@@ -13,6 +13,7 @@ import { path } from '../../routes/routes';
 import { useNavigate } from 'react-router-dom';
 import { RoleType } from '../../interfaces/UserType';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 const SpeedDialComponent: FunctionComponent = () => {
     const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
@@ -73,6 +74,12 @@ const SpeedDialComponent: FunctionComponent = () => {
             icon: <AddSharpIcon />,
             name: t('SpeedDial.actions.addProduct'),
             addClick: showAddProductModal,
+            show: true,
+        },
+        {
+            icon: <WorkOutlineIcon />,
+            name: t('pages.jobs.actions.addJob'),
+            addClick: () => navigate(path.createJob),
             show: true,
         },
     ];

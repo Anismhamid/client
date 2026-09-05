@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { FunctionComponent } from 'react';
 import { useTopAds } from '../../../hooks/ads/useFeaturedAds';
 import { AdGridSkeleton } from './Adgridskeleton';
-import { HomepageAdCard } from './HomepageFeaturedSection ';
+import { HomepageAdCard } from './HomepageFeaturedSection';
 import React from 'react';
 
 // ── Constants ──────────────────────────────────────────────────────────────

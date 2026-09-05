@@ -24,11 +24,11 @@ export const postsCategory = [
     { id: 'RealEstate' },
     { id: 'Pets' },
     { id: 'Furniture' },
-    { Art: 'Art' },
-    { Gaming: 'Gaming' },
-    { RealEstate: 'RealEstate' },
-    { Pets: 'Pets' },
-    { Furniture: 'Furniture' },
+    { id: 'Art' },
+    { id: 'Gaming' },
+    { id: 'RealEstate' },
+    { id: 'Pets' },
+    { id: 'Furniture' },
 ];
 
 // ----- Category Labels -----

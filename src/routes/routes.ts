@@ -46,7 +46,7 @@ export enum path {
     ResetPassword = '/reset-password/:token',
     ReportsManagement = '/reports-management',
     MessageAuditLogs = '/message-audit-logs',
-     BlockedUsers= '/blocked-users',
+    BlockedUsers = '/blocked-users',
 
     Search = '/search',
 
@@ -64,6 +64,11 @@ export enum path {
     MessagesPage = 'messages/chat',
     MyAdsDashboard = '/my-ads-dashboard',
     FeaturedAds = '/featured-ads',
+
+    // jobs routes
+    jobs = '/jobs',
+    createJob = '/jobs/create',
+    editJob = '/jobs/:id/edit',
 
     // Admin
     AdminSettings = '/admin-settings',

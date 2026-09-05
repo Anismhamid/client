@@ -1056,6 +1056,143 @@
         "lastLogin": "آخر تسجيل دخول"
     },
     "pages": {
+        "jobs": {
+            "title": "משרות",
+            "remote": "עבודה מרחוק",
+            "back": "חזרה",
+            "notFound": "המשרה לא נמצאה",
+            "requirements": "דרישות",
+            "benefits": "הטבות",
+
+            "form": {
+                "basicInformation": "פרטי המשרה",
+                "jobTitle": "שם המשרה",
+                "type": "סוג המשרה",
+                "companyName": "שם החברה",
+                "industry": "תחום",
+                "experienceSection": "ניסיון",
+                "experienceLevel": "רמת ניסיון",
+                "notSpecified": "לא צוין",
+
+                "salarySection": "שכר",
+                "salaryMin": "שכר מינימלי",
+                "salaryMax": "שכר מקסימלי",
+                "salaryPeriod": "תקופת השכר",
+
+                "locationSection": "מיקום",
+                "location": "מיקום",
+                "remote": "עבודה מרחוק",
+
+                "requirements": "דרישות המשרה",
+                "requirement": "דרישה",
+                "addRequirement": "הוסף דרישה",
+                "noRequirements": "לא נוספו דרישות",
+
+                "benefits": "הטבות המשרה",
+                "benefit": "הטבה",
+                "addBenefit": "הוסף הטבה",
+                "noBenefits": "לא נוספו הטבות",
+
+                "create": "פרסום משרה",
+                "update": "עדכון משרה"
+            },
+
+            "filters": {
+                "type": "סוג המשרה",
+                "experience": "ניסיון",
+                "salaryPeriod": "תקופת השכר",
+                "salaryMin": "שכר מינימלי",
+                "salaryMax": "שכר מקסימלי",
+                "location": "מיקום",
+                "industry": "תחום",
+                "remote": "עבודה מרחוק",
+                "all": "הכול",
+                "search": "חיפוש",
+                "reset": "איפוס"
+            },
+
+            "types": {
+                "full_time": "משרה מלאה",
+                "part_time": "משרה חלקית",
+                "temporary": "משרה זמנית",
+                "remote": "עבודה מרחוק",
+                "daily": "עבודה יומית",
+                "internship": "התמחות"
+            },
+
+            "experienceLevels": {
+                "no_experience": "ללא ניסיון",
+                "entry": "רמת כניסה",
+                "mid": "ניסיון בינוני",
+                "senior": "בכיר",
+                "manager": "ניהול"
+            },
+
+            "salaryPeriods": {
+                "hourly": "לשעה",
+                "daily": "ליום",
+                "monthly": "לחודש",
+                "yearly": "לשנה"
+            },
+
+            "validation": {
+                "typeRequired": "סוג המשרה הוא שדה חובה",
+                "jobTitleRequired": "שם המשרה הוא שדה חובה",
+                "jobTitleMin": "שם המשרה חייב להכיל לפחות 2 תווים",
+                "jobTitleMax": "שם המשרה לא יכול להכיל יותר מ-150 תווים",
+
+                "companyNameMax": "שם החברה לא יכול להכיל יותר מ-150 תווים",
+                "industryMax": "התחום לא יכול להכיל יותר מ-100 תווים",
+
+                "salaryMinPositive": "השכר חייב להיות 0 או יותר",
+                "salaryMaxPositive": "השכר חייב להיות 0 או יותר",
+                "salaryMaxGreater": "השכר המקסימלי חייב להיות גדול או שווה לשכר המינימלי",
+
+                "locationMax": "המיקום לא יכול להכיל יותר מ-150 תווים",
+
+                "requirementMax": "הדרישה לא יכולה להכיל יותר מ-300 תווים",
+                "benefitMax": "ההטבה לא יכולה להכיל יותר מ-300 תווים"
+            },
+
+            "actions": {
+                "edit": "עריכה",
+                "delete": "מחיקה",
+                "ok": "אישור"
+            },
+
+            "messages": {
+                "createdTitle": "המשרה פורסמה",
+                "created": "המשרה פורסמה בהצלחה",
+                "updatedTitle": "המשרה עודכנה",
+                "updated": "המשרה עודכנה בהצלחה"
+            },
+
+            "errors": {
+                "loadTitle": "שגיאה",
+                "load": "לא ניתן לטעון את פרטי המשרה",
+
+                "createTitle": "לא ניתן לפרסם את המשרה",
+                "create": "אירעה שגיאה בעת פרסום המשרה",
+
+                "updateTitle": "לא ניתן לעדכן את המשרה",
+                "update": "אירעה שגיאה בעת עדכון המשרה",
+
+                "unauthorizedTitle": "נדרשת התחברות",
+                "unauthorized": "עליך להתחבר כדי לבצע פעולה זו",
+
+                "forbiddenTitle": "הגישה נדחתה",
+                "forbidden": "אין לך הרשאה לבצע פעולה זו"
+            },
+
+            "delete": {
+                "title": "מחיקת משרה",
+                "message": "האם אתה בטוח שברצונך למחוק את המשרה? לא ניתן לבטל פעולה זו.",
+                "cancel": "ביטול",
+                "confirm": "מחיקה",
+                "success": "המשרה נמחקה בהצלחה",
+                "error": "לא ניתן למחוק את המשרה"
+            }
+        },
         "receipts": {
             "receiptSearchTitle": "חיפוש קבלות",
             "receiptSearch_1": "שם / אימייל / מספר הזמנה",

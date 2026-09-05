@@ -1,3 +1,4 @@
+// components/ads/HomepageFeaturedSection.tsx
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import DevicesIcon from '@mui/icons-material/Devices';
 import HomeIcon from '@mui/icons-material/Home';
@@ -22,6 +23,10 @@ import SpaIcon from '@mui/icons-material/Spa';
 import GarageIcon from '@mui/icons-material/Garage';
 import PedalBikeIcon from '@mui/icons-material/PedalBike';
 import { SvgIconComponent } from '@mui/icons-material';
+import PaletteIcon from '@mui/icons-material/Palette';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import PetsIcon from '@mui/icons-material/Pets';
+import WeekendIcon from '@mui/icons-material/Weekend';
 
 import {
     Box,
@@ -128,6 +133,23 @@ const CATEGORY_META: Record<
         color: '#22c55e',
         label: categoryLabels.ElectricVehicles,
     },
+    Art: { icon: PaletteIcon, color: '#a855f7', label: categoryLabels.Art },
+    Gaming: {
+        icon: SportsEsportsIcon,
+        color: '#6366f1',
+        label: categoryLabels.Gaming,
+    },
+    RealEstate: {
+        icon: ApartmentIcon,
+        color: '#0ea5e9',
+        label: categoryLabels.RealEstate,
+    },
+    Pets: { icon: PetsIcon, color: '#f59e0b', label: categoryLabels.Pets },
+    Furniture: {
+        icon: WeekendIcon,
+        color: '#78350f',
+        label: categoryLabels.Furniture,
+    },
 };
 
 /* ── Category icon helper ───────────────────────────── */
@@ -146,7 +168,7 @@ function getCategoryIcon(category?: string, size = 24) {
     if (cat.includes('Cars')) return <DirectionsCarIcon sx={iconSx} />;
     if (cat.includes('Electronics')) return <DevicesIcon sx={iconSx} />;
     if (cat.includes('Kids')) return <SportsEsportsIcon sx={iconSx} />;
-    if (cat.includes('Home')) return <ChairIcon sx={iconSx} />;
+    if (cat.includes('Furniture')) return <ChairIcon sx={iconSx} />;
     if (cat.includes('womenClothes')) return <CheckroomIcon sx={iconSx} />;
 
     return <CategoryIcon sx={iconSx} />;
@@ -156,44 +178,56 @@ function getCategoryIcon(category?: string, size = 24) {
 function AdCardSkeleton() {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
-    
+
     return (
         <Card
             sx={{
                 borderRadius: 3,
                 overflow: 'hidden',
-                boxShadow: isDark 
-                    ? '0 1px 3px rgba(0,0,0,0.3)' 
+                boxShadow: isDark
+                    ? '0 1px 3px rgba(0,0,0,0.3)'
                     : '0 1px 3px rgba(0,0,0,0.05)',
                 bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
             }}
         >
-            <Skeleton 
-                variant='rectangular' 
-                height={200} 
+            <Skeleton
+                variant='rectangular'
+                height={200}
                 animation='wave'
                 sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
             />
             <CardContent>
                 <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
-                    <Skeleton 
-                        variant='circular' 
-                        width={40} 
+                    <Skeleton
+                        variant='circular'
+                        width={40}
                         height={40}
-                        sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                        sx={{
+                            bgcolor: isDark
+                                ? 'rgba(255,255,255,0.1)'
+                                : undefined,
+                        }}
                     />
                     <Box sx={{ flex: 1 }}>
-                        <Skeleton 
-                            variant='text' 
-                            width='80%' 
+                        <Skeleton
+                            variant='text'
+                            width='80%'
                             height={24}
-                            sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                            sx={{
+                                bgcolor: isDark
+                                    ? 'rgba(255,255,255,0.1)'
+                                    : undefined,
+                            }}
                         />
-                        <Skeleton 
-                            variant='text' 
-                            width='60%' 
+                        <Skeleton
+                            variant='text'
+                            width='60%'
                             height={20}
-                            sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                            sx={{
+                                bgcolor: isDark
+                                    ? 'rgba(255,255,255,0.1)'
+                                    : undefined,
+                            }}
                         />
                     </Box>
                 </Stack>
@@ -201,13 +235,18 @@ function AdCardSkeleton() {
                     variant='text'
                     width='90%'
                     height={32}
-                    sx={{ mb: 1, bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                    sx={{
+                        mb: 1,
+                        bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined,
+                    }}
                 />
-                <Skeleton 
-                    variant='text' 
-                    width='70%' 
+                <Skeleton
+                    variant='text'
+                    width='70%'
                     height={20}
-                    sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                    sx={{
+                        bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined,
+                    }}
                 />
             </CardContent>
         </Card>
@@ -217,6 +256,7 @@ function AdCardSkeleton() {
 /* ── Featured badge component ───────────────────────── */
 function FeaturedBadge({ endDate }: { endDate: Date | string }) {
     const theme = useTheme();
+    const { t } = useTranslation();
     const daysLeft = Math.ceil(
         (new Date(endDate).getTime() - new Date().getTime()) /
             (1000 * 3600 * 24),
@@ -229,7 +269,11 @@ function FeaturedBadge({ endDate }: { endDate: Date | string }) {
                     sx={{ fontSize: 12, color: 'white !important' }}
                 />
             }
-            label={`مميز ${daysLeft > 0 ? `· ${daysLeft} يوم متبقي` : ''}`}
+            label={`${t('ads.featuredBadge', 'مميز')}${
+                daysLeft > 0
+                    ? ` · ${t('ads.daysLeft', '{{count}} يوم متبقي', { count: daysLeft })}`
+                    : ''
+            }`}
             size='small'
             sx={{
                 bgcolor: theme.palette.primary.main,
@@ -253,12 +297,14 @@ export function HomepageAdCard({
 }) {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
+    const { t } = useTranslation();
     const listing = ad.listingId;
     const navigate = useNavigate();
-    const path = `${productsPathes.postsDetails}/${listing?.category}/Ads/${listing?._id}`;
 
     if (!listing) return null;
-    
+
+    const path = `${productsPathes.postsDetails}/${listing.category}/Ads/${listing._id}`;
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -267,7 +313,7 @@ export function HomepageAdCard({
         >
             <Card
                 onClick={() => {
-                    navigate(`${path}`);
+                    navigate(path);
                 }}
                 sx={{
                     position: 'relative',
@@ -275,13 +321,13 @@ export function HomepageAdCard({
                     overflow: 'hidden',
                     cursor: 'pointer',
                     transition: 'all 0.25s ease-in-out',
-                    boxShadow: isDark 
-                        ? '0 2px 8px rgba(0,0,0,0.3)' 
+                    boxShadow: isDark
+                        ? '0 2px 8px rgba(0,0,0,0.3)'
                         : '0 2px 8px rgba(0,0,0,0.06)',
                     bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
                     '&:hover': {
                         transform: 'translateY(-6px)',
-                        boxShadow: isDark 
+                        boxShadow: isDark
                             ? '0 12px 24px rgba(0,0,0,0.5)'
                             : '0 12px 24px rgba(0,0,0,0.12)',
                         '& .media-overlay': { opacity: 1 },
@@ -319,7 +365,7 @@ export function HomepageAdCard({
                         <Chip
                             className='view-button'
                             icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
-                            label='عرض التفاصيل'
+                            label={t('postCard.viewDetails', 'عرض التفاصيل')}
                             sx={{
                                 bgcolor: 'white',
                                 color: theme.palette.primary.main,
@@ -387,12 +433,15 @@ export function HomepageAdCard({
                                     listing.category as keyof typeof categoryLabels
                                 ] ||
                                     listing.category ||
-                                    'منتج'}
+                                    t('postCard.genericProduct', 'منتج')}
                             </Typography>
                             <Typography
                                 variant='h6'
                                 fontWeight={700}
-                                sx={{ lineHeight: 1.3, color: isDark ? '#fff' : 'inherit' }}
+                                sx={{
+                                    lineHeight: 1.3,
+                                    color: isDark ? '#fff' : 'inherit',
+                                }}
                             >
                                 {listing.product_name}
                             </Typography>
@@ -463,7 +512,7 @@ export function HomepageAdCard({
                             },
                         }}
                     >
-                        عرض التفاصيل
+                        {t('postCard.viewDetails', 'عرض التفاصيل')}
                     </Button>
                 </CardActions>
             </Card>
@@ -476,12 +525,12 @@ function CategorySection({
     ads,
     categoryInfo,
 }: {
-    category: string;
     ads: FeaturedAd[];
     categoryInfo: (typeof CATEGORY_META)[string];
 }) {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
+    const { t } = useTranslation();
 
     if (ads.length === 0) return null;
 
@@ -498,13 +547,21 @@ function CategorySection({
                 }}
             >
                 {categoryInfo.icon && (
-                    <categoryInfo.icon sx={{ fontSize: 28, color: categoryInfo.color }} />
+                    <categoryInfo.icon
+                        sx={{ fontSize: 28, color: categoryInfo.color }}
+                    />
                 )}
-                <Typography variant='h6' fontWeight={700} sx={{ color: isDark ? '#fff' : 'inherit' }}>
+                <Typography
+                    variant='h6'
+                    fontWeight={700}
+                    sx={{ color: isDark ? '#fff' : 'inherit' }}
+                >
                     {categoryInfo.label}
                 </Typography>
                 <Chip
-                    label={`${ads.length} - Ad`}
+                    label={t('ads.countLabel', '{{count}} إعلان', {
+                        count: ads.length,
+                    })}
                     size='small'
                     sx={{
                         bgcolor: alpha(categoryInfo.color, 0.1),
@@ -578,7 +635,9 @@ export default function HomepageFeaturedSection({
             sx={{
                 px: { xs: 2, sm: 3, md: 4 },
                 py: { xs: 3, md: 4 },
-                bgcolor: isDark ? 'rgba(255,255,255,0.03)' : 'background.default',
+                bgcolor: isDark
+                    ? 'rgba(255,255,255,0.03)'
+                    : 'background.default',
                 borderRadius: 3,
                 border: isDark ? '1px solid rgba(255,255,255,0.08)' : 'none',
             }}
@@ -666,7 +725,9 @@ export default function HomepageFeaturedSection({
                                 fontSize: '0.9rem',
                                 minWidth: 'auto',
                                 px: 2,
-                                color: isDark ? 'rgba(255,255,255,0.7)' : 'inherit',
+                                color: isDark
+                                    ? 'rgba(255,255,255,0.7)'
+                                    : 'inherit',
                             },
                             '& .Mui-selected': {
                                 color: theme.palette.primary.main,
@@ -676,7 +737,7 @@ export default function HomepageFeaturedSection({
                             },
                         }}
                     >
-                        <Tab label='الكل' value='all' />
+                        <Tab label={t('ads.allTab', 'الكل')} value='all' />
                         {Object.entries(adsByCategory)
                             .filter(([key]) => key !== 'all')
                             .map(([category]) => {
@@ -716,7 +777,6 @@ export default function HomepageFeaturedSection({
                             return (
                                 <CategorySection
                                     key={category}
-                                    category={category}
                                     ads={categoryAds}
                                     categoryInfo={categoryInfo}
                                 />
@@ -751,10 +811,13 @@ export default function HomepageFeaturedSection({
                         color='text.secondary'
                         gutterBottom
                     >
-                        لا توجد إعلانات مميزة حالياً
+                        {t('ads.noFeaturedAds', 'لا توجد إعلانات مميزة حالياً')}
                     </Typography>
                     <Typography variant='body2' color='text.disabled'>
-                        قم بترقية إعلانك ليظهر هنا
+                        {t(
+                            'ads.upgradeToFeature',
+                            'قم بترقية إعلانك ليظهر هنا',
+                        )}
                     </Typography>
                 </Box>
             )}

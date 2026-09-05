@@ -1050,6 +1050,142 @@
         "messages": "المحادثات"
     },
     "pages": {
+        "jobs": {
+            "title": "الوظائف",
+            "remote": "عن بُعد",
+            "back": "رجوع",
+            "notFound": "لم يتم العثور على الوظيفة",
+            "requirements": "المتطلبات",
+            "benefits": "المزايا",
+
+            "form": {
+                "basicInformation": "معلومات الوظيفة",
+                "jobTitle": "المسمى الوظيفي",
+                "type": "نوع الوظيفة",
+                "companyName": "اسم الشركة",
+                "industry": "المجال",
+                "experienceSection": "الخبرة",
+                "experienceLevel": "مستوى الخبرة",
+                "notSpecified": "غير محدد",
+
+                "salarySection": "الراتب",
+                "salaryMin": "الحد الأدنى للراتب",
+                "salaryMax": "الحد الأعلى للراتب",
+                "salaryPeriod": "فترة الراتب",
+
+                "locationSection": "الموقع",
+                "location": "الموقع",
+                "remote": "العمل عن بُعد",
+
+                "requirements": "متطلبات الوظيفة",
+                "requirement": "المتطلب",
+                "addRequirement": "إضافة متطلب",
+                "noRequirements": "لم تتم إضافة أي متطلبات",
+
+                "benefits": "مزايا الوظيفة",
+                "benefit": "الميزة",
+                "addBenefit": "إضافة ميزة",
+                "noBenefits": "لم تتم إضافة أي مزايا",
+
+                "create": "نشر الوظيفة",
+                "update": "تحديث الوظيفة"
+            },
+
+            "filters": {
+                "type": "نوع الوظيفة",
+                "experience": "الخبرة",
+                "salaryPeriod": "فترة الراتب",
+                "salaryMin": "الحد الأدنى للراتب",
+                "salaryMax": "الحد الأعلى للراتب",
+                "location": "الموقع",
+                "industry": "المجال",
+                "remote": "عن بُعد",
+                "all": "الكل",
+                "search": "بحث",
+                "reset": "إعادة ضبط"
+            },
+
+            "types": {
+                "full_time": "دوام كامل",
+                "part_time": "دوام جزئي",
+                "temporary": "مؤقت",
+                "remote": "عن بُعد",
+                "daily": "يومية",
+                "internship": "تدريب"
+            },
+
+            "experienceLevels": {
+                "no_experience": "بدون خبرة",
+                "entry": "مبتدئ",
+                "mid": "متوسط الخبرة",
+                "senior": "خبير",
+                "manager": "إدارة"
+            },
+
+            "salaryPeriods": {
+                "hourly": "ساعة",
+                "daily": "يوم",
+                "monthly": "شهر",
+                "yearly": "سنة"
+            },
+
+            "validation": {
+                "typeRequired": "نوع الوظيفة مطلوب",
+                "jobTitleRequired": "المسمى الوظيفي مطلوب",
+                "jobTitleMin": "المسمى الوظيفي يجب أن يكون حرفين على الأقل",
+                "jobTitleMax": "المسمى الوظيفي يجب ألا يتجاوز 150 حرفاً",
+
+                "companyNameMax": "اسم الشركة يجب ألا يتجاوز 150 حرفاً",
+                "industryMax": "المجال يجب ألا يتجاوز 100 حرف",
+
+                "salaryMinPositive": "الراتب يجب أن يكون 0 أو أكثر",
+                "salaryMaxPositive": "الراتب يجب أن يكون 0 أو أكثر",
+                "salaryMaxGreater": "الحد الأعلى يجب أن يكون أكبر من أو يساوي الحد الأدنى",
+
+                "locationMax": "الموقع يجب ألا يتجاوز 150 حرفاً",
+
+                "requirementMax": "المتطلب يجب ألا يتجاوز 300 حرف",
+                "benefitMax": "الميزة يجب ألا تتجاوز 300 حرف"
+            },
+            "actions": {
+                "edit": "تعديل",
+                "delete": "حذف",
+                "ok": "حسناً"
+            },
+
+            "messages": {
+                "createdTitle": "تم نشر الوظيفة",
+                "created": "تم نشر الوظيفة بنجاح",
+                "updatedTitle": "تم تحديث الوظيفة",
+                "updated": "تم تحديث الوظيفة بنجاح"
+            },
+
+            "errors": {
+                "loadTitle": "خطأ",
+                "load": "تعذر تحميل بيانات الوظيفة",
+
+                "createTitle": "تعذر نشر الوظيفة",
+                "create": "حدث خطأ أثناء نشر الوظيفة",
+
+                "updateTitle": "تعذر تحديث الوظيفة",
+                "update": "حدث خطأ أثناء تحديث الوظيفة",
+
+                "unauthorizedTitle": "يجب تسجيل الدخول",
+                "unauthorized": "يجب تسجيل الدخول حتى تتمكن من تنفيذ هذا الإجراء",
+
+                "forbiddenTitle": "غير مسموح",
+                "forbidden": "ليس لديك صلاحية لتنفيذ هذا الإجراء"
+            },
+
+            "delete": {
+                "title": "حذف الوظيفة",
+                "message": "هل أنت متأكد من رغبتك في حذف هذه الوظيفة؟ لا يمكن التراجع عن هذا الإجراء.",
+                "cancel": "إلغاء",
+                "confirm": "حذف",
+                "success": "تم حذف الوظيفة بنجاح",
+                "error": "تعذر حذف الوظيفة"
+            }
+        },
         "contact": {
             "title": "اتصل بنا",
             "subtitle": "منصة آمنة وسريعة للبيع والشراء بين المستخدمين، مع أكبر تشكيلة من التصنيفات",

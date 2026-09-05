@@ -3,13 +3,14 @@ import Swal from 'sweetalert2';
 
 interface AlertDialogProps {
     show: boolean;
-    onConfirm: () => void;
+    onConfirm: () => void | Promise<void>;
     onHide: () => void;
     title: string;
     description: string;
     confirmText?: string;
     cancelText?: string;
     successText?: string;
+    errorText?: string;
 }
 
 const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
@@ -21,6 +22,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
     confirmText = 'Yes',
     cancelText = 'Cancel',
     successText = 'Done',
+    errorText = 'Something went wrong',
 }) => {
     useEffect(() => {
         if (!show) return;
@@ -49,15 +51,30 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
                 if (!isMounted) return;
 
                 if (result.isConfirmed) {
-                    onConfirm();
+                    try {
+                        await onConfirm();
 
-                    await swalWithBootstrapButtons.fire({
-                        text: successText,
-                        icon: 'success',
-                    });
+                        if (!isMounted) return;
+
+                        await swalWithBootstrapButtons.fire({
+                            text: successText,
+                            icon: 'success',
+                        });
+                    } catch (error) {
+                        if (!isMounted) return;
+
+                        await swalWithBootstrapButtons.fire({
+                            text: errorText,
+                            icon: 'error',
+                        });
+
+                        console.error('Alert confirmation action failed:', error);
+                    }
                 }
 
-                onHide();
+                if (isMounted) {
+                    onHide();
+                }
             });
 
         return () => {
@@ -72,6 +89,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
         confirmText,
         cancelText,
         successText,
+        errorText,
     ]);
 
     return null;
