@@ -22,19 +22,13 @@ import Loader from '../../../atoms/loader/Loader';
 
 const AddProductModal = lazy(
     () =>
-        import(
-            '../../../atoms/productsManage/addAndUpdateProduct/CreatePostModal'
-        ),
+        import('../../../atoms/productsManage/addAndUpdateProduct/CreatePostModal'),
 );
 
 const UpdateProductModal = lazy(
     () =>
-        import(
-            '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal'
-        ),
+        import('../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal'),
 );
-import { showError } from '../../../atoms/toasts/ReactToast';
-const AlertDialogs = lazy(() => import('../../../atoms/toasts/Sweetalert'));
 import { useUser } from '../../../hooks/useUSer';
 import { usePosts } from '../../../hooks/usePosts';
 import RoleType from '../../../interfaces/UserType';
@@ -44,7 +38,7 @@ import JsonLd from '../../../../utils/JsonLd';
 import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
 import { Posts } from '../../../interfaces/Posts';
-import ChipNavigation from '../../navbar/ChepNavigation';
+import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
@@ -136,15 +130,18 @@ const Home: FunctionComponent = () => {
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
 
-    const handleDelete = async (postId: string) => {
+    const handleDelete = useCallback(async (postId: string) => {
         try {
             await deletePost(postId);
+
             setPosts((prev) => prev.filter((p) => p._id !== postId));
+
+            setPostToDelete('');
         } catch (err) {
             console.error(err);
-            showError('שגיאה במחיקת המוצר!');
+            throw err;
         }
-    };
+    }, []);
 
     // if (loading) return <Loader />;
 
@@ -182,14 +179,14 @@ const Home: FunctionComponent = () => {
                             '@id': 'https://client-qqq1.vercel.app/#website',
                             name: 'صفقة',
                             alternateName: 'Safqa',
-                            url: { currentUrl },
+                            url: currentUrl,
                         },
                         {
                             '@type': 'Organization',
                             '@id': 'https://client-qqq1.vercel.app/#organization',
                             name: 'صفقة',
                             alternateName: 'Safqa',
-                            url: { currentUrl },
+                            url: currentUrl,
                             logo: {
                                 '@type': 'ImageObject',
                                 url: 'https://client-qqq1.vercel.app/d3.png',
@@ -339,7 +336,7 @@ const Home: FunctionComponent = () => {
                 <StatsStrip postsCount={posts.length} />
             </section>
             {/* ─── MAIN ─── */}
-            <main id='lising-section' dir={direction}>
+            <main id='listing-section' dir={direction}>
                 <AdsSection />
 
                 <Suspense fallback={<Loader />}>
@@ -349,7 +346,6 @@ const Home: FunctionComponent = () => {
             CATEGORY NAVIGATION
                ================================================= */}
 
-                <ChipNavigation />
 
                 <Suspense fallback={<Loader />}>
                     <PostsGrid
@@ -408,9 +404,25 @@ const Home: FunctionComponent = () => {
                 <AlertDialogs
                     show={showDeleteModal}
                     onHide={() => setShowDeleteModal(false)}
-                    title='⚠️ تنبيه مهم!'
-                    description={`هل أنت متأكد من رغبتك في حذف "${postToDelete}"؟ هذا الإجراء لا يمكن التراجع عنه`}
-                    handleDelete={() => handleDelete(postToDelete)}
+                    title={t('alerts.deletePost.title')}
+                    description={t('alerts.deletePost.description', {
+                        name: postToDelete,
+                    })}
+                    onConfirm={() => {
+                        if (postToDelete) {
+                            return handleDelete(postToDelete);
+                        }
+                    }}
+                    confirmText={t('common.delete', 'حذف')}
+                    cancelText={t('common.cancel', 'إلغاء')}
+                    successText={t(
+                        'alerts.deletePost.success',
+                        'تم حذف المنتج بنجاح',
+                    )}
+                    errorText={t(
+                        'alerts.deletePost.error',
+                        'حدث خطأ أثناء حذف المنتج',
+                    )}
                 />
             </Suspense>
             <Suspense fallback={<Loader />}>

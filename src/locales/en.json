@@ -985,6 +985,309 @@
                 }
             }
         },
+        "Cameras": {
+            "label": "Cameras & Photography",
+            "heading": "Cameras & Photography Equipment",
+            "description": "A variety of cameras and photography equipment, including digital cameras, lenses, video equipment, and photography accessories.",
+            "subCategories": {
+                "cameras": "Cameras",
+                "lenses": "Lenses",
+                "video": "Video Equipment",
+                "accessories": "Photography Accessories"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "cameraType": "Camera Type",
+                "sensorType": "Sensor Type",
+                "megapixels": "Megapixels",
+                "resolution": "Resolution",
+                "videoResolution": "Video Resolution",
+                "lensMount": "Lens Mount",
+                "focalLength": "Focal Length",
+                "condition": "Condition",
+                "warranty": "Warranty",
+                "includedAccessories": "Included Accessories",
+                "cameraTypeOptions": {
+                    "dslr": "DSLR",
+                    "mirrorless": "Mirrorless",
+                    "compact": "Compact",
+                    "action": "Action Camera",
+                    "security": "Security Camera",
+                    "professional_video": "Professional Video"
+                },
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "Books": {
+            "label": "Books",
+            "heading": "Books & References",
+            "description": "A variety of books and references, including school and university books, novels, children's books, and specialized books.",
+            "subCategories": {
+                "school": "School Books",
+                "university": "University Books",
+                "novels": "Novels",
+                "children": "Children's Books",
+                "religious": "Religious Books",
+                "language": "Language Books",
+                "business": "Business & Management",
+                "other": "Other Books"
+            },
+            "fields": {
+                "title": "Book Title",
+                "author": "Author",
+                "publisher": "Publisher",
+                "edition": "Edition",
+                "publicationYear": "Publication Year",
+                "language": "Language",
+                "isbn": "ISBN",
+                "condition": "Condition",
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "MusicalInstruments": {
+            "label": "Musical Instruments",
+            "heading": "Musical Instruments & Equipment",
+            "description": "A variety of musical instruments and equipment, including guitars, pianos, keyboards, drums, violins, and more.",
+            "subCategories": {
+                "guitars": "Guitars",
+                "pianos": "Pianos",
+                "keyboards": "Keyboards",
+                "drums": "Drums",
+                "violins": "Violins",
+                "wind": "Wind Instruments",
+                "percussion": "Percussion Instruments",
+                "other": "Other Instruments"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "material": "Material",
+                "color": "Color",
+                "size": "Size",
+                "electric": "Electric",
+                "condition": "Condition",
+                "accessories": "Accessories",
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "ConstructionEquipment": {
+            "label": "Construction Equipment",
+            "heading": "Construction Equipment & Machinery",
+            "description": "Heavy and light construction equipment and machinery, including excavators, loaders, cranes, concrete equipment, cutting equipment, and compaction equipment.",
+            "subCategories": {
+                "excavators": "Excavators",
+                "loaders": "Loaders",
+                "cranes": "Cranes",
+                "concrete_equipment": "Concrete Equipment",
+                "scaffolding": "Scaffolding",
+                "cutting_equipment": "Cutting Equipment",
+                "compaction_equipment": "Compaction Equipment",
+                "other": "Other Equipment"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "year": "Year",
+                "operatingHours": "Operating Hours",
+                "enginePower": "Engine Power",
+                "fuelType": "Fuel Type",
+                "weight": "Weight",
+                "condition": "Condition",
+                "warranty": "Warranty",
+                "fuelTypeOptions": {
+                    "diesel": "Diesel",
+                    "gasoline": "Gasoline",
+                    "electric": "Electric",
+                    "hybrid": "Hybrid"
+                },
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "IndustrialEquipment": {
+            "label": "Industrial Equipment",
+            "heading": "Industrial Equipment & Machinery",
+            "description": "A variety of industrial equipment and machinery, including industrial machines, compressors, generators, production equipment, packaging equipment, and material handling equipment.",
+            "subCategories": {
+                "industrial_machines": "Industrial Machines",
+                "compressors": "Compressors",
+                "generators": "Generators",
+                "production_equipment": "Production Equipment",
+                "packaging_equipment": "Packaging Equipment",
+                "material_handling": "Material Handling",
+                "other": "Other Equipment"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "year": "Year",
+                "power": "Power",
+                "voltage": "Voltage",
+                "capacity": "Capacity",
+                "operatingHours": "Operating Hours",
+                "condition": "Condition",
+                "warranty": "Warranty",
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "WeldingEquipment": {
+            "label": "Welding Equipment",
+            "heading": "Welding Equipment & Machines",
+            "description": "Welding and plasma cutting equipment, welding accessories, and protective equipment.",
+            "subCategories": {
+                "welding_machines": "Welding Machines",
+                "plasma_cutters": "Plasma Cutters",
+                "welding_accessories": "Welding Accessories",
+                "protective_equipment": "Protective Equipment",
+                "other": "Other Equipment"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "weldingType": "Welding Type",
+                "power": "Power",
+                "voltage": "Voltage",
+                "amperage": "Amperage",
+                "condition": "Condition",
+                "accessories": "Accessories",
+                "weldingTypeOptions": {
+                    "mig": "MIG",
+                    "mag": "MAG",
+                    "tig": "TIG",
+                    "arc": "Arc Welding",
+                    "plasma": "Plasma",
+                    "spot": "Spot Welding"
+                },
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "OfficeEquipment": {
+            "label": "Office Equipment",
+            "heading": "Office Equipment & Devices",
+            "description": "Office equipment and devices, including printers, scanners, copiers, projectors, shredders, and laminators.",
+            "subCategories": {
+                "printers": "Printers",
+                "scanners": "Scanners",
+                "copiers": "Copiers",
+                "projectors": "Projectors",
+                "shredders": "Paper Shredders",
+                "laminators": "Laminators",
+                "other": "Other Equipment"
+            },
+            "fields": {
+                "brand": "Brand",
+                "model": "Model",
+                "connectivity": "Connectivity",
+                "printTechnology": "Print Technology",
+                "colorPrinting": "Color Printing",
+                "condition": "Condition",
+                "warranty": "Warranty",
+                "printTechnologyOptions": {
+                    "laser": "Laser",
+                    "inkjet": "Inkjet",
+                    "thermal": "Thermal",
+                    "other": "Other"
+                },
+                "conditionOptions": {
+                    "new": "New",
+                    "like_new": "Like New",
+                    "excellent": "Excellent",
+                    "good": "Good",
+                    "fair": "Fair"
+                }
+            }
+        },
+
+        "Services": {
+            "label": "Services",
+            "heading": "Services & Professional Work",
+            "description": "Services provided by individuals and businesses in areas such as maintenance, electrical work, cleaning, transportation, programming, design, and more.",
+            "subCategories": {
+                "maintenance": "Maintenance",
+                "electrical": "Electrical",
+                "plumbing": "Plumbing",
+                "cleaning": "Cleaning",
+                "transportation": "Transportation",
+                "moving": "Moving Services",
+                "automotive": "Automotive Services",
+                "programming": "Programming",
+                "design": "Design",
+                "photography": "Photography",
+                "marketing": "Marketing",
+                "education": "Education",
+                "beauty": "Beauty",
+                "other": "Other Services"
+            },
+            "fields": {
+                "serviceTitle": "Service Title",
+                "providerName": "Service Provider",
+                "experienceYears": "Years of Experience",
+                "priceFrom": "Price From",
+                "priceTo": "Price To",
+                "pricingType": "Pricing Type",
+                "availableDays": "Available Days",
+                "availableHours": "Available Hours",
+                "serviceArea": "Service Area",
+                "emergencyService": "Emergency Service",
+                "pricingTypeOptions": {
+                    "hourly": "Hourly",
+                    "fixed": "Fixed Price",
+                    "daily": "Daily",
+                    "monthly": "Monthly",
+                    "negotiable": "Negotiable"
+                },
+                "availableDaysOptions": {
+                    "sunday": "Sunday",
+                    "monday": "Monday",
+                    "tuesday": "Tuesday",
+                    "wednesday": "Wednesday",
+                    "thursday": "Thursday",
+                    "friday": "Friday",
+                    "saturday": "Saturday"
+                }
+            }
+        },
         "discountsAndOffers": {
             "common": {
                 "discount": "Discount",

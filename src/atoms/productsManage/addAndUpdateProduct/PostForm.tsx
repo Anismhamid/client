@@ -122,6 +122,10 @@ const PostForm: FunctionComponent<PostFormProps> = ({
     const { t } = useTranslation();
     const theme = useTheme();
     const selectedSubcategory = formik.values.subcategory;
+    const selectedCategory = formik.values.category as CategoryValue;
+
+    const isService = selectedCategory === 'Services';
+    const showGeneralPrice = !isService;
 
     const handleImageChange = async (
         e: React.ChangeEvent<HTMLInputElement>,
@@ -583,44 +587,51 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                 />
 
                 {/* Price */}
-                <TextField
-                    fullWidth
-                    size='small'
-                    type='number'
-                    name='price'
-                    label={`${t('modals.addProductModal.price')} *`}
-                    value={formik.values.price || ''}
-                    onChange={(e) => {
-                        const v = e.target.value;
-                        formik.setFieldValue(
-                            'price',
-                            v === '' ? '' : Number(v),
-                        );
-                    }}
-                    onBlur={formik.handleBlur}
-                    error={
-                        Boolean(formik.touched.price) &&
-                        Boolean(formik.errors.price)
-                    }
-                    helperText={
-                        formik.touched.price && (formik.errors.price as string)
-                    }
-                    inputProps={{ min: 0, step: 0.01 }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position='start'>
-                                <Typography
-                                    sx={{
-                                        fontSize: '1rem',
-                                        color: 'text.secondary',
-                                    }}
-                                >
-                                    ₪
-                                </Typography>
-                            </InputAdornment>
-                        ),
-                    }}
-                />
+                {showGeneralPrice && (
+                    <TextField
+                        fullWidth
+                        size='small'
+                        type='number'
+                        name='price'
+                        label={t('modals.addProductModal.price')}
+                        value={formik.values.price ?? ''}
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            formik.setFieldValue(
+                                'price',
+                                value === '' ? '' : Number(value),
+                            );
+                        }}
+                        onBlur={formik.handleBlur}
+                        error={
+                            Boolean(formik.touched.price) &&
+                            Boolean(formik.errors.price)
+                        }
+                        helperText={
+                            formik.touched.price &&
+                            (formik.errors.price as string)
+                        }
+                        inputProps={{
+                            min: 0,
+                            step: 0.01,
+                        }}
+                        InputProps={{
+                            startAdornment: (
+                                <InputAdornment position='start'>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '1rem',
+                                            color: 'text.secondary',
+                                        }}
+                                    >
+                                        ₪
+                                    </Typography>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                )}
             </Section>
 
             <SectionDivider />

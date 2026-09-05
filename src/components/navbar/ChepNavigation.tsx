@@ -1,204 +1,240 @@
-import { useRef } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
-import { ChevronLeftTwoTone, ChevronRightTwoTone } from '@mui/icons-material';
+import { useState } from 'react';
+import {
+    Box,
+    IconButton,
+    List,
+    ListItemButton,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
+import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { NavLink } from 'react-router-dom';
 import { productsAndCategories } from './navCategoryies';
 import { useTranslation } from 'react-i18next';
-import JsonLd from '../../../utils/JsonLd';
+import handleRTL from '../../locales/handleRTL';
+
+const SIDEBAR_WIDTH = 200;
 
 const ChipNavigation = () => {
-    const containerRef = useRef<HTMLDivElement>(null);
     const { t } = useTranslation();
+    const theme = useTheme();
+    const isLgUp = useMediaQuery(theme.breakpoints.up('lg'));
 
-    const scroll = (direction: 'left' | 'right') => {
-        const container = containerRef.current;
-        if (!container) return;
-        const scrollAmount = container.clientWidth * 0.8;
-        const newScrollLeft =
-            direction === 'left'
-                ? container.scrollLeft - scrollAmount
-                : container.scrollLeft + scrollAmount;
-        container.scrollTo({ left: newScrollLeft, behavior: 'smooth' });
-    };
+    // مفتوح افتراضياً عالشاشات الكبيرة، مسكر عالموبايل
+    const [open, setOpen] = useState(isLgUp);
+
+    const dir = handleRTL();
+    const isRTL = dir === 'rtl';
+
+    // transform فيزيائي وما بيتبع insetInlineEnd تلقائياً،
+    // فلازم نحدد اتجاه الإخفاء يدوياً حسب RTL/LTR.
+    const closedTranslate = isRTL ? '-100%' : '100%';
 
     return (
-        <Box
-            component='nav'
-            aria-label='Main Categories'
-            sx={{
-                borderBottom: '1px solid',
-                borderColor: 'divider',
-                position: 'sticky',
-                top: 0,
-                l: 0,
-                r: 0,
-
-                zIndex: 10,
-
-                bgcolor: '#05050511',
-                backdropFilter: 'blur(8px)',
-            }}
-        >
-            <JsonLd
-                data={{
-                    '@context': 'https://schema.org',
-                    '@type': 'ItemList',
-                    name: 'تصنيفات المنتجات',
-                    itemListElement: productsAndCategories.map(
-                        (category, index) => ({
-                            '@type': 'SiteNavigationElement',
-                            position: index + 1,
-                            name: t(category.labelKey),
-                            url: `${window.location.origin}${category.path}`,
-                        }),
-                    ),
-                }}
-            />
-
-            {/* Left scroll button */}
+        <>
+            {/* =========================
+                MENU BUTTON (mobile + desktop)
+            ========================= */}
             <IconButton
-                onClick={() => scroll('left')}
-                size='small'
+                onClick={() => setOpen((prev) => !prev)}
+                aria-label={t(
+                    open ? 'common.close' : 'categories.title',
+                    open ? 'إغلاق' : 'التصنيفات',
+                )}
                 sx={{
-                    position: 'absolute',
-                    left: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    zIndex: 2,
-                    bgcolor: 'background.paper',
-                    border: '1px solid',
+                    position: 'fixed',
+                    top: 70,
+                    insetInlineEnd: 0,
+                    borderRadius: 0,
 
-                    width: 20,
-                    height: 20,
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+
+                    width: 100,
+                    height: 42,
+
+                    bgcolor: 'background.paper',
+
+                    border: '1px solid',
+                    borderColor: 'divider',
+
+                    boxShadow: 2,
+
                     '&:hover': {
-                        bgcolor: 'background.default',
-                        borderColor: 'text.secondary',
+                        bgcolor: 'background.paper',
                     },
                 }}
             >
-                <ChevronLeftTwoTone sx={{ fontSize: 18 }} />
+                {open ? <CloseRoundedIcon /> : <MenuRoundedIcon />}
             </IconButton>
 
-            {/* Scrollable container */}
+            {/* =========================
+                SIDEBAR
+            ========================= */}
             <Box
-                ref={containerRef}
-                component='ul'
+                component='aside'
+                dir={dir}
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    listStyle: 'none',
-                    overflowX: 'auto',
-                    scrollbarWidth: 'unset',
-                    '&::-webkit-scrollbar': { display: 'block' },
-                    maskImage:
-                        'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
-                    WebkitMaskImage:
-                        'linear-gradient(to right, transparent, #fff 40px, #fff calc(100% - 40px), transparent)',
+                    position: 'fixed',
+
+                    top: 0,
+                    insetInlineEnd: 0,
+
+                    width: SIDEBAR_WIDTH,
+
+                    height: '100dvh',
+
+                    bgcolor: 'background.paper',
+
+                    borderInlineStart: '1px solid',
+                    borderColor: 'divider',
+
+                    boxShadow: {
+                        xs: open ? '-8px 0 30px rgba(0,0,0,0.15)' : 'none',
+                        lg: open ? '-4px 0 20px rgba(0,0,0,0.08)' : 'none',
+                    },
+
+                    zIndex: (theme) => theme.zIndex.drawer,
+
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
+
+                    /*
+                     * نخفيه بالكامل خارج الشاشة (موبايل ودسكتوب لما يكون مسكر).
+                     * لازم نحدد الاتجاه يدوياً لأن transform ما بيتبع
+                     * insetInlineEnd/Start تلقائياً.
+                     */
+                    transform: open
+                        ? 'translateX(0)'
+                        : `translateX(${closedTranslate})`,
+
+                    transition: 'transform 200ms ease-in-out',
+
+                    visibility: open ? 'visible' : 'hidden',
+
+                    pointerEvents: open ? 'auto' : 'none',
+
+                    pt: {
+                        xs: 0,
+                        lg: 8,
+                    },
                 }}
             >
-                {productsAndCategories.map((category) => (
-                    <Box
-                        key={category.value}
-                        component='li'
-                        role='listitem'
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            flexShrink: 0,
-                            minWidth: 120,
-                            pt:2
-                        }}
-                    >
+                {/* =========================
+                    HEADER
+                ========================= */}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: 0,
+
+                        zIndex: 2,
+
+                        display: 'flex',
+                        alignItems: 'center',
+
+                        justifyContent: 'space-between',
+
+                        px: 2,
+                        py: 1.5,
+
+                        bgcolor: 'background.paper',
+
+                        borderBottom: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    <Typography variant='h6' fontWeight={700}>
+                        {t('categories.title', 'التصنيفات')}
+                    </Typography>
+
+                 
+                </Box>
+
+                {/* =========================
+                    CATEGORIES
+                ========================= */}
+                <List
+                    disablePadding
+                    sx={{
+                        p: 1,
+                    }}
+                >
+                    {productsAndCategories.map((category) => (
                         <NavLink
-                            title={`${t('links.products')} - ${t(category.labelKey)}`}
+                            key={category.value}
                             to={category.path}
-                            style={{ textDecoration: 'none' }}
+                            onClick={() => setOpen(false)}
+                            style={{
+                                textDecoration: 'none',
+                                color: 'inherit',
+                            }}
                         >
                             {({ isActive }) => (
-                                <Box
+                                <ListItemButton
+                                    selected={isActive}
                                     sx={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        gap: 1,
-                                        borderRadius: '10px',
-                                        cursor: 'pointer',
-                                        bgcolor: isActive
-                                            ? 'primary.50'
-                                            : 'transparent',
-                                        border: '1px solid',
-                                        borderColor: isActive
-                                            ? 'primary.light'
-                                            : 'transparent',
-                                        transition: 'all 0.15s ease',
+                                        minHeight: 56,
+
+                                        borderRadius: 2,
+
+                                        mb: 0.5,
+
+                                        px: 1.5,
+
+                                        '&.Mui-selected': {
+                                            bgcolor: 'primary.50',
+
+                                            color: 'primary.main',
+                                        },
+
+                                        '&.Mui-selected:hover': {
+                                            bgcolor: 'primary.100',
+                                        },
+
                                         '&:hover': {
-                                            bgcolor: isActive
-                                                ? 'primary.50'
-                                                : 'action.hover',
+                                            bgcolor: 'action.hover',
                                         },
                                     }}
                                 >
                                     <Box
                                         component='img'
                                         src={category.icon}
-                                        alt={`${t(category.labelKey)} - category`}
+                                        alt={t(category.labelKey)}
+                                        loading='lazy'
                                         sx={{
-                                            width: '100%',
-                                            height: '100%',
-                                            maxHeight: 50,
+                                            width: 40,
+                                            height: 40,
+
                                             objectFit: 'contain',
-                                            filter: isActive
-                                                ? 'none'
-                                                : 'grayscale(0.2)',
-                                            transition: 'filter 0.15s',
+
+                                            flexShrink: 0,
+
+                                            marginInlineStart: 1.5,
                                         }}
                                     />
+
                                     <Typography
-                                        component='span'
-                                        variant='caption'
                                         sx={{
+                                            fontSize: '0.9rem',
+
                                             fontWeight: isActive ? 700 : 500,
-                                            fontSize: '0.7rem',
-                                            color: isActive
-                                                ? 'primary.main'
-                                                : 'text.secondary',
+
+                                            textAlign: 'start',
+
                                             whiteSpace: 'nowrap',
-                                            lineHeight: 1.2,
                                         }}
                                     >
                                         {t(category.labelKey)}
                                     </Typography>
-                                </Box>
+                                </ListItemButton>
                             )}
                         </NavLink>
-                    </Box>
-                ))}
+                    ))}
+                </List>
             </Box>
-
-            {/* Right scroll button */}
-            <IconButton
-                onClick={() => scroll('right')}
-                size='small'
-                sx={{
-                    position: 'absolute',
-                    right: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    zIndex: 2,
-                    bgcolor: 'background.paper',
-                    border: '1px solid',
-                    // borderColor: 'divider',
-                    width: 20,
-                    height: 20,
-                    '&:hover': {
-                        bgcolor: 'background.default',
-                        borderColor: 'text.secondary',
-                    },
-                }}
-            >
-                <ChevronRightTwoTone sx={{ fontSize: 18 }} />
-            </IconButton>
-        </Box>
+        </>
     );
 };
 

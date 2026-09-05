@@ -24,6 +24,7 @@ import { setupNotificationNavigation } from './services/pushNotifications.servic
 import { useNavigate } from 'react-router-dom';
 import NotificationListener from './components/settings/NotificationListener.tsx';
 import axios from 'axios';
+import ChipNavigation from './components/navbar/ChepNavigation.tsx';
 const api = import.meta.env.VITE_API_URL;
 
 function App() {
@@ -165,11 +166,13 @@ function App() {
             />
             <Theme mode={mode} setMode={setMode} />
             <TransitionAlerts />
-          
+
             <SpeedDialComponent />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
                 <FloatingChats />
+                <ChipNavigation />
+
                 {/* مستمع الإشعارات */}
                 <NotificationListener />
             </Suspense>

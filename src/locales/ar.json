@@ -517,6 +517,7 @@
             "subCategories": {
                 "plants": "نباتات",
                 "watering": "مستلزمات ري",
+                "trees":"اشجار",
                 "tools": "أدوات حديقة",
                 "outdoorDecor": "ديكور خارجي"
             },
@@ -1030,6 +1031,309 @@
                     "noProducts": "لا توجد منتجات مخفضة متاحة حاليًا. تابعنا قريبًا للحصول على عروض جديدة!",
                     "viewAll": "عرض جميع العروض",
                     "ariaLabel": "عرض الاعلانات المخفضة"
+                }
+            }
+        },
+        "Cameras": {
+            "label": "الكاميرات والتصوير",
+            "heading": "الكاميرات ومعدات التصوير",
+            "description": "كاميرات ومعدات تصوير متنوعة تشمل الكاميرات الرقمية والعدسات ومعدات الفيديو وملحقات التصوير.",
+            "subCategories": {
+                "cameras": "كاميرات",
+                "lenses": "عدسات",
+                "video": "معدات فيديو",
+                "accessories": "ملحقات التصوير"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "cameraType": "نوع الكاميرا",
+                "sensorType": "نوع المستشعر",
+                "megapixels": "عدد الميجابكسل",
+                "resolution": "الدقة",
+                "videoResolution": "دقة الفيديو",
+                "lensMount": "تركيب العدسة",
+                "focalLength": "البعد البؤري",
+                "condition": "الحالة",
+                "warranty": "الضمان",
+                "includedAccessories": "الملحقات المرفقة",
+                "cameraTypeOptions": {
+                    "dslr": "DSLR",
+                    "mirrorless": "Mirrorless",
+                    "compact": "مدمجة",
+                    "action": "أكشن",
+                    "security": "مراقبة",
+                    "professional_video": "فيديو احترافي"
+                },
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "Books": {
+            "label": "الكتب",
+            "heading": "الكتب والمراجع",
+            "description": "كتب ومراجع متنوعة تشمل الكتب المدرسية والجامعية والروايات وكتب الأطفال والكتب المتخصصة.",
+            "subCategories": {
+                "school": "كتب مدرسية",
+                "university": "كتب جامعية",
+                "novels": "روايات",
+                "children": "كتب أطفال",
+                "religious": "كتب دينية",
+                "language": "كتب لغات",
+                "business": "أعمال وإدارة",
+                "other": "كتب أخرى"
+            },
+            "fields": {
+                "title": "عنوان الكتاب",
+                "author": "المؤلف",
+                "publisher": "دار النشر",
+                "edition": "الطبعة",
+                "publicationYear": "سنة النشر",
+                "language": "اللغة",
+                "isbn": "رقم ISBN",
+                "condition": "الحالة",
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "MusicalInstruments": {
+            "label": "الآلات الموسيقية",
+            "heading": "الآلات والمعدات الموسيقية",
+            "description": "آلات موسيقية ومعدات متنوعة تشمل الجيتارات والبيانو والكيبورد والطبول والكمان وغيرها.",
+            "subCategories": {
+                "guitars": "جيتارات",
+                "pianos": "بيانو",
+                "keyboards": "كيبورد",
+                "drums": "طبول",
+                "violins": "كمان",
+                "wind": "آلات نفخ",
+                "percussion": "آلات إيقاعية",
+                "other": "آلات أخرى"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "material": "المادة",
+                "color": "اللون",
+                "size": "الحجم",
+                "electric": "كهربائية",
+                "condition": "الحالة",
+                "accessories": "الملحقات",
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "ConstructionEquipment": {
+            "label": "معدات البناء",
+            "heading": "معدات وآليات البناء",
+            "description": "معدات وآليات البناء الثقيلة والخفيفة مثل الحفارات والرافعات ومعدات الخرسانة والقطع والدك.",
+            "subCategories": {
+                "excavators": "حفارات",
+                "loaders": "لوادر",
+                "cranes": "رافعات",
+                "concrete_equipment": "معدات خرسانة",
+                "scaffolding": "سقالات",
+                "cutting_equipment": "معدات قطع",
+                "compaction_equipment": "معدات دك",
+                "other": "معدات أخرى"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "year": "سنة الصنع",
+                "operatingHours": "ساعات التشغيل",
+                "enginePower": "قوة المحرك",
+                "fuelType": "نوع الوقود",
+                "weight": "الوزن",
+                "condition": "الحالة",
+                "warranty": "الضمان",
+                "fuelTypeOptions": {
+                    "diesel": "ديزل",
+                    "gasoline": "بنزين",
+                    "electric": "كهربائي",
+                    "hybrid": "هجين"
+                },
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "IndustrialEquipment": {
+            "label": "المعدات الصناعية",
+            "heading": "المعدات والآلات الصناعية",
+            "description": "معدات وآلات صناعية متنوعة تشمل آلات الإنتاج والضواغط والمولدات ومعدات التعبئة والمناولة.",
+            "subCategories": {
+                "industrial_machines": "آلات صناعية",
+                "compressors": "ضواغط",
+                "generators": "مولدات",
+                "production_equipment": "معدات إنتاج",
+                "packaging_equipment": "معدات تعبئة وتغليف",
+                "material_handling": "معدات مناولة",
+                "other": "معدات أخرى"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "year": "سنة الصنع",
+                "power": "القدرة",
+                "voltage": "الجهد الكهربائي",
+                "capacity": "السعة",
+                "operatingHours": "ساعات التشغيل",
+                "condition": "الحالة",
+                "warranty": "الضمان",
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "WeldingEquipment": {
+            "label": "معدات اللحام",
+            "heading": "معدات وأجهزة اللحام",
+            "description": "أجهزة ومعدات اللحام والقطع بالبلازما وملحقات اللحام ومعدات الحماية.",
+            "subCategories": {
+                "welding_machines": "أجهزة لحام",
+                "plasma_cutters": "قواطع بلازما",
+                "welding_accessories": "ملحقات اللحام",
+                "protective_equipment": "معدات حماية",
+                "other": "معدات أخرى"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "weldingType": "نوع اللحام",
+                "power": "القدرة",
+                "voltage": "الجهد الكهربائي",
+                "amperage": "شدة التيار",
+                "condition": "الحالة",
+                "accessories": "الملحقات",
+                "weldingTypeOptions": {
+                    "mig": "MIG",
+                    "mag": "MAG",
+                    "tig": "TIG",
+                    "arc": "قوس كهربائي",
+                    "plasma": "بلازما",
+                    "spot": "لحام نقطي"
+                },
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "OfficeEquipment": {
+            "label": "معدات المكاتب",
+            "heading": "معدات وأجهزة المكاتب",
+            "description": "أجهزة ومعدات مكتبية تشمل الطابعات والماسحات وآلات التصوير وأجهزة العرض وآلات الإتلاف والتغليف.",
+            "subCategories": {
+                "printers": "طابعات",
+                "scanners": "ماسحات ضوئية",
+                "copiers": "آلات تصوير",
+                "projectors": "أجهزة عرض",
+                "shredders": "آلات إتلاف الورق",
+                "laminators": "آلات تغليف",
+                "other": "معدات أخرى"
+            },
+            "fields": {
+                "brand": "العلامة التجارية",
+                "model": "الموديل",
+                "connectivity": "الاتصال",
+                "printTechnology": "تقنية الطباعة",
+                "colorPrinting": "طباعة ملونة",
+                "condition": "الحالة",
+                "warranty": "الضمان",
+                "printTechnologyOptions": {
+                    "laser": "ليزر",
+                    "inkjet": "نفث الحبر",
+                    "thermal": "حرارية",
+                    "other": "أخرى"
+                },
+                "conditionOptions": {
+                    "new": "جديد",
+                    "like_new": "كالجديد",
+                    "excellent": "ممتاز",
+                    "good": "جيد",
+                    "fair": "مقبول"
+                }
+            }
+        },
+
+        "Services": {
+            "label": "الخدمات",
+            "heading": "الخدمات والأعمال",
+            "description": "خدمات يقدمها الأفراد والشركات في مجالات الصيانة والكهرباء والتنظيف والنقل والبرمجة والتصميم وغيرها.",
+            "subCategories": {
+                "maintenance": "صيانة",
+                "electrical": "كهرباء",
+                "plumbing": "سباكة",
+                "cleaning": "تنظيف",
+                "transportation": "نقل",
+                "moving": "نقل أثاث",
+                "automotive": "خدمات سيارات",
+                "programming": "برمجة",
+                "design": "تصميم",
+                "photography": "تصوير",
+                "marketing": "تسويق",
+                "education": "تعليم",
+                "beauty": "تجميل",
+                "other": "خدمات أخرى"
+            },
+            "fields": {
+                "serviceTitle": "اسم الخدمة",
+                "providerName": "اسم مقدم الخدمة",
+                "experienceYears": "سنوات الخبرة",
+                "priceFrom": "السعر يبدأ من",
+                "priceTo": "السعر حتى",
+                "pricingType": "نوع التسعير",
+                "availableDays": "أيام التوفر",
+                "availableHours": "ساعات التوفر",
+                "serviceArea": "منطقة تقديم الخدمة",
+                "emergencyService": "خدمة طوارئ",
+                "pricingTypeOptions": {
+                    "hourly": "بالساعة",
+                    "fixed": "سعر ثابت",
+                    "daily": "يومي",
+                    "monthly": "شهري",
+                    "negotiable": "قابل للتفاوض"
+                },
+                "availableDaysOptions": {
+                    "sunday": "الأحد",
+                    "monday": "الإثنين",
+                    "tuesday": "الثلاثاء",
+                    "wednesday": "الأربعاء",
+                    "thursday": "الخميس",
+                    "friday": "الجمعة",
+                    "saturday": "السبت"
                 }
             }
         }

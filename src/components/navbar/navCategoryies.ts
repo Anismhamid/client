@@ -58,6 +58,11 @@ export const productsAndCategories: NavCategory[] = [
                 path: `${productsPathes.garden}/plants`,
             },
             {
+                labelKey: 'categories.Garden.subCategories.trees',
+                value: 'trees',
+                path: `${productsPathes.garden}/trees`,
+            },
+            {
                 labelKey: 'categories.Garden.subCategories.watering',
                 value: 'watering',
                 path: `${productsPathes.garden}/watering`,
@@ -646,6 +651,409 @@ export const productsAndCategories: NavCategory[] = [
                 labelKey: 'categories.Furniture.subCategories.kitchen',
                 value: 'kitchen',
                 path: `${productsPathes.furniture}/kitchen`,
+            },
+        ],
+    } /* ================== Cameras ================== */,
+    {
+        labelKey: 'categories.Cameras.label',
+        value: 'Cameras',
+        path: productsPathes.Camera,
+        icon: '/categories/cameras.png',
+        subCategories: [
+            {
+                labelKey: 'categories.Cameras.subCategories.cameras',
+                value: 'cameras',
+                path: `${productsPathes.Camera}/cameras`,
+            },
+            {
+                labelKey: 'categories.Cameras.subCategories.lenses',
+                value: 'lenses',
+                path: `${productsPathes.Camera}/lenses`,
+            },
+            {
+                labelKey: 'categories.Cameras.subCategories.video',
+                value: 'video',
+                path: `${productsPathes.Camera}/video`,
+            },
+            {
+                labelKey: 'categories.Cameras.subCategories.accessories',
+                value: 'accessories',
+                path: `${productsPathes.Camera}/accessories`,
+            },
+        ],
+    },
+
+    /* ================== Books ================== */
+    {
+        labelKey: 'categories.Books.label',
+        value: 'Books',
+        path: productsPathes.Books,
+        icon: '/categories/Books.png',
+        subCategories: [
+            {
+                labelKey: 'categories.Books.subCategories.school',
+                value: 'school',
+                path: `${productsPathes.Books}/school`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.university',
+                value: 'university',
+                path: `${productsPathes.Books}/university`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.novels',
+                value: 'novels',
+                path: `${productsPathes.Books}/novels`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.children',
+                value: 'children',
+                path: `${productsPathes.Books}/children`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.religious',
+                value: 'religious',
+                path: `${productsPathes.Books}/religious`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.language',
+                value: 'language',
+                path: `${productsPathes.Books}/language`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.business',
+                value: 'business',
+                path: `${productsPathes.Books}/business`,
+            },
+            {
+                labelKey: 'categories.Books.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.Books}/other`,
+            },
+        ],
+    },
+
+    /* ================== Musical Instruments ================== */
+    {
+        labelKey: 'categories.MusicalInstruments.label',
+        value: 'MusicalInstruments',
+        path: productsPathes.MusicalInstruments,
+        icon: '/categories/musical-instruments.png',
+        subCategories: [
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.guitars',
+                value: 'guitars',
+                path: `${productsPathes.MusicalInstruments}/guitars`,
+            },
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.pianos',
+                value: 'pianos',
+                path: `${productsPathes.MusicalInstruments}/pianos`,
+            },
+            {
+                labelKey:
+                    'categories.MusicalInstruments.subCategories.keyboards',
+                value: 'keyboards',
+                path: `${productsPathes.MusicalInstruments}/keyboards`,
+            },
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.drums',
+                value: 'drums',
+                path: `${productsPathes.MusicalInstruments}/drums`,
+            },
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.violins',
+                value: 'violins',
+                path: `${productsPathes.MusicalInstruments}/violins`,
+            },
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.wind',
+                value: 'wind',
+                path: `${productsPathes.MusicalInstruments}/wind`,
+            },
+            {
+                labelKey:
+                    'categories.MusicalInstruments.subCategories.percussion',
+                value: 'percussion',
+                path: `${productsPathes.MusicalInstruments}/percussion`,
+            },
+            {
+                labelKey: 'categories.MusicalInstruments.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.MusicalInstruments}/other`,
+            },
+        ],
+    },
+
+    /* ================== Construction Equipment ================== */
+    {
+        labelKey: 'categories.ConstructionEquipment.label',
+        value: 'ConstructionEquipment',
+        path: productsPathes.ConstructionEquipment,
+        icon: '/categories/construction-equipment.png',
+        subCategories: [
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.excavators',
+                value: 'excavators',
+                path: `${productsPathes.ConstructionEquipment}/excavators`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.loaders',
+                value: 'loaders',
+                path: `${productsPathes.ConstructionEquipment}/loaders`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.cranes',
+                value: 'cranes',
+                path: `${productsPathes.ConstructionEquipment}/cranes`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.concrete_equipment',
+                value: 'concrete_equipment',
+                path: `${productsPathes.ConstructionEquipment}/concrete_equipment`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.scaffolding',
+                value: 'scaffolding',
+                path: `${productsPathes.ConstructionEquipment}/scaffolding`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.cutting_equipment',
+                value: 'cutting_equipment',
+                path: `${productsPathes.ConstructionEquipment}/cutting_equipment`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.compaction_equipment',
+                value: 'compaction_equipment',
+                path: `${productsPathes.ConstructionEquipment}/compaction_equipment`,
+            },
+            {
+                labelKey:
+                    'categories.ConstructionEquipment.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.ConstructionEquipment}/other`,
+            },
+        ],
+    },
+
+    /* ================== Industrial Equipment ================== */
+    {
+        labelKey: 'categories.IndustrialEquipment.label',
+        value: 'IndustrialEquipment',
+        path: productsPathes.IndustrialEquipment,
+        icon: '/categories/industrial-equipment.png',
+        subCategories: [
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.industrial_machines',
+                value: 'industrial_machines',
+                path: `${productsPathes.IndustrialEquipment}/industrial_machines`,
+            },
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.compressors',
+                value: 'compressors',
+                path: `${productsPathes.IndustrialEquipment}/compressors`,
+            },
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.generators',
+                value: 'generators',
+                path: `${productsPathes.IndustrialEquipment}/generators`,
+            },
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.production_equipment',
+                value: 'production_equipment',
+                path: `${productsPathes.IndustrialEquipment}/production_equipment`,
+            },
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.packaging_equipment',
+                value: 'packaging_equipment',
+                path: `${productsPathes.IndustrialEquipment}/packaging_equipment`,
+            },
+            {
+                labelKey:
+                    'categories.IndustrialEquipment.subCategories.material_handling',
+                value: 'material_handling',
+                path: `${productsPathes.IndustrialEquipment}/material_handling`,
+            },
+            {
+                labelKey: 'categories.IndustrialEquipment.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.IndustrialEquipment}/other`,
+            },
+        ],
+    },
+
+    /* ================== Welding Equipment ================== */
+    {
+        labelKey: 'categories.WeldingEquipment.label',
+        value: 'WeldingEquipment',
+        path: productsPathes.WeldingEquipment,
+        icon: '/categories/welding-equipment.png',
+        subCategories: [
+            {
+                labelKey:
+                    'categories.WeldingEquipment.subCategories.welding_machines',
+                value: 'welding_machines',
+                path: `${productsPathes.WeldingEquipment}/welding_machines`,
+            },
+            {
+                labelKey:
+                    'categories.WeldingEquipment.subCategories.plasma_cutters',
+                value: 'plasma_cutters',
+                path: `${productsPathes.WeldingEquipment}/plasma_cutters`,
+            },
+            {
+                labelKey:
+                    'categories.WeldingEquipment.subCategories.welding_accessories',
+                value: 'welding_accessories',
+                path: `${productsPathes.WeldingEquipment}/welding_accessories`,
+            },
+            {
+                labelKey:
+                    'categories.WeldingEquipment.subCategories.protective_equipment',
+                value: 'protective_equipment',
+                path: `${productsPathes.WeldingEquipment}/protective_equipment`,
+            },
+            {
+                labelKey: 'categories.WeldingEquipment.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.WeldingEquipment}/other`,
+            },
+        ],
+    },
+
+    /* ================== Office Equipment ================== */
+    {
+        labelKey: 'categories.OfficeEquipment.label',
+        value: 'OfficeEquipment',
+        path: productsPathes.OfficeEquipment,
+        icon: '/categories/office-equipment.png',
+        subCategories: [
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.printers',
+                value: 'printers',
+                path: `${productsPathes.OfficeEquipment}/printers`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.scanners',
+                value: 'scanners',
+                path: `${productsPathes.OfficeEquipment}/scanners`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.copiers',
+                value: 'copiers',
+                path: `${productsPathes.OfficeEquipment}/copiers`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.projectors',
+                value: 'projectors',
+                path: `${productsPathes.OfficeEquipment}/projectors`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.shredders',
+                value: 'shredders',
+                path: `${productsPathes.OfficeEquipment}/shredders`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.laminators',
+                value: 'laminators',
+                path: `${productsPathes.OfficeEquipment}/laminators`,
+            },
+            {
+                labelKey: 'categories.OfficeEquipment.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.OfficeEquipment}/other`,
+            },
+        ],
+    },
+
+    /* ================== Services ================== */
+    {
+        labelKey: 'categories.Services.label',
+        value: 'Services',
+        path: productsPathes.Services,
+        icon: '/categories/Services.png',
+        subCategories: [
+            {
+                labelKey: 'categories.Services.subCategories.maintenance',
+                value: 'maintenance',
+                path: `${productsPathes.Services}/maintenance`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.electrical',
+                value: 'electrical',
+                path: `${productsPathes.Services}/electrical`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.plumbing',
+                value: 'plumbing',
+                path: `${productsPathes.Services}/plumbing`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.cleaning',
+                value: 'cleaning',
+                path: `${productsPathes.Services}/cleaning`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.transportation',
+                value: 'transportation',
+                path: `${productsPathes.Services}/transportation`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.moving',
+                value: 'moving',
+                path: `${productsPathes.Services}/moving`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.automotive',
+                value: 'automotive',
+                path: `${productsPathes.Services}/automotive`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.programming',
+                value: 'programming',
+                path: `${productsPathes.Services}/programming`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.design',
+                value: 'design',
+                path: `${productsPathes.Services}/design`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.photography',
+                value: 'photography',
+                path: `${productsPathes.Services}/photography`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.marketing',
+                value: 'marketing',
+                path: `${productsPathes.Services}/marketing`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.education',
+                value: 'education',
+                path: `${productsPathes.Services}/education`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.beauty',
+                value: 'beauty',
+                path: `${productsPathes.Services}/beauty`,
+            },
+            {
+                labelKey: 'categories.Services.subCategories.other',
+                value: 'other',
+                path: `${productsPathes.Services}/other`,
             },
         ],
     },

@@ -1000,6 +1000,309 @@
                 }
             }
         },
+        "Cameras": {
+            "label": "מצלמות וצילום",
+            "heading": "מצלמות וציוד צילום",
+            "description": "מגוון מצלמות וציוד צילום, כולל מצלמות דיגיטליות, עדשות, ציוד וידאו ואביזרי צילום.",
+            "subCategories": {
+                "cameras": "מצלמות",
+                "lenses": "עדשות",
+                "video": "ציוד וידאו",
+                "accessories": "אביזרי צילום"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "cameraType": "סוג מצלמה",
+                "sensorType": "סוג חיישן",
+                "megapixels": "מגה-פיקסל",
+                "resolution": "רזולוציה",
+                "videoResolution": "רזולוציית וידאו",
+                "lensMount": "חיבור עדשה",
+                "focalLength": "אורך מוקד",
+                "condition": "מצב",
+                "warranty": "אחריות",
+                "includedAccessories": "אביזרים כלולים",
+                "cameraTypeOptions": {
+                    "dslr": "DSLR",
+                    "mirrorless": "ללא מראה",
+                    "compact": "קומפקטית",
+                    "action": "מצלמת אקשן",
+                    "security": "מצלמת אבטחה",
+                    "professional_video": "וידאו מקצועי"
+                },
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "Books": {
+            "label": "ספרים",
+            "heading": "ספרים ומקורות",
+            "description": "מגוון ספרים ומקורות, כולל ספרי לימוד, ספרים אוניברסיטאיים, רומנים, ספרי ילדים וספרים מקצועיים.",
+            "subCategories": {
+                "school": "ספרי לימוד",
+                "university": "ספרים אוניברסיטאיים",
+                "novels": "רומנים",
+                "children": "ספרי ילדים",
+                "religious": "ספרי דת",
+                "language": "ספרי שפות",
+                "business": "עסקים וניהול",
+                "other": "ספרים אחרים"
+            },
+            "fields": {
+                "title": "שם הספר",
+                "author": "מחבר",
+                "publisher": "הוצאה לאור",
+                "edition": "מהדורה",
+                "publicationYear": "שנת פרסום",
+                "language": "שפה",
+                "isbn": "ISBN",
+                "condition": "מצב",
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "MusicalInstruments": {
+            "label": "כלי נגינה",
+            "heading": "כלי נגינה וציוד מוזיקלי",
+            "description": "מגוון כלי נגינה וציוד מוזיקלי, כולל גיטרות, פסנתרים, קלידים, תופים, כינורות ועוד.",
+            "subCategories": {
+                "guitars": "גיטרות",
+                "pianos": "פסנתרים",
+                "keyboards": "קלידים",
+                "drums": "תופים",
+                "violins": "כינורות",
+                "wind": "כלי נשיפה",
+                "percussion": "כלי הקשה",
+                "other": "כלי נגינה אחרים"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "material": "חומר",
+                "color": "צבע",
+                "size": "גודל",
+                "electric": "חשמלי",
+                "condition": "מצב",
+                "accessories": "אביזרים",
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "ConstructionEquipment": {
+            "label": "ציוד בנייה",
+            "heading": "ציוד ומכונות בנייה",
+            "description": "ציוד ומכונות בנייה כבדות וקלות, כולל מחפרים, מעמיסים, מנופים, ציוד בטון, ציוד חיתוך וציוד הידוק.",
+            "subCategories": {
+                "excavators": "מחפרים",
+                "loaders": "מעמיסים",
+                "cranes": "מנופים",
+                "concrete_equipment": "ציוד בטון",
+                "scaffolding": "פיגומים",
+                "cutting_equipment": "ציוד חיתוך",
+                "compaction_equipment": "ציוד הידוק",
+                "other": "ציוד אחר"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "year": "שנה",
+                "operatingHours": "שעות עבודה",
+                "enginePower": "הספק מנוע",
+                "fuelType": "סוג דלק",
+                "weight": "משקל",
+                "condition": "מצב",
+                "warranty": "אחריות",
+                "fuelTypeOptions": {
+                    "diesel": "דיזל",
+                    "gasoline": "בנזין",
+                    "electric": "חשמלי",
+                    "hybrid": "היברידי"
+                },
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "IndustrialEquipment": {
+            "label": "ציוד תעשייתי",
+            "heading": "ציוד ומכונות תעשייתיות",
+            "description": "מגוון ציוד ומכונות תעשייתיות, כולל מכונות תעשייתיות, מדחסים, גנרטורים, ציוד ייצור, אריזה ושינוע.",
+            "subCategories": {
+                "industrial_machines": "מכונות תעשייתיות",
+                "compressors": "מדחסים",
+                "generators": "גנרטורים",
+                "production_equipment": "ציוד ייצור",
+                "packaging_equipment": "ציוד אריזה",
+                "material_handling": "ציוד שינוע",
+                "other": "ציוד אחר"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "year": "שנה",
+                "power": "הספק",
+                "voltage": "מתח",
+                "capacity": "קיבולת",
+                "operatingHours": "שעות עבודה",
+                "condition": "מצב",
+                "warranty": "אחריות",
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "WeldingEquipment": {
+            "label": "ציוד ריתוך",
+            "heading": "ציוד ומכונות ריתוך",
+            "description": "ציוד ריתוך וחיתוך פלזמה, אביזרי ריתוך וציוד מגן.",
+            "subCategories": {
+                "welding_machines": "מכונות ריתוך",
+                "plasma_cutters": "חותכי פלזמה",
+                "welding_accessories": "אביזרי ריתוך",
+                "protective_equipment": "ציוד מגן",
+                "other": "ציוד אחר"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "weldingType": "סוג ריתוך",
+                "power": "הספק",
+                "voltage": "מתח",
+                "amperage": "עוצמת זרם",
+                "condition": "מצב",
+                "accessories": "אביזרים",
+                "weldingTypeOptions": {
+                    "mig": "MIG",
+                    "mag": "MAG",
+                    "tig": "TIG",
+                    "arc": "ריתוך בקשת",
+                    "plasma": "פלזמה",
+                    "spot": "ריתוך נקודתי"
+                },
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "OfficeEquipment": {
+            "label": "ציוד משרדי",
+            "heading": "ציוד ומכשירים משרדיים",
+            "description": "ציוד ומכשירים משרדיים, כולל מדפסות, סורקים, מכונות צילום, מקרנים, מגרסות וניילונים.",
+            "subCategories": {
+                "printers": "מדפסות",
+                "scanners": "סורקים",
+                "copiers": "מכונות צילום",
+                "projectors": "מקרנים",
+                "shredders": "מגרסות נייר",
+                "laminators": "מכונות למינציה",
+                "other": "ציוד אחר"
+            },
+            "fields": {
+                "brand": "מותג",
+                "model": "דגם",
+                "connectivity": "קישוריות",
+                "printTechnology": "טכנולוגיית הדפסה",
+                "colorPrinting": "הדפסה בצבע",
+                "condition": "מצב",
+                "warranty": "אחריות",
+                "printTechnologyOptions": {
+                    "laser": "לייזר",
+                    "inkjet": "הזרקת דיו",
+                    "thermal": "תרמית",
+                    "other": "אחר"
+                },
+                "conditionOptions": {
+                    "new": "חדש",
+                    "like_new": "כמו חדש",
+                    "excellent": "מצוין",
+                    "good": "טוב",
+                    "fair": "סביר"
+                }
+            }
+        },
+
+        "Services": {
+            "label": "שירותים",
+            "heading": "שירותים ועבודות מקצועיות",
+            "description": "שירותים הניתנים על ידי אנשים פרטיים ועסקים בתחומים כגון תחזוקה, חשמל, ניקיון, הובלה, תכנות, עיצוב ועוד.",
+            "subCategories": {
+                "maintenance": "תחזוקה",
+                "electrical": "חשמל",
+                "plumbing": "אינסטלציה",
+                "cleaning": "ניקיון",
+                "transportation": "הובלה",
+                "moving": "הובלת דירה",
+                "automotive": "שירותי רכב",
+                "programming": "תכנות",
+                "design": "עיצוב",
+                "photography": "צילום",
+                "marketing": "שיווק",
+                "education": "חינוך",
+                "beauty": "יופי",
+                "other": "שירותים אחרים"
+            },
+            "fields": {
+                "serviceTitle": "שם השירות",
+                "providerName": "נותן השירות",
+                "experienceYears": "שנות ניסיון",
+                "priceFrom": "מחיר החל מ-",
+                "priceTo": "מחיר עד",
+                "pricingType": "סוג תמחור",
+                "availableDays": "ימי זמינות",
+                "availableHours": "שעות זמינות",
+                "serviceArea": "אזור מתן השירות",
+                "emergencyService": "שירות חירום",
+                "pricingTypeOptions": {
+                    "hourly": "לפי שעה",
+                    "fixed": "מחיר קבוע",
+                    "daily": "יומי",
+                    "monthly": "חודשי",
+                    "negotiable": "ניתן למשא ומתן"
+                },
+                "availableDaysOptions": {
+                    "sunday": "ראשון",
+                    "monday": "שני",
+                    "tuesday": "שלישי",
+                    "wednesday": "רביעי",
+                    "thursday": "חמישי",
+                    "friday": "שישי",
+                    "saturday": "שבת"
+                }
+            }
+        },
         "discountsAndOffers": {
             "common": {
                 "discount": "הנחה",
