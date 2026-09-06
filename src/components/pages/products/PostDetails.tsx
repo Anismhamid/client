@@ -257,8 +257,8 @@ const PostDetails: FunctionComponent = () => {
     const isOwner = useMemo(() => {
         return Boolean(
             auth?._id &&
-                post?._id &&
-                String(auth._id) === String(post.seller?._id),
+            post?._id &&
+            String(auth._id) === String(post.seller?._id),
         );
     }, [auth?._id, post?._id, post.seller?._id]);
 
@@ -285,9 +285,12 @@ const PostDetails: FunctionComponent = () => {
         }
 
         const productUrl = `${SITE_URL}${location.pathname}`;
+        const discountedPrice = post.sale
+            ? post.price - (post.price * (post.discount || 0)) / 100
+            : post.price;
         const initialMessage =
             `مرحباً، أنا مهتم ب"${post.product_name}" 💬\n\n` +
-            `📦 السعر: ${formatPrice(post.price)}\n` +
+            `📦 السعر: ${formatPrice(discountedPrice)}\n` +
             `📂 التصنيف: ${categoryLabel}\n` +
             `🔗 رابط المنتج: ${productUrl}\n\n` +
             `هل لا يزال متوفراً؟`;
@@ -2371,13 +2374,16 @@ const PostDetails: FunctionComponent = () => {
             ========================================================= */}
 
             <AlertDialogs
-                handleDelete={handleDeletePost}
+                onConfirm={handleDeletePost}
                 onHide={() => setShowDeleteModal(false)}
                 show={showDeleteModal}
-                title={`حذف ${post.product_name}`}
-                description={`هل أنت متأكد من حذف المنتج "${post.product_name}"؟`}
+                title={t('modals.report.deletePost.title', {
+                    productName: post.product_name,
+                })}
+                description={t('modals.report.deletePost.description', {
+                    productName: post.product_name,
+                })}
             />
-
             {/* =========================================================
                 UPDATE MODAL
             ========================================================= */}

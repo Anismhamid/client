@@ -47,7 +47,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const { auth } = useUser();
     const [showUpdateProductModal, setOnShowUpdateProductModal] =
         useState<boolean>(false);
-    const [productToDelete, setProductToDelete] = useState<string>('');
+    const [postToDelete, setPostToDelete] = useState<string>('');
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>(
@@ -67,11 +67,14 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     };
 
     const openDeleteModal = (productId: string) => {
-        setProductToDelete(productId);
+        setPostToDelete(productId);
         setShowDeleteModal(true);
     };
 
-    const closeDeleteModal = () => setShowDeleteModal(false);
+    const postToDeleteData = useMemo(
+        () => posts.find((post) => post._id === postToDelete),
+        [posts, postToDelete],
+    );
 
     const filteredProducts = useMemo(() => {
         const searchLower = searchQuery.toLowerCase().trim();
@@ -161,17 +164,20 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
         );
     };
 
-    const handleDelete = (postId: string) => {
-        deletePost(postId)
-            .then(() => {
-                setPosts((prevPosts) =>
-                    prevPosts.filter((post) => post._id !== postId),
-                );
-            })
-            .catch((err) => {
-                console.error(err);
-                showError('خطأ في حذف المنتج');
-            });
+    const handleDelete = async (postId: string) => {
+        try {
+            await deletePost(postId);
+
+            setPosts((prevPosts) =>
+                prevPosts.filter((post) => post._id !== postId),
+            );
+
+            setPostToDelete('');
+            setShowDeleteModal(false);
+        } catch (err) {
+            console.error(err);
+            showError(t('modals.report.deletePost.error'));
+        }
     };
 
     const isAdmin = auth?.role === RoleType.Admin;
@@ -220,7 +226,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const generateCategory = generateCategoryJsonLd(category, posts);
 
     return (
-        <main>
+        <>
             {/* FIX 1: React 19 hoists these to <head> natively — no library needed */}
             <title>{categoryTitle} | صفقة</title>
             <link rel='canonical' href={currentUrl} />
@@ -289,7 +295,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                             return (
                                 <Grid
                                     key={post._id}
-                                    size={{ xs: 12, md: 4, lg: 3 }}
+                                    size={{ xs: 12, md: 6, lg: 3 }}
                                 >
                                     <PostCard
                                         featured={post.featured}
@@ -335,10 +341,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                             color='primary.main'
                             sx={{ mb: 2 }}
                         >
-                           {t('searchPage.search.noResults')}
+                            {t('searchPage.search.noResults')}
                         </Typography>
                         <Typography variant='body2' color='primary.main'>
-                           {t("searchPage.search.tryAgain")}
+                            {t('searchPage.search.tryAgain')}
                         </Typography>
                     </Box>
                 )}
@@ -379,7 +385,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                     },
                                 }}
                             >
-                               {t('loadMore')}
+                                {t('loadMore')}
                             </Button>
                         )}
                     </Box>
@@ -395,21 +401,32 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                     )}
             </Container>
 
+            <AlertDialogs
+                onConfirm={() => {
+                    if (postToDelete) {
+                        handleDelete(postToDelete);
+                    }
+                }}
+                onHide={() => {
+                    setPostToDelete('');
+                    setShowDeleteModal(false);
+                }}
+                show={showDeleteModal}
+                title={t('modals.report.deletePost.title', {
+                    productName: postToDeleteData?.product_name || '',
+                })}
+                description={t('modals.report.deletePost.description', {
+                    productName: postToDeleteData?.product_name || '',
+                })}
+            />
+
             <UpdateProductModal
                 refresh={refreshAfterChange}
                 postId={postIdToUpdate}
                 show={showUpdateProductModal}
                 onHide={() => onHideUpdateProductModal()}
             />
-
-            <AlertDialogs
-                show={showDeleteModal}
-                onHide={closeDeleteModal}
-                handleDelete={() => handleDelete(productToDelete)}
-                title={'حذف المنتج'}
-                description={`هل أنت متأكد أنك تريد حذف "${productToDelete}"؟ لا يمكن التراجع عن هذا الإجراء.`}
-            />
-        </main>
+        </>
     );
 };
 

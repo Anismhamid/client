@@ -422,7 +422,10 @@
                 "delete_comment": "מחיקת התגובה",
                 "ignore": "התעלמות מהדיווח"
             },
-
+            "deletePost": {
+                "title": "מחיקת {{productName}}",
+                "description": "האם אתה בטוח שברצונך למחוק את המודעה \"{{productName}}\"?"
+            },
             "reasons": {
                 "spam": "תוכן מטריד או לא רצוי",
                 "harassment": "הטרדה או בריונות",

@@ -426,6 +426,10 @@
                 "delete_comment": "Delete comment",
                 "ignore": "Ignore report"
             },
+            "deletePost": {
+                "title": "Delete {{productName}}",
+                "description": "Are you sure you want to delete the ad \"{{productName}}\"?"
+            },
 
             "reasons": {
                 "spam": "Spam or unwanted content",

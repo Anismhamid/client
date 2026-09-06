@@ -434,6 +434,10 @@
                 "delete_comment": "حذف التعليق",
                 "ignore": "تجاهل البلاغ"
             },
+            "deletePost": {
+                "title": "حذف {{productName}}",
+                "description": "هل أنت متأكد من حذف إعلان \"{{productName}}\"؟"
+            },
 
             "reasons": {
                 "spam": "محتوى مزعج أو غير مرغوب فيه",
@@ -517,7 +521,7 @@
             "subCategories": {
                 "plants": "نباتات",
                 "watering": "مستلزمات ري",
-                "trees":"اشجار",
+                "trees": "اشجار",
                 "tools": "أدوات حديقة",
                 "outdoorDecor": "ديكور خارجي"
             },

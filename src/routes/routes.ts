@@ -26,7 +26,7 @@ export const productsPathes = {
     IndustrialEquipment: '/category/industrial-equipment',
     WeldingEquipment: '/category/welding-equipment',
     OfficeEquipment: '/category/office-equipment',
-    Services: '/services',
+    Services: '/category/Services',
     // Other
     art: '/category/Art',
     gaming: '/category/Gaming',
