@@ -1,11 +1,13 @@
-import { BaseMessage } from "./chatUser";
+import { BaseMessage } from './chatUser';
 
-export interface LocalMessage extends Omit<BaseMessage, "status"> {
+export interface LocalMessage extends Omit<BaseMessage, 'status'> {
     text: string | undefined;
-	status: "pending" | "sent" | "delivered" | "seen" | "error";
-	fileType?: string;
-	fileUrl?: string;
-	tempId?: string;
-	date?: Date;
-	 isInitial?: boolean;
+    status: 'pending' | 'sent' | 'delivered' | 'seen' | 'error';
+    fileType?: string;
+    fileUrl?: string;
+    tempId?: string;
+    date?: Date;
+    isInitial?: boolean;
+    edited?: boolean;
+    editedAt?: string | Date | null;
 }

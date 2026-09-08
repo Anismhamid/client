@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FunctionComponent, useState } from 'react';
 
 import {
@@ -22,21 +23,18 @@ import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 
 import { useTranslation } from 'react-i18next';
 
-
-
 import useReport from '../../hooks/useReport';
-import { UserReportReason, UserReportType } from '../../interfaces/report.types';
+import {
+    UserReportReason,
+    UserReportType,
+} from '../../interfaces/report.types';
 import handleRTL from '../../locales/handleRTL';
 
 interface ReportModalProps {
     open: boolean;
-
     onClose: () => void;
-
     type: UserReportType;
-
     targetId: string;
-
     onSuccess?: () => void;
 }
 
@@ -66,6 +64,8 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
 
     const [reason, setReason] = useState<UserReportReason | ''>('');
 
+    const [customReason, setCustomReason] = useState('');
+
     const [description, setDescription] = useState('');
 
     const [error, setError] = useState('');
@@ -75,9 +75,14 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
     // =====================================================
 
     const handleReasonChange = (event: SelectChangeEvent) => {
-        setReason(event.target.value as UserReportReason);
+        const value = event.target.value as UserReportReason;
 
+        setReason(value);
         setError('');
+
+        if (value !== 'other') {
+            setCustomReason('');
+        }
     };
 
     // =====================================================
@@ -88,6 +93,7 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
         if (loading) return;
 
         setReason('');
+        setCustomReason('');
         setDescription('');
         setError('');
 
@@ -99,8 +105,23 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
     // =====================================================
 
     const handleSubmit = async () => {
+        // Reason required
         if (!reason) {
-            setError(t('modals.report.reasonRequired', 'Please select a reason.'));
+            setError(
+                t('modals.report.reasonRequired', 'Please select a reason.'),
+            );
+
+            return;
+        }
+
+        // Custom reason required when "other"
+        if (reason === 'other' && !customReason.trim()) {
+            setError(
+                t(
+                    'modals.report.customReasonRequired',
+                    'Please enter the reason.',
+                ),
+            );
 
             return;
         }
@@ -111,17 +132,26 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
             await createReport({
                 type,
                 targetId,
+
+                // Always send the enum reason
                 reason,
+
+                // Only send customReason when reason === "other"
+                customReason:
+                    reason === 'other' ? customReason.trim() : undefined,
+
+                // Optional description
                 description: description.trim() || undefined,
             });
 
+            // Reset form
             setReason('');
+            setCustomReason('');
             setDescription('');
             setError('');
 
             onSuccess?.();
             onClose();
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             console.error('Create report error:', err);
 
@@ -135,37 +165,72 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
             } else {
                 setError(
                     err?.response?.data?.message ||
-                        t('modals.report.failed', 'Failed to submit modals.report.'),
+                        t('modals.report.failed', 'Failed to submit report.'),
                 );
             }
         }
     };
 
-    const dir = handleRTL()
+    // =====================================================
+    // Title
+    // =====================================================
+
+    const reportTitle = `${t('modals.report.title', 'Report')} ${t(
+        `modals.report.types.${type}`,
+        type,
+    )}`;
+
+    const dir = handleRTL();
+
+    // =====================================================
+    // Render
+    // =====================================================
 
     return (
-        <Dialog dir={dir} open={open} onClose={handleClose} fullWidth maxWidth='sm'>
+        <Dialog
+            sx={{ zIndex: 100001 }}
+            dir={dir}
+            open={open}
+            onClose={handleClose}
+            fullWidth
+            maxWidth='sm'
+        >
             <DialogTitle>
                 <Stack direction='row' spacing={1} alignItems='center'>
                     <FlagOutlinedIcon color='error' />
 
-                    <Box sx={{ fontWeight: 'bold', fontSize: '1.2rem' }}>
-                        {t('modals.report.title', 'Report')}
+                    <Box
+                        sx={{
+                            fontWeight: 'bold',
+                            fontSize: '1.2rem',
+                        }}
+                    >
+                        {reportTitle}
                     </Box>
                 </Stack>
             </DialogTitle>
 
             <DialogContent>
                 <Stack spacing={2.5} mt={1}>
+                    {/* Error */}
                     {error && <Alert severity='error'>{error}</Alert>}
 
+                    {/* ================= Reason ================= */}
+
                     <FormControl fullWidth>
-                        <InputLabel>{t('modals.report.reason', 'Reason')}</InputLabel>
+                        <InputLabel>
+                            {t('modals.report.reason', 'Reason')}
+                        </InputLabel>
 
                         <Select
                             value={reason}
                             label={t('modals.report.reason', 'Reason')}
                             onChange={handleReasonChange}
+                            MenuProps={{
+                                sx: {
+                                    zIndex: 100002,
+                                },
+                            }}
                         >
                             {reasons.map((item) => (
                                 <MenuItem key={item} value={item}>
@@ -175,16 +240,51 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
                         </Select>
                     </FormControl>
 
+                    {/* ================= Custom Reason ================= */}
+
+                    {reason === 'other' && (
+                        <TextField
+                            fullWidth
+                            multiline
+                            minRows={3}
+                            label={t(
+                                'modals.report.customReason',
+                                'Other reason',
+                            )}
+                            placeholder={t(
+                                'modals.report.customReasonPlaceholder',
+                                'Write the reason for your report...',
+                            )}
+                            value={customReason}
+                            onChange={(event) => {
+                                setCustomReason(
+                                    event.target.value.slice(0, 300),
+                                );
+
+                                setError('');
+                            }}
+                            error={!customReason.trim() && !!error}
+                            helperText={`${customReason.length}/300`}
+                        />
+                    )}
+
+                    {/* ================= Description ================= */}
+
                     <TextField
-                        label={t('modals.report.description', 'Description')}
+                        label={t(
+                            'modals.report.description',
+                            'Additional details',
+                        )}
                         placeholder={t(
                             'modals.report.descriptionPlaceholder',
                             'Tell us more about the problem...',
                         )}
                         value={description}
-                        onChange={(event) =>
-                            setDescription(event.target.value.slice(0, 500))
-                        }
+                        onChange={(event) => {
+                            setDescription(event.target.value.slice(0, 500));
+
+                            setError('');
+                        }}
                         multiline
                         rows={5}
                         fullWidth
@@ -193,15 +293,22 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
                 </Stack>
             </DialogContent>
 
+            {/* ================= Actions ================= */}
+
             <DialogActions sx={{ p: 2 }}>
                 <Button onClick={handleClose} disabled={loading}>
                     {t('common.cancel', 'Cancel')}
                 </Button>
 
                 <Button
+                    sx={{ gap: 1 }}
                     variant='contained'
                     onClick={handleSubmit}
-                    disabled={loading || !reason}
+                    disabled={
+                        loading ||
+                        !reason ||
+                        (reason === 'other' && !customReason.trim())
+                    }
                     startIcon={
                         loading ? (
                             <CircularProgress size={18} color='inherit' />

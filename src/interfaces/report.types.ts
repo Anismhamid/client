@@ -1,20 +1,12 @@
 // src/interfaces/report.types.ts
 
-import {
-    UserName,
-    UserImage,
-    UserRole,
-} from './User';
+import { UserName, UserImage, UserRole } from './User';
 
 /* =========================
    Report Types
 ========================= */
 
-export type UserReportType =
-    | 'user'
-    | 'post'
-    | 'message'
-    | 'comment';
+export type UserReportType = 'user' | 'post' | 'message' | 'comment';
 
 export type UserReportStatus =
     | 'pending'
@@ -62,8 +54,7 @@ export interface UserReport {
    User Report
 ========================= */
 
-export interface UserReportUser
-    extends UserReport {
+export interface UserReportUser extends UserReport {
     type: 'user';
 
     targetUser?: {
@@ -80,8 +71,7 @@ export interface UserReportUser
    Post Report
 ========================= */
 
-export interface UserReportPost
-    extends UserReport {
+export interface UserReportPost extends UserReport {
     type: 'post';
 
     targetPost?: {
@@ -103,8 +93,7 @@ export interface UserReportPost
    Message Report
 ========================= */
 
-export interface UserReportMessage
-    extends UserReport {
+export interface UserReportMessage extends UserReport {
     type: 'message';
 
     targetMessage?: {
@@ -132,8 +121,7 @@ export interface UserReportMessage
    Comment Report
 ========================= */
 
-export interface UserReportComment
-    extends UserReport {
+export interface UserReportComment extends UserReport {
     type: 'comment';
 
     targetComment?: {
@@ -173,6 +161,8 @@ export interface CreateReportPayload {
 
     reason: UserReportReason;
 
+    customReason?: string;
+
     description?: string;
 }
 
@@ -211,15 +201,9 @@ export interface ReportStats {
 
     rejected: number;
 
-    byType: Record<
-        UserReportType,
-        number
-    >;
+    byType: Record<UserReportType, number>;
 
-    byReason: Record<
-        UserReportReason,
-        number
-    >;
+    byReason: Record<UserReportReason, number>;
 }
 
 /* =========================

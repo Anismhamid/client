@@ -86,7 +86,13 @@
         "typeMessage": "Type your message here...",
         "minimize": "Minimize",
         "options": "Options",
-        "reportHint": "Report inappropriate behavior"
+        "reportHint": "Report inappropriate behavior",
+        "edited": "Edited",
+        "edit": "Edit message",
+        "deleteConversationHint": "This action cannot be undone",
+        "deleteConfirm": "Are you sure you want to delete this message?",
+        "deleteSuccess": "Delete is success",
+        "deleteConversation": "Delete conversation"
     },
     "roles": {
         "title": "Role",

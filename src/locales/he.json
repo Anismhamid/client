@@ -81,7 +81,13 @@
         "typeMessage": "כתוב את ההודעה שלך כאן...",
         "minimize": "מזעור",
         "options": "אפשרויות",
-        "reportHint": "דיווח על התנהגות לא הולמת"
+        "reportHint": "דיווח על התנהגות לא הולמת",
+        "edited": "נערך",
+        "edit":"ערוך הודעה",
+        "deleteConversationHint":"לא ניתן לבטל פעולה זו",
+        "deleteSuccess": "נמחק בהצלחה",
+        "deleteConfirm": "האם את/ה בטוח/ה שברצונך למחוק הודעה זו?",
+        "deleteConversation": "מחיקת שיחה"
     },
     "roles": {
         "title": "תפקיד",

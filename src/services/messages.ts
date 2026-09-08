@@ -187,6 +187,36 @@ export const getAllConversations = async (): Promise<ConversationItem[]> => {
 };
 
 // ======================================================
+// EDIT MESSAGE
+// PATCH /messages/:messageId
+// ======================================================
+
+export const editMessage = async (
+    messageId: string,
+    message: string,
+): Promise<UserMessage> => {
+    try {
+        const response = await axiosInstance.patch<{
+            success: boolean;
+            message: UserMessage;
+        }>(`/${messageId}`, {
+            message: message.trim(),
+        });
+
+        return response.data.message;
+    } catch (error: any) {
+        console.error('❌ Error editing message:', {
+            messageId,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to edit message'),
+        });
+
+        throw error;
+    }
+};
+
+// ======================================================
 // DELETE MESSAGE
 // DELETE /messages/:messageId
 // ======================================================
@@ -205,6 +235,38 @@ export const deleteMessage = async (messageId: string): Promise<boolean> => {
         });
 
         return false;
+    }
+};
+
+// ======================================================
+// DELETE CONVERSATION
+// DELETE /messages/conversation/:userId
+// ======================================================
+
+export const deleteConversation = async (
+    userId: string,
+): Promise<{
+    success: boolean;
+    deletedCount?: number;
+    roomId?: string;
+}> => {
+    try {
+        const response = await axiosInstance.delete<{
+            success: boolean;
+            deletedCount?: number;
+            roomId?: string;
+        }>(`/conversation/${userId}`);
+
+        return response.data;
+    } catch (error: any) {
+        console.error('❌ Error deleting conversation:', {
+            userId,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: getErrorMessage(error, 'Failed to delete conversation'),
+        });
+
+        throw error;
     }
 };
 
@@ -354,7 +416,11 @@ export default {
 
     getAllConversations,
 
+    editMessage,
+
     deleteMessage,
+
+    deleteConversation,
 
     searchInvestigationUsers,
 

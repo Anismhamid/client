@@ -43,5 +43,6 @@ export interface UserMessage {
     createdAt: string;
     name?: { first: string; last: string };
     email?: string;
+    editedAt?: Date;
     role?: string;
 }

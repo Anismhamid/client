@@ -168,9 +168,9 @@ function App() {
             <TransitionAlerts />
 
             <SpeedDialComponent />
+            <FloatingChats />
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
-                <FloatingChats />
                 <ChipNavigation />
 
                 {/* مستمع الإشعارات */}

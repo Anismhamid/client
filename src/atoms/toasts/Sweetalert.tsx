@@ -1,5 +1,6 @@
 import { FunctionComponent, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import handleRTL from '../../locales/handleRTL';
 
 interface AlertDialogProps {
     show: boolean;
@@ -24,6 +25,8 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
     successText = 'Done',
     errorText = 'Something went wrong',
 }) => {
+    const dir = handleRTL();
+
     useEffect(() => {
         if (!show) return;
 
@@ -68,7 +71,10 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
                             icon: 'error',
                         });
 
-                        console.error('Alert confirmation action failed:', error);
+                        console.error(
+                            'Alert confirmation action failed:',
+                            error,
+                        );
                     }
                 }
 
@@ -80,17 +86,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
         return () => {
             isMounted = false;
         };
-    }, [
-        description,
-        onConfirm,
-        onHide,
-        show,
-        title,
-        confirmText,
-        cancelText,
-        successText,
-        errorText,
-    ]);
+    }, [show, dir]);
 
     return null;
 };
