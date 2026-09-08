@@ -142,21 +142,38 @@ export const sendMessage = async (
         );
         
         console.log('Message sent successfully:', response.data);
-        
-        // تحديث الرسالة بالـ ID الحقيقي والحالة
-        if (response.data._id && setMessagesForUser) {
-            setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
-                return prev.map((m): LocalMessage => {
-                    if (m.tempId === tempId) {
-                        return { 
-                            ...response.data, 
-                            status: 'sent' as const,
-                            tempId: tempId
-                        };
-                    }
-                    return m;
+
+        // الباك اند مرة عم يرجع الرسالة مباشرة، ومرة ملفوفة جوا { message }
+        const savedMessage = response.data?._id
+            ? response.data
+            : response.data?.message;
+
+        if (setMessagesForUser) {
+            if (savedMessage?._id) {
+                setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
+                    return prev.map((m): LocalMessage => {
+                        if (m.tempId === tempId) {
+                            return {
+                                ...savedMessage,
+                                status: 'sent' as const,
+                                tempId: tempId,
+                            };
+                        }
+                        return m;
+                    });
                 });
-            });
+            } else {
+                // الطلب نجح بس بلا _id بالرد - منعلّم كـ sent بدل ما تضل عالقة pending للأبد
+                console.warn('sendMessage: response has no _id, keeping tempId', response.data);
+                setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
+                    return prev.map((m): LocalMessage => {
+                        if (m.tempId === tempId) {
+                            return { ...m, status: 'sent' as const };
+                        }
+                        return m;
+                    });
+                });
+            }
         }
     } catch (err) {
         console.error('Failed to send message:', err);

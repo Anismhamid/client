@@ -23,7 +23,6 @@ import {
     Favorite as FavoriteIcon,
     Info as InfoIcon,
     ContactMail as ContactIcon,
-    List as ListIcon,
     Help as HelpIcon,
     Dashboard as DashboardIcon,
     ChatBubble,
@@ -44,6 +43,7 @@ import { AppSettings } from '../../settings/appSettings';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AISearch from '../../../atoms/AISearch';
 import { motion } from 'framer-motion';
+import handleRTL from '../../../locales/handleRTL';
 
 const openAppSettings = async () => {
     if (!Capacitor.isNativePlatform()) return;
@@ -91,8 +91,11 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
         setExpandedMobileMenu(false);
     };
 
+    const dir = handleRTL()
+
     return (
         <Box
+        dir={dir}
             sx={{
                 width: { xs: '100%', sm: 320 },
                 height: '100%',
@@ -544,34 +547,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                         </ListItemButton>
                     </ListItem>
                     {/* My Listings - only if logged in */}
-                    {isLoggedIn && (
-                        <ListItem disablePadding sx={{ mb: 1 }}>
-                            <ListItemButton
-                                component={NavLink}
-                                to={`${path.CustomerProfile.replace(':slug', '')}/${auth?.slug}`}
-                                onClick={handleNavLinkClick}
-                                sx={{
-                                    borderRadius: '8px',
-                                    '&.active': {
-                                        backgroundColor:
-                                            'rgba(220, 53, 69, 0.1)',
-                                        color: '#dc3545',
-                                        fontWeight: 'bold',
-                                    },
-                                }}
-                            >
-                                <ListIcon sx={{ ml: 1 }} />
-                                <ListItemText
-                                    primary={t('footer.myListings')}
-                                    primaryTypographyProps={{
-                                        sx: { fontWeight: 500 },
-                                        'aria-label':
-                                            'صفحة إعلاناتي - إعلاناتي موقع صفقة',
-                                    }}
-                                />
-                            </ListItemButton>
-                        </ListItem>
-                    )}
+                    
                     {/* Help */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton

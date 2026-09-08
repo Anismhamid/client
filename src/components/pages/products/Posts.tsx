@@ -7,31 +7,57 @@ import { generateCategoryJsonLd } from '../../../../utils/structuredData';
 import { Box, Typography } from '@mui/material';
 import { motion } from 'framer-motion';
 import { usePosts } from '../../../hooks/usePosts';
+import PageNotFound from '../Png';
 
-/**
- * Mains products
- * @returns products
- */
 const Posts: FunctionComponent = () => {
     const { t } = useTranslation();
-    const { category } = useParams<{ category: string }>();
+
+    const { category, subCategory } = useParams<{
+        category: string;
+        subCategory?: string;
+    }>();
+
     const { posts } = usePosts();
+
+    // Category is required
     if (!category) {
-        return <div className='text-center mt-4'>Category not found</div>;
+        return <PageNotFound />;
     }
 
-    const categoryData = generateCategoryJsonLd(category, posts);
+    // Normalize category
+    const normalizedCategory =
+        category.charAt(0).toUpperCase() + category.slice(1);
 
-    const pageTitle = t(`categories.${category}.heading`);
+    const categoryKey = `categories.${normalizedCategory}`;
+
+    const categoryTitle = t(`${categoryKey}.heading`);
+    const categoryDescription = t(`${categoryKey}.description`);
+
+    // اسم الـ subCategory المترجم
+    const subCategoryTitle = subCategory
+        ? t(`${categoryKey}.subCategories.${subCategory}`)
+        : null;
+
+    // العنوان النهائي للصفحة
+    const pageTitle = subCategoryTitle
+        ? `${subCategoryTitle} - ${categoryTitle}`
+        : categoryTitle;
+
+    // الوصف
+    const pageDescription = subCategoryTitle
+        ? `${subCategoryTitle} - ${categoryDescription}`
+        : categoryDescription;
+
+    const categoryData = generateCategoryJsonLd(category, posts);
 
     return (
         <>
             <JsonLd data={categoryData} />
+
             <title>{pageTitle}</title>
-            <meta
-                name='description'
-                content={t(`categories.${category}.description`)}
-            />
+
+            <meta name='description' content={pageDescription} />
+
             <Box
                 className='container-fluid'
                 sx={{
@@ -52,9 +78,17 @@ const Posts: FunctionComponent = () => {
                     }}
                 >
                     <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8 }}
+                        initial={{
+                            opacity: 0,
+                            y: 30,
+                        }}
+                        animate={{
+                            opacity: 1,
+                            y: 0,
+                        }}
+                        transition={{
+                            duration: 0.8,
+                        }}
                     >
                         <Typography
                             variant='h1'
@@ -70,10 +104,9 @@ const Posts: FunctionComponent = () => {
                                 },
                             }}
                         >
-                            {t(
-                                `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.heading`,
-                            )}
+                            {pageTitle}
                         </Typography>
+
                         <Typography
                             variant='body1'
                             sx={{
@@ -88,14 +121,13 @@ const Posts: FunctionComponent = () => {
                                 },
                             }}
                         >
-                            {t(
-                                `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`,
-                            )}
+                            {pageDescription}
                         </Typography>
                     </motion.div>
                 </Box>
             </Box>
-            <ProductCategory category={category} />
+
+            <ProductCategory category={category} subCategory={subCategory} />
         </>
     );
 };

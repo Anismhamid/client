@@ -156,9 +156,14 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             />
             <Route path={path.TermOfUse} element={<TermOfUse />} />
 
-            <Route path='/category/:category' element={<Products />} />
+            {/* <Route path='/category/:category' element={<Products />} />
 
-            <Route path='/category/:category/*' element={<Products />} />
+            <Route path='/category/:category/*' element={<Products />} /> */}
+
+            <Route
+                path='/category/:category/:subCategory?'
+                element={<Products />}
+            />
 
             <Route
                 path={`${productsPathes.postsDetails}/:postId`}

@@ -35,15 +35,23 @@ import { usePosts } from '../../../hooks/usePosts';
 
 interface PostsCategoryProps {
     category: string;
+    // ✅ جديد: بارامتر اختياري - نفس الكومبوننت بيخدم كل تصنيف فرعي
+    // بدل ما نعمل كومبوننت منفصل لكل subCategory
+    subCategory?: string;
 }
 
 const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     category,
+    subCategory,
 }: PostsCategoryProps) => {
     const [postIdToUpdate, setPostIdToUpdate] = useState<string>('');
-    const [visibleCount, setVisibleCount] = useState(12); // const [products, setProducts] = useState<Posts[]>([]);
-    // const [loading, setLoading] = useState<boolean>(true);
-    const { posts, setPosts, loading, refetch } = usePosts(category);
+    const [visibleCount, setVisibleCount] = useState(12);
+
+    const { posts, setPosts, loading, refetch } = usePosts(
+        category,
+        subCategory,
+    );
+
     const { auth } = useUser();
     const [showUpdateProductModal, setOnShowUpdateProductModal] =
         useState<boolean>(false);
@@ -58,6 +66,22 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
     const { t } = useTranslation();
     const theme = useTheme();
+
+    const categoryKey = `${category}-${subCategory ?? ''}`;
+
+    const [state, setState] = useState({
+        key: categoryKey,
+        visibleCount: 12,
+        searchQuery: '',
+    });
+
+    if (state.key !== categoryKey) {
+        setState({
+            key: categoryKey,
+            visibleCount: 12,
+            searchQuery: '',
+        });
+    }
 
     const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
     const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
@@ -184,10 +208,33 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
 
-    // FIX: Consistent key casing — no more manual toUpperCase() hack
-    const categoryTitle = t(`categories.${category}.heading`);
-    const categoryDescription = t(`categories.${category}.description`);
-    const currentUrl = `${window.location.origin}/category/${category}`;
+    // ✅ لو في subCategory، دور على ترجمة خاصة فيه أول، وإذا مش موجودة
+    // ارجع لترجمة التصنيف الرئيسي (fallback) - هيك ما تضطر تضيف مفاتيح
+    // ترجمة لكل تصنيف فرعي إذا مش ضروري
+    const categoryTitle = subCategory
+        ? t(
+              `categories.${category}.subCategories.${subCategory}.heading`,
+              t(`categories.${category}.heading`),
+          )
+        : t(`categories.${category}.heading`);
+
+    const categoryDescription = subCategory
+        ? t(
+              `categories.${category}.subCategories.${subCategory}.description`,
+              t(`categories.${category}.description`),
+          )
+        : t(`categories.${category}.description`);
+
+    const searchPlaceholder = subCategory
+        ? t(
+              `categories.${category}.subCategories.${subCategory}.label`,
+              t(`categories.${category}.label`),
+          )
+        : t(`categories.${category}.label`);
+
+    const currentUrl = subCategory
+        ? `${window.location.origin}/category/${category}/${subCategory}`
+        : `${window.location.origin}/category/${category}`;
 
     if (loading) return <Loader />;
 
@@ -223,7 +270,12 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
             </main>
         );
 
-    const generateCategory = generateCategoryJsonLd(category, posts);
+    // ✅ لو في subCategory بنبعتها مع الـ category عشان الـ structured data
+    // يعكس التصنيف الفرعي الفعلي مش بس الرئيسي
+    const generateCategory = generateCategoryJsonLd(
+        subCategory ? `${category}/${subCategory}` : category,
+        posts,
+    );
 
     return (
         <>
@@ -268,7 +320,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                     <SearchBox
                         searchQuery={searchQuery}
                         setSearchQuery={setSearchQuery}
-                        text={t(`categories.${category}.label`)}
+                        text={searchPlaceholder}
                     />
                 </Box>
             </Box>

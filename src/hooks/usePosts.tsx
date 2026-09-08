@@ -28,7 +28,10 @@ const isApiError = (error: unknown): error is ApiError => {
     );
 };
 
-export const usePosts = (category?: string) => {
+export const usePosts = (
+    category?: string,
+    subCategory?: string,
+) => {
     const [posts, setPosts] = useState<Posts[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -40,9 +43,16 @@ export const usePosts = (category?: string) => {
             setLoading(true);
             setError(null);
 
-            const data = category
-                ? await getpostsByCategory(category)
-                : await getAllPosts();
+            let data: Posts[];
+
+            if (category) {
+                data = await getpostsByCategory(
+                    category,
+                    subCategory,
+                );
+            } else {
+                data = await getAllPosts();
+            }
 
             if (isMounted.current) {
                 setPosts(data);
@@ -66,7 +76,7 @@ export const usePosts = (category?: string) => {
                 setLoading(false);
             }
         }
-    }, [category]);
+    }, [category, subCategory]);
 
     useEffect(() => {
         isMounted.current = true;

@@ -183,14 +183,22 @@ export async function deletePost(postId: string) {
 
 /**
  * Get posts by category name
- * @param category - The name of the category to fetch posts for
- * @returns Array of posts if successful, or an empty array if there's an error
+ * @param category - The name of the category
+ * @param subCategory - Optional subcategory
+ * @returns Array of posts
  */
-export const getpostsByCategory = async (category: string) => {
+export const getpostsByCategory = async (
+    category: string,
+    subCategory?: string,
+): Promise<Posts[]> => {
     try {
-        const response = await axios.get(`${api}/posts/${category}`);
+        const response = await axios.get(`${api}/posts/${category}`, {
+            params: subCategory ? { subCategory } : undefined,
+        });
+
         return response.data;
-    } catch {
+    } catch (error) {
+        console.error('Failed to fetch posts by category:', error);
         return [];
     }
 };
@@ -232,7 +240,10 @@ export const toggleLike = async (postId: string) => {
 
         return res.data;
     } catch (error: any) {
-        console.error('❌ Like API Error:', error.response?.data || error.message);
+        console.error(
+            '❌ Like API Error:',
+            error.response?.data || error.message,
+        );
         throw error;
     }
 };

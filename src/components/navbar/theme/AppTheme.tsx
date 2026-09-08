@@ -18,13 +18,12 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LanguageSwitcher from '../../../locales/languageSwich';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import handleRTL from '../../../locales/handleRTL';
 import {
     Brightness4,
     Brightness7,
     Menu as MenuIcon,
-    Category as CategoryIcon,
     Home as HomeIcon,
     Favorite as FavoriteIcon,
     Info as InfoIcon,
@@ -43,11 +42,8 @@ import { patchUserStatus } from '../../../services/usersServices';
 import RoleType from '../../../interfaces/UserType';
 import { useTranslation } from 'react-i18next';
 import useToken from '../../../hooks/useToken';
-import MegaMenu from '../MegaMenu';
 import AccountMenu from '../userManage/AccountMenu';
 import { useUser } from '../../../hooks/useUSer';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { productsAndCategories } from '../navCategoryies';
 import JsonLd from '../../../../utils/JsonLd';
 import { GradientSwitch } from './GradientSwitch';
 import MobileDrawer from './MobileDrawer';
@@ -58,32 +54,6 @@ interface ThemeProps {
     mode: PaletteMode;
     setMode: (mode: PaletteMode) => void;
 }
-
-// Styled NavLink for better SEO and accessibility
-const StyledNavLink = styled(NavLink)(({ theme }) => ({
-    textDecoration: 'none',
-    color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#4a5568',
-    padding: '8px 16px',
-    borderRadius: '8px',
-    transition: 'all 0.3s ease',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    '&:hover': {
-        backgroundColor:
-            theme.palette.mode === 'dark'
-                ? 'rgba(255, 255, 255, 0.1)'
-                : 'rgba(0, 0, 0, 0.04)',
-        transform: 'translateY(-2px)',
-    },
-    '&.active': {
-        fontWeight: 'bold',
-        backgroundColor:
-            theme.palette.mode === 'dark'
-                ? 'rgba(255, 255, 255, 0.884)'
-                : 'rgb(245, 159, 11)',
-    },
-}));
 
 const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const handleThemeChange = (
@@ -99,7 +69,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
     const { decodedToken, setAfterDecode } = useToken();
     const { auth, setAuth, isLoggedIn, setIsLoggedIn } = useUser();
-    const [megaAnchor, setMegaAnchor] = useState<HTMLElement | null>(null);
     const [mobileOpen, setMobileOpen] = useState(false);
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<
         string | false
@@ -119,8 +88,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
     const { unreadCounts } = useChat();
     const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
-
-    const openMega = Boolean(megaAnchor);
 
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -195,7 +162,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
             <AppBar
                 component='header'
-                position='relative'
+                position='sticky'
                 dir={dir}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={() => setHovered(true)}
@@ -276,28 +243,64 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             </IconButton>
 
                             {/* Logo */}
+
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <Link
+                                <StyledNavLink
                                     to={path.Home}
                                     style={{ textDecoration: 'none' }}
                                     aria-label='الرئيسية - موقع صفقة'
                                     title='الرئيسية - موقع صفقة'
-                                    onClick={() => {
-                                        // Close mega menu if open
-                                        setMegaAnchor(null);
+                                >
+                                    <SafqaLogo />
+                                </StyledNavLink>
+                            </motion.div>
+
+                            {isMobile && isLoggedIn && (
+                                <Box role='dev' sx={{ flexShrink: 0 }}>
+                                    <Badge
+                                        badgeContent={totalUnread || 0}
+                                        color='error'
+                                    >
+                                        <StyledNavLink
+                                            to={path.MessagesPage}
+                                            aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
+                                            title={`${t('links.messages', 'الرسائل')} الرسائل`}
+                                        >
+                                            <ChatBubble sx={{ fontSize: 20 }} />
+                                        </StyledNavLink>
+                                    </Badge>
+                                </Box>
+                            )}
+
+                            {/* My Listings - only if logged in */}
+                            {isLoggedIn && (
+                                <Box
+                                    sx={{
+                                        borderRadius: '8px',
+                                        '&.active': {
+                                            backgroundColor:
+                                                'rgba(220, 53, 69, 0.1)',
+                                            color: '#dc3545',
+                                            fontWeight: 'bold',
+                                        },
                                     }}
                                 >
-                                    {/* <img
-                                        src='atoms/deepseek_jsx_20260522_66a750.jsx'
-                                        alt='Safqa Logo'
-                                        style={{ width: '150px' }}
-                                    /> */}
-                                    <SafqaLogo />
-                                </Link>
-                            </motion.div>
+                                    <StyledNavLink
+                                        to={`${path.CustomerProfile.replace(':slug', '')}/${auth?.slug}`}
+                                        aria-label={
+                                            t('footer.myListings') || 'إعلاناتي'
+                                        }
+                                        title={
+                                            t('footer.myListings') || 'إعلاناتي'
+                                        }
+                                    >
+                                        <ListIcon sx={{ fontSize: 20 }} />
+                                    </StyledNavLink>
+                                </Box>
+                            )}
 
                             {/* Desktop Navigation */}
                             <Box
@@ -336,65 +339,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
                                 {/* Products with mega menu wrapper */}
 
-                                <Box
-                                    component='li'
-                                    role='listitem'
-                                    sx={{ flexShrink: 0, position: 'relative' }}
-                                    onMouseEnter={
-                                        !isMobile
-                                            ? (e) =>
-                                                  setMegaAnchor(e.currentTarget)
-                                            : undefined
-                                    }
-                                    onMouseLeave={
-                                        !isMobile
-                                            ? () => setMegaAnchor(null)
-                                            : undefined
-                                    }
-                                    onClick={
-                                        isMobile
-                                            ? (e) =>
-                                                  setMegaAnchor(e.currentTarget)
-                                            : undefined
-                                    }
-                                    aria-haspopup='true'
-                                    aria-expanded={openMega ? 'true' : 'false'}
-                                >
-                                    <KeyboardArrowDownIcon
-                                        sx={{
-                                            transition:
-                                                'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                            transform: openMega
-                                                ? 'rotate(180deg)'
-                                                : 'rotate(0deg)',
-                                        }}
-                                    />
-                                    <CategoryIcon sx={{ fontSize: 20 }} />
-                                    {/* <Typography
-                                        variant='body2'
-                                        sx={{ fontWeight: 500 }}
-                                    >
-                                        {t('links.products')}
-                                    </Typography> */}
-                                </Box>
-                                {/* Placed OUTSIDE the trigger box to prevent parent event bubbling closure traps */}
-                                <MegaMenu
-                                    anchorEl={megaAnchor}
-                                    open={openMega}
-                                    onClose={() => setMegaAnchor(null)}
-                                    onMouseEnter={
-                                        !isMobile
-                                            ? () => setMegaAnchor(megaAnchor)
-                                            : undefined
-                                    }
-                                    onMouseLeave={
-                                        !isMobile
-                                            ? () => setMegaAnchor(null)
-                                            : undefined
-                                    }
-                                    categories={productsAndCategories}
-                                    mode={mode}
-                                />
+        
                                 {/* How to delete your account in safqa */}
                                 <Box
                                     component='li'
@@ -446,6 +391,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <InfoIcon sx={{ fontSize: 20 }} />
                                     </StyledNavLink>
                                 </Box>
+
                                 {/* Messages */}
                                 {isLoggedIn && (
                                     <Box
@@ -453,20 +399,19 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         role='listitem'
                                         sx={{ flexShrink: 0 }}
                                     >
-                                        {' '}
                                         <Badge
                                             badgeContent={totalUnread || 0}
                                             color='error'
                                         >
                                             <StyledNavLink
                                                 to={path.MessagesPage}
-                                                aria-label={`${t('links.messages')} الرسائل موقع صفقة`}
-                                                title={t('links.messages')}
+                                                aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
+                                                title={`${t('links.messages', 'الرسائل')} الرسائل`}
                                             >
                                                 <ChatBubble
                                                     sx={{ fontSize: 20 }}
                                                 />
-                                            </StyledNavLink>{' '}
+                                            </StyledNavLink>
                                         </Badge>
                                     </Box>
                                 )}
@@ -485,18 +430,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <Typography component='span'></Typography>
                                     </StyledNavLink>
                                 </Box>
-                                {/* My Listings - only if logged in */}
-                                {isLoggedIn ? (
-                                    <Box component='li' role='listitem'>
-                                        <StyledNavLink
-                                            to={`${path.CustomerProfile.replace(':slug', '')}/${auth?.slug}`}
-                                            aria-label={`${t('footer.myListings')}`}
-                                            title={`${t('footer.myListings')}`}
-                                        >
-                                            <ListIcon sx={{ fontSize: 20 }} />
-                                        </StyledNavLink>
-                                    </Box>
-                                ) : null}
+
                                 {/* Help */}
                                 <Box component='li' role='listitem'>
                                     <StyledNavLink
@@ -730,3 +664,29 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 };
 
 export default Theme;
+
+// Styled NavLink for better SEO and accessibility
+const StyledNavLink = styled(NavLink)(({ theme }) => ({
+    textDecoration: 'none',
+    color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#4a5568',
+    padding: '8px 16px',
+    borderRadius: '8px',
+    transition: 'all 0.3s ease',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    '&:hover': {
+        backgroundColor:
+            theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.1)'
+                : 'rgba(0, 0, 0, 0.04)',
+        transform: 'translateY(-2px)',
+    },
+    '&.active': {
+        fontWeight: 'bold',
+        backgroundColor:
+            theme.palette.mode === 'dark'
+                ? 'rgba(255, 255, 255, 0.884)'
+                : 'rgb(245, 159, 11)',
+    },
+}));

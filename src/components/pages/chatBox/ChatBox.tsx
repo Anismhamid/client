@@ -20,7 +20,6 @@ import {
     Fade,
     Zoom,
     Fab,
-    Button,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -196,63 +195,63 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         });
     }, [isLoading, userMessages.length]);
 
-    // دالة تحديث حالة الرسائل إلى مقروءة
-    // دالة تحديث حالة الرسائل إلى مقروءة
-    const markMessagesAsSeen = useCallback(() => {
-        if (!otherUser?._id || !socket) {
-            console.log('Cannot mark as seen: missing user or socket');
-            return;
-        }
+    // دالة موحّدة: تحديث حالة الرسائل إلى مقروءة عبر الـ API + محلياً + Socket + تصفير العداد
+    // بتحل مكان التكرار يلي كان موجود بثلاث أماكن (فتح الشات / وصول رسالة / سكرول)
+    const markAsSeen = useCallback(
+        (lastMessageId?: string) => {
+            if (!otherUser?._id || !socket) {
+                console.log('Cannot mark as seen: missing user or socket');
+                return;
+            }
 
-        console.log('Marking messages as seen for user:', otherUser._id);
+            axios
+                .patch(
+                    `${api}/messages/mark-as-seen/${otherUser._id}`,
+                    {},
+                    { headers: { Authorization: token } },
+                )
+                .then(() => {
+                    setMessagesForUser(
+                        otherUser._id ?? '',
+                        (prev: LocalMessage[]): LocalMessage[] => {
+                            return prev.map((m): LocalMessage => {
+                                if (
+                                    m?.from?._id === otherUser._id &&
+                                    m.status !== 'seen'
+                                ) {
+                                    return { ...m, status: 'seen' as const };
+                                }
+                                return m;
+                            });
+                        },
+                    );
 
-        // جمع معرفات الرسائل غير المقروءة من المستخدم الآخر
-        const unseenMessages = userMessages.filter(
-            (m) => m?.from?._id === otherUser._id && m.status !== 'seen',
-        );
+                    // ✅ تصفير العداد - كان ناقص من كل الأماكن يلي بتعلّم seen تلقائياً
+                    setUnreadForUser(otherUser._id as string, 0);
 
-        if (unseenMessages.length === 0) {
-            console.log('No unseen messages to mark');
-            return;
-        }
+                    if (lastMessageId) lastSeenRef.current = lastMessageId;
 
-        console.log('Unseen messages count:', unseenMessages.length);
-
-        // تحديث الحالة محلياً أولاً
-        setMessagesForUser(
-            otherUser._id,
-            (prev: LocalMessage[]): LocalMessage[] => {
-                return prev.map((m): LocalMessage => {
-                    if (m?.from?._id === otherUser._id && m.status !== 'seen') {
-                        console.log('Updating message to seen locally:', m._id);
-                        return { ...m, status: 'seen' as const };
-                    }
-                    return m;
+                    const roomId = [otherUser._id, currentUser._id]
+                        .sort()
+                        .join('_');
+                    socket.emit('message:seen', {
+                        from: currentUser._id, // من قرأ الرسائل
+                        to: otherUser._id, // من أرسل الرسائل
+                        roomId,
+                    });
+                })
+                .catch((err) => {
+                    console.error('Failed to mark as seen:', err);
                 });
-            },
-        );
-
-        // ✅ إرسال عبر Socket مع from و to بشكل صحيح
-        const roomId = [otherUser._id, currentUser._id].sort().join('_');
-        const seenData = {
-            from: currentUser._id, // من قرأ الرسائل
-            to: otherUser._id, // من أرسل الرسائل
-            roomId: roomId,
-        };
-
-        console.log('Emitting message:seen from frontend:', seenData);
-        socket.emit('message:seen', seenData);
-
-        // تصفير العداد
-        setUnreadForUser(otherUser._id, 0);
-    }, [
-        otherUser?._id,
-        currentUser._id,
-        userMessages,
-        setMessagesForUser,
-        setUnreadForUser,
-        socket,
-    ]);
+        },
+        [
+            otherUser?._id,
+            currentUser._id,
+            token,
+            setMessagesForUser,
+            setUnreadForUser,
+        ],
+    );
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -369,62 +368,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
             if (nearBottom) {
                 console.log('User is near bottom, marking as seen');
-                lastSeenRef.current = lastMessage._id;
-
-                // تحديث عبر API
-                axios
-                    .patch(
-                        `${api}/messages/mark-as-seen/${otherUser._id}`,
-                        {},
-                        {
-                            headers: { Authorization: token },
-                        },
-                    )
-                    .then(() => {
-                        console.log('API mark as seen success');
-                        // تحديث الحالة محلياً
-                        setMessagesForUser(
-                            otherUser._id ?? '',
-                            (prev: LocalMessage[]): LocalMessage[] => {
-                                return prev.map((m): LocalMessage => {
-                                    if (
-                                        m?.from?._id === otherUser._id &&
-                                        m.status !== 'seen'
-                                    ) {
-                                        return {
-                                            ...m,
-                                            status: 'seen' as const,
-                                        };
-                                    }
-                                    return m;
-                                });
-                            },
-                        );
-
-                        // إرسال عبر Socket
-                        const roomId = [otherUser._id, currentUser._id]
-                            .sort()
-                            .join('_');
-                        socket.emit('message:seen', {
-                            from: currentUser._id,
-                            to: otherUser._id,
-                            roomId: roomId,
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('Failed to mark as seen:', err);
-                    });
+                markAsSeen(lastMessage._id);
             }
         }
-    }, [
-        userMessages,
-        otherUser._id,
-        token,
-        currentUser._id,
-        setMessagesForUser,
-        socket,
-        isNearBottom,
-    ]);
+    }, [userMessages, otherUser._id, isNearBottom, markAsSeen]);
 
     // عند فتح المحادثة، قم بتحديث الحالة
     useEffect(() => {
@@ -442,51 +389,12 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
             if (unseenMessages.length > 0 && isNearBottom()) {
                 console.log('Marking as seen on chat open');
-
-                axios
-                    .patch(
-                        `${api}/messages/mark-as-seen/${otherUser._id}`,
-                        {},
-                        {
-                            headers: { Authorization: token },
-                        },
-                    )
-                    .then(() => {
-                        setMessagesForUser(
-                            otherUser._id ?? '',
-                            (prev: LocalMessage[]): LocalMessage[] => {
-                                return prev.map((m): LocalMessage => {
-                                    if (
-                                        m?.from?._id === otherUser._id &&
-                                        m.status !== 'seen'
-                                    ) {
-                                        return {
-                                            ...m,
-                                            status: 'seen' as const,
-                                        };
-                                    }
-                                    return m;
-                                });
-                            },
-                        );
-
-                        const roomId = [otherUser._id, currentUser._id]
-                            .sort()
-                            .join('_');
-                        socket.emit('message:seen', {
-                            from: currentUser._id,
-                            to: otherUser._id,
-                            roomId: roomId,
-                        });
-                    })
-                    .catch((err) => {
-                        console.error('Failed to mark as seen on open:', err);
-                    });
+                markAsSeen(unseenMessages[unseenMessages.length - 1]._id);
             }
         }, 500);
 
         return () => clearTimeout(timeoutId);
-    }, [otherUser._id, isLoading]);
+    }, [otherUser._id, isLoading, markAsSeen]);
 
     // Socket events
     useEffect(() => {
@@ -547,15 +455,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     return;
                 }
 
-                // إذا كان المستخدم الحالي هو من رأى الرسائل (أي المستخدم الآخر يرى رسائله)
-                if (from === currentUser._id && to === otherUser._id) {
-                    console.log('Updating messages to seen for current user');
+                // otherUser قرا رسايلي -> علّم رسايلي انا (currentUser) كـ seen
+                // هاد هو الفرع يلي بيخلّي الـ tick يزرق لايف عند صاحب الرسالة الأصلي
+                if (from === otherUser._id && to === currentUser._id) {
+                    console.log('Updating my own messages to seen');
 
                     setMessagesForUser(
                         otherUser._id ?? '',
                         (prev: LocalMessage[]): LocalMessage[] => {
                             return prev.map((m): LocalMessage => {
-                                // تحديث الرسائل المرسلة من المستخدم الحالي إلى المستخدم الآخر
                                 if (
                                     m?.from?._id === currentUser._id &&
                                     m.status !== 'seen'
@@ -572,23 +480,18 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     );
                 }
 
-                // إذا كان المستخدم الآخر هو من رأى الرسائل
-                if (from === otherUser._id && to === currentUser._id) {
-                    console.log('Updating messages to seen for other user');
+                // أنا قريت رسايل otherUser -> echo لحدث بعتّه بنفسي، علّم رسايل otherUser
+                if (from === currentUser._id && to === otherUser._id) {
+                    console.log('Updating other user messages to seen (echo)');
 
                     setMessagesForUser(
                         otherUser._id ?? '',
                         (prev: LocalMessage[]): LocalMessage[] => {
                             return prev.map((m): LocalMessage => {
-                                // تحديث الرسائل المرسلة من المستخدم الآخر
                                 if (
                                     m?.from?._id === otherUser._id &&
                                     m.status !== 'seen'
                                 ) {
-                                    console.log(
-                                        'Updating other user message to seen:',
-                                        m._id,
-                                    );
                                     return { ...m, status: 'seen' as const };
                                 }
                                 return m;
@@ -663,31 +566,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 position: 'relative',
             }}
         >
-            {/* زر اختبار يدوي */}
-            <Button
-                variant='contained'
-                size='small'
-                onClick={() => {
-                    console.log('Manual mark as seen triggered');
-                    const unseen = userMessages.filter(
-                        (m) =>
-                            m?.from?._id === otherUser._id &&
-                            m.status !== 'seen',
-                    );
-                    console.log('Unseen messages:', unseen);
-                    markMessagesAsSeen();
-                }}
-                sx={{
-                    position: 'absolute',
-                    top: 10,
-                    right: 10,
-                    zIndex: 100,
-                    display: 'none', // إخفاء في الإنتاج
-                }}
-            >
-                Mark as Seen
-            </Button>
-
             <Menu
                 anchorEl={anchorEl}
                 open={open}
@@ -744,58 +622,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             console.log('Marking as seen on scroll');
 
                             if (lastSeenRef.current !== lastMessage._id) {
-                                lastSeenRef.current = lastMessage._id;
-
-                                axios
-                                    .patch(
-                                        `${api}/messages/mark-as-seen/${otherUser._id}`,
-                                        {},
-                                        {
-                                            headers: { Authorization: token },
-                                        },
-                                    )
-                                    .then(() => {
-                                        setMessagesForUser(
-                                            otherUser._id ?? '',
-                                            (
-                                                prev: LocalMessage[],
-                                            ): LocalMessage[] => {
-                                                return prev.map(
-                                                    (m): LocalMessage => {
-                                                        if (
-                                                            m?.from?._id ===
-                                                                otherUser._id &&
-                                                            m.status !== 'seen'
-                                                        ) {
-                                                            return {
-                                                                ...m,
-                                                                status: 'seen' as const,
-                                                            };
-                                                        }
-                                                        return m;
-                                                    },
-                                                );
-                                            },
-                                        );
-
-                                        const roomId = [
-                                            otherUser._id,
-                                            currentUser._id,
-                                        ]
-                                            .sort()
-                                            .join('_');
-                                        socket.emit('message:seen', {
-                                            from: currentUser._id,
-                                            to: otherUser._id,
-                                            roomId: roomId,
-                                        });
-                                    })
-                                    .catch((err) => {
-                                        console.error(
-                                            'Failed to mark as seen on scroll:',
-                                            err,
-                                        );
-                                    });
+                                markAsSeen(lastMessage._id);
                             }
                         }
                     }
