@@ -44,6 +44,7 @@ import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AISearch from '../../../atoms/AISearch';
 import { motion } from 'framer-motion';
 import handleRTL from '../../../locales/handleRTL';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 const openAppSettings = async () => {
     if (!Capacitor.isNativePlatform()) return;
@@ -91,11 +92,11 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
         setExpandedMobileMenu(false);
     };
 
-    const dir = handleRTL()
+    const dir = handleRTL();
 
     return (
         <Box
-        dir={dir}
+            dir={dir}
             sx={{
                 width: { xs: '100%', sm: 320 },
                 height: '100%',
@@ -546,8 +547,32 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
-                    {/* My Listings - only if logged in */}
-                    
+                    {/* Jobs */}
+                    <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                            component={NavLink}
+                            to={path.jobs}
+                            onClick={handleNavLinkClick}
+                            sx={{
+                                borderRadius: '8px',
+                                '&.active': {
+                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                                    color: '#dc3545',
+                                    fontWeight: 'bold',
+                                },
+                            }}
+                        >
+                            <WorkOutlineIcon sx={{ ml: 1 }} />
+
+                            <ListItemText
+                                primary={t('links.jobs') || 'الوظائف'}
+                                primaryTypographyProps={{
+                                    sx: { fontWeight: 500 },
+                                    'aria-label': t('links.jobs') || 'الوظائف',
+                                }}
+                            />
+                        </ListItemButton>
+                    </ListItem>
                     {/* Help */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton

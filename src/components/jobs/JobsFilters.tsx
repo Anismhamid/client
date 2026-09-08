@@ -250,7 +250,7 @@ const JobsFilters: FunctionComponent<JobsFiltersProps> = ({
                 {/* Location */}
                 <TextField
                     size='small'
-                    label={t('filters.location')}
+                    label={t('pages.jobs.filters.location')}
                     value={localFilters.location || ''}
                     onChange={(event) =>
                         updateFilter(
@@ -264,7 +264,7 @@ const JobsFilters: FunctionComponent<JobsFiltersProps> = ({
                 {/* Industry */}
                 <TextField
                     size='small'
-                    label={t('filters.industry')}
+                    label={t('pages.jobs.filters.industry')}
                     value={localFilters.industry || ''}
                     onChange={(event) =>
                         updateFilter(

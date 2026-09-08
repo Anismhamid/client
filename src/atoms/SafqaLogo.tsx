@@ -50,6 +50,7 @@ const SafqaLogo = ({ onClick }: SafqaLogoProps) => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    textDecoration: 'none',
                     boxShadow: isHovered
                         ? `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`
                         : 'none',

@@ -33,6 +33,7 @@ import {
     Dashboard as DashboardIcon,
     ChatBubble,
     DeleteSharp,
+    WorkOutline as WorkOutlineIcon,
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { path } from '../../../routes/routes';
@@ -258,6 +259,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </StyledNavLink>
                             </motion.div>
 
+                            {/* Messages */}
                             {isMobile && isLoggedIn && (
                                 <Box role='dev' sx={{ flexShrink: 0 }}>
                                     <Badge
@@ -274,7 +276,20 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     </Badge>
                                 </Box>
                             )}
-
+                            {/* Jobs */}
+                            <Box
+                                component='li'
+                                role='listitem'
+                                sx={{ flexShrink: 0 }}
+                            >
+                                <StyledNavLink
+                                    to={path.jobs}
+                                    aria-label={t('links.jobs') || 'الوظائف'}
+                                    title={t('links.jobs') || 'الوظائف'}
+                                >
+                                    <WorkOutlineIcon sx={{ fontSize: 20 }} />
+                                </StyledNavLink>
+                            </Box>
                             {/* My Listings - only if logged in */}
                             {isLoggedIn && (
                                 <Box
@@ -326,7 +341,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <Box
                                     component='li'
                                     role='listitem'
-                                    sx={{ flexShrink: 0 }}
+                                    sx={{ flexShrink: 0, listStyle: 'none' }}
                                 >
                                     <StyledNavLink
                                         to={path.Home}
@@ -337,9 +352,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     </StyledNavLink>
                                 </Box>
 
-                                {/* Products with mega menu wrapper */}
-
-        
                                 {/* How to delete your account in safqa */}
                                 <Box
                                     component='li'
@@ -668,6 +680,7 @@ export default Theme;
 // Styled NavLink for better SEO and accessibility
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
     textDecoration: 'none',
+    listStyle: 'none',
     color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#4a5568',
     padding: '8px 16px',
     borderRadius: '8px',

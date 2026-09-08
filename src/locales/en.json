@@ -1337,7 +1337,9 @@
         "logout": "Logout",
         "orders": "Orders",
         "receipts": "Receipts",
-        "messages": "Chat"
+        "messages": "Chat",
+
+        "jobs": "Jobs"
     },
     "orders": {
         "status": {

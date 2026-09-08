@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { Job } from '../../interfaces/jobs.types';
+import { useUser } from '../../hooks/useUSer';
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
@@ -27,9 +28,9 @@ interface JobsCardProps {
 }
 
 const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
-    const { t } = useTranslation('jobs');
+    const { t } = useTranslation();
     const navigate = useNavigate();
-
+    const { auth } = useUser();
     const formatSalary = () => {
         if (job.salaryMin === undefined && job.salaryMax === undefined) {
             return null;
@@ -106,8 +107,15 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                     <Stack direction='row' spacing={1} alignItems='center'>
                         <Chip
                             size='small'
-                            icon={<WorkOutline sx={{ fontSize: 16, color: '#fff !important' }} />}
-                            label={t(`types.${job.type}`)}
+                            icon={
+                                <WorkOutline
+                                    sx={{
+                                        fontSize: 16,
+                                        color: '#fff !important',
+                                    }}
+                                />
+                            }
+                            label={t(`pages.jobs.types.${job.type}`)}
                             sx={{
                                 background: BRAND_GRADIENT,
                                 color: '#fff',
@@ -147,7 +155,9 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                                     >
                                         {' '}
                                         /{' '}
-                                        {t(`salaryPeriods.${job.salaryPeriod}`)}
+                                        {t(
+                                            `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
+                                        )}
                                     </Typography>
                                 )}
                             </Typography>
@@ -165,7 +175,9 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                     {job.experienceLevel && (
                         <Chip
                             size='small'
-                            label={t(`experienceLevels.${job.experienceLevel}`)}
+                            label={t(
+                                `pages.jobs.experienceLevels.${job.experienceLevel}`,
+                            )}
                         />
                     )}
 
@@ -173,6 +185,28 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
 
                     {job.industry && <Chip size='small' label={job.industry} />}
                 </Stack>
+                {/* Contact phones */}
+                {(auth?.phone?.phone_1 || auth?.phone?.phone_2) && (
+                    <Stack spacing={1} sx={{ mt: 2 }}>
+                        <Divider />
+
+                        {auth?.phone?.phone_1 && (
+                            <Chip
+                                size='small'
+                                label={`${t('register.phone1')}: ${auth.phone.phone_1}`}
+                                sx={{ width: 'fit-content' }}
+                            />
+                        )}
+
+                        {auth?.phone?.phone_2 && (
+                            <Chip
+                                size='small'
+                                label={`${t('register.phone2')}: ${auth.phone.phone_2}`}
+                                sx={{ width: 'fit-content' }}
+                            />
+                        )}
+                    </Stack>
+                )}
             </CardContent>
         </Card>
     );
