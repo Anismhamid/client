@@ -1,7 +1,4 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import HomeIcon from '@mui/icons-material/Home';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import {
     Box,
     Chip,
@@ -16,44 +13,14 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
-import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
-
-/* ── Config ─────────────────────────────── */
-const typeConfig: Record<
-    AdType,
-    {
-        label: string;
-        color: string;
-        bg: string;
-        icon: React.ReactNode;
-        accent: string;
-    }
-> = {
-    homepage: {
-        label: 'Homepage',
-        color: '#085041',
-        bg: '#E1F5EE',
-        accent: '#1D9E75',
-        icon: <HomeIcon sx={{ fontSize: 18 }} />,
-    },
-    top: {
-        label: 'Top',
-        color: '#633806',
-        bg: '#FAEEDA',
-        accent: '#BA7517',
-        icon: <KeyboardArrowUpIcon sx={{ fontSize: 18 }} />,
-    },
-    highlight: {
-        label: 'Highlight',
-        color: '#3C3489',
-        bg: '#EEEDFE',
-        accent: '#7F77DD',
-        icon: <StarBorderIcon sx={{ fontSize: 18 }} />,
-    },
-};
-
-const prices: Record<AdType, number> = { highlight: 10, top: 25, homepage: 50 };
+import { FeaturedAd } from '../../../interfaces/featuredAd';
+import {
+    FEATURED_AD_ICONS,
+    FEATURED_AD_PRICES,
+    FEATURED_AD_TIERS,
+} from '../../../interfaces/featuredAdsMeta';
 
 /* ── Stat card ───────────────────────────── */
 function StatCard({
@@ -66,13 +33,7 @@ function StatCard({
     color?: string;
 }) {
     return (
-        <Box
-            sx={{
-                bgcolor: 'action.hover',
-                borderRadius: 2,
-                p: '12px 14px',
-            }}
-        >
+        <Box sx={{ bgcolor: 'action.hover', borderRadius: 2, p: '12px 14px' }}>
             <Typography
                 variant='caption'
                 color='text.secondary'
@@ -84,7 +45,7 @@ function StatCard({
             <Typography
                 sx={{
                     fontSize: 22,
-                    fontWeight: 500,
+                    fontWeight: 700,
                     color: color ?? 'text.primary',
                 }}
             >
@@ -104,9 +65,11 @@ function AdRow({
     onDelete: (id: string) => void;
     deleting: boolean;
 }) {
-    const cfg = typeConfig[ad.type];
+    const { i18n } = useTranslation();
+    const tier = FEATURED_AD_TIERS[ad.type];
+    const Icon = FEATURED_AD_ICONS[ad.type];
     const fmt = (iso: string) =>
-        new Date(iso).toLocaleDateString('ar-PS', {
+        new Date(iso).toLocaleDateString(i18n.language, {
             day: 'numeric',
             month: 'short',
         });
@@ -118,12 +81,12 @@ function AdRow({
                 alignItems: 'center',
                 gap: 1.5,
                 bgcolor: 'background.paper',
-                border: '0.5px solid',
-                borderColor: 'divider',
+                border: '1.5px solid',
+                borderColor: ad.isActive ? `${tier.accent}40` : 'divider',
                 borderRadius: 3,
                 p: '10px 14px',
                 opacity: ad.isActive ? 1 : 0.6,
-                transition: 'opacity 0.2s',
+                transition: 'opacity 0.2s, border-color 0.2s',
             }}
         >
             {/* Icon */}
@@ -132,37 +95,32 @@ function AdRow({
                     width: 38,
                     height: 38,
                     borderRadius: 2,
-                    bgcolor: cfg.bg,
+                    bgcolor: tier.bg,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    color: cfg.color,
+                    color: tier.color,
                 }}
             >
-                {cfg.icon}
+                <Icon sx={{ fontSize: 18 }} />
             </Box>
 
             {/* Info */}
             <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography variant='body2' fontWeight={500} noWrap mb={0.4}>
+                <Typography variant='body2' fontWeight={600} noWrap mb={0.4}>
                     {ad.listingId?.product_name ?? '(الإعلان محذوف)'}
                 </Typography>
-                <Stack
-                    direction='row'
-                    alignItems='center'
-                    gap={1}
-                    flexWrap='wrap'
-                >
+                <Stack direction='row' alignItems='center' gap={1} flexWrap='wrap'>
                     <Chip
-                        label={cfg.label}
+                        label={tier.label}
                         size='small'
                         sx={{
-                            bgcolor: cfg.bg,
-                            color: cfg.color,
+                            bgcolor: tier.bg,
+                            color: tier.color,
                             fontSize: 10,
                             height: 18,
-                            fontWeight: 500,
+                            fontWeight: 700,
                         }}
                     />
                     <Typography variant='caption' color='text.disabled'>
@@ -181,11 +139,14 @@ function AdRow({
                         color: ad.isActive ? '#3B6D11' : '#5F5E5A',
                         fontSize: 10,
                         height: 18,
-                        fontWeight: 500,
+                        fontWeight: 700,
                     }}
                 />
-                <Typography variant='caption' color='text.secondary'>
-                    ₪{ad.isActive ? prices[ad.type] : '—'}
+                <Typography
+                    variant='caption'
+                    sx={{ color: tier.accent, fontWeight: 700 }}
+                >
+                    ₪{ad.isActive ? FEATURED_AD_PRICES[ad.type] : '—'}
                 </Typography>
             </Stack>
 
@@ -194,10 +155,7 @@ function AdRow({
                 size='small'
                 onClick={() => onDelete(ad._id)}
                 disabled={deleting}
-                sx={{
-                    color: 'text.disabled',
-                    '&:hover': { color: 'error.main' },
-                }}
+                sx={{ color: 'text.disabled', '&:hover': { color: 'error.main' } }}
             >
                 {deleting ? (
                     <CircularProgress size={14} />
@@ -226,9 +184,6 @@ export default function MyAdsDashboard() {
                 headers: { Authorization: localStorage.getItem('token') },
             });
             setAds(data?.ads || []);
-            // setActiveCounts(
-            //     data?.activeCounts || { homepage: 0, top: 0, highlight: 0 },
-            // );
         } catch (err) {
             console.error(err);
             setAds([]);
@@ -262,12 +217,14 @@ export default function MyAdsDashboard() {
             ? ads
             : ads.filter((a) => (tab === 'active' ? a.isActive : !a.isActive));
 
-    const totalPaid = ads.reduce((sum, a) => sum + prices[a.type], 0);
+    const totalPaid = ads.reduce(
+        (sum, a) => sum + FEATURED_AD_PRICES[a.type],
+        0,
+    );
 
     return (
         <Box sx={{ p: { xs: 2, md: 3 } }}>
-            {/* Page title */}
-            <Typography variant='h6' fontWeight={500} mb={2.5}>
+            <Typography variant='h6' fontWeight={700} mb={2.5}>
                 إعلاناتي المميزة
             </Typography>
 
@@ -282,10 +239,8 @@ export default function MyAdsDashboard() {
                 <Grid size={{ xs: 4 }}>
                     <StatCard
                         label='نشطة الآن'
-                        value={
-                            loading ? '—' : ads.filter((a) => a.isActive).length
-                        }
-                        color='#1D9E75'
+                        value={loading ? '—' : ads.filter((a) => a.isActive).length}
+                        color='#f59f0b'
                     />
                 </Grid>
                 <Grid size={{ xs: 4 }}>
@@ -304,6 +259,8 @@ export default function MyAdsDashboard() {
                     mb: 2,
                     minHeight: 36,
                     '& .MuiTab-root': { minHeight: 36, fontSize: 13, py: 0 },
+                    '& .Mui-selected': { color: '#f59f0b !important' },
+                    '& .MuiTabs-indicator': { bgcolor: '#f59f0b' },
                 }}
             >
                 <Tab label='الكل' value='all' />

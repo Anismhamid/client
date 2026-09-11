@@ -96,8 +96,8 @@
         "deleteConfirm": "هل أنت متأكد/ة من حذف هذه الرسالة؟",
         "edited": "تم التعديل",
         "deleteSuccess": "تم الحذف بنجاح",
-        "edit":"تعديل الرساله",
-        "deleteConversationHint":"لا يمكن التراجع عن هذا الإجراء",
+        "edit": "تعديل الرساله",
+        "deleteConversationHint": "لا يمكن التراجع عن هذا الإجراء",
         "deleteConversation": "حذف المحادثة"
     },
     "roles": {
@@ -1362,7 +1362,7 @@
         "login": "دخول",
         "logout": "تسجيل الخروج",
         "messages": "المحادثات",
-        "jobs":"الوظائف"
+        "jobs": "الوظائف"
     },
     "pages": {
         "jobs": {
@@ -2381,7 +2381,9 @@
             "active": "نشط",
             "expired": "منتهي",
             "daysLeft": "أيام متبقية",
-            "noActiveAds": "لا توجد إعلانات ترويجية نشطة حالياً"
+            "noActiveAds": "لا توجد إعلانات ترويجية نشطة حالياً",
+            "activeCount": "{{count}} نشط",
+            "activeDaysLeft": "نشط • {{count}} يوم"
         },
         "purchase": {
             "title": "شراء باقة ترويجية",
@@ -2394,7 +2396,21 @@
             "days": "يوم",
             "payNow": "ادفع الآن",
             "processing": "جاري المعالجة...",
-            "selectPackage": "اختر الباقة المناسبة لك"
+            "selectPackage": "اختر الباقة المناسبة لك",
+            "invalidDateRange": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية"
+        },
+        "topAdsSection": {
+            "title": "أفضل الإعلانات ⭐",
+            "subtitle": "الإعلانات الأكثر مشاهدة وتفاعلاً",
+            "viewAll": "عرض الكل",
+            "retry": "إعادة المحاولة",
+            "featuredBadge": "إعلان مميز",
+            "verified": "موثّق",
+            "types": {
+                "homepage": "صفحة رئيسية",
+                "top": "مرفوع",
+                "highlight": "مضيء"
+            }
         },
         "currentAds": "إعلاناتك الحالية",
         "noPromotedAds": "لا توجد إعلانات ترويجية بعد",
@@ -2412,7 +2428,8 @@
             "loading": "جاري التحميل...",
             "back": "رجوع",
             "next": "التالي",
-            "submit": "إرسال"
+            "submit": "إرسال",
+            "retry": "إعادة المحاولة"
         }
     },
     "colors": {

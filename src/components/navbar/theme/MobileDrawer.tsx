@@ -82,7 +82,7 @@ const navItemSxRed = {
     borderRadius: '8px',
     '&.active': {
         backgroundColor: 'rgba(220, 53, 69, 0.1)',
-        color: '#dc3545',
+        color: '#f59f0b',
         fontWeight: 'bold',
     },
 } as const;
@@ -552,33 +552,16 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                     component={NavLink}
                                     to={path.UsersManagement}
                                     onClick={handleNavLinkClick}
-                                    sx={{
-                                        borderRadius: '8px',
-                                        backgroundColor:
-                                            mode === 'dark'
-                                                ? 'rgba(144, 202, 249, 0.1)'
-                                                : 'rgba(33, 150, 243, 0.1)',
-                                        '&.active': {
-                                            backgroundColor:
-                                                'rgba(33, 150, 243, 0.2)',
-                                            color: '#2196f3',
-                                            fontWeight: 'bold',
-                                        },
-                                    }}
+                                    sx={navItemSxRed}
                                 >
-                                    <DashboardIcon
-                                        sx={{ ml: 1, color: '#2196f3' }}
-                                    />
+                                    <DashboardIcon sx={{ ml: 1 }} />
                                     <ListItemText
                                         primary={
                                             t('users-management') ||
                                             'لوحة التحكم'
                                         }
                                         primaryTypographyProps={{
-                                            sx: {
-                                                fontWeight: 600,
-                                                color: '#2196f3',
-                                            },
+                                            sx: { fontWeight: 500 },
                                             'aria-label': 'لوحة تحكم الإدارة',
                                         }}
                                     />

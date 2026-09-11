@@ -546,11 +546,15 @@ function CategorySection({
                     pr: 2,
                 }}
             >
-                {categoryInfo.icon && (
-                    <categoryInfo.icon
-                        sx={{ fontSize: 28, color: categoryInfo.color }}
-                    />
-                )}
+                {categoryInfo.icon &&
+                    (() => {
+                        const Icon = categoryInfo.icon;
+                        return (
+                            <Icon
+                                sx={{ fontSize: 28, color: categoryInfo.color }}
+                            />
+                        );
+                    })()}
                 <Typography
                     variant='h6'
                     fontWeight={700}

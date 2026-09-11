@@ -5,7 +5,7 @@ import { path, productsPathes } from './routes';
 import RoleType from '../interfaces/UserType';
 import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
-import MyAdsDashboard from '../components/pages/ads/MyAdsDashboard ';
+import MyAdsDashboard from '../components/pages/ads/MyAdsDashboard';
 import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSection';
 import PaymentSuccess from '../components/pages/payment/Success';
 import JobsPage from '../components/pages/Jobs/JobsPage';

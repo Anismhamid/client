@@ -7,7 +7,6 @@ import {
     alpha,
     Container,
     Button,
-    Paper,
     Chip,
     Stack,
 } from '@mui/material';
@@ -16,34 +15,37 @@ import EastIcon from '@mui/icons-material/East';
 import { LocalFireDepartment, Verified } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FunctionComponent } from 'react';
-import { useTopAds } from '../../../hooks/ads/useFeaturedAds';
-import { AdGridSkeleton } from './Adgridskeleton';
-import { HomepageAdCard } from './HomepageFeaturedSection';
+import { FunctionComponent, useMemo } from 'react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-// ── Constants ──────────────────────────────────────────────────────────────
+import { useTopAds } from '../../../hooks/ads/useFeaturedAds';
+import { HomepageAdCard } from './HomepageFeaturedSection';
+import { FEATURED_AD_TIERS } from '../../../interfaces/featuredAdsMeta';
+import { path } from '../../../routes/routes';
+import { AdGridSkeleton } from './Adgridskeleton';
+
 const MAX_ADS = 8;
 
-const FEATURED_META = {
+type FeaturedType = 'homepage' | 'top' | 'highlight';
+
+// Only color/bg are static — labels come from i18n
+const FEATURED_COLORS: Record<FeaturedType, { color: string; bg: string }> = {
     homepage: {
-        label: 'صفحة رئيسية',
-        color: '#f59e0b',
-        bg: 'rgba(245,158,11,0.10)',
+        color: FEATURED_AD_TIERS.homepage.accent,
+        bg: `${FEATURED_AD_TIERS.homepage.accent}1A`,
     },
     top: {
-        label: 'مرفوع',
-        color: '#818cf8',
-        bg: 'rgba(129,140,248,0.10)',
+        color: FEATURED_AD_TIERS.top.accent,
+        bg: `${FEATURED_AD_TIERS.top.accent}1A`,
     },
     highlight: {
-        label: 'مضيء',
-        color: '#34d399',
-        bg: 'rgba(52,211,153,0.10)',
+        color: FEATURED_AD_TIERS.highlight.accent,
+        bg: `${FEATURED_AD_TIERS.highlight.accent}1A`,
     },
-} as const;
+};
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ── Rank badge ─────────────────────────────────────────────────────────────
 interface RankBadgeProps {
     rank: number;
 }
@@ -81,45 +83,36 @@ const RankBadge = ({ rank }: RankBadgeProps) => {
     );
 };
 
-// ── Props ──────────────────────────────────────────────────────────────────
+// ── Main section ───────────────────────────────────────────────────────────
 interface TopAdsSectionProps {
     featured?: boolean;
-    featuredType?: keyof typeof FEATURED_META;
+    featuredType?: FeaturedType;
 }
 
-// ── Component ──────────────────────────────────────────────────────────────
 const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
     featured = false,
     featuredType = 'highlight',
 }) => {
     const theme = useTheme();
     const navigate = useNavigate();
-    const { ads: topAds, loading, error } = useTopAds();
-    const featuredMeta = FEATURED_META[featuredType];
+    const { t } = useTranslation();
+    const { ads: topAds, loading } = useTopAds();
+
+    const featuredMeta = useMemo(() => {
+        const colors = FEATURED_COLORS[featuredType];
+        return {
+            ...colors,
+            label: t(`ads.topAdsSection.types.${featuredType}`),
+        };
+    }, [featuredType, t]);
 
     if (loading) {
         return (
             <Box sx={{ mb: 6 }}>
                 <Typography variant='h5' fontWeight={800} sx={{ mb: 3 }}>
-                    أفضل الإعلانات ⭐
+                    {t('ads.topAdsSection.title')}
                 </Typography>
                 <AdGridSkeleton count={4} height={250} />
-            </Box>
-        );
-    }
-
-    if (error) {
-        return (
-            <Box sx={{ mb: 6, textAlign: 'center', py: 4 }}>
-                <Typography color='error' gutterBottom>
-                    {error}
-                </Typography>
-                <Button
-                    variant='outlined'
-                    onClick={() => window.location.reload()}
-                >
-                    إعادة المحاولة
-                </Button>
             </Box>
         );
     }
@@ -128,7 +121,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
 
     return (
         <Container
-            component={'article'}
+            component='article'
             maxWidth='lg'
             sx={{ mb: 6, px: { xs: 2, sm: 3, md: 4 } }}
         >
@@ -137,7 +130,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                {/* Featured Banner Card */}
+                {/* ── Featured banner card ────────────────────────────── */}
                 <Box
                     sx={{
                         borderRadius: '16px',
@@ -161,7 +154,6 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                         },
                     }}
                 >
-                    {/* Featured Banner */}
                     {featured && (
                         <Box
                             sx={{
@@ -194,12 +186,13 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                         letterSpacing: 0.5,
                                     }}
                                 >
-                                    إعلان مميز · {featuredMeta.label}
+                                    {t('ads.topAdsSection.featuredBadge')} ·{' '}
+                                    {featuredMeta.label}
                                 </Typography>
                             </Stack>
 
                             <Chip
-                                label='موثّق'
+                                label={t('ads.topAdsSection.verified')}
                                 size='small'
                                 sx={{
                                     height: 20,
@@ -214,7 +207,6 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                         </Box>
                     )}
 
-                    {/* Header Content */}
                     <Box sx={{ p: 2.5 }}>
                         <Stack
                             direction='row'
@@ -270,13 +262,13 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                         fontWeight={800}
                                         sx={{ mb: 0.5 }}
                                     >
-                                        أفضل الإعلانات ⭐
+                                        {t('ads.topAdsSection.title')}
                                     </Typography>
                                     <Typography
                                         variant='body2'
                                         color='text.secondary'
                                     >
-                                        الإعلانات الأكثر مشاهدة وتفاعلاً
+                                        {t('ads.topAdsSection.subtitle')}
                                     </Typography>
                                 </Box>
                             </Stack>
@@ -285,7 +277,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                 variant='text'
                                 endIcon={<EastIcon />}
                                 onClick={() =>
-                                    navigate('/featured-ads?type=top')
+                                    navigate(`${path.FeaturedAds}?type=top`)
                                 }
                                 sx={{
                                     fontWeight: 600,
@@ -298,12 +290,11 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                     },
                                 }}
                             >
-                                عرض الكل
+                                {t('ads.topAdsSection.viewAll')}
                             </Button>
                         </Stack>
                     </Box>
 
-                    {/* Featured overlay gradient */}
                     {featured && (
                         <Box
                             sx={{
@@ -319,7 +310,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                     )}
                 </Box>
 
-                {/* Ads Grid */}
+                {/* ── Ads grid ────────────────────────────────────────── */}
                 <Grid container spacing={2.5}>
                     {topAds.slice(0, MAX_ADS).map((ad, idx) => (
                         <Grid
@@ -334,17 +325,10 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                     delay: idx * 0.05,
                                 }}
                             >
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        borderRadius: 2,
-                                    }}
-                                >
+                                <Box sx={{ position: 'relative' }}>
                                     <RankBadge rank={idx + 1} />
                                     <HomepageAdCard ad={ad} index={idx} />
-                                </Paper>
+                                </Box>
                             </motion.div>
                         </Grid>
                     ))}

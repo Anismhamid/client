@@ -1,70 +1,40 @@
-import HomeIcon from '@mui/icons-material/Home';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
-import { Box, Chip, Stack, Typography } from '@mui/material';
-import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
+import { Box, Chip, IconButton, Stack, Typography } from '@mui/material';
+import { FeaturedAd } from '../../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+
+import {
+    FEATURED_AD_ICONS,
+    FEATURED_AD_PRICES,
+    FEATURED_AD_TIERS,
+} from '../../../interfaces/featuredAdsMeta';
 
 interface FeaturedAdCardProps {
     ad: FeaturedAd;
     onDelete?: (id: string) => void;
 }
 
-const typeConfig: Record<
-    AdType,
-    { label: string; color: string; bg: string; icon: React.ReactNode }
-> = {
-    homepage: {
-        label: 'Homepage',
-        color: '#085041',
-        bg: '#E1F5EE',
-        icon: <HomeIcon sx={{ fontSize: 14 }} />,
-    },
-    top: {
-        label: 'Top',
-        color: '#633806',
-        bg: '#FAEEDA',
-        icon: <KeyboardArrowUpIcon sx={{ fontSize: 14 }} />,
-    },
-    highlight: {
-        label: 'Highlight',
-        color: '#3C3489',
-        bg: '#EEEDFE',
-        icon: <StarBorderIcon sx={{ fontSize: 14 }} />,
-    },
-};
-
-const accentColor: Record<AdType, string> = {
-    homepage: '#1D9E75',
-    top: '#BA7517',
-    highlight: '#7F77DD',
-};
-
-export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
-    const config = typeConfig[ad.type];
-    const accent = accentColor[ad.type];
-
-    const priceMap: Record<AdType, number> = {
-        highlight: 10,
-        top: 25,
-        homepage: 50,
-    };
+export default function FeaturedAdCard({ ad, onDelete }: FeaturedAdCardProps) {
+    const tier = FEATURED_AD_TIERS[ad.type];
+    const Icon = FEATURED_AD_ICONS[ad.type];
 
     return (
         <Box
             sx={{
                 borderRadius: 3,
-                border: '0.5px solid',
+                border: '1.5px solid',
                 borderColor: 'divider',
                 overflow: 'hidden',
-                // bgcolor: 'background.paper',
                 opacity: ad.isActive ? 1 : 0.65,
-                transition: 'box-shadow 0.2s',
-                '&:hover': { boxShadow: '0 2px 12px rgba(0,0,0,0.07)' },
+                transition: 'box-shadow 0.2s, transform 0.2s',
+                '&:hover': {
+                    boxShadow: `0 4px 20px ${tier.accent}25`,
+                    transform: 'translateY(-2px)',
+                },
             }}
         >
             {/* Accent top bar */}
-            <Box sx={{ height: 4, bgcolor: accent }} />
+            <Box sx={{ height: 5, bgcolor: tier.accent }} />
 
             <Box sx={{ p: 2 }}>
                 {/* Header row */}
@@ -75,16 +45,16 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                     mb={1.5}
                 >
                     <Chip
-                        icon={config.icon as React.ReactElement}
-                        label={config.label}
+                        icon={<Icon sx={{ fontSize: 14 }} />}
+                        label={tier.label}
                         size='small'
                         sx={{
-                            bgcolor: config.bg,
-                            color: config.color,
-                            fontWeight: 500,
+                            bgcolor: tier.bg,
+                            color: tier.color,
+                            fontWeight: 700,
                             fontSize: 11,
                             height: 22,
-                            '& .MuiChip-icon': { color: config.color },
+                            '& .MuiChip-icon': { color: tier.color },
                         }}
                     />
                     <Chip
@@ -95,7 +65,7 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                             color: ad.isActive ? '#3B6D11' : '#5F5E5A',
                             fontSize: 11,
                             height: 22,
-                            fontWeight: 500,
+                            fontWeight: 700,
                         }}
                     />
                 </Stack>
@@ -103,7 +73,7 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                 {/* Title */}
                 <Typography
                     variant='body2'
-                    fontWeight={500}
+                    fontWeight={600}
                     noWrap
                     sx={{ mb: 0.5 }}
                 >
@@ -136,12 +106,25 @@ export default function FeaturedAdCard({ ad }: FeaturedAdCardProps) {
                     </Typography>
                     <Typography
                         variant='caption'
-                        fontWeight={500}
-                        sx={{ color: accent }}
+                        fontWeight={700}
+                        sx={{ color: tier.accent }}
                     >
-                        {formatPrice(priceMap[ad.type])}
+                        {formatPrice(FEATURED_AD_PRICES[ad.type])}
                     </Typography>
                 </Stack>
+                {onDelete && (
+                    <IconButton
+                        size='small'
+                        onClick={() => onDelete(ad._id)}
+                        sx={{
+                            ml: 0.5,
+                            color: 'text.disabled',
+                            '&:hover': { color: 'error.main' },
+                        }}
+                    >
+                        <DeleteOutlineIcon sx={{ fontSize: 16 }} />
+                    </IconButton>
+                )}
             </Box>
         </Box>
     );

@@ -2366,43 +2366,44 @@
 
     "ads": {
         "createAd": "Promote Ad",
-        "financed": "financed",
-        "createAdDescription": "Increase your ad's visibility by promoting it. Choose your budget and campaign duration to start attracting more potential buyers.",
+        "financed": "Financed",
+        "createAdDescription": "Increase your ad's visibility by promoting it. Choose your budget and campaign duration to attract more potential buyers.",
         "dashboard": "Ads Dashboard",
-        "description": "Here you can manage your ads, edit or delete them as needed",
-        "noAds": "You don't have any ads yet. Create a new ad to increase your products' visibility!",
+        "description": "Here you can manage, edit, or delete your ads as needed",
+        "noAds": "You don't have any ads yet. Create a new one to boost your products' visibility!",
         "promotionPackages": {
             "title": "Promotion Packages",
-            "description": "Choose from different promotion packages to increase your ad's visibility",
+            "description": "Choose from different promotion packages to boost your ad's visibility",
+            "subtitle": "Choose the package that fits your needs and enjoy exclusive benefits that boost your sales",
             "homepage": {
                 "name": "Homepage Package",
-                "description": "Premium placement at the top of the homepage, seen by thousands of visitors daily",
                 "FeaturedAdOnTheHomepage": "Featured ad on the homepage",
-                "price": "{{price}} / per week",
+                "description": "Premium placement at the top of the homepage in front of thousands of daily visitors",
+                "price": "{{price}} / week",
                 "features": [
-                    "Top homepage placement",
-                    "Daily automatic renewal",
-                    "Priority display"
+                    "Top placement on the homepage",
+                    "Daily refresh rotation",
+                    "Display priority"
                 ]
             },
             "top": {
-                "name": "Top Listing Package",
-                "description": "Your ad at the top of search results and lists at all times",
-                "price": "{{price}} / per week",
+                "name": "Top Package",
+                "description": "Your ad stays at the top of search results and lists",
+                "price": "{{price}} / week",
                 "features": [
-                    "Search result priority",
-                    "Top of lists placement",
-                    "Gold highlighting"
+                    "Priority in search results",
+                    "Top-of-list placement",
+                    "Highlighted in gold"
                 ]
             },
             "highlight": {
                 "name": "Highlight Package",
-                "description": "Eye-catching visual highlighting that makes your ad stand out",
-                "price": "{{price}} / per week",
+                "description": "A striking visual highlight that makes your ad stand out from competitors",
+                "price": "{{price}} / week",
                 "features": [
-                    "Special ad background",
+                    "Distinctive ad background",
                     "Glowing icon",
-                    "Green highlighting"
+                    "Highlighted in green"
                 ]
             }
         },
@@ -2410,28 +2411,44 @@
             "active": "Active",
             "expired": "Expired",
             "daysLeft": "days left",
-            "noActiveAds": "No active promoted ads at the moment"
+            "noActiveAds": "No active promoted ads right now",
+            "activeCount": "{{count}} active",
+            "activeDaysLeft": "Active • {{count}} days"
         },
         "purchase": {
-            "title": "Purchase Promotion Package",
-            "subtitle": "Complete the details below and proceed to payment",
+            "title": "Buy a Promotion Package",
+            "subtitle": "Fill in the details below and proceed to payment",
             "selectListing": "Select your ad",
             "selectPromotion": "Promotion type",
             "startDate": "Start date",
             "endDate": "End date",
             "duration": "Duration",
             "days": "days",
-            "payNow": "Pay Now",
+            "payNow": "Pay now",
             "processing": "Processing...",
-            "selectPackage": "Choose the package that suits you"
+            "selectPackage": "Choose the package that fits you",
+            "invalidDateRange": "End date must be after start date"
         },
-        "currentAds": "Your Current Ads",
+        "topAdsSection": {
+            "title": "Top Ads ⭐",
+            "subtitle": "The most viewed and engaged ads",
+            "viewAll": "View all",
+            "retry": "Retry",
+            "featuredBadge": "Featured ad",
+            "verified": "Verified",
+            "types": {
+                "homepage": "Homepage",
+                "top": "Top",
+                "highlight": "Highlight"
+            }
+        },
+        "currentAds": "Your current ads",
         "noPromotedAds": "No promoted ads yet",
-        "startPromoting": "Start by purchasing your first promotion package now",
+        "startPromoting": "Start by purchasing your first promotion package",
         "common": {
             "selected": "Selected",
             "untitled": "Untitled",
-            "error": "An error occurred",
+            "error": "Something went wrong",
             "success": "Operation completed successfully",
             "confirm": "Confirm",
             "cancel": "Cancel",
@@ -2441,7 +2458,8 @@
             "loading": "Loading...",
             "back": "Back",
             "next": "Next",
-            "submit": "Submit"
+            "submit": "Submit",
+            "retry": "Retry"
         }
     },
     "colors": {

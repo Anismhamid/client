@@ -297,8 +297,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         borderRadius: '8px',
                                         '&.active': {
                                             backgroundColor:
-                                                'rgba(220, 53, 69, 0.1)',
-                                            color: '#dc3545',
+                                                'rgba(255, 168, 38, 0.541)',
+                                            color: 'rgb(255, 167, 38)',
                                             fontWeight: 'bold',
                                         },
                                     }}
@@ -462,18 +462,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             to={path.UsersManagement}
                                             aria-label={t('users-management')}
                                             title={t('users-management')}
-                                            sx={{
-                                                backgroundColor:
-                                                    mode === 'dark'
-                                                        ? 'rgba(144, 202, 249, 0.1)'
-                                                        : 'rgba(33, 150, 243, 0.1)',
-                                                '&:hover': {
-                                                    backgroundColor:
-                                                        mode === 'dark'
-                                                            ? 'rgba(144, 202, 249, 0.2)'
-                                                            : 'rgba(33, 150, 243, 0.2)',
-                                                },
-                                            }}
                                         >
                                             <DashboardIcon
                                                 sx={{ fontSize: 20 }}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Typography,
@@ -14,91 +14,86 @@ import {
     Chip,
     SelectChangeEvent,
     useTheme,
+    Snackbar as MuiSnackbar,
+    Alert,
 } from '@mui/material';
 import axios from 'axios';
 import dayjs from 'dayjs';
-import { FeaturedAd } from '../../../interfaces/featuredAd';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
+
+import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
 import useSnackbar from '../../../hooks/useSnackbar';
-import { Snackbar as MuiSnackbar, Alert } from '@mui/material';
 import { getCustomerProfilePostsBySlug } from '../../../services/postsServices';
 import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
-import { useTranslation } from 'react-i18next';
+import {
+    FEATURED_AD_EMOJI,
+    FEATURED_AD_PRICES,
+    FEATURED_AD_TIERS,
+} from '../../../interfaces/featuredAdsMeta';
 
 const api = import.meta.env.VITE_API_URL;
 
-// ─── Plan config ────────────────────────────────────────────────────────────
+// ✅ Correct TFunction usage — no `=> string`
+const buildPlanMeta = (
+    type: AdType,
+    isDark: boolean,
+    t: TFunction<'translation', undefined>,
+) => {
+    const tier = FEATURED_AD_TIERS[type];
+    return {
+        label: t(`ads.promotionPackages.${type}.name`),
+        color: isDark ? tier.darkBg : tier.bg,
+        accent: tier.accent,
+        icon: FEATURED_AD_EMOJI[type],
+        desc: t(`ads.promotionPackages.${type}.description`),
+        price: t(`ads.promotionPackages.${type}.price`, {
+            price: FEATURED_AD_PRICES[type],
+        }),
+    };
+};
 
 const FeaturedAdsDashboard = () => {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
-    const [ads, setAds] = useState<FeaturedAd[]>([]);
     const { auth } = useUser();
+    const { t } = useTranslation();
+    const { snackbar, showSnackbar, closeSnackbar } = useSnackbar();
+
+    const [ads, setAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
-    const [newAd, setNewAd] = useState({
+    const [saving, setSaving] = useState(false);
+    const [userListings, setUserListings] = useState<Posts[]>([]);
+    const [selectedPlan, setSelectedPlan] = useState<AdType>('homepage');
+
+    const [newAd, setNewAd] = useState<{
+        listingId: string;
+        type: AdType;
+        startDate: string;
+        endDate: string;
+    }>({
         listingId: '',
         type: 'homepage',
         startDate: dayjs().format('YYYY-MM-DD'),
         endDate: dayjs().add(7, 'day').format('YYYY-MM-DD'),
     });
-    const [saving, setSaving] = useState(false);
-    const { snackbar, showSnackbar, closeSnackbar } = useSnackbar();
-    const [userListings, setUserListings] = useState<Posts[]>([]);
-    const [selectedPlan, setSelectedPlan] = useState<string>('homepage');
-    const { t } = useTranslation();
 
-    const PRICE_VALUES = {
-        homepage: 50,
-        top: 25,
-        highlight: 10,
-    };
+    // ✅ Memoized — rebuilds only when theme or language changes
+    const PLAN_META = useMemo(
+        () => ({
+            homepage: buildPlanMeta('homepage', isDark, t),
+            top: buildPlanMeta('top', isDark, t),
+            highlight: buildPlanMeta('highlight', isDark, t),
+        }),
+        [isDark, t],
+    );
 
-    const PLAN_META: Record<
-        string,
-        {
-            label: string;
-            color: string;
-            accent: string;
-            icon: string;
-            desc: string;
-            price: string;
-        }
-    > = {
-        homepage: {
-            label: t('ads.promotionPackages.homepage.name'),
-            color: isDark ? '#0f172a' : '#f1f5f9',
-            accent: '#f59e0b',
-            icon: '🏠',
-            desc: t('ads.promotionPackages.homepage.description'),
-            price: t('ads.promotionPackages.homepage.price', {
-                price: PRICE_VALUES.homepage,
-            }),
-        },
-        top: {
-            label: t('ads.promotionPackages.top.name'),
-            color: isDark ? '#1e1b4b' : '#eef2ff',
-            accent: '#818cf8',
-            icon: '🚀',
-            desc: t('ads.promotionPackages.top.description'),
-            price: t('ads.promotionPackages.top.price', {
-                price: PRICE_VALUES.top,
-            }),
-        },
-        highlight: {
-            label: t('ads.promotionPackages.highlight.name'),
-            color: isDark ? '#064e3b' : '#ecfdf5',
-            accent: '#34d399',
-            icon: '✨',
-            desc: t('ads.promotionPackages.highlight.description'),
-            price: t('ads.promotionPackages.highlight.price', {
-                price: PRICE_VALUES.highlight,
-            }),
-        },
-    };
-
+    // ── Load user's own listings ────────────────────────────────────────
     useEffect(() => {
-        getCustomerProfilePostsBySlug(auth?.slug as string)
+        if (!auth?.slug) return;
+        getCustomerProfilePostsBySlug(auth.slug)
             .then((res) => setUserListings(res))
             .catch((err) => {
                 console.error(err);
@@ -106,7 +101,8 @@ const FeaturedAdsDashboard = () => {
             });
     }, [auth?.slug]);
 
-    const fetchAds = async () => {
+    // ── Load current ads ────────────────────────────────────────────────
+    const fetchAds = useCallback(async () => {
         setLoading(true);
         try {
             const { data } = await axios.get(`${api}/featured-ads/me`, {
@@ -119,12 +115,13 @@ const FeaturedAdsDashboard = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchAds();
-    }, []);
+    }, [fetchAds]);
 
+    // ── Change handlers ─────────────────────────────────────────────────
     const handleTextChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
@@ -132,12 +129,24 @@ const FeaturedAdsDashboard = () => {
         setNewAd((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSelectChange = (e: SelectChangeEvent<string>) => {
+    const handleSelectChange = (e: SelectChangeEvent) => {
         const { name, value } = e.target;
+
+        if (name === 'type') {
+            const adType = value as AdType;
+            setNewAd((prev) => ({ ...prev, type: adType }));
+            setSelectedPlan(adType);
+            return;
+        }
+
         setNewAd((prev) => ({ ...prev, [name]: value }));
-        if (name === 'type') setSelectedPlan(value);
     };
 
+    const isDateRangeValid = dayjs(newAd.endDate).isAfter(
+        dayjs(newAd.startDate),
+    );
+
+    // ── Submit ──────────────────────────────────────────────────────────
     const handleSubmit = async () => {
         setSaving(true);
         try {
@@ -151,11 +160,13 @@ const FeaturedAdsDashboard = () => {
                     },
                 },
             );
-            console.log(data);
             window.location.href = data.url;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
-            showSnackbar(err.response?.data?.message || 'حدث خطأ', 'error');
+            showSnackbar(
+                err.response?.data?.message || t('ads.common.error'),
+                'error',
+            );
         } finally {
             setSaving(false);
         }
@@ -173,21 +184,24 @@ const FeaturedAdsDashboard = () => {
 
     const plan = PLAN_META[selectedPlan];
 
-    // Theme-based color variables
     const textPrimary = isDark ? '#fff' : '#0f172a';
     const textSecondary = isDark ? '#94a3b8' : '#475569';
     const textTertiary = isDark ? '#64748b' : '#64748b';
-    const surfaceColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
-    const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-    
+    const surfaceColor = isDark
+        ? 'rgba(255,255,255,0.04)'
+        : 'rgba(0,0,0,0.04)';
+    const borderColor = isDark
+        ? 'rgba(255,255,255,0.08)'
+        : 'rgba(0,0,0,0.08)';
+
     const selectedCardBg = isDark
         ? `linear-gradient(135deg, ${plan.color}, #1e293b)`
         : `linear-gradient(135deg, ${plan.color}, #f8fafc)`;
 
     return (
         <Box
-            dir='rtl'
-            component='main'
+            dir="rtl"
+            component="main"
             sx={{
                 minHeight: '100vh',
                 fontFamily: "'Cairo', 'Tajawal', sans-serif",
@@ -205,8 +219,8 @@ const FeaturedAdsDashboard = () => {
                     height: '70vw',
                     borderRadius: '50%',
                     background: isDark
-                        ? `radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)`
-                        : `radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)`,
+                        ? 'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)'
+                        : 'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)',
                     pointerEvents: 'none',
                 },
             }}
@@ -226,10 +240,10 @@ const FeaturedAdsDashboard = () => {
                 </Alert>
             </MuiSnackbar>
 
-            {/* ── Hero Header ────────────────────────────────────────────── */}
+            {/* ── Hero Header ─────────────────────────────────────────── */}
             <Box sx={{ textAlign: 'center', mb: 8, position: 'relative' }}>
                 <Typography
-                    variant='overline'
+                    variant="overline"
                     sx={{
                         color: '#f59e0b',
                         letterSpacing: 4,
@@ -242,7 +256,7 @@ const FeaturedAdsDashboard = () => {
                     {t('ads.promotionPackages.title')}
                 </Typography>
                 <Typography
-                    variant='h2'
+                    variant="h2"
                     sx={{
                         color: textPrimary,
                         fontWeight: 900,
@@ -265,116 +279,133 @@ const FeaturedAdsDashboard = () => {
                 </Typography>
             </Box>
 
-            {/* ── Plan Cards ─────────────────────────────────────────────── */}
-            <Grid container spacing={3} justifyContent='center' sx={{ mb: 8 }}>
-                {Object.entries(PLAN_META).map(([key, meta]) => {
-                    const isSelected = selectedPlan === key;
-                    const count = activeCounts[key] || 0;
-                    return (
-                        <Grid size={{ xs: 12, sm: 4 }} key={key}>
-                            <Box
-                                onClick={() => {
-                                    setSelectedPlan(key);
-                                    setNewAd((p) => ({ ...p, type: key }));
-                                }}
-                                sx={{
-                                    cursor: 'pointer',
-                                    borderRadius: 4,
-                                    p: 3.5,
-                                    height: '100%',
-                                    background: isSelected
-                                        ? selectedCardBg
-                                        : surfaceColor,
-                                    border: `2px solid ${isSelected ? meta.accent : borderColor}`,
-                                    boxShadow: isSelected
-                                        ? `0 0 40px ${meta.accent}30`
-                                        : isDark ? 'none' : '0 4px 12px rgba(0,0,0,0.05)',
-                                    transition: 'all 0.3s ease',
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                    '&:hover': {
-                                        border: `2px solid ${meta.accent}80`,
-                                        transform: 'translateY(-4px)',
-                                        boxShadow: isDark
-                                            ? `0 8px 30px rgba(0,0,0,0.3)`
-                                            : `0 8px 30px rgba(0,0,0,0.1)`,
-                                    },
-                                }}
-                            >
-                                {isSelected && (
-                                    <Box
+            {/* ── Plan Cards ──────────────────────────────────────────── */}
+            <Grid
+                container
+                spacing={3}
+                justifyContent="center"
+                sx={{ mb: 8 }}
+            >
+                {(Object.entries(PLAN_META) as [AdType, typeof plan][]).map(
+                    ([key, meta]) => {
+                        const isSelected = selectedPlan === key;
+                        const count = activeCounts[key] || 0;
+                        return (
+                            <Grid size={{ xs: 12, sm: 4 }} key={key}>
+                                <Box
+                                    onClick={() => {
+                                        setSelectedPlan(key);
+                                        setNewAd((p) => ({
+                                            ...p,
+                                            type: key,
+                                        }));
+                                    }}
+                                    sx={{
+                                        cursor: 'pointer',
+                                        borderRadius: 4,
+                                        p: 3.5,
+                                        height: '100%',
+                                        background: isSelected
+                                            ? selectedCardBg
+                                            : surfaceColor,
+                                        border: `2px solid ${isSelected ? meta.accent : borderColor}`,
+                                        boxShadow: isSelected
+                                            ? `0 0 40px ${meta.accent}30`
+                                            : isDark
+                                              ? 'none'
+                                              : '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s ease',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        '&:hover': {
+                                            border: `2px solid ${meta.accent}80`,
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: isDark
+                                                ? '0 8px 30px rgba(0,0,0,0.3)'
+                                                : '0 8px 30px rgba(0,0,0,0.1)',
+                                        },
+                                    }}
+                                >
+                                    {isSelected && (
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 16,
+                                                left: 16,
+                                                background: meta.accent,
+                                                color: isDark
+                                                    ? '#000'
+                                                    : '#fff',
+                                                fontSize: '0.65rem',
+                                                fontWeight: 800,
+                                                px: 1.5,
+                                                py: 0.4,
+                                                borderRadius: 10,
+                                                letterSpacing: 1,
+                                            }}
+                                        >
+                                            {t('ads.common.selected')}
+                                        </Box>
+                                    )}
+                                    <Typography
+                                        sx={{ fontSize: '2.2rem', mb: 1.5 }}
+                                    >
+                                        {meta.icon}
+                                    </Typography>
+                                    <Typography
                                         sx={{
-                                            position: 'absolute',
-                                            top: 16,
-                                            left: 16,
-                                            background: meta.accent,
-                                            color: isDark ? '#000' : '#fff',
-                                            fontSize: '0.65rem',
+                                            color: textPrimary,
                                             fontWeight: 800,
-                                            px: 1.5,
-                                            py: 0.4,
-                                            borderRadius: 10,
-                                            letterSpacing: 1,
+                                            fontSize: '1.2rem',
+                                            mb: 1,
                                         }}
                                     >
-                                        مختار
-                                    </Box>
-                                )}
-                                <Typography
-                                    sx={{ fontSize: '2.2rem', mb: 1.5 }}
-                                >
-                                    {meta.icon}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: textPrimary,
-                                        fontWeight: 800,
-                                        fontSize: '1.2rem',
-                                        mb: 1,
-                                    }}
-                                >
-                                    {meta.label}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: textSecondary,
-                                        fontSize: '0.88rem',
-                                        mb: 2,
-                                        lineHeight: 1.6,
-                                    }}
-                                >
-                                    {meta.desc}
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: meta.accent,
-                                        fontWeight: 800,
-                                        fontSize: '1.1rem',
-                                        mb: 1,
-                                    }}
-                                >
-                                    {meta.price}
-                                </Typography>
-                                {count > 0 && (
-                                    <Chip
-                                        label={`${count} نشط`}
-                                        size='small'
+                                        {meta.label}
+                                    </Typography>
+                                    <Typography
                                         sx={{
-                                            background: `${meta.accent}20`,
-                                            color: meta.accent,
-                                            border: `1px solid ${meta.accent}40`,
-                                            fontWeight: 700,
-                                            fontSize: '0.75rem',
+                                            color: textSecondary,
+                                            fontSize: '0.88rem',
+                                            mb: 2,
+                                            lineHeight: 1.6,
                                         }}
-                                    />
-                                )}
-                            </Box>
-                        </Grid>
-                    );
-                })}
+                                    >
+                                        {meta.desc}
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            color: meta.accent,
+                                            fontWeight: 800,
+                                            fontSize: '1.1rem',
+                                            mb: 1,
+                                        }}
+                                    >
+                                        {meta.price}
+                                    </Typography>
+                                    {count > 0 && (
+                                        <Chip
+                                            label={t(
+                                                'ads.stats.activeCount',
+                                                { count },
+                                            )}
+                                            size="small"
+                                            sx={{
+                                                background: `${meta.accent}20`,
+                                                color: meta.accent,
+                                                border: `1px solid ${meta.accent}40`,
+                                                fontWeight: 700,
+                                                fontSize: '0.75rem',
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            </Grid>
+                        );
+                    },
+                )}
             </Grid>
 
-            {/* ── Purchase Form ───────────────────────────────────────────── */}
+            {/* ── Purchase Form ───────────────────────────────────────── */}
             <Box sx={{ maxWidth: 820, mx: 'auto', mb: 8 }}>
                 <Box
                     sx={{
@@ -387,7 +418,7 @@ const FeaturedAdsDashboard = () => {
                         backdropFilter: isDark ? 'blur(20px)' : 'none',
                         boxShadow: isDark
                             ? `0 0 60px ${plan.accent}10`
-                            : `0 8px 40px rgba(0,0,0,0.08)`,
+                            : '0 8px 40px rgba(0,0,0,0.08)',
                         transition:
                             'box-shadow 0.4s ease, border-color 0.4s ease',
                     }}
@@ -423,7 +454,7 @@ const FeaturedAdsDashboard = () => {
                                     fontSize: '1.2rem',
                                 }}
                             >
-                                شراء باقة {plan.label}
+                                {t('ads.purchase.title')} — {plan.label}
                             </Typography>
                             <Typography
                                 sx={{
@@ -431,7 +462,7 @@ const FeaturedAdsDashboard = () => {
                                     fontSize: '0.85rem',
                                 }}
                             >
-                                أكمل البيانات أدناه واتجه للدفع
+                                {t('ads.purchase.subtitle')}
                             </Typography>
                         </Box>
                     </Box>
@@ -441,13 +472,13 @@ const FeaturedAdsDashboard = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel sx={{ color: textTertiary }}>
-                                    اختر إعلانك
+                                    {t('ads.purchase.selectListing')}
                                 </InputLabel>
                                 <Select
-                                    name='listingId'
+                                    name="listingId"
                                     value={newAd.listingId}
                                     onChange={handleSelectChange}
-                                    label='اختر إعلانك'
+                                    label={t('ads.purchase.selectListing')}
                                     sx={selectSx(plan.accent, isDark)}
                                 >
                                     {userListings.map((listing) => (
@@ -456,7 +487,7 @@ const FeaturedAdsDashboard = () => {
                                             value={listing._id}
                                         >
                                             {listing.product_name ||
-                                                'بدون عنوان'}
+                                                t('ads.common.untitled')}
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -467,23 +498,28 @@ const FeaturedAdsDashboard = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel sx={{ color: textTertiary }}>
-                                    نوع الترويج
+                                    {t('ads.purchase.selectPromotion')}
                                 </InputLabel>
                                 <Select
-                                    name='type'
+                                    name="type"
                                     value={newAd.type}
                                     onChange={handleSelectChange}
-                                    label='نوع الترويج'
+                                    label={t(
+                                        'ads.purchase.selectPromotion',
+                                    )}
                                     sx={selectSx(plan.accent, isDark)}
                                 >
-                                    <MenuItem value='homepage'>
-                                        🏠 الصفحة الرئيسية
+                                    <MenuItem value="homepage">
+                                        {FEATURED_AD_EMOJI.homepage}{' '}
+                                        {PLAN_META.homepage.label}
                                     </MenuItem>
-                                    <MenuItem value='top'>
-                                        🚀 إعلان مرفوع
+                                    <MenuItem value="top">
+                                        {FEATURED_AD_EMOJI.top}{' '}
+                                        {PLAN_META.top.label}
                                     </MenuItem>
-                                    <MenuItem value='highlight'>
-                                        ✨ إعلان مضيء
+                                    <MenuItem value="highlight">
+                                        {FEATURED_AD_EMOJI.highlight}{' '}
+                                        {PLAN_META.highlight.label}
                                     </MenuItem>
                                 </Select>
                             </FormControl>
@@ -492,9 +528,9 @@ const FeaturedAdsDashboard = () => {
                         {/* Dates */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
-                                label='تاريخ البداية'
-                                type='date'
-                                name='startDate'
+                                label={t('ads.purchase.startDate')}
+                                type="date"
+                                name="startDate"
                                 value={newAd.startDate}
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
@@ -504,13 +540,14 @@ const FeaturedAdsDashboard = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
-                                label='تاريخ النهاية'
-                                type='date'
-                                name='endDate'
+                                label={t('ads.purchase.endDate')}
+                                type="date"
+                                name="endDate"
                                 value={newAd.endDate}
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
+                                error={!isDateRangeValid}
                                 sx={inputSx(plan.accent, isDark)}
                             />
                         </Grid>
@@ -524,43 +561,73 @@ const FeaturedAdsDashboard = () => {
                                     alignItems: 'center',
                                     p: 2,
                                     borderRadius: 3,
-                                    background: `${plan.accent}10`,
-                                    border: `1px solid ${plan.accent}25`,
+                                    background: isDateRangeValid
+                                        ? `${plan.accent}10`
+                                        : 'rgba(239,68,68,0.1)',
+                                    border: `1px solid ${
+                                        isDateRangeValid
+                                            ? `${plan.accent}25`
+                                            : 'rgba(239,68,68,0.3)'
+                                    }`,
                                 }}
                             >
-                                <Typography
-                                    sx={{
-                                        color: textSecondary,
-                                        fontSize: '0.9rem',
-                                    }}
-                                >
-                                    المدة:{' '}
-                                    <strong style={{ color: textPrimary }}>
-                                        {dayjs(newAd.endDate).diff(
-                                            dayjs(newAd.startDate),
-                                            'day',
-                                        )}{' '}
-                                        يوم
-                                    </strong>
-                                </Typography>
-                                <Typography
-                                    sx={{
-                                        color: plan.accent,
-                                        fontWeight: 800,
-                                        fontSize: '1rem',
-                                    }}
-                                >
-                                    {plan.price}
-                                </Typography>
+                                {isDateRangeValid ? (
+                                    <>
+                                        <Typography
+                                            sx={{
+                                                color: textSecondary,
+                                                fontSize: '0.9rem',
+                                            }}
+                                        >
+                                            {t('ads.purchase.duration')}:{' '}
+                                            <strong
+                                                style={{
+                                                    color: textPrimary,
+                                                }}
+                                            >
+                                                {dayjs(newAd.endDate).diff(
+                                                    dayjs(newAd.startDate),
+                                                    'day',
+                                                )}{' '}
+                                                {t('ads.purchase.days')}
+                                            </strong>
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                color: plan.accent,
+                                                fontWeight: 800,
+                                                fontSize: '1rem',
+                                            }}
+                                        >
+                                            {plan.price}
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    <Typography
+                                        sx={{
+                                            color: '#ef4444',
+                                            fontSize: '0.9rem',
+                                            fontWeight: 600,
+                                        }}
+                                    >
+                                        {t(
+                                            'ads.purchase.invalidDateRange',
+                                        )}
+                                    </Typography>
+                                )}
                             </Box>
                         </Grid>
 
                         {/* Submit */}
                         <Grid size={{ xs: 12 }}>
                             <Button
-                                variant='contained'
+                                variant="contained"
                                 fullWidth
-                                disabled={!newAd.listingId || saving}
+                                disabled={
+                                    !newAd.listingId ||
+                                    !isDateRangeValid ||
+                                    saving
+                                }
                                 onClick={handleSubmit}
                                 sx={{
                                     py: 1.8,
@@ -586,10 +653,14 @@ const FeaturedAdsDashboard = () => {
                                 {saving ? (
                                     <CircularProgress
                                         size={24}
-                                        sx={{ color: isDark ? '#000' : '#fff' }}
+                                        sx={{
+                                            color: isDark
+                                                ? '#000'
+                                                : '#fff',
+                                        }}
                                     />
                                 ) : (
-                                    `💳 ادفع الآن — ${plan.price}`
+                                    `${t('ads.purchase.payNow')} — ${plan.price}`
                                 )}
                             </Button>
                         </Grid>
@@ -597,7 +668,7 @@ const FeaturedAdsDashboard = () => {
                 </Box>
             </Box>
 
-            {/* ── My Current Ads ──────────────────────────────────────────── */}
+            {/* ── My Current Ads ──────────────────────────────────────── */}
             <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
                 <Box
                     sx={{
@@ -616,14 +687,16 @@ const FeaturedAdsDashboard = () => {
                             fontSize: '1.3rem',
                         }}
                     >
-                        إعلاناتك الحالية
+                        {t('ads.currentAds')}
                     </Typography>
-                    <Stack direction='row' spacing={1}>
-                        {Object.entries(PLAN_META).map(([key, meta]) => (
+                    <Stack direction="row" spacing={1}>
+                        {(
+                            Object.entries(PLAN_META) as [AdType, typeof plan][]
+                        ).map(([key, meta]) => (
                             <Chip
                                 key={key}
                                 label={`${meta.icon} ${activeCounts[key] || 0}`}
-                                size='small'
+                                size="small"
                                 sx={{
                                     background: `${meta.accent}15`,
                                     color: meta.accent,
@@ -660,12 +733,9 @@ const FeaturedAdsDashboard = () => {
                             📭
                         </Typography>
                         <Typography
-                            sx={{
-                                color: textSecondary,
-                                fontSize: '1rem',
-                            }}
+                            sx={{ color: textSecondary, fontSize: '1rem' }}
                         >
-                            لا توجد إعلانات ترويجية بعد
+                            {t('ads.noPromotedAds')}
                         </Typography>
                         <Typography
                             sx={{
@@ -674,7 +744,7 @@ const FeaturedAdsDashboard = () => {
                                 mt: 1,
                             }}
                         >
-                            ابدأ بشراء أول باقة ترويجية الآن
+                            {t('ads.startPromoting')}
                         </Typography>
                     </Box>
                 ) : (
@@ -703,13 +773,19 @@ const FeaturedAdsDashboard = () => {
                                                     ? `linear-gradient(135deg, ${meta.color}cc, #1e293b)`
                                                     : `linear-gradient(135deg, ${meta.color}, #f8fafc)`
                                                 : surfaceColor,
-                                            border: `1px solid ${isActive ? meta.accent + '40' : borderColor}`,
-                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                            border: `1px solid ${
+                                                isActive
+                                                    ? meta.accent + '40'
+                                                    : borderColor
+                                            }`,
+                                            transition:
+                                                'transform 0.2s ease, box-shadow 0.2s ease',
                                             boxShadow: isDark
                                                 ? 'none'
                                                 : '0 2px 8px rgba(0,0,0,0.04)',
                                             '&:hover': {
-                                                transform: 'translateY(-3px)',
+                                                transform:
+                                                    'translateY(-3px)',
                                                 boxShadow: isDark
                                                     ? '0 8px 30px rgba(0,0,0,0.3)'
                                                     : '0 8px 30px rgba(0,0,0,0.08)',
@@ -719,7 +795,8 @@ const FeaturedAdsDashboard = () => {
                                         <Box
                                             sx={{
                                                 display: 'flex',
-                                                justifyContent: 'space-between',
+                                                justifyContent:
+                                                    'space-between',
                                                 mb: 2,
                                             }}
                                         >
@@ -731,20 +808,32 @@ const FeaturedAdsDashboard = () => {
                                             <Chip
                                                 label={
                                                     isActive
-                                                        ? `نشط • ${daysLeft} يوم`
-                                                        : 'منتهي'
+                                                        ? t(
+                                                              'ads.stats.activeDaysLeft',
+                                                              {
+                                                                  count: daysLeft,
+                                                              },
+                                                          )
+                                                        : t(
+                                                              'ads.stats.expired',
+                                                          )
                                                 }
-                                                size='small'
+                                                size="small"
                                                 sx={{
                                                     background: isActive
                                                         ? `${meta.accent}20`
                                                         : isDark
-                                                        ? 'rgba(239,68,68,0.15)'
-                                                        : 'rgba(239,68,68,0.1)',
+                                                          ? 'rgba(239,68,68,0.15)'
+                                                          : 'rgba(239,68,68,0.1)',
                                                     color: isActive
                                                         ? meta.accent
                                                         : '#f87171',
-                                                    border: `1px solid ${isActive ? meta.accent + '40' : '#f8717140'}`,
+                                                    border: `1px solid ${
+                                                        isActive
+                                                            ? meta.accent +
+                                                              '40'
+                                                            : '#f8717140'
+                                                    }`,
                                                     fontWeight: 700,
                                                     fontSize: '0.72rem',
                                                 }}
@@ -759,7 +848,7 @@ const FeaturedAdsDashboard = () => {
                                             }}
                                         >
                                             {ad.listingId?.product_name ||
-                                                'بدون عنوان'}
+                                                t('ads.common.untitled')}
                                         </Typography>
                                         <Typography
                                             sx={{
@@ -791,23 +880,29 @@ const FeaturedAdsDashboard = () => {
     );
 };
 
-// ─── Shared style helpers ───────────────────────────────────────────────────
+// ─── Shared style helpers ────────────────────────────────────────────────
 const selectSx = (accent: string, isDark: boolean) => ({
     color: isDark ? '#e2e8f0' : '#0f172a',
     '.MuiOutlinedInput-notchedOutline': {
-        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        borderColor: isDark
+            ? 'rgba(255,255,255,0.12)'
+            : 'rgba(0,0,0,0.12)',
     },
-    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: `${accent}60` },
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: accent },
+    '&:hover .MuiOutlinedInput-notchedOutline': {
+        borderColor: `${accent}60`,
+    },
+    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+        borderColor: accent,
+    },
     '.MuiSvgIcon-root': { color: isDark ? '#64748b' : '#94a3b8' },
 });
 
 const inputSx = (accent: string, isDark: boolean) => ({
-    '& .MuiInputBase-root': { 
-        color: isDark ? '#e2e8f0' : '#0f172a' 
-    },
+    '& .MuiInputBase-root': { color: isDark ? '#e2e8f0' : '#0f172a' },
     '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        borderColor: isDark
+            ? 'rgba(255,255,255,0.12)'
+            : 'rgba(0,0,0,0.12)',
     },
     '& .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,
@@ -815,13 +910,9 @@ const inputSx = (accent: string, isDark: boolean) => ({
     '& .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: accent,
     },
-    '& .MuiInputLabel-root': { 
-        color: isDark ? '#64748b' : '#94a3b8' 
-    },
+    '& .MuiInputLabel-root': { color: isDark ? '#64748b' : '#94a3b8' },
     '& .MuiInputLabel-root.Mui-focused': { color: accent },
-    '& input': { 
-        colorScheme: isDark ? 'dark' : 'light' 
-    },
+    '& input': { colorScheme: isDark ? 'dark' : 'light' },
 });
 
 export default FeaturedAdsDashboard;
