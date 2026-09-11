@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LanguageSwitcher from '../../../locales/languageSwich';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import handleRTL from '../../../locales/handleRTL';
 import {
     Brightness4,
@@ -169,11 +169,8 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 sx={{
-                    background:
-                        mode === 'dark'
-                            ? 'rgba(245, 159, 11, 0.016)'
-                            : '#F5F5F5',
-                    boxShadow: '0 4px 20px #f59e0b11',
+                    background: mode === 'dark' ? '#0a1116' : '#ffffff',
+                    boxShadow: '0 1px 10px #414141',
                     zIndex: 1100,
                     overflow: 'hidden',
                     top: 0,
@@ -183,7 +180,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                         inset: 1,
                         borderRadius: '21px',
                         pointerEvents: 'none',
-                        borderBottom: '1px solid transparent',
+                        borderBottom: '3px solid transparent',
                         background: `
                                                 radial-gradient(
                                                 180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
@@ -249,14 +246,17 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
-                                <StyledNavLink
+                                <Link
                                     to={path.Home}
-                                    style={{ textDecoration: 'none' }}
+                                    style={{
+                                        textDecoration: 'none',
+                                        listStyle: 'none',
+                                    }}
                                     aria-label='الرئيسية - موقع صفقة'
                                     title='الرئيسية - موقع صفقة'
                                 >
                                     <SafqaLogo />
-                                </StyledNavLink>
+                                </Link>
                             </motion.div>
 
                             {/* Messages */}
@@ -280,7 +280,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             <Box
                                 component='li'
                                 role='listitem'
-                                sx={{ flexShrink: 0 }}
+                                sx={{ flexShrink: 0, listStyle: 'none' }}
                             >
                                 <StyledNavLink
                                     to={path.jobs}
@@ -602,11 +602,11 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         sx={{
                                             borderRadius: '30px',
                                             fontWeight: 'bold',
-                                            backgroundColor: '#4FC3F7',
+                                            backgroundColor: '#FBBC05',
                                             color: '#1A1E22',
                                             px: 3,
                                             '&:hover': {
-                                                backgroundColor: '#81D4FA',
+                                                backgroundColor: '#fb9905',
                                             },
                                         }}
                                         aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
@@ -625,7 +625,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
             {/* Mobile Drawer */}
             <Drawer
                 variant='temporary'
-                anchor={dir === 'rtl' ? 'right' : 'left'}
+                anchor={dir === 'rtl' ? 'left' : 'right'}
                 open={mobileOpen}
                 onClose={handleDrawerToggle}
                 ModalProps={{
@@ -681,7 +681,7 @@ export default Theme;
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
     textDecoration: 'none',
     listStyle: 'none',
-    color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#4a5568',
+    color: theme.palette.mode === 'dark' ? '#74829b' : '#74829b',
     padding: '8px 16px',
     borderRadius: '8px',
     transition: 'all 0.3s ease',
@@ -697,9 +697,9 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
     },
     '&.active': {
         fontWeight: 'bold',
-        backgroundColor:
+        border:
             theme.palette.mode === 'dark'
-                ? 'rgba(255, 255, 255, 0.884)'
-                : 'rgb(245, 159, 11)',
+                ? '2px solid rgba(255, 255, 255, 0.884)'
+                : '2px solid  rgb(245, 159, 11)',
     },
 }));

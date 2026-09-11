@@ -1,3 +1,4 @@
+import { FunctionComponent, SyntheticEvent } from 'react';
 import {
     Box,
     Typography,
@@ -8,17 +9,18 @@ import {
     ListItemText,
     Divider,
     FormControlLabel,
+    FormGroup,
+    Collapse,
     PaletteMode,
     useTheme,
     Badge,
+    Grid,
+    Tooltip,
 } from '@mui/material';
 import {
     Brightness4,
     Brightness7,
-    ExpandMore,
-    ExpandLess,
     Close as CloseIcon,
-    Category as CategoryIcon,
     Home as HomeIcon,
     Favorite as FavoriteIcon,
     Info as InfoIcon,
@@ -28,29 +30,28 @@ import {
     ChatBubble,
     Delete,
 } from '@mui/icons-material';
-import { FunctionComponent, SyntheticEvent } from 'react';
-import { Collapse, FormGroup } from '@mui/material';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { Capacitor } from '@capacitor/core';
+
 import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
+import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
 import { GradientSwitch } from './GradientSwitch';
-import { useTranslation } from 'react-i18next';
 import { AuthValues } from '../../../interfaces/authValues';
 import { useChat } from '../../../hooks/useChat';
-import { Capacitor } from '@capacitor/core';
 import { AppSettings } from '../../settings/appSettings';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AISearch from '../../../atoms/AISearch';
-import { motion } from 'framer-motion';
-import handleRTL from '../../../locales/handleRTL';
-import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
 const openAppSettings = async () => {
     if (!Capacitor.isNativePlatform()) return;
-
     await AppSettings.open();
 };
+
 interface MobileDrawerProps {
     mode: PaletteMode;
     setMobileOpen: (value: boolean) => void;
@@ -67,32 +68,46 @@ interface MobileDrawerProps {
     logout: () => void;
 }
 
+// Shared style helpers (previously duplicated per-item)
+const navItemSx = {
+    borderRadius: '8px',
+    '&.active': {
+        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+        color: '#f59f0b',
+        fontWeight: 'bold',
+    },
+} as const;
+
+const navItemSxRed = {
+    borderRadius: '8px',
+    '&.active': {
+        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+        color: '#dc3545',
+        fontWeight: 'bold',
+    },
+} as const;
+
 const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
     mode,
-    isLoggedIn,
     setMobileOpen,
     expandedMobileMenu = false,
     setExpandedMobileMenu,
+    isLoggedIn,
     handleDrawerToggle,
-    isAdmin,
     auth,
+    isAdmin,
     handleThemeChange,
 }) => {
     const { t } = useTranslation();
     const theme = useTheme();
-    const handleMobileMenuToggle = (menu: string) => {
-        setExpandedMobileMenu(expandedMobileMenu === menu ? false : menu);
-    };
-
     const { unreadCounts } = useChat();
     const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
+    const dir = handleRTL();
 
     const handleNavLinkClick = () => {
         setMobileOpen(false);
         setExpandedMobileMenu(false);
     };
-
-    const dir = handleRTL();
 
     return (
         <Box
@@ -102,13 +117,13 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                 height: '100%',
                 background:
                     mode === 'dark'
-                        ? `radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%), ${theme.palette.background.paper}`
+                        ? `radial-gradient(circle, transparent 70%), ${theme.palette.background.paper}`
                         : theme.palette.background.paper,
                 display: 'flex',
                 flexDirection: 'column',
             }}
         >
-            {/* Drawer header with close button */}
+            {/* Drawer header */}
             <Box
                 sx={{
                     display: 'flex',
@@ -149,17 +164,15 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             <AISearch />
                         </Box>
                     </ListItem>
+
                     {/* Notification settings - native only */}
                     {Capacitor.isNativePlatform() && (
                         <ListItem disablePadding sx={{ mb: 1 }}>
                             <ListItemButton
                                 onClick={openAppSettings}
-                                sx={{
-                                    borderRadius: '8px',
-                                }}
+                                sx={{ borderRadius: '8px' }}
                             >
                                 <NotificationsActiveIcon sx={{ ml: 1 }} />
-
                                 <ListItemText
                                     primary={
                                         t('notificationSettings') ||
@@ -172,20 +185,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
+
                     {/* Home */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.Home}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#f59f0b',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSx}
                         >
                             <HomeIcon sx={{ ml: 1 }} />
                             <ListItemText
@@ -197,6 +204,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
+
                     {/* Favorites */}
                     {auth._id && (
                         <ListItem disablePadding sx={{ mb: 1 }}>
@@ -204,15 +212,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                 component={NavLink}
                                 to={path.Favorite}
                                 onClick={handleNavLinkClick}
-                                sx={{
-                                    borderRadius: '8px',
-                                    '&.active': {
-                                        backgroundColor:
-                                            'rgba(220, 53, 69, 0.1)',
-                                        color: '#f59f0b',
-                                        fontWeight: 'bold',
-                                    },
-                                }}
+                                sx={navItemSx}
                             >
                                 <FavoriteIcon sx={{ ml: 1 }} />
                                 <ListItemText
@@ -225,20 +225,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
-                    {/* How to delete your account in safqa */}
+
+                    {/* Delete account */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.DeleteAccount}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#f59f0b',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSx}
                         >
                             <Delete sx={{ ml: 1 }} />
                             <ListItemText
@@ -252,7 +246,8 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
-                    {/* Messages page */}{' '}
+
+                    {/* Messages */}
                     {isLoggedIn && (
                         <ListItem disablePadding sx={{ mb: 1 }}>
                             <ListItemButton
@@ -260,15 +255,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                 to={path.MessagesPage}
                                 onClick={handleNavLinkClick}
                                 sx={{
-                                    borderRadius: '8px',
+                                    ...navItemSx,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    '&.active': {
-                                        backgroundColor:
-                                            'rgba(220, 53, 69, 0.1)',
-                                        color: '#f59f0b', // كانت #f59e0b11
-                                        fontWeight: 'bold',
-                                    },
                                 }}
                             >
                                 <Badge
@@ -290,31 +279,9 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
-                    {/* Products with categories - IMPLEMENTED */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton
-                            onClick={() => handleMobileMenuToggle('products')}
-                            aria-expanded={expandedMobileMenu === 'products'}
-                            aria-label='المنتجات والتصنيفات'
-                            sx={{ borderRadius: '8px' }}
-                        >
-                            <CategoryIcon sx={{ ml: 1 }} />
-                            <ListItemText
-                                primary={t('links.products') || 'المنتجات'}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: 500 },
-                                }}
-                            />
-                            {expandedMobileMenu === 'products' ? (
-                                <ExpandLess />
-                            ) : (
-                                <ExpandMore />
-                            )}
-                        </ListItemButton>
-                    </ListItem>
+
                     <Collapse
                         in={expandedMobileMenu === 'products'}
-                        // timeout='auto'
                         unmountOnExit
                     >
                         <List component='div' disablePadding>
@@ -342,7 +309,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                 />
                             </ListItemButton>
 
-                            {/* Categories and subcategories from productsAndCategories */}
+                            {/* Categories and subcategories */}
                             {productsAndCategories.map(
                                 (category: NavCategory) => (
                                     <ListItemButton
@@ -358,7 +325,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                             textDecoration: 'none',
                                             color: 'text.primary',
                                             position: 'relative',
-
                                             '&.active': {
                                                 backgroundColor:
                                                     mode === 'dark'
@@ -379,7 +345,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                     borderRadius: 2,
                                                 },
                                             },
-
                                             '&:hover': {
                                                 backgroundColor:
                                                     mode === 'dark'
@@ -388,16 +353,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                 transform: 'translateX(4px)',
                                                 transition: 'all 0.2s ease',
                                             },
-
                                             '&:focus-visible': {
                                                 outline: `2px solid ${theme.palette.primary.main}`,
                                                 outlineOffset: 2,
                                             },
                                         }}
                                     >
-                                        {/* icon or short label */}
                                         <Box
-                                            component={'img'}
+                                            component='img'
                                             sx={{
                                                 mr: 1.5,
                                                 fontSize: '1.2rem',
@@ -410,7 +373,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                             src={category.icon}
                                             aria-hidden='true'
                                         />
-
                                         <ListItemText
                                             primary={
                                                 <Typography
@@ -441,7 +403,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                     </Typography>
                                                 </Typography>
                                             }
-                                            // SEO Optimization: Keep subcategories for screen readers
                                             secondary={
                                                 <Typography
                                                     component='span'
@@ -454,7 +415,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                     aria-label={`${category.subCategories.length} تصنيفات فرعية`}
                                                 >
                                                     {category.subCategories
-                                                        .slice(0, 3) // Limit to 3 for better UX
+                                                        .slice(0, 3)
                                                         .map((sub) =>
                                                             t(sub.labelKey),
                                                         )
@@ -478,7 +439,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                                 },
                                             }}
                                         />
-
                                         {category.subCategories.length > 0 && (
                                             <Badge
                                                 badgeContent={
@@ -495,20 +455,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             )}
                         </List>
                     </Collapse>
+
                     {/* About */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.About}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#dc3545',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSxRed}
                         >
                             <InfoIcon sx={{ ml: 1 }} />
                             <ListItemText
@@ -521,20 +475,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
+
                     {/* Contact */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.Contact}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#dc3545',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSxRed}
                         >
                             <ContactIcon sx={{ ml: 1 }} />
                             <ListItemText
@@ -547,23 +495,16 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
+
                     {/* Jobs */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.jobs}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#dc3545',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSxRed}
                         >
                             <WorkOutlineIcon sx={{ ml: 1 }} />
-
                             <ListItemText
                                 primary={t('links.jobs') || 'الوظائف'}
                                 primaryTypographyProps={{
@@ -573,20 +514,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
+
                     {/* Help */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
                         <ListItemButton
                             component={NavLink}
                             to={path.SellingHelp}
                             onClick={handleNavLinkClick}
-                            sx={{
-                                borderRadius: '8px',
-                                '&.active': {
-                                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                                    color: '#dc3545',
-                                    fontWeight: 'bold',
-                                },
-                            }}
+                            sx={navItemSxRed}
                         >
                             <HelpIcon sx={{ ml: 1 }} />
                             <ListItemText
@@ -599,63 +534,68 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             />
                         </ListItemButton>
                     </ListItem>
+
                     {/* Admin Panel - only if admin */}
                     {isAdmin && (
-                        <Divider
-                            sx={{
-                                my: 2,
-                                borderColor:
-                                    mode === 'dark'
-                                        ? 'rgba(255,255,255,0.1)'
-                                        : 'rgba(0,0,0,0.1)',
-                            }}
-                        />
-                    )}
-                    {isAdmin && (
-                        <ListItem disablePadding sx={{ mb: 1 }}>
-                            <ListItemButton
-                                component={NavLink}
-                                to={path.UsersManagement}
-                                onClick={handleNavLinkClick}
+                        <>
+                            <Divider
                                 sx={{
-                                    borderRadius: '8px',
-                                    backgroundColor:
+                                    my: 2,
+                                    borderColor:
                                         mode === 'dark'
-                                            ? 'rgba(144, 202, 249, 0.1)'
-                                            : 'rgba(33, 150, 243, 0.1)',
-                                    '&.active': {
-                                        backgroundColor:
-                                            'rgba(33, 150, 243, 0.2)',
-                                        color: '#2196f3',
-                                        fontWeight: 'bold',
-                                    },
+                                            ? 'rgba(255,255,255,0.1)'
+                                            : 'rgba(0,0,0,0.1)',
                                 }}
-                            >
-                                <DashboardIcon
-                                    sx={{ ml: 1, color: '#2196f3' }}
-                                />
-                                <ListItemText
-                                    primary={
-                                        t('users-management') || 'لوحة التحكم'
-                                    }
-                                    primaryTypographyProps={{
-                                        sx: {
-                                            fontWeight: 600,
+                            />
+                            <ListItem disablePadding sx={{ mb: 1 }}>
+                                <ListItemButton
+                                    component={NavLink}
+                                    to={path.UsersManagement}
+                                    onClick={handleNavLinkClick}
+                                    sx={{
+                                        borderRadius: '8px',
+                                        backgroundColor:
+                                            mode === 'dark'
+                                                ? 'rgba(144, 202, 249, 0.1)'
+                                                : 'rgba(33, 150, 243, 0.1)',
+                                        '&.active': {
+                                            backgroundColor:
+                                                'rgba(33, 150, 243, 0.2)',
                                             color: '#2196f3',
+                                            fontWeight: 'bold',
                                         },
-                                        'aria-label': 'لوحة تحكم الإدارة',
                                     }}
-                                />
-                            </ListItemButton>
-                        </ListItem>
+                                >
+                                    <DashboardIcon
+                                        sx={{ ml: 1, color: '#2196f3' }}
+                                    />
+                                    <ListItemText
+                                        primary={
+                                            t('users-management') ||
+                                            'لوحة التحكم'
+                                        }
+                                        primaryTypographyProps={{
+                                            sx: {
+                                                fontWeight: 600,
+                                                color: '#2196f3',
+                                            },
+                                            'aria-label': 'لوحة تحكم الإدارة',
+                                        }}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        </>
                     )}
                 </List>
             </Box>
 
             {/* Footer with theme and language */}
-            <Box
+            <Grid
+                container
                 sx={{
-                    p: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
                     borderTop: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
                     backgroundColor:
                         mode === 'dark'
@@ -664,15 +604,22 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                 }}
             >
                 {/* Theme toggle */}
-                <Box
+                <Grid
+                    size={{ xs: 6 }}
                     sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
-                        mb: 2,
+                        justifyContent: 'center',
                     }}
                 >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                        sx={{
+                            px: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                        }}
+                    >
                         {mode === 'dark' ? (
                             <Brightness4 sx={{ color: '#ffffff' }} />
                         ) : (
@@ -691,57 +638,43 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             aria-label='تبديل وضع السمة'
                         />
                     </FormGroup>
-                </Box>
+                </Grid>
 
                 {/* Language switcher */}
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant='body2' sx={{ mb: 1, fontWeight: 500 }}>
-                        {t('language') || 'اللغة'}
-                    </Typography>
-                    <LanguageSwitcher />
-                </Box>
-
-                {/* Login/Logout button
-                {!isLoggedIn && (
-                    <Box sx={{ mt: 2 }}>
-                        <Button
-                            fullWidth
-                            variant='contained'
-                            color='primary'
-                            onClick={() => {
-                                navigate(path.Login);
-                                handleNavLinkClick();
-                            }}
-                            sx={{
-                                borderRadius: '30px',
-                                fontWeight: 'bold',
-                                backgroundColor: '#4FC3F7',
-                                color: '#1A1E22',
-                                '&:hover': {
-                                    backgroundColor: '#81D4FA',
-                                },
-                            }}
-                            aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
-                        >
-                            {t('links.login')}
-                        </Button>
-                    </Box>
-                )} */}
-
-                {/* Copyright */}
-                <Typography
-                    variant='caption'
+                <Grid
+                    size={{ xs: 6 }}
                     sx={{
-                        display: 'block',
-                        textAlign: 'center',
-                        mt: 2,
-                        color: 'text.secondary',
+                        display: 'flex',
+                        alignContent: 'center',
+                        justifyContent: 'center',
                     }}
                 >
-                    © {new Date().getFullYear()} صفقة. جميع الحقوق محفوظة.
-                </Typography>
-            </Box>
+                    <Tooltip
+                        children={<LanguageSwitcher />}
+                        title={t('language')}
+                    />
+                </Grid>
+
+                {/* Copyright */}
+                <Grid size={{ xs: 12 }}>
+                    <Box borderTop={1} borderColor='divider' textAlign='center'>
+                        <Typography variant='body2' color='text.secondary'>
+                            © {new Date().getFullYear()} {t('footer.siteName')}{' '}
+                            - {t('allRightsReserved')}
+                        </Typography>
+                        <Typography
+                            variant='caption'
+                            color='text.disabled'
+                            display='block'
+                            mt={1}
+                        >
+                            {t('footer.version', { version: '2.6.1' })}
+                        </Typography>
+                    </Box>
+                </Grid>
+            </Grid>
         </Box>
     );
 };
+
 export default MobileDrawer;

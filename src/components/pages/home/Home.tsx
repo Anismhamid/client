@@ -143,14 +143,12 @@ const Home: FunctionComponent = () => {
         }
     }, []);
 
-    // if (loading) return <Loader />;
-
     const currentUrl = window.location.origin;
 
     return (
         <>
             {/* ─── SEO ─── */}
-            <title>بيع وشراء جديد ومستعمل | صفقة</title>
+            <title>صفقة | بيع وشراء جديد ومستعمل</title>
 
             <meta
                 name='description'
@@ -159,7 +157,7 @@ const Home: FunctionComponent = () => {
             <link rel='icon' href='/d3.png' />
             <link rel='apple-touch-icon' href='/d3.png' />
             <link rel='canonical' href={currentUrl} />
-            <meta property='og:title' content='بيع وشراء جديد ومستعمل | صفقة' />
+            <meta property='og:title' content='صفقة | بيع وشراء جديد ومستعمل' />
             <meta
                 property='og:description'
                 content='بيع وشراء المنتجات بسهولة وأمان'

@@ -32,10 +32,26 @@ const FLOATING_SEALS = [
 ];
 
 const TRUST_ITEMS = [
-    { icon: LockOutlinedIcon, key: 'trust.securePayments', fallback: 'دفع آمن' },
-    { icon: LocalShippingOutlinedIcon, key: 'trust.fastDelivery', fallback: 'توصيل سريع' },
-    { icon: SupportAgentOutlinedIcon, key: 'trust.support', fallback: 'دعم ٢٤/٧' },
-    { icon: HandshakeOutlinedIcon, key: 'trust.verifiedDeals', fallback: 'صفقات موثوقة' },
+    {
+        icon: LockOutlinedIcon,
+        key: 'trust.securePayments',
+        fallback: 'دفع آمن',
+    },
+    {
+        icon: LocalShippingOutlinedIcon,
+        key: 'trust.fastDelivery',
+        fallback: 'توصيل سريع',
+    },
+    {
+        icon: SupportAgentOutlinedIcon,
+        key: 'trust.support',
+        fallback: 'دعم ٢٤/٧',
+    },
+    {
+        icon: HandshakeOutlinedIcon,
+        key: 'trust.verifiedDeals',
+        fallback: 'صفقات موثوقة',
+    },
 ];
 
 const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
@@ -69,14 +85,12 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 position: 'relative',
                 overflow: 'hidden',
                 bgcolor: 'background.paper',
-                backgroundImage:
-                    'radial-gradient(circle, rgba(245,159,11,0.03) 0%, transparent 70%)',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
         >
-              <AISearch />
+            <AISearch />
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
             <Box
                 sx={{
@@ -102,8 +116,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     width: { xs: 320, md: 620 },
                     height: { xs: 320, md: 620 },
                     borderRadius: '50%',
-                    background:
-                        'radial-gradient(circle, rgba(184,134,11,0.10) 0%, transparent 70%)',
                     pointerEvents: 'none',
                 }}
             />
@@ -137,8 +149,17 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             },
                         }}
                     >
-                        <SealBadge size={seal.size} rotate={seal.rotate} tone='outline'>
-                            <Box sx={{ width: seal.size * 0.35, height: seal.size * 0.35 }} />
+                        <SealBadge
+                            size={seal.size}
+                            rotate={seal.rotate}
+                            tone='outline'
+                        >
+                            <Box
+                                sx={{
+                                    width: seal.size * 0.35,
+                                    height: seal.size * 0.35,
+                                }}
+                            />
                         </SealBadge>
                     </motion.div>
                 ))}
@@ -203,7 +224,10 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             mb: 2,
                         }}
                     >
-                        <Box component='span' sx={{ display: 'inline-block', mr: 1 }}>
+                        <Box
+                            component='span'
+                            sx={{ display: 'inline-block', mr: 1 }}
+                        >
                             🛒
                         </Box>
                         <Box

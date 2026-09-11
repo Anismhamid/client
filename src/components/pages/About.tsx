@@ -1,8 +1,6 @@
 import { FunctionComponent } from 'react';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForwardIos';
 import {
     Box,
-    IconButton,
     Typography,
     Container,
     Card,
@@ -179,35 +177,6 @@ const About: FunctionComponent = () => {
                     maxWidth='lg'
                     sx={{ position: 'relative', zIndex: 1, py: 8 }}
                 >
-                    {/* Back Button */}
-                    <motion.div
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                    >
-                        <IconButton
-                            onClick={() => navigate(-1)}
-                            aria-label='back'
-                            sx={{
-                                mb: 4,
-                                bgcolor: theme.palette.background.paper,
-                                boxShadow: `0 4px 12px ${alpha(theme.palette.common.black, 0.08)}`,
-                                '&:hover': {
-                                    bgcolor: alpha(
-                                        theme.palette.primary.main,
-                                        0.04,
-                                    ),
-                                    transform: 'translateX(-5px)',
-                                },
-                                transition: 'all 0.3s ease',
-                            }}
-                        >
-                            <ArrowForwardIcon
-                                sx={{ transform: 'rotate(180deg)' }}
-                            />
-                        </IconButton>
-                    </motion.div>
-
                     {/* Hero Section */}
                     <motion.div
                         initial={{ y: 50, opacity: 0 }}
