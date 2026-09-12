@@ -19,6 +19,7 @@ import {
     CardMedia,
     Chip,
     Container,
+    Dialog,
     Divider,
     Grid,
     IconButton,
@@ -30,9 +31,13 @@ import {
     Tooltip,
     Typography,
     alpha,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import {
@@ -221,6 +226,9 @@ const PostDetails: FunctionComponent = () => {
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
     const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]);
+    const [imageDialogOpen, setImageDialogOpen] = useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const imageContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -293,7 +301,18 @@ const PostDetails: FunctionComponent = () => {
             t('chat.isStillAvailable');
 
         openChat(seller as UserMessage, initialMessage);
-    }, [post.seller, post.sale, post.price, post.discount, post.product_name, auth._id, t, categoryLabel, openChat, navigate]);
+    }, [
+        post.seller,
+        post.sale,
+        post.price,
+        post.discount,
+        post.product_name,
+        auth._id,
+        t,
+        categoryLabel,
+        openChat,
+        navigate,
+    ]);
 
     /* =====================================================
        PROFILE
@@ -390,8 +409,12 @@ const PostDetails: FunctionComponent = () => {
         const shareUrl = `${SITE_URL}${location.pathname}`;
         try {
             const shareData = {
-                title: t('common.product.shareTitle', { name: post.product_name }),
-                text: t('common.product.shareText', { name: post.product_name }),
+                title: t('common.product.shareTitle', {
+                    name: post.product_name,
+                }),
+                text: t('common.product.shareText', {
+                    name: post.product_name,
+                }),
                 url: shareUrl,
             };
 
@@ -713,9 +736,7 @@ const PostDetails: FunctionComponent = () => {
 
                                             {post.seller?.slug && (
                                                 <Tooltip
-                                                    title={t(
-                                                        'verifiedSeller',
-                                                    )}
+                                                    title={t('verifiedSeller')}
                                                 >
                                                     <VerifiedRounded
                                                         sx={{
@@ -760,7 +781,9 @@ const PostDetails: FunctionComponent = () => {
                                                 color='text.secondary'
                                                 sx={{ fontSize: '0.8125rem' }}
                                             >
-                                                {t('common.product.postedSince')}{' '}
+                                                {t(
+                                                    'common.product.postedSince',
+                                                )}{' '}
                                                 {formatTimeAgo(
                                                     String(
                                                         post.createdAt || '',
@@ -775,7 +798,9 @@ const PostDetails: FunctionComponent = () => {
                                                         sx={{ fontSize: 14 }}
                                                     />
                                                 }
-                                                label={t('common.product.views')}
+                                                label={t(
+                                                    'common.product.views',
+                                                )}
                                                 value={post.views ?? 0}
                                             />
                                             <StatsBadge
@@ -784,7 +809,9 @@ const PostDetails: FunctionComponent = () => {
                                                         sx={{ fontSize: 14 }}
                                                     />
                                                 }
-                                                label={t('common.product.likes')}
+                                                label={t(
+                                                    'common.product.likes',
+                                                )}
                                                 value={post.likes?.length || 0}
                                             />
                                         </Stack>
@@ -805,7 +832,9 @@ const PostDetails: FunctionComponent = () => {
                                         },
                                     }}
                                 >
-                                    <Tooltip title={t('common.product.refreshData')}>
+                                    <Tooltip
+                                        title={t('common.product.refreshData')}
+                                    >
                                         <IconButton
                                             onClick={handleRefreshPost}
                                             size='small'
@@ -1031,22 +1060,45 @@ const PostDetails: FunctionComponent = () => {
                                             <Box
                                                 ref={imageContainerRef}
                                                 onMouseMove={handleMouseMove}
-                                                onClick={() =>
-                                                    setIsZoomed((prev) => !prev)
-                                                }
+                                                onClick={() => {
+                                                    if (isMobile) {
+                                                        setImageDialogOpen(
+                                                            true,
+                                                        );
+                                                        return;
+                                                    }
+                                                    setIsZoomed(
+                                                        (prev) => !prev,
+                                                    );
+                                                }}
                                                 sx={{
                                                     position: 'relative',
+                                                    // ✅ ارتفاع متجاوب: تلقائي على الهاتف، ثابت على الشاشات الكبيرة
                                                     height: {
-                                                        xs: 360,
+                                                        xs: 'auto',
+                                                        sm: 400,
                                                         md: 520,
+                                                    },
+                                                    minHeight: {
+                                                        xs: 240,
+                                                        sm: 400,
+                                                    },
+                                                    maxHeight: {
+                                                        xs: '70vh',
+                                                        sm: 'unset',
                                                     },
                                                     borderRadius: 3,
                                                     overflow: 'hidden',
-                                                    cursor: isZoomed
-                                                        ? 'zoom-out'
-                                                        : 'zoom-in',
+                                                    cursor: isMobile
+                                                        ? 'pointer'
+                                                        : isZoomed
+                                                          ? 'zoom-out'
+                                                          : 'zoom-in',
                                                     background:
                                                         'radial-gradient(circle at top, #f8fafc 0%, #f1ede4 100%)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
                                                     '&::before': {
                                                         content: '""',
                                                         position: 'absolute',
@@ -1054,11 +1106,25 @@ const PostDetails: FunctionComponent = () => {
                                                         background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(184,134,11,.12), transparent 40%)`,
                                                         pointerEvents: 'none',
                                                         transition: '0.2s',
+                                                        zIndex: 1,
                                                     },
                                                 }}
                                             >
                                                 {post.image?.url ? (
-                                                    <>
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'relative',
+                                                            width: '100%',
+                                                            height: '100%',
+                                                            // ✅ على الهاتف: نحافظ على نسبة الصورة
+                                                            display: 'flex',
+                                                            alignItems:
+                                                                'center',
+                                                            justifyContent:
+                                                                'center',
+                                                        }}
+                                                    >
                                                         <CardMedia
                                                             component='img'
                                                             image={
@@ -1069,9 +1135,20 @@ const PostDetails: FunctionComponent = () => {
                                                             }
                                                             sx={{
                                                                 width: '100%',
-                                                                height: '100%',
-                                                                objectFit:
-                                                                    'contain',
+                                                                height: {
+                                                                    xs: 'auto',
+                                                                    sm: '100%',
+                                                                },
+                                                                maxHeight: {
+                                                                    xs: '70vh',
+                                                                    sm: '100%',
+                                                                },
+                                                                objectFit: {
+                                                                    xs: 'contain',
+                                                                    sm: 'cover',
+                                                                },
+                                                                display:
+                                                                    'block',
                                                                 transition:
                                                                     'transform 0.3s ease',
                                                                 transform:
@@ -1102,6 +1179,16 @@ const PostDetails: FunctionComponent = () => {
                                                                 py: 0.75,
                                                                 boxShadow:
                                                                     '0 4px 20px rgba(0,0,0,0.2)',
+                                                                zIndex: 2,
+                                                                scale: {
+                                                                    xs: 0.85,
+                                                                    sm: 1,
+                                                                },
+                                                                // ✅ جديد: إخفاء على الهاتف (التحكم عبر Dialog)
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'flex',
+                                                                },
                                                             }}
                                                         >
                                                             <Tooltip
@@ -1253,31 +1340,32 @@ const PostDetails: FunctionComponent = () => {
                                                         </Stack>
 
                                                         {/* ZOOM LEVEL */}
-                                                        {isZoomed && (
-                                                            <Box
-                                                                sx={{
-                                                                    position:
-                                                                        'absolute',
-                                                                    top: 16,
-                                                                    right: 16,
-                                                                    px: 1.5,
-                                                                    py: 0.5,
-                                                                    borderRadius: 99,
-                                                                    bgcolor:
-                                                                        'rgba(0,0,0,0.7)',
-                                                                    color: '#fff',
-                                                                    fontWeight: 700,
-                                                                    fontSize: 12,
-                                                                    backdropFilter:
-                                                                        'blur(8px)',
-                                                                }}
-                                                            >
-                                                                {zoomLevel.toFixed(
-                                                                    1,
-                                                                )}
-                                                                x
-                                                            </Box>
-                                                        )}
+                                                        {isZoomed &&
+                                                            !isMobile && (
+                                                                <Box
+                                                                    sx={{
+                                                                        position:
+                                                                            'absolute',
+                                                                        top: 16,
+                                                                        right: 16,
+                                                                        px: 1.5,
+                                                                        py: 0.5,
+                                                                        borderRadius: 99,
+                                                                        bgcolor:
+                                                                            'rgba(0,0,0,0.7)',
+                                                                        color: '#fff',
+                                                                        fontWeight: 700,
+                                                                        fontSize: 12,
+                                                                        backdropFilter:
+                                                                            'blur(8px)',
+                                                                    }}
+                                                                >
+                                                                    {zoomLevel.toFixed(
+                                                                        1,
+                                                                    )}
+                                                                    x
+                                                                </Box>
+                                                            )}
 
                                                         {/* ZOOM HINT */}
                                                         <Box
@@ -1295,6 +1383,11 @@ const PostDetails: FunctionComponent = () => {
                                                                 py: 0.5,
                                                                 boxShadow:
                                                                     '0 2px 8px rgba(0,0,0,0.08)',
+                                                                // ✅ جديد: إخفاء على الهاتف
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'block',
+                                                                },
                                                             }}
                                                         >
                                                             <Typography
@@ -1304,6 +1397,10 @@ const PostDetails: FunctionComponent = () => {
                                                                     color: 'text.secondary',
                                                                     fontSize:
                                                                         '0.6875rem',
+                                                                    display: {
+                                                                        xs: 'none',
+                                                                        sm: 'block',
+                                                                    },
                                                                 }}
                                                             >
                                                                 {isZoomed
@@ -1314,8 +1411,31 @@ const PostDetails: FunctionComponent = () => {
                                                                           'common.product.clickToZoom',
                                                                       )}
                                                             </Typography>
+
+                                                            {/* 📱 على الهاتف: "tap" */}
+                                                            <Typography
+                                                                variant='caption'
+                                                                sx={{
+                                                                    fontWeight: 700,
+                                                                    color: 'text.secondary',
+                                                                    fontSize:
+                                                                        '0.6875rem',
+                                                                    display: {
+                                                                        xs: 'block',
+                                                                        sm: 'none',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                {isZoomed
+                                                                    ? t(
+                                                                          'common.product.tapToCancelZoom',
+                                                                      )
+                                                                    : t(
+                                                                          'common.product.tapToZoom',
+                                                                      )}
+                                                            </Typography>
                                                         </Box>
-                                                    </>
+                                                    </Box>
                                                 ) : (
                                                     <Stack
                                                         justifyContent='center'
@@ -1634,7 +1754,9 @@ const PostDetails: FunctionComponent = () => {
                                                         },
                                                     }}
                                                 >
-                                                    {t('common.product.callNow')}
+                                                    {t(
+                                                        'common.product.callNow',
+                                                    )}
                                                 </Button>
 
                                                 <Button
@@ -2148,8 +2270,10 @@ const PostDetails: FunctionComponent = () => {
                                                         variant='body2'
                                                         color='text.secondary'
                                                     >
-                                                        {t('common.product.seller')} • @
-                                                        {post.seller?.slug}
+                                                        {t(
+                                                            'common.product.seller',
+                                                        )}{' '}
+                                                        • @{post.seller?.slug}
                                                     </Typography>
                                                 </Box>
 
@@ -2260,7 +2384,9 @@ const PostDetails: FunctionComponent = () => {
                                                     },
                                                 }}
                                             >
-                                                {t('common.product.shareProduct')}
+                                                {t(
+                                                    'common.product.shareProduct',
+                                                )}
                                             </Button>
                                         </Stack>
                                     </Card>
@@ -2361,9 +2487,7 @@ const PostDetails: FunctionComponent = () => {
                         {relatedProducts.length > 0 && (
                             <Box sx={{ mt: 6 }}>
                                 <SectionTitle
-                                    title={t(
-                                        'common.product.relatedProducts',
-                                    )}
+                                    title={t('common.product.relatedProducts')}
                                     subtitle={t(
                                         'common.product.discoverRelatedProducts',
                                     )}
@@ -2425,6 +2549,168 @@ const PostDetails: FunctionComponent = () => {
                 postId={post._id as string}
                 refresh={handleRefreshPost}
             />
+            {/* =========================================================
+    IMAGE FULLSCREEN DIALOG (Mobile Pinch to Zoom)
+========================================================= */}
+            <Dialog
+                fullScreen
+                open={imageDialogOpen}
+                onClose={() => setImageDialogOpen(false)}
+                sx={{
+                    zIndex: 9999,
+                    '& .MuiDialog-paper': {
+                        backgroundColor: '#000',
+                    },
+                }}
+            >
+                <Box
+                    sx={{
+                        position: 'relative',
+                        width: '100vw',
+                        height: '100vh',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#000',
+                        overflow: 'hidden',
+                    }}
+                >
+                    {/* زر الإغلاق */}
+                    <IconButton
+                        onClick={() => setImageDialogOpen(false)}
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            right: 16,
+                            zIndex: 10,
+                            backgroundColor: 'rgba(255,255,255,0.15)',
+                            backdropFilter: 'blur(8px)',
+                            color: '#fff',
+                            '&:hover': {
+                                backgroundColor: 'rgba(255,255,255,0.25)',
+                            },
+                        }}
+                        aria-label='close'
+                    >
+                        <CloseIcon />
+                    </IconButton>
+
+                    {/* تلميح الاستخدام */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 16,
+                            left: 16,
+                            zIndex: 10,
+                            backgroundColor: 'rgba(255,255,255,0.15)',
+                            backdropFilter: 'blur(8px)',
+                            borderRadius: 99,
+                            px: 1.5,
+                            py: 0.5,
+                        }}
+                    >
+                        <Typography
+                            variant='caption'
+                            sx={{
+                                color: '#fff',
+                                fontWeight: 600,
+                                fontSize: '0.6875rem',
+                            }}
+                        >
+                            {t('common.product.pinchToZoomHint') ||
+                                'اسحب للتنقل · إصبعان للتكبير'}
+                        </Typography>
+                    </Box>
+
+                    {/* الصورة مع الإيماءات */}
+                    {post.image?.url && (
+                        <TransformWrapper
+                            initialScale={1}
+                            minScale={1}
+                            maxScale={5}
+                            centerOnInit
+                            doubleClick={{ mode: 'toggle' }}
+                            wheel={{ step: 0.1 }}
+                            pinch={{ step: 5 }}
+                            panning={{ velocityDisabled: false }}
+                        >
+                            {({ zoomIn, zoomOut, resetTransform }) => (
+                                <>
+                                    <TransformComponent
+                                        wrapperStyle={{
+                                            width: '100vw',
+                                            height: '100vh',
+                                        }}
+                                        contentStyle={{
+                                            width: '100vw',
+                                            height: '100vh',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <img
+                                            src={post.image.url}
+                                            alt={post.product_name}
+                                            style={{
+                                                maxWidth: '100%',
+                                                maxHeight: '100%',
+                                                width: 'auto',
+                                                height: 'auto',
+                                                objectFit: 'contain',
+                                                display: 'block',
+                                                userSelect: 'none',
+                                                pointerEvents: 'auto',
+                                            }}
+                                            draggable={false}
+                                        />
+                                    </TransformComponent>
+
+                                    {/* أزرار التحكم بالزوم */}
+                                    <Stack
+                                        direction='row'
+                                        spacing={1}
+                                        sx={{
+                                            position: 'absolute',
+                                            bottom: 24,
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                            backgroundColor: 'rgba(0,0,0,0.6)',
+                                            backdropFilter: 'blur(12px)',
+                                            borderRadius: 99,
+                                            px: 1.5,
+                                            py: 1,
+                                            zIndex: 10,
+                                        }}
+                                    >
+                                        <IconButton
+                                            onClick={() => zoomOut()}
+                                            sx={{ color: '#fff' }}
+                                            size='small'
+                                        >
+                                            <ZoomOut />
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => resetTransform()}
+                                            sx={{ color: '#fff' }}
+                                            size='small'
+                                        >
+                                            <RefreshIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            onClick={() => zoomIn()}
+                                            sx={{ color: '#fff' }}
+                                            size='small'
+                                        >
+                                            <ZoomIn />
+                                        </IconButton>
+                                    </Stack>
+                                </>
+                            )}
+                        </TransformWrapper>
+                    )}
+                </Box>
+            </Dialog>
         </>
     );
 };
