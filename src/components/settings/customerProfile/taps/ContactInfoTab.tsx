@@ -4,20 +4,16 @@ import { Phone } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { User } from '../../../../interfaces/chat/usersMessages';
 import { Link } from 'react-router-dom';
-import ContactTab from './ContactTab';
-
+// import ContactTab from './ContactTab';
 
 interface ContactInfoTabProps {
     user: User;
 }
 
-/**
- * تبويب معلومات التواصل الخاصة بالمستخدم
- * @param {user}
- * @returns ContactInfoTab
- */
 const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
     const { t } = useTranslation();
+
+
 
     return (
         <Grid container spacing={3}>
@@ -37,11 +33,8 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                 <Phone />
                             </Avatar>
                             <Box>
-                                <Typography
-                                    variant='caption'
-                                    color='text.secondary'
-                                >
-                                    {t('phone')}
+                                <Typography variant='caption' color='text.secondary'>
+                                    {t('common.phone')}
                                 </Typography>
                                 <Typography
                                     component={Link}
@@ -53,27 +46,23 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                         color: 'success.main',
                                     }}
                                 >
-                                    {user.phone?.phone_1
-                                        ? user.phone.phone_1
-                                        : '-'}
+                                    {user.phone?.phone_1 || '-'}
                                 </Typography>
                             </Box>
                         </Box>
+
                         {user.phone?.phone_2 && (
                             <Box display='flex' alignItems='center' gap={2}>
                                 <Avatar sx={{ bgcolor: 'success.light' }}>
                                     <Phone />
                                 </Avatar>
                                 <Box>
-                                    <Typography
-                                        variant='caption'
-                                        color='text.secondary'
-                                    >
+                                    <Typography variant='caption' color='text.secondary'>
                                         {t('phone')}
                                     </Typography>
                                     <Typography
                                         component={Link}
-                                        to={`tel:+972${user.phone?.phone_2}`}
+                                        to={`tel:+972${user.phone.phone_2}`}
                                         variant='body1'
                                         sx={{
                                             px: 1.5,
@@ -82,9 +71,7 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                             color: 'success.main',
                                         }}
                                     >
-                                        {user.phone?.phone_2
-                                            ? user.phone?.phone_2
-                                            : '-'}
+                                        {user.phone.phone_2}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -100,37 +87,23 @@ const ContactInfoTab: FunctionComponent<ContactInfoTabProps> = ({ user }) => {
                                     rel='noopener noreferrer'
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    <img
-                                        src='/waze.png'
-                                        width={20}
-                                        style={{ fontSize: 10 }}
-                                    />
+                                    <img src='/waze.png' width={20} alt='Waze' style={{ fontSize: 10 }} />
                                 </a>
                             </Avatar>
                             <Box>
-                                <Typography
-                                    variant='caption'
-                                    color='text.secondary'
-                                >
+                                <Typography variant='caption' color='text.secondary'>
                                     {t('modals.updateProductModal.location')}
                                 </Typography>
-                                <Typography variant='body1'>
-                                    {user.address?.city}
-                                </Typography>
+                                <Typography variant='body1'>{user.address?.city}</Typography>
                             </Box>
                         </Box>
                     </Box>
                 </Card>
             </Grid>
 
-            <Grid size={{ xs: 12, lg: 6 }}>
-                <ContactTab
-                    user={user}
-                    handleWhatsApp={function (): void {
-                        throw new Error('Function not implemented.');
-                    }}
-                />
-            </Grid>
+            {/* <Grid size={{ xs: 12, lg: 6 }}>
+                <ContactTab user={user} handleWhatsApp={handleWhatsApp} />
+            </Grid> */}
         </Grid>
     );
 };

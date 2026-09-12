@@ -7,9 +7,12 @@ import {
     Card,
     CardContent,
     Chip,
+    Divider,
     Grid,
+    IconButton,
     Rating,
     Stack,
+    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -25,33 +28,31 @@ import {
     ChatBubble,
     ArrowRight,
     ArrowLeft,
+    CalendarMonth,
 } from '@mui/icons-material';
 import { NavigateFunction } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { User, UserMessage } from '../../../interfaces/chat/usersMessages';
 import { Stats } from './types/states';
-import { Posts } from '../../../interfaces/Posts';
 import { useUser } from '../../../hooks/useUSer';
 import RoleType from '../../../interfaces/UserType';
 import { showError } from '../../../atoms/toasts/ReactToast';
+import { useChatWindow } from '../../../context/ChatWindowContext';
+import { formatDate } from '../../../helpers/dateAndPriceFormat';
 
-// نفس هوية صفقة اللونية المستخدمة في التنبيه وصفحة المنتج
 const BRAND_GOLD = '#B8860B';
 const BRAND_BROWN = '#8B4513';
-const BRAND_GRADIENT = `linear-gradient(90deg, ${BRAND_GOLD}, ${BRAND_BROWN})`;
+const BRAND_GRADIENT = `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`;
 
 interface CustomerProfileHeaderProps {
     handleShareProfile: () => void;
+    handleWhatsApp: () => void;
     navigate: NavigateFunction;
     user: User;
     slug: string;
     stats: Stats;
-    posts: Posts[];
-    handleContactSeller: () => void;
-    handleWhatsApp: () => void;
     dir: 'ltr' | 'rtl';
 }
-import { useChatWindow } from '../../../context/ChatWindowContext';
 
 const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     handleShareProfile,
@@ -66,8 +67,9 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     const { t } = useTranslation();
     const { auth } = useUser();
     const { openChat } = useChatWindow();
-
     const isRtl = dir === 'rtl';
+
+    const fullName = `${user.name?.first || ''} ${user.name?.last || ''}`.trim() || t('unknownUser');
 
     const handleOpenChat = () => {
         if (!auth?._id) {
@@ -83,338 +85,346 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.4 }}
         >
             <Card
+                elevation={0}
                 sx={{
                     mb: 4,
                     borderRadius: 4,
-                    boxShadow: theme.shadows[2],
-                    background: `linear-gradient(135deg, ${theme.palette.background.paper} 70%, ${BRAND_GOLD}10 100%)`,
-                    position: 'relative',
-                    overflow: 'visible',
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        height: 6,
-                        background: BRAND_GRADIENT,
-                        borderRadius: '4px 4px 0 0',
-                    },
+                    overflow: 'hidden',
+                    border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+                    bgcolor: 'background.paper',
                 }}
             >
-                {/* شريط الرجوع */}
+                {/* === غلاف علوي متدرج === */}
                 <Box
-                    sx={{ p: 2, display: 'flex', justifyContent: 'flex-start' }}
+                    sx={{
+                        position: 'relative',
+                        height: { xs: 120, md: 160 },
+                        background: BRAND_GRADIENT,
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            inset: 0,
+                            background:
+                                'radial-gradient(circle at 20% 30%, rgba(255,255,255,0.18), transparent 55%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.12), transparent 50%)',
+                        },
+                    }}
                 >
-                    <Button
-                        size='small'
-                        variant='text'
-                        startIcon={isRtl ? <ArrowRight /> : <ArrowLeft />}
+                    {/* زر الرجوع فوق الغلاف */}
+                    <IconButton
                         onClick={() => navigate(-1)}
                         aria-label={t('common.back')}
                         sx={{
-                            fontWeight: '600',
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                                transform: isRtl
-                                    ? 'translateX(4px)'
-                                    : 'translateX(-4px)',
-                                backgroundColor: 'transparent',
-                                color: BRAND_BROWN,
-                            },
+                            position: 'absolute',
+                            top: 12,
+                            insetInlineStart: 12,
+                            zIndex: 2,
+                            color: '#fff',
+                            bgcolor: alpha('#000', 0.18),
+                            backdropFilter: 'blur(6px)',
+                            '&:hover': { bgcolor: alpha('#000', 0.32) },
                         }}
                     >
-                        {t('common.back')}
-                    </Button>
+                        {isRtl ? <ArrowRight /> : <ArrowLeft />}
+                    </IconButton>
+
+                    {/* زر المشاركة فوق الغلاف */}
+                    <Tooltip title={t('common.shareProfile')}>
+                        <IconButton
+                            onClick={handleShareProfile}
+                            aria-label={t('common.shareProfile')}
+                            sx={{
+                                position: 'absolute',
+                                top: 12,
+                                insetInlineEnd: 12,
+                                zIndex: 2,
+                                color: '#fff',
+                                bgcolor: alpha('#000', 0.18),
+                                backdropFilter: 'blur(6px)',
+                                '&:hover': { bgcolor: alpha('#000', 0.32) },
+                            }}
+                        >
+                            <Share fontSize='small' />
+                        </IconButton>
+                    </Tooltip>
                 </Box>
 
+                {/* === جسم الكارد === */}
                 <CardContent
-                    sx={{ px: { xs: 3, md: 4 }, pb: { xs: 4, md: 4 }, pt: 0 }}
+                    sx={{
+                        px: { xs: 2.5, md: 4 },
+                        pb: { xs: 3, md: 4 },
+                        pt: 0,
+                        '&:last-child': { pb: { xs: 3, md: 4 } },
+                    }}
                 >
-                    <Grid
-                        container
-                        spacing={{ xs: 4, md: 2 }}
-                        alignItems='center'
-                    >
-                        {/* الصورة الشخصية */}
-                        <Grid
-                            size={{ xs: 12, md: 'auto' }}
-                            sx={{ display: 'flex', justifyContent: 'center' }}
-                        >
-                            <Box position='relative'>
+                    <Grid container spacing={2}>
+                        {/* الصورة — تتداخل مع الغلاف */}
+                        <Grid size={{ xs: 12, md: 'auto' }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: { xs: 'center', md: 'flex-start' },
+                                    mt: { xs: -8, md: -9 },
+                                }}
+                            >
                                 <Badge
                                     overlap='circular'
                                     anchorOrigin={{
                                         vertical: 'bottom',
-                                        horizontal: isRtl ? 'right' : 'left',
+                                        horizontal: isRtl ? 'left' : 'right',
                                     }}
                                     badgeContent={
-                                        <VerifiedUser
-                                            sx={{
-                                                color: BRAND_GOLD,
-                                                fontSize: 32,
-                                                bgcolor: 'background.paper',
-                                                borderRadius: '50%',
-                                                p: 0.5,
-                                                boxShadow: 2,
-                                            }}
-                                        />
+                                        <Tooltip title={t('common.verifiedSeller')}>
+                                            <Box
+                                                sx={{
+                                                    width: 34,
+                                                    height: 34,
+                                                    borderRadius: '50%',
+                                                    bgcolor: 'background.paper',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    boxShadow: 2,
+                                                    border: `2px solid ${BRAND_GOLD}`,
+                                                }}
+                                            >
+                                                <VerifiedUser
+                                                    sx={{
+                                                        color: BRAND_GOLD,
+                                                        fontSize: 22,
+                                                    }}
+                                                />
+                                            </Box>
+                                        </Tooltip>
                                     }
                                 >
                                     <Avatar
                                         src={user.image?.url}
+                                        alt={fullName}
                                         sx={{
-                                            width: { xs: 130, md: 160 },
-                                            height: { xs: 130, md: 160 },
-                                            border: `4px solid ${theme.palette.background.paper}`,
+                                            width: { xs: 120, md: 150 },
+                                            height: { xs: 120, md: 150 },
+                                            border: `5px solid ${theme.palette.background.paper}`,
                                             boxShadow: theme.shadows[4],
                                             background: BRAND_GRADIENT,
-                                            fontSize: '2rem',
-                                            fontWeight: 'bold',
-                                            transition: 'all 0.3s ease-in-out',
-                                            '&:hover': {
-                                                transform: 'scale(1.04)',
-                                                boxShadow: `0 0 20px ${BRAND_GOLD}30`,
-                                            },
+                                            fontSize: '2.25rem',
+                                            fontWeight: 800,
+                                            transition: 'transform 0.3s ease',
+                                            '&:hover': { transform: 'scale(1.03)' },
                                         }}
                                     >
-                                        {user.name?.first
-                                            ?.charAt(0)
-                                            .toUpperCase()}
-                                        {user.name?.last
-                                            ?.charAt(0)
-                                            .toUpperCase()}
+                                        {user.name?.first?.charAt(0).toUpperCase()}
+                                        {user.name?.last?.charAt(0).toUpperCase()}
                                     </Avatar>
                                 </Badge>
                             </Box>
                         </Grid>
 
-                        {/* بيانات الملف الشخصي */}
-                        <Grid
-                            size={{ xs: 12, md: 6 }}
-                            sx={{ textAlign: { xs: 'center', md: 'left' } }}
-                        >
-                            <Typography
-                                variant='h4'
-                                fontWeight='800'
-                                sx={{ mb: 1, letterSpacing: '-0.5px' }}
-                            >
-                                {`${user.name?.first || ''} ${user.name?.last || ''}`.trim() ||
-                                    t('unknownUser')}
-                            </Typography>
-
-                            <Stack
-                                direction='row'
-                                flexWrap='wrap'
-                                alignItems='center'
-                                justifyContent={{
-                                    xs: 'center',
-                                    md: 'flex-start',
-                                }}
-                                spacing={1}
-                                useFlexGap
-                                sx={{ mb: 2 }}
-                            >
-                                <Typography
-                                    variant='subtitle2'
-                                    color='text.secondary'
-                                    fontWeight='600'
-                                >
-                                    {t('common.businessName')}
-                                </Typography>
-                                <Typography
-                                    variant='subtitle2'
-                                    fontWeight='700'
-                                    sx={{ color: BRAND_BROWN }}
-                                >
-                                    @{slug}
-                                </Typography>
-                                <Chip
-                                    icon={
-                                        <Storefront style={{ fontSize: 16 }} />
-                                    }
-                                    label='بائع معتمد'
-                                    size='small'
-                                    sx={{
-                                        fontWeight: 'bold',
-                                        borderRadius: 1.5,
-                                        background: BRAND_GRADIENT,
-                                        color: '#fff',
-                                        '& .MuiChip-icon': { color: '#fff' },
-                                    }}
-                                />
-                                {user.role === RoleType.Admin && (
-                                    <Chip
-                                        label='مدير'
-                                        size='small'
-                                        color='warning'
-                                        sx={{
-                                            fontWeight: 'bold',
-                                            borderRadius: 1.5,
-                                        }}
-                                    />
-                                )}
-                            </Stack>
-
-                            {/* التقييم */}
-                            <Stack
-                                direction='row'
-                                alignItems='center'
-                                justifyContent={{
-                                    xs: 'center',
-                                    md: 'flex-start',
-                                }}
-                                spacing={1}
-                                sx={{ mb: 2.5 }}
-                            >
-                                <Rating
-                                    value={stats.rating}
-                                    precision={0.5}
-                                    readOnly
-                                    size='small'
-                                    sx={{ color: BRAND_GOLD }}
-                                />
-                                <Typography
-                                    variant='caption'
-                                    color='text.secondary'
-                                    fontWeight='600'
-                                >
-                                    ({stats.rating} {t('common.outOf')} 5)
-                                </Typography>
-                            </Stack>
-
-                            {/* معلومات سريعة */}
-                            <Stack
-                                direction='row'
-                                flexWrap='wrap'
-                                spacing={1}
-                                useFlexGap
-                                justifyContent={{
-                                    xs: 'center',
-                                    md: 'flex-start',
+                        {/* المعلومات */}
+                        <Grid size={{ xs: 12, md: 6 }} sx={{ minWidth: 0 }}>
+                            <Box
+                                sx={{
+                                    mt: { xs: 1, md: 2 },
+                                    textAlign: { xs: 'center', md: 'start' },
                                 }}
                             >
-                                {user.phone?.phone_1 && (
-                                    <Chip
-                                        icon={
-                                            <Phone style={{ fontSize: 14 }} />
-                                        }
-                                        label={user.phone.phone_1}
-                                        variant='outlined'
-                                        size='small'
+                                <Stack
+                                    direction='row'
+                                    flexWrap='wrap'
+                                    alignItems='center'
+                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    spacing={1}
+                                    useFlexGap
+                                    sx={{ mb: 0.5 }}
+                                >
+                                    <Typography
+                                        variant='h4'
+                                        fontWeight={800}
                                         sx={{
-                                            borderRadius: 1.5,
-                                            borderColor: 'divider',
+                                            letterSpacing: '-0.5px',
+                                            lineHeight: 1.2,
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
                                         }}
-                                    />
-                                )}
-                                {user.address?.city && (
-                                    <Chip
-                                        icon={
-                                            <LocationOn
-                                                style={{ fontSize: 14 }}
-                                            />
-                                        }
-                                        label={user.address.city}
-                                        variant='outlined'
+                                    >
+                                        {fullName}
+                                    </Typography>
+                                    {user.role === RoleType.Admin && (
+                                        <Chip
+                                            label={t('common.admin')}
+                                            size='small'
+                                            color='warning'
+                                            sx={{ fontWeight: 700, borderRadius: 1.5 }}
+                                        />
+                                    )}
+                                </Stack>
+
+                                <Stack
+                                    direction='row'
+                                    alignItems='center'
+                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    spacing={1}
+                                    sx={{ mb: 1.5, color: 'text.secondary' }}
+                                >
+                                    <Storefront sx={{ fontSize: 18, color: BRAND_BROWN }} />
+                                    <Typography variant='body2' fontWeight={700} sx={{ color: BRAND_BROWN }}>
+                                        @{slug}
+                                    </Typography>
+                                </Stack>
+
+                                {/* التقييم */}
+                                <Stack
+                                    direction='row'
+                                    alignItems='center'
+                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    spacing={1}
+                                    sx={{ mb: 2 }}
+                                >
+                                    <Rating
+                                        value={stats.rating || 0}
+                                        precision={0.5}
+                                        readOnly
                                         size='small'
-                                        sx={{
-                                            borderRadius: 1.5,
-                                            borderColor: 'divider',
-                                        }}
+                                        sx={{ color: BRAND_GOLD }}
                                     />
-                                )}
-                            </Stack>
+                                    <Typography variant='body2' color='text.secondary' fontWeight={600}>
+                                        {stats.rating.toFixed(1)}
+                                    </Typography>
+                                    {stats.reviewsCount > 0 && (
+                                        <>
+                                            <Divider orientation='vertical' flexItem sx={{ mx: 0.5 }} />
+                                            <Typography variant='body2' color='text.secondary'>
+                                                {t('common.reviewsCount', { count: stats.reviewsCount })}
+                                            </Typography>
+                                        </>
+                                    )}
+                                </Stack>
+
+                                {/* معلومات سريعة */}
+                                <Stack
+                                    direction='row'
+                                    flexWrap='wrap'
+                                    spacing={1}
+                                    useFlexGap
+                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                >
+                                    {user.address?.city && (
+                                        <Chip
+                                            icon={<LocationOn style={{ fontSize: 16 }} />}
+                                            label={user.address.city}
+                                            variant='outlined'
+                                            size='small'
+                                            sx={{
+                                                borderRadius: 2,
+                                                borderColor: alpha(theme.palette.divider, 0.9),
+                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                            }}
+                                        />
+                                    )}
+                                    {user.phone?.phone_1 && (
+                                        <Chip
+                                            icon={<Phone style={{ fontSize: 16 }} />}
+                                            label={user.phone.phone_1}
+                                            variant='outlined'
+                                            size='small'
+                                            sx={{
+                                                borderRadius: 2,
+                                                borderColor: alpha(theme.palette.divider, 0.9),
+                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                            }}
+                                        />
+                                    )}
+                                    {user.createdAt && (
+                                        <Chip
+                                            icon={<CalendarMonth style={{ fontSize: 16 }} />}
+                                            label={formatDate(user.createdAt)}
+                                            variant='outlined'
+                                            size='small'
+                                            sx={{
+                                                borderRadius: 2,
+                                                borderColor: alpha(theme.palette.divider, 0.9),
+                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                            }}
+                                        />
+                                    )}
+                                </Stack>
+                            </Box>
                         </Grid>
 
                         {/* أزرار التواصل */}
-                        <Grid size={{ xs: 12, md: 3 }}>
+                        <Grid size={{ xs: 12, md: 'auto' }}>
                             <Stack
+                                direction={{ xs: 'row', md: 'column' }}
                                 spacing={1}
                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
+                                    mt: { xs: 2, md: 2 },
+                                    minWidth: { md: 200 },
+                                    justifyContent: 'center',
                                 }}
                             >
                                 <Button
-                                    variant='outlined'
-                                    size='small'
-                                    disableElevation
-                                    startIcon={<ChatBubble />}
+                                    variant='contained'
                                     fullWidth
+                                    startIcon={<ChatBubble />}
                                     onClick={handleOpenChat}
                                     sx={{
-                                        fontWeight: 'bold',
-                                        borderRadius: 1.5,
-                                        py: 1.2,
+                                        fontWeight: 700,
+                                        borderRadius: 2.5,
+                                        py: 1.1,
                                         gap: 1,
-                                        // background: BRAND_GRADIENT,
+                                        textTransform: 'none',
+                                        background: BRAND_GRADIENT,
+                                        boxShadow: `0 6px 16px ${alpha(BRAND_GOLD, 0.25)}`,
                                         '&:hover': {
-                                            opacity: 0.95,
+                                            background: BRAND_GRADIENT,
+                                            boxShadow: `0 8px 22px ${alpha(BRAND_GOLD, 0.35)}`,
                                         },
                                     }}
                                 >
-                                    تواصل عبر المنصة
+                                    {t('common.contactViaPlatform')}
                                 </Button>
 
                                 <Button
                                     variant='outlined'
-                                    size='small'
                                     fullWidth
                                     color='success'
                                     startIcon={<WhatsApp />}
                                     onClick={handleWhatsApp}
                                     sx={{
-                                        fontWeight: 'bold',
-                                        py: 1.2,
-                                        borderWidth: 1.5,
+                                        fontWeight: 700,
+                                        borderRadius: 2.5,
+                                        py: 1.1,
                                         gap: 1,
+                                        textTransform: 'none',
+                                        borderWidth: 1.5,
+                                        '&:hover': { borderWidth: 1.5 },
                                     }}
                                 >
-                                    واتساب
+                                    {t('common.whatsapp')}
                                 </Button>
 
-                                {/* <Button
-                                    variant='outlined'
-                                    size='small'
-                                    fullWidth
-                                    color='inherit'
-                                    startIcon={<Share />}
-                                    onClick={handleShareProfile}
-                                    sx={{
-                                        fontWeight: 'bold',
-                                        color: 'text.secondary',
-                                        borderWidth: 1.5,
-                                        gap: 1,
-                                    }}
-                                >
-                                    مشاركة الملف
-                                </Button> */}
                                 <Button
                                     variant='text'
-                                    size='small'
                                     fullWidth
                                     startIcon={<Share sx={{ fontSize: 18 }} />}
                                     onClick={handleShareProfile}
                                     sx={{
                                         fontWeight: 600,
                                         color: 'text.secondary',
-                                        py: 1,
-                                        borderRadius: 2,
-                                        transition: 'all 0.2s ease',
+                                        borderRadius: 2.5,
+                                        textTransform: 'none',
                                         '&:hover': {
                                             color: BRAND_BROWN,
-                                            bgcolor: alpha(BRAND_GOLD, 0.04),
+                                            bgcolor: alpha(BRAND_GOLD, 0.06),
                                         },
                                     }}
                                 >
-                                    مشاركة الملف الشخصي
+                                    {t('common.shareProfile')}
                                 </Button>
                             </Stack>
                         </Grid>

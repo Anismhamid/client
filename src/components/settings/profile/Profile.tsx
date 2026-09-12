@@ -59,24 +59,16 @@ import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
 import Loader from '../../../atoms/loader/Loader';
 import handleRTL from '../../../locales/handleRTL';
+import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 
-const INK = 'primary'; // '#12161C';
-const ACCENT = '#f59e0b'; // brand amber, used across navbar/switch/active states
+const ACCENT = '#f59e0b';
 
-/**
- * Returns a traffic-light color for the profile-completion ring so the
- * number itself communicates urgency, not just progress.
- */
 const getCompletionColor = (percentage: number) => {
     if (percentage >= 80) return '#22c55e';
     if (percentage >= 50) return ACCENT;
     return '#ef4444';
 };
 
-/**
- * User Profile Component
- * @returns User profile with personal data and management options
- */
 const Profile: FunctionComponent = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
@@ -90,19 +82,16 @@ const Profile: FunctionComponent = () => {
     const [showEdit, setShowEdit] = useState<boolean>(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [hovered, setHovered] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
-
         setMousePosition({
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
         });
     };
-    /**
-     * Human-friendly relative date for the activity feed: "اليوم"، "أمس"، or
-     * a short date for anything older.
-     */
+
     const getRelativeDate = (timestamp: string) => {
         const date = new Date(timestamp);
         const today = new Date();
@@ -110,29 +99,22 @@ const Profile: FunctionComponent = () => {
             (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
                 86400000,
         );
-
         const time = date.toLocaleTimeString('ar', {
             hour: '2-digit',
             minute: '2-digit',
         });
-
         if (diffDays === 0) return `${t('activity.today')}، ${time}`;
         if (diffDays === 1) return `${t('activity.yesterday')}، ${time}`;
         return `${date.toLocaleDateString('ar', { day: 'numeric', month: 'short' })}، ${time}`;
     };
 
     const { id } = useParams();
-
-    const handleShowIdit = () => setShowEdit(!showEdit);
+    const handleShowIdit = () => setShowEdit((p) => !p);
 
     const [user, setUser] = useState<{
         name: { first: string; last: string };
         phone: { phone_1: string; phone_2: string };
-        address: {
-            city: string;
-            street: string;
-            houseNumber: number;
-        };
+        address: { city: string; street: string; houseNumber: number };
         email: string;
         image: { url: string; alt: string };
         role: string;
@@ -158,34 +140,28 @@ const Profile: FunctionComponent = () => {
     const { userPosts, loading: productsLoading } = useUserPosts(user.slug);
     const { posts } = usePosts();
 
-    const calculateProfileCompletion = (user: User) => {
+    const calculateProfileCompletion = (u: User) => {
         const fields = [
-            user.name?.first,
-            user.name?.last,
-            user.phone?.phone_1,
-            user.address?.city,
-            user.address?.street,
-            user.address?.houseNumber,
-            user.image?.url,
-            user.gender?.toString(),
+            u.name?.first,
+            u.name?.last,
+            u.phone?.phone_1,
+            u.address?.city,
+            u.address?.street,
+            u.address?.houseNumber,
+            u.image?.url,
+            u.gender?.toString(),
         ];
-
         const filled = fields.filter(Boolean).length;
         return Math.round((filled / fields.length) * 100);
     };
 
     const calculateRating = (products: Posts[]) => {
         if (!products.length) return 0;
-
         const ratings = products
-            .flatMap((p) => p.reviews?.map((review) => review.rating) ?? [])
-            .filter((rating): rating is number => rating !== undefined);
-
+            .flatMap((p) => p.reviews?.map((r) => r.rating) ?? [])
+            .filter((r): r is number => r !== undefined);
         if (!ratings.length) return 0;
-
-        const avg =
-            ratings.reduce((sum: number, rating: number) => sum + rating, 0) /
-            ratings.length;
+        const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
         return Number(avg.toFixed(1));
     };
 
@@ -194,12 +170,18 @@ const Profile: FunctionComponent = () => {
         if (navigator.share) {
             navigator.share({
                 title: `${t('profile.title')} ${user.name.first} ${user.name.last}`,
-                text: `اطلع على ملفي الشخصي على موقع صفقه`,
+                text: t('profile.shareText', {
+                    defaultValue: 'اطلع على ملفي الشخصي على موقع صفقه',
+                }),
                 url: profileUrl,
             });
         } else {
             navigator.clipboard.writeText(profileUrl);
-            showSuccess('تم نسخ رابط الملف الشخصي');
+            showSuccess(
+                t('profile.linkCopied', {
+                    defaultValue: 'تم نسخ رابط الملف الشخصي',
+                }),
+            );
         }
     };
 
@@ -215,19 +197,23 @@ const Profile: FunctionComponent = () => {
 
     useEffect(() => {
         if (!targetId) return;
-        const fetchData = async () => {
+        let cancelled = false;
+
+        (async () => {
             try {
                 setLoading(true);
                 const userRes = await getUserById(targetId);
-                setUser(userRes);
+                if (!cancelled) setUser(userRes);
             } catch (err) {
                 console.error('Error fetching profile data:', err);
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
-        };
+        })();
 
-        fetchData();
+        return () => {
+            cancelled = true;
+        };
     }, [id, decodedToken, targetId]);
 
     const stats = useMemo(() => {
@@ -240,33 +226,28 @@ const Profile: FunctionComponent = () => {
               ).length
             : 0;
 
-        if (!user)
-            return {
-                totalProducts: userPosts.length,
-                totalFavorites,
-                rating: 0,
-                totalLikesOnMyProducts: 0,
-                completionPercentage: 0,
-            };
-
+        // ⚠️ نُرجع نفس الشكل دائماً
         return {
             totalProducts: userPosts.length,
             totalFavorites,
-            rating: calculateRating(userPosts || []),
-            completionPercentage: calculateProfileCompletion(user),
+            rating: user ? calculateRating(userPosts || []) : 0,
+            completionPercentage: user
+                ? calculateProfileCompletion(user as unknown as User)
+                : 0,
         };
     }, [user, userPosts, posts, decodedToken]);
 
-    const handleDeleteAccount = () => {
-        if (!decodedToken?._id) return;
+    const handleDeleteAccount = async () => {
+        if (!decodedToken?._id) {
+            throw new Error('User ID is missing');
+        }
 
-        deleteUserById(decodedToken._id).then(() => {
-            localStorage.removeItem('token');
-            setAuth(emptyAuthValues);
-            setIsLoggedIn(false);
-            setAfterDecode(null);
-            navigate(path.Home);
-        });
+        await deleteUserById(decodedToken._id);
+
+        localStorage.removeItem('token');
+        setAuth(emptyAuthValues);
+        setIsLoggedIn(false);
+        setAfterDecode(null);
     };
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -280,8 +261,8 @@ const Profile: FunctionComponent = () => {
         { label: t('profile.myFavorites'), icon: <Favorite /> },
         { label: t('profile.settings'), icon: <Settings /> },
     ];
-    const currentUrl = `https://client-qqq1.vercel.app/profile`;
 
+    const currentUrl = `https://client-qqq1.vercel.app/profile`;
     const completionColor = getCompletionColor(stats.completionPercentage);
 
     const statItems = [
@@ -340,7 +321,7 @@ const Profile: FunctionComponent = () => {
                     transition={{ duration: 0.5 }}
                 >
                     <Container maxWidth='lg'>
-                        {/* Membership Card Header */}
+                        {/* === Membership Card Header === */}
                         <Box
                             onMouseMove={handleMouseMove}
                             onMouseEnter={() => setHovered(true)}
@@ -349,12 +330,12 @@ const Profile: FunctionComponent = () => {
                                 position: 'relative',
                                 mb: 7,
                                 borderRadius: '22px',
-                                bgcolor: INK,
+
                                 px: { xs: 3, md: 5 },
                                 pt: { xs: 3, md: 4 },
                                 pb: { xs: 5, md: 5 },
                                 overflow: 'hidden',
-                                boxShadow: '0 20px 40px -20px rgba(0,0,0,.5)',
+                                boxShadow: '0 20px 40px -20px rgba(0,0,0,.55)',
 
                                 '&::after': {
                                     content: '""',
@@ -364,13 +345,12 @@ const Profile: FunctionComponent = () => {
                                     pointerEvents: 'none',
                                     border: '1px solid transparent',
                                     background: `
-                                                radial-gradient(
-                                                180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
-                                              rgb(255, 167, 38),
-                                                transparent 80%
-                                                )
-                                                border-box
-                                                `,
+                radial-gradient(
+                    180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
+                    rgb(255, 167, 38),
+                    transparent 80%
+                ) border-box
+            `,
                                     WebkitMask:
                                         'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
                                     WebkitMaskComposite: 'xor',
@@ -388,22 +368,19 @@ const Profile: FunctionComponent = () => {
                             >
                                 <Typography
                                     variant='overline'
-                                    sx={{
-                                        letterSpacing: 3,
-                                        fontWeight: 700,
-                                    }}
+                                    sx={{ letterSpacing: 3, fontWeight: 700 }}
                                 >
                                     {t('profile.membershipCard')}
                                 </Typography>
                                 <Stack direction='row' gap={1}>
-                                    <Tooltip title='مشاركة'>
+                                    <Tooltip title={t('common.share')}>
                                         <IconButton
                                             onClick={handleShareProfile}
                                             size='small'
                                             sx={{
-                                                // color: '#fff',
+                                                color: 'inherit',
                                                 border: '1px solid',
-                                                // borderColor: alpha('#fff', 0.2),
+                                                borderColor: alpha('#fff', 0.2),
                                                 '&:hover': {
                                                     borderColor: alpha(
                                                         '#272aee',
@@ -420,9 +397,9 @@ const Profile: FunctionComponent = () => {
                                             onClick={handleLogout}
                                             size='small'
                                             sx={{
-                                                // color: '#fff',
+                                                color: 'inherit',
                                                 border: '1px solid',
-                                                // borderColor: alpha('#fff', 0.2),
+                                                borderColor: alpha('#fff', 0.2),
                                                 '&:hover': {
                                                     borderColor: 'error.main',
                                                     color: 'error.light',
@@ -468,9 +445,9 @@ const Profile: FunctionComponent = () => {
                                                 .toUpperCase()}
                                         </Avatar>
 
-                                        {/* Verification stamp — reads like an
-                                            official seal rather than a plain badge */}
-                                        <Tooltip title='حساب موثّق'>
+                                        <Tooltip
+                                            title={t('profile.verifiedAccount')}
+                                        >
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
@@ -510,7 +487,10 @@ const Profile: FunctionComponent = () => {
                                     </Box>
                                 </Grid>
 
-                                <Grid size={{ xs: 12 }}>
+                                <Grid
+                                    size={{ xs: 12, sm: 'auto' }}
+                                    sx={{ flex: 1 }}
+                                >
                                     <Typography
                                         variant='h4'
                                         fontWeight={800}
@@ -536,7 +516,10 @@ const Profile: FunctionComponent = () => {
                                             sm: 'flex-start',
                                         }}
                                     >
-                                        <Typography variant='body2'>
+                                        <Typography
+                                            variant='body2'
+                                            sx={{ opacity: 0.8 }}
+                                        >
                                             @
                                             {user.slug ||
                                                 user.email.split('@')[0]}
@@ -554,6 +537,7 @@ const Profile: FunctionComponent = () => {
                                             size='small'
                                             sx={{
                                                 bgcolor: alpha('#fff', 0.12),
+                                                color: 'inherit',
                                                 fontWeight: 600,
                                             }}
                                         />
@@ -636,7 +620,7 @@ const Profile: FunctionComponent = () => {
                                                     sx={{ opacity: 0.6 }}
                                                 />
                                                 <Typography variant='body2'>
-                                                    {t('profile.memberSinse')} :
+                                                    {t('profile.memberSince')} :{' '}
                                                     {formatDate(user.createdAt)}
                                                 </Typography>
                                             </Box>
@@ -646,7 +630,7 @@ const Profile: FunctionComponent = () => {
                             </Grid>
                         </Box>
 
-                        {/* Stats Ribbon — the "back of the card" */}
+                        {/* === Stats Ribbon === */}
                         <Paper
                             variant='outlined'
                             sx={{
@@ -657,6 +641,8 @@ const Profile: FunctionComponent = () => {
                         >
                             <Grid container>
                                 {statItems.map((s, i) => {
+                                    const totalCells = statItems.length + 1; // +1 for completion
+                                    const isLast = i === totalCells - 1;
                                     const content = (
                                         <Box
                                             sx={{
@@ -709,10 +695,9 @@ const Profile: FunctionComponent = () => {
                                             key={s.label}
                                             size={{ xs: 6, sm: 3 }}
                                             sx={{
-                                                borderInlineEnd:
-                                                    i < 3
-                                                        ? '1px solid'
-                                                        : 'none',
+                                                borderInlineEnd: !isLast
+                                                    ? '1px solid'
+                                                    : 'none',
                                                 borderColor: 'divider',
                                             }}
                                         >
@@ -722,6 +707,8 @@ const Profile: FunctionComponent = () => {
                                                     style={{
                                                         textDecoration: 'none',
                                                         color: 'inherit',
+                                                        display: 'block',
+                                                        height: '100%',
                                                     }}
                                                 >
                                                     {content}
@@ -732,6 +719,7 @@ const Profile: FunctionComponent = () => {
                                         </Grid>
                                     );
                                 })}
+
                                 <Grid
                                     size={{ xs: 6, sm: 3 }}
                                     sx={{
@@ -772,7 +760,6 @@ const Profile: FunctionComponent = () => {
                                                         position: 'absolute',
                                                     }}
                                                 />
-
                                                 <CircularProgress
                                                     variant='determinate'
                                                     value={
@@ -784,7 +771,6 @@ const Profile: FunctionComponent = () => {
                                                         color: completionColor,
                                                     }}
                                                 />
-
                                                 <Box
                                                     sx={{
                                                         position: 'absolute',
@@ -819,7 +805,7 @@ const Profile: FunctionComponent = () => {
                             </Grid>
                         </Paper>
 
-                        {/* Tabs Navigation — segmented pill style to echo the card motif */}
+                        {/* === Tabs Navigation === */}
                         <Box
                             sx={{
                                 display: 'flex',
@@ -832,18 +818,14 @@ const Profile: FunctionComponent = () => {
                                 onChange={handleTabChange}
                                 variant={isMobile ? 'scrollable' : 'standard'}
                                 scrollButtons={isMobile ? 'auto' : false}
-                                TabIndicatorProps={{
-                                    sx: { display: 'none' },
-                                }}
+                                TabIndicatorProps={{ sx: { display: 'none' } }}
                                 sx={{
                                     p: 0.75,
-                                    bgcolor: (t) =>
-                                        alpha(t.palette.text.primary, 0.04),
+                                    bgcolor: (th) =>
+                                        alpha(th.palette.text.primary, 0.04),
                                     borderRadius: 999,
                                     minHeight: 0,
-                                    '& .MuiTabs-flexContainer': {
-                                        gap: 0.5,
-                                    },
+                                    '& .MuiTabs-flexContainer': { gap: 0.5 },
                                     '& .MuiTab-root': {
                                         fontWeight: 700,
                                         textTransform: 'none',
@@ -872,7 +854,7 @@ const Profile: FunctionComponent = () => {
                             </Tabs>
                         </Box>
 
-                        {/* Tab Content */}
+                        {/* === Tab Content === */}
                         {activeTab === 0 && (
                             <motion.div
                                 initial={{ opacity: 0 }}
@@ -881,10 +863,11 @@ const Profile: FunctionComponent = () => {
                             >
                                 <Grid container spacing={3}>
                                     <Grid size={{ xs: 12, lg: 8 }}>
-                                        <PersonalInformation user={user} />
+                                        <PersonalInformation
+                                            user={user as unknown as User}
+                                        />
                                     </Grid>
 
-                                    {/* Activity History */}
                                     <Grid size={{ xs: 12, lg: 4 }}>
                                         <Card
                                             variant='outlined'
@@ -1174,7 +1157,11 @@ const Profile: FunctionComponent = () => {
                                                         )}
                                                     </Button>
                                                 </Stack>
-                                                <QuickActionsTab user={user} />
+                                                <QuickActionsTab
+                                                    user={
+                                                        user as unknown as User
+                                                    }
+                                                />
                                             </Card>
                                         </Grid>
                                     </Grid>
@@ -1182,7 +1169,7 @@ const Profile: FunctionComponent = () => {
                             </Card>
                         )}
 
-                        {/* Edit User Data Section */}
+                        {/* === Edit User Data === */}
                         <Box
                             ref={detailsRef}
                             sx={{
@@ -1198,7 +1185,13 @@ const Profile: FunctionComponent = () => {
                                 onClick={handleShowIdit}
                                 sx={{ borderRadius: 999, px: 3 }}
                             >
-                                {showEdit ? 'إخفاء التعديل' : 'تعديل البيانات'}
+                                {showEdit
+                                    ? t('profile.hideEdit', {
+                                          defaultValue: 'إخفاء التعديل',
+                                      })
+                                    : t('profile.editData', {
+                                          defaultValue: 'تعديل البيانات',
+                                      })}
                             </Button>
                         </Box>
 
@@ -1208,9 +1201,35 @@ const Profile: FunctionComponent = () => {
 
                         <Divider sx={{ my: 4 }} />
 
-                        <DeleteAccountBox onDelete={handleDeleteAccount} />
+                        <DeleteAccountBox
+                            onDelete={() => setShowDeleteConfirm(true)}
+                        />
                     </Container>
                 </motion.div>
+                <AlertDialogs
+                    show={showDeleteConfirm}
+                    onHide={() => setShowDeleteConfirm(false)}
+                    onConfirm={handleDeleteAccount}
+                    title={t('deleteAccount.title', {
+                        defaultValue: 'حذف الحساب؟',
+                    })}
+                    description={t('deleteAccount.description', {
+                        defaultValue:
+                            'هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
+                    })}
+                    confirmText={t('common.delete', {
+                        defaultValue: 'حذف',
+                    })}
+                    cancelText={t('common.cancel', {
+                        defaultValue: 'إلغاء',
+                    })}
+                    successText={t('deleteAccount.success', {
+                        defaultValue: 'تم حذف الحساب بنجاح',
+                    })}
+                    errorText={t('deleteAccount.error', {
+                        defaultValue: 'حدث خطأ أثناء حذف الحساب',
+                    })}
+                />
             </Box>
         </>
     );
