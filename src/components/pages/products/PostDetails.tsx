@@ -120,8 +120,6 @@ const fadeUp = {
     },
 };
 
-// ✅ تم إزالة staggerContainer لأنه غير مستخدم
-
 /* =========================================================
    COMMON CARD STYLE
 ========================================================= */
@@ -223,7 +221,6 @@ const PostDetails: FunctionComponent = () => {
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
     const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]);
-    // const [isLiked, setIsLiked] = useState<boolean>(post.likes?.includes(auth._id!) || false);
 
     const imageContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -245,7 +242,7 @@ const PostDetails: FunctionComponent = () => {
 
     const categoryLabel = useMemo(() => {
         if (!post.category) {
-            return t('product.category') || 'التصنيف';
+            return t('common.product.category') || 'التصنيف';
         }
         return categoryLabels[post.category] || t(post.category);
     }, [post.category, t]);
@@ -275,12 +272,12 @@ const PostDetails: FunctionComponent = () => {
         }
 
         if (!seller?._id) {
-            showError('لا يمكن فتح المحادثة، البائع غير متوفر');
+            showError(t('common.product.sellerUnavailable'));
             return;
         }
 
         if (String(auth._id) === String(seller._id)) {
-            showError('لا يمكنك التواصل مع نفسك');
+            showError(t('common.product.cannotContactSelf'));
             return;
         }
 
@@ -289,22 +286,14 @@ const PostDetails: FunctionComponent = () => {
             ? post.price - (post.price * (post.discount || 0)) / 100
             : post.price;
         const initialMessage =
-            `مرحباً، أنا مهتم ب"${post.product_name}" 💬\n\n` +
-            `📦 السعر: ${formatPrice(discountedPrice)}\n` +
-            `📂 التصنيف: ${categoryLabel}\n` +
-            `🔗 رابط المنتج: ${productUrl}\n\n` +
-            `هل لا يزال متوفراً؟`;
+            `${t('chat.interestedIn')} "${post.product_name}" 💬\n\n` +
+            `📦 ${t('common.product.currentPrice')}: ${formatPrice(discountedPrice)}\n` +
+            `📂 ${t('common.product.category')}: ${categoryLabel}\n` +
+            `🔗 ${t('common.product.productLink')}: ${productUrl}\n\n` +
+            t('chat.isStillAvailable');
 
         openChat(seller as UserMessage, initialMessage);
-    }, [
-        post.seller,
-        post.product_name,
-        post.price,
-        auth._id,
-        categoryLabel,
-        openChat,
-        navigate,
-    ]);
+    }, [post.seller, post.sale, post.price, post.discount, post.product_name, auth._id, t, categoryLabel, openChat, navigate]);
 
     /* =====================================================
        PROFILE
@@ -375,9 +364,9 @@ const PostDetails: FunctionComponent = () => {
             await document.exitFullscreen();
             setIsFullscreen(false);
         } catch {
-            showError('تعذر تفعيل وضع ملء الشاشة');
+            showError(t('common.product.fullscreenError'));
         }
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         const handleFullscreenChange = () => {
@@ -401,27 +390,27 @@ const PostDetails: FunctionComponent = () => {
         const shareUrl = `${SITE_URL}${location.pathname}`;
         try {
             const shareData = {
-                title: `منتج ${post.product_name} رائع`,
-                text: `شاهد ${post.product_name} الآن على منصة صفقة`,
+                title: t('common.product.shareTitle', { name: post.product_name }),
+                text: t('common.product.shareText', { name: post.product_name }),
                 url: shareUrl,
             };
 
             if (navigator.share) {
                 await navigator.share(shareData);
-                showSuccess('تمت مشاركة المنتج بنجاح');
+                showSuccess(t('common.product.shareSuccess'));
                 return;
             }
 
             await navigator.clipboard.writeText(shareUrl);
-            showSuccess('تم نسخ رابط المنتج');
+            showSuccess(t('common.product.linkCopied'));
         } catch (shareError) {
             if ((shareError as Error).name !== 'AbortError') {
-                showError('تعذر تنفيذ المشاركة حالياً');
+                showError(t('common.product.shareError'));
             }
         } finally {
             setIsSharing(false);
         }
-    }, [post.product_name]);
+    }, [post.product_name, t]);
 
     /* =====================================================
        DELETE POST
@@ -433,7 +422,7 @@ const PostDetails: FunctionComponent = () => {
         }
         try {
             await deletePost(postId);
-            showSuccess('تم حذف المنتج بنجاح');
+            showSuccess(t('common.product.deleteSuccess'));
             const categoryPath = post.category
                 ? categoryPathMap[post.category]
                 : undefined;
@@ -444,7 +433,7 @@ const PostDetails: FunctionComponent = () => {
             console.error('Delete post error:', deleteError);
             showError(deleteError as string);
         }
-    }, [navigate, post.category, postId]);
+    }, [navigate, post.category, postId, t]);
 
     /* =====================================================
        EDIT
@@ -471,15 +460,14 @@ const PostDetails: FunctionComponent = () => {
             .then((res) => {
                 setPost(res);
                 setProductRating(res.rating || 0);
-                // setIsLiked(res.likes?.includes(auth._id) || false);
             })
             .catch(() => {
-                setError('حدث خطأ أثناء تحميل المنتج');
+                setError(t('common.product.loadError'));
             })
             .finally(() => {
                 setLoading(false);
             });
-    }, [postId]);
+    }, [postId, t]);
 
     /* =====================================================
        GET POST
@@ -487,7 +475,7 @@ const PostDetails: FunctionComponent = () => {
 
     useEffect(() => {
         if (!postId) {
-            setError('معرف المنتج غير موجود');
+            setError(t('common.product.idMissing'));
             setLoading(false);
             return;
         }
@@ -499,15 +487,15 @@ const PostDetails: FunctionComponent = () => {
             .then((res) => {
                 setPost(res);
                 setProductRating(Number(res.rating || 0));
-                // setIsLiked(res.likes?.includes(auth._id) || false);
             })
             .catch((fetchError) => {
                 console.error('Error fetching post:', fetchError);
-                setError('حدث خطأ أثناء تحميل المنشور');
+                setError(t('common.product.loadPostError'));
             })
             .finally(() => {
                 setLoading(false);
             });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [auth._id, postId]);
 
     /* =====================================================
@@ -588,7 +576,7 @@ const PostDetails: FunctionComponent = () => {
             <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
                 <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
                 <Typography variant='h5' color='error' gutterBottom>
-                    {t('product.notFound') || 'المنتج غير موجود'}
+                    {t('common.product.notFound') || 'المنتج غير موجود'}
                 </Typography>
                 <Button
                     variant='contained'
@@ -708,7 +696,9 @@ const PostDetails: FunctionComponent = () => {
 
                                             {isOwner && (
                                                 <Chip
-                                                    label='صاحب المنشور'
+                                                    label={t(
+                                                        'common.product.postOwner',
+                                                    )}
                                                     size='small'
                                                     sx={{
                                                         fontWeight: 700,
@@ -722,7 +712,11 @@ const PostDetails: FunctionComponent = () => {
                                             )}
 
                                             {post.seller?.slug && (
-                                                <Tooltip title='بائع موثوق'>
+                                                <Tooltip
+                                                    title={t(
+                                                        'verifiedSeller',
+                                                    )}
+                                                >
                                                     <VerifiedRounded
                                                         sx={{
                                                             color: BRAND_COLOR,
@@ -766,7 +760,7 @@ const PostDetails: FunctionComponent = () => {
                                                 color='text.secondary'
                                                 sx={{ fontSize: '0.8125rem' }}
                                             >
-                                                منشور منذ{' '}
+                                                {t('common.product.postedSince')}{' '}
                                                 {formatTimeAgo(
                                                     String(
                                                         post.createdAt || '',
@@ -775,14 +769,13 @@ const PostDetails: FunctionComponent = () => {
                                                 )}
                                             </Typography>
 
-                                            {/* ✅ إحصائيات صحيحة */}
                                             <StatsBadge
                                                 icon={
                                                     <ViewIcon
                                                         sx={{ fontSize: 14 }}
                                                     />
                                                 }
-                                                label='عدد المشاهدات'
+                                                label={t('common.product.views')}
                                                 value={post.views ?? 0}
                                             />
                                             <StatsBadge
@@ -791,7 +784,7 @@ const PostDetails: FunctionComponent = () => {
                                                         sx={{ fontSize: 14 }}
                                                     />
                                                 }
-                                                label='عدد الإعجابات'
+                                                label={t('common.product.likes')}
                                                 value={post.likes?.length || 0}
                                             />
                                         </Stack>
@@ -812,8 +805,7 @@ const PostDetails: FunctionComponent = () => {
                                         },
                                     }}
                                 >
-                                    {/* ✅ زر تحديث */}
-                                    <Tooltip title='تحديث البيانات'>
+                                    <Tooltip title={t('common.product.refreshData')}>
                                         <IconButton
                                             onClick={handleRefreshPost}
                                             size='small'
@@ -926,7 +918,7 @@ const PostDetails: FunctionComponent = () => {
                                                 },
                                             }}
                                         >
-                                            تواصل
+                                            {t('common.product.contactSeller')}
                                         </Button>
                                     )}
                                 </Stack>
@@ -940,7 +932,7 @@ const PostDetails: FunctionComponent = () => {
                         <Box>
                             <Breadcrumbs
                                 aria-label={
-                                    t('product.breadcrumbNavigation') ||
+                                    t('common.product.breadcrumbNavigation') ||
                                     'مسار التنقل'
                                 }
                                 separator={
@@ -956,7 +948,7 @@ const PostDetails: FunctionComponent = () => {
                                     component={Link}
                                     to={path.Home}
                                     startIcon={
-                                        <HomeIcon sx={{ fontSize: 18 }} />
+                                        <HomeIcon sx={{ fontSize: 18, m: 1 }} />
                                     }
                                     sx={{
                                         textTransform: 'none',
@@ -969,7 +961,9 @@ const PostDetails: FunctionComponent = () => {
                                 {post.category && (
                                     <Button
                                         startIcon={
-                                            <StoreIcon sx={{ fontSize: 18 }} />
+                                            <StoreIcon
+                                                sx={{ fontSize: 18, m: 1 }}
+                                            />
                                         }
                                         onClick={() => {
                                             const catPath =
@@ -1111,7 +1105,9 @@ const PostDetails: FunctionComponent = () => {
                                                             }}
                                                         >
                                                             <Tooltip
-                                                                title='تكبير'
+                                                                title={t(
+                                                                    'common.product.zoomIn',
+                                                                )}
                                                                 placement='top'
                                                             >
                                                                 <IconButton
@@ -1135,7 +1131,9 @@ const PostDetails: FunctionComponent = () => {
                                                             </Tooltip>
 
                                                             <Tooltip
-                                                                title='تصغير'
+                                                                title={t(
+                                                                    'common.product.zoomOut',
+                                                                )}
                                                                 placement='top'
                                                             >
                                                                 <span>
@@ -1176,8 +1174,12 @@ const PostDetails: FunctionComponent = () => {
                                                             <Tooltip
                                                                 title={
                                                                     isFullscreen
-                                                                        ? 'إغلاق ملء الشاشة'
-                                                                        : 'ملء الشاشة'
+                                                                        ? t(
+                                                                              'common.product.exitFullscreen',
+                                                                          )
+                                                                        : t(
+                                                                              'common.product.fullscreen',
+                                                                          )
                                                                 }
                                                                 placement='top'
                                                             >
@@ -1220,7 +1222,9 @@ const PostDetails: FunctionComponent = () => {
                                                                         }}
                                                                     />
                                                                     <Tooltip
-                                                                        title='إعادة الضبط'
+                                                                        title={t(
+                                                                            'common.product.resetZoom',
+                                                                        )}
                                                                         placement='top'
                                                                     >
                                                                         <IconButton
@@ -1303,8 +1307,12 @@ const PostDetails: FunctionComponent = () => {
                                                                 }}
                                                             >
                                                                 {isZoomed
-                                                                    ? '🔄 اضغط لإلغاء التكبير'
-                                                                    : '🔍 اضغط للتكبير'}
+                                                                    ? t(
+                                                                          'common.product.clickToCancelZoom',
+                                                                      )
+                                                                    : t(
+                                                                          'common.product.clickToZoom',
+                                                                      )}
                                                             </Typography>
                                                         </Box>
                                                     </>
@@ -1319,15 +1327,17 @@ const PostDetails: FunctionComponent = () => {
                                                             variant='h6'
                                                             color='text.secondary'
                                                         >
-                                                            لا توجد صورة للمنتج
+                                                            {t(
+                                                                'common.product.noImage',
+                                                            )}
                                                         </Typography>
                                                         <Typography
                                                             variant='body2'
                                                             color='text.disabled'
                                                         >
-                                                            يمكن إضافة صورة
-                                                            لاحقاً لتحسين عرض
-                                                            المنتج.
+                                                            {t(
+                                                                'common.product.addImageLater',
+                                                            )}
                                                         </Typography>
                                                     </Stack>
                                                 )}
@@ -1390,8 +1400,9 @@ const PostDetails: FunctionComponent = () => {
                                                             opacity: 0.7,
                                                         }}
                                                     >
-                                                        اعرض الصورة بوضوح أعلى
-                                                        قبل اتخاذ قرار الشراء.
+                                                        {t(
+                                                            'common.product.viewImageHint',
+                                                        )}
                                                     </Typography>
                                                 </Stack>
                                             </Box>
@@ -1463,7 +1474,9 @@ const PostDetails: FunctionComponent = () => {
                                                     color='text.secondary'
                                                     sx={{ mb: 0.5 }}
                                                 >
-                                                    السعر الحالي
+                                                    {t(
+                                                        'common.product.currentPrice',
+                                                    )}
                                                 </Typography>
 
                                                 <Typography
@@ -1493,8 +1506,12 @@ const PostDetails: FunctionComponent = () => {
                                                     <Chip
                                                         label={
                                                             post.in_stock
-                                                                ? '✅ متوفر'
-                                                                : '❌ غير متوفر'
+                                                                ? t(
+                                                                      'common.product.available',
+                                                                  )
+                                                                : t(
+                                                                      'common.product.notAvailable',
+                                                                  )
                                                         }
                                                         color={
                                                             post.in_stock
@@ -1506,7 +1523,9 @@ const PostDetails: FunctionComponent = () => {
                                                     />
 
                                                     <Chip
-                                                        label='⚡ رد سريع'
+                                                        label={t(
+                                                            'common.product.quickResponse',
+                                                        )}
                                                         size='small'
                                                         sx={{
                                                             bgcolor: alpha(
@@ -1531,8 +1550,7 @@ const PostDetails: FunctionComponent = () => {
                                                         }}
                                                     >
                                                         {t(
-                                                            'product.availableOptions',
-                                                            'الخيارات المتاحة',
+                                                            'common.product.availableOptions',
                                                         )}
                                                     </Typography>
                                                     <ColorsAndSizes
@@ -1551,8 +1569,7 @@ const PostDetails: FunctionComponent = () => {
                                                     mb={1}
                                                 >
                                                     {t(
-                                                        'product.description',
-                                                        'الوصف',
+                                                        'common.product.description',
                                                     )}
                                                 </Typography>
                                                 <Typography
@@ -1561,8 +1578,7 @@ const PostDetails: FunctionComponent = () => {
                                                 >
                                                     {post.description ||
                                                         t(
-                                                            'product.noDescription',
-                                                            'لا يوجد وصف متاح لهذا المنتج',
+                                                            'common.product.noDescription',
                                                         )}
                                                 </Typography>
                                             </Box>
@@ -1591,7 +1607,9 @@ const PostDetails: FunctionComponent = () => {
                                                             },
                                                         }}
                                                     >
-                                                        تواصل مع البائع
+                                                        {t(
+                                                            'common.product.contactSeller',
+                                                        )}
                                                     </Button>
                                                 )}
 
@@ -1616,7 +1634,7 @@ const PostDetails: FunctionComponent = () => {
                                                         },
                                                     }}
                                                 >
-                                                    اتصل الآن
+                                                    {t('common.product.callNow')}
                                                 </Button>
 
                                                 <Button
@@ -1926,7 +1944,9 @@ const PostDetails: FunctionComponent = () => {
                                                             !auth?._id
                                                         ) {
                                                             showError(
-                                                                'بيانات المستخدم أو المنتج غير متوفرة',
+                                                                t(
+                                                                    'review.missingData',
+                                                                ),
                                                             );
                                                             return;
                                                         }
@@ -2087,7 +2107,7 @@ const PostDetails: FunctionComponent = () => {
                                     spacing={3}
                                     sx={{
                                         position: { lg: 'sticky' },
-                                        top: { lg: 24 },
+                                        top: { lg: 80 },
                                     }}
                                 >
                                     {/* SELLER CARD */}
@@ -2128,14 +2148,16 @@ const PostDetails: FunctionComponent = () => {
                                                         variant='body2'
                                                         color='text.secondary'
                                                     >
-                                                        بائع • @
+                                                        {t('common.product.seller')} • @
                                                         {post.seller?.slug}
                                                     </Typography>
                                                 </Box>
 
                                                 {isOwner && (
                                                     <Chip
-                                                        label='إعلانك'
+                                                        label={t(
+                                                            'common.product.yourListing',
+                                                        )}
                                                         size='small'
                                                         sx={{
                                                             background:
@@ -2171,7 +2193,10 @@ const PostDetails: FunctionComponent = () => {
                                                     variant='body2'
                                                     sx={{ fontWeight: 600 }}
                                                 >
-                                                    بائع موثوق • رد سريع
+                                                    {t('verifiedSeller')} •{' '}
+                                                    {t(
+                                                        'common.product.quickResponse',
+                                                    )}
                                                 </Typography>
                                             </Box>
 
@@ -2195,7 +2220,7 @@ const PostDetails: FunctionComponent = () => {
                                                     href={`https://wa.me/${post.seller?.phone?.phone_1}`}
                                                     target='_blank'
                                                 >
-                                                    واتساب
+                                                    {t('whatsapp')}
                                                 </Button>
                                                 <Button
                                                     fullWidth
@@ -2214,7 +2239,7 @@ const PostDetails: FunctionComponent = () => {
                                                     }}
                                                     href={`mailto:${post.seller?.email}`}
                                                 >
-                                                    بريد
+                                                    {t('common.product.email')}
                                                 </Button>
                                             </Stack>
 
@@ -2235,12 +2260,12 @@ const PostDetails: FunctionComponent = () => {
                                                     },
                                                 }}
                                             >
-                                                شارك المنتج
+                                                {t('common.product.shareProduct')}
                                             </Button>
                                         </Stack>
                                     </Card>
 
-                                    {/* ✅ معلومات إضافية */}
+                                    {/* معلومات إضافية */}
                                     <Card
                                         sx={{
                                             ...sectionCardSx,
@@ -2253,7 +2278,7 @@ const PostDetails: FunctionComponent = () => {
                                             fontWeight={700}
                                             gutterBottom
                                         >
-                                            📋 معلومات إضافية
+                                            {t('common.product.additionalInfo')}
                                         </Typography>
                                         <Stack spacing={1.5}>
                                             <Stack
@@ -2272,7 +2297,9 @@ const PostDetails: FunctionComponent = () => {
                                                     color='text.secondary'
                                                 >
                                                     {post.location ||
-                                                        'غير محدد'}
+                                                        t(
+                                                            'common.product.locationNotSpecified',
+                                                        )}
                                                 </Typography>
                                             </Stack>
                                             <Stack
@@ -2290,7 +2317,10 @@ const PostDetails: FunctionComponent = () => {
                                                     variant='body2'
                                                     color='text.secondary'
                                                 >
-                                                    تاريخ النشر:{' '}
+                                                    {t(
+                                                        'common.product.publishedDate',
+                                                    )}
+                                                    :{' '}
                                                     {formatTimeAgo(
                                                         String(post.createdAt),
                                                         t,
@@ -2312,7 +2342,10 @@ const PostDetails: FunctionComponent = () => {
                                                     variant='body2'
                                                     color='text.secondary'
                                                 >
-                                                    {post.views ?? 0} مشاهدة
+                                                    {post.views ?? 0}{' '}
+                                                    {t(
+                                                        'common.product.viewsCount',
+                                                    )}
                                                 </Typography>
                                             </Stack>
                                         </Stack>
@@ -2329,12 +2362,10 @@ const PostDetails: FunctionComponent = () => {
                             <Box sx={{ mt: 6 }}>
                                 <SectionTitle
                                     title={t(
-                                        'relatedProducts',
-                                        'منتجات ذات صلة',
+                                        'common.product.relatedProducts',
                                     )}
                                     subtitle={t(
-                                        'discoverRelatedProducts',
-                                        'اكتشف منتجات أخرى قد تعجبك بناءً على اهتماماتك.',
+                                        'common.product.discoverRelatedProducts',
                                     )}
                                 />
 
