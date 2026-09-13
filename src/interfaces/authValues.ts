@@ -1,16 +1,62 @@
-export type AccountStatus = 'active' | 'disabled';
+// interfaces/authValues.ts
+import { User } from './User';
 
-export interface UserPermissions {
-    canLogin: boolean;
-    canCreatePosts: boolean;
-    canSendMessages: boolean;
-    canSendOffers: boolean;
-    canUseAccount: boolean;
-    canAccessExistingData: boolean;
+/**
+ * AuthValues = User + حقول JWT.
+ *
+ * لا نُعيد تعريف أي حقل من User.
+ * أي حقل إضافي خاص بالتوكن نضيفه هنا فقط.
+ */
+export interface AuthValues extends User {
+    /**
+     * JWT issued-at
+     */
+    iat?: number;
+
+    /**
+     * JWT expiry
+     */
+    exp?: number;
 }
 
+/**
+ * نسخة فارغة تُستخدم قبل تسجيل الدخول.
+ * يجب أن تُوفّر كل الحقول الإلزامية في User.
+ */
 export const emptyAuthValues: AuthValues = {
+    // ===== إلزامية في User =====
     _id: '',
+
+    role: 'Client',
+
+    name: {
+        first: '',
+        last: '',
+    },
+
+    phone: {
+        phone_1: '',
+        phone_2: '',
+    },
+
+    address: {
+        city: '',
+        street: '',
+        houseNumber: '',
+    },
+
+    email: '',
+
+    personalEmail: '',
+
+    gender: 'other',
+
+    slug: '',
+
+    image: {
+        url: '',
+        alt: '',
+    },
 
     status: false,
 
@@ -25,92 +71,17 @@ export const emptyAuthValues: AuthValues = {
         canAccessExistingData: true,
     },
 
-    name: {
-        first: '',
-        last: '',
-    },
+    createdAt: '',
 
-    email: '',
+    updatedAt: '',
 
-    phone: {
-        phone_1: '',
-        phone_2: '',
-    },
+    lastActivity: null,
 
-    image: {
-        url: '',
-        alt: '',
-    },
-
-    address: {
-        city: '',
-        street: '',
-        houseNumber: '',
-    },
-
-    role: 'Client',
-
+    // ===== خاصة بالتوكن =====
     iat: 0,
 
     exp: 0,
-
-    slug: '',
-
-    gender: '',
-
-    createdAt: '',
 };
 
-export interface AuthValues {
-    _id?: string;
-
-    /**
-     * Online / Offline
-     */
-    status: boolean;
-
-    /**
-     * Account state
-     */
-    accountStatus: AccountStatus;
-
-    /**
-     * Account permissions
-     */
-    permissions: UserPermissions;
-
-    name: {
-        first: string;
-        last: string;
-    };
-
-    email?: string;
-
-    phone: {
-        phone_1: string;
-        phone_2: string;
-    };
-
-    image?: {
-        url: string;
-        alt: string;
-    };
-
-    address: {
-        city: string;
-        street: string;
-        houseNumber: string;
-    };
-
-    role?: 'Admin' | 'Moderator' | 'Client' | string;
-
-    iat?: number;
-
-    exp?: number;
-
-    slug?: string;
-
-    gender: string;
-
-    createdAt: Date | string;
-}
+// إعادة تصدير للاستخدام في أماكن أخرى
+export type { AccountStatus, UserPermissions } from './User';

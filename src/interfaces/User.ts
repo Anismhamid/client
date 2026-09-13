@@ -88,23 +88,18 @@ export interface UserLogin {
 // User returned from Backend
 // ===============================
 
+// interfaces/User.ts
 export interface User {
-    updatedAt: string | number | Date;
-    createdAt: string | number | Date;
-    lastActivity: string | number | Date | null;
     _id: string;
 
     role: UserRole;
 
     name: UserName;
-
     phone: UserPhone;
-
     address: UserAddress;
-
     email: string;
 
-    personalEmail: string;
+    personalEmail?: string;
 
     gender: Gender;
 
@@ -117,6 +112,11 @@ export interface User {
     accountStatus: AccountStatus;
 
     permissions: UserPermissions;
+
+    createdAt: string | number | Date;
+    updatedAt: string | number | Date;
+
+    lastActivity?: string | number | Date | null;   // ← اختياري
 }
 
 // ===============================

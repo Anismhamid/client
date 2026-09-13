@@ -37,12 +37,9 @@ import {
 } from '@mui/icons-material';
 import { motion, AnimatePresence } from 'framer-motion';
 import { path } from '../../../routes/routes';
-import { emptyAuthValues } from '../../../interfaces/authValues';
 import socket from '../../../socket/globalSocket';
-import { patchUserStatus } from '../../../services/usersServices';
 import RoleType from '../../../interfaces/UserType';
 import { useTranslation } from 'react-i18next';
-import useToken from '../../../hooks/useToken';
 import AccountMenu from '../userManage/AccountMenu';
 import { useUser } from '../../../hooks/useUSer';
 import JsonLd from '../../../../utils/JsonLd';
@@ -68,8 +65,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
     const dir = handleRTL();
 
-    const { decodedToken, setAfterDecode } = useToken();
-    const { auth, setAuth, isLoggedIn, setIsLoggedIn } = useUser();
+    // ✅ استخدم Context فقط — لا useToken ولا setAuth/setIsLoggedIn مباشرة
+    const { auth, isLoggedIn, logout: contextLogout } = useUser();
+
     const [mobileOpen, setMobileOpen] = useState(false);
     const [expandedMobileMenu, setExpandedMobileMenu] = useState<
         string | false
@@ -97,14 +95,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token && decodedToken) {
-            setAuth(decodedToken);
-            setIsLoggedIn(true);
-        }
-    }, [decodedToken, setAuth, setIsLoggedIn]);
-
     const isAdmin = auth?.role === RoleType.Admin;
 
     const { pathname } = useLocation();
@@ -113,24 +103,25 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         window.scrollTo(0, 0);
     }, [pathname]);
 
-    const disconnectSocket = () => socket.disconnect();
-
-    const logout = useCallback(() => {
-        const userId = auth?._id as string;
-
-        if (userId) {
-            patchUserStatus(userId, false).catch(console.error);
+    // ✅ دالة logout موحّدة — تستدعي Context.logout الذي يستدعي POST /users/logout
+    const handleLogout = useCallback(async () => {
+        // 1. قطع socket
+        try {
+            socket.disconnect();
+        } catch (err) {
+            console.warn('Socket disconnect failed:', err);
         }
 
-        disconnectSocket();
+        // 2. استدعاء logout من Context — يمسح الكوكي + يحدّث الحالة
+        await contextLogout();
 
+        // 3. تنظيف أي بيانات محلية قديمة (احتياط)
         localStorage.removeItem('token');
-        setAuth(emptyAuthValues);
-        setIsLoggedIn(false);
-        setAfterDecode(null);
-        navigate(path.Home);
+
+        // 4. التوجيه للصفحة الرئيسية
+        navigate(path.Home, { replace: true });
         setMobileOpen(false);
-    }, [navigate, setAuth, setIsLoggedIn, setAfterDecode, auth._id]);
+    }, [contextLogout, navigate]);
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
@@ -447,7 +438,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <Box component='li' role='listitem'>
                                     <StyledNavLink
                                         to={path.SellingHelp}
-                                        // aria-label='صفحة مساعدة - '
                                         aria-label={t('help')}
                                     >
                                         <HelpIcon sx={{ fontSize: 20 }} />
@@ -602,7 +592,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         {t('links.login')}
                                     </Button>
                                 ) : (
-                                    <AccountMenu logout={logout} />
+                                    <AccountMenu logout={handleLogout} />
                                 )}
                             </Box>
                         </Box>
@@ -617,7 +607,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 open={mobileOpen}
                 onClose={handleDrawerToggle}
                 ModalProps={{
-                    keepMounted: true, // Better mobile performance
+                    keepMounted: true,
                 }}
                 sx={{
                     display: { xs: 'block', md: 'none' },
@@ -625,7 +615,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                         boxSizing: 'border-box',
                         width: { xs: '100%', sm: 320 },
                         border: 'none',
-                        zIndex: 1200, // Higher than header
+                        zIndex: 1200,
                     },
                 }}
             >
@@ -637,7 +627,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     handleThemeChange={handleThemeChange}
                     isAdmin={isAdmin}
                     isLoggedIn={isLoggedIn}
-                    logout={logout}
+                    logout={handleLogout}
                     setMobileOpen={setMobileOpen}
                     mode={mode}
                 />

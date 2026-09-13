@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
     FunctionComponent,
     useActionState,
@@ -6,7 +7,6 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { UserLogin } from '../../interfaces/User';
 import * as yup from 'yup';
 import { Link, useNavigate } from 'react-router-dom';
 import { path } from '../../routes/routes';
@@ -16,9 +16,7 @@ import {
     verifyGoogleUser,
 } from '../../services/usersServices';
 import { useUser } from '../../hooks/useUSer';
-import useToken from '../../hooks/useToken';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
-import { AuthValues } from '../../interfaces/authValues';
 import { GoogleLogin } from '@react-oauth/google';
 import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SocialLogin } from '@capgo/capacitor-social-login';
@@ -61,6 +59,7 @@ import SafqaLogo from '../../atoms/SafqaLogo';
 import { Preferences } from '@capacitor/preferences';
 import { SavePassword } from '@capgo/capacitor-autofill-save-password';
 import Loader from '../../atoms/loader/Loader';
+import api from '../../services/api';
 
 interface LoginProps {
     mode?: PaletteMode;
@@ -73,8 +72,12 @@ interface FormErrors {
 }
 
 interface CredentialHelperPlugin {
-    getSavedPassword(): Promise<{ username: string; password: string }>;
+    getSavedPassword(): Promise<{
+        username: string;
+        password: string;
+    }>;
 }
+
 const CredentialHelper =
     registerPlugin<CredentialHelperPlugin>('CredentialHelper');
 
@@ -83,6 +86,7 @@ const devLog = (...args: any[]) => {
         console.log(...args);
     }
 };
+
 const devError = (...args: any[]) => {
     if (import.meta.env.DEV) {
         console.error(...args);
@@ -115,157 +119,184 @@ const REMEMBER_KEY = 'remembered_email';
 const Login: FunctionComponent<LoginProps> = ({ mode }) => {
     const navigate = useNavigate();
     const theme = useTheme();
-    const { setAfterDecode } = useToken();
+
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [googleResponse, setGoogleResponse] = useState<any>(null);
+    const [googleResponse, setGoogleResponse] =
+        useState<CredentialResponse | null>(null);
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [isHovered, setIsHovered] = useState<boolean>(false);
-    const { setAuth, setIsLoggedIn } = useUser();
-    const [showSignOutButton, setShowSignOutButton] = useState<boolean>(false);
+
+    const { logout, setAuth, setIsLoggedIn } = useUser();
+
+    const [showSignOutButton, setShowSignOutButton] =
+        useState<boolean>(false);
+
     const [rememberMe, setRememberMe] = useState<boolean>(false);
     const [savedEmail, setSavedEmail] = useState<string>('');
-    const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
-    const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
+
+    const [isGoogleLoading, setIsGoogleLoading] =
+        useState<boolean>(false);
+
+    const [isCheckingAuth, setIsCheckingAuth] =
+        useState<boolean>(true);
+
     const [isLoadingSavedCreds, setIsLoadingSavedCreds] =
         useState<boolean>(true);
-    const [isSigningOut, setIsSigningOut] = useState<boolean>(false);
+
+    const [isSigningOut, setIsSigningOut] =
+        useState<boolean>(false);
+
     const [isSubmittingUserInfo, setIsSubmittingUserInfo] =
         useState<boolean>(false);
 
     const { t } = useTranslation();
 
+    /**
+     * ============================================================
+     * Handle successful authentication
+     * ============================================================
+     *
+     * JWT is stored in an HttpOnly cookie by the backend.
+     *
+     * The frontend:
+     * - DOES NOT read the JWT
+     * - DOES NOT decode the JWT
+     * - DOES NOT store the JWT in localStorage
+     *
+     * Instead we ask the backend for the authenticated user.
+     */
     const handleSuccessfulLogin = async (
-        token: string,
         email?: string,
         password?: string,
     ) => {
         try {
-            localStorage.setItem('token', token);
+            const response = await api.get('/users/me', {
+                withCredentials: true,
+            });
 
-            const decoded = jwtDecode<AuthValues>(token);
-            setAfterDecode(token);
-            setAuth(decoded);
-            setIsLoggedIn(true);
+            const user = response.data?.user;
 
-            if (rememberMe && email) {
-                await Preferences.set({ key: REMEMBER_KEY, value: email });
-            } else {
-                await Preferences.remove({ key: REMEMBER_KEY });
+            if (!user) {
+                throw new Error('USER_NOT_FOUND');
             }
 
-            if (Capacitor.isNativePlatform() && email && password) {
+            setAuth(user);
+            setIsLoggedIn(true);
+
+            /**
+             * Remember only the email.
+             *
+             * Never store the authentication token here.
+             */
+            if (rememberMe && email) {
+                await Preferences.set({
+                    key: REMEMBER_KEY,
+                    value: email,
+                });
+            } else {
+                await Preferences.remove({
+                    key: REMEMBER_KEY,
+                });
+            }
+
+            /**
+             * Native password manager.
+             *
+             * This is only for saving credentials in the device's
+             * password manager. It is NOT the application auth token.
+             */
+            if (
+                Capacitor.isNativePlatform() &&
+                email &&
+                password
+            ) {
                 try {
                     await SavePassword.promptDialog({
                         username: email,
                         password,
                     });
-                } catch (e) {
-                    devLog('Save password prompt failed', e);
+                } catch (error) {
+                    devLog(
+                        'Save password prompt failed',
+                        error,
+                    );
                 }
             }
 
             showSuccess(
                 t('login.successMessage', {
-                    name: `${decoded.name?.first ?? ''} ${decoded.name?.last ?? ''}`.trim(),
+                    name: `${user.name?.first ?? ''} ${
+                        user.name?.last ?? ''
+                    }`.trim(),
                 }),
             );
 
             navigate(path.Home);
         } catch (error: any) {
-            devError('Login handler error:', error);
+            devError(
+                'Login handler error:',
+                error,
+            );
+
             showError(
-                t('login.error') || 'Something went wrong. Please try again.',
+                t('login.error') ||
+                    'Something went wrong. Please try again.',
             );
         }
     };
 
-    const handleNativeGoogleLogin = async () => {
-        setIsGoogleLoading(true);
-        try {
-            setShowSignOutButton(false);
-
-            const res = await SocialLogin.login({
-                provider: 'google',
-                options: {
-                    filterByAuthorizedAccounts: false,
-                    scopes: ['profile', 'email'],
-                },
-            });
-
-            devLog('Google login result:', res);
-
-            const idToken = (res.result as any)?.idToken;
-
-            if (!idToken) {
-                throw new Error('missing_credential');
-            }
-
-            const decodedGoogle = jwtDecode<DecodedGooglePayload>(idToken);
-
-            devLog('Google user:', {
-                sub: decodedGoogle.sub,
-                email: decodedGoogle.email,
-            });
-
-            const userExists = await verifyGoogleUser(decodedGoogle.sub);
-
-            const fakeCredentialResponse = {
-                credential: idToken,
-            } as CredentialResponse;
-
-            if (userExists) {
-                const token = await handleGoogleLogin(
-                    fakeCredentialResponse,
-                    null,
-                );
-
-                if (token) {
-                    await handleSuccessfulLogin(token);
-                }
-            } else {
-                setGoogleResponse(fakeCredentialResponse);
-                setShowModal(true);
-            }
-        } catch (error: any) {
-            console.error(
-                'json:',
-                JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
-            );
-
-            showError(
-                t(
-                    'login.errors.googleLoginError',
-                    'Google sign-in failed. Please try again.',
-                ),
-            );
-        } finally {
-            setIsGoogleLoading(false);
-        }
-    };
-
+    /**
+     * ============================================================
+     * Check existing session
+     * ============================================================
+     *
+     * We no longer check:
+     *
+     * localStorage.getItem('token')
+     *
+     * The browser automatically sends the HttpOnly cookie to the
+     * backend.
+     */
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
+        const checkAuth = async () => {
             try {
-                const decoded = jwtDecode<AuthValues>(token);
-                const isExpired = decoded.exp
-                    ? decoded.exp * 1000 < Date.now()
-                    : false;
+                const response = await api.get('/users/me', {
+                    withCredentials: true,
+                });
 
-                if (!isExpired) {
-                    navigate(path.Home, { replace: true });
+                const user = response.data?.user;
+
+                if (user) {
+                    setAuth(user);
+                    setIsLoggedIn(true);
+
+                    navigate(path.Home, {
+                        replace: true,
+                    });
+
                     return;
-                } else {
-                    localStorage.removeItem('token');
                 }
             } catch (error) {
-                localStorage.removeItem('token');
-                devLog(error);
+                /**
+                 * 401 here simply means there is no active session.
+                 */
+                devLog(
+                    'No active authentication session',
+                    error,
+                );
+            } finally {
+                setIsCheckingAuth(false);
             }
-        }
-        setIsCheckingAuth(false);
-    }, [navigate]);
+        };
 
+        checkAuth();
+    }, [navigate, setAuth, setIsLoggedIn]);
+
+    /**
+     * ============================================================
+     * Login validation schema
+     * ============================================================
+     */
     const loginSchema = useMemo(
         () =>
             yup.object({
@@ -273,311 +304,765 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                     .string()
                     .trim()
                     .lowercase()
-                    .email(t('login.validation.emailInvalid'))
-                    .max(254, t('login.validation.emailInvalid'))
-                    .required(t('login.validation.emailRequired')),
+                    .email(
+                        t(
+                            'login.validation.emailInvalid',
+                        ),
+                    )
+                    .max(
+                        254,
+                        t(
+                            'login.validation.emailInvalid',
+                        ),
+                    )
+                    .required(
+                        t(
+                            'login.validation.emailRequired',
+                        ),
+                    ),
+
                 password: yup
                     .string()
-                    .min(8, t('login.validation.passwordMin'))
-                    .max(60, t('login.validation.passwordMax'))
-                    .required(t('login.validation.passwordRequired')),
+                    .min(
+                        8,
+                        t(
+                            'login.validation.passwordMin',
+                        ),
+                    )
+                    .max(
+                        60,
+                        t(
+                            'login.validation.passwordMax',
+                        ),
+                    )
+                    .required(
+                        t(
+                            'login.validation.passwordRequired',
+                        ),
+                    ),
             }),
         [t],
     );
 
+    /**
+     * ============================================================
+     * Normal login
+     * ============================================================
+     */
     const loginAction = async (
         _: FormErrors | null,
         formData: FormData,
     ): Promise<FormErrors | null> => {
         try {
             const values = {
-                email: (formData.get('email') as string)?.trim().toLowerCase(),
-                password: formData.get('password') as string,
+                email: (
+                    formData.get('email') as string
+                )
+                    ?.trim()
+                    .toLowerCase(),
+
+                password:
+                    formData.get('password') as string,
             };
 
-            await loginSchema.validate(values, { abortEarly: false });
+            await loginSchema.validate(
+                values,
+                {
+                    abortEarly: false,
+                },
+            );
 
-            const token = await loginUser(values as UserLogin);
+            /**
+             * Backend creates the HttpOnly cookie.
+             */
+            await loginUser(
+                values as any,
+            );
 
-            if (token) {
-                await handleSuccessfulLogin(
-                    token,
-                    values.email,
-                    values.password,
-                );
-                return null;
-            } else {
-                throw new Error('login_failed');
-            }
+            /**
+             * Fetch authenticated user through
+             * the HttpOnly cookie.
+             */
+            await handleSuccessfulLogin(
+                values.email,
+                values.password,
+            );
+
+            return null;
         } catch (err: any) {
-            devError('Login error:', err);
+            devError(
+                'Login error:',
+                err,
+            );
 
             const errors: FormErrors = {};
 
             if (err.inner) {
-                err.inner.forEach((error: any) => {
-                    if (error.path === 'email') {
-                        errors.email = error.message;
-                    } else if (error.path === 'password') {
-                        errors.password = error.message;
-                    }
-                });
+                err.inner.forEach(
+                    (error: any) => {
+                        if (
+                            error.path ===
+                            'email'
+                        ) {
+                            errors.email =
+                                error.message;
+                        } else if (
+                            error.path ===
+                            'password'
+                        ) {
+                            errors.password =
+                                error.message;
+                        }
+                    },
+                );
             } else {
                 errors.general =
-                    t('login.errors.loginFailed') ||
+                    t(
+                        'login.errors.loginFailed',
+                    ) ||
                     'Invalid email or password.';
             }
 
-            return Object.keys(errors).length > 0 ? errors : null;
+            return Object.keys(errors)
+                .length > 0
+                ? errors
+                : null;
         }
     };
 
-    const [error, submitAction, isPending] = useActionState<
+    const [
+        error,
+        submitAction,
+        isPending,
+    ] = useActionState<
         FormErrors | null,
         FormData
     >(loginAction, null);
 
-    const handleGoogleLoginSuccess = async (response: CredentialResponse) => {
-        if (!response.credential) {
-            devError('Missing Google credential');
-            showError(
-                t('login.errors.googleLoginError') ||
-                    'Google sign-in failed. Please try again.',
-            );
-            return;
-        }
+    /**
+     * ============================================================
+     * Native Google Login
+     * ============================================================
+     */
+    const handleNativeGoogleLogin =
+        async () => {
+            setIsGoogleLoading(true);
 
-        setIsGoogleLoading(true);
-        try {
-            setShowSignOutButton(false);
-            const decodedGoogle = jwtDecode<DecodedGooglePayload>(
-                response.credential,
-            );
-            const userExists = await verifyGoogleUser(decodedGoogle.sub);
-
-            if (userExists) {
-                const token = await handleGoogleLogin(response, null);
-                if (token) {
-                    await handleSuccessfulLogin(token);
-                }
-            } else {
-                setGoogleResponse(response);
-                setShowModal(true);
+            try {
                 setShowSignOutButton(false);
-            }
-        } catch (error: any) {
-            devError('Google login error:', error);
-            showError(
-                t('login.errors.googleLoginError') ||
-                    'Google sign-in failed. Please try again.',
-            );
-        } finally {
-            setIsGoogleLoading(false);
-        }
-    };
 
-    const handleGoogleSignOut = async () => {
-        setIsSigningOut(true);
-        try {
-            if (Capacitor.isNativePlatform()) {
-                await SocialLogin.logout({
-                    provider: 'google',
-                });
-            }
-            localStorage.removeItem('token');
-            setAuth({} as AuthValues);
-            setIsLoggedIn(false);
-            setShowSignOutButton(false);
-            showSuccess(
-                t('login.signOutSuccess') ||
-                    'Signed out successfully. Please try logging in again.',
-            );
-            window.location.reload();
-        } catch (error) {
-            devError('Sign out error:', error);
-            showError(
-                t('login.errors.signOutFailed') ||
-                    'Failed to sign out. Please try manually.',
-            );
-        } finally {
-            setIsSigningOut(false);
-        }
-    };
+                const res =
+                    await SocialLogin.login({
+                        provider: 'google',
+                        options: {
+                            filterByAuthorizedAccounts:
+                                false,
+                            scopes: [
+                                'profile',
+                                'email',
+                            ],
+                        },
+                    });
 
-    const handleUserInfoSubmit = async (userExtraData: any) => {
-        setIsSubmittingUserInfo(true);
-        try {
-            const token = await handleGoogleLogin(
-                googleResponse,
-                userExtraData,
-            );
-            if (!token) {
-                showError(
-                    t('login.errors.loginFailed') ||
-                        'Something went wrong. Please try again.',
+                devLog(
+                    'Google login result:',
+                    res,
                 );
+
+                const idToken = (
+                    res.result as any
+                )?.idToken;
+
+                if (!idToken) {
+                    throw new Error(
+                        'missing_credential',
+                    );
+                }
+
+                /**
+                 * This is Google's ID token.
+                 *
+                 * It is NOT our Safqa session token.
+                 *
+                 * We only decode it to identify
+                 * the Google account.
+                 */
+                const decodedGoogle =
+                    jwtDecode<DecodedGooglePayload>(
+                        idToken,
+                    );
+
+                devLog(
+                    'Google user:',
+                    {
+                        sub: decodedGoogle.sub,
+                        email:
+                            decodedGoogle.email,
+                    },
+                );
+
+                const userExists =
+                    await verifyGoogleUser(
+                        decodedGoogle.sub,
+                    );
+
+                const fakeCredentialResponse =
+                    {
+                        credential: idToken,
+                    } as CredentialResponse;
+
+                if (userExists) {
+                    /**
+                     * Backend should create the
+                     * HttpOnly authentication cookie.
+                     */
+                    await handleGoogleLogin(
+                        fakeCredentialResponse,
+                        null,
+                    );
+
+                    await handleSuccessfulLogin(
+                        decodedGoogle.email,
+                    );
+                } else {
+                    setGoogleResponse(
+                        fakeCredentialResponse,
+                    );
+
+                    setShowModal(true);
+                }
+            } catch (error: any) {
+                devError(
+                    'Native Google login error:',
+                    error,
+                );
+
+                showError(
+                    t(
+                        'login.errors.googleLoginError',
+                        'Google sign-in failed. Please try again.',
+                    ),
+                );
+            } finally {
+                setIsGoogleLoading(false);
+            }
+        };
+
+    /**
+     * ============================================================
+     * Web Google Login
+     * ============================================================
+     */
+    const handleGoogleLoginSuccess =
+        async (
+            response: CredentialResponse,
+        ) => {
+            if (!response.credential) {
+                devError(
+                    'Missing Google credential',
+                );
+
+                showError(
+                    t(
+                        'login.errors.googleLoginError',
+                    ) ||
+                        'Google sign-in failed. Please try again.',
+                );
+
                 return;
             }
-            await handleSuccessfulLogin(token);
-        } catch (error: any) {
-            devError('User info submit error:', error);
-            showError(
-                t('login.errors.loginFailed') ||
-                    'Something went wrong. Please try again.',
-            );
-            setShowModal(false);
-        } finally {
-            setIsSubmittingUserInfo(false);
-        }
-    };
 
-    useEffect(() => {
-        (async () => {
-            let email = '';
+            setIsGoogleLoading(true);
 
-            if (Capacitor.isNativePlatform()) {
-                try {
-                    const cred = await CredentialHelper.getSavedPassword();
-                    email = cred.username;
-                } catch (e) {
-                    devLog('No saved credential found', e);
+            try {
+                setShowSignOutButton(false);
+
+                /**
+                 * Decode ONLY Google's ID token.
+                 */
+                const decodedGoogle =
+                    jwtDecode<DecodedGooglePayload>(
+                        response.credential,
+                    );
+
+                const userExists =
+                    await verifyGoogleUser(
+                        decodedGoogle.sub,
+                    );
+
+                if (userExists) {
+                    /**
+                     * Backend creates the HttpOnly
+                     * authentication cookie.
+                     */
+                    await handleGoogleLogin(
+                        response,
+                        null,
+                    );
+
+                    await handleSuccessfulLogin(
+                        decodedGoogle.email,
+                    );
+                } else {
+                    setGoogleResponse(
+                        response,
+                    );
+
+                    setShowModal(true);
+                    setShowSignOutButton(false);
                 }
-            }
+            } catch (error: any) {
+                devError(
+                    'Google login error:',
+                    error,
+                );
 
-            if (!email) {
-                const { value } = await Preferences.get({
-                    key: REMEMBER_KEY,
-                });
-                if (value) email = value;
+                showError(
+                    t(
+                        'login.errors.googleLoginError',
+                    ) ||
+                        'Google sign-in failed. Please try again.',
+                );
+            } finally {
+                setIsGoogleLoading(false);
             }
+        };
 
-            if (email) {
-                setSavedEmail(email);
-                setRememberMe(true);
+    /**
+     * ============================================================
+     * Google Sign Out
+     * ============================================================
+     */
+    const handleGoogleSignOut =
+        async () => {
+            setIsSigningOut(true);
+
+            try {
+                if (
+                    Capacitor.isNativePlatform()
+                ) {
+                    await SocialLogin.logout(
+                        {
+                            provider: 'google',
+                        },
+                    );
+                }
+
+                /**
+                 * logout() should call the backend
+                 * logout endpoint which clears the
+                 * HttpOnly cookie.
+                 */
+                await logout();
+
+                setShowSignOutButton(
+                    false,
+                );
+
+                showSuccess(
+                    t(
+                        'login.signOutSuccess',
+                    ) ||
+                        'Signed out successfully. Please try logging in again.',
+                );
+
+                window.location.reload();
+            } catch (error) {
+                devError(
+                    'Sign out error:',
+                    error,
+                );
+
+                showError(
+                    t(
+                        'login.errors.signOutFailed',
+                    ) ||
+                        'Failed to sign out. Please try manually.',
+                );
+            } finally {
+                setIsSigningOut(false);
             }
-            setIsLoadingSavedCreds(false);
-        })();
+        };
+
+    /**
+     * ============================================================
+     * Google new-user information
+     * ============================================================
+     */
+    const handleUserInfoSubmit =
+        async (
+            userExtraData: any,
+        ) => {
+            setIsSubmittingUserInfo(true);
+
+            try {
+                if (!googleResponse) {
+                    throw new Error(
+                        'GOOGLE_RESPONSE_MISSING',
+                    );
+                }
+
+                /**
+                 * Backend creates the HttpOnly
+                 * authentication cookie.
+                 */
+                await handleGoogleLogin(
+                    googleResponse,
+                    userExtraData,
+                );
+
+                /**
+                 * No token is returned/used.
+                 */
+                await handleSuccessfulLogin();
+            } catch (error: any) {
+                devError(
+                    'User info submit error:',
+                    error,
+                );
+
+                showError(
+                    t(
+                        'login.errors.loginFailed',
+                    ) ||
+                        'Something went wrong. Please try again.',
+                );
+
+                setShowModal(false);
+            } finally {
+                setIsSubmittingUserInfo(
+                    false,
+                );
+            }
+        };
+
+    /**
+     * ============================================================
+     * Load saved email / native saved credentials
+     * ============================================================
+     */
+    useEffect(() => {
+        const loadSavedCredentials =
+            async () => {
+                let email = '';
+
+                if (
+                    Capacitor.isNativePlatform()
+                ) {
+                    try {
+                        const cred =
+                            await CredentialHelper.getSavedPassword();
+
+                        email =
+                            cred.username;
+                    } catch (e) {
+                        devLog(
+                            'No saved credential found',
+                            e,
+                        );
+                    }
+                }
+
+                if (!email) {
+                    const {
+                        value,
+                    } =
+                        await Preferences.get(
+                            {
+                                key: REMEMBER_KEY,
+                            },
+                        );
+
+                    if (value) {
+                        email = value;
+                    }
+                }
+
+                if (email) {
+                    setSavedEmail(email);
+                    setRememberMe(true);
+                }
+
+                setIsLoadingSavedCreds(
+                    false,
+                );
+            };
+
+        loadSavedCredentials();
     }, []);
 
-    const currentUrl = `https://client-qqq1.vercel.app/login`;
+    const currentUrl =
+        'https://client-qqq1.vercel.app/login';
+
     const dire = handleRTL();
 
-    // ================ نمط الحقل الموحد ================
+    /**
+     * ============================================================
+     * Text field styles
+     * ============================================================
+     */
     const textFieldSx = {
         '& .MuiOutlinedInput-root': {
             borderRadius: 3,
-            transition: 'all 0.2s ease',
+            transition:
+                'all 0.2s ease',
+
             '&:hover fieldset': {
-                borderColor: theme.palette.primary.main,
+                borderColor:
+                    theme.palette.primary
+                        .main,
                 borderWidth: 2,
             },
+
             '&.Mui-focused fieldset': {
-                borderColor: theme.palette.primary.main,
+                borderColor:
+                    theme.palette.primary
+                        .main,
                 borderWidth: 2,
             },
         },
-        '& .MuiInputLabel-root.Mui-focused': {
-            color: theme.palette.primary.main,
-        },
+
+        '& .MuiInputLabel-root.Mui-focused':
+            {
+                color: theme.palette.primary
+                    .main,
+            },
     };
 
-    // ================ نمط الزر الموحد ================
+    /**
+     * ============================================================
+     * Primary button styles
+     * ============================================================
+     */
     const primaryButtonSx = {
         borderRadius: 3,
         py: 1.5,
         fontSize: '1.1rem',
         fontWeight: 600,
+
         background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-        boxShadow: `0 4px 20px ${alpha(theme.palette.primary.main, 0.3)}`,
+
+        boxShadow: `0 4px 20px ${alpha(
+            theme.palette.primary.main,
+            0.3,
+        )}`,
+
         '&:hover': {
             background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-            boxShadow: `0 6px 28px ${alpha(theme.palette.primary.main, 0.4)}`,
+
+            boxShadow: `0 6px 28px ${alpha(
+                theme.palette.primary.main,
+                0.4,
+            )}`,
         },
+
         '&:disabled': {
             opacity: 0.7,
-            background: theme.palette.action.disabledBackground,
+            background:
+                theme.palette.action
+                    .disabledBackground,
         },
     };
 
-    // لسا عم نتحقق من التوكن المخزن قبل ما نعرض فورم اللوجين
+    /**
+     * ============================================================
+     * Initial auth check
+     * ============================================================
+     */
     if (isCheckingAuth) {
         return <Loader />;
     }
 
     return (
         <>
-            <link rel='canonical' href={currentUrl} />
-            <title>{`${t('login.loginButton')} | صفقة`}</title>
+            <link
+                rel='canonical'
+                href={currentUrl}
+            />
+
+            <title>
+                {`${t(
+                    'login.loginButton',
+                )} | صفقة`}
+            </title>
+
             <meta
                 name='description'
-                content={`${t('login.metaDescription')}`}
+                content={t(
+                    'login.metaDescription',
+                )}
             />
-            <meta name='keywords' content={t('login.metaKeywords')} />
+
+            <meta
+                name='keywords'
+                content={t(
+                    'login.metaKeywords',
+                )}
+            />
+
             <meta
                 property='og:title'
-                content={`${t('login.loginButton')} | صفقة`}
+                content={`${t(
+                    'login.loginButton',
+                )} | صفقة`}
             />
+
             <meta
                 property='og:description'
-                content={`${t('login.metaDescription')}`}
+                content={t(
+                    'login.metaDescription',
+                )}
             />
-            <meta property='og:url' content={currentUrl} />
+
+            <meta
+                property='og:url'
+                content={currentUrl}
+            />
 
             <Container
                 dir={dire}
                 maxWidth='md'
                 sx={{
                     py: 8,
-                    bgcolor: theme.palette.background.default,
+                    bgcolor:
+                        theme.palette
+                            .background
+                            .default,
                     minHeight: '100vh',
                 }}
             >
                 <Box
                     sx={{
                         display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
+                        justifyContent:
+                            'center',
+                        alignItems:
+                            'center',
                         minHeight: '70vh',
                     }}
                 >
-                    <Grid container spacing={4} alignItems='center'>
-                        <Grid size={{ xs: 12, md: 6 }}>
+                    <Grid
+                        container
+                        spacing={4}
+                        alignItems='center'
+                    >
+                        <Grid
+                            size={{
+                                xs: 12,
+                                md: 6,
+                            }}
+                        >
                             <Paper
-                                elevation={mode === 'dark' ? 8 : 4}
+                                elevation={
+                                    mode ===
+                                    'dark'
+                                        ? 8
+                                        : 4
+                                }
                                 sx={{
-                                    p: { xs: 3, sm: 4, md: 5 },
+                                    p: {
+                                        xs: 3,
+                                        sm: 4,
+                                        md: 5,
+                                    },
+
                                     borderRadius: 4,
-                                    backdropFilter: 'blur(20px)',
+
+                                    backdropFilter:
+                                        'blur(20px)',
+
                                     border: `1px solid ${theme.palette.divider}`,
-                                    bgcolor: theme.palette.background.paper,
-                                    position: 'relative',
-                                    overflow: 'hidden',
-                                    transform: isHovered
-                                        ? 'translateY(-4px)'
-                                        : 'translateY(0)',
+
+                                    bgcolor:
+                                        theme
+                                            .palette
+                                            .background
+                                            .paper,
+
+                                    position:
+                                        'relative',
+
+                                    overflow:
+                                        'hidden',
+
+                                    transform:
+                                        isHovered
+                                            ? 'translateY(-4px)'
+                                            : 'translateY(0)',
+
                                     transition:
                                         'transform 0.3s ease, box-shadow 0.3s ease',
-                                    boxShadow: mode === 'dark'
-                                        ? `0 8px 32px ${alpha(theme.palette.common.black, 0.5)}`
-                                        : `0 8px 40px ${alpha(theme.palette.primary.main, 0.08)}`,
-                                    '&:hover': {
-                                        boxShadow: mode === 'dark'
-                                            ? `0 12px 48px ${alpha(theme.palette.common.black, 0.6)}`
-                                            : `0 12px 48px ${alpha(theme.palette.primary.main, 0.12)}`,
-                                    },
-                                    '&::before': {
-                                        content: '""',
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        height: '6px',
-                                        background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 50%, ${theme.palette.secondary.main} 100%)`,
-                                        borderRadius: '4px 4px 0 0',
-                                    },
+
+                                    boxShadow:
+                                        mode ===
+                                        'dark'
+                                            ? `0 8px 32px ${alpha(
+                                                  theme
+                                                      .palette
+                                                      .common
+                                                      .black,
+                                                  0.5,
+                                              )}`
+                                            : `0 8px 40px ${alpha(
+                                                  theme
+                                                      .palette
+                                                      .primary
+                                                      .main,
+                                                  0.08,
+                                              )}`,
+
+                                    '&:hover':
+                                        {
+                                            boxShadow:
+                                                mode ===
+                                                'dark'
+                                                    ? `0 12px 48px ${alpha(
+                                                          theme
+                                                              .palette
+                                                              .common
+                                                              .black,
+                                                          0.6,
+                                                      )}`
+                                                    : `0 12px 48px ${alpha(
+                                                          theme
+                                                              .palette
+                                                              .primary
+                                                              .main,
+                                                          0.12,
+                                                      )}`,
+                                        },
+
+                                    '&::before':
+                                        {
+                                            content:
+                                                '""',
+
+                                            position:
+                                                'absolute',
+
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+
+                                            height:
+                                                '6px',
+
+                                            background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.light} 50%, ${theme.palette.secondary.main} 100%)`,
+
+                                            borderRadius:
+                                                '4px 4px 0 0',
+                                        },
                                 }}
-                                onMouseEnter={() => setIsHovered(true)}
-                                onMouseLeave={() => setIsHovered(false)}
+                                onMouseEnter={() =>
+                                    setIsHovered(
+                                        true,
+                                    )
+                                }
+                                onMouseLeave={() =>
+                                    setIsHovered(
+                                        false,
+                                    )
+                                }
                             >
                                 <Typography
                                     variant='h4'
@@ -586,136 +1071,203 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     sx={{
                                         mb: 4,
                                         fontWeight: 700,
-                                        color: theme.palette.primary.main,
+                                        color: theme
+                                            .palette
+                                            .primary
+                                            .main,
                                     }}
                                 >
-                                    {t('login.loginButton')}
+                                    {t(
+                                        'login.loginButton',
+                                    )}
                                 </Typography>
 
                                 <form
                                     autoComplete='on'
                                     noValidate
-                                    action={submitAction}
+                                    action={
+                                        submitAction
+                                    }
                                 >
                                     <TextField
-                                        label={t('login.email')}
+                                        label={t(
+                                            'login.email',
+                                        )}
                                         type='email'
                                         name='email'
-                                        defaultValue={savedEmail}
-                                        error={Boolean(error?.email)}
-                                        helperText={error?.email}
+                                        defaultValue={
+                                            savedEmail
+                                        }
+                                        error={Boolean(
+                                            error?.email,
+                                        )}
+                                        helperText={
+                                            error?.email
+                                        }
                                         fullWidth
                                         margin='normal'
                                         variant='outlined'
                                         disabled={
-                                            isPending || isLoadingSavedCreds
+                                            isPending ||
+                                            isLoadingSavedCreds
                                         }
                                         color='primary'
-                                        inputProps={{ maxLength: 254 }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position='start'>
-                                                    <Email color='action' />
-                                                </InputAdornment>
-                                            ),
-                                            endAdornment: isLoadingSavedCreds ? (
-                                                <InputAdornment position='end'>
-                                                    <CircularProgress
-                                                        size={16}
-                                                    />
-                                                </InputAdornment>
-                                            ) : undefined,
+                                        inputProps={{
+                                            maxLength: 254,
                                         }}
-                                        sx={textFieldSx}
+                                        InputProps={{
+                                            startAdornment:
+                                                (
+                                                    <InputAdornment position='start'>
+                                                        <Email color='action' />
+                                                    </InputAdornment>
+                                                ),
+
+                                            endAdornment:
+                                                isLoadingSavedCreds ? (
+                                                    <InputAdornment position='end'>
+                                                        <CircularProgress
+                                                            size={
+                                                                16
+                                                            }
+                                                        />
+                                                    </InputAdornment>
+                                                ) : undefined,
+                                        }}
+                                        sx={
+                                            textFieldSx
+                                        }
                                         autoComplete='email'
                                     />
 
                                     <TextField
-                                        label={t('login.password')}
-                                        type={showPassword ? 'text' : 'password'}
+                                        label={t(
+                                            'login.password',
+                                        )}
+                                        type={
+                                            showPassword
+                                                ? 'text'
+                                                : 'password'
+                                        }
                                         name='password'
-                                        error={Boolean(error?.password)}
-                                        helperText={error?.password}
+                                        error={Boolean(
+                                            error?.password,
+                                        )}
+                                        helperText={
+                                            error?.password
+                                        }
                                         fullWidth
                                         margin='normal'
                                         variant='outlined'
                                         color='primary'
-                                        disabled={isPending}
-                                        inputProps={{ maxLength: 60 }}
-                                        InputProps={{
-                                            startAdornment: (
-                                                <InputAdornment position='start'>
-                                                    <Lock color='action' />
-                                                </InputAdornment>
-                                            ),
-                                            endAdornment: (
-                                                <InputAdornment position='end'>
-                                                    <IconButton
-                                                        aria-label={
-                                                            showPassword
-                                                                ? t(
-                                                                      'login.hidePassword',
-                                                                      'إخفاء كلمة السر',
-                                                                  )
-                                                                : t(
-                                                                      'login.showPassword',
-                                                                      'إظهار كلمة السر',
-                                                                  )
-                                                        }
-                                                        onClick={() =>
-                                                            setShowPassword(
-                                                                !showPassword,
-                                                            )
-                                                        }
-                                                        edge='end'
-                                                        type='button'
-                                                        tabIndex={-1}
-                                                    >
-                                                        {showPassword ? (
-                                                            <VisibilityOff />
-                                                        ) : (
-                                                            <Visibility />
-                                                        )}
-                                                    </IconButton>
-                                                </InputAdornment>
-                                            ),
+                                        disabled={
+                                            isPending
+                                        }
+                                        inputProps={{
+                                            maxLength: 60,
                                         }}
-                                        sx={textFieldSx}
+                                        InputProps={{
+                                            startAdornment:
+                                                (
+                                                    <InputAdornment position='start'>
+                                                        <Lock color='action' />
+                                                    </InputAdornment>
+                                                ),
+
+                                            endAdornment:
+                                                (
+                                                    <InputAdornment position='end'>
+                                                        <IconButton
+                                                            aria-label={
+                                                                showPassword
+                                                                    ? t(
+                                                                          'login.hidePassword',
+                                                                          'إخفاء كلمة السر',
+                                                                      )
+                                                                    : t(
+                                                                          'login.showPassword',
+                                                                          'إظهار كلمة السر',
+                                                                      )
+                                                            }
+                                                            onClick={() =>
+                                                                setShowPassword(
+                                                                    !showPassword,
+                                                                )
+                                                            }
+                                                            edge='end'
+                                                            type='button'
+                                                            tabIndex={
+                                                                -1
+                                                            }
+                                                        >
+                                                            {showPassword ? (
+                                                                <VisibilityOff />
+                                                            ) : (
+                                                                <Visibility />
+                                                            )}
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                ),
+                                        }}
+                                        sx={
+                                            textFieldSx
+                                        }
                                         autoComplete='current-password'
                                     />
 
                                     {error?.general && (
                                         <Typography
                                             color='error'
-                                            sx={{ mt: 2 }}
+                                            sx={{
+                                                mt: 2,
+                                            }}
                                             role='alert'
                                         >
-                                            {error.general}
+                                            {
+                                                error.general
+                                            }
                                         </Typography>
                                     )}
 
                                     <FormControlLabel
                                         control={
                                             <Checkbox
-                                                checked={rememberMe}
-                                                onChange={(e) =>
+                                                checked={
+                                                    rememberMe
+                                                }
+                                                onChange={(
+                                                    e,
+                                                ) =>
                                                     setRememberMe(
-                                                        e.target.checked,
+                                                        e
+                                                            .target
+                                                            .checked,
                                                     )
                                                 }
                                                 sx={{
-                                                    '&.Mui-checked': {
-                                                        color: theme.palette.primary.main,
-                                                    },
+                                                    '&.Mui-checked':
+                                                        {
+                                                            color: theme
+                                                                .palette
+                                                                .primary
+                                                                .main,
+                                                        },
                                                 }}
                                             />
                                         }
                                         label={
-                                            t('login.rememberMe') || 'تذكرني'
+                                            t(
+                                                'login.rememberMe',
+                                            ) ||
+                                            'تذكرني'
                                         }
                                     />
 
-                                    <Box sx={{ mt: 4 }}>
+                                    <Box
+                                        sx={{
+                                            mt: 4,
+                                        }}
+                                    >
                                         <Button
                                             color='primary'
                                             variant='contained'
@@ -725,76 +1277,139 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                             startIcon={
                                                 isPending ? (
                                                     <CircularProgress
-                                                        size={20}
+                                                        size={
+                                                            20
+                                                        }
                                                         color='inherit'
                                                     />
                                                 ) : (
                                                     <LoginIcon />
                                                 )
                                             }
-                                            disabled={isPending}
-                                            sx={primaryButtonSx}
+                                            disabled={
+                                                isPending
+                                            }
+                                            sx={
+                                                primaryButtonSx
+                                            }
                                         >
                                             {isPending
-                                                ? t('login.loading')
-                                                : t('login.loginButton')}
+                                                ? t(
+                                                      'login.loading',
+                                                  )
+                                                : t(
+                                                      'login.loginButton',
+                                                  )}
                                         </Button>
                                     </Box>
 
-                                    <Box sx={{ textAlign: 'center', mt: 2 }}>
+                                    <Box
+                                        sx={{
+                                            textAlign:
+                                                'center',
+                                            mt: 2,
+                                        }}
+                                    >
                                         <Link
-                                            to={path.ForgotPassword}
+                                            to={
+                                                path.ForgotPassword
+                                            }
                                             style={{
-                                                textDecoration: 'none',
-                                                color: theme.palette.primary.main,
-                                                fontSize: '0.9rem',
+                                                textDecoration:
+                                                    'none',
+
+                                                color: theme
+                                                    .palette
+                                                    .primary
+                                                    .main,
+
+                                                fontSize:
+                                                    '0.9rem',
+
                                                 fontWeight: 500,
-                                                transition: 'color 0.2s ease',
+
+                                                transition:
+                                                    'color 0.2s ease',
                                             }}
-                                            onMouseEnter={(e) => {
-                                                e.currentTarget.style.color = theme.palette.primary.dark;
-                                                e.currentTarget.style.textDecoration = 'underline';
+                                            onMouseEnter={(
+                                                e,
+                                            ) => {
+                                                e.currentTarget.style.color =
+                                                    theme
+                                                        .palette
+                                                        .primary
+                                                        .dark;
+
+                                                e.currentTarget.style.textDecoration =
+                                                    'underline';
                                             }}
-                                            onMouseLeave={(e) => {
-                                                e.currentTarget.style.color = theme.palette.primary.main;
-                                                e.currentTarget.style.textDecoration = 'none';
+                                            onMouseLeave={(
+                                                e,
+                                            ) => {
+                                                e.currentTarget.style.color =
+                                                    theme
+                                                        .palette
+                                                        .primary
+                                                        .main;
+
+                                                e.currentTarget.style.textDecoration =
+                                                    'none';
                                             }}
                                         >
-                                            {t('login.forgotPassword') ||
+                                            {t(
+                                                'login.forgotPassword',
+                                            ) ||
                                                 'نسيت كلمة السر؟'}
                                         </Link>
                                     </Box>
 
-                                    <Divider sx={{ my: 4 }}>
+                                    <Divider
+                                        sx={{
+                                            my: 4,
+                                        }}
+                                    >
                                         <Typography
                                             variant='body2'
                                             sx={{
-                                                color: theme.palette.text.secondary,
+                                                color: theme
+                                                    .palette
+                                                    .text
+                                                    .secondary,
                                                 px: 2,
                                             }}
                                         >
-                                            {t('login.or') || 'أو'}
+                                            {t(
+                                                'login.or',
+                                            ) ||
+                                                'أو'}
                                         </Typography>
                                     </Divider>
 
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
+                                            display:
+                                                'flex',
+                                            flexDirection:
+                                                'column',
+                                            alignItems:
+                                                'center',
                                             gap: 2,
                                         }}
                                     >
                                         {Capacitor.isNativePlatform() ? (
                                             <Button
                                                 variant='outlined'
-                                                onClick={handleNativeGoogleLogin}
+                                                onClick={
+                                                    handleNativeGoogleLogin
+                                                }
                                                 fullWidth
                                                 size='large'
                                                 startIcon={
                                                     isGoogleLoading ? (
                                                         <CircularProgress
-                                                            size={20}
+                                                            size={
+                                                                20
+                                                            }
                                                             color='inherit'
                                                         />
                                                     ) : (
@@ -802,24 +1417,34 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     )
                                                 }
                                                 disabled={
-                                                    isGoogleLoading || isPending
+                                                    isGoogleLoading ||
+                                                    isPending
                                                 }
                                                 sx={{
                                                     maxWidth: 300,
                                                     borderRadius: 50,
-                                                    textTransform: 'none',
+                                                    textTransform:
+                                                        'none',
                                                     fontWeight: 600,
-                                                    bgcolor: '#fff',
-                                                    color: '#3c4043',
+                                                    bgcolor:
+                                                        '#fff',
+                                                    color:
+                                                        '#3c4043',
                                                     border: '1px solid #dadce0',
-                                                    '&:hover': {
-                                                        bgcolor: '#f7f8f8',
-                                                        border: '1px solid #dadce0',
-                                                        boxShadow: '0 1px 4px rgba(0,0,0,0.08)',
-                                                    },
-                                                    '&:disabled': {
-                                                        opacity: 0.7,
-                                                    },
+
+                                                    '&:hover':
+                                                        {
+                                                            bgcolor:
+                                                                '#f7f8f8',
+                                                            border: '1px solid #dadce0',
+                                                            boxShadow:
+                                                                '0 1px 4px rgba(0,0,0,0.08)',
+                                                        },
+
+                                                    '&:disabled':
+                                                        {
+                                                            opacity: 0.7,
+                                                        },
                                                 }}
                                             >
                                                 {isGoogleLoading
@@ -835,7 +1460,8 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         ) : (
                                             <Box
                                                 sx={{
-                                                    position: 'relative',
+                                                    position:
+                                                        'relative',
                                                     maxWidth: 300,
                                                     width: '100%',
                                                 }}
@@ -849,27 +1475,33 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                             left: 0,
                                                             right: 0,
                                                             bottom: 0,
-                                                            display: 'flex',
+                                                            display:
+                                                                'flex',
                                                             alignItems:
                                                                 'center',
                                                             justifyContent:
                                                                 'center',
                                                             bgcolor:
                                                                 alpha(
-                                                                    theme.palette
+                                                                    theme
+                                                                        .palette
                                                                         .common
                                                                         .white,
                                                                     0.7,
                                                                 ),
-                                                            borderRadius: 50,
+                                                            borderRadius:
+                                                                50,
                                                             zIndex: 1,
                                                         }}
                                                     >
                                                         <CircularProgress
-                                                            size={28}
+                                                            size={
+                                                                28
+                                                            }
                                                         />
                                                     </Box>
                                                 )}
+
                                                 <GoogleLogin
                                                     ux_mode='popup'
                                                     shape='pill'
@@ -885,6 +1517,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                         setShowSignOutButton(
                                                             true,
                                                         );
+
                                                         showError(
                                                             t(
                                                                 'login.googleLoginError',
@@ -892,8 +1525,12 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                                 'Google login failed',
                                                         );
                                                     }}
-                                                    useOneTap={false}
-                                                    auto_select={false}
+                                                    useOneTap={
+                                                        false
+                                                    }
+                                                    auto_select={
+                                                        false
+                                                    }
                                                 />
                                             </Box>
                                         )}
@@ -919,11 +1556,13 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                             'Reauthentication Required',
                                                         )}
                                                     </AlertTitle>
+
                                                     {t(
                                                         'login.reauthBody',
                                                         'Please sign out of Google and try again.',
                                                     )}
                                                 </Alert>
+
                                                 <Button
                                                     variant='outlined'
                                                     color='error'
@@ -932,38 +1571,58 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                     }
                                                     fullWidth
                                                     size='medium'
-                                                    disabled={isSigningOut}
+                                                    disabled={
+                                                        isSigningOut
+                                                    }
                                                     startIcon={
                                                         isSigningOut ? (
                                                             <CircularProgress
-                                                                size={18}
+                                                                size={
+                                                                    18
+                                                                }
                                                                 color='inherit'
                                                             />
                                                         ) : undefined
                                                     }
                                                     sx={{
                                                         borderRadius: 50,
-                                                        textTransform: 'none',
+                                                        textTransform:
+                                                            'none',
                                                         fontWeight: 600,
-                                                        borderColor: theme
-                                                            .palette.error
+
+                                                        borderColor:
+                                                            theme
+                                                                .palette
+                                                                .error
+                                                                .main,
+
+                                                        color: theme
+                                                            .palette
+                                                            .error
                                                             .main,
-                                                        color: theme.palette
-                                                            .error.main,
-                                                        '&:hover': {
-                                                            borderColor: theme
-                                                                .palette.error
-                                                                .dark,
-                                                            bgcolor: alpha(
-                                                                theme.palette
-                                                                    .error
-                                                                    .main,
-                                                                0.04,
-                                                            ),
-                                                        },
-                                                        '&:disabled': {
-                                                            opacity: 0.7,
-                                                        },
+
+                                                        '&:hover':
+                                                            {
+                                                                borderColor:
+                                                                    theme
+                                                                        .palette
+                                                                        .error
+                                                                        .dark,
+
+                                                                bgcolor:
+                                                                    alpha(
+                                                                        theme
+                                                                            .palette
+                                                                            .error
+                                                                            .main,
+                                                                        0.04,
+                                                                    ),
+                                                            },
+
+                                                        '&:disabled':
+                                                            {
+                                                                opacity: 0.7,
+                                                            },
                                                     }}
                                                 >
                                                     {t(
@@ -975,7 +1634,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         )}
                                     </Box>
 
-                                    <Box mt={2} textAlign='center'>
+                                    <Box
+                                        mt={2}
+                                        textAlign='center'
+                                    >
                                         <Typography
                                             variant='body2'
                                             color='text.secondary'
@@ -984,20 +1646,34 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                                 'login.noAccount',
                                                 "Don't have an account?",
                                             )}
+
                                             <Link
-                                                to={path.Register}
+                                                to={
+                                                    path.Register
+                                                }
                                                 style={{
-                                                    marginLeft: '4px',
-                                                    color: theme.palette
-                                                        .primary.main,
+                                                    marginLeft:
+                                                        '4px',
+
+                                                    color: theme
+                                                        .palette
+                                                        .primary
+                                                        .main,
+
                                                     fontWeight: 600,
-                                                    textDecoration: 'none',
+
+                                                    textDecoration:
+                                                        'none',
                                                 }}
-                                                onMouseEnter={(e) => {
+                                                onMouseEnter={(
+                                                    e,
+                                                ) => {
                                                     e.currentTarget.style.textDecoration =
                                                         'underline';
                                                 }}
-                                                onMouseLeave={(e) => {
+                                                onMouseLeave={(
+                                                    e,
+                                                ) => {
                                                     e.currentTarget.style.textDecoration =
                                                         'none';
                                                 }}
@@ -1012,8 +1688,10 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
                                     <Box
                                         sx={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
+                                            display:
+                                                'flex',
+                                            justifyContent:
+                                                'center',
                                             gap: 4,
                                             mt: 4,
                                             pt: 3,
@@ -1021,74 +1699,143 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         }}
                                     >
                                         <Link
-                                            to={path.PrivacyAndPolicy}
+                                            to={
+                                                path.PrivacyAndPolicy
+                                            }
                                             style={{
-                                                textDecoration: 'none',
-                                                color: theme.palette.text
+                                                textDecoration:
+                                                    'none',
+
+                                                color: theme
+                                                    .palette
+                                                    .text
                                                     .secondary,
-                                                fontSize: '0.875rem',
-                                                transition: 'color 0.2s ease',
+
+                                                fontSize:
+                                                    '0.875rem',
+
+                                                transition:
+                                                    'color 0.2s ease',
                                             }}
-                                            onMouseEnter={(e) => {
+                                            onMouseEnter={(
+                                                e,
+                                            ) => {
                                                 e.currentTarget.style.color =
-                                                    theme.palette.primary.main;
+                                                    theme
+                                                        .palette
+                                                        .primary
+                                                        .main;
                                             }}
-                                            onMouseLeave={(e) => {
+                                            onMouseLeave={(
+                                                e,
+                                            ) => {
                                                 e.currentTarget.style.color =
-                                                    theme.palette.text.secondary;
+                                                    theme
+                                                        .palette
+                                                        .text
+                                                        .secondary;
                                             }}
                                         >
-                                            {t('login.privacyPolicy')}
+                                            {t(
+                                                'login.privacyPolicy',
+                                            )}
                                         </Link>
+
                                         <Link
-                                            to={path.TermOfUse}
+                                            to={
+                                                path.TermOfUse
+                                            }
                                             style={{
-                                                textDecoration: 'none',
-                                                color: theme.palette.text
+                                                textDecoration:
+                                                    'none',
+
+                                                color: theme
+                                                    .palette
+                                                    .text
                                                     .secondary,
-                                                fontSize: '0.875rem',
-                                                transition: 'color 0.2s ease',
+
+                                                fontSize:
+                                                    '0.875rem',
+
+                                                transition:
+                                                    'color 0.2s ease',
                                             }}
-                                            onMouseEnter={(e) => {
+                                            onMouseEnter={(
+                                                e,
+                                            ) => {
                                                 e.currentTarget.style.color =
-                                                    theme.palette.primary.main;
+                                                    theme
+                                                        .palette
+                                                        .primary
+                                                        .main;
                                             }}
-                                            onMouseLeave={(e) => {
+                                            onMouseLeave={(
+                                                e,
+                                            ) => {
                                                 e.currentTarget.style.color =
-                                                    theme.palette.text.secondary;
+                                                    theme
+                                                        .palette
+                                                        .text
+                                                        .secondary;
                                             }}
                                         >
-                                            {t('login.termsOfUse')}
+                                            {t(
+                                                'login.termsOfUse',
+                                            )}
                                         </Link>
                                     </Box>
                                 </form>
                             </Paper>
                         </Grid>
 
-                        {/* ===== الفاصل العمودي ===== */}
+                        {/* Vertical divider */}
                         <Box
                             sx={{
-                                display: { xs: 'none', md: 'block' },
+                                display: {
+                                    xs: 'none',
+                                    md: 'block',
+                                },
+
                                 width: '5px',
                                 height: '70vh',
+
                                 mx: 'auto',
+
                                 background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                                borderRadius: '10px',
+
+                                borderRadius:
+                                    '10px',
+
                                 opacity: 0.6,
                             }}
                         />
 
-                        {/* ===== الجانب الأيمن ===== */}
-                        <Grid size={{ xs: 12, md: 5 }}>
-                            <Fade in={true} timeout={800}>
+                        {/* Right side */}
+                        <Grid
+                            size={{
+                                xs: 12,
+                                md: 5,
+                            }}
+                        >
+                            <Fade
+                                in={true}
+                                timeout={800}
+                            >
                                 <Box
                                     sx={{
                                         textAlign: {
                                             xs: 'center',
                                             md: 'right',
                                         },
-                                        pr: { md: 4 },
-                                        mb: { xs: 4, md: 0 },
+
+                                        pr: {
+                                            md: 4,
+                                        },
+
+                                        mb: {
+                                            xs: 4,
+                                            md: 0,
+                                        },
                                     }}
                                 >
                                     <Typography
@@ -1097,6 +1844,7 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                         sx={{
                                             fontWeight: 800,
                                             mb: 2,
+
                                             fontSize: {
                                                 xs: '2.5rem',
                                                 md: '3.5rem',
@@ -1105,37 +1853,71 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
                                     >
                                         <SafqaLogo />
                                     </Typography>
+
                                     <Typography
                                         variant='h6'
                                         sx={{
-                                            color: theme.palette.text.secondary,
+                                            color: theme
+                                                .palette
+                                                .text
+                                                .secondary,
+
                                             mb: 3,
+
                                             lineHeight: 1.6,
                                         }}
                                     >
-                                        {t('login.description')}
+                                        {t(
+                                            'login.description',
+                                        )}
                                     </Typography>
+
                                     <Button
                                         variant='outlined'
-                                        startIcon={<ArrowRight />}
-                                        onClick={() => navigate(path.Home)}
+                                        startIcon={
+                                            <ArrowRight />
+                                        }
+                                        onClick={() =>
+                                            navigate(
+                                                path.Home,
+                                            )
+                                        }
                                         sx={{
                                             borderRadius: 3,
                                             px: 4,
                                             py: 1,
                                             borderWidth: 2,
-                                            borderColor: theme.palette.primary
+
+                                            borderColor:
+                                                theme
+                                                    .palette
+                                                    .primary
+                                                    .main,
+
+                                            color: theme
+                                                .palette
+                                                .primary
                                                 .main,
-                                            color: theme.palette.primary.main,
-                                            '&:hover': {
-                                                borderWidth: 2,
-                                                borderColor: theme.palette
-                                                    .primary.dark,
-                                                bgcolor: alpha(
-                                                    theme.palette.primary.main,
-                                                    0.04,
-                                                ),
-                                            },
+
+                                            '&:hover':
+                                                {
+                                                    borderWidth: 2,
+
+                                                    borderColor:
+                                                        theme
+                                                            .palette
+                                                            .primary
+                                                            .dark,
+
+                                                    bgcolor:
+                                                        alpha(
+                                                            theme
+                                                                .palette
+                                                                .primary
+                                                                .main,
+                                                            0.04,
+                                                        ),
+                                                },
                                         }}
                                     >
                                         {t(
@@ -1151,13 +1933,24 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
 
                 <UserInfoModal
                     isOpen={showModal}
-                    isSubmitting={isSubmittingUserInfo}
+                    isSubmitting={
+                        isSubmittingUserInfo
+                    }
                     onClose={() => {
-                        if (isSubmittingUserInfo) return;
+                        if (
+                            isSubmittingUserInfo
+                        ) {
+                            return;
+                        }
+
                         setShowModal(false);
-                        setGoogleResponse(null);
+                        setGoogleResponse(
+                            null,
+                        );
                     }}
-                    onSubmit={handleUserInfoSubmit}
+                    onSubmit={
+                        handleUserInfoSubmit
+                    }
                 />
             </Container>
         </>

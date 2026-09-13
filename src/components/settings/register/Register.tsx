@@ -75,12 +75,13 @@ import {
     registerValidationSchema,
     UserRegisterFormValues,
 } from './registerSchema';
+import { useUser } from '../../../hooks/useUSer';
 
 const Register: FunctionComponent = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const theme = useTheme();
-
+    const { refreshAuth } = useUser();
     const dir = handleRTL();
 
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -244,9 +245,9 @@ const Register: FunctionComponent = () => {
                     terms: user.terms,
                 };
 
-                const token = await registerNewUser(dataToSend);
+                await registerNewUser(dataToSend);
 
-                localStorage.setItem('token', token);
+                await refreshAuth();
 
                 setSubmitSuccess(true);
 
