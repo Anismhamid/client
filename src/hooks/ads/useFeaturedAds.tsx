@@ -10,8 +10,6 @@ export const useHomePageAds = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log('🚀 جلب الإعلانات المميزة من:', `${api}/homepage`);
-
         axios
             .get(`${api}/homepage`)
             .then(({ data }) => {

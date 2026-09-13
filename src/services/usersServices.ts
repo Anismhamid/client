@@ -191,13 +191,6 @@ export const handleGoogleLogin = async (
             },
         };
 
-        if (import.meta.env.DEV) {
-            console.log('Google userData:', {
-                ...userData,
-                credentialToken: '[HIDDEN]',
-            });
-        }
-
         const res = await api.post(`${usersApi}/google`, userData, {
             headers: {
                 'Content-Type': 'application/json',
