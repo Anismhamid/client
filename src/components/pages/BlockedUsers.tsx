@@ -1,9 +1,4 @@
-import {
-    FunctionComponent,
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 
 import {
     Avatar,
@@ -30,30 +25,24 @@ import { useUser } from '../../hooks/useUSer';
 import handleRTL from '../../locales/handleRTL';
 import AlertDialogs from '../../atoms/toasts/Sweetalert';
 
+// ✅ استخدم api instance بدل axios مباشرة
+import api from '../../services/api';
+
 interface BlockedUser {
     _id: string;
-
     name?: {
         first?: string;
         last?: string;
     };
-
     slug?: string;
-
     email?: string;
-
     image?: {
         url?: string;
     };
-
     role?: string;
-
     blockedAt?: string;
-
     reason?: string;
-
     expiresAt?: string | null;
-
     isPermanent?: boolean;
 }
 
@@ -63,29 +52,13 @@ const BlockedUsers: FunctionComponent = () => {
 
     const direction = handleRTL();
 
-    const API_URL = import.meta.env.VITE_API_URL;
-
     const [users, setUsers] = useState<BlockedUser[]>([]);
-
     const [loading, setLoading] = useState(true);
-
-    const [unblockingId, setUnblockingId] = useState<string | null>(
+    const [unblockingId, setUnblockingId] = useState<string | null>(null);
+    const [confirmUnblockId, setConfirmUnblockId] = useState<string | null>(
         null,
     );
-
-    const [confirmUnblockId, setConfirmUnblockId] = useState<
-        string | null
-    >(null);
-
     const [error, setError] = useState('');
-
-    // ============================================
-    // Get token
-    // ============================================
-
-    const getToken = useCallback(() => {
-        return localStorage.getItem('token');
-    }, []);
 
     // ============================================
     // Fetch blocked users
@@ -96,40 +69,19 @@ const BlockedUsers: FunctionComponent = () => {
             setLoading(true);
             setError('');
 
-            const token = getToken();
-
-            if (!token) {
-                setError(
-                    t('common.unauthorized') ||
-                        'Your session has expired',
-                );
-
-                return;
-            }
-
-            const response = await axios.get(
-                `${API_URL}/blocks/my`,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                },
-            );
+            // ✅ لم نعد نتحقق من token — الكوكي تُرسَل تلقائياً
+            // ✅ استخدم api instance بدل axios
+            const response = await api.get('/blocks/my');
 
             setUsers(response.data?.blocks || []);
         } catch (err) {
-            console.error(
-                'Failed to fetch blocked users:',
-                err,
-            );
+            console.error('Failed to fetch blocked users:', err);
 
             if (axios.isAxiosError(err)) {
                 if (err.response?.status === 401) {
                     setError(
-                        t('common.unauthorized') ||
-                            'Your session has expired',
+                        t('common.unauthorized') || 'Your session has expired',
                     );
-
                     return;
                 }
             }
@@ -141,17 +93,17 @@ const BlockedUsers: FunctionComponent = () => {
         } finally {
             setLoading(false);
         }
-    }, [API_URL, getToken, t]);
+    }, [t]);
 
     // ============================================
     // Initial load
     // ============================================
 
     useEffect(() => {
-        if (auth) {
+        if (auth?._id) {
             fetchBlockedUsers();
         }
-    }, [auth, fetchBlockedUsers]);
+    }, [auth?._id, fetchBlockedUsers]);
 
     // ============================================
     // Get user name
@@ -175,33 +127,23 @@ const BlockedUsers: FunctionComponent = () => {
     // Get initials
     // ============================================
 
-    const getInitials = useCallback(
-        (user: BlockedUser) => {
-            const first = user.name?.first?.[0] || '';
-            const last = user.name?.last?.[0] || '';
+    const getInitials = useCallback((user: BlockedUser) => {
+        const first = user.name?.first?.[0] || '';
+        const last = user.name?.last?.[0] || '';
 
-            return (
-                `${first}${last}`.toUpperCase() ||
-                'U'
-            );
-        },
-        [],
-    );
+        return `${first}${last}`.toUpperCase() || 'U';
+    }, []);
 
     // ============================================
     // Format date
     // ============================================
 
     const formatDate = useCallback((date?: string) => {
-        if (!date) {
-            return '';
-        }
+        if (!date) return '';
 
         const parsedDate = new Date(date);
 
-        if (Number.isNaN(parsedDate.getTime())) {
-            return '';
-        }
+        if (Number.isNaN(parsedDate.getTime())) return '';
 
         return new Intl.DateTimeFormat(undefined, {
             year: 'numeric',
@@ -216,14 +158,8 @@ const BlockedUsers: FunctionComponent = () => {
 
     const getExpirationText = useCallback(
         (user: BlockedUser) => {
-            if (
-                user.isPermanent ||
-                !user.expiresAt
-            ) {
-                return (
-                    t('modals.blockedUsers.permanent') ||
-                    'Permanent block'
-                );
+            if (user.isPermanent || !user.expiresAt) {
+                return t('modals.blockedUsers.permanent') || 'Permanent block';
             }
 
             return `${t('modals.blockedUsers.until') || 'Until'} ${formatDate(
@@ -243,50 +179,21 @@ const BlockedUsers: FunctionComponent = () => {
                 setUnblockingId(userId);
                 setError('');
 
-                const token = getToken();
+                // ✅ استخدم api instance — بدون token يدوي
+                await api.delete(`/blocks/${userId}`);
 
-                if (!token) {
-                    setError(
-                        t('common.unauthorized') ||
-                            'Your session has expired',
-                    );
-
-                    return false;
-                }
-
-                await axios.delete(
-                    `${API_URL}/blocks/${userId}`,
-                    {
-                        headers: {
-                            Authorization: token,
-                        },
-                    },
-                );
-
-                // Remove from local list
-                setUsers((prev) =>
-                    prev.filter(
-                        (user) => user._id !== userId,
-                    ),
-                );
+                setUsers((prev) => prev.filter((user) => user._id !== userId));
 
                 return true;
             } catch (err) {
-                console.error(
-                    'Failed to unblock user:',
-                    err,
-                );
+                console.error('Failed to unblock user:', err);
 
                 if (axios.isAxiosError(err)) {
                     // Already unblocked
                     if (err.response?.status === 404) {
                         setUsers((prev) =>
-                            prev.filter(
-                                (user) =>
-                                    user._id !== userId,
-                            ),
+                            prev.filter((user) => user._id !== userId),
                         );
-
                         return true;
                     }
 
@@ -296,7 +203,6 @@ const BlockedUsers: FunctionComponent = () => {
                             t('common.unauthorized') ||
                                 'Your session has expired',
                         );
-
                         return false;
                     }
                 }
@@ -312,25 +218,21 @@ const BlockedUsers: FunctionComponent = () => {
                 setConfirmUnblockId(null);
             }
         },
-        [API_URL, getToken, t],
+        [t],
     );
 
     // ============================================
     // Selected user
     // ============================================
 
-    const selectedUser = users.find(
-        (user) => user._id === confirmUnblockId,
-    );
+    const selectedUser = users.find((user) => user._id === confirmUnblockId);
 
     // ============================================
     // Confirm unblock
     // ============================================
 
     const handleConfirmUnblock = useCallback(async () => {
-        if (!confirmUnblockId) {
-            return;
-        }
+        if (!confirmUnblockId) return;
 
         await handleUnblock(confirmUnblockId);
     }, [confirmUnblockId, handleUnblock]);
@@ -366,75 +268,41 @@ const BlockedUsers: FunctionComponent = () => {
                 width: '100%',
                 maxWidth: 900,
                 mx: 'auto',
-                px: {
-                    xs: 2,
-                    sm: 3,
-                },
-                py: {
-                    xs: 3,
-                    md: 5,
-                },
+                px: { xs: 2, sm: 3 },
+                py: { xs: 3, md: 5 },
             }}
         >
-            {/* ======================================== */}
             {/* Header */}
-            {/* ======================================== */}
-
             <Stack
                 direction='row'
                 alignItems='center'
                 justifyContent='space-between'
-                sx={{
-                    mb: 3,
-                }}
+                sx={{ mb: 3 }}
             >
                 <Box>
-                    <Stack
-                        direction='row'
-                        alignItems='center'
-                        spacing={1}
-                    >
+                    <Stack direction='row' alignItems='center' spacing={1}>
                         <BlockIcon color='error' />
 
-                        <Typography
-                            variant='h5'
-                            fontWeight={700}
-                        >
-                            {t(
-                                'modals.blockedUsers.title',
-                            ) || 'Blocked Users'}
+                        <Typography variant='h5' fontWeight={700}>
+                            {t('modals.blockedUsers.title') || 'Blocked Users'}
                         </Typography>
                     </Stack>
 
                     <Typography
                         variant='body2'
                         color='text.secondary'
-                        sx={{
-                            mt: 0.5,
-                            
-                        }}
+                        sx={{ mt: 0.5 }}
                     >
-                        {t(
-                            'modals.blockedUsers.description',
-                        ) ||
+                        {t('modals.blockedUsers.description') ||
                             'Manage the users you have blocked.'}
                     </Typography>
                 </Box>
 
-                <Tooltip
-                    title={
-                        t(
-                            'modals.blockedUsers.refresh',
-                        ) || 'Refresh'
-                    }
-                >
+                <Tooltip title={t('modals.blockedUsers.refresh') || 'Refresh'}>
                     <span>
                         <IconButton
                             onClick={fetchBlockedUsers}
-                            disabled={
-                                loading ||
-                                Boolean(unblockingId)
-                            }
+                            disabled={loading || Boolean(unblockingId)}
                         >
                             <RefreshIcon />
                         </IconButton>
@@ -442,28 +310,18 @@ const BlockedUsers: FunctionComponent = () => {
                 </Tooltip>
             </Stack>
 
-            {/* ======================================== */}
             {/* Error */}
-            {/* ======================================== */}
-
             {error && (
                 <Alert
                     severity='error'
-                    sx={{
-                        mb: 3,
-                    }}
-                    onClose={() =>
-                        setError('')
-                    }
+                    sx={{ mb: 3 }}
+                    onClose={() => setError('')}
                 >
                     {error}
                 </Alert>
             )}
 
-            {/* ======================================== */}
             {/* Empty */}
-            {/* ======================================== */}
-
             {users.length === 0 ? (
                 <Card
                     elevation={0}
@@ -473,56 +331,32 @@ const BlockedUsers: FunctionComponent = () => {
                         borderRadius: 3,
                     }}
                 >
-                    <CardContent
-                        sx={{
-                            py: 7,
-                            textAlign: 'center',
-                        }}
-                    >
+                    <CardContent sx={{ py: 7, textAlign: 'center' }}>
                         <BlockIcon
                             sx={{
                                 fontSize: 60,
                                 color: 'text.disabled',
                                 mb: 2,
-                                
                             }}
                         />
 
-                        <Typography
-                            variant='h6'
-                            fontWeight={600}
-                            gutterBottom
-                        >
-                            {t(
-                                'modals.blockedUsers.empty',
-                            ) ||
+                        <Typography variant='h6' fontWeight={600} gutterBottom>
+                            {t('modals.blockedUsers.empty') ||
                                 'No blocked users'}
                         </Typography>
 
-                        <Typography
-                            variant='body2'
-                            color='text.secondary'
-                        >
-                            {t(
-                                'modals.blockedUsers.emptyDescription',
-                            ) ||
+                        <Typography variant='body2' color='text.secondary'>
+                            {t('modals.blockedUsers.emptyDescription') ||
                                 'You have not blocked any users.'}
                         </Typography>
                     </CardContent>
                 </Card>
             ) : (
-                /* ======================================== */
                 /* Users */
-                /* ======================================== */
-
                 <Stack spacing={1.5}>
                     {users.map((user) => {
-                        const userName =
-                            getUserName(user);
-
-                        const isUnblocking =
-                            unblockingId ===
-                            user._id;
+                        const userName = getUserName(user);
+                        const isUnblocking = unblockingId === user._id;
 
                         return (
                             <Card
@@ -530,16 +364,11 @@ const BlockedUsers: FunctionComponent = () => {
                                 elevation={0}
                                 sx={{
                                     border: 1,
-                                    borderColor:
-                                        'divider',
+                                    borderColor: 'divider',
                                     borderRadius: 3,
-                                    transition:
-                                        'all 0.2s ease',
-
+                                    transition: 'all 0.2s ease',
                                     '&:hover': {
-                                        borderColor:
-                                            'error.light',
-
+                                        borderColor: 'error.light',
                                         boxShadow:
                                             '0 4px 18px rgba(0,0,0,0.06)',
                                     },
@@ -559,46 +388,30 @@ const BlockedUsers: FunctionComponent = () => {
                                         spacing={2}
                                     >
                                         {/* User information */}
-
                                         <Stack
                                             direction='row'
                                             alignItems='center'
                                             spacing={2}
-                                            sx={{
-                                                minWidth: 0,
-                                            }}
+                                            sx={{ minWidth: 0 }}
                                         >
                                             <Avatar
                                                 src={
-                                                    user
-                                                        .image
-                                                        ?.url ||
-                                                    undefined
+                                                    user.image?.url || undefined
                                                 }
                                                 sx={{
                                                     width: 52,
                                                     height: 52,
                                                 }}
                                             >
-                                                {getInitials(
-                                                    user,
-                                                )}
+                                                {getInitials(user)}
                                             </Avatar>
 
-                                            <Box
-                                                sx={{
-                                                    minWidth: 0,
-                                                }}
-                                            >
+                                            <Box sx={{ minWidth: 0 }}>
                                                 <Typography
-                                                    fontWeight={
-                                                        700
-                                                    }
+                                                    fontWeight={700}
                                                     noWrap
                                                 >
-                                                    {
-                                                        userName
-                                                    }
+                                                    {userName}
                                                 </Typography>
 
                                                 {user.email && (
@@ -607,28 +420,20 @@ const BlockedUsers: FunctionComponent = () => {
                                                         color='text.secondary'
                                                         noWrap
                                                     >
-                                                        {
-                                                            user.email
-                                                        }
+                                                        {user.email}
                                                     </Typography>
                                                 )}
 
                                                 <Stack
                                                     direction='row'
-                                                    spacing={
-                                                        1
-                                                    }
+                                                    spacing={1}
                                                     flexWrap='wrap'
-                                                    sx={{
-                                                        mt: 0.5,
-                                                    }}
+                                                    sx={{ mt: 0.5 }}
                                                 >
                                                     <Typography
                                                         variant='caption'
                                                         color='error.main'
-                                                        fontWeight={
-                                                            600
-                                                        }
+                                                        fontWeight={600}
                                                     >
                                                         {getExpirationText(
                                                             user,
@@ -656,65 +461,49 @@ const BlockedUsers: FunctionComponent = () => {
                                                         variant='caption'
                                                         color='text.secondary'
                                                         sx={{
-                                                            display:
-                                                                'block',
+                                                            display: 'block',
                                                             mt: 0.75,
                                                         }}
                                                     >
                                                         {t(
                                                             'modals.blockedUsers.reason',
                                                         )}
-                                                        :{' '}
-                                                        {
-                                                            user.reason
-                                                        }
+                                                        : {user.reason}
                                                     </Typography>
                                                 )}
                                             </Box>
                                         </Stack>
 
                                         {/* Unblock */}
-
                                         <Button
                                             variant='outlined'
-                                            
                                             color='error'
                                             startIcon={
                                                 isUnblocking ? (
                                                     <CircularProgress
-                                                        size={
-                                                            18
-                                                        }
+                                                        size={18}
                                                     />
                                                 ) : (
                                                     <PersonRemoveIcon />
                                                 )
                                             }
-                                            disabled={
-                                                Boolean(
-                                                    unblockingId,
-                                                )
-                                            }
+                                            disabled={Boolean(unblockingId)}
                                             onClick={() =>
-                                                setConfirmUnblockId(
-                                                    user._id,
-                                                )
+                                                setConfirmUnblockId(user._id)
                                             }
                                             sx={{
                                                 minWidth: 130,
                                                 flexShrink: 0,
-                                                gap:1
+                                                gap: 1,
                                             }}
                                         >
                                             {isUnblocking
                                                 ? t(
                                                       'modals.blockedUsers.unblocking',
-                                                  ) ||
-                                                  'Unblocking...'
+                                                  ) || 'Unblocking...'
                                                 : t(
                                                       'modals.blockedUsers.unblock',
-                                                  ) ||
-                                                  'Unblock'}
+                                                  ) || 'Unblock'}
                                         </Button>
                                     </Stack>
                                 </CardContent>
@@ -724,56 +513,32 @@ const BlockedUsers: FunctionComponent = () => {
                 </Stack>
             )}
 
-            {/* ======================================== */}
             {/* Confirm Dialog */}
-            {/* ======================================== */}
-
             <AlertDialogs
-                show={
-                    Boolean(
-                        confirmUnblockId,
-                    ) &&
-                    !unblockingId
-                }
+                show={Boolean(confirmUnblockId) && !unblockingId}
                 title={
-                    t(
-                        'modals.blockedUsers.confirmUnblockTitle',
-                    ) || 'Unblock User'
+                    t('modals.blockedUsers.confirmUnblockTitle') ||
+                    'Unblock User'
                 }
                 description={
                     selectedUser
-                        ? `${t(
-                              'modals.blockedUsers.confirmUnblock',
-                          ) || 'Are you sure you want to unblock this user?'} ${getUserName(
-                              selectedUser,
-                          )}?`
-                        : t(
-                              'modals.blockedUsers.confirmUnblock',
-                          ) ||
+                        ? `${
+                              t('modals.blockedUsers.confirmUnblock') ||
+                              'Are you sure you want to unblock this user?'
+                          } ${getUserName(selectedUser)}?`
+                        : t('modals.blockedUsers.confirmUnblock') ||
                           'Are you sure you want to unblock this user?'
                 }
-                confirmText={
-                    t('common.yes') ||
-                    'Yes'
-                }
-                cancelText={
-                    t('common.cancel') ||
-                    'Cancel'
-                }
+                confirmText={t('common.yes') || 'Yes'}
+                cancelText={t('common.cancel') || 'Cancel'}
                 successText={
-                    t(
-                        'modals.blockedUsers.unblockedSuccessfully',
-                    ) ||
+                    t('modals.blockedUsers.unblockedSuccessfully') ||
                     'User unblocked successfully'
                 }
-                onConfirm={
-                    handleConfirmUnblock
-                }
+                onConfirm={handleConfirmUnblock}
                 onHide={() => {
                     if (!unblockingId) {
-                        setConfirmUnblockId(
-                            null,
-                        );
+                        setConfirmUnblockId(null);
                     }
                 }}
             />

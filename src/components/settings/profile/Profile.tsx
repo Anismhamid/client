@@ -44,12 +44,10 @@ import { motion } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
 import { useUserPosts } from '../../../hooks/useUserPosts';
 import { usePosts } from '../../../hooks/usePosts';
-import useToken from '../../../hooks/useToken';
 import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
 import { path } from '../../../routes/routes';
 import { showSuccess } from '../../../atoms/toasts/ReactToast';
-import { emptyAuthValues } from '../../../interfaces/authValues';
 import { deleteUserById, getUserById } from '../../../services/usersServices';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
 import DeleteAccountBox from '../../navbar/userManage/DeleteAccountBox';
@@ -73,8 +71,6 @@ const Profile: FunctionComponent = () => {
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState(0);
     const navigate = useNavigate();
-    const { decodedToken, setAfterDecode } = useToken();
-    const { setAuth, setIsLoggedIn } = useUser();
     const detailsRef = useRef<HTMLDivElement>(null);
     const { t } = useTranslation();
     const theme = useTheme();
@@ -83,6 +79,9 @@ const Profile: FunctionComponent = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [hovered, setHovered] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    // ✅ احذف useToken، استخدم Context فقط
+    const { auth, logout: contextLogout } = useUser();
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -185,15 +184,14 @@ const Profile: FunctionComponent = () => {
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        setAuth(emptyAuthValues);
-        setIsLoggedIn(false);
-        setAfterDecode(null);
-        navigate(path.Home);
+    // ✅ استخدم logout من Context
+    const handleLogout = async () => {
+        await contextLogout();
+        navigate(path.Home, { replace: true });
     };
 
-    const targetId = id || decodedToken?._id;
+    // ✅ احصل على userId من auth
+    const targetId = id || auth?._id;
 
     useEffect(() => {
         if (!targetId) return;
@@ -214,10 +212,10 @@ const Profile: FunctionComponent = () => {
         return () => {
             cancelled = true;
         };
-    }, [id, decodedToken, targetId]);
+    }, [id, targetId]);
 
     const stats = useMemo(() => {
-        const viewerId = decodedToken?._id;
+        const viewerId = auth?._id;
         const totalFavorites = viewerId
             ? posts.filter(
                   (post) =>
@@ -226,7 +224,6 @@ const Profile: FunctionComponent = () => {
               ).length
             : 0;
 
-        // ⚠️ نُرجع نفس الشكل دائماً
         return {
             totalProducts: userPosts.length,
             totalFavorites,
@@ -235,19 +232,17 @@ const Profile: FunctionComponent = () => {
                 ? calculateProfileCompletion(user as unknown as User)
                 : 0,
         };
-    }, [user, userPosts, posts, decodedToken]);
+    }, [user, userPosts, posts, auth?._id]);
 
     const handleDeleteAccount = async () => {
-        if (!decodedToken?._id) {
+        if (!auth?._id) {
             throw new Error('User ID is missing');
         }
 
-        await deleteUserById(decodedToken._id);
+        await deleteUserById(auth._id);
 
-        localStorage.removeItem('token');
-        setAuth(emptyAuthValues);
-        setIsLoggedIn(false);
-        setAfterDecode(null);
+        // ✅ استخدم logout من Context (سيمسح الكوكي)
+        await contextLogout();
     };
 
     const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -330,7 +325,6 @@ const Profile: FunctionComponent = () => {
                                 position: 'relative',
                                 mb: 7,
                                 borderRadius: '22px',
-
                                 px: { xs: 3, md: 5 },
                                 pt: { xs: 3, md: 4 },
                                 pb: { xs: 5, md: 5 },
@@ -641,7 +635,7 @@ const Profile: FunctionComponent = () => {
                         >
                             <Grid container>
                                 {statItems.map((s, i) => {
-                                    const totalCells = statItems.length + 1; // +1 for completion
+                                    const totalCells = statItems.length + 1;
                                     const isLast = i === totalCells - 1;
                                     const content = (
                                         <Box
@@ -1196,7 +1190,7 @@ const Profile: FunctionComponent = () => {
                         </Box>
 
                         {showEdit && (
-                            <EditUserData userId={decodedToken?._id || ''} />
+                            <EditUserData userId={auth?._id || ''} />
                         )}
 
                         <Divider sx={{ my: 4 }} />

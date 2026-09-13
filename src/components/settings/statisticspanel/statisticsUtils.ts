@@ -137,6 +137,16 @@ export const CATEGORY_NAMES: Record<string, string> = {
 export const getCategoryName = (category: string): string =>
     CATEGORY_NAMES[category] ?? category;
 
+// بعض البيانات القادمة من السيرفر بترجع الاسم كـ string وبعضها كـ {first, last}
+// (متل AuthValues.name) — هالدالة بتطبّعهم لسترينغ واحد آمن للعرض
+export const toDisplayName = (
+    value: string | { first?: string; last?: string } | null | undefined,
+): string => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return `${value.first ?? ''} ${value.last ?? ''}`.trim();
+};
+
 export const CHART_COLORS = [
     '#6366F1',
     '#10B981',
@@ -215,7 +225,7 @@ export const calculateStatistics = (
     // Sellers map
     const sellersMap = new Map<string, SellerData>();
     posts.forEach((post) => {
-        const sellerId = post.seller?.user?._id;
+        const sellerId = post.seller?._id;
         if (!sellerId || !post.userData) return;
 
         const existing = sellersMap.get(sellerId);
@@ -304,12 +314,12 @@ export const calculateStatistics = (
             status: post.in_stock ? 'active' : 'sold',
             seller: {
                 name:
-                    post.seller?.name ||
-                    `${post.userData?.name?.first ?? ''} ${post.userData?.name?.last ?? ''}`.trim() ||
+                    toDisplayName(post.seller?.name) ||
+                    toDisplayName(post.userData?.name) ||
                     'بائع غير معروف',
-                link: `/customer-profile/${post.seller?.user?.slug ?? ''}`,
-                slug: post.seller?.user?.slug ?? '',
-                user: post.seller?.user?.user ?? '',
+                link: `/customer-profile/${post.seller?.slug ?? ''}`,
+                slug: post.seller?.slug ?? '',
+                user: post.seller?._id ?? '',
             },
             category: post.category ?? 'غير مصنف',
             createdAt: getCreatedAtAsString(post.createdAt),

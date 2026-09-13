@@ -53,35 +53,52 @@ import {
 import { ProductsTable } from './DashboardTables';
 import { SellersTable } from './DashboardTables';
 import { ProductsGrowthChart, CategoryDonutChart } from './DashboardCharts';
+import { useTranslation } from 'react-i18next';
 
 // ─── Spreadsheet-compatible CSV export ────────────────────────────────────────
 
 const csvCell = (value: string | number) =>
-    `"${String(value).replaceAll('"', '""')}"`;
+    `"${String(value).replace(/"/g, '""')}"`;
 
-const csvRow = (values: Array<string | number>) => values.map(csvCell).join(',');
+const csvRow = (values: Array<string | number>) =>
+    values.map(csvCell).join(',');
 
 const exportToExcel = (data: Statistics) => {
     const lines = [
         csvRow(['ملخص']),
         csvRow([
-            'إجمالي المنتجات', 'المنتجات النشطة', 'المنتجات المباعة',
-            'إجمالي المستخدمين', 'المستخدمين المتصلين', 'إجمالي الإعجابات',
-            'القيمة الإجمالية', 'متوسط السعر', 'أعلى سعر', 'إجمالي الخصومات',
+            'إجمالي المنتجات',
+            'المنتجات النشطة',
+            'المنتجات المباعة',
+            'إجمالي المستخدمين',
+            'المستخدمين المتصلين',
+            'إجمالي الإعجابات',
+            'القيمة الإجمالية',
+            'متوسط السعر',
+            'أعلى سعر',
+            'إجمالي الخصومات',
         ]),
         csvRow([
-            data.totalProducts, data.activeProducts, data.soldPosts,
-            data.totalUsers, data.onlineUsers, data.totalLikes,
-            data.totalProductValue, data.averageProductPrice,
-            data.highestPricedProduct, data.totalDiscountValue,
+            data.totalProducts,
+            data.activeProducts,
+            data.soldPosts,
+            data.totalUsers,
+            data.onlineUsers,
+            data.totalLikes,
+            data.totalProductValue,
+            data.averageProductPrice,
+            data.highestPricedProduct,
+            data.totalDiscountValue,
         ]),
         '',
         csvRow(['الفئات']),
         csvRow(['الفئة', 'العدد', 'النسبة %', 'القيمة الإجمالية']),
         ...data.productsByCategory.map((category) =>
             csvRow([
-                getCategoryName(category.category), category.count,
-                category.percentage.toFixed(1), category.totalValue,
+                getCategoryName(category.category),
+                category.count,
+                category.percentage.toFixed(1),
+                category.totalValue,
             ]),
         ),
         '',
@@ -89,7 +106,9 @@ const exportToExcel = (data: Statistics) => {
         csvRow(['البائع', 'المنتجات', 'الإعجابات', 'القيمة الإجمالية']),
         ...data.topSellers.map((seller) =>
             csvRow([
-                seller.name, seller.productsCount, seller.totalLikes,
+                seller.name,
+                seller.productsCount,
+                seller.totalLikes,
                 seller.totalValue,
             ]),
         ),
@@ -128,8 +147,9 @@ const formatLastUpdated = (date: Date | null): string => {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 const WebSiteAdmins: FunctionComponent = () => {
-    const { auth } = useUser();
+    const { auth, isAuthLoading } = useUser();
     const theme = useTheme();
+    const { t } = useTranslation();
 
     const {
         timeFrame,
@@ -140,7 +160,11 @@ const WebSiteAdmins: FunctionComponent = () => {
         lastUpdated,
         handleRefresh,
         handleTimeFrameChange,
-    } = useAdminDashboard(auth.role || 'Client');
+    } = useAdminDashboard(auth?.role || 'Client');
+
+    if (isAuthLoading) {
+        return <SkeletonDashboard />;
+    }
 
     // Access guard
     if (auth.role !== RoleType.Admin && auth.role !== RoleType.Moderator) {
@@ -165,7 +189,7 @@ const WebSiteAdmins: FunctionComponent = () => {
                     startIcon={<Refresh />}
                     sx={{ mt: 2 }}
                 >
-                    إعادة المحاولة
+                  {t('common.retry')}
                 </Button>
             </Box>
         );
@@ -173,7 +197,8 @@ const WebSiteAdmins: FunctionComponent = () => {
 
     return (
         <>
-            <title>لوحة تحكم الإدارة | صفقة</title>
+            <title>{t('admin.dashboard.title')} | صفقة</title>
+
             <meta
                 name='description'
                 content='لوحة تحكم إدارة منصة بيع وشراء C2C | صفقة'
@@ -239,7 +264,7 @@ const WebSiteAdmins: FunctionComponent = () => {
                                     variant='outlined'
                                     size='small'
                                 >
-                                    تصدير Excel
+                                    {t('admin.dashboard.exportExcel')}
                                 </Button>
                                 <Tooltip title='تحديث البيانات'>
                                     <IconButton
@@ -377,7 +402,7 @@ const WebSiteAdmins: FunctionComponent = () => {
                                             icon={
                                                 <People sx={{ fontSize: 48 }} />
                                             }
-                                            label='إجمالي المستخدمين'
+                                           label={t('admin.dashboard.totalUsers')}
                                             value={statistics.totalUsers}
                                             growth={`+${statistics.newUsersToday} اليوم`}
                                             progressValue={
