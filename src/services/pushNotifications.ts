@@ -1,22 +1,33 @@
 // pushNotifications.service.ts
+
 import {
     PushNotifications,
     Token,
     PushNotificationSchema,
     ActionPerformed,
 } from '@capacitor/push-notifications';
-import axios from 'axios';
+
 import { Capacitor } from '@capacitor/core';
 
-const api = import.meta.env.VITE_API_URL;
+import api from './api';
 
-// Cache for the current token
+// Cache for the current FCM token
 let currentToken: string | null = null;
 
-export async function registerPush(tokenAuth: string) {
-    // Only run on native platforms
+/**
+ * ============================================================
+ * REGISTER PUSH
+ * ============================================================
+ *
+ * Authentication is handled by the HttpOnly Cookie.
+ * No JWT/authToken is required here.
+ */
+export async function registerPush() {
     if (!Capacitor.isNativePlatform()) {
-        console.log('ℹ️ Push notifications only available on native platforms');
+        console.log(
+            'ℹ️ Push notifications only available on native platforms',
+        );
+
         return;
     }
 
@@ -29,23 +40,38 @@ export async function registerPush(tokenAuth: string) {
         }
 
         // Setup listeners BEFORE registering
-        setupListeners(tokenAuth);
+        setupListeners();
 
         // Check and request permissions
         const hasPermission = await checkAndRequestPermissions();
+
         if (!hasPermission) {
-            console.warn('⚠️ Push notifications permission denied');
+            console.warn(
+                '⚠️ Push notifications permission denied',
+            );
+
             return;
         }
 
         // Register with FCM
         await PushNotifications.register();
-        console.log('✅ Push notifications registered successfully');
 
+        console.log(
+            '✅ Push notifications registered successfully',
+        );
     } catch (error) {
-        console.error('❌ Push registration failed:', error);
+        console.error(
+            '❌ Push registration failed:',
+            error,
+        );
     }
 }
+
+/**
+ * ============================================================
+ * ANDROID CHANNELS
+ * ============================================================
+ */
 
 async function setupAndroidChannels() {
     try {
@@ -75,151 +101,307 @@ async function setupAndroidChannels() {
             vibration: true,
             sound: 'default',
         });
-        
-        console.log('✅ Android channels created');
+
+        console.log(
+            '✅ Android channels created',
+        );
     } catch (error) {
-        console.error('❌ Failed to create Android channels:', error);
+        console.error(
+            '❌ Failed to create Android channels:',
+            error,
+        );
     }
 }
 
-function setupListeners(authToken: string) {
-    // Registration / Token refresh
-    PushNotifications.addListener('registration', async (token: Token) => {
-        // Skip if token hasn't changed
-        if (currentToken === token.value) {
-            console.log('ℹ️ Token unchanged, skipping save');
-            return;
-        }
+/**
+ * ============================================================
+ * PUSH LISTENERS
+ * ============================================================
+ */
 
-        const saved = await saveTokenToServer(token.value, authToken);
-        if (saved) {
-            currentToken = token.value;
-            localStorage.setItem('fcmToken', token.value);
-        }
-    });
+function setupListeners() {
+    /**
+     * Registration / Token refresh
+     */
+    PushNotifications.addListener(
+        'registration',
+        async (token: Token) => {
+            if (currentToken === token.value) {
+                console.log(
+                    'ℹ️ Token unchanged, skipping save',
+                );
 
-    // Registration error
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PushNotifications.addListener('registrationError', (error: any) => {
-        console.error('❌ FCM Registration error:', error);
-    });
+                return;
+            }
 
-    // Foreground notification received
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-        console.log('📨 Notification received in foreground:', {
-            title: notification.title,
-            body: notification.body,
-            data: notification.data,
-        });
-        
-        // Emit event for in-app notifications
-        window.dispatchEvent(new CustomEvent('push-notification-received', {
-            detail: notification
-        }));
-    });
+            const saved =
+                await saveTokenToServer(token.value);
 
-    // Notification clicked
-    PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
-        const data = action.notification.data;
-        console.log('👆 Notification clicked:', data);
-        
-        // Emit event for navigation
-        window.dispatchEvent(new CustomEvent('push-notification-clicked', {
-            detail: data
-        }));
-    });
+            if (saved) {
+                currentToken = token.value;
+
+                localStorage.setItem(
+                    'fcmToken',
+                    token.value,
+                );
+            }
+        },
+    );
+
+    /**
+     * Registration error
+     */
+    PushNotifications.addListener(
+        'registrationError',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (error: any) => {
+            console.error(
+                '❌ FCM Registration error:',
+                error,
+            );
+        },
+    );
+
+    /**
+     * Foreground notification received
+     */
+    PushNotifications.addListener(
+        'pushNotificationReceived',
+        (notification: PushNotificationSchema) => {
+            console.log(
+                '📨 Notification received in foreground:',
+                {
+                    title: notification.title,
+                    body: notification.body,
+                    data: notification.data,
+                },
+            );
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    'push-notification-received',
+                    {
+                        detail: notification,
+                    },
+                ),
+            );
+        },
+    );
+
+    /**
+     * Notification clicked
+     */
+    PushNotifications.addListener(
+        'pushNotificationActionPerformed',
+        (action: ActionPerformed) => {
+            const data =
+                action.notification.data;
+
+            console.log(
+                '👆 Notification clicked:',
+                data,
+            );
+
+            window.dispatchEvent(
+                new CustomEvent(
+                    'push-notification-clicked',
+                    {
+                        detail: data,
+                    },
+                ),
+            );
+        },
+    );
 }
 
+/**
+ * ============================================================
+ * PERMISSIONS
+ * ============================================================
+ */
+
 async function checkAndRequestPermissions(): Promise<boolean> {
-    let permission = await PushNotifications.checkPermissions();
-    
+    let permission =
+        await PushNotifications.checkPermissions();
+
     if (permission.receive === 'granted') {
         return true;
     }
-    
+
     if (permission.receive === 'prompt') {
-        permission = await PushNotifications.requestPermissions();
+        permission =
+            await PushNotifications.requestPermissions();
+
         return permission.receive === 'granted';
     }
-    
+
     return false;
 }
 
-async function saveTokenToServer(token: string, authToken: string): Promise<boolean> {
+/**
+ * ============================================================
+ * SAVE FCM TOKEN
+ * ============================================================
+ *
+ * Authentication:
+ * HttpOnly Cookie
+ *
+ * IMPORTANT:
+ * No Authorization header.
+ * No JWT.
+ */
+async function saveTokenToServer(
+    token: string,
+): Promise<boolean> {
     const maxRetries = 3;
-    
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+
+    for (
+        let attempt = 1;
+        attempt <= maxRetries;
+        attempt++
+    ) {
         try {
-            await axios.patch(
-                `${api}/users/push-token`,
-                { pushToken: token },
+            await api.patch(
+                '/users/push-token',
                 {
-                    headers: { Authorization: authToken },
+                    pushToken: token,
+                },
+                {
                     timeout: 10000,
-                }
+                },
             );
-            console.log('✅ Push token saved to server');
+
+            console.log(
+                '✅ Push token saved to server',
+            );
+
             return true;
         } catch (error) {
-            console.warn(`⚠️ Save attempt ${attempt}/${maxRetries} failed:`, error);
-            
+            console.warn(
+                `⚠️ Save attempt ${attempt}/${maxRetries} failed:`,
+                error,
+            );
+
             if (attempt === maxRetries) {
-                console.error('❌ All save attempts failed');
+                console.error(
+                    '❌ All save attempts failed',
+                );
+
                 return false;
             }
-            
-            // Exponential backoff
-            await new Promise(resolve => 
-                setTimeout(resolve, 1000 * Math.pow(2, attempt - 1))
+
+            await new Promise((resolve) =>
+                setTimeout(
+                    resolve,
+                    1000 *
+                        Math.pow(
+                            2,
+                            attempt - 1,
+                        ),
+                ),
             );
         }
     }
+
     return false;
 }
 
-// Function to remove token on logout
-export async function removePushToken(authToken: string) {
+/**
+ * ============================================================
+ * REMOVE TOKEN ON LOGOUT
+ * ============================================================
+ *
+ * Authentication is handled by the HttpOnly Cookie.
+ */
+export async function removePushToken() {
     if (!Capacitor.isNativePlatform()) {
         return;
     }
 
-    const token = localStorage.getItem('fcmToken');
+    const token =
+        localStorage.getItem('fcmToken');
+
     if (!token) {
         return;
     }
 
     try {
-        await axios.delete(
-            `${api}/users/push-token`,
+        await api.delete(
+            '/users/push-token',
             {
-                data: { pushToken: token },
-                headers: { Authorization: authToken }
-            }
+                data: {
+                    pushToken: token,
+                },
+            },
         );
-        localStorage.removeItem('fcmToken');
+
+        localStorage.removeItem(
+            'fcmToken',
+        );
+
         currentToken = null;
-        console.log('✅ Push token removed');
+
+        console.log(
+            '✅ Push token removed',
+        );
     } catch (error) {
-        console.error('❌ Failed to remove push token:', error);
+        console.error(
+            '❌ Failed to remove push token:',
+            error,
+        );
     }
 }
 
-// Helper function to get current token
+/**
+ * ============================================================
+ * CURRENT TOKEN
+ * ============================================================
+ */
+
 export function getCurrentPushToken(): string | null {
-    return currentToken || localStorage.getItem('fcmToken') || null;
+    return (
+        currentToken ||
+        localStorage.getItem('fcmToken') ||
+        null
+    );
 }
 
-// For navigation from notification clicks - use with React Router
-export function setupNotificationNavigation(navigate: (path: string) => void) {
-    window.addEventListener('push-notification-clicked', ((event: CustomEvent) => {
-        const data = event.detail;
-        
-        if (data?.type === 'chat' && data?.userId) {
-            navigate(`/chat/${data.userId}`);
-        } else if (data?.type === 'order' && data?.orderId) {
-            navigate(`/orders/${data.orderId}`);
-        } else if (data?.type === 'product' && data?.productId) {
-            navigate(`/product/${data.productId}`);
-        }
-    }) as EventListener);
+/**
+ * ============================================================
+ * NOTIFICATION NAVIGATION
+ * ============================================================
+ */
+
+export function setupNotificationNavigation(
+    navigate: (path: string) => void,
+) {
+    window.addEventListener(
+        'push-notification-clicked',
+        ((event: CustomEvent) => {
+            const data = event.detail;
+
+            if (
+                data?.type === 'chat' &&
+                data?.userId
+            ) {
+                navigate(
+                    `/chat/${data.userId}`,
+                );
+            } else if (
+                data?.type === 'order' &&
+                data?.orderId
+            ) {
+                navigate(
+                    `/orders/${data.orderId}`,
+                );
+            } else if (
+                data?.type === 'product' &&
+                data?.productId
+            ) {
+                navigate(
+                    `/product/${data.productId}`,
+                );
+            }
+        }) as EventListener,
+    );
 }

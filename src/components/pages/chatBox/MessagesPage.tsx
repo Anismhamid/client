@@ -89,7 +89,6 @@ const MessagesPage = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { auth } = useUser();
     const dir = handleRTL();
-    const token = localStorage.getItem('token') ?? '';
     // const isOnline = selectedUser?.from?.status === true;
     // const [chatOpen, setChatOpen] = useState(false);
     // const [chatMinimized, setChatMinimized] = useState(false);
@@ -192,7 +191,6 @@ const MessagesPage = () => {
                                 >
                                     <ChatList
                                         currentUser={currentUser}
-                                        token={token}
                                         onSelectChat={handleSelectChat}
                                         selectedUserId={selectedUser?._id}
                                     />

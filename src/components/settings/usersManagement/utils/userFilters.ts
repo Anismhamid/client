@@ -1,12 +1,12 @@
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 import {
     UsersFiltersState,
 } from '../types/usersManagement.types';
 
 export const filterUsers = (
-    users: UserRegister[],
+    users: User[],
     filters: UsersFiltersState,
-): UserRegister[] => {
+): User[] => {
     const search = filters.search
         .trim()
         .toLowerCase();

@@ -10,8 +10,6 @@ import {
     useMemo,
 } from 'react';
 
-import axios from 'axios';
-
 import {
     Box,
     Typography,
@@ -66,20 +64,17 @@ import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 
 import { useTranslation } from 'react-i18next';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
-
-const api = import.meta.env.VITE_API_URL;
+import api from '../../../services/api';
 
 interface ChatBoxProps {
     currentUser: BaseUser;
     otherUser: BaseUser;
-    token: string;
     initialMessage?: string;
 }
 
 const ChatBox: FunctionComponent<ChatBoxProps> = ({
     currentUser,
     otherUser,
-    token,
     initialMessage,
 }) => {
     // ======================================================
@@ -395,20 +390,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
             addMessageForUser(otherUser._id as string, newMessage);
 
-            axios
-                .post(
-                    `${api}/messages`,
-                    {
-                        toUserId: otherUser._id,
+            api.post(`/messages`, {
+                toUserId: otherUser._id,
 
-                        message: initialMessage,
-                    },
-                    {
-                        headers: {
-                            Authorization: token,
-                        },
-                    },
-                )
+                message: initialMessage,
+            })
                 .then((res) => {
                     const savedMessage = res.data?.message ?? res.data;
 
@@ -475,16 +461,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 return;
             }
 
-            axios
-                .patch(
-                    `${api}/messages/mark-as-seen/${otherUser._id}`,
-                    {},
-                    {
-                        headers: {
-                            Authorization: token,
-                        },
-                    },
-                )
+            api.patch(`/messages/mark-as-seen/${otherUser._id}`, {})
                 .then(() => {
                     setMessagesForUser(
                         otherUser._id as string,
@@ -525,13 +502,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     console.error('Failed to mark as seen:', err);
                 });
         },
-        [
-            otherUser?._id,
-            currentUser._id,
-            token,
-            setMessagesForUser,
-            setUnreadForUser,
-        ],
+        [otherUser?._id, currentUser._id, setMessagesForUser, setUnreadForUser],
     );
 
     // ======================================================
@@ -603,13 +574,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         try {
             const skip = isInitial ? 0 : userMessages.length;
 
-            const res = await axios.get(
-                `${api}/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
-                {
-                    headers: {
-                        Authorization: token,
-                    },
-                },
+            const res = await api.get(
+                `/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
             );
 
             const fetchedMessages = res.data.messages || [];
@@ -904,12 +870,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         formData.append('toUserId', otherUser?._id ?? '');
 
         try {
-            const res = await axios.post(`${api}/messages/upload`, formData, {
-                headers: {
-                    Authorization: token,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const res = await api.post(`/messages/upload`, formData);
 
             if (res.data.message) {
                 addMessageForUser(otherUser._id as string, res.data.message);
@@ -1672,7 +1633,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                 setInput,
                                                 chatContainerRef,
                                                 addMessageForUser,
-                                                token,
                                                 setMessagesForUser,
                                             )
                                         }

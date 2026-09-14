@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+
 import React, {
     createContext,
     useCallback,
@@ -9,9 +10,15 @@ import React, {
     FunctionComponent,
 } from 'react';
 
-import { AuthValues, emptyAuthValues } from '../interfaces/authValues';
-import api from '../services/api';
-import { getCurrentUser } from '../services/usersServices';
+import {
+    AuthValues,
+    emptyAuthValues,
+} from '../interfaces/authValues';
+
+import {
+    getCurrentUser,
+    logoutUser,
+} from '../services/usersServices';
 
 type Auth = AuthValues;
 
@@ -67,40 +74,47 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
         useState<boolean>(true);
 
     /**
-     * Get current authenticated user
+     * Restore the current authenticated user.
      *
-     * JWT is stored inside HttpOnly cookie.
-     * Frontend never reads the JWT.
+     * Authentication is handled by the HttpOnly cookie.
+     * The frontend never reads or stores the JWT.
      */
-  const refreshAuth = useCallback(async () => {
-    try {
-        setIsAuthLoading(true);
+    const refreshAuth = useCallback(async () => {
+        try {
+            setIsAuthLoading(true);
 
-        const user = await getCurrentUser();
+            const user = await getCurrentUser();
 
-        if (!user) {
+            if (!user) {
+                setAuth(emptyAuthValues);
+                setIsLoggedIn(false);
+                return;
+            }
+
+            setAuth(user);
+            setIsLoggedIn(true);
+        } catch (error) {
+            console.error(
+                'Failed to restore authentication:',
+                error,
+            );
+
             setAuth(emptyAuthValues);
             setIsLoggedIn(false);
-            return;
+        } finally {
+            setIsAuthLoading(false);
         }
-
-        setAuth(user);
-        setIsLoggedIn(true);
-    } catch (error) {
-        console.error('Failed to restore authentication:', error);
-        setAuth(emptyAuthValues);
-        setIsLoggedIn(false);
-    } finally {
-        setIsAuthLoading(false);
-    }
-}, []);
+    }, []);
 
     /**
-     * Logout from backend and clear local auth state.
+     * Logout from the backend and clear local auth state.
+     *
+     * The backend is responsible for clearing
+     * the HttpOnly authentication cookie.
      */
     const logout = useCallback(async () => {
         try {
-            await api.post('/users/logout');
+            await logoutUser();
         } catch (error) {
             console.warn(
                 'Logout request failed:',
@@ -113,14 +127,17 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
     }, []);
 
     /**
-     * Restore session when application starts.
+     * Restore authentication when the application starts.
      */
     useEffect(() => {
         refreshAuth();
     }, [refreshAuth]);
 
     /**
-     * Handle centralized 401 events.
+     * Handle centralized authentication logout events.
+     *
+     * This can be triggered by the Axios interceptor
+     * when the backend returns 401/403.
      */
     useEffect(() => {
         const handleAuthLogout = () => {

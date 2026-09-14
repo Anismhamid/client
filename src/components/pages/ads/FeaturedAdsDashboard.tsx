@@ -17,7 +17,6 @@ import {
     Snackbar as MuiSnackbar,
     Alert,
 } from '@mui/material';
-import axios from 'axios';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
@@ -33,8 +32,7 @@ import {
     FEATURED_AD_PRICES,
     FEATURED_AD_TIERS,
 } from '../../../interfaces/featuredAdsMeta';
-
-const api = import.meta.env.VITE_API_URL;
+import api from '../../../services/api';
 
 // ✅ Correct TFunction usage — no `=> string`
 const buildPlanMeta = (
@@ -105,9 +103,7 @@ const FeaturedAdsDashboard = () => {
     const fetchAds = useCallback(async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get(`${api}/featured-ads/me`, {
-                headers: { Authorization: localStorage.getItem('token') },
-            });
+            const { data } = await api.get('/featured-ads/me');
             setAds(data?.ads || []);
         } catch (err) {
             console.error(err);
@@ -150,16 +146,7 @@ const FeaturedAdsDashboard = () => {
     const handleSubmit = async () => {
         setSaving(true);
         try {
-            const { data } = await axios.post(
-                `${api}/featured-ads/buy`,
-                newAd,
-                {
-                    headers: {
-                        Authorization: localStorage.getItem('token'),
-                        'Content-Type': 'application/json',
-                    },
-                },
-            );
+            const { data } = await api.post('featured-ads/buy', newAd);
             window.location.href = data.url;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
@@ -187,12 +174,8 @@ const FeaturedAdsDashboard = () => {
     const textPrimary = isDark ? '#fff' : '#0f172a';
     const textSecondary = isDark ? '#94a3b8' : '#475569';
     const textTertiary = isDark ? '#64748b' : '#64748b';
-    const surfaceColor = isDark
-        ? 'rgba(255,255,255,0.04)'
-        : 'rgba(0,0,0,0.04)';
-    const borderColor = isDark
-        ? 'rgba(255,255,255,0.08)'
-        : 'rgba(0,0,0,0.08)';
+    const surfaceColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+    const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
 
     const selectedCardBg = isDark
         ? `linear-gradient(135deg, ${plan.color}, #1e293b)`
@@ -200,8 +183,8 @@ const FeaturedAdsDashboard = () => {
 
     return (
         <Box
-            dir="rtl"
-            component="main"
+            dir='rtl'
+            component='main'
             sx={{
                 minHeight: '100vh',
                 fontFamily: "'Cairo', 'Tajawal', sans-serif",
@@ -243,7 +226,7 @@ const FeaturedAdsDashboard = () => {
             {/* ── Hero Header ─────────────────────────────────────────── */}
             <Box sx={{ textAlign: 'center', mb: 8, position: 'relative' }}>
                 <Typography
-                    variant="overline"
+                    variant='overline'
                     sx={{
                         color: '#f59e0b',
                         letterSpacing: 4,
@@ -256,7 +239,7 @@ const FeaturedAdsDashboard = () => {
                     {t('ads.promotionPackages.title')}
                 </Typography>
                 <Typography
-                    variant="h2"
+                    variant='h2'
                     sx={{
                         color: textPrimary,
                         fontWeight: 900,
@@ -280,12 +263,7 @@ const FeaturedAdsDashboard = () => {
             </Box>
 
             {/* ── Plan Cards ──────────────────────────────────────────── */}
-            <Grid
-                container
-                spacing={3}
-                justifyContent="center"
-                sx={{ mb: 8 }}
-            >
+            <Grid container spacing={3} justifyContent='center' sx={{ mb: 8 }}>
                 {(Object.entries(PLAN_META) as [AdType, typeof plan][]).map(
                     ([key, meta]) => {
                         const isSelected = selectedPlan === key;
@@ -333,9 +311,7 @@ const FeaturedAdsDashboard = () => {
                                                 top: 16,
                                                 left: 16,
                                                 background: meta.accent,
-                                                color: isDark
-                                                    ? '#000'
-                                                    : '#fff',
+                                                color: isDark ? '#000' : '#fff',
                                                 fontSize: '0.65rem',
                                                 fontWeight: 800,
                                                 px: 1.5,
@@ -384,11 +360,10 @@ const FeaturedAdsDashboard = () => {
                                     </Typography>
                                     {count > 0 && (
                                         <Chip
-                                            label={t(
-                                                'ads.stats.activeCount',
-                                                { count },
-                                            )}
-                                            size="small"
+                                            label={t('ads.stats.activeCount', {
+                                                count,
+                                            })}
+                                            size='small'
                                             sx={{
                                                 background: `${meta.accent}20`,
                                                 color: meta.accent,
@@ -475,7 +450,7 @@ const FeaturedAdsDashboard = () => {
                                     {t('ads.purchase.selectListing')}
                                 </InputLabel>
                                 <Select
-                                    name="listingId"
+                                    name='listingId'
                                     value={newAd.listingId}
                                     onChange={handleSelectChange}
                                     label={t('ads.purchase.selectListing')}
@@ -501,23 +476,21 @@ const FeaturedAdsDashboard = () => {
                                     {t('ads.purchase.selectPromotion')}
                                 </InputLabel>
                                 <Select
-                                    name="type"
+                                    name='type'
                                     value={newAd.type}
                                     onChange={handleSelectChange}
-                                    label={t(
-                                        'ads.purchase.selectPromotion',
-                                    )}
+                                    label={t('ads.purchase.selectPromotion')}
                                     sx={selectSx(plan.accent, isDark)}
                                 >
-                                    <MenuItem value="homepage">
+                                    <MenuItem value='homepage'>
                                         {FEATURED_AD_EMOJI.homepage}{' '}
                                         {PLAN_META.homepage.label}
                                     </MenuItem>
-                                    <MenuItem value="top">
+                                    <MenuItem value='top'>
                                         {FEATURED_AD_EMOJI.top}{' '}
                                         {PLAN_META.top.label}
                                     </MenuItem>
-                                    <MenuItem value="highlight">
+                                    <MenuItem value='highlight'>
                                         {FEATURED_AD_EMOJI.highlight}{' '}
                                         {PLAN_META.highlight.label}
                                     </MenuItem>
@@ -529,8 +502,8 @@ const FeaturedAdsDashboard = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
                                 label={t('ads.purchase.startDate')}
-                                type="date"
-                                name="startDate"
+                                type='date'
+                                name='startDate'
                                 value={newAd.startDate}
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
@@ -541,8 +514,8 @@ const FeaturedAdsDashboard = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
                                 label={t('ads.purchase.endDate')}
-                                type="date"
-                                name="endDate"
+                                type='date'
+                                name='endDate'
                                 value={newAd.endDate}
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
@@ -610,9 +583,7 @@ const FeaturedAdsDashboard = () => {
                                             fontWeight: 600,
                                         }}
                                     >
-                                        {t(
-                                            'ads.purchase.invalidDateRange',
-                                        )}
+                                        {t('ads.purchase.invalidDateRange')}
                                     </Typography>
                                 )}
                             </Box>
@@ -621,7 +592,7 @@ const FeaturedAdsDashboard = () => {
                         {/* Submit */}
                         <Grid size={{ xs: 12 }}>
                             <Button
-                                variant="contained"
+                                variant='contained'
                                 fullWidth
                                 disabled={
                                     !newAd.listingId ||
@@ -654,9 +625,7 @@ const FeaturedAdsDashboard = () => {
                                     <CircularProgress
                                         size={24}
                                         sx={{
-                                            color: isDark
-                                                ? '#000'
-                                                : '#fff',
+                                            color: isDark ? '#000' : '#fff',
                                         }}
                                     />
                                 ) : (
@@ -689,14 +658,14 @@ const FeaturedAdsDashboard = () => {
                     >
                         {t('ads.currentAds')}
                     </Typography>
-                    <Stack direction="row" spacing={1}>
+                    <Stack direction='row' spacing={1}>
                         {(
                             Object.entries(PLAN_META) as [AdType, typeof plan][]
                         ).map(([key, meta]) => (
                             <Chip
                                 key={key}
                                 label={`${meta.icon} ${activeCounts[key] || 0}`}
-                                size="small"
+                                size='small'
                                 sx={{
                                     background: `${meta.accent}15`,
                                     color: meta.accent,
@@ -784,8 +753,7 @@ const FeaturedAdsDashboard = () => {
                                                 ? 'none'
                                                 : '0 2px 8px rgba(0,0,0,0.04)',
                                             '&:hover': {
-                                                transform:
-                                                    'translateY(-3px)',
+                                                transform: 'translateY(-3px)',
                                                 boxShadow: isDark
                                                     ? '0 8px 30px rgba(0,0,0,0.3)'
                                                     : '0 8px 30px rgba(0,0,0,0.08)',
@@ -795,8 +763,7 @@ const FeaturedAdsDashboard = () => {
                                         <Box
                                             sx={{
                                                 display: 'flex',
-                                                justifyContent:
-                                                    'space-between',
+                                                justifyContent: 'space-between',
                                                 mb: 2,
                                             }}
                                         >
@@ -814,11 +781,9 @@ const FeaturedAdsDashboard = () => {
                                                                   count: daysLeft,
                                                               },
                                                           )
-                                                        : t(
-                                                              'ads.stats.expired',
-                                                          )
+                                                        : t('ads.stats.expired')
                                                 }
-                                                size="small"
+                                                size='small'
                                                 sx={{
                                                     background: isActive
                                                         ? `${meta.accent}20`
@@ -830,8 +795,7 @@ const FeaturedAdsDashboard = () => {
                                                         : '#f87171',
                                                     border: `1px solid ${
                                                         isActive
-                                                            ? meta.accent +
-                                                              '40'
+                                                            ? meta.accent + '40'
                                                             : '#f8717140'
                                                     }`,
                                                     fontWeight: 700,
@@ -884,9 +848,7 @@ const FeaturedAdsDashboard = () => {
 const selectSx = (accent: string, isDark: boolean) => ({
     color: isDark ? '#e2e8f0' : '#0f172a',
     '.MuiOutlinedInput-notchedOutline': {
-        borderColor: isDark
-            ? 'rgba(255,255,255,0.12)'
-            : 'rgba(0,0,0,0.12)',
+        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,
@@ -900,9 +862,7 @@ const selectSx = (accent: string, isDark: boolean) => ({
 const inputSx = (accent: string, isDark: boolean) => ({
     '& .MuiInputBase-root': { color: isDark ? '#e2e8f0' : '#0f172a' },
     '& .MuiOutlinedInput-notchedOutline': {
-        borderColor: isDark
-            ? 'rgba(255,255,255,0.12)'
-            : 'rgba(0,0,0,0.12)',
+        borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
     },
     '& .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,

@@ -28,7 +28,6 @@ import {
     CategoryValue,
 } from '../../../interfaces/postLogicMap';
 import { postsCategory } from '../../../interfaces/postsCategoeis';
-import { LoadingButton } from '@mui/lab';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import {
@@ -1036,7 +1035,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                     {t('modals.addProductModal.cancel')}
                 </Button>
 
-                <LoadingButton
+                <Button
                     variant='contained'
                     type='submit'
                     loading={formik.isSubmitting}
@@ -1057,7 +1056,7 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                     {mode === 'add'
                         ? t('modals.addProductModal.addProduct')
                         : t('modals.updateProductModal.updateButton')}
-                </LoadingButton>
+                </Button>
             </Stack>
         </Box>
     );

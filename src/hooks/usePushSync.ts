@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // src/hooks/usePushSync.ts
+
 import { useEffect, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -8,17 +11,17 @@ import {
     getCurrentPushToken,
 } from '../services/pushNotifications.service';
 import { PushNotifications } from '@capacitor/push-notifications';
-import useToken from './useToken';
 
 const usePushSync = () => {
-    const { token } = useToken(); // auth هو التوكن نفسه (string)
     const [isInitialized, setIsInitialized] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        // ✅ فقط على الأجهزة النative
+        // Push Notifications تعمل فقط على Native
         if (!Capacitor.isNativePlatform()) {
-            console.log('ℹ️ Not running on native platform');
+            console.log(
+                'ℹ️ Not running on native platform',
+            );
             return;
         }
 
@@ -26,84 +29,120 @@ const usePushSync = () => {
 
         const initPush = async () => {
             try {
-                // 1. التحقق من وجود مستخدم مسجل دخول
-                if (!token) {
-                    console.log('ℹ️ No auth token, skipping push init');
-                    return;
-                }
+                console.log(
+                    '📱 Initializing push notifications...',
+                );
 
-                console.log('📱 Initializing push notifications...');
+                // Authentication is handled by the HttpOnly cookie.
+                await initializePushNotifications();
 
-                // 2. تهيئة الإشعارات باستخدام auth كـ token
-                await initializePushNotifications(token);
+                if (!mounted) return;
 
-                if (mounted) {
-                    setIsInitialized(true);
-                    setError(null);
-                    console.log(
-                        '✅ Push notifications initialized successfully',
-                    );
+                setIsInitialized(true);
+                setError(null);
 
-                    // 3. التحقق من التوكن
-                    const token = getCurrentPushToken();
-                    console.log(
-                        '🔑 Current push token:',
-                        token ? '✅ Available' : '❌ Not available',
-                    );
-                }
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                console.log(
+                    '✅ Push notifications initialized successfully',
+                );
+
+                const pushToken =
+                    getCurrentPushToken();
+
+                console.log(
+                    '🔑 Current push token:',
+                    pushToken
+                        ? '✅ Available'
+                        : '❌ Not available',
+                );
             } catch (error: any) {
                 console.error(
                     '❌ Failed to initialize push notifications:',
                     error,
                 );
+
                 if (mounted) {
                     setError(
-                        error.message ||
+                        error?.message ||
                             'Failed to initialize push notifications',
                     );
+
                     setIsInitialized(false);
                 }
             }
         };
 
-        // ✅ تأخير التهيئة قليلاً للتأكد من تحميل كل شيء
+        // إعطاء التطبيق وقتًا قصيرًا للتهيئة
         const timeoutId = setTimeout(() => {
             initPush();
         }, 1000);
 
-        // ✅ تنظيف عند إلغاء التثبيت أو تسجيل الخروج
         return () => {
             mounted = false;
             clearTimeout(timeoutId);
 
-            // إزالة التوكن عند تسجيل الخروج
-            if (token) {
-                removePushToken(token).catch(console.error);
-            }
-
-            // إزالة المستمعين
+            // هنا نحذف listeners فقط.
+            //
+            // لا نحذف FCM token من السيرفر هنا،
+            // لأن unmount لا يعني بالضرورة logout.
             if (Capacitor.isNativePlatform()) {
-                PushNotifications.removeAllListeners().catch(console.error);
+                PushNotifications
+                    .removeAllListeners()
+                    .catch(console.error);
             }
 
-            console.log('🧹 Push notifications cleaned up');
+            console.log(
+                '🧹 Push notification listeners cleaned up',
+            );
         };
-    }, [token]); // ✅ إعادة التهيئة عند تغيير التوكن
+    }, []);
 
-    // ✅ دالة لتحديث التوكن يدوياً
+    /**
+     * تحديث FCM token يدويًا
+     *
+     * لا يحتاج Auth JWT.
+     * الـ backend سيعرف المستخدم من HttpOnly cookie.
+     */
     const refreshPushToken = async () => {
-        if (!token) {
-            console.warn('⚠️ No token available');
-            return false;
-        }
-
         try {
-            const result = await refreshToken(token);
-            console.log('🔄 Token refresh result:', result);
+            const result = await refreshToken();
+
+            console.log(
+                '🔄 Push token refresh result:',
+                result,
+            );
+
             return result;
         } catch (error) {
-            console.error('❌ Failed to refresh token:', error);
+            console.error(
+                '❌ Failed to refresh push token:',
+                error,
+            );
+
+            return false;
+        }
+    };
+
+    /**
+     * إزالة FCM token من حساب المستخدم.
+     *
+     * يجب استدعاؤها أثناء logout،
+     * قبل مسح HttpOnly authentication cookie.
+     */
+    const clearPushToken = async () => {
+        try {
+            await removePushToken();
+
+            console.log(
+                '🗑️ Push token removed from server',
+            );
+
+            return true;
+        } catch (error) {
+            console.error(
+                '❌ Failed to remove push token:',
+                error,
+            );
+
             return false;
         }
     };
@@ -112,6 +151,7 @@ const usePushSync = () => {
         isInitialized,
         error,
         refreshPushToken,
+        clearPushToken,
         getToken: getCurrentPushToken,
     };
 };

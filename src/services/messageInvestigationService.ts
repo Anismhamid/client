@@ -1,17 +1,9 @@
-import axios from 'axios';
 import {
     AuditLogsResponse,
     ConversationResponse,
     InvestigationUser,
 } from '../interfaces/InvestigationMessage';
-
-const API_URL = `${import.meta.env.VITE_API_URL}/messages`;
-
-const getAuthConfig = () => ({
-    headers: {
-        Authorization: localStorage.getItem('token') || '',
-    },
-});
+import api from './api';
 
 // ======================================================
 // Search users
@@ -20,11 +12,10 @@ const getAuthConfig = () => ({
 export const searchInvestigationUsers = async (
     search: string,
 ): Promise<InvestigationUser[]> => {
-    const response = await axios.get(`${API_URL}/admin/users/search`, {
+    const response = await api.get(`/messages/admin/users/search`, {
         params: {
             search,
         },
-        ...getAuthConfig(),
     });
 
     return response.data.users || [];
@@ -39,15 +30,11 @@ export const viewInvestigationConversation = async (
     user2Id: string,
     reason: string,
 ): Promise<ConversationResponse> => {
-    const response = await axios.post(
-        `${API_URL}/admin/conversation`,
-        {
-            user1Id,
-            user2Id,
-            reason,
-        },
-        getAuthConfig(),
-    );
+    const response = await api.post(`/messages/admin/conversation`, {
+        user1Id,
+        user2Id,
+        reason,
+    });
     return response.data;
 };
 
@@ -59,12 +46,11 @@ export const getMessageAuditLogs = async (
     limit = 50,
     skip = 0,
 ): Promise<AuditLogsResponse> => {
-    const response = await axios.get(`${API_URL}/admin/audit-logs`, {
+    const response = await api.get(`messages/admin/audit-logs`, {
         params: {
             limit,
             skip,
         },
-        ...getAuthConfig(),
     });
 
     return response.data;

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import axios from 'axios';
 import { UserMessage } from '../interfaces/chat/usersMessages';
 import {
     AuditLogsResponse,
@@ -8,50 +7,14 @@ import {
     InvestigationMessage,
     InvestigationUser,
 } from '../interfaces/InvestigationMessage';
+import api from './api';
 
 // ======================================================
 // API
 // ======================================================
 
-const API_URL = import.meta.env.VITE_API_URL;
 
-const axiosInstance = axios.create({
-    baseURL: `${API_URL}/messages`,
-});
 
-// ======================================================
-// Authorization Interceptor
-// ======================================================
-
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-
-        if (token) {
-            config.headers.Authorization = token;
-        }
-
-        return config;
-    },
-    (error) => Promise.reject(error),
-);
-
-// ======================================================
-// Error Helper
-// ======================================================
-
-const getErrorMessage = (error: unknown, fallback: string): string => {
-    if (axios.isAxiosError(error)) {
-        return (
-            error.response?.data?.message ||
-            error.response?.data?.error ||
-            error.message ||
-            fallback
-        );
-    }
-
-    return fallback;
-};
 
 // ======================================================
 // SEND MESSAGE
@@ -66,17 +29,16 @@ export const postMessage = async (data: {
     replyTo?: string;
 }): Promise<UserMessage> => {
     try {
-        const response = await axiosInstance.post<{
+        const response = await api.post<{
             success: boolean;
             message: UserMessage;
-        }>('/', data);
+        }>('/messages', data);
 
         return response.data.message;
     } catch (error: any) {
         console.error('❌ Error in postMessage service:', {
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'فشل إرسال الرسالة'),
         });
 
         throw error;
@@ -102,8 +64,8 @@ export const getUserMessages = async (
     skip = 0,
 ): Promise<ConversationMessagesResponse> => {
     try {
-        const response = await axiosInstance.get<ConversationMessagesResponse>(
-            `/conversation/${userId}`,
+        const response = await api.get<ConversationMessagesResponse>(
+            `/messages/conversation/${userId}`,
             {
                 params: {
                     limit,
@@ -120,7 +82,6 @@ export const getUserMessages = async (
             userId,
             limit,
             skip,
-            message: getErrorMessage(error, 'Failed to fetch conversation'),
         });
 
         return {
@@ -140,7 +101,7 @@ export const markMessagesAsSeen = async (
     fromUserId: string,
 ): Promise<boolean> => {
     try {
-        await axiosInstance.patch(`/mark-as-seen/${fromUserId}`);
+        await api.patch(`/messages/mark-as-seen/${fromUserId}`);
 
         return true;
     } catch (error: any) {
@@ -148,7 +109,6 @@ export const markMessagesAsSeen = async (
             fromUserId,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to mark messages as seen'),
         });
 
         return false;
@@ -170,16 +130,15 @@ export interface ConversationItem {
 
 export const getAllConversations = async (): Promise<ConversationItem[]> => {
     try {
-        const response = await axiosInstance.get<{
+        const response = await api.get<{
             conversations: ConversationItem[];
-        }>('/conversations');
+        }>('/messages/conversations');
 
         return response.data.conversations || [];
     } catch (error: any) {
         console.error('❌ Error fetching conversations:', {
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to fetch conversations'),
         });
 
         return [];
@@ -196,10 +155,10 @@ export const editMessage = async (
     message: string,
 ): Promise<UserMessage> => {
     try {
-        const response = await axiosInstance.patch<{
+        const response = await api.patch<{
             success: boolean;
             message: UserMessage;
-        }>(`/${messageId}`, {
+        }>(`/messages/${messageId}`, {
             message: message.trim(),
         });
 
@@ -209,7 +168,6 @@ export const editMessage = async (
             messageId,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to edit message'),
         });
 
         throw error;
@@ -223,7 +181,7 @@ export const editMessage = async (
 
 export const deleteMessage = async (messageId: string): Promise<boolean> => {
     try {
-        await axiosInstance.delete(`/${messageId}`);
+        await api.delete(`/messages/${messageId}`);
 
         return true;
     } catch (error: any) {
@@ -231,7 +189,6 @@ export const deleteMessage = async (messageId: string): Promise<boolean> => {
             messageId,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to delete message'),
         });
 
         return false;
@@ -251,11 +208,11 @@ export const deleteConversation = async (
     roomId?: string;
 }> => {
     try {
-        const response = await axiosInstance.delete<{
+        const response = await api.delete<{
             success: boolean;
             deletedCount?: number;
             roomId?: string;
-        }>(`/conversation/${userId}`);
+        }>(`/messages/conversation/${userId}`);
 
         return response.data;
     } catch (error: any) {
@@ -263,7 +220,6 @@ export const deleteConversation = async (
             userId,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to delete conversation'),
         });
 
         throw error;
@@ -283,10 +239,10 @@ export const searchInvestigationUsers = async (
             return [];
         }
 
-        const response = await axiosInstance.get<{
+        const response = await api.get<{
             success: boolean;
             users: InvestigationUser[];
-        }>('/admin/users/search', {
+        }>('/messages/admin/users/search', {
             params: {
                 search: search.trim(),
             },
@@ -298,7 +254,6 @@ export const searchInvestigationUsers = async (
             search,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to search users'),
         });
 
         return [];
@@ -316,8 +271,8 @@ export const viewInvestigationConversation = async (
     reason: string,
 ): Promise<ConversationResponse> => {
     try {
-        const response = await axiosInstance.post<ConversationResponse>(
-            '/admin/conversation',
+        const response = await api.post<ConversationResponse>(
+            '/messages/admin/conversation',
             {
                 user1Id,
                 user2Id,
@@ -332,7 +287,6 @@ export const viewInvestigationConversation = async (
             user2Id,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to retrieve conversation'),
         });
 
         throw error;
@@ -349,10 +303,10 @@ export const viewInvestigationMessage = async (
     reason: string,
 ): Promise<InvestigationMessage> => {
     try {
-        const response = await axiosInstance.post<{
+        const response = await api.post<{
             success: boolean;
             message: InvestigationMessage;
-        }>(`/admin/view/${messageId}`, {
+        }>(`/messages/admin/view/${messageId}`, {
             reason: reason.trim(),
         });
 
@@ -362,7 +316,6 @@ export const viewInvestigationMessage = async (
             messageId,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to retrieve message'),
         });
 
         throw error;
@@ -379,8 +332,8 @@ export const getAuditLogs = async (
     skip = 0,
 ): Promise<AuditLogsResponse> => {
     try {
-        const response = await axiosInstance.get<AuditLogsResponse>(
-            '/admin/audit-logs',
+        const response = await api.get<AuditLogsResponse>(
+            '/messages/admin/audit-logs',
             {
                 params: {
                     limit,
@@ -396,7 +349,6 @@ export const getAuditLogs = async (
             skip,
             status: error.response?.status,
             data: error.response?.data,
-            message: getErrorMessage(error, 'Failed to retrieve audit logs'),
         });
 
         throw error;

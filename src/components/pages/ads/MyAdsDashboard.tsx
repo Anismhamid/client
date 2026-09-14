@@ -11,7 +11,6 @@ import {
     Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import { FeaturedAd } from '../../../interfaces/featuredAd';
@@ -23,6 +22,7 @@ import {
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { productsPathes } from '../../../routes/routes';
 import { Link } from 'react-router-dom';
+import api from '../../../services/api';
 
 /* ── design tokens (matching Merchant Passport / Profile.tsx) ── */
 const INK = '#12161C';
@@ -275,7 +275,6 @@ function AdRow({
 
 /* ── Main dashboard ──────────────────────────────────────────── */
 type TabFilter = 'all' | 'active' | 'expired';
-const api = import.meta.env.VITE_API_URL;
 
 export default function MyAdsDashboard() {
     const { t } = useTranslation();
@@ -287,9 +286,7 @@ export default function MyAdsDashboard() {
     const fetchAds = async () => {
         setLoading(true);
         try {
-            const { data } = await axios.get(`${api}/featured-ads/me`, {
-                headers: { Authorization: localStorage.getItem('token') },
-            });
+            const { data } = await api.get('featured-ads/me');
             setAds(data?.ads || []);
         } catch (err) {
             console.error(err);
@@ -302,9 +299,7 @@ export default function MyAdsDashboard() {
     const handleDelete = async (adId: string) => {
         setDeletingId(adId);
         try {
-            await axios.delete(`${api}/featured-ads/delete/${adId}`, {
-                headers: { Authorization: localStorage.getItem('token') },
-            });
+            await api.delete('featured-ads/delete/${adId}');
             await fetchAds();
             showSuccess(t('ads.common.success'));
         } catch (err) {

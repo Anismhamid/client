@@ -71,7 +71,6 @@ function App() {
         if (!Capacitor.isNativePlatform() || !isInitialized || !auth) return;
 
         const interval = setInterval(() => {
-            console.log('🔄 Refreshing push token...');
             refreshPushToken();
         }, 300000); // 5 دقائق
 

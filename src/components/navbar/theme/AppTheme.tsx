@@ -115,9 +115,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         // 2. استدعاء logout من Context — يمسح الكوكي + يحدّث الحالة
         await contextLogout();
 
-        // 3. تنظيف أي بيانات محلية قديمة (احتياط)
-        localStorage.removeItem('token');
-
         // 4. التوجيه للصفحة الرئيسية
         navigate(path.Home, { replace: true });
         setMobileOpen(false);

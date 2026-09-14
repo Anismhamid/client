@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from 'axios';
 import { Posts } from '../interfaces/Posts';
 import { showError } from '../atoms/toasts/ReactToast';
-
-const api = `${import.meta.env.VITE_API_URL}`;
+import api from './api';
 
 /**
  * Gets a specific post by name
@@ -12,9 +10,7 @@ const api = `${import.meta.env.VITE_API_URL}`;
  */
 export const getPostById = async (post_id: string) => {
     try {
-        const post = await axios.get(`${api}/posts/spicific/${post_id}`, {
-            headers: { Authorization: localStorage.getItem('token') },
-        });
+        const post = await api.get(`/posts/spicific/${post_id}`);
         return post.data;
     } catch (error) {
         console.log(error);
@@ -33,8 +29,8 @@ export const getRelatedPosts = async (
             limit: limit.toString(),
         });
 
-        const response = await axios.get(
-            `${api}/posts/related-posts/${category}?${params.toString()}`,
+        const response = await api.get(
+            `/posts/related-posts/${category}?${params.toString()}`,
         );
 
         return response.data || [];
@@ -44,7 +40,7 @@ export const getRelatedPosts = async (
     }
 };
 
-// نسخة متقدمة مع فلترة وترتيب
+// // نسخة متقدمة مع فلترة وترتيب
 export const getRelatedPostsAdvanced = async (
     category: string,
     currentPostId?: string,
@@ -67,9 +63,7 @@ export const getRelatedPostsAdvanced = async (
             ...(currentPostId && { excludeId: currentPostId }),
         });
 
-        const response = await axios.get(
-            `${api}/postss/related?${params.toString()}`,
-        );
+        const response = await api.get(`/posts/related?${params.toString()}`);
 
         return response.data?.posts || response.data?.data || [];
     } catch (error) {
@@ -86,12 +80,7 @@ export const getRelatedPostsAdvanced = async (
  */
 export const updatePost = async (postId: string, updatedPost: Posts) => {
     try {
-        const token = localStorage.getItem('token');
-        const post = await axios.put(`${api}/posts/${postId}`, updatedPost, {
-            headers: {
-                Authorization: token,
-            },
-        });
+        const post = await api.put(`/posts/${postId}`, updatedPost);
         return post.data;
     } catch (error) {
         console.log(error);
@@ -105,7 +94,7 @@ export const updatePost = async (postId: string, updatedPost: Posts) => {
  */
 export const getAllPosts = async () => {
     try {
-        const response = await axios.get(`${api}/posts`);
+        const response = await api.get(`/posts`);
         if (Array.isArray(response.data)) return response.data;
         return [];
     } catch (error: any) {
@@ -121,11 +110,7 @@ export const getAllPosts = async () => {
  */
 export const createNewPost = async (post: Posts) => {
     try {
-        const response = await axios.post(`${api}/posts`, post, {
-            headers: {
-                Authorization: localStorage.getItem('token'),
-            },
-        });
+        const response = await api.post(`/posts`, post);
 
         return response.data;
     } catch (error: any) {
@@ -146,7 +131,7 @@ export const createNewPost = async (post: Posts) => {
  */
 export async function getPostsInDiscount() {
     try {
-        const response = await axios.get(`${api}/discounts`);
+        const response = await api.get(`/discounts`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -161,23 +146,12 @@ export async function getPostsInDiscount() {
  */
 export async function deletePost(postId: string) {
     try {
-        const response = await axios.delete(`${api}/posts/${postId}`, {
-            headers: {
-                Authorization: localStorage.getItem('token'),
-            },
-        });
+        const response = await api.delete(`/posts/${postId}`);
 
         return response.data;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            console.error('Delete post error:', {
-                status: error.response?.status,
-                message: error.response?.data || error.message,
-                postId,
-            });
-            throw new Error(error.response?.data || error.message);
-        }
-        throw error;
+        console.log(error);
+        return;
     }
 }
 
@@ -192,7 +166,7 @@ export const getpostsByCategory = async (
     subCategory?: string,
 ): Promise<Posts[]> => {
     try {
-        const response = await axios.get(`${api}/posts/${category}`, {
+        const response = await api.get(`/posts/${category}`, {
             params: subCategory ? { subCategory } : undefined,
         });
 
@@ -207,7 +181,7 @@ export const getCustomerProfilePostsBySlug = async (
     slug: string,
 ): Promise<Posts[]> => {
     try {
-        const res = await axios.get(`${api}/users/customer/${slug}/posts`);
+        const res = await api.get(`/users/customer/${slug}/posts`);
 
         if (Array.isArray(res.data?.posts)) {
             return res.data.posts;
@@ -221,21 +195,10 @@ export const getCustomerProfilePostsBySlug = async (
 };
 
 export const toggleLike = async (postId: string) => {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        throw new Error('Authentication token is missing');
-    }
-
     try {
-        const res = await axios.patch(
-            `${api}/posts/${postId}/like`,
-            {},
-            {
-                headers: {
-                    Authorization: token,
-                },
-            },
+        const res = await api.patch(
+            `/posts/${postId}/like`,
+            {}
         );
 
         return res.data;
@@ -253,17 +216,9 @@ export const submitReview = async (
     postId: string,
     review: { userId: string; rating: number; comment: string },
 ) => {
-    const token = localStorage.getItem('token');
 
     try {
-        const res = await axios.patch(
-            `${api}/posts/${postId}/reviews`,
-            review,
-            {
-                headers: {
-                    Authorization: token,
-                },
-            },
+        const res = await api.patch(`/posts/${postId}/reviews`, review
         );
 
         console.log('Review submitted:', res.data);
@@ -275,9 +230,7 @@ export const submitReview = async (
 
 export const incrementViewCount = async (postId: string) => {
     try {
-        const result = await axios.patch(
-            `${api}/posts/${postId}/increment-views`,
-        );
+        const result = await api.patch(`/posts/${postId}/increment-views`);
 
         return result.data;
     } catch (error) {

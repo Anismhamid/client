@@ -10,7 +10,6 @@ import { categoriesLogic } from '../../../interfaces/postLogicMap';
 import {
     Dialog,
     DialogTitle,
-    Typography,
     IconButton,
     DialogContent,
     Box,
@@ -147,11 +146,12 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
                         background: GRADIENT,
                         color: '#fff',
                         py: 1.75,
+                        fontWeight: 'bold',
+                        fontSize: '1.25rem',
                     }}
                 >
-                    <Typography variant='h6' fontWeight='bold'>
-                        {t('modals.updateProductModal.title')}
-                    </Typography>
+                    {t('modals.updateProductModal.title')}
+
                     <IconButton
                         onClick={onHide}
                         size='small'

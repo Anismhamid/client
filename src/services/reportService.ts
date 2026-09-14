@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {
     UserReportStatus,
     UserReportType,
@@ -11,20 +10,15 @@ import {
     UpdateReportResponse,
 } from '../interfaces/report.types';
 
+import api from '../services/api';
+
 // ===============================
 // API Endpoints
 // ===============================
 
-const REPORTS_BASE = `${import.meta.env.VITE_API_URL}/reports`;
-const BLOCK_BASE = `${import.meta.env.VITE_API_URL}/blocks`;
+const REPORTS_BASE = '/reports';
+const BLOCK_BASE = '/blocks';
 
-const getAuthHeaders = () => {
-    const token = localStorage.getItem('token');
-
-    return {
-        Authorization: token,
-    };
-};
 // ========== Reports ==========
 
 /**
@@ -33,9 +27,11 @@ const getAuthHeaders = () => {
 export const createReport = async (
     payload: CreateReportPayload,
 ): Promise<UserReportUnion> => {
-    const response = await axios.post<UserReportUnion>(REPORTS_BASE, payload, {
-        headers: getAuthHeaders(),
-    });
+    const response = await api.post<UserReportUnion>(
+        REPORTS_BASE,
+        payload,
+    );
+
     return response.data;
 };
 
@@ -54,12 +50,15 @@ export const getAllReports = async (params?: {
     page: number;
     totalPages: number;
 }> => {
-    const response = await axios.get<{
+    const response = await api.get<{
         reports: UserReportUnion[];
         total: number;
         page: number;
         totalPages: number;
-    }>(REPORTS_BASE, { params, headers: getAuthHeaders() });
+    }>(REPORTS_BASE, {
+        params,
+    });
+
     return response.data;
 };
 
@@ -69,10 +68,10 @@ export const getAllReports = async (params?: {
 export const getReportById = async (
     reportId: string,
 ): Promise<UserReportUnion> => {
-    const response = await axios.get<UserReportUnion>(
+    const response = await api.get<UserReportUnion>(
         `${REPORTS_BASE}/${reportId}`,
-        { headers: getAuthHeaders() },
     );
+
     return response.data;
 };
 
@@ -83,30 +82,31 @@ export const updateReport = async (
     reportId: string,
     payload: UpdateReportPayload,
 ): Promise<UpdateReportResponse> => {
-    const response = await axios.patch<UpdateReportResponse>(
+    const response = await api.patch<UpdateReportResponse>(
         `${REPORTS_BASE}/${reportId}`,
         payload,
-        { headers: getAuthHeaders() },
     );
+
     return response.data;
 };
 
 /**
  * حذف إبلاغ (للمديرين فقط)
  */
-export const deleteReport = async (reportId: string): Promise<void> => {
-    await axios.delete(`${REPORTS_BASE}/${reportId}`, {
-        headers: getAuthHeaders(),
-    });
+export const deleteReport = async (
+    reportId: string,
+): Promise<void> => {
+    await api.delete(`${REPORTS_BASE}/${reportId}`);
 };
 
 /**
  * جلب إبلاغات المستخدم الحالي
  */
 export const getMyReports = async (): Promise<UserReportUnion[]> => {
-    const response = await axios.get<UserReportUnion[]>(`${REPORTS_BASE}/my`, {
-        headers: getAuthHeaders(),
-    });
+    const response = await api.get<UserReportUnion[]>(
+        `${REPORTS_BASE}/my`,
+    );
+
     return response.data;
 };
 
@@ -114,9 +114,10 @@ export const getMyReports = async (): Promise<UserReportUnion[]> => {
  * جلب إحصائيات الإبلاغات
  */
 export const getReportStats = async (): Promise<ReportStats> => {
-    const response = await axios.get<ReportStats>(`${REPORTS_BASE}/stats`, {
-        headers: getAuthHeaders(),
-    });
+    const response = await api.get<ReportStats>(
+        `${REPORTS_BASE}/stats`,
+    );
+
     return response.data;
 };
 
@@ -127,11 +128,8 @@ export const hasUserReported = async (
     type: UserReportType,
     targetId: string,
 ): Promise<boolean> => {
-    const response = await axios.get<{ reported: boolean }>(
+    const response = await api.get<{ reported: boolean }>(
         `${REPORTS_BASE}/check/${type}/${targetId}`,
-        {
-            headers: getAuthHeaders(),
-        },
     );
 
     return response.data.reported;
@@ -145,41 +143,44 @@ export const hasUserReported = async (
 export const blockUser = async (
     payload: BlockUserPayload,
 ): Promise<BlockedUserInfo> => {
-    const response = await axios.post<BlockedUserInfo>(BLOCK_BASE, payload, {
-        headers: getAuthHeaders(),
-    });
+    const response = await api.post<BlockedUserInfo>(
+        BLOCK_BASE,
+        payload,
+    );
+
     return response.data;
 };
 
 /**
  * إلغاء حظر مستخدم
  */
-export const unblockUser = async (userId: string): Promise<void> => {
-    await axios.delete(`${BLOCK_BASE}/${userId}`, {
-        headers: getAuthHeaders(),
-    });
+export const unblockUser = async (
+    userId: string,
+): Promise<void> => {
+    await api.delete(`${BLOCK_BASE}/${userId}`);
 };
 
 /**
  * جلب قائمة المستخدمين المحظورين (للمستخدم الحالي)
  */
 export const getBlockedUsers = async (): Promise<BlockedUserInfo[]> => {
-    const response = await axios.get<BlockedUserInfo[]>(`${BLOCK_BASE}/my`, {
-        headers: getAuthHeaders(),
-    });
+    const response = await api.get<BlockedUserInfo[]>(
+        `${BLOCK_BASE}/my`,
+    );
+
     return response.data;
 };
 
 /**
  * التحقق مما إذا كان المستخدم محظورًا
  */
-export const isUserBlocked = async (userId: string): Promise<boolean> => {
-    const response = await axios.get<{ blocked: boolean }>(
+export const isUserBlocked = async (
+    userId: string,
+): Promise<boolean> => {
+    const response = await api.get<{ blocked: boolean }>(
         `${BLOCK_BASE}/check/${userId}`,
-        {
-            headers: getAuthHeaders(),
-        },
     );
+
     return response.data.blocked;
 };
 
@@ -189,11 +190,9 @@ export const isUserBlocked = async (userId: string): Promise<boolean> => {
 export const getBlockers = async (
     userId: string,
 ): Promise<BlockedUserInfo[]> => {
-    const response = await axios.get<BlockedUserInfo[]>(
+    const response = await api.get<BlockedUserInfo[]>(
         `${BLOCK_BASE}/blockers/${userId}`,
-        {
-            headers: getAuthHeaders(),
-        },
     );
+
     return response.data;
 };

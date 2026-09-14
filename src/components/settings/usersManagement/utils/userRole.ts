@@ -1,26 +1,26 @@
 import RoleType from '../../../../interfaces/UserType';
-import { UserRegister } from '../../../../interfaces/User';
+import { User } from '../../../../interfaces/User';
 
-export const USER_ROLES: UserRegister['role'][] = [
+export const USER_ROLES: User['role'][] = [
     RoleType.Admin,
     RoleType.Moderator,
     RoleType.Client,
 ];
 
-export const isAdminRole = (role: UserRegister['role']): boolean => {
+export const isAdminRole = (role: User['role']): boolean => {
     return role === RoleType.Admin;
 };
 
-export const isModeratorRole = (role: UserRegister['role']): boolean => {
+export const isModeratorRole = (role: User['role']): boolean => {
     return role === RoleType.Moderator;
 };
 
-export const isClientRole = (role: UserRegister['role']): boolean => {
+export const isClientRole = (role: User['role']): boolean => {
     return role === RoleType.Client;
 };
 
 export const getRoleColor = (
-    role: UserRegister['role'],
+    role: User['role'],
 ): 'error' | 'warning' | 'info' | 'default' => {
     switch (role) {
         case RoleType.Admin:

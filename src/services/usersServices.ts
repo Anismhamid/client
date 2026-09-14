@@ -25,22 +25,14 @@ import { CredentialResponse } from '@react-oauth/google';
  * Users API
  * ============================================================
  *
- * IMPORTANT:
+ * Authentication:
+ * - Safqa authentication uses HttpOnly Cookie.
+ * - The api instance uses withCredentials: true.
+ * - Never read/store the Safqa JWT from localStorage.
  *
- * Authentication is handled through an HttpOnly cookie.
- *
- * Do NOT:
- *
- *   localStorage.setItem('token', ...)
- *   localStorage.getItem('token')
- *   Authorization: token
- *
- * The api instance already contains:
- *
- *   withCredentials: true
- *
- * Therefore the browser automatically sends the authentication
- * cookie with authenticated requests.
+ * Google:
+ * - Google credential is still a Google token.
+ * - It is sent to the backend only during Google login.
  */
 
 const usersApi = '/users';
@@ -65,15 +57,6 @@ export interface UpdatePermissionResponse {
     user: User;
 }
 
-/**
- * الشكل الموحّد لأخطاء الباك إند بعد الإصلاح:
- *
- * {
- *   success: false,
- *   code: 'SOME_CODE',
- *   message: '...'
- * }
- */
 export interface ApiErrorShape {
     success?: boolean;
     code?: string;
@@ -81,9 +64,10 @@ export interface ApiErrorShape {
     error?: string;
 }
 
-/**
- * استخراج رسالة خطأ موحّدة من أي شكل محتمل.
- */
+// ============================================================
+// ERROR HELPERS
+// ============================================================
+
 const extractErrorMessage = (
     error: any,
     fallback: string,
@@ -97,13 +81,14 @@ const extractErrorMessage = (
     return data.message || data.error || fallback;
 };
 
-/**
- * استخراج كود الخطأ من response الباك إند.
- */
-const extractErrorCode = (error: any): string | undefined => {
+const extractErrorCode = (
+    error: any,
+): string | undefined => {
     const data = error?.response?.data;
 
-    if (!data || typeof data === 'string') return undefined;
+    if (!data || typeof data === 'string') {
+        return undefined;
+    }
 
     return data.code;
 };
@@ -112,13 +97,14 @@ const extractErrorCode = (error: any): string | undefined => {
 // REGISTER
 // ============================================================
 
-export const registerNewUser = async (newUserData: UserRegister) => {
+export const registerNewUser = async (
+    newUserData: UserRegister,
+) => {
     try {
-        const response = await api.post(usersApi, newUserData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await api.post(
+            usersApi,
+            newUserData,
+        );
 
         return response.data;
     } catch (error: any) {
@@ -149,18 +135,25 @@ export const handleGoogleLogin = async (
         }
 
         /**
-         * This token belongs to Google.
+         * This is Google's credential.
          * It is NOT the Safqa authentication cookie.
          */
         const decoded = jwtDecode<DecodedGooglePayload>(
             response.credential,
         );
 
-        const { email, given_name, family_name, picture, sub } =
-            decoded;
+        const {
+            email,
+            given_name,
+            family_name,
+            picture,
+            sub,
+        } = decoded;
 
         if (!email || !sub) {
-            throw new Error('Missing required Google user info');
+            throw new Error(
+                'Missing required Google user info',
+            );
         }
 
         const userData = {
@@ -191,11 +184,10 @@ export const handleGoogleLogin = async (
             },
         };
 
-        const res = await api.post(`${usersApi}/google`, userData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const res = await api.post(
+            `${usersApi}/google`,
+            userData,
+        );
 
         return res.data;
     } catch (error) {
@@ -214,19 +206,32 @@ export const handleGoogleLogin = async (
 };
 
 // ============================================================
-// VERIFY GOOGLE TOKEN (Google, not Safqa)
+// VERIFY GOOGLE TOKEN
 // ============================================================
 
-export const verifyGoogleToken = async (token: string) => {
-    // ⚠️ صُحّح الاسم من VITE_API_VIREFY_TOKEN → VITE_API_VERIFY_TOKEN
-    const url = `${import.meta.env.VITE_API_VIREFY_TOKEN}${token}`;
+export const verifyGoogleToken = async (
+    token: string,
+) => {
+    /**
+     * This token is a Google credential.
+     * It is unrelated to the Safqa auth cookie.
+     */
+    const url =
+        `${import.meta.env.VITE_API_VIREFY_TOKEN}${token}`;
 
     try {
         const response = await axios.get(url);
+
         return response.data;
     } catch (error) {
-        console.error('Google token verification error:', error);
-        throw new Error('Failed to verify Google token');
+        console.error(
+            'Google token verification error:',
+            error,
+        );
+
+        throw new Error(
+            'Failed to verify Google token',
+        );
     }
 };
 
@@ -234,7 +239,9 @@ export const verifyGoogleToken = async (token: string) => {
 // VERIFY GOOGLE USER
 // ============================================================
 
-export const verifyGoogleUser = async (googleId: string) => {
+export const verifyGoogleUser = async (
+    googleId: string,
+) => {
     try {
         const response = await api.get(
             `${usersApi}/google/verify/${googleId}`,
@@ -242,7 +249,11 @@ export const verifyGoogleUser = async (googleId: string) => {
 
         return response.data.exists;
     } catch (error) {
-        console.error('Error verifying Google user:', error);
+        console.error(
+            'Error verifying Google user:',
+            error,
+        );
+
         return false;
     }
 };
@@ -276,16 +287,15 @@ export const compleateProfileData = async (
         const response = await api.patch(
             `${usersApi}/compleate/${userId}`,
             payload,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
         );
 
         return response.data;
     } catch (error) {
-        console.error('Error completing profile:', error);
+        console.error(
+            'Error completing profile:',
+            error,
+        );
+
         throw error;
     }
 };
@@ -302,11 +312,6 @@ export const editUserProfile = async (
         const response = await api.patch(
             `${usersApi}/edit-user/${userId}`,
             data,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
         );
 
         return response.data;
@@ -333,24 +338,38 @@ export const editUserProfile = async (
 // LOGIN
 // ============================================================
 
-export const loginUser = async (userData: UserLogin) => {
+export const loginUser = async (
+    userData: UserLogin,
+) => {
     try {
         const response = await api.post(
             `${usersApi}/login`,
             userData,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            },
         );
+
+        /**
+         * Backend should set the HttpOnly auth cookie here.
+         *
+         * Example backend:
+         *
+         * res.cookie('token', jwt, {
+         *   httpOnly: true,
+         *   secure: true,
+         *   sameSite: 'none',
+         * });
+         *
+         * Frontend does NOT store the token.
+         */
 
         return response.data;
     } catch (error: any) {
         const status = error?.response?.status;
         const code = extractErrorCode(error);
 
-        if (status === 429 || code === 'RATE_LIMITED') {
+        if (
+            status === 429 ||
+            code === 'RATE_LIMITED'
+        ) {
             showError(
                 extractErrorMessage(
                     error,
@@ -366,13 +385,19 @@ export const loginUser = async (userData: UserLogin) => {
             );
         } else if (code === 'VALIDATION_ERROR') {
             showError(
-                extractErrorMessage(error, 'נתונים לא תקינים'),
+                extractErrorMessage(
+                    error,
+                    'נתונים לא תקינים',
+                ),
             );
         } else {
-            showError('שם משתמש או סיסמה שגויים');
+            showError(
+                'שם משתמש או סיסמה שגויים',
+            );
         }
 
         console.error('Login error:', error);
+
         throw error;
     }
 };
@@ -383,31 +408,41 @@ export const loginUser = async (userData: UserLogin) => {
 
 export const getCurrentUser = async (): Promise<User | null> => {
     try {
-        const response = await api.get(`${usersApi}/me`);
-        // الباك إند يعيد { success: true, user }
+        const response = await api.get(
+            `${usersApi}/me`,
+        );
+
         return response.data?.user ?? null;
     } catch (error) {
         if (
             axios.isAxiosError(error) &&
-            (error.response?.status === 401 ||
-                error.response?.status === 403)
+            (
+                error.response?.status === 401 ||
+                error.response?.status === 403
+            )
         ) {
             return null;
         }
+
         throw error;
     }
 };
 
 // ============================================================
-// GET ALL USERS (Admin / Moderator)
+// GET ALL USERS
 // ============================================================
 
 export const getAllUsers = async () => {
     try {
         const response = await api.get(usersApi);
+
         return response.data;
     } catch (error) {
-        console.error('Error getting all users:', error);
+        console.error(
+            'Error getting all users:',
+            error,
+        );
+
         return null;
     }
 };
@@ -416,18 +451,27 @@ export const getAllUsers = async () => {
 // GET USER BY ID
 // ============================================================
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (
+    userId: string,
+) => {
     try {
-        const response = await api.get(`${usersApi}/${userId}`);
+        const response = await api.get(
+            `${usersApi}/${userId}`,
+        );
+
         return response.data;
     } catch (error) {
-        console.error('Error getting user:', error);
+        console.error(
+            'Error getting user:',
+            error,
+        );
+
         return null;
     }
 };
 
 // ============================================================
-// PATCH USER ROLE (Admin only)
+// PATCH USER ROLE
 // ============================================================
 
 export const patchUserRole = async (
@@ -437,17 +481,18 @@ export const patchUserRole = async (
     try {
         const response = await api.patch(
             `${usersApi}/role/${userId}`,
-            { role: newRole },
             {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                role: newRole,
             },
         );
 
         return response.data;
     } catch (error) {
-        console.error('Error updating user role:', error);
+        console.error(
+            'Error updating user role:',
+            error,
+        );
+
         return null;
     }
 };
@@ -456,17 +501,21 @@ export const patchUserRole = async (
 // DELETE USER
 // ============================================================
 
-export const deleteUserById = async (userId: string) => {
+export const deleteUserById = async (
+    userId: string,
+) => {
     try {
-        const response = await api.delete(`${usersApi}/${userId}`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await api.delete(
+            `${usersApi}/${userId}`,
+        );
 
         return response.data;
     } catch (error) {
-        console.error('Error deleting user:', error);
+        console.error(
+            'Error deleting user:',
+            error,
+        );
+
         throw error;
     }
 };
@@ -482,18 +531,21 @@ export const changeUserPassword = async (
     try {
         await api.patch(
             `${usersApi}/password/${userId}`,
-            { newPassword },
             {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                newPassword,
             },
         );
 
-        showSuccess('הסיסמה שונתה בהצלחה');
+        showSuccess(
+            'הסיסמה שונתה בהצלחה',
+        );
+
         return true;
     } catch (error) {
-        console.error('שגיאה בשינוי סיסמה:', error);
+        console.error(
+            'שגיאה בשינוי סיסמה:',
+            error,
+        );
 
         showError(
             extractErrorMessage(
@@ -507,7 +559,7 @@ export const changeUserPassword = async (
 };
 
 // ============================================================
-// PATCH USER STATUS (online / offline)
+// PATCH USER STATUS
 // ============================================================
 
 export const patchUserStatus = async (
@@ -517,21 +569,29 @@ export const patchUserStatus = async (
     try {
         const response = await api.patch(
             `${usersApi}/status/${userId}`,
-            { status },
+            {
+                status,
+            },
         );
 
         return response.data;
     } catch (error) {
-        console.error('Error updating status:', error);
+        console.error(
+            'Error updating status:',
+            error,
+        );
+
         throw error;
     }
 };
 
 // ============================================================
-// CUSTOMER PROFILE BY SLUG (Public)
+// CUSTOMER PROFILE BY SLUG
 // ============================================================
 
-export const getCustomerProfileBySlug = async (slug: string) => {
+export const getCustomerProfileBySlug = async (
+    slug: string,
+) => {
     try {
         const response = await api.get(
             `${usersApi}/customer/${slug}`,
@@ -549,7 +609,7 @@ export const getCustomerProfileBySlug = async (slug: string) => {
 };
 
 // ============================================================
-// CHECK SLUG AVAILABILITY (Public)
+// CHECK SLUG AVAILABILITY
 // ============================================================
 
 export const checkSlugAvailability = async (
@@ -562,13 +622,17 @@ export const checkSlugAvailability = async (
 
         return response.data.available;
     } catch (error) {
-        console.error('Error checking slug availability:', error);
+        console.error(
+            'Error checking slug availability:',
+            error,
+        );
+
         throw error;
     }
 };
 
 // ============================================================
-// FORGOT PASSWORD (Public)
+// FORGOT PASSWORD
 // ============================================================
 
 export const forgotPassword = async (
@@ -576,14 +640,16 @@ export const forgotPassword = async (
 ): Promise<string> => {
     const { data } = await api.post(
         `${usersApi}/forgot-password`,
-        { email },
+        {
+            email,
+        },
     );
 
     return data.message;
 };
 
 // ============================================================
-// RESET PASSWORD (Public)
+// RESET PASSWORD
 // ============================================================
 
 export const resetPassword = async (
@@ -593,14 +659,17 @@ export const resetPassword = async (
 ): Promise<string> => {
     const { data } = await api.post(
         `${usersApi}/reset-password/${token}`,
-        { email, password },
+        {
+            email,
+            password,
+        },
     );
 
     return data.message;
 };
 
 // ============================================================
-// UPDATE ACCOUNT STATUS (Admin only)
+// UPDATE ACCOUNT STATUS
 // ============================================================
 
 export const updateAccountStatus = async (
@@ -609,17 +678,22 @@ export const updateAccountStatus = async (
 ) => {
     const response = await api.patch(
         `${usersApi}/account-status/${userId}`,
-        { accountStatus },
+        {
+            accountStatus,
+        },
     );
 
     return response.data;
 };
 
 // ============================================================
-// UPDATE USER PERMISSION (Admin only)
+// UPDATE USER PERMISSION
 // ============================================================
 
-const permissionEndpoints: Record<UserPermission, string> = {
+const permissionEndpoints: Record<
+    UserPermission,
+    string
+> = {
     canLogin: 'login',
     canCreatePosts: 'create-posts',
     canSendMessages: 'messages',
@@ -634,17 +708,16 @@ export const updateUserPermission = async (
     enabled: boolean,
 ): Promise<UpdatePermissionResponse> => {
     try {
-        const endpoint = permissionEndpoints[permission];
+        const endpoint =
+            permissionEndpoints[permission];
 
-        const response = await api.patch<UpdatePermissionResponse>(
-            `${usersApi}/permissions/${userId}/${endpoint}`,
-            { enabled },
-            {
-                headers: {
-                    'Content-Type': 'application/json',
+        const response =
+            await api.patch<UpdatePermissionResponse>(
+                `${usersApi}/permissions/${userId}/${endpoint}`,
+                {
+                    enabled,
                 },
-            },
-        );
+            );
 
         return response.data;
     } catch (error) {
@@ -664,20 +737,23 @@ export const updateUserPermission = async (
 /**
  * POST /users/logout
  *
- * الباك إند:
- *  - يحوّل المستخدم إلى offline (إن كان التوكن صالحاً)
- *  - يمسح HttpOnly cookie
- *
- * حتى لو فشل الطلب، نعتبر العملية ناجحة من ناحية الواجهة
- * لأن الكوكي ستنتهي عند إغلاق الجلسة على أي حال.
- * لكن نعيد boolean لتتمكن الواجهة من القرار.
+ * Backend:
+ * - optionally sets user offline
+ * - clears the HttpOnly authentication cookie
  */
 export const logoutUser = async (): Promise<boolean> => {
     try {
-        await api.post(`${usersApi}/logout`);
+        await api.post(
+            `${usersApi}/logout`,
+        );
+
         return true;
     } catch (error) {
-        console.error('Logout request failed:', error);
+        console.error(
+            'Logout request failed:',
+            error,
+        );
+
         return false;
     }
 };

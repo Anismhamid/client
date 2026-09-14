@@ -1,5 +1,4 @@
 import { useEffect, useState, FunctionComponent, useMemo, memo } from 'react';
-import axios from 'axios';
 import {
     Box,
     Typography,
@@ -23,8 +22,8 @@ import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import { useChat } from '../../../hooks/useChat';
 import { useTranslation } from 'react-i18next';
 import { formatTime, getUserName } from './helpers/functions';
+import api from '../../../services/api';
 
-const api = import.meta.env.VITE_API_URL;
 
 interface ChatListProps {
     currentUser: {
@@ -33,7 +32,6 @@ interface ChatListProps {
         email: string;
         role: string;
     };
-    token: string;
     onSelectChat: (user: UserMessage) => void;
     selectedUserId?: string;
 }
@@ -45,7 +43,6 @@ interface Conversation {
 
 const ChatList: FunctionComponent<ChatListProps> = ({
     currentUser,
-    token,
     onSelectChat,
     selectedUserId,
 }) => {
@@ -65,9 +62,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
         const loadConversations = async () => {
             try {
                 setLoading(true);
-                const res = await axios.get(`${api}/messages/conversations`, {
-                    headers: { Authorization: token },
-                });
+                const res = await api.get(`/messages/conversations`);
 
                 const conversationsWithStatus = res.data.conversations.map(
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,7 +88,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             }
         };
         loadConversations();
-    }, [currentUser._id, token]);
+    }, [currentUser._id]);
 
     const filteredConversations = useMemo(() => {
         return conversations

@@ -21,7 +21,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import { useUser } from '../../../hooks/useUSer';
 
 interface AccountMenuProps {
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {

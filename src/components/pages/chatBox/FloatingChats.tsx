@@ -36,10 +36,7 @@ import MiniChat from './MiniChat';
 import BlockButton from '../../reports/BlockButton';
 import ReportModal from '../../reports/ReportModal';
 
-import {
-    showSuccess,
-    showError,
-} from '../../../atoms/toasts/ReactToast';
+import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 
 import { deleteConversation } from '../../../services/messages';
 
@@ -48,13 +45,8 @@ const FloatingChats = () => {
     // CHAT WINDOW
     // ======================================================
 
-    const {
-        chats,
-        minimizeChat,
-        closeChat,
-        clearChats,
-        openChat,
-    } = useChatWindow();
+    const { chats, minimizeChat, closeChat, clearChats, openChat } =
+        useChatWindow();
 
     // ======================================================
     // CHAT CONTEXT
@@ -66,11 +58,11 @@ const FloatingChats = () => {
     // MENU STATE
     // ======================================================
 
-    const [optionsAnchor, setOptionsAnchor] =
-        useState<null | HTMLElement>(null);
+    const [optionsAnchor, setOptionsAnchor] = useState<null | HTMLElement>(
+        null,
+    );
 
-    const [optionsUserId, setOptionsUserId] =
-        useState<string | null>(null);
+    const [optionsUserId, setOptionsUserId] = useState<string | null>(null);
 
     // ======================================================
     // REPORT STATE
@@ -82,36 +74,33 @@ const FloatingChats = () => {
     // DELETE STATE
     // ======================================================
 
-    const [isDeletingConversation, setIsDeletingConversation] =
-        useState(false);
+    const [isDeletingConversation, setIsDeletingConversation] = useState(false);
 
     // ======================================================
     // AUTH / I18N / THEME
     // ======================================================
 
-    const { auth } = useUser();
+    const { auth, isAuthLoading, isLoggedIn } = useUser();
 
     const { t } = useTranslation();
 
     const theme = useTheme();
-
-    const token = localStorage.getItem('token') ?? '';
 
     // ======================================================
     // CLEAR CHATS WHEN LOGGED OUT
     // ======================================================
 
     useEffect(() => {
-        if (!auth || !token) {
-            clearChats?.();
+        if (!isAuthLoading && !isLoggedIn) {
+            clearChats();
         }
-    }, [auth, token, clearChats]);
+    }, [clearChats, isAuthLoading, isLoggedIn]);
 
     // ======================================================
     // NO AUTH
     // ======================================================
 
-    if (!auth || !token) {
+    if (isAuthLoading || !isLoggedIn || !auth?._id) {
         return null;
     }
 
@@ -207,14 +196,10 @@ const FloatingChats = () => {
             // ==================================================
 
             showSuccess(
-                t('messages.conversationDeleted') ||
-                    'Conversation deleted',
+                t('messages.conversationDeleted') || 'Conversation deleted',
             );
         } catch (error) {
-            console.error(
-                'Failed to delete conversation:',
-                error,
-            );
+            console.error('Failed to delete conversation:', error);
 
             showError(
                 t('messages.conversationDeleteFailed') ||
@@ -310,9 +295,7 @@ const FloatingChats = () => {
                         {chat.minimized ? (
                             <MiniChat
                                 user={chat.user}
-                                onOpen={() =>
-                                    openChat(chat.user)
-                                }
+                                onOpen={() => openChat(chat.user)}
                             />
                         ) : (
                             /* ===================================== */
@@ -367,13 +350,11 @@ const FloatingChats = () => {
 
                                         alignItems: 'center',
 
-                                        justifyContent:
-                                            'space-between',
+                                        justifyContent: 'space-between',
 
                                         px: 1.5,
 
-                                        bgcolor:
-                                            'background.paper',
+                                        bgcolor: 'background.paper',
 
                                         borderBottom: 1,
 
@@ -382,8 +363,7 @@ const FloatingChats = () => {
                                         flexShrink: 0,
 
                                         boxShadow: `0 2px 10px ${alpha(
-                                            theme.palette.common
-                                                .black,
+                                            theme.palette.common.black,
                                             0.04,
                                         )}`,
                                     }}
@@ -394,25 +374,17 @@ const FloatingChats = () => {
 
                                     <Tooltip
                                         title={
-                                            t(
-                                                'messages.options',
-                                            ) ||
-                                            'Options'
+                                            t('messages.options') || 'Options'
                                         }
                                     >
                                         <IconButton
                                             aria-label={
-                                                t(
-                                                    'messages.options',
-                                                ) ||
+                                                t('messages.options') ||
                                                 'Conversation options'
                                             }
                                             size='small'
                                             onClick={(event) =>
-                                                handleOptionsOpen(
-                                                    event,
-                                                    userId,
-                                                )
+                                                handleOptionsOpen(event, userId)
                                             }
                                         >
                                             <MoreVertIcon />
@@ -432,14 +404,8 @@ const FloatingChats = () => {
                                         }}
                                     >
                                         <Avatar
-                                            src={
-                                                chat.user
-                                                    .image?.url
-                                            }
-                                            alt={
-                                                chat.user
-                                                    .name?.first
-                                            }
+                                            src={chat.user.image?.url}
+                                            alt={chat.user.name?.first}
                                             sx={{
                                                 width: 36,
                                                 height: 36,
@@ -447,14 +413,8 @@ const FloatingChats = () => {
                                             }}
                                         />
 
-                                        <Typography
-                                            fontWeight={700}
-                                            noWrap
-                                        >
-                                            {
-                                                chat.user
-                                                    .name?.first
-                                            }
+                                        <Typography fontWeight={700} noWrap>
+                                            {chat.user.name?.first}
                                         </Typography>
                                     </Box>
 
@@ -467,24 +427,18 @@ const FloatingChats = () => {
 
                                         <Tooltip
                                             title={
-                                                t(
-                                                    'messages.minimize',
-                                                ) ||
+                                                t('messages.minimize') ||
                                                 'Minimize'
                                             }
                                         >
                                             <IconButton
                                                 aria-label={
-                                                    t(
-                                                        'messages.minimize',
-                                                    ) ||
+                                                    t('messages.minimize') ||
                                                     'Minimize chat'
                                                 }
                                                 size='small'
                                                 onClick={() =>
-                                                    minimizeChat(
-                                                        userId,
-                                                    )
+                                                    minimizeChat(userId)
                                                 }
                                             >
                                                 <ExpandMoreIcon />
@@ -494,23 +448,16 @@ const FloatingChats = () => {
                                         {/* CLOSE */}
 
                                         <Tooltip
-                                            title={
-                                                t('common.close') ||
-                                                'Close'
-                                            }
+                                            title={t('common.close') || 'Close'}
                                         >
                                             <IconButton
                                                 aria-label={
-                                                    t(
-                                                        'common.close',
-                                                    ) ||
+                                                    t('common.close') ||
                                                     'Close chat'
                                                 }
                                                 size='small'
                                                 onClick={() =>
-                                                    closeChat(
-                                                        userId,
-                                                    )
+                                                    closeChat(userId)
                                                 }
                                             >
                                                 <CloseIcon />
@@ -536,15 +483,9 @@ const FloatingChats = () => {
                                             ...mapUserMessageToChatBox(
                                                 chat.user,
                                             ),
-                                            status: Boolean(
-                                                chat.user
-                                                    .status,
-                                            ),
+                                            status: Boolean(chat.user.status),
                                         }}
-                                        token={token}
-                                        initialMessage={
-                                            chat.initialMessage
-                                        }
+                                        initialMessage={chat.initialMessage}
                                     />
                                 </Box>
                             </Paper>
@@ -603,12 +544,8 @@ const FloatingChats = () => {
                 {optionsUserId && (
                     <>
                         <MenuItem
-                            onClick={() =>
-                                void handleDeleteConversation()
-                            }
-                            disabled={
-                                isDeletingConversation
-                            }
+                            onClick={() => void handleDeleteConversation()}
+                            disabled={isDeletingConversation}
                             sx={{
                                 py: 1.25,
 
@@ -616,8 +553,7 @@ const FloatingChats = () => {
 
                                 '&:hover': {
                                     bgcolor: alpha(
-                                        theme.palette.error
-                                            .main,
+                                        theme.palette.error.main,
                                         0.06,
                                     ),
                                 },
@@ -633,22 +569,17 @@ const FloatingChats = () => {
 
                             <ListItemText
                                 primary={
-                                    t(
-                                        'messages.deleteConversation',
-                                    ) ||
+                                    t('messages.deleteConversation') ||
                                     'Delete conversation'
                                 }
                                 secondary={
-                                    t(
-                                        'messages.deleteConversationHint',
-                                    ) ||
+                                    t('messages.deleteConversationHint') ||
                                     'Delete all messages'
                                 }
                                 slotProps={{
                                     secondary: {
                                         sx: {
-                                            fontSize:
-                                                '0.72rem',
+                                            fontSize: '0.72rem',
                                         },
                                     },
                                 }}
@@ -669,10 +600,7 @@ const FloatingChats = () => {
                         py: 1.25,
 
                         '&:hover': {
-                            bgcolor: alpha(
-                                theme.palette.error.main,
-                                0.04,
-                            ),
+                            bgcolor: alpha(theme.palette.error.main, 0.04),
                         },
                     }}
                 >
@@ -685,10 +613,7 @@ const FloatingChats = () => {
                     </ListItemIcon>
 
                     <ListItemText
-                        primary={
-                            t('modals.report.reportThis') ||
-                            'Report user'
-                        }
+                        primary={t('modals.report.reportThis') || 'Report user'}
                         secondary={
                             t('messages.reportHint') ||
                             'Report inappropriate behavior'
@@ -725,8 +650,7 @@ const FloatingChats = () => {
                                     return;
                                 }
 
-                                const blockedUserId =
-                                    optionsUserId;
+                                const blockedUserId = optionsUserId;
 
                                 setOptionsAnchor(null);
 

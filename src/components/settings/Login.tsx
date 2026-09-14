@@ -250,10 +250,6 @@ const Login: FunctionComponent<LoginProps> = ({ mode }) => {
      * Check existing session
      * ============================================================
      *
-     * We no longer check:
-     *
-     * localStorage.getItem('token')
-     *
      * The browser automatically sends the HttpOnly cookie to the
      * backend.
      */

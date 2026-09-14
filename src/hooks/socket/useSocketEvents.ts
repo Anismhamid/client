@@ -1,28 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useEffect } from 'react';
-// import {useTranslation} from "react-i18next";
 import { useNavigate } from 'react-router-dom';
+
 import { showNewPostToast } from '../../atoms/bootStrapToast/SocketToast';
 import { showInfo } from '../../atoms/toasts/ReactToast';
+
 import { useUser } from '../useUSer';
-import { UserRegister } from '../../interfaces/User';
 import RoleType from '../../interfaces/UserType';
 import socket from '../../socket/globalSocket';
+
 import useNotificationSound from './useNotificationSound';
+
 import { Posts } from '../../interfaces/Posts';
 import { productsPathes } from '../../routes/routes';
+
 import { useChat } from '../useChat';
+
 import { LocalMessage } from '../../interfaces/chat/localMessage';
+import { User } from '../../interfaces/User';
 
 const useSocketEvents = () => {
-    const { auth } = useUser();
+    const { auth, isLoggedIn, isAuthLoading } = useUser();
 
     const userId = auth?._id;
     const userRole = auth?.role;
-    const userName = auth?.name?.first;
 
     const navigate = useNavigate();
-    const { playNotificationSound, showNotification } = useNotificationSound();
+
+    const {
+        playNotificationSound,
+        showNotification,
+    } = useNotificationSound();
+
     const {
         currentChatId,
         updateMessageStatus,
@@ -31,17 +41,35 @@ const useSocketEvents = () => {
         messages,
     } = useChat();
 
-    useEffect(() => {
-        if (!currentChatId || !userId || !messages) return;
+    // ======================================================
+    // MARK MESSAGES AS SEEN
+    // ======================================================
 
-        const userMessages = messages[currentChatId] || [];
+    useEffect(() => {
+        if (
+            !isLoggedIn ||
+            isAuthLoading ||
+            !currentChatId ||
+            !userId ||
+            !messages
+        ) {
+            return;
+        }
+
+        const userMessages =
+            messages[currentChatId] || [];
 
         userMessages.forEach((msg) => {
-            if (msg.from?._id !== userId && msg.status === 'sent') {
-                // تحديث محليًا
-                updateMessageStatus(currentChatId, msg._id, 'seen');
+            if (
+                msg.from?._id !== userId &&
+                msg.status === 'sent'
+            ) {
+                updateMessageStatus(
+                    currentChatId,
+                    msg._id,
+                    'seen',
+                );
 
-                // إرسال إلى السيرفر
                 socket.emit('message:seen', {
                     messageId: msg._id,
                     from: userId,
@@ -49,166 +77,303 @@ const useSocketEvents = () => {
                 });
             }
         });
-    }, [currentChatId, messages, userId, updateMessageStatus]);
+    }, [
+        currentChatId,
+        messages,
+        userId,
+        updateMessageStatus,
+        isLoggedIn,
+        isAuthLoading,
+    ]);
+
+    // ======================================================
+    // SOCKET CONNECTION
+    // ======================================================
 
     useEffect(() => {
-        if (!userId) return;
+        if (
+            !isLoggedIn ||
+            isAuthLoading ||
+            !userId
+        ) {
+            return;
+        }
 
-        const isAdminOrModerator =
-            userRole === RoleType.Admin || userRole === RoleType.Moderator;
+        // --------------------------------------------------
+        // IMPORTANT:
+        // Do NOT send userId / role / name through socket.auth.
+        //
+        // Authentication is now handled by the HttpOnly cookie.
+        // --------------------------------------------------
 
-        // הגדרת נתוני התחברות
-        socket.auth = {
-            userId: userId,
-            role: userRole,
-            name: userName,
-            withCredentials: true,
-        };
-
-        // התחברות לחדר אדמין
         const handleConnect = () => {
-            socket.emit('join-user', {
-                userId: userId,
-            });
-
-            if (isAdminOrModerator)
-                socket.emit('admins', { userId: userId, role: userRole });
+            console.log(
+                '🔌 Socket connected:',
+                socket.id,
+            );
         };
 
-        socket.on('connect', handleConnect);
+        const handleError = (err: any) => {
+            console.error(
+                '❌ Socket error:',
+                err,
+            );
+        };
 
-        // התחברות אם לא מחובר
-        if (!socket.connected) socket.connect();
-
-        // הודעת שגיאה
-        const handleError = (err: any) => console.error('Socket error:', err);
-
-        // ניתוק
-        // const handleDisconnect = (reason: any) => {
-        //     console.warn('Socket disconnected:', reason);
-        //     setTimeout(() => {
-        //         if (!socket.connected) socket.connect();
-        //     }, 1000);
-        // };
+        const handleConnectError = (err: any) => {
+            console.error(
+                '❌ Socket connection error:',
+                err?.message || err,
+            );
+        };
 
         const handleDisconnect = (reason: any) => {
-            console.warn('Socket disconnected:', reason);
+            console.warn(
+                '🔌 Socket disconnected:',
+                reason,
+            );
         };
 
-        // משתמש חדש נרשם
-        const handleUserRegistered = (user: UserRegister) => {
-            if (userRole === RoleType.Admin) {
-                playNotificationSound();
-                showInfo(`${user.email} ${user.role} مستخدم جديد تم تسجيله`);
-                showNotification(
-                    `${user.email} ${user.role} مستخدم جديد تم تسجيله`,
-                );
+        // ==================================================
+        // NEW USER REGISTERED
+        // ==================================================
+
+        const handleUserRegistered = (
+            user: User,
+        ) => {
+            if (userRole !== RoleType.Admin) {
+                return;
             }
+
+            playNotificationSound();
+
+            const message =
+                `${user.email} ${user.role} مستخدم جديد تم تسجيله`;
+
+            showInfo(message);
+            showNotification(message);
         };
 
-        // משתמש התחבר
-        const handleUserLoggedIn = (user: UserRegister) => {
-            if (userRole === RoleType.Admin) {
-                playNotificationSound();
+        // ==================================================
+        // USER LOGGED IN
+        // ==================================================
 
-                const msg =
-                    user.role === RoleType.Admin
-                        ? `${user.email} משתמש אדמין התחבר`
-                        : user.role === RoleType.Moderator
-                          ? `${user.email} משתמש מנחה התחבר`
-                          : `${user.email} משתמש התחבר`;
-                showInfo(msg);
-                showNotification(msg);
+        const handleUserLoggedIn = (
+            user: User,
+        ) => {
+            if (userRole !== RoleType.Admin) {
+                return;
             }
+
+            playNotificationSound();
+
+            const message =
+                user.role === RoleType.Admin
+                    ? `${user.email} مستخدم أدمن سجل الدخول`
+                    : user.role === RoleType.Moderator
+                      ? `${user.email} مستخدم مشرف سجل الدخول`
+                      : `${user.email} مستخدم سجل الدخول`;
+
+            showInfo(message);
+            showNotification(message);
         };
 
-        const handleNewProduct = (newPost: Posts) => {
+        // ==================================================
+        // NEW PRODUCT
+        // ==================================================
+
+        const handleNewProduct = (
+            newPost: Posts,
+        ) => {
             playNotificationSound();
 
             showNewPostToast({
                 navigate,
-                navigateTo: `${productsPathes.postsDetails}/${newPost.category}/${newPost.brand}/${newPost._id}`,
+                navigateTo:
+                    `${productsPathes.postsDetails}/` +
+                    `${newPost.category}/` +
+                    `${newPost.brand}/` +
+                    `${newPost._id}`,
                 post: newPost,
             });
 
-            showNotification(`تم إضافة منشور جديد: ${newPost.product_name}`);
+            showNotification(
+                `تم إضافة منشور جديد: ${newPost.product_name}`,
+            );
         };
 
-        // const messageReceived = (msg: any) => {
-        // 	// إذا المرسل هو المستخدم الحالي
-        // 	if (msg.to?._id === auth._id) {
-        // 		playNotificationSound("messageReceived");
-        // 		if (addMessageForUser !== msg.chatId)
-        // 			new Notification(`رسالة من ${msg.from?.name.first}`, {
-        // 				body: msg.text,
-        // 			});
-        // 	}
-        // };
-        const messageReceived = (msg: LocalMessage) => {
+        // ==================================================
+        // MESSAGE RECEIVED
+        // ==================================================
+
+        const messageReceived = (
+            msg: LocalMessage,
+        ) => {
+            // Ignore messages sent by current user
             if (msg.from?._id === userId) {
                 return;
             }
 
-            // const otherUserId =
-            //     msg.from?._id === userId ? msg.to?._id : msg.from?._id;
+            const otherUserId =
+                msg.from?._id;
 
-            const otherUserId = msg.from?._id;
+            if (!otherUserId) {
+                return;
+            }
 
-            addMessageForUser(otherUserId as string, msg);
+            addMessageForUser(
+                otherUserId,
+                msg,
+            );
 
-            // showInfo(`لديك رسالة جديده ${msg.from?.name?.first ?? 'user'}`);
+            setUnreadForUser(
+                otherUserId,
+                (prev) => (prev || 0) + 1,
+            );
 
-            if (otherUserId) {
-                // setUnreadForUser(
-                //     otherUserId as string,
-                //     (prev) => (prev || 0) + 1,
-                // );
+            playNotificationSound(
+                'messageReceived',
+            );
 
-                setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
+            showNotification(
+                `رسالة من ${
+                    msg.from?.name?.first ??
+                    'مستخدم'
+                }`,
+            );
+        };
 
-                playNotificationSound('messageReceived');
+        // ==================================================
+        // MESSAGE SENT
+        // ==================================================
 
-                showNotification(
-                    `رسالة من ${msg.from?.name?.first ?? 'مستخدم'}`,
+        const messageSent = (
+            msg: any,
+        ) => {
+            if (msg.from?._id === userId) {
+                playNotificationSound(
+                    'messageSent',
                 );
             }
         };
 
-        const messageSent = (msg: any) => {
-            if (msg.from?._id === userId) {
-                playNotificationSound('messageSent');
-            }
-        };
+        // ==================================================
+        // REGISTER EVENTS
+        // ==================================================
 
-        // חיבור מאזינים
-        socket.on('error', handleError);
-        socket.on('disconnect', handleDisconnect);
-        socket.on('message:sent', messageSent);
-        socket.on('message:received', messageReceived);
-        socket.on('user:registered', handleUserRegistered);
-        socket.on('user:newUserLoggedIn', handleUserLoggedIn);
-        socket.on('product:new', handleNewProduct);
+        socket.on(
+            'connect',
+            handleConnect,
+        );
 
-        // ניקוי מאזינים
+        socket.on(
+            'connect_error',
+            handleConnectError,
+        );
+
+        socket.on(
+            'error',
+            handleError,
+        );
+
+        socket.on(
+            'disconnect',
+            handleDisconnect,
+        );
+
+        socket.on(
+            'message:sent',
+            messageSent,
+        );
+
+        socket.on(
+            'message:received',
+            messageReceived,
+        );
+
+        socket.on(
+            'user:registered',
+            handleUserRegistered,
+        );
+
+        socket.on(
+            'user:newUserLoggedIn',
+            handleUserLoggedIn,
+        );
+
+        socket.on(
+            'product:new',
+            handleNewProduct,
+        );
+
+        // ==================================================
+        // CONNECT
+        // ==================================================
+
+        if (!socket.connected) {
+            socket.connect();
+        }
+
+        // ==================================================
+        // CLEANUP
+        // ==================================================
+
         return () => {
-            socket.off('connect', handleConnect);
-            socket.off('error', handleError);
-            socket.off('disconnect', handleDisconnect);
-            socket.off('message:sent', messageSent);
-            socket.off('message:received', messageReceived);
-            socket.off('user:registered', handleUserRegistered);
-            socket.off('user:newUserLoggedIn', handleUserLoggedIn);
-            socket.off('product:new', handleNewProduct);
+            socket.off(
+                'connect',
+                handleConnect,
+            );
+
+            socket.off(
+                'connect_error',
+                handleConnectError,
+            );
+
+            socket.off(
+                'error',
+                handleError,
+            );
+
+            socket.off(
+                'disconnect',
+                handleDisconnect,
+            );
+
+            socket.off(
+                'message:sent',
+                messageSent,
+            );
+
+            socket.off(
+                'message:received',
+                messageReceived,
+            );
+
+            socket.off(
+                'user:registered',
+                handleUserRegistered,
+            );
+
+            socket.off(
+                'user:newUserLoggedIn',
+                handleUserLoggedIn,
+            );
+
+            socket.off(
+                'product:new',
+                handleNewProduct,
+            );
         };
     }, [
         userId,
         userRole,
-        userName,
         navigate,
         playNotificationSound,
         addMessageForUser,
         setUnreadForUser,
         showNotification,
+        isLoggedIn,
+        isAuthLoading,
     ]);
 };
 

@@ -5,18 +5,16 @@ import { LocalMessage } from '../../../../interfaces/chat/localMessage';
 import { BaseUser } from '../../../../interfaces/chat/chatUser';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import socket from '../../../../socket/globalSocket';
-import axios from 'axios';
 import { Typography } from '@mui/material';
 import { UserMessage } from '../../../../interfaces/chat/usersMessages';
-
-const api = import.meta.env.VITE_API_URL;
+import api from '../../../../services/api';
 
 // تعريف نوع الحالة
 type MessageStatus = 'seen' | 'delivered' | 'sent' | 'pending' | 'error';
 
 export const getStatusIcon = (status: MessageStatus) => {
     console.log('Getting status icon for:', status);
-    
+
     switch (status) {
         case 'seen':
             return <DoneAllIcon sx={{ fontSize: 14, color: '#2196f3' }} />;
@@ -86,7 +84,6 @@ export const sendMessage = async (
     setInput: Dispatch<SetStateAction<string>>,
     chatContainerRef: RefObject<HTMLDivElement | null>,
     addMessageForUser: (userId: string, msg: LocalMessage) => void,
-    token: string,
     setMessagesForUser?: (
         userId: string,
         updater: (prev: LocalMessage[]) => LocalMessage[],
@@ -116,7 +113,7 @@ export const sendMessage = async (
     // إضافة الرسالة محلياً
     addMessageForUser(otherUser?._id ?? '', tempMessage);
     setInput('');
-    
+
     // إيقاف حالة الكتابة
     if (socket) {
         socket.emit('user:stopTyping', {
@@ -124,23 +121,17 @@ export const sendMessage = async (
             from: currentUser._id,
         });
     }
-    
+
     // التمرير للأسفل
     setTimeout(() => scrollToBottom('smooth', chatContainerRef), 0);
 
     try {
-        const response = await axios.post(
-            `${api}/messages`,
-            { 
-                toUserId: otherUser._id, 
-                message: messageText, 
-                tempId 
-            },
-            { 
-                headers: { Authorization: token } 
-            },
-        );
-        
+        const response = await api.post('/messages', {
+            toUserId: otherUser._id,
+            message: messageText,
+            tempId,
+        });
+
         console.log('Message sent successfully:', response.data);
 
         // الباك اند مرة عم يرجع الرسالة مباشرة، ومرة ملفوفة جوا { message }
@@ -150,42 +141,54 @@ export const sendMessage = async (
 
         if (setMessagesForUser) {
             if (savedMessage?._id) {
-                setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
-                    return prev.map((m): LocalMessage => {
-                        if (m.tempId === tempId) {
-                            return {
-                                ...savedMessage,
-                                status: 'sent' as const,
-                                tempId: tempId,
-                            };
-                        }
-                        return m;
-                    });
-                });
+                setMessagesForUser(
+                    otherUser?._id ?? '',
+                    (prev: LocalMessage[]): LocalMessage[] => {
+                        return prev.map((m): LocalMessage => {
+                            if (m.tempId === tempId) {
+                                return {
+                                    ...savedMessage,
+                                    status: 'sent' as const,
+                                    tempId: tempId,
+                                };
+                            }
+                            return m;
+                        });
+                    },
+                );
             } else {
                 // الطلب نجح بس بلا _id بالرد - منعلّم كـ sent بدل ما تضل عالقة pending للأبد
-                console.warn('sendMessage: response has no _id, keeping tempId', response.data);
-                setMessagesForUser(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
-                    return prev.map((m): LocalMessage => {
-                        if (m.tempId === tempId) {
-                            return { ...m, status: 'sent' as const };
-                        }
-                        return m;
-                    });
-                });
+                console.warn(
+                    'sendMessage: response has no _id, keeping tempId',
+                    response.data,
+                );
+                setMessagesForUser(
+                    otherUser?._id ?? '',
+                    (prev: LocalMessage[]): LocalMessage[] => {
+                        return prev.map((m): LocalMessage => {
+                            if (m.tempId === tempId) {
+                                return { ...m, status: 'sent' as const };
+                            }
+                            return m;
+                        });
+                    },
+                );
             }
         }
     } catch (err) {
         console.error('Failed to send message:', err);
         // نعلّم الرسالة كخطأ بدل ما تضل عالقة على "pending" للأبد
-        setMessagesForUser?.(otherUser?._id ?? '', (prev: LocalMessage[]): LocalMessage[] => {
-            return prev.map((m): LocalMessage => {
-                if (m.tempId === tempId) {
-                    return { ...m, status: 'error' as const };
-                }
-                return m;
-            });
-        });
+        setMessagesForUser?.(
+            otherUser?._id ?? '',
+            (prev: LocalMessage[]): LocalMessage[] => {
+                return prev.map((m): LocalMessage => {
+                    if (m.tempId === tempId) {
+                        return { ...m, status: 'error' as const };
+                    }
+                    return m;
+                });
+            },
+        );
     }
 };
 

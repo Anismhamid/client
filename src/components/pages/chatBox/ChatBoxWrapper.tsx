@@ -21,7 +21,6 @@ interface ChatBoxWrapperProps {
 
 const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({ user }) => {
     const { auth } = useUser();
-    const token = localStorage.getItem('token');
 
     if (!auth?._id) return <Navigate to={path.Login} replace />;
 
@@ -41,7 +40,6 @@ const ChatBoxWrapper: FunctionComponent<ChatBoxWrapperProps> = ({ user }) => {
                 ...mapUserMessageToChatBox(user),
                 status: user.to.status,
             }}
-            token={token || ''}
         />
     );
 };
