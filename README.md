@@ -1,252 +1,266 @@
-# صفقة | E-Commerce C2C Marketplace
+# Safqa Marketplace | C2C Marketplace Frontend
 
-![React](https://img.shields.io/badge/React-19-blue?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6.0-purple?logo=vite)
-![Socket.io](https://img.shields.io/badge/Socket.io-4.0-black?logo=socket.io)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+A modern consumer-to-consumer marketplace frontend built with React, TypeScript, and Vite, designed to enable users to buy and sell products securely and effortlessly across multiple categories. The platform supports user authentication, real-time chat, ad management, product discovery, and role-based administration in a responsive, mobile-friendly experience.
 
-A C2C (Consumer-to-Consumer) marketplace that lets users list, sell, and buy products across categories like cars, electronics, real estate, and personal items — with real-time messaging, featured ads, and strong SEO.
+![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
+![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite)
+![Socket.io](https://img.shields.io/badge/Socket.io-4-010101?logo=socket.io)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-**Live:** [client-qqq1.vercel.app](https://client-qqq1.vercel.app) · **Backend:** [github.com/Anismhamid/server](https://github.com/Anismhamid/server)
+This client app connects to a backend API and event server to provide a complete marketplace experience for users, sellers, and administrators.
 
----
-
+Backend repository: [github.com/Anismhamid/server](https://github.com/Anismhamid/server)
 
 ## Table of Contents
 
-1. [Features](#features)
-2. [Tech Stack](#tech-stack)
-3. [Getting Started](#getting-started)
-4. [Environment Variables](#environment-variables)
-5. [Project Structure](#project-structure)
-6. [Routes](#routes)
-7. [SEO](#seo)
-8. [Contributing](#contributing)
-9. [License](#license)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Environment Variables](#environment-variables)
+- [Project Structure](#project-structure)
+- [Main Routes](#main-routes)
+- [Security & Stability Considerations](#security--stability-considerations)
+- [Contributing](#contributing)
+- [License](#license)
 
----
+## Overview
 
-## Features
+Safqa Marketplace is a feature-rich frontend for a C2C trading platform that helps people discover, list, and negotiate the sale of products in a trusted and streamlined way. It supports a wide variety of listings including:
 
-- **Product categories** — cars, motorcycles, trucks, electronics, home, garden, clothing, health, and more
-- **Role-based access** — Admin, Moderator, and Client permission levels
-- **Real-time messaging** — Socket.IO chat between buyers and sellers, with reply-to and message alerts, no personal contact info required
-- **Featured ads dashboard** — manage and activate promoted listings
-- **SEO-optimized** — clean URLs, dynamic sitemap, JSON-LD structured data, optimized meta tags
-- **Responsive UI** — MUI + Bootstrap 5, works on all screen sizes
-- **User profiles** — seller/buyer pages with ratings and listings
-- **Google OAuth** — social login support
+- Vehicles
+- Electronics
+- Home and garden items
+- Fashion and accessories
+- Health and beauty products
+- Everyday essentials and miscellaneous goods
 
----
+The frontend includes multiple user journeys, from browsing and filtering listings to messaging sellers, managing favorites, creating ads, and viewing profile pages. It is structured for both consumer usage and admin oversight.
+
+## Key Features
+
+- Responsive marketplace UI built with React and Material UI
+- Product categories and filtered browsing experience
+- Search and discovery flows for product listings
+- User registration and login system
+- Google OAuth login support
+- Real-time messaging with Socket.IO
+- Seller and buyer profile pages
+- Favorites and saved listings
+- Premium/featured ad management
+- Dark and light theme support
+- Localization support for multiple languages
+- Admin tools for moderation and user management
+- SEO-friendly pages and structured metadata
+- Mobile-ready architecture with Capacitor support
 
 ## Tech Stack
 
 ### Frontend
-| | |
+
+| Category | Technology |
 |---|---|
-| Framework | React 19 + Vite |
-| Language | TypeScript 5 |
-| Routing | React Router DOM v7 |
-| Styling | Material UI (MUI), Bootstrap 5, Font Awesome |
-| Real-time | Socket.IO Client |
-| Forms | Formik + Yup |
+| Framework | React 19 |
+| Build Tool | Vite |
+| Language | TypeScript |
+| Routing | React Router DOM |
+| UI Library | Material UI + Bootstrap 5 |
+| Form Handling | Formik + Yup |
+| Real-time Communication | Socket.IO Client |
+| Charts | Recharts |
+| Icons | Font Awesome + Lucide |
+| Notifications | react-toastify |
+| Localization | react-i18next |
 
-### Backend
-| | |
+### Additional Integrations
+
+| Integration | Purpose |
 |---|---|
-| Runtime | Node.js + Express.js |
-| Database | MongoDB Atlas (Mongoose) |
-| Auth | JWT + bcryptjs + Google OAuth |
-| Security | Helmet, express-rate-limit |
-| Validation | Joi |
+| Capacitor | Android / hybrid app packaging |
+| Google OAuth | Social authentication |
+| PDF Rendering | Document generation and export |
+| Context + Hooks | State management and app logic |
 
----
+## Prerequisites
 
-flowchart LR
-    A[React 19 + Vite Frontend] --> B[REST API Calls]
-    A --> C[Socket.IO Client]
+Before running the project, make sure you have:
 
-    B --> D[Node.js + Express Backend]
-    C --> E[Socket.IO Server]
-
-    D --> F[MongoDB Atlas]
-    D --> G[JWT Auth]
-    D --> H[Google OAuth]
-
-    D --> I[Product Service]
-    D --> J[User Service]
-    D --> K[Message Service]
-    D --> L[Featured Ads Service]
-
-    E --> K
-    
+- Node.js 20 or newer
+- npm or yarn installed
+- A running backend service
+- Access to a MongoDB-powered backend or equivalent API service
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js v20.18 or higher
-- The [backend server](https://github.com/Anismhamid/server) running locally or deployed
-- MongoDB (local or Atlas)
-
-### Installation
+### 1) Clone the Repository
 
 ```bash
 git clone https://github.com/Anismhamid/client.git
 cd client
+```
+
+### 2) Install Dependencies
+
+```bash
 npm install
 ```
 
-### Development
+### 3) Configure Environment Variables
+
+Create a `.env` file in the root of the project and add the following values:
+
+```env
+VITE_API_URL=http://localhost:8209/api
+VITE_SOCKET_URL=http://localhost:8209
+VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+
+> If the backend is running on a different port, adjust the values accordingly.
+
+### 4) Run the App in Development Mode
 
 ```bash
 npm run dev
-# Client runs at http://localhost:5173
-# Backend expected at http://localhost:8209
 ```
 
-### Production
+The app should be available at:
+
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8209`
+
+### 5) Build for Production
 
 ```bash
 npm run build
 npm run preview
-# Preview runs at http://localhost:4173
 ```
-
----
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in your values:
-
-```env
-# Backend API base URL
-VITE_API_URL=http://localhost:8209/api
-
-# Socket.IO server URL (usually same as API)
-VITE_SOCKET_URL=http://localhost:8209
-
-# Google OAuth client ID
-VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
-```
-
----
+| Variable | Description |
+|---|---|
+| `VITE_API_URL` | Base URL for the backend API |
+| `VITE_SOCKET_URL` | Real-time Socket.IO server URL |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID used for login |
 
 ## Project Structure
 
-### Key Components
+```text
+client/
+├── public/                     # Static assets and public files
+├── src/
+│   ├── App.tsx                # Main app component
+│   ├── main.tsx               # React bootstrap entry
+│   ├── assets/                # Images, icons, and static resources
+│   ├── atoms/                 # Reusable small UI elements
+│   ├── components/            # Feature-rich UI components
+│   ├── context/               # App context providers
+│   ├── helpers/               # Utility functions
+│   ├── hooks/                 # Custom React hooks
+│   ├── interfaces/            # TypeScript type definitions
+│   ├── locales/               # Language files and localization logic
+│   ├── routes/                # Application routing configuration
+│   ├── services/              # API and integration services
+│   ├── socket/                # Socket.IO-related logic
+│   ├── index.css              # Core styling
+│   └── ...
+├── android/                   # Android project (Capacitor)
+├── package.json               # Dependencies and scripts
+├── vite.config.ts             # Vite configuration
+├── vercel.json                # Deployment config for Vercel
+├── tsconfig*.json             # TypeScript configuration
+├── README.md                  # Project documentation
+├── .gitignore                 # Ignored files
+└── LICENSE                    # License file
+```
 
-| Component | Description |
-|---|---|
-| `Navbar` | Category filters, search, auth menu |
-| `ProductCard` | Product image, price, contact seller, favorites |
-| `UserProfile` | Seller/buyer info, ratings, listings |
-| `MessagingPage` | Full messaging interface with reply support |
-| `ChatWindow` | Real-time Socket.IO chat window |
-| `AdminDashboard` | User and ad management for admins |
-| `FeaturedAdsDashboard` | Manage featured/promoted listings |
-| `HelpCenter` | SEO-optimized help pages |
+## Main Routes
 
-### Key Services
+### Core Pages
 
-| Service | Responsibility |
-|---|---|
-| `AuthService` | Login, register, JWT, Google OAuth |
-| `ProductService` | Product CRUD, categories |
-| `UserService` | Profiles, ratings |
-| `MessageService` | Send/receive messages, Socket.IO |
-| `FeaturedAdService` | Featured ad activation |
-
----
-
-## Routes
-
-### Main Pages
-
-| Path | Description |
+| Route | Description |
 |---|---|
 | `/` | Homepage |
-| `/login` | Login |
-| `/register` | Register |
+| `/login` | Login page |
+| `/register` | Registration page |
 | `/profile` | User profile |
-| `/adsDashboard` | Featured ads dashboard |
-| `/about` | About |
-| `/contact` | Contact |
-| `/blog` | Blog |
-| `/favorites` | Favorites |
+| `/messages` | Messaging center |
+| `/favorites` | Saved favorite listings |
+| `/about` | About page |
+| `/contact` | Contact page |
 | `/privacy-and-policy` | Privacy policy |
 | `/term-of-use` | Terms of use |
-| `/discounts-and-offers` | Discounts and offers |
+| `/discounts-and-offers` | Promotions and offers |
 
-### Categories
+### Product & Category Pages
 
-| Path | Description |
+| Route | Description |
 |---|---|
 | `/category/cars` | Cars |
 | `/category/motorcycles` | Motorcycles |
-| `/category/bikes` | Bicycles |
-| `/category/trucks` | Trucks |
-| `/category/electric-vehicles` | Electric vehicles |
-| `/category/house` | House |
-| `/category/garden` | Garden |
-| `/category/baby` | Baby products |
 | `/category/electronics` | Electronics |
-| `/category/kids` | Kids products |
-| `/category/beauty` | Beauty |
-| `/category/cleaning` | Cleaning |
-| `/category/health` | Health |
+| `/category/house` | Home items |
+| `/category/garden` | Garden and outdoor |
+| `/category/health` | Health and wellness |
+| `/category/beauty` | Beauty products |
+| `/category/cleaning` | Cleaning essentials |
 | `/category/watches` | Watches |
-| `/category/women-clothes` | Women's clothing |
-| `/category/men-clothes` | Men's clothing |
-| `/category/women-bags` | Women's bags |
+| `/category/women-clothes` | Women’s clothing |
+| `/category/men-clothes` | Men’s clothing |
 
-### Help Center
+### Admin & Management Pages
 
-| Path | Description |
+| Route | Description |
 |---|---|
-| `/help/selling` | Selling guidelines |
-| `/help/safety` | Safety instructions |
-| `/help/disputes` | Dispute resolution |
+| `/users-management` | Manage users |
+| `/admins` | Admin dashboard |
+| `/adsDashboard` | Featured ad dashboard |
+| `/reports` | Report management |
 
-### Users & Messaging
+## Security & Stability Considerations
 
-| Path | Description |
-|---|---|
-| `/users/customer/:slug` | Public user profile |
-| `/users-management` | User management (admin) |
-| `/admins` | Admin management |
-| `/messages` | Messages list |
-| `/messages/chat` | Chat window |
-| `/brands/:brand` | Brand page |
-| `/categories` | All categories |
+This project applies a good baseline of frontend security awareness. Key positive practices include:
 
----
+- Use of `withCredentials: true` for authenticated API requests
+- Centralized client API setup in `src/services/api.ts`
+- Automatic logout handling on 401 and 403 responses
+- Secure HTTP headers configured in `vercel.json`, including:
+  - Content-Security-Policy
+  - Strict-Transport-Security
+  - X-Content-Type-Options
+  - Referrer-Policy
+  - Permissions-Policy
 
-## SEO
+However, the strongest protection must still live in the backend. Frontend-only protections are not enough for production-grade security. Critical backend responsibilities include:
 
-- Clean, descriptive URLs for all product and category pages
-- Dynamic `sitemap.xml` for search engine indexing
-- JSON-LD structured data for rich snippets
-- Optimized `<title>` and `<meta name="description">` per page via React 19 native head tag hoisting
-- Help center pages targeting long-tail search queries
+- Proper authorization and role checks
+- Input validation and sanitization
+- Protection against CSRF when using cookies
+- JWT/session validation
+- Safe handling of user-generated content
 
----
+Overall, the application is structurally solid and suitable for a marketplace workflow, but production security should be treated as a layered approach: frontend + backend + secure deployment configuration.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m 'Add your feature'`
-4. Push to the branch: `git push origin feature/your-feature`
-5. Open a pull request
+Contributions are welcome. To propose changes:
 
----
+```bash
+git checkout -b feature/my-improvement
+# make your changes
+git add .
+git commit -m "Add my improvement"
+git push origin feature/my-improvement
+```
+
+Then open a pull request from your branch into the main branch.
 
 ## License
 
-MIT License — see [LICENSE](./LICENSE) for details.
+This project is licensed under the MIT License. See [Licencse.md](./Licencse.md) for more information.
 
 ---
 
-Made with ❤️ for the C2C community
+Built to support a modern, user-focused, secure, and scalable peer-to-peer marketplace experience.

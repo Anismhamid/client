@@ -92,7 +92,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 }) => {
     const { t } = useTranslation();
     const dir = handleRTL();
-    const { auth } = useUser();
+    const { auth, isLoggedIn } = useUser();
     const { openChat } = useChatWindow();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
@@ -159,16 +159,20 @@ const PostCard: FunctionComponent<PostCardProps> = ({
      * (mounted once in App.tsx) picks it up and renders it; PostCard never
      * needs to render a chat window itself. */
     const handleContactClick = () => {
-        const sellerUser = post.seller;
-        if (!sellerUser?._id) {
+        if (!isLoggedIn) {
             navigate('/login');
             return;
         }
-        if (!auth?._id) {
-            navigate('/login');
+
+        const seller = post.seller;
+
+        // لو الـ seller لسا مش populated (جاي كـ string ID فقط)
+        if (typeof seller === 'string' || !seller?._id) {
+            showError(t('postCard.sellerUnavailable'));
             return;
         }
-        openChat(sellerUser as UserMessage);
+
+        openChat(seller as UserMessage);
     };
 
     const productUrl = `${productsPathes.postsDetails}/${post.category}/${post?.brand}/${post._id}`;
@@ -772,6 +776,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 color: '#fff',
                                 borderColor: 'primary.main',
                             },
+                            gap: 1,
                         }}
                     >
                         {t('common.contact')}

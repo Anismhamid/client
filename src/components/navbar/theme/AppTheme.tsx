@@ -89,7 +89,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const { t } = useTranslation();
 
@@ -157,11 +157,12 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 sx={{
-                    background: mode === 'dark' ? '#0a1116' : '#ffffff',
+                    background: mode === 'dark' ? '#151B1E' : '#ffffff',
                     boxShadow: '0 1px 10px #414141',
                     zIndex: 1100,
                     overflow: 'hidden',
                     top: 0,
+                    flexWrap:"wrap",
                     '&::after': {
                         content: '""',
                         position: 'absolute',
@@ -199,7 +200,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             alignItems: 'center',
                             p: 0,
                             minHeight: { xs: '64px', md: '72px' },
-                            flexWrap: 'nowrap',
+                            flexWrap: 'noWrap',
                         }}
                     >
                         {/* Left side: Mobile menu button and Logo */}

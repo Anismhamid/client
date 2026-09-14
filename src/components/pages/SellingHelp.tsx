@@ -395,7 +395,6 @@ const SellingHelp: FunctionComponent = () => {
                                     sx={{
                                         p: 2,
                                         borderRadius: 2,
-                                        background: 'white',
                                         display: 'flex',
                                         alignItems: 'center',
                                         gap: 2,
