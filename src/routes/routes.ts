@@ -54,6 +54,7 @@ export enum path {
     ReportsManagement = '/reports-management',
     MessageAuditLogs = '/message-audit-logs',
     BlockedUsers = '/blocked-users',
+    PendingPosts = '/isPending',
 
     Search = '/search',
 

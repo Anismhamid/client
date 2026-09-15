@@ -46,6 +46,7 @@ import MessageAuditLogs from '../components/settings/usersManagement/components/
 import BlockedUsers from '../components/pages/BlockedUsers';
 import CreateJob from '../components/pages/Jobs/CreateJob';
 import EditJob from '../components/pages/Jobs/EditJob';
+import PendingPosts from '../components/PendingPosts';
 
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
@@ -83,6 +84,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 path={path.FeaturedAdsDashboard}
                 element={<FeaturedAdsDashboard />}
             />
+            <Route path={path.PendingPosts} element={<PendingPosts />} />
             <Route path={path.SellingHelp} element={<SellingHelp />} />
             <Route path={path.SafetyHelp} element={<SafetyHelp />} />
             <Route path={path.DisputesHelp} element={<DisputesHelp />} />

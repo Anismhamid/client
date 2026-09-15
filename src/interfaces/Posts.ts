@@ -69,25 +69,41 @@ type SellerUser = {
 
 export interface Posts {
     featured: boolean;
+
     _id?: string;
-    createdAt: Date | string;
+
+    createdAt?: Date | string;
+
     updatedAt?: Date | string;
+
     location: string;
+
     likes?: string[];
+
     isNew?: boolean;
+
     type?: string;
+
     seller?: SellerUser;
 
     product_name: string;
+
     category: CategoryValue;
+
     subcategory?: string;
+
     brand?: string;
-    year?: string;
+
+    year?: number;
+
     fuel?: string;
+
     mileage?: number;
+
     color?: string;
 
     price: number;
+
     description: string;
 
     views?: number;
@@ -103,10 +119,12 @@ export interface Posts {
     reviews?: Review[];
 
     in_stock: boolean;
+
+    status?: 'pending' | 'accepted' | 'rejected' | 'sold';
 }
 
 export const initialProductValue: Partial<Posts> = {
-    location: 'אום אל פחם',
+    // location: '',
     featured: false,
     views: 0,
     seller: {

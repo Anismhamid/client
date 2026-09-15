@@ -862,6 +862,7 @@ const PostDetails: FunctionComponent = () => {
                                         }
                                         onClick={goToProfile}
                                         sx={{
+                                            gap: 1,
                                             borderColor: 'divider',
                                             color: 'text.secondary',
                                             '&:hover': {
@@ -888,6 +889,7 @@ const PostDetails: FunctionComponent = () => {
                                                 }
                                                 onClick={handleEditProduct}
                                                 sx={{
+                                                    gap: 1,
                                                     borderColor: 'warning.main',
                                                     '&:hover': {
                                                         bgcolor: alpha(
@@ -911,6 +913,7 @@ const PostDetails: FunctionComponent = () => {
                                                     setShowDeleteModal(true)
                                                 }
                                                 sx={{
+                                                    gap: 1,
                                                     borderColor: 'error.main',
                                                     color: 'error.main',
                                                     '&:hover': {
@@ -1073,16 +1076,22 @@ const PostDetails: FunctionComponent = () => {
                                                 }}
                                                 sx={{
                                                     position: 'relative',
-                                                    // ✅ ارتفاع متجاوب: تلقائي على الهاتف، ثابت على الشاشات الكبيرة
+                                                    left: 'auto',
+                                                    right: 'auto',
                                                     height: {
                                                         xs: 'auto',
-                                                        sm: 400,
-                                                        md: 520,
+                                                        sm: 'auto',
                                                     },
                                                     minHeight: {
                                                         xs: 240,
                                                         sm: 400,
                                                     },
+                                                    width: '100%',
+                                                    maxWidth: {
+                                                        xs: '100%',
+                                                        sm: 450,
+                                                    },
+                                                    mx: 'auto',
                                                     maxHeight: {
                                                         xs: '70vh',
                                                         sm: 'unset',
@@ -1107,6 +1116,14 @@ const PostDetails: FunctionComponent = () => {
                                                         pointerEvents: 'none',
                                                         transition: '0.2s',
                                                         zIndex: 1,
+                                                    },
+                                                    // ✅ fullscreen: الصورة تاخد كامل الشاشة بدون قص
+                                                    '&:fullscreen': {
+                                                        maxWidth: '100vw',
+                                                        maxHeight: '100vh',
+                                                        width: '100vw',
+                                                        height: '100vh',
+                                                        backgroundColor: '#000',
                                                     },
                                                 }}
                                             >
@@ -1143,10 +1160,13 @@ const PostDetails: FunctionComponent = () => {
                                                                     xs: '70vh',
                                                                     sm: '100%',
                                                                 },
-                                                                objectFit: {
-                                                                    xs: 'contain',
-                                                                    sm: 'cover',
-                                                                },
+                                                                objectFit:
+                                                                    isFullscreen
+                                                                        ? 'contain'
+                                                                        : {
+                                                                              xs: 'contain',
+                                                                              sm: 'cover',
+                                                                          },
                                                                 display:
                                                                     'block',
                                                                 transition:
@@ -2330,6 +2350,7 @@ const PostDetails: FunctionComponent = () => {
                                                     variant='outlined'
                                                     startIcon={<WhatsApp />}
                                                     sx={{
+                                                        gap: 1,
                                                         borderColor: '#25D366',
                                                         color: '#25D366',
                                                         '&:hover': {
@@ -2351,6 +2372,7 @@ const PostDetails: FunctionComponent = () => {
                                                     variant='outlined'
                                                     startIcon={<Email />}
                                                     sx={{
+                                                        gap: 1,
                                                         borderColor:
                                                             'info.main',
                                                         color: 'info.main',

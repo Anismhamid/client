@@ -5,11 +5,12 @@ import { createNewPost } from '../services/postsServices';
 import { Posts } from '../interfaces/Posts';
 import { useState } from 'react';
 import { uploadImage } from '../services/uploadImage';
+import { useUser } from './useUSer';
 
 const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
     const { t } = useTranslation();
     const [imageFile, setImageFile] = useState<File | null>(null);
-
+    const { auth } = useUser();
     const [imageData, setImageData] = useState<{
         url: string;
         publicId: string;
@@ -27,9 +28,8 @@ const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
             sale: false,
             discount: 0,
             in_stock: true,
-            location: '',
+            location: auth?.address?.city || '',
             featured: false,
-            createdAt: '',
         },
         validationSchema: yup.object({
             product_name: yup

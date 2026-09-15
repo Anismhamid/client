@@ -54,13 +54,28 @@ export const getRelatedPostsAdvanced = async (
 ): Promise<Posts[]> => {
     try {
         const params = new URLSearchParams({
-            category: category,
-            limit: (options?.limit || 4).toString(),
-            ...(options?.sortBy && { sortBy: options.sortBy }),
-            ...(options?.sortOrder && { sortOrder: options.sortOrder }),
-            ...(options?.minPrice && { minPrice: options.minPrice.toString() }),
-            ...(options?.maxPrice && { maxPrice: options.maxPrice.toString() }),
-            ...(currentPostId && { excludeId: currentPostId }),
+            category,
+            limit: (options?.limit ?? 4).toString(),
+
+            ...(options?.sortBy && {
+                sortBy: options.sortBy,
+            }),
+
+            ...(options?.sortOrder && {
+                sortOrder: options.sortOrder,
+            }),
+
+            ...(options?.minPrice !== undefined && {
+                minPrice: options.minPrice.toString(),
+            }),
+
+            ...(options?.maxPrice !== undefined && {
+                maxPrice: options.maxPrice.toString(),
+            }),
+
+            ...(currentPostId && {
+                excludeId: currentPostId,
+            }),
         });
 
         const response = await api.get(`/posts/related?${params.toString()}`);
@@ -196,10 +211,7 @@ export const getCustomerProfilePostsBySlug = async (
 
 export const toggleLike = async (postId: string) => {
     try {
-        const res = await api.patch(
-            `/posts/${postId}/like`,
-            {}
-        );
+        const res = await api.patch(`/posts/${postId}/like`, {});
 
         return res.data;
     } catch (error: any) {
@@ -216,10 +228,8 @@ export const submitReview = async (
     postId: string,
     review: { userId: string; rating: number; comment: string },
 ) => {
-
     try {
-        const res = await api.patch(`/posts/${postId}/reviews`, review
-        );
+        const res = await api.patch(`/posts/${postId}/reviews`, review);
 
         console.log('Review submitted:', res.data);
         return res.data;
@@ -235,5 +245,44 @@ export const incrementViewCount = async (postId: string) => {
         return result.data;
     } catch (error) {
         console.error('Failed to increment view count:', error);
+    }
+};
+
+export const getPendingPosts = async () => {
+    try {
+        const response = await api('/posts/pending');
+        return response.data;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const approvePost = async (postId: string) => {
+    try {
+        const response = await api.patch(`/posts/${postId}/approve`);
+
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            'Failed to approve post:',
+            error.response?.data || error.message,
+        );
+
+        throw error;
+    }
+};
+
+export const rejectPost = async (postId: string) => {
+    try {
+        const response = await api.patch(`/posts/${postId}/reject`);
+
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            'Failed to reject post:',
+            error.response?.data || error.message,
+        );
+
+        throw error;
     }
 };

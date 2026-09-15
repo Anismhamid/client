@@ -93,7 +93,7 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
             location: post.location || '',
             in_stock: post.in_stock,
             ...initialDynamicValues,
-            createdAt: '',
+            createdAt: post.createdAt || '',
             featured: false,
         },
         validationSchema: yup.object({

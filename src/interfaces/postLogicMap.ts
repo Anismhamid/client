@@ -282,6 +282,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'brand', type: 'text' },
         ],
     },
+    
     /* ================== Men Clothes ================== */
     MenClothes: {
         casual: [

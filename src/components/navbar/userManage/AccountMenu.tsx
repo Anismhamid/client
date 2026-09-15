@@ -371,6 +371,19 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         {t('ads.dashboard') || 'Ads Dashboard'}
                     </Typography>
                 </MenuItem>
+                <MenuItem
+                    onClick={() => navigateTo(path.PendingPosts)}
+                    sx={menuItemSx()}
+                >
+                    <ListItemIcon sx={{ minWidth: 36 }}>
+                        <DashboardIcon
+                            sx={{ fontSize: 20, color: 'text.secondary' }}
+                        />
+                    </ListItemIcon>
+                    <Typography variant='body2'>
+                        {t('pages.pending.title','pening posts') }
+                    </Typography>
+                </MenuItem>
 
                 {/* Logout */}
                 <Divider />
