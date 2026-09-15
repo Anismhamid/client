@@ -1000,6 +1000,7 @@ export const categoriesLogic: Record<CategoryValue, SubCategoryFields> = {
             { name: 'includesAccessories', type: 'boolean' },
         ],
     },
+    
     /* ================== Cameras ================== */
     Cameras: {
         cameras: [

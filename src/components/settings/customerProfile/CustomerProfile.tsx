@@ -59,7 +59,13 @@ interface StatCardProps {
     delay?: number;
 }
 
-const StatCard: FunctionComponent<StatCardProps> = ({ icon, value, label, color, delay = 0 }) => {
+const StatCard: FunctionComponent<StatCardProps> = ({
+    icon,
+    value,
+    label,
+    color,
+    delay = 0,
+}) => {
     const theme = useTheme();
     return (
         <motion.div
@@ -107,7 +113,11 @@ const StatCard: FunctionComponent<StatCardProps> = ({ icon, value, label, color,
                 >
                     {value}
                 </Typography>
-                <Typography variant='caption' color='text.secondary' fontWeight={600}>
+                <Typography
+                    variant='caption'
+                    color='text.secondary'
+                    fontWeight={600}
+                >
                     {label}
                 </Typography>
             </Paper>
@@ -150,7 +160,10 @@ const CustomerProfile: FunctionComponent = () => {
         [isLoggedIn, navigate, t],
     );
 
-    const handleTabChange = useCallback((_: SyntheticEvent, v: number) => setTabValue(v), []);
+    const handleTabChange = useCallback(
+        (_: SyntheticEvent, v: number) => setTabValue(v),
+        [],
+    );
 
     useEffect(() => {
         if (!slug) return;
@@ -200,25 +213,35 @@ const CustomerProfile: FunctionComponent = () => {
         return () => ctrl.abort();
     }, [slug, t]);
 
-    const handleShareProfile = useCallback(async () => {
-        const shareData = {
-            title: t('common.shareProfileTitle', {
-                name: `${user?.name?.first} ${user?.name?.last}`,
-            }),
-            text: t('common.shareProfileText', { name: user?.name?.first }),
-            url: window.location.href,
-        };
+  const handleShareProfile = useCallback(async () => {
+    if (!user || !slug) return;
+
+    const profileUrl = `${import.meta.env.VITE_API_SOCKET_URL}/users/customer/${slug}`;
+
+    const message = t('common.shareProfileText', {
+        name: user.name?.first ?? '',
+    });
+
+    const shareText = `${message}\n\n${profileUrl}`;
+
+    try {
         if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-            } catch (e) {
-                if (e instanceof Error && e.name !== 'AbortError') console.error(e);
-            }
+            await navigator.share({
+                title: t('common.shareProfileTitle', {
+                    name: `${user.name?.first ?? ''} ${user.name?.last ?? ''}`.trim(),
+                }),
+                text: shareText,
+            });
         } else {
-            await navigator.clipboard.writeText(window.location.href);
+            await navigator.clipboard.writeText(shareText);
             showSuccess(t('common.profileLinkCopied'));
         }
-    }, [user, t]);
+    } catch (e) {
+        if (e instanceof Error && e.name !== 'AbortError') {
+            console.error('Share profile error:', e);
+        }
+    }
+}, [user, slug, t]);
 
     const handleWhatsApp = useCallback(() => {
         if (!user?.phone?.phone_1) {
@@ -239,25 +262,25 @@ const CustomerProfile: FunctionComponent = () => {
                 icon: <LocalOffer sx={{ fontSize: 22 }} />,
                 value: stats.totalProducts,
                 label: t('common.products'),
-                color: BRAND_GOLD,
+                color: '#B8860B', // ذهبي أساسي
             },
             {
                 icon: <ThumbUp sx={{ fontSize: 22 }} />,
                 value: stats.totalLikes,
                 label: t('common.likes'),
-                color: '#A0522D',
+                color: '#A0522D', // بني متوسط
             },
             {
                 icon: <Visibility sx={{ fontSize: 22 }} />,
                 value: stats.totalViews,
                 label: t('common.views'),
-                color: '#8B6914',
+                color: '#8B6914', // ذهبي داكن
             },
             {
                 icon: <Star sx={{ fontSize: 22 }} />,
                 value: stats.rating ? stats.rating.toFixed(1) : '—',
                 label: t('common.rating'),
-                color: BRAND_BROWN,
+                color: '#8B4513', // بني أساسي
             },
         ],
         [stats, t],
@@ -274,8 +297,16 @@ const CustomerProfile: FunctionComponent = () => {
                 minHeight='70vh'
                 gap={3}
             >
-                <CircularProgress size={52} thickness={4} sx={{ color: BRAND_GOLD }} />
-                <Typography variant='body1' color='text.secondary' fontWeight={500}>
+                <CircularProgress
+                    size={52}
+                    thickness={4}
+                    sx={{ color: BRAND_GOLD }}
+                />
+                <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    fontWeight={500}
+                >
                     {t('common.loadingProfile')}
                 </Typography>
             </Box>
@@ -286,12 +317,22 @@ const CustomerProfile: FunctionComponent = () => {
     if (!user) {
         return (
             <Container maxWidth='sm' sx={{ py: 10, textAlign: 'center' }}>
-                <Card sx={{ p: 5, borderRadius: 4, border: `1px solid ${alpha(theme.palette.divider, 0.6)}` }}>
+                <Card
+                    sx={{
+                        p: 5,
+                        borderRadius: 4,
+                        border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
+                    }}
+                >
                     <Box sx={{ fontSize: 72, mb: 2 }}>😔</Box>
                     <Typography variant='h5' fontWeight={800} gutterBottom>
                         {t('common.userNotFound')}
                     </Typography>
-                    <Typography variant='body2' color='text.secondary' sx={{ mb: 4 }}>
+                    <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        sx={{ mb: 4 }}
+                    >
                         {t('common.userNotFoundDescription')}
                     </Typography>
                     <Button
@@ -320,14 +361,30 @@ const CustomerProfile: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>{`منتجات ${user.name?.first} ${user.name?.last} للبيع في ${user.address?.city || 'كافة البلاد'} | صفقة`}</title>
+            <title>
+                {t('profile.seo.title', {
+                    firstName: user.name?.first ?? '',
+                    lastName: user.name?.last ?? '',
+                    city: user.address?.city || t('profile.seo.defaultCity'),
+                })}
+            </title>
             <meta
                 name='description'
-                content={`تصفح أفضل العروض من البائع ${user.name?.first} في ${user.address?.city}. متوفر ${posts.length} منتجات. بيع وشراء آمن عبر صفقة.`}
+                content={t('profile.seo.description', {
+                    firstName: user.name?.first ?? '',
+                    city: user.address?.city || t('profile.seo.defaultCity'),
+                    count: posts.length,
+                })}
             />
             <JsonLd data={{}} />
 
-            <Box sx={{ minHeight: '100vh', bgcolor: alpha(BRAND_GOLD, 0.025), py: { xs: 3, md: 5 } }}>
+            <Box
+                sx={{
+                    minHeight: '100vh',
+                    bgcolor: alpha(BRAND_GOLD, 0.025),
+                    py: { xs: 3, md: 5 },
+                }}
+            >
                 <Container dir={dir} maxWidth='lg'>
                     {/* === الهيدر === */}
                     <CustomerProfileHeader
@@ -358,7 +415,10 @@ const CustomerProfile: FunctionComponent = () => {
                             border: `1px solid ${alpha(theme.palette.divider, 0.6)}`,
                         }}
                     >
-                        <CustomTabs handleTabChange={handleTabChange} tabValue={tabValue} />
+                        <CustomTabs
+                            handleTabChange={handleTabChange}
+                            tabValue={tabValue}
+                        />
 
                         <AnimatePresence mode='wait'>
                             <motion.div
@@ -377,7 +437,6 @@ const CustomerProfile: FunctionComponent = () => {
                                         user={user}
                                     />
                                 </TabPanel>
-
 
                                 <TabPanel value={tabValue} index={1}>
                                     <RatingsTab stats={stats} user={user} />

@@ -658,7 +658,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.Cameras.label',
         value: 'Cameras',
         path: productsPathes.Camera,
-        icon: '/categories/cameras.png',
+        icon: '/categories/camera.png',
         subCategories: [
             {
                 labelKey: 'categories.Cameras.subCategories.cameras',
@@ -688,7 +688,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.Books.label',
         value: 'Books',
         path: productsPathes.Books,
-        icon: '/categories/Books.png',
+        icon: '/categories/books.png',
         subCategories: [
             {
                 labelKey: 'categories.Books.subCategories.school',
@@ -738,7 +738,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.MusicalInstruments.label',
         value: 'MusicalInstruments',
         path: productsPathes.MusicalInstruments,
-        icon: '/categories/musical-instruments.png',
+        icon: '/categories/live-music.png',
         subCategories: [
             {
                 labelKey: 'categories.MusicalInstruments.subCategories.guitars',
@@ -790,7 +790,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.ConstructionEquipment.label',
         value: 'ConstructionEquipment',
         path: productsPathes.ConstructionEquipment,
-        icon: '/categories/construction-equipment.png',
+        icon: '/categories/tools.png',
         subCategories: [
             {
                 labelKey:
@@ -848,7 +848,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.IndustrialEquipment.label',
         value: 'IndustrialEquipment',
         path: productsPathes.IndustrialEquipment,
-        icon: '/categories/industrial-equipment.png',
+        icon: '/categories/conveyor.png',
         subCategories: [
             {
                 labelKey:
@@ -899,7 +899,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.WeldingEquipment.label',
         value: 'WeldingEquipment',
         path: productsPathes.WeldingEquipment,
-        icon: '/categories/welding-equipment.png',
+        icon: '/categories/welding.png',
         subCategories: [
             {
                 labelKey:
@@ -938,7 +938,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.OfficeEquipment.label',
         value: 'OfficeEquipment',
         path: productsPathes.OfficeEquipment,
-        icon: '/categories/office-equipment.png',
+        icon: '/categories/officeEquipment.png',
         subCategories: [
             {
                 labelKey: 'categories.OfficeEquipment.subCategories.printers',
@@ -983,7 +983,7 @@ export const productsAndCategories: NavCategory[] = [
         labelKey: 'categories.Services.label',
         value: 'Services',
         path: productsPathes.Services,
-        icon: '/categories/Services.png',
+        icon: '/categories/mechanic.png',
         subCategories: [
             {
                 labelKey: 'categories.Services.subCategories.maintenance',

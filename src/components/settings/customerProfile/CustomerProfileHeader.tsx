@@ -39,6 +39,7 @@ import RoleType from '../../../interfaces/UserType';
 import { showError } from '../../../atoms/toasts/ReactToast';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
+import { path } from '../../../routes/routes';
 
 const BRAND_GOLD = '#B8860B';
 const BRAND_BROWN = '#8B4513';
@@ -69,11 +70,13 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     const { openChat } = useChatWindow();
     const isRtl = dir === 'rtl';
 
-    const fullName = `${user.name?.first || ''} ${user.name?.last || ''}`.trim() || t('unknownUser');
+    const fullName =
+        `${user.name?.first || ''} ${user.name?.last || ''}`.trim() ||
+        t('unknownUser');
 
     const handleOpenChat = () => {
         if (!auth?._id) {
-            navigate('/login');
+            navigate(path.Login);
             return;
         }
         if (!user?._id) {
@@ -168,7 +171,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                             <Box
                                 sx={{
                                     display: 'flex',
-                                    justifyContent: { xs: 'center', md: 'flex-start' },
+                                    justifyContent: {
+                                        xs: 'center',
+                                        md: 'flex-start',
+                                    },
                                     mt: { xs: -8, md: -9 },
                                 }}
                             >
@@ -179,7 +185,9 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                         horizontal: isRtl ? 'left' : 'right',
                                     }}
                                     badgeContent={
-                                        <Tooltip title={t('common.verifiedSeller')}>
+                                        <Tooltip
+                                            title={t('common.verifiedSeller')}
+                                        >
                                             <Box
                                                 sx={{
                                                     width: 34,
@@ -215,11 +223,17 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                             fontSize: '2.25rem',
                                             fontWeight: 800,
                                             transition: 'transform 0.3s ease',
-                                            '&:hover': { transform: 'scale(1.03)' },
+                                            '&:hover': {
+                                                transform: 'scale(1.03)',
+                                            },
                                         }}
                                     >
-                                        {user.name?.first?.charAt(0).toUpperCase()}
-                                        {user.name?.last?.charAt(0).toUpperCase()}
+                                        {user.name?.first
+                                            ?.charAt(0)
+                                            .toUpperCase()}
+                                        {user.name?.last
+                                            ?.charAt(0)
+                                            .toUpperCase()}
                                     </Avatar>
                                 </Badge>
                             </Box>
@@ -237,7 +251,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     direction='row'
                                     flexWrap='wrap'
                                     alignItems='center'
-                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    justifyContent={{
+                                        xs: 'center',
+                                        md: 'flex-start',
+                                    }}
                                     spacing={1}
                                     useFlexGap
                                     sx={{ mb: 0.5 }}
@@ -259,7 +276,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                             label={t('common.admin')}
                                             size='small'
                                             color='warning'
-                                            sx={{ fontWeight: 700, borderRadius: 1.5 }}
+                                            sx={{
+                                                fontWeight: 700,
+                                                borderRadius: 1.5,
+                                            }}
                                         />
                                     )}
                                 </Stack>
@@ -267,12 +287,24 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                 <Stack
                                     direction='row'
                                     alignItems='center'
-                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    justifyContent={{
+                                        xs: 'center',
+                                        md: 'flex-start',
+                                    }}
                                     spacing={1}
                                     sx={{ mb: 1.5, color: 'text.secondary' }}
                                 >
-                                    <Storefront sx={{ fontSize: 18, color: BRAND_BROWN }} />
-                                    <Typography variant='body2' fontWeight={700} sx={{ color: BRAND_BROWN }}>
+                                    <Storefront
+                                        sx={{
+                                            fontSize: 18,
+                                            color: BRAND_BROWN,
+                                        }}
+                                    />
+                                    <Typography
+                                        variant='body2'
+                                        fontWeight={700}
+                                        sx={{ color: BRAND_BROWN }}
+                                    >
                                         @{slug}
                                     </Typography>
                                 </Stack>
@@ -281,7 +313,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                 <Stack
                                     direction='row'
                                     alignItems='center'
-                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    justifyContent={{
+                                        xs: 'center',
+                                        md: 'flex-start',
+                                    }}
                                     spacing={1}
                                     sx={{ mb: 2 }}
                                 >
@@ -292,14 +327,27 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                         size='small'
                                         sx={{ color: BRAND_GOLD }}
                                     />
-                                    <Typography variant='body2' color='text.secondary' fontWeight={600}>
+                                    <Typography
+                                        variant='body2'
+                                        color='text.secondary'
+                                        fontWeight={600}
+                                    >
                                         {stats.rating.toFixed(1)}
                                     </Typography>
                                     {stats.reviewsCount > 0 && (
                                         <>
-                                            <Divider orientation='vertical' flexItem sx={{ mx: 0.5 }} />
-                                            <Typography variant='body2' color='text.secondary'>
-                                                {t('common.reviewsCount', { count: stats.reviewsCount })}
+                                            <Divider
+                                                orientation='vertical'
+                                                flexItem
+                                                sx={{ mx: 0.5 }}
+                                            />
+                                            <Typography
+                                                variant='body2'
+                                                color='text.secondary'
+                                            >
+                                                {t('common.reviewsCount', {
+                                                    count: stats.reviewsCount,
+                                                })}
                                             </Typography>
                                         </>
                                     )}
@@ -311,44 +359,80 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     flexWrap='wrap'
                                     spacing={1}
                                     useFlexGap
-                                    justifyContent={{ xs: 'center', md: 'flex-start' }}
+                                    justifyContent={{
+                                        xs: 'center',
+                                        md: 'flex-start',
+                                    }}
                                 >
                                     {user.address?.city && (
                                         <Chip
-                                            icon={<LocationOn style={{ fontSize: 16 }} />}
+                                            icon={
+                                                <LocationOn
+                                                    style={{ fontSize: 16 }}
+                                                />
+                                            }
                                             label={user.address.city}
                                             variant='outlined'
                                             size='small'
                                             sx={{
                                                 borderRadius: 2,
-                                                borderColor: alpha(theme.palette.divider, 0.9),
-                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                                borderColor: alpha(
+                                                    theme.palette.divider,
+                                                    0.9,
+                                                ),
+                                                bgcolor: alpha(
+                                                    theme.palette.background
+                                                        .default,
+                                                    0.4,
+                                                ),
                                             }}
                                         />
                                     )}
                                     {user.phone?.phone_1 && (
                                         <Chip
-                                            icon={<Phone style={{ fontSize: 16 }} />}
+                                            icon={
+                                                <Phone
+                                                    style={{ fontSize: 16 }}
+                                                />
+                                            }
                                             label={user.phone.phone_1}
                                             variant='outlined'
                                             size='small'
                                             sx={{
                                                 borderRadius: 2,
-                                                borderColor: alpha(theme.palette.divider, 0.9),
-                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                                borderColor: alpha(
+                                                    theme.palette.divider,
+                                                    0.9,
+                                                ),
+                                                bgcolor: alpha(
+                                                    theme.palette.background
+                                                        .default,
+                                                    0.4,
+                                                ),
                                             }}
                                         />
                                     )}
                                     {user.createdAt && (
                                         <Chip
-                                            icon={<CalendarMonth style={{ fontSize: 16 }} />}
+                                            icon={
+                                                <CalendarMonth
+                                                    style={{ fontSize: 16 }}
+                                                />
+                                            }
                                             label={formatDate(user.createdAt)}
                                             variant='outlined'
                                             size='small'
                                             sx={{
                                                 borderRadius: 2,
-                                                borderColor: alpha(theme.palette.divider, 0.9),
-                                                bgcolor: alpha(theme.palette.background.default, 0.4),
+                                                borderColor: alpha(
+                                                    theme.palette.divider,
+                                                    0.9,
+                                                ),
+                                                bgcolor: alpha(
+                                                    theme.palette.background
+                                                        .default,
+                                                    0.4,
+                                                ),
                                             }}
                                         />
                                     )}
@@ -406,25 +490,6 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     }}
                                 >
                                     {t('common.whatsapp')}
-                                </Button>
-
-                                <Button
-                                    variant='text'
-                                    fullWidth
-                                    startIcon={<Share sx={{ fontSize: 18 }} />}
-                                    onClick={handleShareProfile}
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: 'text.secondary',
-                                        borderRadius: 2.5,
-                                        textTransform: 'none',
-                                        '&:hover': {
-                                            color: BRAND_BROWN,
-                                            bgcolor: alpha(BRAND_GOLD, 0.06),
-                                        },
-                                    }}
-                                >
-                                    {t('common.shareProfile')}
                                 </Button>
                             </Stack>
                         </Grid>

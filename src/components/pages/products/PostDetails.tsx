@@ -875,7 +875,7 @@ const PostDetails: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        {t('profile.title')}
+                                        {t('profile.customer')}
                                     </Button>
 
                                     {isOwner ? (

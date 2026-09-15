@@ -32,6 +32,7 @@ import SearchBox from '../../../atoms/productsManage/SearchBox';
 import { Posts } from '../../../interfaces/Posts';
 import PostCard from './PostsCard';
 import { usePosts } from '../../../hooks/usePosts';
+import handleRTL from '../../../locales/handleRTL';
 
 interface PostsCategoryProps {
     category: string;
@@ -251,7 +252,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                         color='text.secondary'
                         sx={{ mb: 3 }}
                     >
-                        لم يتم العثور على أي منتجات في هذه الفئة
+                        {t("categories.notFound")}
                     </Typography>
                     <Button
                         onClick={refreshAfterChange}
@@ -277,9 +278,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
         posts,
     );
 
+    const dir = handleRTL()
+
     return (
-        <>
-            {/* FIX 1: React 19 hoists these to <head> natively — no library needed */}
+        <Box component={'main'} p={10} dir={dir}>
             <title>{categoryTitle} | صفقة</title>
             <link rel='canonical' href={currentUrl} />
             <meta name='description' content={categoryDescription} />
@@ -478,7 +480,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 show={showUpdateProductModal}
                 onHide={() => onHideUpdateProductModal()}
             />
-        </>
+        </Box>
     );
 };
 
