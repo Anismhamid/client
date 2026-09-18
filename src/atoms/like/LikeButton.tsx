@@ -32,21 +32,15 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
     const navigate = useNavigate();
     const { isLoggedIn, auth } = useUser();
 
-    // Use useRef to persist the audio instance across renders
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    // Check if user has liked the product
-    const userLiked = auth._id ? product.likes?.includes(auth._id) : false;
+    const userLiked = auth?._id ? product.likes?.includes(auth._id) : false;
 
-    // Initialize audio only once when component mounts
     useEffect(() => {
-        // Create audio instance only if it doesn't exist
         if (!audioRef.current) {
             audioRef.current = new Audio('/Like-Sound-Effect (mp3cut.net).mp3');
-            // Optional: preload the audio for better performance
             audioRef.current.preload = 'auto';
         }
 
-        // Cleanup function to prevent memory leaks
         return () => {
             if (audioRef.current) {
                 audioRef.current.pause();
@@ -54,11 +48,10 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
                 audioRef.current = null;
             }
         };
-    }, []);
+    }, [isLoggedIn]);
 
     const playNotificationSound = useCallback(() => {
         if (audioRef.current) {
-            // Reset audio to beginning if it's already playing
             audioRef.current.currentTime = 0;
             audioRef.current.play().catch((error) => {
                 console.error('Failed to play notification sound:', error);
@@ -66,10 +59,18 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
         }
     }, []);
 
+    // يشتغل بعد ما handleLike يأكد النجاح فعلياً، مش قبل
+    const handleToggleResult = useCallback(
+        (productId: string, liked: boolean) => {
+            if (liked) playNotificationSound();
+            onLikeToggle?.(productId, liked);
+        },
+        [onLikeToggle, playNotificationSound],
+    );
+
     const handleClick = async () => {
-        // If no auth, do nothing
-        if (!auth || !auth._id) {
-            navigate(path.Login)
+        if (!auth?._id) {
+            navigate(path.Login);
             return;
         }
 
@@ -81,7 +82,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
             setProduct,
             product,
             auth,
-            onLikeToggle,
+            onLikeToggle: handleToggleResult,
         };
 
         await handleLike(params);
@@ -92,13 +93,8 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
             aria-label={
                 userLiked ? 'remove from favorites' : 'add to favorites'
             }
-            onClick={() => {
-                handleClick();
-                if (!userLiked) {
-                    playNotificationSound();
-                }
-            }}
-            disabled={isLiking || !auth}
+            onClick={handleClick}
+            disabled={isLiking || !auth?._id}
             sx={{
                 position: 'relative',
                 padding: '8px',
@@ -126,7 +122,7 @@ const LikeButton: FunctionComponent<LikeButtonProps> = ({
                             animation: 'pulse 0.3s ease-in-out',
                             '@keyframes pulse': {
                                 '0%': { transform: 'scale(1)' },
-                                '50%': { transform: 'scale(1.5)' },
+                                '50%': { transform: 'scale(2)' },
                                 '100%': { transform: 'scale(1)' },
                             },
                         }}

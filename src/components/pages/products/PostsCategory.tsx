@@ -281,7 +281,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const dir = handleRTL()
 
     return (
-        <Box component={'main'} p={10} dir={dir}>
+        <Box component={'main'} p={3} dir={dir}>
             <title>{categoryTitle} | صفقة</title>
             <link rel='canonical' href={currentUrl} />
             <meta name='description' content={categoryDescription} />

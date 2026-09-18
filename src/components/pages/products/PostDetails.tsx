@@ -539,12 +539,14 @@ const PostDetails: FunctionComponent = () => {
     /* =====================================================
        VIEW COUNT
     ===================================================== */
-
+    const incrementedRef = useRef<string | null>(null);
     useEffect(() => {
-        if (post && post._id) {
-            incrementViewCount(post._id);
-        }
-    }, [post, post._id]);
+        const id = post._id;
+        if (!post._id || incrementedRef.current === id) return;
+
+        incrementedRef.current = id as string;
+        incrementViewCount(post._id);
+    }, [post._id]);
 
     /* =====================================================
        LOADING

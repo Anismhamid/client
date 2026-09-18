@@ -618,7 +618,7 @@
     },
 
     "categories": {
-        "title":"Categories",
+        "title": "Categories",
         "House": {
             "label": "Home",
             "heading": "Home essentials",
@@ -1491,6 +1491,14 @@
         "jobs": "Jobs"
     },
     "pages": {
+        "pageNotFound": {
+            "title": "Page Not Found | Safqa",
+            "description": "Sorry, we could not find this page. It may not exist.",
+            "heading": "Page Not Found",
+            "imageAlt": "An image indicating that the page could not be found",
+            "message": "Sorry, we could not find this page. It may not exist.",
+            "goBack": "Go Back"
+        },
         "jobs": {
             "title": "Jobs",
             "remote": "Remote",
