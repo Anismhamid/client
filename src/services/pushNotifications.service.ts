@@ -16,6 +16,10 @@ let currentToken: string | null = null;
 
 let backgroundInterval: number | null = null;
 
+let appStateListenersInitialized = false;
+
+let notificationClickHandler: EventListener | null = null;
+
 /**
  * ============================================================
  * INITIALIZE
@@ -24,9 +28,7 @@ let backgroundInterval: number | null = null;
 
 export async function initializePushNotifications() {
     if (!Capacitor.isNativePlatform()) {
-        console.log(
-            'ℹ️ Push notifications only available on native platforms',
-        );
+        console.log('ℹ️ Push notifications only available on native platforms');
 
         return;
     }
@@ -38,10 +40,7 @@ export async function initializePushNotifications() {
 
         console.log('✅ Push notifications fully initialized');
     } catch (error) {
-        console.error(
-            '❌ Failed to initialize push notifications:',
-            error,
-        );
+        console.error('❌ Failed to initialize push notifications:', error);
     }
 }
 
@@ -98,6 +97,12 @@ export async function registerPush() {
  */
 
 function setupAppStateListeners() {
+    if (appStateListenersInitialized) {
+        console.log('ℹ️ App state listeners already set up, skipping');
+        return;
+    }
+    appStateListenersInitialized = true;
+
     App.addListener('appStateChange', async (state) => {
         console.log(
             `📱 App state changed: ${
@@ -155,10 +160,7 @@ async function onAppForeground() {
             console.log('⏹️ Background interval stopped');
         }
     } catch (error) {
-        console.error(
-            '❌ Error updating foreground status:',
-            error,
-        );
+        console.error('❌ Error updating foreground status:', error);
     }
 }
 
@@ -192,14 +194,6 @@ async function onAppBackground() {
                 });
         }
 
-        /**
-         * IMPORTANT:
-         *
-         * Do not use localStorage token anymore.
-         *
-         * Authentication is handled by HttpOnly Cookie.
-         */
-
         if (!backgroundInterval) {
             backgroundInterval = window.setInterval(async () => {
                 console.log('🔄 Background token sync attempt');
@@ -214,26 +208,17 @@ async function onAppBackground() {
                     const saved = await saveTokenToServer(token);
 
                     if (saved) {
-                        console.log(
-                            '✅ Push token synced in background',
-                        );
+                        console.log('✅ Push token synced in background');
                     }
                 } catch {
-                    console.log(
-                        '⚠️ Background token sync failed',
-                    );
+                    console.log('⚠️ Background token sync failed');
                 }
             }, 60000);
         }
 
-        console.log(
-            '✅ App in background, background interval started',
-        );
+        console.log('✅ App in background, background interval started');
     } catch (error) {
-        console.error(
-            '❌ Error handling background state:',
-            error,
-        );
+        console.error('❌ Error handling background state:', error);
     }
 }
 
@@ -270,8 +255,8 @@ async function setupAndroidChannels() {
         });
 
         await PushNotifications.createChannel({
-            id: 'orders',
-            name: 'Order Updates',
+            id: 'post',
+            name: 'post Updates',
             description: 'Notifications about your orders',
             importance: 4,
             vibration: true,
@@ -281,11 +266,6 @@ async function setupAndroidChannels() {
             lightColor: '#0000FF',
         });
 
-        /**
-         * This channel is not required for authentication.
-         * Keep it only if the Android implementation actually
-         * uses it.
-         */
         await PushNotifications.createChannel({
             id: 'background_service',
             name: 'Background Service',
@@ -298,10 +278,7 @@ async function setupAndroidChannels() {
 
         console.log('✅ Android channels created');
     } catch (error) {
-        console.error(
-            '❌ Failed to create Android channels:',
-            error,
-        );
+        console.error('❌ Failed to create Android channels:', error);
     }
 }
 
@@ -312,71 +289,46 @@ async function setupAndroidChannels() {
  */
 
 function setupListeners() {
-    PushNotifications.addListener(
-        'registration',
-        async (token: Token) => {
-            if (currentToken === token.value) {
-                console.log(
-                    'ℹ️ Token unchanged, skipping save',
-                );
+    PushNotifications.addListener('registration', async (token: Token) => {
+        if (currentToken === token.value) {
+            console.log('ℹ️ Token unchanged, skipping save');
 
-                return;
-            }
+            return;
+        }
 
-            const saved = await saveTokenToServer(token.value);
+        const saved = await saveTokenToServer(token.value);
 
-            if (saved) {
-                currentToken = token.value;
+        if (saved) {
+            currentToken = token.value;
 
-                localStorage.setItem(
-                    'fcmToken',
-                    token.value,
-                );
+            localStorage.setItem('fcmToken', token.value);
 
-                localStorage.setItem(
-                    'fcmTokenTimestamp',
-                    Date.now().toString(),
-                );
-            }
-        },
-    );
+            localStorage.setItem('fcmTokenTimestamp', Date.now().toString());
+        }
+    });
 
-    PushNotifications.addListener(
-        'registrationError',
-        (error: any) => {
-            console.error(
-                '❌ FCM Registration error:',
-                error,
-            );
+    PushNotifications.addListener('registrationError', (error: any) => {
+        console.error('❌ FCM Registration error:', error);
 
-            setTimeout(() => {
-                console.log(
-                    '🔄 Retrying registration...',
-                );
+        setTimeout(() => {
+            console.log('🔄 Retrying registration...');
 
-                void registerPush();
-            }, 5000);
-        },
-    );
+            void registerPush();
+        }, 5000);
+    });
 
     PushNotifications.addListener(
         'pushNotificationReceived',
         (notification: PushNotificationSchema) => {
-            console.log(
-                '📨 Notification received in foreground:',
-                {
-                    title: notification.title,
-                    body: notification.body,
-                },
-            );
+            console.log('📨 Notification received in foreground:', {
+                title: notification.title,
+                body: notification.body,
+            });
 
             window.dispatchEvent(
-                new CustomEvent(
-                    'push-notification-received',
-                    {
-                        detail: notification,
-                    },
-                ),
+                new CustomEvent('push-notification-received', {
+                    detail: notification,
+                }),
             );
         },
     );
@@ -384,20 +336,27 @@ function setupListeners() {
     PushNotifications.addListener(
         'pushNotificationActionPerformed',
         (action: ActionPerformed) => {
-            const data = action.notification.data;
+            console.log('====================================');
+            console.log('🔔 PUSH NOTIFICATION CLICKED');
+            console.log('====================================');
+
+            console.log('📦 Full action:', action);
+
+            console.log('📦 Notification:', action.notification);
+
+            console.log('📦 Notification data:', action.notification.data);
 
             console.log(
-                '👆 Notification clicked:',
-                data,
+                '📦 Notification data JSON:',
+                JSON.stringify(action.notification.data, null, 2),
             );
 
+            const data = action.notification.data;
+
             window.dispatchEvent(
-                new CustomEvent(
-                    'push-notification-clicked',
-                    {
-                        detail: data,
-                    },
-                ),
+                new CustomEvent('push-notification-clicked', {
+                    detail: data,
+                }),
             );
         },
     );
@@ -410,31 +369,25 @@ function setupListeners() {
  */
 
 async function checkAndRequestPermissions(): Promise<boolean> {
-    let permission =
-        await PushNotifications.checkPermissions();
+    let permission = await PushNotifications.checkPermissions();
 
     if (permission.receive === 'granted') {
         return true;
     }
 
     if (permission.receive === 'prompt') {
-        permission =
-            await PushNotifications.requestPermissions();
+        permission = await PushNotifications.requestPermissions();
 
         return permission.receive === 'granted';
     }
 
     if (Capacitor.getPlatform() === 'android') {
         try {
-            const result =
-                await PushNotifications.requestPermissions();
+            const result = await PushNotifications.requestPermissions();
 
             return result.receive === 'granted';
         } catch (error) {
-            console.error(
-                'Permission request failed:',
-                error,
-            );
+            console.error('Permission request failed:', error);
 
             return false;
         }
@@ -447,26 +400,14 @@ async function checkAndRequestPermissions(): Promise<boolean> {
  * ============================================================
  * SAVE PUSH TOKEN
  * ============================================================
- *
- * Authentication:
- * HttpOnly Cookie
- *
- * There is NO JWT argument here.
- * There is NO Authorization header here.
  */
 
-async function saveTokenToServer(
-    token: string,
-): Promise<boolean> {
+async function saveTokenToServer(token: string): Promise<boolean> {
     const maxRetries = 3;
 
     const deviceInfo = await getDeviceInfo();
 
-    for (
-        let attempt = 1;
-        attempt <= maxRetries;
-        attempt++
-    ) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             await api.patch(
                 '/users/push-token',
@@ -480,9 +421,7 @@ async function saveTokenToServer(
                 },
             );
 
-            console.log(
-                '✅ Push token saved to server',
-            );
+            console.log('✅ Push token saved to server');
 
             return true;
         } catch (error) {
@@ -492,18 +431,13 @@ async function saveTokenToServer(
             );
 
             if (attempt === maxRetries) {
-                console.error(
-                    '❌ All save attempts failed',
-                );
+                console.error('❌ All save attempts failed');
 
                 return false;
             }
 
             await new Promise((resolve) =>
-                setTimeout(
-                    resolve,
-                    1000 * Math.pow(2, attempt - 1),
-                ),
+                setTimeout(resolve, 1000 * Math.pow(2, attempt - 1)),
             );
         }
     }
@@ -519,8 +453,7 @@ async function saveTokenToServer(
 
 async function getDeviceInfo() {
     try {
-        const { Device } =
-            await import('@capacitor/device');
+        const { Device } = await import('@capacitor/device');
 
         const info = await Device.getInfo();
 
@@ -532,10 +465,7 @@ async function getDeviceInfo() {
             manufacturer: info.manufacturer,
         };
     } catch (error) {
-        console.warn(
-            'Could not get device info:',
-            error,
-        );
+        console.warn('Could not get device info:', error);
 
         return {
             platform: Capacitor.getPlatform(),
@@ -554,28 +484,22 @@ export async function removePushToken() {
         return;
     }
 
-    const token =
-        localStorage.getItem('fcmToken');
+    const token = localStorage.getItem('fcmToken');
 
     if (!token) {
         return;
     }
 
     try {
-        await api.delete(
-            '/users/push-token',
-            {
-                data: {
-                    pushToken: token,
-                },
+        await api.delete('/users/push-token', {
+            data: {
+                pushToken: token,
             },
-        );
+        });
 
         localStorage.removeItem('fcmToken');
 
-        localStorage.removeItem(
-            'fcmTokenTimestamp',
-        );
+        localStorage.removeItem('fcmTokenTimestamp');
 
         currentToken = null;
 
@@ -585,14 +509,9 @@ export async function removePushToken() {
             backgroundInterval = null;
         }
 
-        console.log(
-            '✅ Push token removed',
-        );
+        console.log('✅ Push token removed');
     } catch (error) {
-        console.error(
-            '❌ Failed to remove push token:',
-            error,
-        );
+        console.error('❌ Failed to remove push token:', error);
     }
 }
 
@@ -603,11 +522,7 @@ export async function removePushToken() {
  */
 
 export function getCurrentPushToken(): string | null {
-    return (
-        currentToken ||
-        localStorage.getItem('fcmToken') ||
-        null
-    );
+    return currentToken || localStorage.getItem('fcmToken') || null;
 }
 
 /**
@@ -616,46 +531,41 @@ export function getCurrentPushToken(): string | null {
  * ============================================================
  */
 
-export function setupNotificationNavigation(
-    navigate: (path: string) => void,
-) {
+export function setupNotificationNavigation(navigate: (path: string) => void) {
+    if (notificationClickHandler) {
+        window.removeEventListener(
+            'push-notification-clicked',
+            notificationClickHandler,
+        );
+    }
+
+    notificationClickHandler = ((event: CustomEvent) => {
+        const data = event.detail;
+
+        console.log('🚀 setupNotificationNavigation received:', data);
+
+        if (data?.type === 'chat' && data?.userId) {
+            window.dispatchEvent(
+                new CustomEvent('open-floating-chat', {
+                    detail: { userId: data.userId },
+                }),
+            );
+        } else if (data?.type === 'post' && data?.postId) {
+            navigate(`/posts/${data.postId}`);
+        } else if (data?.type === 'like' && data?.postId) {
+            navigate(`/liked/${data.postId}`);
+        } else if (data?.type === 'customer' && data?.slug) {
+            navigate(`/users/customer/${data.slug}`);
+        } else if (data?.screen) {
+            navigate(data.screen);
+        } else {
+            console.warn('⚠️ Unknown/invalid notification data:', data);
+        }
+    }) as EventListener;
+
     window.addEventListener(
         'push-notification-clicked',
-        ((event: CustomEvent) => {
-            const data = event.detail;
-
-            if (
-                data?.type === 'chat' &&
-                data?.userId
-            ) {
-                navigate(
-                    `/chat/${data.userId}`,
-                );
-            } else if (
-                data?.type === 'order' &&
-                data?.orderId
-            ) {
-                navigate(
-                    `/orders/${data.orderId}`,
-                );
-            } else if (
-                data?.type === 'product' &&
-                data?.productId
-            ) {
-                navigate(
-                    `/product/${data.productId}`,
-                );
-            } else if (
-                data?.type === 'profile' &&
-                data?.userId
-            ) {
-                navigate(
-                    `/profile/${data.userId}`,
-                );
-            } else if (data?.screen) {
-                navigate(data.screen);
-            }
-        }) as EventListener,
+        notificationClickHandler,
     );
 }
 
@@ -666,8 +576,7 @@ export function setupNotificationNavigation(
  */
 
 export async function refreshToken() {
-    const token =
-        localStorage.getItem('fcmToken');
+    const token = localStorage.getItem('fcmToken');
 
     if (!token) {
         return false;

@@ -12,12 +12,20 @@ import AppRoutes from './routes/AppRoutes.tsx';
 import Theme from './components/navbar/theme/AppTheme.tsx';
 import SpeedDialComponent from './atoms/productsManage/SpeedDialComponent.tsx';
 import useSocketEvents from './hooks/socket/useSocketEvents.ts';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    lazy,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+    Suspense,
+} from 'react';
 import handleRTL from './locales/handleRTL.ts';
-import { Suspense } from 'react';
 import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
-import FloatingChats from './components/pages/chatBox/FloatingChats.tsx';
+const FloatingChats = lazy(
+    () => import('./components/pages/chatBox/FloatingChats'),
+);
 import usePushSync from './hooks/usePushSync.ts';
 import { Capacitor } from '@capacitor/core';
 import { setupNotificationNavigation } from './services/pushNotifications.service';
@@ -167,7 +175,9 @@ function App() {
             <TransitionAlerts />
 
             <SpeedDialComponent />
-            <FloatingChats />
+            <Suspense fallback={null}>
+                <FloatingChats />
+            </Suspense>
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
                 <ChipNavigation />

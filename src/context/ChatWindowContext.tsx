@@ -2,11 +2,13 @@ import {
     createContext,
     useContext,
     useState,
+    useEffect,
     ReactNode,
     useCallback,
 } from 'react';
 
 import { UserMessage } from '../interfaces/chat/usersMessages';
+import api from '../services/api';
 
 interface ChatWindow {
     user: UserMessage;
@@ -65,6 +67,42 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
             ];
         });
     };
+
+    useEffect(() => {
+        const handleOpenFloatingChat = (async (event: CustomEvent) => {
+            const { userId } = event.detail;
+
+            if (!userId) return;
+
+            // إذا الشات مفتوح أصلاً بس مصغّر، فيك تفتحو مباشرة بدون fetch
+            const existing = chats.find(
+                (chat) => (chat.user._id || chat.user.from?._id) === userId
+            );
+
+            if (existing) {
+                openChat(existing.user);
+                return;
+            }
+
+            try {
+                const { data } = await api.get(`/users/${userId}`);
+                openChat(data as UserMessage);
+            } catch (error) {
+                console.error(
+                    '❌ Failed to load user for floating chat:',
+                    error
+                );
+            }
+        }) as unknown as EventListener;
+
+        window.addEventListener('open-floating-chat', handleOpenFloatingChat);
+
+        return () =>
+            window.removeEventListener(
+                'open-floating-chat',
+                handleOpenFloatingChat,
+            );
+    }, [chats]);
 
     const clearChats = useCallback(() => {
         setChats([]);

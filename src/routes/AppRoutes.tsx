@@ -35,18 +35,34 @@ const PostDetails = lazy(
 );
 const Products = lazy(() => import('../components/pages/products/Posts'));
 const Messages = lazy(() => import('../components/settings/Messages'));
-import WebSiteAdmins from '../components/settings/statisticspanel/WebSiteAdmins';
-import ForgotPassword from '../components/settings/ForgotPassword';
-import ResetPassword from '../components/settings/ResetPassword';
-import SearchPage from '../atoms/SearchPage';
-import DeleteAccount from '../components/settings/DeleteAccount';
-import MessageInvestigation from '../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation';
-import ReportManagement from '../components/reports/ReportManagement';
-import MessageAuditLogs from '../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs';
-import BlockedUsers from '../components/pages/BlockedUsers';
-import CreateJob from '../components/pages/Jobs/CreateJob';
-import EditJob from '../components/pages/Jobs/EditJob';
-import PendingPosts from '../components/PendingPosts';
+const WebSiteAdmins = lazy(
+    () => import('../components/settings/statisticspanel/WebSiteAdmins'),
+);
+const ForgotPassword = lazy(
+    () => import('../components/settings/ForgotPassword'),
+);
+const ResetPassword = lazy(
+    () => import('../components/settings/ResetPassword'),
+);
+const SearchPage = lazy(() => import('../atoms/SearchPage'));
+const DeleteAccount = lazy(
+    () => import('../components/settings/DeleteAccount'),
+);
+const MessageInvestigation = lazy(
+    () =>
+        import('../components/settings/usersManagement/components/MessageInvestigation/MessageInvestigation'),
+);
+const ReportManagement = lazy(
+    () => import('../components/reports/ReportManagement'),
+);
+const MessageAuditLogs = lazy(
+    () =>
+        import('../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs'),
+);
+const BlockedUsers = lazy(() => import('../components/pages/BlockedUsers'));
+const CreateJob = lazy(() => import('../components/pages/Jobs/CreateJob'));
+const EditJob = lazy(() => import('../components/pages/Jobs/EditJob'));
+const PendingPosts = lazy(() => import('../components/PendingPosts'));
 
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
@@ -75,6 +91,9 @@ interface AppRoutesProps {
 }
 
 const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
+    const isAdminOrModerator =
+        auth?.role === RoleType.Admin || auth?.role === RoleType.Moderator;
+
     return (
         <Routes>
             <Route path={path.Home} element={<Home />} />
@@ -90,7 +109,6 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path={path.DisputesHelp} element={<DisputesHelp />} />
             <Route path={path.CustomerProfile} element={<CustomerProfile />} />
             <Route path={`${path.Profile}/:id`} element={<Profile />} />
-            <Route path={`${path.Favorite}`} element={<Favorite />} />
             <Route path={`${path.Favorite}`} element={<Favorite />} />
             <Route path={`${path.jobs}`} element={<JobsPage />} />
             <Route path={`${path.createJob}`} element={<CreateJob />} />
@@ -110,43 +128,27 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.UsersManagement}
                 element={
-                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
-                        <UsersManagement />
-                    ) : (
-                        <PageNotFound />
-                    )
+                    isAdminOrModerator ? <UsersManagement /> : <PageNotFound />
                 }
             />
 
             <Route
                 path={path.AdminSettings}
                 element={
-                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
-                        <AdminSettings />
-                    ) : (
-                        <PageNotFound />
-                    )
+                    isAdminOrModerator ? <AdminSettings /> : <PageNotFound />
                 }
             />
 
             <Route
                 path={path.ReportsManagement}
                 element={
-                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
-                        <ReportManagement />
-                    ) : (
-                        <PageNotFound />
-                    )
+                    isAdminOrModerator ? <ReportManagement /> : <PageNotFound />
                 }
             />
             <Route
                 path={path.MessageAuditLogs}
                 element={
-                    auth?.role === RoleType.Admin || RoleType.Moderator ? (
-                        <MessageAuditLogs />
-                    ) : (
-                        <PageNotFound />
-                    )
+                    isAdminOrModerator ? <MessageAuditLogs /> : <PageNotFound />
                 }
             />
             <Route path={path.Contact} element={<Contact />} />
@@ -199,8 +201,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route
                 path={path.MessageInvestigation}
                 element={
-                    auth?.role === RoleType.Admin ||
-                    auth?.role === RoleType.Moderator ? (
+                    isAdminOrModerator ? (
                         <MessageInvestigation />
                     ) : (
                         <PageNotFound />

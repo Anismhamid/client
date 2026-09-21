@@ -1,52 +1,55 @@
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import {
-    FormControlLabel,
-    PaletteMode,
-    FormGroup,
-    Box,
-    Typography,
-    Tooltip,
-    useMediaQuery,
-    Toolbar,
-    Button,
-    Container,
-    IconButton,
-    Drawer,
-    useTheme,
-    AppBar,
-    Badge,
-} from '@mui/material';
+    FunctionComponent,
+    lazy,
+    useCallback,
+    useEffect,
+    useState,
+    Suspense,
+} from 'react';
+import { FormControlLabel } from '@mui/material';
+import { PaletteMode } from '@mui/material';
+import { FormGroup } from '@mui/material';
+import { Box } from '@mui/material';
+import { Typography } from '@mui/material';
+import { Tooltip } from '@mui/material';
+import { useMediaQuery } from '@mui/material';
+import { Toolbar } from '@mui/material';
+import { Button } from '@mui/material';
+import { Container } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { Drawer } from '@mui/material';
+import { useTheme } from '@mui/material';
+import { AppBar } from '@mui/material';
+import { Badge } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import LanguageSwitcher from '../../../locales/languageSwich';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import handleRTL from '../../../locales/handleRTL';
-import {
-    Brightness4,
-    Brightness7,
-    Menu as MenuIcon,
-    Home as HomeIcon,
-    Favorite as FavoriteIcon,
-    Info as InfoIcon,
-    ContactMail as ContactIcon,
-    List as ListIcon,
-    Help as HelpIcon,
-    Dashboard as DashboardIcon,
-    ChatBubble,
-    DeleteSharp,
-    WorkOutline as WorkOutlineIcon,
-} from '@mui/icons-material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import InfoIcon from '@mui/icons-material/Info';
+import ContactIcon from '@mui/icons-material/ContactMail';
+import ListIcon from '@mui/icons-material/List';
+import HelpIcon from '@mui/icons-material/Help';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { motion, AnimatePresence } from 'framer-motion';
 import { path } from '../../../routes/routes';
 import socket from '../../../socket/globalSocket';
 import RoleType from '../../../interfaces/UserType';
 import { useTranslation } from 'react-i18next';
-import AccountMenu from '../userManage/AccountMenu';
+const AccountMenu = lazy(() => import('../userManage/AccountMenu'));
 import { useUser } from '../../../hooks/useUSer';
 import JsonLd from '../../../../utils/JsonLd';
-import { GradientSwitch } from './GradientSwitch';
-import MobileDrawer from './MobileDrawer';
+const MobileDrawer = lazy(() => import('./MobileDrawer'));
 import SafqaLogo from '../../../atoms/SafqaLogo';
 import { useChat } from '../../../hooks/useChat';
+import { GradientSwitch } from './GradientSwitch';
 
 interface ThemeProps {
     mode: PaletteMode;
@@ -162,7 +165,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     zIndex: 1100,
                     overflow: 'hidden',
                     top: 0,
-                    flexWrap:"wrap",
+                    flexWrap: 'wrap',
                     '&::after': {
                         content: '""',
                         position: 'absolute',
@@ -260,7 +263,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
                                             title={`${t('links.messages', 'الرسائل')} الرسائل`}
                                         >
-                                            <ChatBubble sx={{ fontSize: 20 }} />
+                                            <ChatBubbleIcon
+                                                sx={{ fontSize: 20 }}
+                                            />
                                         </StyledNavLink>
                                     </Badge>
                                 </Box>
@@ -354,7 +359,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         )}
                                         title={t('pages.deleteAccount.title')}
                                     >
-                                        <DeleteSharp sx={{ fontSize: 20 }} />
+                                        <DeleteSharpIcon
+                                            sx={{ fontSize: 20 }}
+                                        />
                                     </StyledNavLink>
                                 </Box>
                                 {/* Favorites */}
@@ -409,7 +416,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                 aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
                                                 title={`${t('links.messages', 'الرسائل')} الرسائل`}
                                             >
-                                                <ChatBubble
+                                                <ChatBubbleIcon
                                                     sx={{ fontSize: 20 }}
                                                 />
                                             </StyledNavLink>
@@ -523,7 +530,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                     }}
                                                 >
                                                     {mode === 'dark' ? (
-                                                        <Brightness4
+                                                        <Brightness4Icon
                                                             sx={{
                                                                 color: '#ffffff',
                                                                 fontSize: {
@@ -537,7 +544,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                             }}
                                                         />
                                                     ) : (
-                                                        <Brightness7
+                                                        <Brightness7Icon
                                                             sx={{
                                                                 color: '#ffd000',
                                                                 fontSize: {
@@ -569,30 +576,33 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             )}
 
                             {/* Account Menu / Login Button - Desktop only */}
-                            <Box sx={{ display: { xs: 'block' } }}>
-                                {!isLoggedIn ? (
-                                    <Button
-                                        variant='contained'
-                                        color='primary'
-                                        onClick={() => navigate(path.Login)}
-                                        sx={{
-                                            borderRadius: '30px',
-                                            fontWeight: 'bold',
-                                            backgroundColor: '#FBBC05',
-                                            color: '#1A1E22',
-                                            px: 3,
-                                            '&:hover': {
-                                                backgroundColor: '#fb9905',
-                                            },
-                                        }}
-                                        aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
-                                    >
-                                        {t('links.login')}
-                                    </Button>
-                                ) : (
-                                    <AccountMenu logout={handleLogout} />
-                                )}
-                            </Box>
+                            <Suspense fallback={null}>
+                                {' '}
+                                <Box sx={{ display: { xs: 'block' } }}>
+                                    {!isLoggedIn ? (
+                                        <Button
+                                            variant='contained'
+                                            color='primary'
+                                            onClick={() => navigate(path.Login)}
+                                            sx={{
+                                                borderRadius: '30px',
+                                                fontWeight: 'bold',
+                                                backgroundColor: '#FBBC05',
+                                                color: '#1A1E22',
+                                                px: 3,
+                                                '&:hover': {
+                                                    backgroundColor: '#fb9905',
+                                                },
+                                            }}
+                                            aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
+                                        >
+                                            {t('links.login')}
+                                        </Button>
+                                    ) : (
+                                        <AccountMenu logout={handleLogout} />
+                                    )}
+                                </Box>
+                            </Suspense>
                         </Box>
                     </Toolbar>
                 </Container>
@@ -617,18 +627,20 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     },
                 }}
             >
-                <MobileDrawer
-                    expandedMobileMenu={expandedMobileMenu}
-                    setExpandedMobileMenu={setExpandedMobileMenu}
-                    auth={auth}
-                    handleDrawerToggle={handleDrawerToggle}
-                    handleThemeChange={handleThemeChange}
-                    isAdmin={isAdmin}
-                    isLoggedIn={isLoggedIn}
-                    logout={handleLogout}
-                    setMobileOpen={setMobileOpen}
-                    mode={mode}
-                />
+                <Suspense fallback={null}>
+                    <MobileDrawer
+                        expandedMobileMenu={expandedMobileMenu}
+                        setExpandedMobileMenu={setExpandedMobileMenu}
+                        auth={auth}
+                        handleDrawerToggle={handleDrawerToggle}
+                        handleThemeChange={handleThemeChange}
+                        isAdmin={isAdmin}
+                        isLoggedIn={isLoggedIn}
+                        logout={handleLogout}
+                        setMobileOpen={setMobileOpen}
+                        mode={mode}
+                    />
+                </Suspense>
             </Drawer>
 
             {/* Backdrop for drawer */}

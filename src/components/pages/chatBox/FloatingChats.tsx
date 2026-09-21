@@ -30,7 +30,6 @@ import { useUser } from '../../../hooks/useUSer';
 import { useChat } from '../../../hooks/useChat';
 
 import ChatBox from './ChatBox';
-import { mapUserMessageToChatBox } from './MessagesPage';
 import MiniChat from './MiniChat';
 
 import BlockButton from '../../reports/BlockButton';
@@ -39,6 +38,7 @@ import ReportModal from '../../reports/ReportModal';
 import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 
 import { deleteConversation } from '../../../services/messages';
+import { mapUserMessageToChatBox } from './chatUtils';
 
 const FloatingChats = () => {
     // ======================================================
