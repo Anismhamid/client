@@ -69,6 +69,7 @@ export interface EditUserProfile {
     phone: UserPhone;
 
     address: UserAddress;
+    personalEmail: string;
 
     gender: Gender;
 
@@ -116,7 +117,7 @@ export interface User {
     createdAt: string | number | Date;
     updatedAt: string | number | Date;
 
-    lastActivity?: string | number | Date | null;   // ← اختياري
+    lastActivity?: string | number | Date | null; // ← اختياري
 }
 
 // ===============================

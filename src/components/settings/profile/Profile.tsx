@@ -72,7 +72,7 @@ const Profile: FunctionComponent = () => {
     const [activeTab, setActiveTab] = useState(0);
     const navigate = useNavigate();
     const detailsRef = useRef<HTMLDivElement>(null);
-    const { t } = useTranslation();
+    const { t,i18n } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [showEdit, setShowEdit] = useState<boolean>(false);
@@ -98,13 +98,13 @@ const Profile: FunctionComponent = () => {
             (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
                 86400000,
         );
-        const time = date.toLocaleTimeString('i18ready.language', {
+        const time = date.toLocaleTimeString(i18n.language, {
             hour: '2-digit',
             minute: '2-digit',
         });
         if (diffDays === 0) return `${t('activity.today')}، ${time}`;
         if (diffDays === 1) return `${t('activity.yesterday')}، ${time}`;
-        return `${date.toLocaleDateString('i18ready.language', { day: 'numeric', month: 'short' })}، ${time}`;
+        return `${date.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' })}، ${time}`;
     };
 
     const { id } = useParams();

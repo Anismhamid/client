@@ -7,6 +7,7 @@ import {
     Card,
     CardContent,
     Chip,
+    Dialog,
     Divider,
     Grid,
     IconButton,
@@ -17,7 +18,7 @@ import {
     useTheme,
 } from '@mui/material';
 import { m } from 'framer-motion';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import {
     Share,
     Phone,
@@ -40,9 +41,10 @@ import { showError } from '../../../atoms/toasts/ReactToast';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
 import { path } from '../../../routes/routes';
+import CloseIcon from '@mui/icons-material/Close';
 
-const BRAND_GOLD = '#B8860B';
-const BRAND_BROWN = '#8B4513';
+const BRAND_GOLD = 'rgb(184, 135, 11)';
+const BRAND_BROWN = 'rgba(139, 69, 19, 0.952)';
 const BRAND_GRADIENT = `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`;
 
 interface CustomerProfileHeaderProps {
@@ -69,6 +71,8 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     const { auth } = useUser();
     const { openChat } = useChatWindow();
     const isRtl = dir === 'rtl';
+    const [zoomOpen, setZoomOpen] = useState(false);
+    const canZoom = Boolean(user.image?.url);
 
     const fullName =
         `${user.name?.first || ''} ${user.name?.last || ''}`.trim() ||
@@ -85,6 +89,8 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
         }
         openChat(user as UserMessage);
     };
+
+    const isSelf = auth.slug === user.slug;
 
     return (
         <m.div
@@ -214,17 +220,31 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     <Avatar
                                         src={user.image?.url}
                                         alt={fullName}
+                                        onClick={
+                                            canZoom
+                                                ? () => setZoomOpen(true)
+                                                : undefined
+                                        }
+                                        role={canZoom ? 'button' : undefined}
+                                        tabIndex={canZoom ? 0 : undefined}
                                         sx={{
+                                            border: `3px solid ${BRAND_GOLD}`,
                                             width: { xs: 120, md: 150 },
                                             height: { xs: 120, md: 150 },
-                                            border: `5px solid ${theme.palette.background.paper}`,
                                             boxShadow: theme.shadows[4],
                                             background: BRAND_GRADIENT,
                                             fontSize: '2.25rem',
                                             fontWeight: 800,
+                                            cursor: canZoom
+                                                ? 'pointer'
+                                                : 'default',
                                             transition: 'transform 0.3s ease',
                                             '&:hover': {
                                                 transform: 'scale(1.03)',
+                                            },
+                                            '&:focus-visible': {
+                                                outline: `3px solid ${alpha(BRAND_GOLD, 0.6)}`,
+                                                outlineOffset: 3,
                                             },
                                         }}
                                     >
@@ -292,7 +312,11 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                         md: 'flex-start',
                                     }}
                                     spacing={1}
-                                    sx={{ mb: 1.5, color: 'text.secondary' }}
+                                    sx={{
+                                        gap: 1,
+                                        mb: 1.5,
+                                        color: 'text.secondary',
+                                    }}
                                 >
                                     <Storefront
                                         sx={{
@@ -305,7 +329,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                         fontWeight={700}
                                         sx={{ color: BRAND_BROWN }}
                                     >
-                                        @{slug}
+                                        {slug}
                                     </Typography>
                                 </Stack>
 
@@ -319,8 +343,10 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     }}
                                     spacing={1}
                                     sx={{ mb: 2 }}
+                                    gap={1}
                                 >
                                     <Rating
+                                        dir={'ltr'}
                                         value={stats.rating || 0}
                                         precision={0.5}
                                         readOnly
@@ -400,6 +426,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                             size='small'
                                             sx={{
                                                 borderRadius: 2,
+
                                                 borderColor: alpha(
                                                     theme.palette.divider,
                                                     0.9,
@@ -424,6 +451,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                             size='small'
                                             sx={{
                                                 borderRadius: 2,
+
                                                 borderColor: alpha(
                                                     theme.palette.divider,
                                                     0.9,
@@ -441,61 +469,120 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                         </Grid>
 
                         {/* أزرار التواصل */}
-                        <Grid size={{ xs: 12, md: 'auto' }}>
-                            <Stack
-                                direction={{ xs: 'row', md: 'column' }}
-                                spacing={1}
-                                sx={{
-                                    mt: { xs: 2, md: 2 },
-                                    minWidth: { md: 200 },
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <Button
-                                    variant='contained'
-                                    fullWidth
-                                    startIcon={<ChatBubble />}
-                                    onClick={handleOpenChat}
+                        {!isSelf && (
+                            <Grid size={{ xs: 12, md: 'auto' }}>
+                                <Stack
+                                    direction={{ xs: 'row', md: 'column' }}
+                                    spacing={1}
                                     sx={{
-                                        fontWeight: 700,
-                                        borderRadius: 2.5,
-                                        py: 1.1,
-                                        gap: 1,
-                                        textTransform: 'none',
-                                        background: BRAND_GRADIENT,
-                                        boxShadow: `0 6px 16px ${alpha(BRAND_GOLD, 0.25)}`,
-                                        '&:hover': {
+                                        mt: { xs: 2, md: 2 },
+                                        minWidth: { md: 200 },
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <Button
+                                        variant='contained'
+                                        fullWidth
+                                        startIcon={<ChatBubble />}
+                                        onClick={handleOpenChat}
+                                        sx={{
+                                            fontWeight: 700,
+                                            borderRadius: 2.5,
+                                            py: 1.1,
+                                            gap: 1,
+                                            textTransform: 'none',
                                             background: BRAND_GRADIENT,
-                                            boxShadow: `0 8px 22px ${alpha(BRAND_GOLD, 0.35)}`,
-                                        },
-                                    }}
-                                >
-                                    {t('common.contactViaPlatform')}
-                                </Button>
+                                            boxShadow: `0 6px 16px ${alpha(BRAND_GOLD, 0.25)}`,
+                                            '&:hover': {
+                                                background: BRAND_GRADIENT,
+                                                boxShadow: `0 8px 22px ${alpha(BRAND_GOLD, 0.35)}`,
+                                            },
+                                        }}
+                                    >
+                                        {t('common.contactViaPlatform')}
+                                    </Button>
 
-                                <Button
-                                    variant='outlined'
-                                    fullWidth
-                                    color='success'
-                                    startIcon={<WhatsApp />}
-                                    onClick={handleWhatsApp}
-                                    sx={{
-                                        fontWeight: 700,
-                                        borderRadius: 2.5,
-                                        py: 1.1,
-                                        gap: 1,
-                                        textTransform: 'none',
-                                        borderWidth: 1.5,
-                                        '&:hover': { borderWidth: 1.5 },
-                                    }}
-                                >
-                                    {t('common.whatsapp')}
-                                </Button>
-                            </Stack>
-                        </Grid>
+                                    <Button
+                                        variant='outlined'
+                                        fullWidth
+                                        color='success'
+                                        startIcon={<WhatsApp />}
+                                        onClick={handleWhatsApp}
+                                        sx={{
+                                            fontWeight: 700,
+                                            borderRadius: 2.5,
+                                            py: 1.1,
+                                            gap: 1,
+                                            textTransform: 'none',
+                                            borderWidth: 1.5,
+                                            '&:hover': { borderWidth: 1.5 },
+                                        }}
+                                    >
+                                        {t('common.whatsapp')}
+                                    </Button>
+                                </Stack>
+                            </Grid>
+                        )}
                     </Grid>
                 </CardContent>
             </Card>
+            <Dialog
+                open={zoomOpen}
+                onClose={() => setZoomOpen(false)}
+                maxWidth='md'
+                slotProps={{
+                    backdrop: {
+                        sx: {
+                            bgcolor: alpha('#000', 0.85),
+                            backdropFilter: 'blur(4px)',
+                        },
+                    },
+                    paper: {
+                        sx: {
+                            bgcolor: 'transparent',
+                            boxShadow: 'none',
+                            overflow: 'visible',
+                            m: 2,
+                        },
+                    },
+                }}
+            >
+                <Box sx={{ position: 'relative' }}>
+                    <IconButton
+                        onClick={() => setZoomOpen(false)}
+                        aria-label={t('common.close')}
+                        size='small'
+                        sx={{
+                            position: 'absolute',
+                            top: -14,
+                            insetInlineEnd: -14,
+                            zIndex: 1,
+                            color: '#fff',
+                            bgcolor: alpha('#000', 0.6),
+                            '&:hover': { bgcolor: alpha('#000', 0.85) },
+                        }}
+                    >
+                        <CloseIcon fontSize='small' />
+                    </IconButton>
+
+                    <Box
+                        component='img'
+                        src={user.image?.url}
+                        alt={fullName}
+                        onClick={() => setZoomOpen(false)}
+                        sx={{
+                            display: 'block',
+                            maxWidth: '100%',
+                            maxHeight: '85vh',
+                            borderRadius: 3,
+                            objectFit: 'contain',
+                            bgcolor: 'background.paper',
+                            boxShadow: theme.shadows[24],
+                            cursor: 'zoom-out',
+                        }}
+                    />
+                </Box>
+            </Dialog>
         </m.div>
     );
 };

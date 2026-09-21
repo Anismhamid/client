@@ -193,12 +193,26 @@ const CustomerProfile: FunctionComponent = () => {
                     0,
                 );
 
+                const ratings = productsData
+                    .flatMap((p) => p.reviews ?? [])
+                    .map((r) => Number(r.rating))
+                    .filter((r) => Number.isFinite(r) && r > 0);
+
+                const computedRating = ratings.length
+                    ? Number(
+                          (
+                              ratings.reduce((s, r) => s + r, 0) /
+                              ratings.length
+                          ).toFixed(1),
+                      )
+                    : 0;
+
                 setStats({
                     totalProducts: productsData.length,
                     totalLikes,
                     totalViews,
                     reviewsCount,
-                    rating: profile.rating || 0,
+                    rating: computedRating || Number(profile.rating) || 0,
                 });
             } catch (e) {
                 if (!ctrl.signal.aborted) {
@@ -213,46 +227,57 @@ const CustomerProfile: FunctionComponent = () => {
         return () => ctrl.abort();
     }, [slug, t]);
 
-  const handleShareProfile = useCallback(async () => {
-    if (!user || !slug) return;
+    const SITE_URL: string =
+        import.meta.env.VITE_SITE_URL || 'https://client-qqq1.vercel.app';
 
-    const profileUrl = `${import.meta.env.VITE_API_SOCKET_URL}/users/customer/${slug}`;
+    const handleShareProfile = useCallback(async () => {
+        if (!user || !slug) return;
 
-    const message = t('common.shareProfileText', {
-        name: user.name?.first ?? '',
-    });
+        const profileUrl = `${SITE_URL}/users/customer/${slug}`;
+        const message = t('common.shareProfileText', {
+            name: user.name?.first ?? '',
+        });
 
-    const shareText = `${message}\n\n${profileUrl}`;
-
-    try {
-        if (navigator.share) {
-            await navigator.share({
-                title: t('common.shareProfileTitle', {
-                    name: `${user.name?.first ?? ''} ${user.name?.last ?? ''}`.trim(),
-                }),
-                text: shareText,
-            });
-        } else {
-            await navigator.clipboard.writeText(shareText);
-            showSuccess(t('common.profileLinkCopied'));
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: t('common.shareProfileTitle', {
+                        name: `${user.name?.first ?? ''} ${user.name?.last ?? ''}`.trim(),
+                    }),
+                    text: message,
+                    url: profileUrl,
+                });
+            } else {
+                await navigator.clipboard.writeText(
+                    `${message}\n\n${profileUrl}`,
+                );
+                showSuccess(t('common.profileLinkCopied'));
+            }
+        } catch (e) {
+            if (e instanceof Error && e.name !== 'AbortError') {
+                console.error('Share profile error:', e);
+            }
         }
-    } catch (e) {
-        if (e instanceof Error && e.name !== 'AbortError') {
-            console.error('Share profile error:', e);
-        }
-    }
-}, [user, slug, t]);
+    }, [user, slug, SITE_URL, t]);
 
     const handleWhatsApp = useCallback(() => {
         if (!user?.phone?.phone_1) {
             showError(t('common.noWhatsappNumber'));
             return;
         }
-        const clean = user.phone.phone_1.replace(/\s/g, '');
-        const msg = t('common.whatsappGreeting', { name: user?.name?.first });
+
+        // wa.me بده رقم دولي بدون + وبدون 0 بالأول (05x... → 9725x...)
+        const digits = user.phone.phone_1.replace(/\D/g, '');
+        const international = digits.startsWith('0')
+            ? `972${digits.slice(1)}`
+            : digits;
+
+        const msg = t('common.whatsappGreeting', { name: user.name?.first });
+
         window.open(
-            `https://wa.me/${clean}?text=${encodeURIComponent(msg)}`,
-            '_blank noopener noreferrer',
+            `https://wa.me/${international}?text=${encodeURIComponent(msg)}`,
+            '_blank',
+            'noopener,noreferrer',
         );
     }, [user, t]);
 
