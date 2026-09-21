@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useMemo, useRef, useState } from 'react';
+import { FunctionComponent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Button,
@@ -39,8 +39,8 @@ import {
     ShoppingCart,
     Star,
 } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { useTranslation} from 'react-i18next';
+import { m } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
 import { useUserPosts } from '../../../hooks/useUserPosts';
 import { usePosts } from '../../../hooks/usePosts';
@@ -98,13 +98,13 @@ const Profile: FunctionComponent = () => {
             (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
                 86400000,
         );
-        const time = date.toLocaleTimeString('ar', {
+        const time = date.toLocaleTimeString('i18ready.language', {
             hour: '2-digit',
             minute: '2-digit',
         });
         if (diffDays === 0) return `${t('activity.today')}، ${time}`;
         if (diffDays === 1) return `${t('activity.yesterday')}، ${time}`;
-        return `${date.toLocaleDateString('ar', { day: 'numeric', month: 'short' })}، ${time}`;
+        return `${date.toLocaleDateString('i18ready.language', { day: 'numeric', month: 'short' })}، ${time}`;
     };
 
     const { id } = useParams();
@@ -310,7 +310,7 @@ const Profile: FunctionComponent = () => {
                 dir={dir}
                 sx={{ minHeight: '100vh', py: 4, px: { xs: 2, sm: 3 } }}
             >
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -850,7 +850,7 @@ const Profile: FunctionComponent = () => {
 
                         {/* === Tab Content === */}
                         {activeTab === 0 && (
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ duration: 0.3 }}
@@ -1074,7 +1074,7 @@ const Profile: FunctionComponent = () => {
                                         </Card>
                                     </Grid>
                                 </Grid>
-                            </motion.div>
+                            </m.div>
                         )}
 
                         {activeTab === 1 && <FavoritesProducts />}
@@ -1190,7 +1190,9 @@ const Profile: FunctionComponent = () => {
                         </Box>
 
                         {showEdit && (
-                            <EditUserData userId={auth?._id || ''} />
+                            <Suspense fallback={null}>
+                                <EditUserData userId={auth?._id || ''} />
+                            </Suspense>
                         )}
 
                         <Divider sx={{ my: 4 }} />
@@ -1199,7 +1201,7 @@ const Profile: FunctionComponent = () => {
                             onDelete={() => setShowDeleteConfirm(true)}
                         />
                     </Container>
-                </motion.div>
+                </m.div>
                 <AlertDialogs
                     show={showDeleteConfirm}
                     onHide={() => setShowDeleteConfirm(false)}

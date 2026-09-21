@@ -1,7 +1,7 @@
 // components/home/ContactCTA.tsx
 import { Box, Button, Typography } from '@mui/material';
 import HeadsetMicIcon from '@mui/icons-material/HeadsetMic';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import SealBadge from './SealBadge';
@@ -54,7 +54,7 @@ const ContactCTA = () => {
                 }}
             />
 
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -96,7 +96,7 @@ const ContactCTA = () => {
                     </Typography>
                 </Box>
 
-                <motion.div
+                <m.div
                     style={{ display: 'inline-block' }}
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
@@ -123,8 +123,8 @@ const ContactCTA = () => {
                     >
                         {t('contactCTA.button')}
                     </Button>
-                </motion.div>
-            </motion.div>
+                </m.div>
+            </m.div>
         </Box>
     );
 };

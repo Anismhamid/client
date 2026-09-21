@@ -22,7 +22,7 @@ import {
     Storefront as StorefrontIcon,
     ThumbUp as ThumbUpIcon,
 } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 const About: FunctionComponent = () => {
     const navigate = useNavigate();
@@ -178,7 +178,7 @@ const About: FunctionComponent = () => {
                     sx={{ position: 'relative', zIndex: 1, py: 8 }}
                 >
                     {/* Hero Section */}
-                    <motion.div
+                    <m.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8 }}
@@ -285,13 +285,13 @@ const About: FunctionComponent = () => {
                                 </Button>
                             </Box>
                         </Paper>
-                    </motion.div>
+                    </m.div>
 
                     {/* Features Grid */}
                     <Grid container spacing={4}>
                         {features.map((feature, index) => (
                             <Grid size={{ xs: 12, md: 6, lg: 4 }} key={index}>
-                                <motion.div
+                                <m.div
                                     initial={{ y: 50, opacity: 0 }}
                                     animate={{ y: 0, opacity: 1 }}
                                     transition={{
@@ -383,7 +383,7 @@ const About: FunctionComponent = () => {
                                             </Typography>
                                         </CardContent>
                                     </Card>
-                                </motion.div>
+                                </m.div>
                             </Grid>
                         ))}
                     </Grid>
@@ -538,7 +538,7 @@ const About: FunctionComponent = () => {
                     </Box>
 
                     {/* Stats Section */}
-                    <motion.div
+                    <m.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 0.8 }}
@@ -682,10 +682,10 @@ const About: FunctionComponent = () => {
                                 </Grid>
                             </Grid>
                         </Paper>
-                    </motion.div>
+                    </m.div>
 
                     {/* CTA Section */}
-                    <motion.div
+                    <m.div
                         initial={{ y: 50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         transition={{ duration: 0.8, delay: 1 }}
@@ -733,7 +733,7 @@ const About: FunctionComponent = () => {
                                 {t('pages.about.startFree')}
                             </Button>
                         </Box>
-                    </motion.div>
+                    </m.div>
                 </Container>
             </Box>
         </>

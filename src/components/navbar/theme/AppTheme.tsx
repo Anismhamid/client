@@ -38,7 +38,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { path } from '../../../routes/routes';
 import socket from '../../../socket/globalSocket';
 import RoleType from '../../../interfaces/UserType';
@@ -234,7 +234,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
                             {/* Logo */}
 
-                            <motion.div
+                            <m.div
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
@@ -249,7 +249,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 >
                                     <SafqaLogo />
                                 </Link>
-                            </motion.div>
+                            </m.div>
 
                             {/* Messages */}
                             {isMobile && isLoggedIn && (
@@ -485,7 +485,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             : t('darkMode')
                                     }
                                 >
-                                    <motion.div
+                                    <m.div
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.95 }}
                                     >
@@ -511,7 +511,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             </FormGroup>
 
                                             <AnimatePresence mode='wait'>
-                                                <motion.div
+                                                <m.div
                                                     key={mode}
                                                     initial={{
                                                         opacity: 0,
@@ -558,21 +558,21 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                             }}
                                                         />
                                                     )}
-                                                </motion.div>
+                                                </m.div>
                                             </AnimatePresence>
                                         </Box>
-                                    </motion.div>
+                                    </m.div>
                                 </Tooltip>
                             )}
 
                             {/* Language Switcher */}
                             {!isMobile && (
-                                <motion.div
+                                <m.div
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                 >
                                     <LanguageSwitcher />
-                                </motion.div>
+                                </m.div>
                             )}
 
                             {/* Account Menu / Login Button - Desktop only */}

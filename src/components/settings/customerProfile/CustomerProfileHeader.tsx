@@ -16,7 +16,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { FunctionComponent } from 'react';
 import {
     Share,
@@ -87,7 +87,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
     };
 
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
@@ -496,7 +496,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                     </Grid>
                 </CardContent>
             </Card>
-        </motion.div>
+        </m.div>
     );
 };
 

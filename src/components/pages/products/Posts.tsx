@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import JsonLd from '../../../../utils/JsonLd';
 import { generateCategoryJsonLd } from '../../../../utils/structuredData';
 import { Box, Typography } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { usePosts } from '../../../hooks/usePosts';
 import PageNotFound from '../Png';
 
@@ -77,7 +77,7 @@ const Posts: FunctionComponent = () => {
                         margin: '0 auto',
                     }}
                 >
-                    <motion.div
+                    <m.div
                         initial={{
                             opacity: 0,
                             y: 30,
@@ -123,7 +123,7 @@ const Posts: FunctionComponent = () => {
                         >
                             {pageDescription}
                         </Typography>
-                    </motion.div>
+                    </m.div>
                 </Box>
             </Box>
 

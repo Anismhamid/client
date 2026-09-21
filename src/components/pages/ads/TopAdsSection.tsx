@@ -13,7 +13,7 @@ import {
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import EastIcon from '@mui/icons-material/East';
 import { LocalFireDepartment, Verified } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FunctionComponent, useMemo } from 'react';
 import React from 'react';
@@ -125,7 +125,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
             maxWidth='lg'
             sx={{ mb: 6, px: { xs: 2, sm: 3, md: 4 } }}
         >
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -317,7 +317,7 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                             size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                             key={`top-ad-${ad._id}`}
                         >
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{
@@ -329,11 +329,11 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
                                     <RankBadge rank={idx + 1} />
                                     <HomepageAdCard ad={ad} index={idx} />
                                 </Box>
-                            </motion.div>
+                            </m.div>
                         </Grid>
                     ))}
                 </Grid>
-            </motion.div>
+            </m.div>
         </Container>
     );
 };

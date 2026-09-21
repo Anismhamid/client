@@ -40,7 +40,7 @@ import {
     Close as CloseIcon,
     ErrorOutline,
 } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { getAllUsers } from '../../services/usersServices';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
 import { getUserMessages, postMessage } from '../../services/messages';
@@ -427,7 +427,7 @@ const MessagingPage: React.FC = () => {
         const avatarUrl = getUserAvatar(user);
 
         return (
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -625,7 +625,7 @@ const MessagingPage: React.FC = () => {
                         </Box>
                     </Box>
                 </Paper>
-            </motion.div>
+            </m.div>
         );
     };
 
@@ -951,7 +951,7 @@ const MessagingPage: React.FC = () => {
             >
                 <Container maxWidth='lg' dir={direction}>
                     {/* Header */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
@@ -1006,13 +1006,13 @@ const MessagingPage: React.FC = () => {
                                 </Typography>
                             </Box>
                         </Paper>
-                    </motion.div>
+                    </m.div>
 
                     {/* Main Content */}
                     <Box sx={{ display: 'flex', gap: 3 }}>
                         {/* Compose Form - Desktop */}
                         {!isMobile && (
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: 0.1 }}
@@ -1042,11 +1042,11 @@ const MessagingPage: React.FC = () => {
                                     </Typography>
                                     {renderComposeForm()}
                                 </Paper>
-                            </motion.div>
+                            </m.div>
                         )}
 
                         {/* Messages Section */}
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
@@ -1275,12 +1275,12 @@ const MessagingPage: React.FC = () => {
                                     </Box>
                                 )}
                             </Paper>
-                        </motion.div>
+                        </m.div>
                     </Box>
 
                     {/* Mobile Compose Button */}
                     {isMobile && (
-                        <motion.div
+                        <m.div
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ delay: 0.5 }}
@@ -1313,7 +1313,7 @@ const MessagingPage: React.FC = () => {
                                     <SendIcon />
                                 </IconButton>
                             </Tooltip>
-                        </motion.div>
+                        </m.div>
                     )}
 
                     {/* Mobile Compose Drawer */}

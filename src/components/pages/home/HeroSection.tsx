@@ -6,7 +6,7 @@ import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUSer';
@@ -130,7 +130,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 }}
             >
                 {FLOATING_SEALS.map((seal, i) => (
-                    <motion.div
+                    <m.div
                         key={i}
                         style={{
                             position: 'absolute',
@@ -161,7 +161,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                 }}
                             />
                         </SealBadge>
-                    </motion.div>
+                    </m.div>
                 ))}
             </Box>
 
@@ -174,7 +174,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 }}
             >
                 {/* Seal badge + trust label */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
@@ -206,10 +206,10 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             {t('TrustedOnlineMarketplace')}
                         </Typography>
                     </Box>
-                </motion.div>
+                </m.div>
 
                 {/* Title */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
@@ -254,10 +254,10 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     >
                         {t('bestOffers')}
                     </Typography>
-                </motion.div>
+                </m.div>
 
                 {/* CTA Buttons */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.2 }}
@@ -271,7 +271,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             mb: { xs: 4, md: 5 },
                         }}
                     >
-                        <motion.div
+                        <m.div
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -299,8 +299,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             >
                                 {t('create-post')}
                             </Button>
-                        </motion.div>
-                        <motion.div
+                        </m.div>
+                        <m.div
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
                         >
@@ -331,12 +331,12 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             >
                                 {t('browse-posts') || 'تصفح المنتجات'}
                             </Button>
-                        </motion.div>
+                        </m.div>
                     </Box>
-                </motion.div>
+                </m.div>
 
                 {/* Trust ticker — quiet reassurance strip under the CTAs */}
-                <motion.div
+                <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.5, delay: 0.35 }}
@@ -368,7 +368,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             </Box>
                         ))}
                     </Stack>
-                </motion.div>
+                </m.div>
             </Box>
         </Box>
     );

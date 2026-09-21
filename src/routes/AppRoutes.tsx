@@ -1,15 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import { lazy } from 'react';
-import { FunctionComponent } from 'react';
+import { lazy, FunctionComponent } from 'react';
 import { path, productsPathes } from './routes';
 import RoleType from '../interfaces/UserType';
 import { AuthValues } from '../interfaces/authValues';
 import { UserMessage } from '../interfaces/chat/usersMessages';
-import MyAdsDashboard from '../components/pages/ads/MyAdsDashboard';
-import HomepageFeaturedSection from '../components/pages/ads/HomepageFeaturedSection';
-import PaymentSuccess from '../components/pages/payment/Success';
-import JobsPage from '../components/pages/Jobs/JobsPage';
-import JobDetails from '../components/pages/Jobs/JobDetails';
 
 const UsersManagement = lazy(
     () =>
@@ -18,7 +12,6 @@ const UsersManagement = lazy(
 const Home = lazy(() => import('../components/pages/home/Home'));
 const Login = lazy(() => import('../components/settings/Login'));
 const About = lazy(() => import('../components/pages/About'));
-// import EditUserData from "../atoms/userManage/EditUserData";
 const Contact = lazy(() => import('../components/pages/Contact'));
 const PageNotFound = lazy(() => import('../components/pages/Png'));
 const PrivacyAdnPolicy = lazy(
@@ -60,10 +53,7 @@ const MessageAuditLogs = lazy(
         import('../components/settings/usersManagement/components/MessageInvestigation/MessageAuditLogs'),
 );
 const BlockedUsers = lazy(() => import('../components/pages/BlockedUsers'));
-const CreateJob = lazy(() => import('../components/pages/Jobs/CreateJob'));
-const EditJob = lazy(() => import('../components/pages/Jobs/EditJob'));
 const PendingPosts = lazy(() => import('../components/PendingPosts'));
-
 const CustomerProfile = lazy(
     () => import('../components/settings/customerProfile/CustomerProfile'),
 );
@@ -85,6 +75,21 @@ const MessagesPage = lazy(
 const FeaturedAdsDashboard = lazy(
     () => import('../components/pages/ads/FeaturedAdsDashboard'),
 );
+
+// كانوا static imports
+const MyAdsDashboard = lazy(
+    () => import('../components/pages/ads/MyAdsDashboard'),
+);
+const HomepageFeaturedSection = lazy(
+    () => import('../components/pages/ads/HomepageFeaturedSection'),
+);
+const PaymentSuccess = lazy(
+    () => import('../components/pages/payment/Success'),
+);
+const JobsPage = lazy(() => import('../components/pages/Jobs/JobsPage'));
+const JobDetails = lazy(() => import('../components/pages/Jobs/JobDetails'));
+const CreateJob = lazy(() => import('../components/pages/Jobs/CreateJob'));
+const EditJob = lazy(() => import('../components/pages/Jobs/EditJob'));
 
 interface AppRoutesProps {
     auth: AuthValues;
@@ -109,11 +114,11 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             <Route path={path.DisputesHelp} element={<DisputesHelp />} />
             <Route path={path.CustomerProfile} element={<CustomerProfile />} />
             <Route path={`${path.Profile}/:id`} element={<Profile />} />
-            <Route path={`${path.Favorite}`} element={<Favorite />} />
-            <Route path={`${path.jobs}`} element={<JobsPage />} />
-            <Route path={`${path.createJob}`} element={<CreateJob />} />
-            <Route path={`${path.editJob}`} element={<EditJob />} />
-            <Route path={`/jobs/:id`} element={<JobDetails />} />
+            <Route path={path.Favorite} element={<Favorite />} />
+            <Route path={path.jobs} element={<JobsPage />} />
+            <Route path={path.createJob} element={<CreateJob />} />
+            <Route path={path.editJob} element={<EditJob />} />
+            <Route path='/jobs/:id' element={<JobDetails />} />
 
             <Route path={path.Register} element={<Register />} />
             <Route path={path.Messages} element={<Messages />} />
@@ -131,14 +136,12 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                     isAdminOrModerator ? <UsersManagement /> : <PageNotFound />
                 }
             />
-
             <Route
                 path={path.AdminSettings}
                 element={
                     isAdminOrModerator ? <AdminSettings /> : <PageNotFound />
                 }
             />
-
             <Route
                 path={path.ReportsManagement}
                 element={
@@ -153,46 +156,34 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             />
             <Route path={path.Contact} element={<Contact />} />
             <Route path={path.About} element={<About />} />
-
             <Route
                 path={path.PrivacyAndPolicy}
                 element={<PrivacyAdnPolicy />}
             />
             <Route path={path.TermOfUse} element={<TermOfUse />} />
 
-            {/* <Route path='/category/:category' element={<Products />} />
-
-            <Route path='/category/:category/*' element={<Products />} /> */}
-
             <Route
                 path='/category/:category/:subCategory?'
                 element={<Products />}
             />
-
             <Route
                 path={`${productsPathes.postsDetails}/:postId`}
                 element={<PostDetails />}
             />
-
             <Route
                 path={`${productsPathes.postsDetails}/:category/:brand/:postId`}
                 element={<PostDetails />}
             />
-
             <Route
-                path={`${path.DiscountsAndOffers}`}
+                path={path.DiscountsAndOffers}
                 element={<DiscountsAndOffers />}
             />
+            <Route path={path.MyAdsDashboard} element={<MyAdsDashboard />} />
             <Route
-                path={`${path.MyAdsDashboard}`}
-                element={<MyAdsDashboard />}
-            />
-            <Route
-                path={`${path.FeaturedAds}`}
+                path={path.FeaturedAds}
                 element={<HomepageFeaturedSection />}
             />
             <Route path='/search' element={<SearchPage />} />
-
             <Route path='/payment/success' element={<PaymentSuccess />} />
             <Route path='/password-recover' element={<ForgotPassword />} />
             <Route path='/reset-password/:token' element={<ResetPassword />} />
@@ -208,7 +199,7 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                     )
                 }
             />
-            <Route path={'*'} element={<PageNotFound />} />
+            <Route path='*' element={<PageNotFound />} />
         </Routes>
     );
 };

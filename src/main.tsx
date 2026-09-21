@@ -5,16 +5,19 @@ import App from './App.tsx';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';
 import { UserProvider, useUser } from './hooks/useUSer.tsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import { Buffer } from 'buffer';
 import ErrorBoundary from './components/pages/ErrorBoundary.tsx';
 import { ChatProvider } from './hooks/useChat.tsx';
-window.Buffer = Buffer;
 import 'react-toastify/dist/ReactToastify.css';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { useEffect } from 'react';
 import { SocialLogin } from '@capgo/capacitor-social-login';
 import { ChatWindowProvider } from './context/ChatWindowContext.tsx';
+import { LazyMotion } from 'framer-motion';
+import { i18nReady } from './locales/i18n.tsx';
+
+const loadMotionFeatures = () =>
+    import('./motionFeatures').then((mod) => mod.default);
 
 if (Capacitor.isNativePlatform()) {
     SocialLogin.initialize({
@@ -70,12 +73,21 @@ const AppWithProviders = () => {
     );
 };
 
-createRoot(document.getElementById('root')!).render(
-    <GoogleOAuthProvider
-        clientId={import.meta.env.VITE_API_GOOGLE_API as string}
-    >
-        <UserProvider>
-            <AppWithProviders />
-        </UserProvider>
-    </GoogleOAuthProvider>,
-);
+const render = () => {
+    createRoot(document.getElementById('root')!).render(
+        <GoogleOAuthProvider
+            clientId={import.meta.env.VITE_API_GOOGLE_API as string}
+        >
+            <UserProvider>
+                <LazyMotion features={loadMotionFeatures} strict>
+                    <AppWithProviders />
+                </LazyMotion>
+            </UserProvider>
+        </GoogleOAuthProvider>,
+    );
+};
+
+// بننتظر تحميل لغة المستخدم قبل الـ render. إذا فشل، بتضل 'ar'
+i18nReady
+    .catch((err) => console.error('Failed to load language', err))
+    .then(render);

@@ -43,6 +43,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
     const formik = useFormik({
         initialValues: {
             name: { first: '', last: '' },
+            personalEmail: '',
             phone: { phone_1: '', phone_2: '' },
             image: { url: '', alt: '' },
             address: { city: '', street: '', houseNumber: '' },
@@ -63,6 +64,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                     .string()
                     .matches(/^0[2-9]\d{7,8}$/, 'رقم الهاتف غير صحيح'),
             }),
+            personalEmail: yup.string().email(),
             image: yup.object({
                 url: yup.string(),
                 alt: yup.string(),
@@ -86,6 +88,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                     phone_1: values.phone.phone_1,
                     phone_2: values.phone.phone_2 || '',
                 },
+                personalEmail: values.personalEmail,
                 image: {
                     url: values.image.url || '',
                     alt: values.image.alt || values.name.first || '',
@@ -95,7 +98,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                     street: values.address.street,
                     houseNumber: values.address.houseNumber || '',
                 },
-                gender: values.gender,
+                gender: values.gender as EditUserProfile['gender'],
             };
 
             editUserProfile(userId, payload)
@@ -123,6 +126,7 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                         first: userData.name?.first || '',
                         last: userData.name?.last || '',
                     },
+                    personalEmail:userData.personalEmail,
                     phone: {
                         phone_1: userData.phone?.phone_1 || '',
                         phone_2: userData.phone?.phone_2 || '',
@@ -218,7 +222,13 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                         </Grid>
 
                         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                            <FormControl fullWidth error={formik.touched.gender && Boolean(formik.errors.gender)}>
+                            <FormControl
+                                fullWidth
+                                error={
+                                    formik.touched.gender &&
+                                    Boolean(formik.errors.gender)
+                                }
+                            >
                                 <InputLabel id='gender-label'>
                                     {t('register.gender')}
                                 </InputLabel>
@@ -244,11 +254,12 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                         {t('register.female')}
                                     </MenuItem>
                                 </Select>
-                                {formik.touched.gender && formik.errors.gender && (
-                                    <FormHelperText>
-                                        {formik.errors.gender}
-                                    </FormHelperText>
-                                )}
+                                {formik.touched.gender &&
+                                    formik.errors.gender && (
+                                        <FormHelperText>
+                                            {formik.errors.gender}
+                                        </FormHelperText>
+                                    )}
                             </FormControl>
                         </Grid>
 
@@ -338,12 +349,21 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                 options={streets}
                                 value={formik.values.address.street || null}
                                 onChange={(_event, value) =>
-                                    formik.setFieldValue('address.street', value)
+                                    formik.setFieldValue(
+                                        'address.street',
+                                        value,
+                                    )
                                 }
                                 onBlur={() =>
-                                    formik.setFieldTouched('address.street', true)
+                                    formik.setFieldTouched(
+                                        'address.street',
+                                        true,
+                                    )
                                 }
-                                disabled={!formik.values.address.city || loadingStreets}
+                                disabled={
+                                    !formik.values.address.city ||
+                                    loadingStreets
+                                }
                                 loading={loadingStreets}
                                 renderInput={(params) => (
                                     <TextField
@@ -352,7 +372,9 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                         variant='outlined'
                                         error={
                                             formik.touched.address?.street &&
-                                            Boolean(formik.errors.address?.street)
+                                            Boolean(
+                                                formik.errors.address?.street,
+                                            )
                                         }
                                         helperText={
                                             formik.touched.address?.street &&
@@ -382,13 +404,17 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                                 >
                                     {preview
                                         ? t('hideImage') || 'إخفاء الصورة'
-                                        : t('showImage') || 'إظهار صورة الملف الشخصي'}
+                                        : t('showImage') ||
+                                          'إظهار صورة الملف الشخصي'}
                                 </Button>
                                 {preview && (
                                     <Box sx={{ mt: 2 }}>
                                         <Box
                                             component='img'
-                                            src={formik.values.image.url || user?.image?.url}
+                                            src={
+                                                formik.values.image.url ||
+                                                user?.image?.url
+                                            }
                                             alt={`${user?.name.first} avatar`}
                                             sx={{
                                                 height: 220,

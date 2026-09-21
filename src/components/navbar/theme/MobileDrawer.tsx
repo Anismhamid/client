@@ -33,7 +33,7 @@ import {
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { NavLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Capacitor } from '@capacitor/core';
 
@@ -136,7 +136,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                 <Typography variant='h6' sx={{ fontWeight: 700 }}>
                     {t('navigationMenu') || 'قائمة التنقل'}
                 </Typography>
-                <motion.div
+                <m.div
                     whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.85 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 15 }}
@@ -148,7 +148,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     >
                         <CloseIcon />
                     </IconButton>
-                </motion.div>
+                </m.div>
             </Box>
 
             {/* Scrollable content */}

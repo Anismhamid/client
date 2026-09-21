@@ -4,7 +4,7 @@ import { Box, Container, Typography } from '@mui/material';
 import TrendingUpRoundedIcon from '@mui/icons-material/TrendingUpRounded';
 import SupportAgentRoundedIcon from '@mui/icons-material/SupportAgentRounded';
 import VerifiedUserRoundedIcon from '@mui/icons-material/VerifiedUserRounded';
-import { motion, useInView } from 'framer-motion';
+import { m, useInView } from 'framer-motion';
 import handleRTL from '../../../locales/handleRTL';
 import { useTranslation } from 'react-i18next';
 import SealBadge from './SealBadge';
@@ -86,7 +86,7 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
                     {STATS(postsCount).map((stat, i) => {
                         const { Icon } = stat;
                         return (
-                            <motion.div
+                            <m.div
                                 key={stat.label}
                                 whileHover={{ y: -3 }}
                                 transition={{ duration: 0.2 }}
@@ -138,7 +138,7 @@ const StatsStrip = ({ postsCount }: StatsStripProps) => {
                                         {stat.label}
                                     </Typography>
                                 </Box>
-                            </motion.div>
+                            </m.div>
                         );
                     })}
                 </Box>

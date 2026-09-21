@@ -26,7 +26,7 @@ import {
     ThumbUp,
     Visibility,
 } from '@mui/icons-material';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import { User } from '../../../interfaces/chat/usersMessages';
@@ -68,7 +68,7 @@ const StatCard: FunctionComponent<StatCardProps> = ({
 }) => {
     const theme = useTheme();
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay }}
@@ -121,7 +121,7 @@ const StatCard: FunctionComponent<StatCardProps> = ({
                     {label}
                 </Typography>
             </Paper>
-        </motion.div>
+        </m.div>
     );
 };
 
@@ -421,7 +421,7 @@ const CustomerProfile: FunctionComponent = () => {
                         />
 
                         <AnimatePresence mode='wait'>
-                            <motion.div
+                            <m.div
                                 key={tabValue}
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -445,7 +445,7 @@ const CustomerProfile: FunctionComponent = () => {
                                 <TabPanel value={tabValue} index={2}>
                                     <ContactInfoTab user={user} />
                                 </TabPanel>
-                            </motion.div>
+                            </m.div>
                         </AnimatePresence>
                     </Card>
                 </Container>

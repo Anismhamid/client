@@ -16,7 +16,7 @@ import {
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ForumTwoToneIcon from '@mui/icons-material/ForumTwoTone';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import ChatList from './ChatList';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import handleRTL from '../../../locales/handleRTL';
@@ -166,7 +166,7 @@ const MessagesPage = () => {
                         >
                             {selectedUser ? (
                                 <AnimatePresence mode='wait'>
-                                    <motion.div
+                                    <m.div
                                         key='chat-active'
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
@@ -329,10 +329,10 @@ const MessagesPage = () => {
                                                 onSuccess={() => setReportOpen(false)}
                                             />
                                         </Box>
-                                    </motion.div>
+                                    </m.div>
                                 </AnimatePresence>
                             ) : (
-                                <motion.div
+                                <m.div
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.3 }}
@@ -390,7 +390,7 @@ const MessagesPage = () => {
                                                 'اختر محادثة من القائمة للبدء'}
                                         </Typography>
                                     </Box>
-                                </motion.div>
+                                </m.div>
                             )}
                         </Grid>
                     </Grid>

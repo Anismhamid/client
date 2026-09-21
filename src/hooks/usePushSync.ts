@@ -2,26 +2,23 @@
 
 // src/hooks/usePushSync.ts
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
-import {
-    initializePushNotifications,
-    removePushToken,
-    refreshToken,
-    getCurrentPushToken,
-} from '../services/pushNotifications.service';
-import { PushNotifications } from '@capacitor/push-notifications';
+
+type PushService = typeof import('../services/pushNotifications.service');
+
+const loadPushService = () => import('../services/pushNotifications.service');
 
 const usePushSync = () => {
     const [isInitialized, setIsInitialized] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // بنخزّن الـ service بعد ما يتحمّل، ليضل getToken sync متل قبل
+    const serviceRef = useRef<PushService | null>(null);
+
     useEffect(() => {
         // Push Notifications تعمل فقط على Native
         if (!Capacitor.isNativePlatform()) {
-            console.log(
-                'ℹ️ Not running on native platform',
-            );
             return;
         }
 
@@ -29,12 +26,13 @@ const usePushSync = () => {
 
         const initPush = async () => {
             try {
-                console.log(
-                    '📱 Initializing push notifications...',
-                );
+                console.log('📱 Initializing push notifications...');
+
+                const svc = await loadPushService();
+                serviceRef.current = svc;
 
                 // Authentication is handled by the HttpOnly cookie.
-                await initializePushNotifications();
+                await svc.initializePushNotifications();
 
                 if (!mounted) return;
 
@@ -42,117 +40,95 @@ const usePushSync = () => {
                 setError(null);
 
                 console.log(
-                    '✅ Push notifications initialized successfully',
+                    '✅ Push notifications initialized. Token:',
+                    svc.getCurrentPushToken() ? 'available' : 'not available',
                 );
-
-                const pushToken =
-                    getCurrentPushToken();
-
-                console.log(
-                    '🔑 Current push token:',
-                    pushToken
-                        ? '✅ Available'
-                        : '❌ Not available',
-                );
-            } catch (error: any) {
-                console.error(
-                    '❌ Failed to initialize push notifications:',
-                    error,
-                );
+            } catch (err: any) {
+                console.error('❌ Failed to initialize push notifications:', err);
 
                 if (mounted) {
                     setError(
-                        error?.message ||
+                        err?.message ||
                             'Failed to initialize push notifications',
                     );
-
                     setIsInitialized(false);
                 }
             }
         };
 
         // إعطاء التطبيق وقتًا قصيرًا للتهيئة
-        const timeoutId = setTimeout(() => {
-            initPush();
-        }, 1000);
+        const timeoutId = setTimeout(initPush, 1000);
 
         return () => {
             mounted = false;
             clearTimeout(timeoutId);
 
-            // هنا نحذف listeners فقط.
-            //
-            // لا نحذف FCM token من السيرفر هنا،
+            // نحذف listeners فقط. لا نحذف FCM token من السيرفر،
             // لأن unmount لا يعني بالضرورة logout.
-            if (Capacitor.isNativePlatform()) {
-                PushNotifications
-                    .removeAllListeners()
-                    .catch(console.error);
-            }
+            import('@capacitor/push-notifications')
+                .then(({ PushNotifications }) =>
+                    PushNotifications.removeAllListeners(),
+                )
+                .catch(console.error);
 
-            console.log(
-                '🧹 Push notification listeners cleaned up',
-            );
+            console.log('🧹 Push notification listeners cleaned up');
         };
     }, []);
 
     /**
-     * تحديث FCM token يدويًا
-     *
-     * لا يحتاج Auth JWT.
-     * الـ backend سيعرف المستخدم من HttpOnly cookie.
+     * تحديث FCM token يدويًا.
+     * الـ backend بيعرف المستخدم من HttpOnly cookie.
      */
-    const refreshPushToken = async () => {
+    const refreshPushToken = useCallback(async () => {
         try {
-            const result = await refreshToken();
+            const svc = serviceRef.current ?? (await loadPushService());
+            serviceRef.current = svc;
 
-            console.log(
-                '🔄 Push token refresh result:',
-                result,
-            );
+            const result = await svc.refreshToken();
+
+            console.log('🔄 Push token refresh result:', result);
 
             return result;
-        } catch (error) {
-            console.error(
-                '❌ Failed to refresh push token:',
-                error,
-            );
+        } catch (err) {
+            console.error('❌ Failed to refresh push token:', err);
 
             return false;
         }
-    };
+    }, []);
 
     /**
      * إزالة FCM token من حساب المستخدم.
-     *
-     * يجب استدعاؤها أثناء logout،
-     * قبل مسح HttpOnly authentication cookie.
+     * لازم تنستدعى أثناء logout، قبل مسح HttpOnly cookie.
      */
-    const clearPushToken = async () => {
+    const clearPushToken = useCallback(async () => {
         try {
-            await removePushToken();
+            const svc = serviceRef.current ?? (await loadPushService());
+            serviceRef.current = svc;
 
-            console.log(
-                '🗑️ Push token removed from server',
-            );
+            await svc.removePushToken();
+
+            console.log('🗑️ Push token removed from server');
 
             return true;
-        } catch (error) {
-            console.error(
-                '❌ Failed to remove push token:',
-                error,
-            );
+        } catch (err) {
+            console.error('❌ Failed to remove push token:', err);
 
             return false;
         }
-    };
+    }, []);
+
+    // sync زي قبل. بيرجّع null قبل ما يتحمّل الـ service (يعني قبل الـ init)
+    const getToken = useCallback(
+        () => serviceRef.current?.getCurrentPushToken() ?? null,
+        [],
+    );
 
     return {
         isInitialized,
         error,
         refreshPushToken,
         clearPushToken,
-        getToken: getCurrentPushToken,
+        getToken,
     };
 };
 

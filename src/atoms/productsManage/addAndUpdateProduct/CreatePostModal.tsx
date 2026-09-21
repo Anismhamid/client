@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon, AddCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import handleRTL from '../../../locales/handleRTL';
 import PostForm from './PostForm';
 import useAddProductFormik from '../../../hooks/useAddProductFormik';
@@ -155,7 +155,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     gap: 1.5,
                                 }}
                             >
-                                <motion.div
+                                <m.div
                                     whileHover={{ rotate: 5, scale: 1.05 }}
                                     transition={{ duration: 0.2 }}
                                 >
@@ -178,7 +178,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                             }}
                                         />
                                     </Box>
-                                </motion.div>
+                                </m.div>
 
                                 <Box>
                                     <Typography

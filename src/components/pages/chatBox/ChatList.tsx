@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import { useChat } from '../../../hooks/useChat';
 import { useTranslation } from 'react-i18next';
@@ -127,7 +127,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
             const userName = getUserName(conv.user);
 
             return (
-                <motion.div
+                <m.div
                     initial={{ opacity: 0, x: -16 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -8 }}
@@ -283,7 +283,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                             </Typography>
                         </Box>
                     </ListItemButton>
-                </motion.div>
+                </m.div>
             );
         },
     );

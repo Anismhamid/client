@@ -60,9 +60,9 @@ import {
     VisibilityOff,
 } from '@mui/icons-material';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
-import { debounce } from 'lodash';
+import debounce from 'lodash-es/debounce';
 
 import { useTranslation } from 'react-i18next';
 
@@ -129,60 +129,6 @@ const Register: FunctionComponent = () => {
     ) => {
         event.preventDefault();
     };
-
-    // =========================================================
-    // SLUG CHECK
-    // =========================================================
-
-    const checkSlug = useMemo(
-        () =>
-            debounce(async (slug: string) => {
-                const normalizedSlug = slug.trim().toLowerCase();
-
-                if (normalizedSlug.length < 3) {
-                    setSlugAvailable(null);
-                    setCheckingSlug(false);
-                    return;
-                }
-
-                const requestId = ++slugRequestId.current;
-
-                setCheckingSlug(true);
-
-                try {
-                    const available =
-                        await checkSlugAvailability(normalizedSlug);
-
-                    /**
-                     * Ignore stale requests.
-                     */
-                    if (requestId !== slugRequestId.current) {
-                        return;
-                    }
-
-                    setSlugAvailable(Boolean(available));
-                } catch (error) {
-                    console.error('Error checking slug:', error);
-
-                    if (requestId === slugRequestId.current) {
-                        setSlugAvailable(null);
-                    }
-                } finally {
-                    if (requestId === slugRequestId.current) {
-                        setCheckingSlug(false);
-                    }
-                }
-            }, 500),
-        [],
-    );
-
-    useEffect(() => {
-        return () => {
-            checkSlug.cancel();
-            slugRequestId.current += 1;
-        };
-    }, [checkSlug]);
-
     // =========================================================
     // FORMIK
     // =========================================================
@@ -292,6 +238,69 @@ const Register: FunctionComponent = () => {
             }
         },
     });
+    // =========================================================
+    // SLUG CHECK
+    // =========================================================
+
+    const checkSlug = useMemo(
+        () =>
+            debounce(async (slug: string) => {
+                const normalizedSlug = slug.trim().toLowerCase();
+
+                if (normalizedSlug.length < 3) {
+                    setSlugAvailable(null);
+                    setCheckingSlug(false);
+                    return;
+                }
+
+                const requestId = ++slugRequestId.current;
+
+                setCheckingSlug(true);
+
+                try {
+                    const available =
+                        await checkSlugAvailability(normalizedSlug);
+
+                    /**
+                     * Ignore stale requests.
+                     */
+                    if (requestId !== slugRequestId.current) {
+                        return;
+                    }
+
+                    setSlugAvailable(Boolean(available));
+                } catch (error) {
+                    console.error('Error checking slug:', error);
+
+                    if (requestId === slugRequestId.current) {
+                        setSlugAvailable(null);
+                    }
+                } finally {
+                    if (requestId === slugRequestId.current) {
+                        setCheckingSlug(false);
+                    }
+                }
+            }, 500),
+        [],
+    );
+
+    useEffect(() => {
+        const slug = formik.values.slug?.trim().toLowerCase() || '';
+
+        checkSlug.cancel();
+
+        // أي طلب قيد التنفيذ صار قديم
+        slugRequestId.current += 1;
+
+        setSlugAvailable(null);
+        setCheckingSlug(false);
+
+        if (slug.length < 3) {
+            return;
+        }
+
+        checkSlug(slug);
+    }, [checkSlug, formik.values.slug]);
 
     // =========================================================
     // ERROR HANDLER
@@ -342,7 +351,7 @@ const Register: FunctionComponent = () => {
         if (generatedSlug.length >= 3) {
             checkSlug(generatedSlug);
         }
-    }, [formik, checkSlug]);
+    }, [checkSlug, formik]);
 
     // =========================================================
     // SLUG CHANGE
@@ -776,7 +785,7 @@ const Register: FunctionComponent = () => {
                             bgcolor: theme.palette.background.paper,
                         }}
                     >
-                        <motion.div
+                        <m.div
                             initial={{
                                 scale: 0,
                             }}
@@ -797,7 +806,7 @@ const Register: FunctionComponent = () => {
                                     mb: 3,
                                 }}
                             />
-                        </motion.div>
+                        </m.div>
 
                         <Typography
                             variant='h4'
@@ -918,7 +927,7 @@ const Register: FunctionComponent = () => {
                             : '#f0f4f8',
                 }}
             >
-                <motion.div
+                <m.div
                     initial={{
                         opacity: 0,
                         y: 20,
@@ -1295,7 +1304,7 @@ const Register: FunctionComponent = () => {
                                     ================================================= */}
 
                                     {submitError && (
-                                        <motion.div
+                                        <m.div
                                             initial={{
                                                 opacity: 0,
                                                 y: -20,
@@ -1327,7 +1336,7 @@ const Register: FunctionComponent = () => {
                                             >
                                                 {submitError}
                                             </Alert>
-                                        </motion.div>
+                                        </m.div>
                                     )}
 
                                     {/* =================================================
@@ -1340,7 +1349,7 @@ const Register: FunctionComponent = () => {
                                         onSubmit={formik.handleSubmit}
                                     >
                                         <AnimatePresence mode='wait'>
-                                            <motion.div
+                                            <m.div
                                                 key={currentStep}
                                                 initial={{
                                                     opacity: 0,
@@ -2557,7 +2566,7 @@ const Register: FunctionComponent = () => {
                                                         </Grid>
                                                     </Grid>
                                                 )}
-                                            </motion.div>
+                                            </m.div>
                                         </AnimatePresence>
 
                                         {/* =================================================
@@ -2714,7 +2723,7 @@ const Register: FunctionComponent = () => {
                             </Paper>
                         </Grid>
                     </Grid>
-                </motion.div>
+                </m.div>
             </Box>
         </>
     );

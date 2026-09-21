@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import { FunctionComponent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import {
     LocalOffer,
     Favorite,
@@ -101,7 +101,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                 size={{ xs: 12, sm: 6, md: 4 }}
                                 key={product._id}
                             >
-                                <motion.div
+                                <m.div
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{
@@ -353,7 +353,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                             </Stack>
                                         </CardContent>
                                     </Card>
-                                </motion.div>
+                                </m.div>
                             </Grid>
                         );
                     })}

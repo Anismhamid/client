@@ -95,7 +95,7 @@ import {
     submitReview,
 } from '../../../services/postsServices';
 
-import { easeOut, motion } from 'framer-motion';
+import { easeOut, m } from 'framer-motion';
 
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
@@ -1049,7 +1049,7 @@ const PostDetails: FunctionComponent = () => {
                             <Grid size={{ xs: 12, lg: 7 }}>
                                 <Stack spacing={3}>
                                     {/* IMAGE */}
-                                    <motion.div
+                                    <m.div
                                         variants={fadeUp}
                                         initial='hidden'
                                         whileInView='show'
@@ -1549,7 +1549,7 @@ const PostDetails: FunctionComponent = () => {
                                                 </Stack>
                                             </Box>
                                         </Card>
-                                    </motion.div>
+                                    </m.div>
 
                                     {/* PRODUCT INFO */}
                                     <Card

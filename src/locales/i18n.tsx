@@ -1,24 +1,43 @@
-import i18n from "i18next";
-import {initReactI18next} from "react-i18next";
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
 
-import translationEN from "./en.json";
-import translationHE from "./he.json";
-import translationAR from "./ar.json";
+import translationAR from './ar.json';
 
-const savedLanguage = localStorage.getItem("lang") || "ar";
+export type Lang = 'ar' | 'he' | 'en';
+
+const SUPPORTED: readonly Lang[] = ['ar', 'he', 'en'];
+const DEFAULT_LANG: Lang = 'ar';
+
+const lazyLoaders = {
+    he: () => import('./he.json'),
+    en: () => import('./en.json'),
+} as const;
+
+const stored = localStorage.getItem('lang');
+
+const initialLang: Lang = SUPPORTED.includes(stored as Lang)
+    ? (stored as Lang)
+    : DEFAULT_LANG;
 
 i18n.use(initReactI18next).init({
-	resources: {
-		en: {translation: translationEN},
-		he: {translation: translationHE},
-		ar: {translation: translationAR},
-	},
-	lng: savedLanguage,
-	fallbackLng: ["en", "he","ar"],
-
-	interpolation: {
-		escapeValue: false,
-	},
+    resources: { ar: { translation: translationAR } },
+    lng: DEFAULT_LANG,
+    fallbackLng: false, // المفاتيح متطابقة بكل اللغات
+    interpolation: { escapeValue: false },
 });
+
+export async function loadLanguage(lng: Lang): Promise<void> {
+    if (lng !== 'ar' && !i18n.hasResourceBundle(lng, 'translation')) {
+        const mod = await lazyLoaders[lng]();
+        i18n.addResourceBundle(lng, 'translation', mod.default, true, true);
+    }
+
+    if (i18n.language !== lng) {
+        await i18n.changeLanguage(lng);
+    }
+}
+
+// main.tsx بيستنى هاد قبل الـ render. إذا فشل التحميل بتضل اللغة 'ar'
+export const i18nReady = loadLanguage(initialLang);
 
 export default i18n;

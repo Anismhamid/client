@@ -8,6 +8,8 @@ import {
     useLayoutEffect,
     useCallback,
     useMemo,
+    Suspense,
+    lazy,
 } from 'react';
 
 import {
@@ -63,8 +65,9 @@ import { deleteMessage, editMessage } from '../../../services/messages';
 import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 
 import { useTranslation } from 'react-i18next';
-import AlertDialogs from '../../../atoms/toasts/Sweetalert';
+const AlertDialogs = lazy(() => import('../../../atoms/toasts/Sweetalert'));
 import api from '../../../services/api';
+import Loader from '../../../atoms/loader/Loader';
 
 interface ChatBoxProps {
     currentUser: BaseUser;
@@ -1659,29 +1662,33 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     />
                 </Box>
             </Box>
-            <AlertDialogs
-                onConfirm={() => handleConfirmDeleteMessage()}
-                onHide={() => {
-                    if (deletingMessageId) {
-                        return;
-                    }
+            <Suspense fallback={<Loader/>}>
+                <AlertDialogs
+                    onConfirm={() => handleConfirmDeleteMessage()}
+                    onHide={() => {
+                        if (deletingMessageId) {
+                            return;
+                        }
 
-                    setMessageToDelete(null);
-                    setShowDeleteMessageModal(false);
-                }}
-                show={showDeleteMessageModal}
-                title={t('messages.delete') || 'Delete message'}
-                description={t('messages.deleteConfirm')}
-                confirmText={t('modals.report.actions.delete_message') || 'Yes'}
-                cancelText={t('common.cancel') || 'Cancel'}
-                successText={
-                    t('messages.deleteSuccess') ||
-                    'Message deleted successfully'
-                }
-                errorText={
-                    t('messages.deleteFailed') || 'Failed to delete message'
-                }
-            />
+                        setMessageToDelete(null);
+                        setShowDeleteMessageModal(false);
+                    }}
+                    show={showDeleteMessageModal}
+                    title={t('messages.delete') || 'Delete message'}
+                    description={t('messages.deleteConfirm')}
+                    confirmText={
+                        t('modals.report.actions.delete_message') || 'Yes'
+                    }
+                    cancelText={t('common.cancel') || 'Cancel'}
+                    successText={
+                        t('messages.deleteSuccess') ||
+                        'Message deleted successfully'
+                    }
+                    errorText={
+                        t('messages.deleteFailed') || 'Failed to delete message'
+                    }
+                />
+            </Suspense>
         </Box>
     );
 };

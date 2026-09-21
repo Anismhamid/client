@@ -10,30 +10,38 @@ import {
 import './locales/i18n.tsx';
 import AppRoutes from './routes/AppRoutes.tsx';
 import Theme from './components/navbar/theme/AppTheme.tsx';
-import SpeedDialComponent from './atoms/productsManage/SpeedDialComponent.tsx';
 import useSocketEvents from './hooks/socket/useSocketEvents.ts';
 import {
     lazy,
-    useCallback,
     useEffect,
     useMemo,
+    useRef,
     useState,
     Suspense,
 } from 'react';
 import handleRTL from './locales/handleRTL.ts';
 import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
-const FloatingChats = lazy(
-    () => import('./components/pages/chatBox/FloatingChats'),
-);
 import usePushSync from './hooks/usePushSync.ts';
 import { Capacitor } from '@capacitor/core';
-import { setupNotificationNavigation } from './services/pushNotifications.service';
 import { useNavigate } from 'react-router-dom';
 import NotificationListener from './components/settings/NotificationListener.tsx';
 import axios from 'axios';
 import ChipNavigation from './components/navbar/ChepNavigation.tsx';
+
+const FloatingChats = lazy(
+    () => import('./components/pages/chatBox/FloatingChats'),
+);
+const SpeedDialComponent = lazy(
+    () => import('./atoms/productsManage/SpeedDialComponent.tsx'),
+);
+
 const api = import.meta.env.VITE_API_URL;
+
+const getInitialMode = (): PaletteMode => {
+    const stored = localStorage.getItem('theme');
+    return (stored as PaletteMode) || 'light';
+};
 
 function App() {
     const { auth } = useUser();
@@ -44,35 +52,42 @@ function App() {
 
     // ✅ تفعيل Socket Events
     useSocketEvents();
-    const pingServer = useCallback(async () => {
-        await axios.get(api);
-    }, []);
 
     useEffect(() => {
-        pingServer();
-    }, [pingServer]);
+        axios.get(api).catch(() => {});
+    }, []);
 
-    // Manage theme mode state
-    const getInitialMode = (): PaletteMode => {
-        const stored = localStorage.getItem('theme');
-        return (stored as PaletteMode) || 'light';
-    };
-    const [mode, setMode] = useState<PaletteMode>(getInitialMode());
+    const [mode, setMode] = useState<PaletteMode>(getInitialMode);
     const diriction = handleRTL();
 
     useEffect(() => {
         localStorage.setItem('theme', mode);
     }, [mode]);
 
-    // ✅ إعداد التنقل من الإشعارات
+    // ✅ إعداد التنقل من الإشعارات (native فقط)
+    const navigateRef = useRef(navigate);
+    navigateRef.current = navigate;
+
     useEffect(() => {
-        if (Capacitor.isNativePlatform()) {
-            setupNotificationNavigation((path: string) => {
-                console.log('🔔 Navigating from notification:', path);
-                navigate(path);
-            });
-        }
-    }, [navigate]);
+        if (!Capacitor.isNativePlatform()) return;
+
+        let cancelled = false;
+
+        import('./services/pushNotifications.service').then(
+            ({ setupNotificationNavigation }) => {
+                if (cancelled) return;
+
+                setupNotificationNavigation((path: string) => {
+                    console.log('🔔 Navigating from notification:', path);
+                    navigateRef.current(path);
+                });
+            },
+        );
+
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     // ✅ تحديث التوكن بشكل دوري (كل 5 دقائق)
     useEffect(() => {
@@ -80,7 +95,7 @@ function App() {
 
         const interval = setInterval(() => {
             refreshPushToken();
-        }, 300000); // 5 دقائق
+        }, 300000);
 
         return () => clearInterval(interval);
     }, [isInitialized, refreshPushToken, auth]);
@@ -174,17 +189,20 @@ function App() {
             <Theme mode={mode} setMode={setMode} />
             <TransitionAlerts />
 
-            <SpeedDialComponent />
             <Suspense fallback={null}>
+                <SpeedDialComponent />
                 <FloatingChats />
             </Suspense>
+
             <Suspense fallback={<Loader />}>
                 <AppRoutes auth={auth} />
-                <ChipNavigation />
-
-                {/* مستمع الإشعارات */}
-                <NotificationListener />
             </Suspense>
+
+            <ChipNavigation />
+
+            {/* مستمع الإشعارات */}
+            <NotificationListener />
+
             <Footer />
         </ThemeProvider>
     );

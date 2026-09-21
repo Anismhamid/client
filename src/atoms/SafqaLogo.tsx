@@ -8,7 +8,7 @@ import {
     useMediaQuery,
     useTheme,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface SafqaLogoProps {
     onClick?: () => void;
@@ -21,7 +21,7 @@ const SafqaLogo = ({ onClick }: SafqaLogoProps) => {
 
     return (
         <Box
-            component={motion.div}
+            component={m.div}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onHoverStart={() => setIsHovered(true)}
@@ -37,7 +37,7 @@ const SafqaLogo = ({ onClick }: SafqaLogoProps) => {
         >
             {/* Animated Icon */}
             <Box
-                component={motion.div}
+                component={m.div}
                 animate={{
                     rotate: isHovered ? [0, -5, 5, 0] : 0,
                     borderRadius: isHovered ? '16px' : '12px',

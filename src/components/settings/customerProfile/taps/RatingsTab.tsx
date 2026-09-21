@@ -13,7 +13,7 @@ import { FunctionComponent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stats } from '../types/states';
 import { Star, RateReview, Storefront } from '@mui/icons-material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { usePosts } from '../../../../hooks/usePosts';
 import { getAverageRating } from '../../../pages/products/helpers/helperFunctions';
 import { User } from '../../../../interfaces/chat/usersMessages';
@@ -137,7 +137,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user }) => {
             <Grid container spacing={{ xs: 3, md: 4 }} alignItems='stretch'>
                 {/* === بطاقة الرقم الكبير === */}
                 <Grid size={{ xs: 12, md: 4 }}>
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.35 }}
@@ -251,12 +251,12 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user }) => {
                                 />
                             </Stack>
                         </Box>
-                    </motion.div>
+                    </m.div>
                 </Grid>
 
                 {/* === توزيع النجوم === */}
                 <Grid size={{ xs: 12, md: 8 }}>
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: 16 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.35, delay: 0.1 }}
@@ -368,7 +368,7 @@ const RatingsTab: FunctionComponent<RatingsTabProps> = ({ user }) => {
                                 </Box>
                             )}
                         </Box>
-                    </motion.div>
+                    </m.div>
                 </Grid>
             </Grid>
         </Box>

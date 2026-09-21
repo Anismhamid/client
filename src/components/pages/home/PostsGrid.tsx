@@ -20,7 +20,7 @@ import {
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 
 import { useTranslation } from 'react-i18next';
 
@@ -212,7 +212,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                             lg: 3,
                                         }}
                                     >
-                                        <motion.div
+                                        <m.div
                                             initial={{
                                                 opacity: 0,
                                                 y: 10,
@@ -252,7 +252,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                                 category={post.category}
                                                 onLikeToggle={onLikeToggle}
                                             />
-                                        </motion.div>
+                                        </m.div>
                                     </Grid>
                                 );
                             })}
@@ -262,7 +262,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                            EMPTY STATE
                            ================================================= */
 
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.4 }}
@@ -330,7 +330,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                     )}
                                 </Typography>
                             </Box>
-                        </motion.div>
+                        </m.div>
                     )}
                 </AnimatePresence>
 

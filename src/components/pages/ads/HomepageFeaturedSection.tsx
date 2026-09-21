@@ -49,7 +49,7 @@ import {
     Tab,
     Container,
 } from '@mui/material';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { FeaturedAd } from '../../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
@@ -306,7 +306,7 @@ export function HomepageAdCard({
     const path = `${productsPathes.postsDetails}/${listing.category}/Ads/${listing._id}`;
 
     return (
-        <motion.div
+        <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
@@ -516,7 +516,7 @@ export function HomepageAdCard({
                     </Button>
                 </CardActions>
             </Card>
-        </motion.div>
+        </m.div>
     );
 }
 

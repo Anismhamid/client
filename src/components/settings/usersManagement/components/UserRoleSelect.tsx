@@ -65,14 +65,6 @@ const UserRoleSelect: FunctionComponent<Props> = ({
                 </MenuItem>
 
                 <MenuItem
-                    value={RoleType.Delivery}
-                >
-                    {t(
-                        'pages.usersManagement.roles.delivery',
-                    )}
-                </MenuItem>
-
-                <MenuItem
                     value={RoleType.Client}
                 >
                     {t(
