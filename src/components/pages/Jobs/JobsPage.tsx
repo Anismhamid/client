@@ -1,4 +1,9 @@
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import React, {
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 
 import {
     Box,
@@ -6,6 +11,9 @@ import {
     Pagination,
     Typography,
     CircularProgress,
+    Tabs,
+    Tab,
+    useTheme,
 } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
@@ -19,6 +27,7 @@ import {
 } from '../../../interfaces/jobs.types';
 
 import { searchJobs } from '../../../services/jobsService';
+import CreateJob from './CreateJob';
 
 const DEFAULT_FILTERS: JobsFiltersType = {
     page: 1,
@@ -33,7 +42,9 @@ const JobsPage: FunctionComponent = () => {
 
     const [loading, setLoading] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
-
+    const [activeTab, setActiveTab] = useState<'jobs' | 'filter' | 'create'>(
+        'jobs',
+    );
     const loadJobs = useCallback(async (currentFilters: JobsFiltersType) => {
         try {
             setLoading(true);
@@ -53,41 +64,32 @@ const JobsPage: FunctionComponent = () => {
         }
     }, []);
 
-    // =====================================================
-    // Load jobs whenever filters change
-    // =====================================================
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
 
     useEffect(() => {
-        loadJobs(filters);
-    }, [filters, loadJobs]);
-
-    // =====================================================
-    // Search
-    // =====================================================
+        if (activeTab === 'jobs') {
+            loadJobs(filters);
+        }
+    }, [filters, loadJobs, activeTab]);
 
     const handleSearch = (nextFilters: JobsFiltersType) => {
         setFilters(nextFilters);
     };
 
-    // =====================================================
-    // Reset
-    // =====================================================
-
     const handleReset = () => {
-        setFilters({
-            ...DEFAULT_FILTERS,
-        });
+        setFilters({ ...DEFAULT_FILTERS });
     };
 
-    // =====================================================
-    // Pagination
-    // =====================================================
-
     const handlePageChange = (_: React.ChangeEvent<unknown>, page: number) => {
-        setFilters((prev) => ({
-            ...prev,
-            page,
-        }));
+        setFilters((prev) => ({ ...prev, page }));
+    };
+
+    const handleTabChange = (
+        _: React.SyntheticEvent,
+        newValue: 'jobs' | 'create'|'filter',
+    ) => {
+        setActiveTab(newValue);
     };
 
     return (
@@ -100,47 +102,139 @@ const JobsPage: FunctionComponent = () => {
                 {t('pages.jobs.title')}
             </Typography>
 
-            <JobsFilters
-                filters={filters}
-                onSearch={handleSearch}
-                onReset={handleReset}
-            />
-
-            {loading ? (
-                <Box
+            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
+                <Tabs
+                    value={activeTab}
+                    onChange={handleTabChange}
+                    TabIndicatorProps={{ style: { display: 'none' } }}
                     sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        py: 8,
+                        minHeight: 44,
+                        bgcolor: isDark
+                            ? 'rgba(255,255,255,0.06)'
+                            : 'rgba(0,0,0,0.04)',
+                        borderRadius: 999,
+                        p: 0.5,
+                        '& .MuiTab-root': {
+                            minHeight: 36,
+                            borderRadius: 999,
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            px: 3,
+                            transition: 'color 0.2s ease',
+                        },
+                        '& .Mui-selected': { color: '#fff !important' },
                     }}
                 >
-                    <CircularProgress />
+                    <Tab
+                        value='jobs'
+                        label={t('pages.jobs.tabs.jobs', 'Jobs')}
+                        sx={
+                            activeTab === 'jobs'
+                                ? {
+                                      background:
+                                          'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                                  }
+                                : undefined
+                        }
+                    />
+                    {activeTab === 'filter' && (
+                        <Box
+                            sx={{
+                                p: 2,
+                                borderRadius: 3,
+                                bgcolor: 'background.paper',
+                                boxShadow: 1,
+                                mb: 3,
+                                border: '1px solid',
+                                borderColor: isDark
+                                    ? 'rgba(255,255,255,0.08)'
+                                    : 'rgba(0,0,0,0.06)',
+                            }}
+                        >
+                            <JobsFilters
+                                filters={filters}
+                                onSearch={handleSearch}
+                                onReset={handleReset}
+                            />
+                        </Box>
+                    )}
+                    <Tab
+                        value='create'
+                        label={t('pages.jobs.tabs.create', 'Share a job')}
+                        sx={
+                            activeTab === 'create'
+                                ? {
+                                      background:
+                                          'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                                  }
+                                : undefined
+                        }
+                    />
+                </Tabs>
+            </Box>
+
+            {activeTab === 'create' ? (
+                <Box
+                    sx={{
+                        p: 2,
+                        borderRadius: 3,
+                        bgcolor: 'background.paper',
+                        boxShadow: 1,
+                        mb: 3,
+                        border: '1px solid',
+                        borderColor: isDark
+                            ? 'rgba(255,255,255,0.08)'
+                            : 'rgba(0,0,0,0.06)',
+                    }}
+                >
+                    <CreateJob />
                 </Box>
             ) : (
                 <>
-                    <JobsGrid jobs={jobs} />
+                    <JobsFilters
+                        filters={filters}
+                        onSearch={handleSearch}
+                        onReset={handleReset}
+                    />
 
-                    {totalPages > 1 && (
+                    {loading ? (
                         <Box
                             sx={{
                                 display: 'flex',
                                 justifyContent: 'center',
-                                mt: 4,
+                                py: 8,
                             }}
                         >
-                            <Pagination
-                                count={totalPages}
-                                page={filters.page ?? 1}
-                                onChange={handlePageChange}
-                                sx={{
-                                    '& .MuiPaginationItem-root.Mui-selected': {
-                                        background:
-                                            'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                                        color: '#fff',
-                                    },
-                                }}
-                            />
+                            <CircularProgress />
                         </Box>
+                    ) : (
+                        <>
+                            <JobsGrid jobs={jobs} />
+
+                            {totalPages > 1 && (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        mt: 4,
+                                    }}
+                                >
+                                    <Pagination
+                                        count={totalPages}
+                                        page={filters.page ?? 1}
+                                        onChange={handlePageChange}
+                                        sx={{
+                                            '& .MuiPaginationItem-root.Mui-selected':
+                                                {
+                                                    background:
+                                                        'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                                                    color: '#fff',
+                                                },
+                                        }}
+                                    />
+                                </Box>
+                            )}
+                        </>
                     )}
                 </>
             )}

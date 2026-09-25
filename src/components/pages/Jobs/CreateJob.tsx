@@ -69,7 +69,6 @@ const CreateJob: FunctionComponent = () => {
                 fontWeight={700}
                 sx={{
                     mb: 1,
-                    color: '#12161C',
                 }}
             >
                 {t('pages.jobs.form.create')}

@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, memo } from 'react';
 import {
     Card,
     CardContent,
@@ -6,6 +6,8 @@ import {
     Chip,
     Stack,
     Divider,
+    Box,
+    Button,
 } from '@mui/material';
 
 import {
@@ -19,9 +21,16 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 import { Job } from '../../interfaces/jobs.types';
-import { useUser } from '../../hooks/useUSer';
 
-const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+// =====================================================
+// Shared brand constants
+// =====================================================
+
+const BRAND_GOLD = '#B8860B';
+const BRAND_BROWN = '#8B4513';
+const BRAND_GRADIENT = `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`;
+
+const NUMBER_FORMAT = new Intl.NumberFormat();
 
 interface JobsCardProps {
     job: Job;
@@ -30,40 +39,47 @@ interface JobsCardProps {
 const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { auth } = useUser();
-    const formatSalary = () => {
-        if (job.salaryMin === undefined && job.salaryMax === undefined) {
-            return null;
-        }
 
-        const min =
-            job.salaryMin !== undefined ? job.salaryMin.toLocaleString() : '';
+    // =====================================================
+    // Salary formatting
+    // =====================================================
 
-        const max =
-            job.salaryMax !== undefined ? job.salaryMax.toLocaleString() : '';
+    const formatSalary = (): string | null => {
+        const hasMin = job.salaryMin != null;
+        const hasMax = job.salaryMax != null;
 
-        if (min && max) {
-            return `${min} - ${max}`;
-        }
+        if (!hasMin && !hasMax) return null;
 
+        const min = hasMin ? NUMBER_FORMAT.format(job.salaryMin as number) : '';
+        const max = hasMax ? NUMBER_FORMAT.format(job.salaryMax as number) : '';
+
+        if (min && max) return `${min} - ${max}`;
         return min || max;
     };
 
     const salary = formatSalary();
 
+    // =====================================================
+    // Navigation
+    // =====================================================
+
+    const goToDetails = () => navigate(`/jobs/${job._id}`);
+
     return (
         <Card
-            onClick={() => navigate(`/jobs/${job._id}`)}
             sx={{
                 height: '100%',
-                cursor: 'pointer',
                 borderRadius: 3,
                 border: '1px solid transparent',
                 transition: '0.2s',
                 '&:hover': {
                     transform: 'translateY(-3px)',
-                    borderColor: '#B8860B',
+                    borderColor: BRAND_GOLD,
                     boxShadow: '0 8px 20px rgba(184,134,11,0.18)',
+                },
+                '&:focus-within': {
+                    borderColor: BRAND_GOLD,
+                    boxShadow: `0 0 0 2px ${BRAND_GOLD}40`,
                 },
             }}
         >
@@ -104,25 +120,24 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                 {/* Information */}
                 <Stack spacing={1}>
                     {/* Type */}
-                    <Stack direction='row' spacing={1} alignItems='center'>
-                        <Chip
-                            size='small'
-                            icon={
-                                <WorkOutline
-                                    sx={{
+                    {job.type && (
+                        <Stack direction='row' spacing={1} alignItems='center'>
+                            <Chip
+                                size='small'
+                                icon={<WorkOutline />}
+                                label={t(`pages.jobs.types.${job.type}`)}
+                                sx={{
+                                    background: BRAND_GRADIENT,
+                                    color: '#fff',
+                                    fontWeight: 600,
+                                    '& .MuiChip-icon': {
+                                        color: '#fff',
                                         fontSize: 16,
-                                        color: '#fff !important',
-                                    }}
-                                />
-                            }
-                            label={t(`pages.jobs.types.${job.type}`)}
-                            sx={{
-                                background: BRAND_GRADIENT,
-                                color: '#fff',
-                                fontWeight: 600,
-                            }}
-                        />
-                    </Stack>
+                                    },
+                                }}
+                            />
+                        </Stack>
+                    )}
 
                     {/* Location */}
                     {job.location && (
@@ -141,24 +156,28 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                             <PaymentsOutlined fontSize='small' />
 
                             <Typography
+                                component='span'
                                 variant='body2'
                                 fontWeight={700}
-                                sx={{ color: '#8B4513' }}
+                                sx={{ color: BRAND_BROWN }}
                             >
                                 {salary}
-
                                 {job.salaryPeriod && (
-                                    <Typography
+                                    <Box
                                         component='span'
-                                        variant='body2'
-                                        color='text.secondary'
+                                        sx={{
+                                            color: 'text.secondary',
+                                            fontWeight: 400,
+                                        }}
                                     >
-                                        {' '}
-                                        /{' '}
+                                        {' / '}
                                         {t(
                                             `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
+                                            {
+                                                defaultValue: job.salaryPeriod,
+                                            },
                                         )}
-                                    </Typography>
+                                    </Box>
                                 )}
                             </Typography>
                         </Stack>
@@ -170,7 +189,8 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                     direction='row'
                     spacing={1}
                     flexWrap='wrap'
-                    sx={{ mt: 2, gap: 1 }}
+                    useFlexGap
+                    sx={{ mt: 2 }}
                 >
                     {job.experienceLevel && (
                         <Chip
@@ -181,35 +201,30 @@ const JobsCard: FunctionComponent<JobsCardProps> = ({ job }) => {
                         />
                     )}
 
-                    {job.remote && <Chip size='small' label={t('remote')} />}
+                    {job.remote && (
+                        <Chip
+                            size='small'
+                            label={t('pages.jobs.filters.remote', {
+                                defaultValue: 'Remote',
+                            })}
+                        />
+                    )}
 
                     {job.industry && <Chip size='small' label={job.industry} />}
                 </Stack>
-                {/* Contact phones */}
-                {(auth?.phone?.phone_1 || auth?.phone?.phone_2) && (
-                    <Stack spacing={1} sx={{ mt: 2 }}>
-                        <Divider />
-
-                        {auth?.phone?.phone_1 && (
-                            <Chip
-                                size='small'
-                                label={`${t('register.phone1')}: ${auth.phone.phone_1}`}
-                                sx={{ width: 'fit-content' }}
-                            />
-                        )}
-
-                        {auth?.phone?.phone_2 && (
-                            <Chip
-                                size='small'
-                                label={`${t('register.phone2')}: ${auth.phone.phone_2}`}
-                                sx={{ width: 'fit-content' }}
-                            />
-                        )}
-                    </Stack>
-                )}
             </CardContent>
+            <Button
+            variant='contained'
+                aria-label={t('pages.jobs.card.openDetails', {
+                    title: job.jobTitle,
+                    defaultValue: `View details for ${job.jobTitle}`,
+                })}
+                onClick={goToDetails}
+            >
+                {t('pages.jobs.card.openDetails')}
+            </Button>
         </Card>
     );
 };
 
-export default JobsCard;
+export default memo(JobsCard);

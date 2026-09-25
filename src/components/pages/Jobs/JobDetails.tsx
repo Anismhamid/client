@@ -19,6 +19,7 @@ import {
     PaymentsOutlined,
     ArrowBack,
     EditOutlined,
+    ArrowForward,
 } from '@mui/icons-material';
 
 import { deleteJob } from '../../../services/jobsService';
@@ -32,9 +33,10 @@ import { useUser } from '../../../hooks/useUSer';
 import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 import { path } from '../../../routes/routes';
+import handleRTL from '../../../locales/handleRTL';
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
-const INK = '#12161C';
+const INK = 'default.main';
 
 const JobDetails: FunctionComponent = () => {
     const { id } = useParams();
@@ -52,7 +54,9 @@ const JobDetails: FunctionComponent = () => {
     const handleDelete = async () => {
         if (!job?._id) return;
 
-        await deleteJob(job._id);
+        await deleteJob(job._id).then(() => {
+            navigate(-1);
+        });
 
         navigate('/jobs', {
             replace: true,
@@ -109,15 +113,15 @@ const JobDetails: FunctionComponent = () => {
         auth?._id && job.seller?._id && auth._id === job.seller._id,
     );
 
+    const dir = handleRTL();
+
     return (
-        <Container maxWidth='md' sx={{ py: 4 }}>
+        <Container dir={dir} maxWidth='md' sx={{ py: 4 }}>
             <Button
-                startIcon={<ArrowBack />}
+                startIcon={dir === 'ltr' ? <ArrowBack /> : <ArrowForward />}
                 onClick={() => navigate(-1)}
-                sx={{ mb: 3 }}
-            >
-                {t('back')}
-            </Button>
+                sx={{ mb: 3, gap: 1 }}
+            />
 
             <Paper
                 elevation={2}
@@ -126,7 +130,6 @@ const JobDetails: FunctionComponent = () => {
                         xs: 2,
                         md: 4,
                     },
-                    borderRadius: 3,
                     borderTop: '4px solid transparent',
                     borderImage: `${BRAND_GRADIENT} 1`,
                 }}
@@ -227,7 +230,9 @@ const JobDetails: FunctionComponent = () => {
                             {job.salaryPeriod && (
                                 <>
                                     {' / '}
-                                    {t(`pages.jobs.salaryPeriods.${job.salaryPeriod}`)}
+                                    {t(
+                                        `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
+                                    )}
                                 </>
                             )}
                         </Typography>
@@ -266,13 +271,16 @@ const JobDetails: FunctionComponent = () => {
                     </Box>
                 )}
                 {isOwner && (
-                    <Stack direction='row' spacing={1} sx={{ mb: 3 }}>
+                    <Stack display={'flex'} alignItems={'center'} justifyContent={'space-around'} direction='row' spacing={1} sx={{ mb: 3 }}>
                         <Button
                             variant='outlined'
                             startIcon={<EditOutlined />}
-                            onClick={() => navigate(`${path.jobs}/${job._id}/edit`)}
+                            onClick={() =>
+                                navigate(`${path.jobs}/${job._id}/edit`)
+                            }
                             sx={{
                                 borderColor: INK,
+                                gap: 1,
                                 color: INK,
                                 '&:hover': {
                                     borderColor: '#8B4513',
@@ -285,6 +293,7 @@ const JobDetails: FunctionComponent = () => {
                         </Button>
 
                         <Button
+                            sx={{ gap: 1 }}
                             variant='outlined'
                             color='error'
                             startIcon={<DeleteOutline />}

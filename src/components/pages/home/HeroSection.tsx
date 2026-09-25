@@ -90,7 +90,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 backgroundPosition: 'center',
             }}
         >
-            <AISearch />
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
             <Box
                 sx={{
@@ -334,7 +333,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                         </m.div>
                     </Box>
                 </m.div>
-
+                <AISearch />
                 {/* Trust ticker — quiet reassurance strip under the CTAs */}
                 <m.div
                     initial={{ opacity: 0 }}

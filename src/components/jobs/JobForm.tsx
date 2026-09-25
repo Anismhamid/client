@@ -33,7 +33,7 @@ import { CreateJobPayload, Job, JobType } from '../../interfaces/jobs.types';
 import handleRTL from '../../locales/handleRTL';
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
-const INK = '#12161C';
+const INK = 'default.main';
 const GOLD = '#B8860B';
 const BROWN = '#8B4513';
 

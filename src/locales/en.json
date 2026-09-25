@@ -1584,7 +1584,9 @@
                 "senior": "Senior",
                 "manager": "Manager"
             },
-
+            "card": {
+                "openDetails": "View More"
+            },
             "salaryPeriods": {
                 "hourly": "Hour",
                 "daily": "Day",
