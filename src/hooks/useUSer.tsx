@@ -1,5 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-
 import React, {
     createContext,
     useCallback,
@@ -10,15 +9,9 @@ import React, {
     FunctionComponent,
 } from 'react';
 
-import {
-    AuthValues,
-    emptyAuthValues,
-} from '../interfaces/authValues';
+import { AuthValues, emptyAuthValues } from '../interfaces/authValues';
 
-import {
-    getCurrentUser,
-    logoutUser,
-} from '../services/usersServices';
+import { getCurrentUser, logoutUser } from '../services/usersServices';
 
 type Auth = AuthValues;
 
@@ -50,8 +43,7 @@ const defaultUserContext: UserContextType = {
     logout: async () => {},
 };
 
-const UserContext =
-    createContext<UserContextType>(defaultUserContext);
+const UserContext = createContext<UserContextType>(defaultUserContext);
 
 export const useUser = () => {
     return useContext(UserContext);
@@ -64,14 +56,11 @@ interface UserProviderProps {
 export const UserProvider: FunctionComponent<UserProviderProps> = ({
     children,
 }) => {
-    const [isLoggedIn, setIsLoggedIn] =
-        useState<boolean>(false);
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-    const [auth, setAuth] =
-        useState<Auth>(emptyAuthValues);
+    const [auth, setAuth] = useState<Auth>(emptyAuthValues);
 
-    const [isAuthLoading, setIsAuthLoading] =
-        useState<boolean>(true);
+    const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
 
     /**
      * Restore the current authenticated user.
@@ -94,10 +83,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
             setAuth(user);
             setIsLoggedIn(true);
         } catch (error) {
-            console.error(
-                'Failed to restore authentication:',
-                error,
-            );
+            console.error('Failed to restore authentication:', error);
 
             setAuth(emptyAuthValues);
             setIsLoggedIn(false);
@@ -116,10 +102,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
         try {
             await logoutUser();
         } catch (error) {
-            console.warn(
-                'Logout request failed:',
-                error,
-            );
+            console.warn('Logout request failed:', error);
         } finally {
             setAuth(emptyAuthValues);
             setIsLoggedIn(false);
@@ -145,16 +128,10 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
             setIsLoggedIn(false);
         };
 
-        window.addEventListener(
-            'auth:logout',
-            handleAuthLogout,
-        );
+        window.addEventListener('auth:logout', handleAuthLogout);
 
         return () => {
-            window.removeEventListener(
-                'auth:logout',
-                handleAuthLogout,
-            );
+            window.removeEventListener('auth:logout', handleAuthLogout);
         };
     }, []);
 

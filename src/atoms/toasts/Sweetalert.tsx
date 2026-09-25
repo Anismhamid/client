@@ -34,6 +34,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
 
         const swalWithBootstrapButtons = Swal.mixin({
             customClass: {
+                popup: 'safqa-swal-popup',
                 confirmButton: 'btn btn-outline-success',
                 cancelButton: 'btn btn-outline-danger ms-5',
             },
@@ -48,7 +49,7 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
                 confirmButtonText: confirmText,
                 showCancelButton: true,
                 cancelButtonText: cancelText,
-                reverseButtons: false,
+                reverseButtons: true,
             })
             .then(async (result) => {
                 if (!isMounted) return;
