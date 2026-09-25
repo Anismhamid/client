@@ -4,6 +4,8 @@ apply plugin: 'com.android.application'
 android {
     namespace = "com.safqa.c2c"
     compileSdk = rootProject.ext.compileSdkVersion
+
+
     defaultConfig {
         applicationId "com.safqa.c2c"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -21,8 +23,12 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+              ndk {
+            debugSymbolLevel 'SYMBOL_TABLE'
+        }
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
         debug {
         minifyEnabled false
     }
