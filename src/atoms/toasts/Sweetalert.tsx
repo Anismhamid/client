@@ -50,6 +50,14 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
                 showCancelButton: true,
                 cancelButtonText: cancelText,
                 reverseButtons: true,
+
+                didOpen: () => {
+                    const container = Swal.getContainer();
+
+                    if (container) {
+                        container.setAttribute('dir', dir);
+                    }
+                },
             })
             .then(async (result) => {
                 if (!isMounted) return;
