@@ -4,6 +4,7 @@ import {
     Storefront,
     Star,
     ChatBubbleTwoTone,
+    WorkOutlined,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
@@ -45,17 +46,26 @@ const CustomTabs: FunctionComponent<TabsProps> = ({
                 label={t('common.tabs.posts')}
                 icon={<Storefront sx={{ color: BRAND_GOLD }} />}
                 iconPosition='end'
+                sx={{ gap: 1 }}
+            />
+            <Tab
+                label={t('common.tabs.jobs')}
+                icon={<WorkOutlined sx={{ color: BRAND_BROWN }} />}
+                iconPosition='end'
+                sx={{ gap: 1 }}
             />
             <Tab
                 label={t('common.tabs.ratings')}
                 icon={<Star sx={{ color: BRAND_GOLD }} />}
-                iconPosition='start'
+                iconPosition='end'
+                sx={{ gap: 1 }}
             />
 
             <Tab
                 label={t('common.tabs.contact')}
                 icon={<ChatBubbleTwoTone sx={{ color: BRAND_BROWN }} />}
-                iconPosition='start'
+                iconPosition='end'
+                sx={{ gap: 1 }}
             />
         </MuiTabs>
     );

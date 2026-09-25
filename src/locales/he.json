@@ -36,7 +36,6 @@
     "email": "אימייל",
     "darkMode": "מצב כהה",
     "lightMode": "מצב בהיר",
-    
 
     "minutesAgo": "{{count}} דקות",
     "hoursAgo": "{{count}} שעות",
@@ -459,7 +458,8 @@
             "posts": "פוסטים",
             "info": "מידע",
             "ratings": "דירוגים",
-            "contact": "צור קשר"
+            "contact": "צור קשר",
+            "jobs": "משרות"
         }
     },
 
@@ -2423,8 +2423,8 @@
             "userOne": "משתמש ראשון",
             "userTwo": "משתמש שני"
         },
-        "pending":{
-            "title":"בהמתנה"
+        "pending": {
+            "title": "בהמתנה"
         }
     },
     "accountMenu": {

@@ -46,6 +46,9 @@ import ProductsTab from './taps/ProductsTap';
 import RatingsTab from './taps/RatingsTab';
 import ContactInfoTab from './taps/ContactInfoTab';
 import { initStats, Stats } from './types/states';
+import { getJobsByUserId } from '../../../services/jobsService';
+import { Job } from '../../../interfaces/jobs.types';
+import JobsTab from './taps/JobsTap';
 
 const BRAND_GOLD = '#B8860B';
 const BRAND_BROWN = '#8B4513';
@@ -138,6 +141,7 @@ const CustomerProfile: FunctionComponent = () => {
     const [wishlist, setWishlist] = useState<Set<string>>(new Set());
     const [tabValue, setTabValue] = useState(0);
     const [stats, setStats] = useState<Stats>(initStats);
+    const [jobs, setJobs] = useState<Job[]>([]);
 
     const toggleWishlist = useCallback(
         (productId: string) => {
@@ -167,6 +171,7 @@ const CustomerProfile: FunctionComponent = () => {
 
     useEffect(() => {
         if (!slug) return;
+
         const ctrl = new AbortController();
 
         (async () => {
@@ -175,19 +180,41 @@ const CustomerProfile: FunctionComponent = () => {
                     getCustomerProfileBySlug(slug),
                     getCustomerProfilePostsBySlug(slug),
                 ]);
+
                 if (ctrl.signal.aborted) return;
 
                 setUser(profile);
                 setPosts(productsData);
 
+                // =========================
+                // Get user's jobs
+                // =========================
+                try {
+                    if (profile._id) {
+                        const userJobs = await getJobsByUserId(profile._id);
+
+                        if (!ctrl.signal.aborted) {
+                            setJobs(userJobs);
+                        }
+                    }
+                } catch (jobError) {
+                    console.error('Failed to load user jobs:', jobError);
+
+                    if (!ctrl.signal.aborted) {
+                        setJobs([]);
+                    }
+                }
+
                 const totalLikes = productsData.reduce(
                     (sum, p) => sum + (p.likes?.length || 0),
                     0,
                 );
+
                 const totalViews = productsData.reduce(
                     (sum, p) => sum + (Number((p as Posts).views) || 0),
                     0,
                 );
+
                 const reviewsCount = productsData.reduce(
                     (sum, p) => sum + (p.reviews?.length || 0),
                     0,
@@ -220,12 +247,20 @@ const CustomerProfile: FunctionComponent = () => {
                     showError(t('common.loadUserError'));
                 }
             } finally {
-                if (!ctrl.signal.aborted) setLoading(false);
+                if (!ctrl.signal.aborted) {
+                    setLoading(false);
+                }
             }
         })();
 
         return () => ctrl.abort();
     }, [slug, t]);
+
+    // useEffect(() => {
+    //     getJobsByUserId(Profile._id)
+    //         .then((res) => setJobs(res))
+    //         .catch((err) => console.error(err));
+    // }, [slug]);
 
     const SITE_URL: string =
         import.meta.env.VITE_SITE_URL || 'https://client-qqq1.vercel.app';
@@ -402,7 +437,17 @@ const CustomerProfile: FunctionComponent = () => {
                 })}
             />
             <JsonLd data={{}} />
+            {/* {jobs.length > 0 && (
+                <Box sx={{ mb: 4 }}>
+                    <Typography variant='h5' fontWeight={800} sx={{ mb: 2 }}>
+                        {t('pages.jobs.userJobs', {
+                            defaultValue: 'Jobs',
+                        })}
+                    </Typography>
 
+                    <JobsGrid jobs={jobs} />
+                </Box>
+            )} */}
             <Box
                 sx={{
                     minHeight: '100vh',
@@ -462,12 +507,18 @@ const CustomerProfile: FunctionComponent = () => {
                                         user={user}
                                     />
                                 </TabPanel>
-
                                 <TabPanel value={tabValue} index={1}>
-                                    <RatingsTab stats={stats} user={user} />
+                                    <JobsTab
+                                        jobs={jobs}
+                                        user={user}
+                                    />
                                 </TabPanel>
 
                                 <TabPanel value={tabValue} index={2}>
+                                    <RatingsTab stats={stats} user={user} />
+                                </TabPanel>
+
+                                <TabPanel value={tabValue} index={3}>
                                     <ContactInfoTab user={user} />
                                 </TabPanel>
                             </m.div>

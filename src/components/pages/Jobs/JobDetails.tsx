@@ -10,6 +10,7 @@ import {
     CircularProgress,
     Button,
     Paper,
+    Avatar,
 } from '@mui/material';
 
 import {
@@ -35,8 +36,9 @@ import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 import { path } from '../../../routes/routes';
 import handleRTL from '../../../locales/handleRTL';
 
-const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
-const INK = 'default.main';
+const BRAND_GOLD = '#B8860B';
+const BRAND_BROWN = '#8B4513';
+const BRAND_GRADIENT = `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`;
 
 const JobDetails: FunctionComponent = () => {
     const { id } = useParams();
@@ -92,7 +94,7 @@ const JobDetails: FunctionComponent = () => {
                     py: 10,
                 }}
             >
-                <CircularProgress />
+                <CircularProgress sx={{ color: BRAND_GOLD }} />
             </Box>
         );
     }
@@ -120,26 +122,75 @@ const JobDetails: FunctionComponent = () => {
             <Button
                 startIcon={dir === 'ltr' ? <ArrowBack /> : <ArrowForward />}
                 onClick={() => navigate(-1)}
-                sx={{ mb: 3, gap: 1 }}
-            />
-
-            <Paper
-                elevation={2}
                 sx={{
-                    p: {
-                        xs: 2,
-                        md: 4,
-                    },
-                    borderTop: '4px solid transparent',
-                    borderImage: `${BRAND_GRADIENT} 1`,
+                    mb: 3,
+                    gap: 1,
+                    color: 'text.secondary',
+                    '&:hover': { color: BRAND_BROWN, bgcolor: 'transparent' },
                 }}
             >
+                {t('pages.jobs.actions.back', { defaultValue: t('back') })}
+            </Button>
+
+            <Paper
+                elevation={0}
+                sx={{
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: 4,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    boxShadow: '0 4px 20px rgba(18,22,28,0.06)',
+                    p: { xs: 2.5, md: 4 },
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        insetInlineStart: 0,
+                        insetBlockStart: 0,
+                        width: '100%',
+                        height: 5,
+                        background: BRAND_GRADIENT,
+                    },
+                }}
+            >
+                  <Stack
+                    direction='row'
+                    spacing={1.5}
+                    alignItems='center'
+                    sx={{ mb: 1.5 }}
+                >
+                    <Avatar
+                    component={'a'}
+                    href={`/users/customer/${job.seller.slug}`}
+                        src={job.seller.image.url}
+                        alt={job.seller.name.first}
+                        sx={{
+                            width: 60,
+                            height: 60,
+                            border: '2px solid',
+                            borderColor: BRAND_GOLD,
+                            boxShadow: '0 0 0 3px rgba(184,134,11,0.12)',
+                        }}
+                    />
+                    </Stack>
+
+                    {job.companyName && (
+                        <Stack direction='row' spacing={0.75} alignItems='center'>
+                            <BusinessOutlined
+                                fontSize='small'
+                                sx={{ color: 'text.secondary' }}
+                            />
+                            <Typography variant='body2' color='text.secondary'>
+                                {job.companyName}
+                            </Typography>
+                        </Stack>
+                    )}
                 {/* Title */}
                 <Typography
                     variant='h4'
-                    fontWeight={700}
+                    fontWeight={800}
                     gutterBottom
-                    sx={{ color: INK }}
+                    sx={{ color: 'text.primary', lineHeight: 1.25 }}
                 >
                     {job.jobTitle}
                 </Typography>
@@ -150,11 +201,11 @@ const JobDetails: FunctionComponent = () => {
                         direction='row'
                         spacing={1}
                         alignItems='center'
-                        sx={{ mb: 2 }}
+                        sx={{ mb: 2.5 }}
                     >
-                        <BusinessOutlined />
+                        <BusinessOutlined sx={{ color: 'text.secondary' }} />
 
-                        <Typography variant='h6' color='text.secondary'>
+                        <Typography variant='h6' color='text.secondary' fontWeight={500}>
                             {job.companyName}
                         </Typography>
                     </Stack>
@@ -173,6 +224,7 @@ const JobDetails: FunctionComponent = () => {
 
                     {job.experienceLevel && (
                         <Chip
+                            variant='outlined'
                             label={t(
                                 `pages.jobs.experienceLevels.${job.experienceLevel}`,
                             )}
@@ -183,72 +235,84 @@ const JobDetails: FunctionComponent = () => {
                         <Chip
                             label={t('pages.jobs.remote')}
                             variant='outlined'
-                            sx={{ borderColor: '#B8860B', color: '#8B4513' }}
+                            sx={{ borderColor: BRAND_GOLD, color: BRAND_BROWN }}
                         />
                     )}
 
-                    {job.industry && <Chip label={job.industry} />}
+                    {job.industry && (
+                        <Chip variant='outlined' label={job.industry} />
+                    )}
                 </Stack>
 
                 <Divider sx={{ mb: 3 }} />
 
-                {/* Location */}
-                {job.location && (
-                    <Stack
-                        direction='row'
-                        spacing={1}
-                        alignItems='center'
-                        sx={{ mb: 2 }}
-                    >
-                        <LocationOnOutlined />
+                <Stack spacing={2} sx={{ mb: salary ? 3 : 0 }}>
+                    {/* Location */}
+                    {job.location && (
+                        <Stack direction='row' spacing={1} alignItems='center'>
+                            <LocationOnOutlined sx={{ color: 'text.secondary' }} />
+                            <Typography>{job.location}</Typography>
+                        </Stack>
+                    )}
 
-                        <Typography>{job.location}</Typography>
-                    </Stack>
-                )}
+                    {/* Salary */}
+                    {salary && (
+                        <Stack direction='row' spacing={1} alignItems='center'>
+                            <PaymentsOutlined sx={{ color: BRAND_BROWN }} />
 
-                {/* Salary */}
-                {salary && (
-                    <Stack
-                        direction='row'
-                        spacing={1}
-                        alignItems='center'
-                        sx={{ mb: 3 }}
-                    >
-                        <PaymentsOutlined sx={{ color: '#8B4513' }} />
+                            <Typography fontWeight={700} sx={{ color: BRAND_BROWN }}>
+                                {job.salaryMin !== undefined &&
+                                    job.salaryMin.toLocaleString()}
 
-                        <Typography fontWeight={700} sx={{ color: '#8B4513' }}>
-                            {job.salaryMin !== undefined &&
-                                job.salaryMin.toLocaleString()}
+                                {job.salaryMin !== undefined &&
+                                    job.salaryMax !== undefined &&
+                                    ' - '}
 
-                            {job.salaryMin !== undefined &&
-                                job.salaryMax !== undefined &&
-                                ' - '}
+                                {job.salaryMax !== undefined &&
+                                    job.salaryMax.toLocaleString()}
 
-                            {job.salaryMax !== undefined &&
-                                job.salaryMax.toLocaleString()}
-
-                            {job.salaryPeriod && (
-                                <>
-                                    {' / '}
-                                    {t(
-                                        `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
-                                    )}
-                                </>
-                            )}
-                        </Typography>
-                    </Stack>
-                )}
+                                {job.salaryPeriod && (
+                                    <Box
+                                        component='span'
+                                        sx={{ color: 'text.secondary', fontWeight: 400 }}
+                                    >
+                                        {' / '}
+                                        {t(
+                                            `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
+                                        )}
+                                    </Box>
+                                )}
+                            </Typography>
+                        </Stack>
+                    )}
+                </Stack>
 
                 {/* Requirements */}
                 {job.requirements && job.requirements.length > 0 && (
                     <Box sx={{ mb: 4 }}>
-                        <Typography variant='h6' fontWeight={700} gutterBottom>
+                        <Typography
+                            variant='h6'
+                            fontWeight={700}
+                            gutterBottom
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                '&::before': {
+                                    content: '""',
+                                    width: 4,
+                                    height: 18,
+                                    borderRadius: 1,
+                                    background: BRAND_GRADIENT,
+                                },
+                            }}
+                        >
                             {t('pages.jobs.requirements')}
                         </Typography>
 
-                        <Stack spacing={1}>
+                        <Stack spacing={1} sx={{ mt: 1 }}>
                             {job.requirements.map((requirement, index) => (
-                                <Typography key={index}>
+                                <Typography key={index} color='text.secondary'>
                                     • {requirement}
                                 </Typography>
                             ))}
@@ -258,52 +322,80 @@ const JobDetails: FunctionComponent = () => {
 
                 {/* Benefits */}
                 {job.benefits && job.benefits.length > 0 && (
-                    <Box>
-                        <Typography variant='h6' fontWeight={700} gutterBottom>
+                    <Box sx={{ mb: isOwner ? 4 : 0 }}>
+                        <Typography
+                            variant='h6'
+                            fontWeight={700}
+                            gutterBottom
+                            sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                '&::before': {
+                                    content: '""',
+                                    width: 4,
+                                    height: 18,
+                                    borderRadius: 1,
+                                    background: BRAND_GRADIENT,
+                                },
+                            }}
+                        >
                             {t('pages.jobs.benefits')}
                         </Typography>
 
-                        <Stack spacing={1}>
+                        <Stack spacing={1} sx={{ mt: 1 }}>
                             {job.benefits.map((benefit, index) => (
-                                <Typography key={index}>• {benefit}</Typography>
+                                <Typography key={index} color='text.secondary'>
+                                    • {benefit}
+                                </Typography>
                             ))}
                         </Stack>
                     </Box>
                 )}
-                {isOwner && (
-                    <Stack display={'flex'} alignItems={'center'} justifyContent={'space-around'} direction='row' spacing={1} sx={{ mb: 3 }}>
-                        <Button
-                            variant='outlined'
-                            startIcon={<EditOutlined />}
-                            onClick={() =>
-                                navigate(`${path.jobs}/${job._id}/edit`)
-                            }
-                            sx={{
-                                borderColor: INK,
-                                gap: 1,
-                                color: INK,
-                                '&:hover': {
-                                    borderColor: '#8B4513',
-                                    color: '#8B4513',
-                                    bgcolor: 'transparent',
-                                },
-                            }}
-                        >
-                            {t('pages.jobs.actions.edit')}
-                        </Button>
 
-                        <Button
-                            sx={{ gap: 1 }}
-                            variant='outlined'
-                            color='error'
-                            startIcon={<DeleteOutline />}
-                            onClick={() => setDeleteDialog(true)}
+                {isOwner && (
+                    <>
+                        <Divider sx={{ mb: 3 }} />
+
+                        <Stack
+                            direction='row'
+                            spacing={2}
+                            justifyContent='center'
                         >
-                            {t('pages.jobs.actions.delete')}
-                        </Button>
-                    </Stack>
+                            <Button
+                                variant='outlined'
+                                startIcon={<EditOutlined />}
+                                onClick={() =>
+                                    navigate(`${path.jobs}/${job._id}/edit`)
+                                }
+                                sx={{
+                                    gap: 1,
+                                    borderColor: 'text.primary',
+                                    color: 'text.primary',
+                                    '&:hover': {
+                                        borderColor: BRAND_BROWN,
+                                        color: BRAND_BROWN,
+                                        bgcolor: 'transparent',
+                                    },
+                                }}
+                            >
+                                {t('pages.jobs.actions.edit')}
+                            </Button>
+
+                            <Button
+                                sx={{ gap: 1 }}
+                                variant='outlined'
+                                color='error'
+                                startIcon={<DeleteOutline />}
+                                onClick={() => setDeleteDialog(true)}
+                            >
+                                {t('pages.jobs.actions.delete')}
+                            </Button>
+                        </Stack>
+                    </>
                 )}
             </Paper>
+
             <AlertDialogs
                 show={deleteDialog}
                 onHide={() => setDeleteDialog(false)}

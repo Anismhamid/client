@@ -35,10 +35,9 @@ export const searchJobs = async (
         }
     });
 
-    const { data } = await api.get<JobsResponse>(
-        `${JOBS_BASE}/search`,
-        { params },
-    );
+    const { data } = await api.get<JobsResponse>(`${JOBS_BASE}/search`, {
+        params,
+    });
 
     return data;
 };
@@ -47,12 +46,8 @@ export const searchJobs = async (
 // Get jobs by type
 // =====================================================
 
-export const getJobsByType = async (
-    type: string,
-): Promise<JobsResponse> => {
-    const { data } = await api.get<JobsResponse>(
-        `${JOBS_BASE}/type/${type}`,
-    );
+export const getJobsByType = async (type: string): Promise<JobsResponse> => {
+    const { data } = await api.get<JobsResponse>(`${JOBS_BASE}/type/${type}`);
 
     return data;
 };
@@ -74,9 +69,7 @@ export const getJobById = async (id: string): Promise<Job> => {
 // Create job
 // =====================================================
 
-export const createJob = async (
-    payload: CreateJobPayload,
-): Promise<Job> => {
+export const createJob = async (payload: CreateJobPayload): Promise<Job> => {
     const { data } = await api.post<{
         success: boolean;
         job: Job;
@@ -107,4 +100,20 @@ export const updateJob = async (
 
 export const deleteJob = async (id: string): Promise<void> => {
     await api.delete(`${JOBS_BASE}/${id}`);
+};
+
+// =====================================================
+// Get gobs by userId
+// =====================================================
+
+export const getJobsByUserId = async (
+    userId: string,
+): Promise<Job[]> => {
+    const { data } = await api.get<{
+        success: boolean;
+        count: number;
+        jobs: Job[];
+    }>(`${JOBS_BASE}/user/${userId}`);
+
+    return data.jobs;
 };

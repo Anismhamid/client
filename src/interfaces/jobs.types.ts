@@ -1,3 +1,5 @@
+import { User } from "./User";
+
 export type JobType =
     | 'full_time'
     | 'part_time'
@@ -22,12 +24,7 @@ export type SalaryPeriod =
 export interface Job {
     _id: string;
 
-    seller: {
-        _id: string;
-        name: string;
-        image?: string;
-        slug?: string;
-    };
+    seller:User
 
     type: JobType;
 
