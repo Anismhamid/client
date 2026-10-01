@@ -45,9 +45,9 @@ const INITIAL_STATISTICS: Statistics = {
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 export const useAdminDashboard = (role: string) => {
-    const [timeFrame, setTimeFrame] = useState<'today' | 'month' | 'all'>(
-        'month',
-    );
+    const [timeFrame, setTimeFrame] = useState<
+        'today' | '7days' | 'month' | '30days' | '90days' | 'year' | 'all'
+    >('all');
     const [statistics, setStatistics] =
         useState<Statistics>(INITIAL_STATISTICS);
     const [loading, setLoading] = useState(true);
@@ -61,12 +61,24 @@ export const useAdminDashboard = (role: string) => {
         posts: PostWithUser[];
     } | null>(null);
 
-    const applyTimeFrame = useCallback((frame: 'today' | 'month' | 'all') => {
-        if (!rawDataRef.current) return;
-        const { users, posts } = rawDataRef.current;
-        const filtered = filterPostsByTimeFrame(posts, frame);
-        setStatistics(calculateStatistics(users, filtered));
-    }, []);
+    const applyTimeFrame = useCallback(
+        (
+            frame:
+                | 'today'
+                | '7days'
+                | 'month'
+                | '30days'
+                | '90days'
+                | 'year'
+                | 'all',
+        ) => {
+            if (!rawDataRef.current) return;
+            const { users, posts } = rawDataRef.current;
+            const filtered = filterPostsByTimeFrame(posts, frame);
+            setStatistics(calculateStatistics(users, filtered));
+        },
+        [],
+    );
 
     const fetchData = useCallback(
         async (isRefresh = false): Promise<void> => {

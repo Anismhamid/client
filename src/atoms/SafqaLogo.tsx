@@ -22,7 +22,7 @@ const SafqaLogo = ({ onClick }: SafqaLogoProps) => {
     return (
         <Box
             component={m.div}
-            whileHover={{ scale: 1.02 }}
+            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.98 }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
@@ -44,16 +44,16 @@ const SafqaLogo = ({ onClick }: SafqaLogoProps) => {
                 }}
                 transition={{ duration: 0.3 }}
                 sx={{
-                    width: { xs: 36, sm: 60 },
-                    height: { xs: 36, sm: 60 },
-                    borderRadius: '12px',
+                    width: { xs: 36, sm: 70 },
+                    height: { xs: 36, sm: 70 },
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     textDecoration: 'none',
-                    boxShadow: isHovered
-                        ? `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`
-                        : 'none',
+                    filter: isHovered
+                        ? `drop-shadow(5px 1px 2px ${alpha(theme.palette.common.black, 0.6)})`
+                        : `drop-shadow(5px 1px 2px ${alpha(theme.palette.common.black, 0.25)})`,
+                    transition: 'filter 0.3s ease',
                 }}
             >
                 <CardMedia

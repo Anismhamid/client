@@ -2458,12 +2458,15 @@
         "dataExport": "تصدير البيانات",
         "technicalSupport": "الدعم الفني",
         "myBusinessPage": "صفحتي التجارية",
+        "hideEditProfile": "إخفاء تعديل الملف",
+        "showEditProfile": "عرض تعديل الملف",
         "roles": {
             "admin": "مدير",
             "moderator": "مشرف",
             "user": "مستخدم"
         },
         "address": {
+            "title": "العنوان",
             "city": "البلد",
             "street": "الشارع",
             "houseNumber": "رقم البيت"

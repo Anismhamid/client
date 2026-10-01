@@ -36,20 +36,17 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({ user }) => {
 
     const roleLabel =
         user.role === RoleType.Admin
-            ? t('roles.admin')
+            ? t('accountMenu.admin')
             : user.role === RoleType.Moderator
-              ? t('roles.moderator')
-              : t('roles.user');
+              ? t('accountMenu.moderator')
+              : t('accountMenu.client');
 
     const addressValue =
         user.address?.city || user.address?.street || user.address?.houseNumber
             ? [
-                  user.address?.city &&
-                      `${t('profile.address.city')}: ${user.address.city}`,
-                  user.address?.street &&
-                      `${t('profile.address.street')}: ${user.address.street}`,
-                  user.address?.houseNumber &&
-                      `${t('profile.address.houseNumber')}: ${user.address.houseNumber}`,
+                  user.address?.city && user.address.city,
+                  user.address?.street && user.address.street,
+                  user.address?.houseNumber && user.address.houseNumber,
               ]
                   .filter(Boolean)
                   .join('، ')
@@ -80,7 +77,7 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({ user }) => {
             : []),
         {
             icon: <LocationOn fontSize='small' />,
-            label: t('profile.address'),
+            label: t('profile.address.title'),
             value: addressValue,
         },
         {
@@ -95,7 +92,7 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({ user }) => {
                 <Typography
                     component='span'
                     fontWeight={700}
-                    color='success.main'
+                    color='warning.main'
                 >
                     {roleLabel}
                 </Typography>
@@ -113,6 +110,7 @@ const UserDetailTable: FunctionComponent<UserDetailTableProps> = ({ user }) => {
                     direction='row'
                     alignItems='center'
                     spacing={2}
+                    gap={2}
                     sx={{ py: 1.75 }}
                 >
                     <Box

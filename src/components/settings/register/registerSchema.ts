@@ -19,15 +19,16 @@ export interface UserRegisterFormValues {
     image: { url?: string; alt?: string };
 }
 
-
 export const registerValidationSchema = (t: TFunction) => {
     return yup.object({
         name: yup.object({
             first: yup
                 .string()
+                .min(2, t('register.validation.firstNameMinLength'))
                 .required(t('register.validation.firstNameRequired')),
             last: yup
                 .string()
+                .min(2, t('register.validation.lastNameMinLength'))
                 .required(t('register.validation.lastNameRequired')),
         }),
         phone: yup.object({
@@ -71,7 +72,6 @@ export const registerValidationSchema = (t: TFunction) => {
         }),
     });
 };
-
 
 export const registerInitialValues: UserRegisterFormValues = {
     name: {

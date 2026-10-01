@@ -1,4 +1,11 @@
-import { FunctionComponent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    FunctionComponent,
+    Suspense,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
     Button,
@@ -39,7 +46,7 @@ import {
     ShoppingCart,
     Star,
 } from '@mui/icons-material';
-import { useTranslation} from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { m } from 'framer-motion';
 import PersonalInformation from './tabs/PersonalInformationTab';
 import { useUserPosts } from '../../../hooks/useUserPosts';
@@ -72,7 +79,7 @@ const Profile: FunctionComponent = () => {
     const [activeTab, setActiveTab] = useState(0);
     const navigate = useNavigate();
     const detailsRef = useRef<HTMLDivElement>(null);
-    const { t,i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [showEdit, setShowEdit] = useState<boolean>(false);
@@ -1180,12 +1187,8 @@ const Profile: FunctionComponent = () => {
                                 sx={{ borderRadius: 999, px: 3 }}
                             >
                                 {showEdit
-                                    ? t('profile.hideEdit', {
-                                          defaultValue: 'إخفاء التعديل',
-                                      })
-                                    : t('profile.editData', {
-                                          defaultValue: 'تعديل البيانات',
-                                      })}
+                                    ? t('profile.hideEditProfile')
+                                    : t('profile.showEditProfile')}
                             </Button>
                         </Box>
 

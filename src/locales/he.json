@@ -2459,12 +2459,15 @@
         "dataExport": "ייצא נתונים",
         "technicalSupport": "תמיכה טכנית",
         "myBusinessPage": "העמוד העסקי שלי",
+        "hideEditProfile": "הסתר ערוך פרופיל",
+        "showEditProfile": "הצג ערוך פרופיל",
         "roles": {
             "admin": "מנהל",
             "moderator": "מפקח",
             "user": "משתמש"
         },
         "address": {
+            "title": "כתובת",
             "city": "עיר",
             "street": "רחוב",
             "houseNumber": "מספר בית"

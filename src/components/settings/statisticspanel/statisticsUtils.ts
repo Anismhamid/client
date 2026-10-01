@@ -162,19 +162,64 @@ export const CHART_COLORS = [
 
 export const filterPostsByTimeFrame = (
     posts: PostWithUser[],
-    timeFrame: 'today' | 'month' | 'all',
+    timeFrame:
+        | 'today'
+        | '7days'
+        | 'month'
+        | '30days'
+        | '90days'
+        | 'year'
+        | 'all',
 ): PostWithUser[] => {
-    if (timeFrame === 'all') return posts;
+    if (timeFrame === 'all') {
+        return posts;
+    }
 
     const now = new Date();
-    const cutoff =
-        timeFrame === 'today'
-            ? new Date(now.getFullYear(), now.getMonth(), now.getDate())
-            : new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const start = new Date(now);
+
+    switch (timeFrame) {
+        case 'today':
+            start.setHours(0, 0, 0, 0);
+            break;
+
+        case '7days':
+            start.setDate(start.getDate() - 6);
+            start.setHours(0, 0, 0, 0);
+            break;
+
+        case 'month':
+            start.setDate(1);
+            start.setHours(0, 0, 0, 0);
+            break;
+
+        case '30days':
+            start.setDate(start.getDate() - 29);
+            start.setHours(0, 0, 0, 0);
+            break;
+
+        case '90days':
+            start.setDate(start.getDate() - 89);
+            start.setHours(0, 0, 0, 0);
+            break;
+
+        case 'year':
+            start.setMonth(0, 1);
+            start.setHours(0, 0, 0, 0);
+            break;
+    }
 
     return posts.filter((post) => {
-        if (!post.createdAt) return false;
-        return new Date(getCreatedAtAsString(post.createdAt)) >= cutoff;
+        if (!post.createdAt) {
+            return false;
+        }
+
+        const createdAt = new Date(
+            getCreatedAtAsString(post.createdAt),
+        );
+
+        return createdAt >= start && createdAt <= now;
     });
 };
 

@@ -2428,7 +2428,7 @@
     "accountMenu": {
         "admin": "System admin",
         "siteModerator": "Site moderator",
-        "client": "User",
+        "client": "Client",
         "profile": "Profile",
         "blockedUsers": "Blocked users",
         "messages": "Messages",
@@ -2457,12 +2457,15 @@
         "dataExport": "Export data",
         "technicalSupport": "Technical support",
         "myBusinessPage": "My business page",
+        "hideEditProfile": "Hide edit profile",
+        "showEditProfile": "Show edit profile",
         "roles": {
             "admin": "Admin",
             "moderator": "Moderator",
-            "user": "User"
+            "user": "Client"
         },
         "address": {
+            "title": "Address",
             "city": "City",
             "street": "Street",
             "houseNumber": "House number"
