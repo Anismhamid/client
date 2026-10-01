@@ -1,6 +1,7 @@
 {
     "you": "أنت",
     "post": "{{count}} إعلان",
+    "notificationSettings": "إعدادات الإشعارات",
     "loadMore": "تحميل المزيد",
     "latessProducts": "أحدث الإعلانات",
     "featuredAdvertisement": "الإعلانات المميزة",

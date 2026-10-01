@@ -1,6 +1,7 @@
 {
     "you": "You",
     "post": "{{count}} listing",
+    "notificationSettings": "Notification Settings",
     "loadMore": "Load more",
     "latessProducts": "Latest listings",
     "featuredAdvertisement": "Featured listings",
