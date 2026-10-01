@@ -196,7 +196,7 @@ const Footer: FunctionComponent = () => {
                         display='block'
                         mt={1}
                     >
-                        {t('footer.version', { version: '2.6.1' })}
+                        {t('footer.version', { version: '3.8.5' })}
                     </Typography>
                 </Box>
             </Container>
