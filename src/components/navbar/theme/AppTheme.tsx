@@ -35,7 +35,7 @@ import ContactIcon from '@mui/icons-material/ContactMail';
 import ListIcon from '@mui/icons-material/List';
 import HelpIcon from '@mui/icons-material/Help';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+// import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import { m, AnimatePresence } from 'framer-motion';
@@ -50,6 +50,8 @@ const MobileDrawer = lazy(() => import('./MobileDrawer'));
 import SafqaLogo from '../../../atoms/SafqaLogo';
 import { useChat } from '../../../hooks/useChat';
 import { GradientSwitch } from './GradientSwitch';
+import MailIcon from '@mui/icons-material/Mail';
+
 
 interface ThemeProps {
     mode: PaletteMode;
@@ -263,7 +265,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
                                             title={`${t('links.messages', 'الرسائل')} الرسائل`}
                                         >
-                                            <ChatBubbleIcon
+                                            <MailIcon
                                                 sx={{ fontSize: 20 }}
                                             />
                                         </StyledNavLink>
@@ -416,7 +418,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                 aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
                                                 title={`${t('links.messages', 'الرسائل')} الرسائل`}
                                             >
-                                                <ChatBubbleIcon
+                                                <MailIcon
                                                     sx={{ fontSize: 20 }}
                                                 />
                                             </StyledNavLink>
@@ -669,7 +671,7 @@ export default Theme;
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
     textDecoration: 'none',
     listStyle: 'none',
-    color: theme.palette.mode === 'dark' ? '#74829b' : '#74829b',
+    color: theme.palette.mode === 'dark' ? '#fdfeff' : '#33415a',
     padding: '8px 16px',
     borderRadius: '8px',
     transition: 'all 0.3s ease',

@@ -15,12 +15,11 @@ import { path } from '../../../routes/routes';
 import { useEffect } from 'react';
 import SealBadge from './SealBadge';
 import AISearch from '../../../atoms/AISearch';
+import { BRAND } from '../../navbar/theme/brand';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
 }
-
-const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
 // Small decorative seals scattered behind the hero copy — purely ambient,
 // reinforcing the "deal being sealed" motif without competing for attention.
@@ -85,9 +84,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 position: 'relative',
                 overflow: 'hidden',
                 bgcolor: 'background.paper',
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
             }}
         >
             {/* Ledger-rule texture: fine horizontal lines, like a trading ledger page */}
@@ -95,8 +91,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 sx={{
                     position: 'absolute',
                     inset: 0,
-                    backgroundImage:
-                        'repeating-linear-gradient(rgba(139,69,19,0.055) 0px, rgba(139,69,19,0.055) 1px, transparent 1px, transparent 32px)',
+                    backgroundImage: BRAND.ledgerLines(0.055, 32),
                     maskImage:
                         'radial-gradient(ellipse at center, black 0%, transparent 75%)',
                     WebkitMaskImage:
@@ -115,6 +110,9 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     width: { xs: 320, md: 620 },
                     height: { xs: 320, md: 620 },
                     borderRadius: '50%',
+                    background:
+                        'radial-gradient(circle, rgba(184,134,11,0.16) 0%, transparent 65%)',
+                    filter: 'blur(20px)',
                     pointerEvents: 'none',
                 }}
             />
@@ -187,7 +185,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             py: 0.75,
                             mb: 3,
                             border: '1px solid',
-                            borderColor: 'primary',
+                            borderColor: 'primary.main',
                             borderRadius: '11px',
                         }}
                     >
@@ -197,7 +195,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                         <Typography
                             variant='caption'
                             sx={{
-                                color: 'primary',
+                                color: 'primary.main',
                                 fontWeight: 600,
                                 letterSpacing: 0.4,
                             }}
@@ -225,14 +223,14 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     >
                         <Box
                             component='span'
-                            sx={{ display: 'inline-block', mr: 1 }}
+                            sx={{ display: 'inline-block', marginInlineEnd: 1 }}
                         >
                             🛒
                         </Box>
                         <Box
                             component='span'
                             sx={{
-                                background: GRADIENT,
+                                background: BRAND.gradient,
                                 backgroundClip: 'text',
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
@@ -285,13 +283,11 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                     borderRadius: '10px',
                                     fontWeight: 700,
                                     fontSize: '0.95rem',
-                                    background: GRADIENT,
-                                    boxShadow:
-                                        '0 10px 24px -10px rgba(139,69,19,0.55)',
+                                    background: BRAND.gradient,
+                                    boxShadow: `0 10px 24px -10px ${BRAND.ledger(0.55)}`,
                                     '&:hover': {
-                                        boxShadow:
-                                            '0 14px 28px -10px rgba(139,69,19,0.65)',
-                                        background: GRADIENT,
+                                        boxShadow: `0 14px 28px -10px ${BRAND.ledger(0.65)}`,
+                                        background: BRAND.gradient,
                                         filter: 'brightness(1.06)',
                                     },
                                 }}
@@ -317,8 +313,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                     color: 'text.primary',
                                     '&:hover': {
                                         borderWidth: '1.5px',
-                                        borderColor: '#8B4513',
-                                        color: '#8B4513',
+                                        borderColor: BRAND.brown,
+                                        color: BRAND.brown,
                                         bgcolor: 'transparent',
                                     },
                                 }}
@@ -357,7 +353,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                     color: 'text.secondary',
                                 }}
                             >
-                                <Icon sx={{ fontSize: 16, color: '#B8860B' }} />
+                                <Icon sx={{ fontSize: 16, color: BRAND.gold }} />
                                 <Typography
                                     variant='caption'
                                     sx={{ fontWeight: 600, letterSpacing: 0.2 }}

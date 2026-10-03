@@ -293,6 +293,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     </Typography>
                                     {user.role === RoleType.Admin && (
                                         <Chip
+                                        data-testid='admin-chip'
                                             label={t('common.admin')}
                                             size='small'
                                             color='warning'
@@ -392,6 +393,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                 >
                                     {user.address?.city && (
                                         <Chip
+                                        data-testid='city-chip'
                                             icon={
                                                 <LocationOn
                                                     style={{ fontSize: 16 }}
@@ -416,6 +418,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     )}
                                     {user.phone?.phone_1 && (
                                         <Chip
+                                            data-testid='phone-chip'
                                             icon={
                                                 <Phone
                                                     style={{ fontSize: 16 }}
@@ -441,6 +444,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
                                     )}
                                     {user.createdAt && (
                                         <Chip
+                                            data-testid='createdAt-chip'
                                             icon={
                                                 <CalendarMonth
                                                     style={{ fontSize: 16 }}

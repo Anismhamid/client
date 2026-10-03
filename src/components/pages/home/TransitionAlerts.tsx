@@ -1,17 +1,30 @@
+// components/home/TransitionAlerts.tsx
 import { useEffect, useState } from 'react';
-import { Box, Fab, IconButton, Slide, SlideProps, Snackbar, Tooltip, Typography } from '@mui/material';
+import {
+    Box,
+    Fab,
+    IconButton,
+    Slide,
+    SlideProps,
+    Snackbar,
+    Tooltip,
+    Typography,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ConstructionRoundedIcon from '@mui/icons-material/ConstructionRounded';
 import ChatBubbleOutlineRoundedIcon from '@mui/icons-material/ChatBubbleOutlineRounded';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { BRAND } from '../../navbar/theme/brand';
 
 function SlideTransition(props: SlideProps) {
     return <Slide {...props} direction='down' />;
 }
 
 function TransitionAlerts() {
-    const [seen, setSeen] = useState(() => localStorage.getItem('development-alert') === 'true');
+    const [seen, setSeen] = useState(
+        () => localStorage.getItem('development-alert') === 'true',
+    );
     const [open, setOpen] = useState(false);
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -40,7 +53,11 @@ function TransitionAlerts() {
             <Snackbar
                 open={open}
                 autoHideDuration={12000}
-                onClose={handleClose}
+                onClose={(_, reason) => {
+                    // لا يسكّر بمجرد الضغط بأي مكان بالصفحة
+                    if (reason === 'clickaway') return;
+                    handleClose();
+                }}
                 TransitionComponent={SlideTransition}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 sx={{ top: { xs: 12, sm: 24 } }}
@@ -65,7 +82,7 @@ function TransitionAlerts() {
                             gap: 1.5,
                             px: 2.5,
                             py: 1.75,
-                            background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
+                            background: BRAND.gradient,
                             position: 'relative',
                         }}
                     >
@@ -81,14 +98,24 @@ function TransitionAlerts() {
                                 flexShrink: 0,
                             }}
                         >
-                            <ConstructionRoundedIcon sx={{ color: '#fff', fontSize: 20 }} />
+                            <ConstructionRoundedIcon
+                                sx={{ color: '#fff', fontSize: 20 }}
+                            />
                         </Box>
-                        <Typography sx={{ color: '#fff', fontWeight: 800, fontSize: 15, flexGrow: 1 }}>
+                        <Typography
+                            sx={{
+                                color: '#fff',
+                                fontWeight: 800,
+                                fontSize: 15,
+                                flexGrow: 1,
+                            }}
+                        >
                             🚧 الموقع في مرحلة التطوير
                         </Typography>
                         <IconButton
-                            onClick={() => setOpen(false)}
+                            onClick={handleClose}
                             size='small'
+                            aria-label='إغلاق'
                             sx={{ color: 'rgba(255,255,255,0.85)' }}
                         >
                             <CloseIcon fontSize='small' />
@@ -112,15 +139,23 @@ function TransitionAlerts() {
 
                     {/* Body */}
                     <Box sx={{ px: 2.5, pt: 2, pb: 2.25 }}>
-                        <Typography sx={{ color: 'rgba(255,255,255,0.85)', fontSize: 13.5, lineHeight: 1.9 }}>
-                            قد تواجه بعض الأخطاء أو ميزات لم تكتمل بعد، ونعمل باستمرار على تحسين
-                            تجربتك.
+                        <Typography
+                            sx={{
+                                color: 'rgba(255,255,255,0.85)',
+                                fontSize: 13.5,
+                                lineHeight: 1.9,
+                            }}
+                        >
+                            قد تواجه بعض الأخطاء أو ميزات لم تكتمل بعد، ونعمل
+                            باستمرار على تحسين تجربتك.
                         </Typography>
 
                         <Box
                             onClick={() => {
-                                navigate('/contact', { state: { from: 'alert' } });
-                                setOpen(false);
+                                navigate('/contact', {
+                                    state: { from: 'alert' },
+                                });
+                                handleClose();
                             }}
                             sx={{
                                 mt: 1.75,
@@ -134,9 +169,13 @@ function TransitionAlerts() {
                                 fontWeight: 700,
                                 fontSize: 13.5,
                                 color: '#fff',
-                                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                                transition: 'transform 0.15s ease, filter 0.15s ease',
-                                '&:hover': { filter: 'brightness(1.1)', transform: 'translateY(-1px)' },
+                                background: BRAND.gradient,
+                                transition:
+                                    'transform 0.15s ease, filter 0.15s ease',
+                                '&:hover': {
+                                    filter: 'brightness(1.1)',
+                                    transform: 'translateY(-1px)',
+                                },
                             }}
                         >
                             <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 17 }} />
@@ -158,41 +197,42 @@ function TransitionAlerts() {
                 </Box>
             </Snackbar>
 
-         {seen && !open && (
-    <Tooltip title='إظهار التنبيه' placement='left'>
-        <Fab
-            size='small'
-            onClick={() => setOpen(true)}
-            sx={{
-                position: 'fixed',
-                bottom: 20,
-                insetInlineEnd: 20,
-                // zIndex: (theme) => theme.zIndex.snackbar,
-                background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                color: '#fff',
-                boxShadow: '0 8px 20px -6px rgba(139,69,19,0.6)',
-                '&:hover': {
-                    background: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                    filter: 'brightness(1.1)',
-                },
-                '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    inset: 0,
-                    borderRadius: '50%',
-                    border: '2px solid #B8860B',
-                    animation: 'ring 1.8s ease-out infinite',
-                },
-                '@keyframes ring': {
-                    '0%': { transform: 'scale(1)', opacity: 0.7 },
-                    '100%': { transform: 'scale(1.6)', opacity: 0 },
-                },
-            }}
-        >
-            <ConstructionRoundedIcon fontSize='small' />
-        </Fab>
-    </Tooltip>
-)}
+            {seen && !open && (
+                <Tooltip title='إظهار التنبيه' placement='left'>
+                    <Fab
+                        size='small'
+                        onClick={() => setOpen(true)}
+                        aria-label='إظهار التنبيه'
+                        sx={{
+                            position: 'fixed',
+                            bottom: 20,
+                            insetInlineEnd: 20,
+                            zIndex: (theme) => theme.zIndex.snackbar,
+                            background: BRAND.gradient,
+                            color: '#fff',
+                            boxShadow: `0 8px 20px -6px ${BRAND.ledger(0.6)}`,
+                            '&:hover': {
+                                background: BRAND.gradient,
+                                filter: 'brightness(1.1)',
+                            },
+                            '&::after': {
+                                content: '""',
+                                position: 'absolute',
+                                inset: 0,
+                                borderRadius: '50%',
+                                border: `2px solid ${BRAND.gold}`,
+                                animation: 'ring 1.8s ease-out infinite',
+                            },
+                            '@keyframes ring': {
+                                '0%': { transform: 'scale(1)', opacity: 0.7 },
+                                '100%': { transform: 'scale(1.6)', opacity: 0 },
+                            },
+                        }}
+                    >
+                        <ConstructionRoundedIcon fontSize='small' />
+                    </Fab>
+                </Tooltip>
+            )}
         </>
     );
 }

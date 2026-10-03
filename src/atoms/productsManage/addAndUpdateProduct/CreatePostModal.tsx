@@ -16,8 +16,8 @@ import { m } from 'framer-motion';
 import handleRTL from '../../../locales/handleRTL';
 import PostForm from './PostForm';
 import useAddProductFormik from '../../../hooks/useAddProductFormik';
+import { BRAND } from '../../../components/navbar/theme/brand';
 
-const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 const INK = '#12161C';
 
 interface AddProductModalProps {
@@ -66,12 +66,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                     sx={{
                         position: 'relative',
                         width: '100%',
-                        maxWidth: isMobile
-                            ? '95%'
-                            : {
-                                  xs: '95%',
-                                  md: '600px',
-                              },
+                        maxWidth: isMobile ? '95%' : { xs: '95%', md: '600px' },
                         maxHeight: isMobile ? '92vh' : '90vh',
                         borderRadius: isMobile ? '28px 28px 0 0' : '28px',
                         overflow: 'hidden',
@@ -86,25 +81,6 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             : `0 30px 60px -20px ${alpha(INK, 0.5)}`,
                     }}
                 >
-                    {/* Animated brand gradient top bar */}
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            height: '3px',
-                            background: `linear-gradient(90deg, #B8860B, #8B4513, #B8860B)`,
-                            backgroundSize: '200% 100%',
-                            animation: 'gradientMove 2s ease infinite',
-                            '@keyframes gradientMove': {
-                                '0%': { backgroundPosition: '0% 50%' },
-                                '50%': { backgroundPosition: '100% 50%' },
-                                '100%': { backgroundPosition: '0% 50%' },
-                            },
-                        }}
-                    />
-
                     {/* Swipe indicator for mobile */}
                     {isMobile && (
                         <Box
@@ -129,7 +105,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                         </Box>
                     )}
 
-                    {/* Header — dark ink header per brand system */}
+                    {/* Header */}
                     <Box
                         sx={{
                             position: 'sticky',
@@ -137,8 +113,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             zIndex: 20,
                             px: isMobile ? 2.5 : { xs: 3, sm: 4 },
                             py: isMobile ? 2 : 2.5,
-                            background: BRAND_GRADIENT,
-                            borderBottom: `1px solid ${alpha('#B8860B', 0.25)}`,
+                            background: BRAND.gradient,
                         }}
                     >
                         <Box
@@ -159,40 +134,34 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     whileHover={{ rotate: 5, scale: 1.05 }}
                                     transition={{ duration: 0.2 }}
                                 >
+                                    {/* كان نفس لون الخلفية فمكانش بيبان — صار شفاف أبيض */}
                                     <Box
                                         sx={{
                                             width: 44,
                                             height: 44,
                                             borderRadius: '16px',
-                                            background: BRAND_GRADIENT,
+                                            bgcolor: alpha('#fff', 0.18),
+                                            border: `1px solid ${alpha('#fff', 0.25)}`,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            boxShadow: `0 8px 20px ${alpha('#B8860B', 0.4)}`,
                                         }}
                                     >
                                         <AddCircleOutline
-                                            sx={{
-                                                color: 'white',
-                                                fontSize: 24,
-                                            }}
+                                            sx={{ color: '#fff', fontSize: 24 }}
                                         />
                                     </Box>
                                 </m.div>
 
                                 <Box>
+                                    {/* نص أبيض عادي: التدرّج الأبيض→ذهبي كان ضعيف التباين على خلفية ذهبية */}
                                     <Typography
                                         variant='h5'
                                         sx={{
                                             fontWeight: 800,
-                                            fontSize: isMobile
-                                                ? '1.3rem'
-                                                : '1.6rem',
+                                            fontSize: isMobile ? '1.3rem' : '1.6rem',
                                             letterSpacing: '-0.5px',
-                                            background: `linear-gradient(135deg, #fff, #D4A85A)`,
-                                            backgroundClip: 'text',
-                                            WebkitBackgroundClip: 'text',
-                                            color: 'transparent',
+                                            color: '#fff',
                                         }}
                                     >
                                         {t('modals.addProductModal.title') ||
@@ -201,7 +170,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     <Typography
                                         variant='caption'
                                         sx={{
-                                            color: alpha('#fff', 0.6),
+                                            color: alpha('#fff', 0.8),
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: 0.5,
@@ -212,8 +181,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                                 width: 6,
                                                 height: 6,
                                                 borderRadius: '50%',
-                                                bgcolor:
-                                                    theme.palette.success.main,
+                                                bgcolor: theme.palette.success.light,
                                             }}
                                         />
                                         {t('modals.addProductModal.subtitle') ||
@@ -224,12 +192,12 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
 
                             <IconButton
                                 onClick={onHide}
+                                aria-label={t('common.close', 'إغلاق')}
                                 sx={{
-                                    color: alpha('#fff', 0.7),
-                                    backgroundColor: alpha('#fff', 0.06),
+                                    color: '#fff',
+                                    backgroundColor: alpha('#fff', 0.14),
                                     '&:hover': {
-                                        backgroundColor: alpha('#B8860B', 0.2),
-                                        color: '#D4A85A',
+                                        backgroundColor: alpha('#fff', 0.26),
                                         transform: 'rotate(90deg)',
                                     },
                                     transition:
@@ -252,19 +220,15 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                 : 'calc(90vh - 130px)',
                             overflowY: 'auto',
                             WebkitOverflowScrolling: 'touch',
-                            '&::-webkit-scrollbar': {
-                                width: 6,
-                            },
+                            '&::-webkit-scrollbar': { width: 6 },
                             '&::-webkit-scrollbar-track': {
                                 background: alpha(theme.palette.divider, 0.1),
                                 borderRadius: 3,
                             },
                             '&::-webkit-scrollbar-thumb': {
-                                background: alpha('#B8860B', 0.4),
+                                background: BRAND.ledger(0.4),
                                 borderRadius: 3,
-                                '&:hover': {
-                                    background: alpha('#B8860B', 0.6),
-                                },
+                                '&:hover': { background: BRAND.ledger(0.6) },
                             },
                         }}
                     >
@@ -272,14 +236,8 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             sx={{
                                 background:
                                     theme.palette.mode === 'dark'
-                                        ? alpha(
-                                              theme.palette.common.white,
-                                              0.02,
-                                          )
-                                        : alpha(
-                                              theme.palette.common.black,
-                                              0.01,
-                                          ),
+                                        ? alpha(theme.palette.common.white, 0.02)
+                                        : alpha(theme.palette.common.black, 0.01),
                                 borderRadius: '20px',
                                 p: isMobile ? 1.5 : { xs: 2, sm: 2.5 },
                                 border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
@@ -293,6 +251,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                 setImageData={setImageData}
                                 onHide={onHide}
                                 mode='add'
+                                wizard
                             />
                         </Box>
 
@@ -316,7 +275,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     width: 4,
                                     height: 4,
                                     borderRadius: '50%',
-                                    background: BRAND_GRADIENT,
+                                    background: BRAND.gradient,
                                 }}
                             />
                             {t('modals.addProductModal.footerNote') ||
@@ -326,7 +285,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                                     width: 4,
                                     height: 4,
                                     borderRadius: '50%',
-                                    background: BRAND_GRADIENT,
+                                    background: BRAND.gradient,
                                 }}
                             />
                         </Typography>

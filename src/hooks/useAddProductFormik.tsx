@@ -7,7 +7,11 @@ import { useState } from 'react';
 import { uploadImage } from '../services/uploadImage';
 import { useUser } from './useUSer';
 
-const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
+const useAddPostFormik = (
+    onHide: () => void,
+    onSuccess?: () => void,
+    onError?: (error: unknown) => void,
+) => {
     const { t } = useTranslation();
     const [imageFile, setImageFile] = useState<File | null>(null);
     const { auth } = useUser();
@@ -38,6 +42,17 @@ const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
                 .required(
                     t('modals.addProductModal.validation.productNameRequired'),
                 ),
+            // الصورة مطلوبة: إعلان بدون صورة بيضعّف الشبكة كلها
+            image: yup.object({
+                url: yup
+                    .string()
+                    .required(
+                        t(
+                            'modals.addProductModal.validation.imageRequired',
+                            'أضف صورة للمنتج',
+                        ),
+                    ),
+            }),
             category: yup
                 .string()
                 .required(
@@ -71,12 +86,9 @@ const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
                     });
                 }
 
-                const { ...productData } = values;
-
-                console.log(productData);
-
+                // ما نبعت status من الكلاينت أبدًا: السيرفر هو اللي بيقرّر (pending / approved)
                 await createNewPost({
-                    ...productData,
+                    ...values,
                     image: {
                         url: uploadedImage?.url || '',
                         publicId: uploadedImage?.publicId || '',
@@ -90,6 +102,8 @@ const useAddPostFormik = (onHide: () => void, onSuccess?: () => void) => {
                 onHide?.();
             } catch (error) {
                 console.error(error);
+                // قبل: الفشل كان صامت والمستخدم ما يعرف شو صار
+                onError?.(error);
             }
         },
     });

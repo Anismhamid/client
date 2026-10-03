@@ -1,8 +1,10 @@
 import {
+    Alert,
     Avatar,
     Box,
     Button,
     Chip,
+    CircularProgress,
     FormControl,
     FormControlLabel,
     FormHelperText,
@@ -18,11 +20,20 @@ import {
     useTheme,
 } from '@mui/material';
 import { FormikProps } from 'formik';
-import { FunctionComponent, useCallback, useEffect, useMemo } from 'react';
+import {
+    Fragment,
+    FunctionComponent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { colors } from '../../colorsSettings/carsColors';
 import { Posts } from '../../../interfaces/Posts';
 import { deleteImage, uploadImage } from '../../../services/uploadImage';
+
 import {
     categoriesLogic,
     CategoryValue,
@@ -35,7 +46,11 @@ import {
     LocalOffer,
     Inventory2,
     Percent,
+    Payments,
+    CheckRounded,
 } from '@mui/icons-material';
+import { compressImage, MAX_UPLOAD_BYTES } from './Compressimage';
+import { BRAND } from '../../../components/navbar/theme/brand';
 
 interface PostFormProps {
     formik: FormikProps<Posts>;
@@ -45,6 +60,8 @@ interface PostFormProps {
     setImageData: (data: { url: string; publicId: string } | null) => void;
     onHide: () => void;
     mode?: 'add' | 'update';
+    /** نشر بالخطوات (3 خطوات). بيتفعّل بوضع الإضافة بس. */
+    wizard?: boolean;
 }
 
 export interface DynamicField {
@@ -55,6 +72,8 @@ export interface DynamicField {
     min?: number;
     step?: number;
 }
+
+const LAST_STEP = 2;
 
 // ─── Section wrapper ────────────────────────────────────────────────────────
 const Section = ({
@@ -110,6 +129,78 @@ const SectionDivider = () => (
     />
 );
 
+// ─── Wizard progress ────────────────────────────────────────────────────────
+const WizardProgress = ({
+    step,
+    labels,
+}: {
+    step: number;
+    labels: string[];
+}) => (
+    <Stack direction='row' alignItems='flex-start' sx={{ mb: 3.5 }}>
+        {labels.map((label, i) => {
+            const done = i < step;
+            const active = i === step;
+            const reached = done || active;
+
+            return (
+                <Fragment key={label}>
+                    <Stack alignItems='center' gap={0.5} sx={{ minWidth: 64 }}>
+                        <Box
+                            sx={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: '50%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 800,
+                                fontSize: '0.8rem',
+                                color: reached ? '#fff' : 'text.secondary',
+                                background: reached
+                                    ? BRAND.gradient
+                                    : 'transparent',
+                                border: reached ? 'none' : '1.5px dashed',
+                                borderColor: 'divider',
+                                boxShadow: active
+                                    ? `0 0 0 4px ${BRAND.ledger(0.15)}`
+                                    : 'none',
+                                transition: 'all 0.25s ease',
+                            }}
+                        >
+                            {done ? <CheckRounded sx={{ fontSize: 18 }} /> : i + 1}
+                        </Box>
+                        <Typography
+                            variant='caption'
+                            sx={{
+                                fontWeight: active ? 700 : 500,
+                                color: active ? 'text.primary' : 'text.secondary',
+                                textAlign: 'center',
+                                lineHeight: 1.3,
+                            }}
+                        >
+                            {label}
+                        </Typography>
+                    </Stack>
+                    {i < labels.length - 1 && (
+                        <Box
+                            sx={{
+                                flex: 1,
+                                mt: '15px',
+                                mx: 0.5,
+                                borderTop: '2px dashed',
+                                borderColor: done ? BRAND.brown : 'divider',
+                                opacity: done ? 0.6 : 1,
+                                transition: 'all 0.25s ease',
+                            }}
+                        />
+                    )}
+                </Fragment>
+            );
+        })}
+    </Stack>
+);
+
 const PostForm: FunctionComponent<PostFormProps> = ({
     formik,
     setImageData,
@@ -117,9 +208,17 @@ const PostForm: FunctionComponent<PostFormProps> = ({
     onHide,
     imageData,
     mode,
+    wizard = false,
 }) => {
     const { t } = useTranslation();
     const theme = useTheme();
+    const formRef = useRef<HTMLFormElement>(null);
+    const { setFieldValue } = formik;
+
+    const [step, setStep] = useState(0);
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState('');
+
     const selectedSubcategory = formik.values.subcategory;
     const selectedCategory = formik.values.category as CategoryValue;
 
@@ -129,26 +228,50 @@ const PostForm: FunctionComponent<PostFormProps> = ({
     const handleImageChange = async (
         e: React.ChangeEvent<HTMLInputElement>,
     ) => {
-        if (!e.target.files?.[0]) return;
-        const file = e.target.files[0];
-        setImageFile(file);
+        const input = e.target;
+        const original = input.files?.[0];
+        // خلّي اختيار نفس الملف مرة ثانية يشتغل
+        input.value = '';
+        if (!original) return;
 
-        if (mode === 'update' && imageData?.publicId) {
-            try {
-                await deleteImage(imageData.publicId);
-                setImageData(null);
-            } catch (err) {
-                console.error('Failed to delete old image:', err);
-            }
+        if (!original.type.startsWith('image/')) {
+            setUploadError(t('wizard.notImage', 'الملف لازم يكون صورة'));
+            return;
+        }
+        if (original.size > MAX_UPLOAD_BYTES) {
+            setUploadError(
+                t('wizard.imageTooLarge', 'حجم الصورة كبير (الحد 15MB)'),
+            );
+            return;
         }
 
+        setUploadError('');
+        setUploading(true);
+
         try {
+            const file = await compressImage(original);
+            setImageFile(file);
+
+            // ارفع الجديدة أول، وبعدين احذف القديمة — عشان ما نخسر الصورة لو فشل الرفع
             const { url, publicId } = await uploadImage(file);
+            const previousId = imageData?.publicId;
             const newImageData = { url, publicId };
+
             setImageData(newImageData);
-            formik.setFieldValue('image', newImageData);
+            setFieldValue('image', newImageData);
+
+            if (previousId) {
+                deleteImage(previousId).catch((err) =>
+                    console.error('Failed to delete old image:', err),
+                );
+            }
         } catch (error) {
             console.error(error);
+            setUploadError(
+                t('wizard.uploadFailed', 'فشل رفع الصورة، جرّب مرة ثانية'),
+            );
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -158,10 +281,15 @@ const PostForm: FunctionComponent<PostFormProps> = ({
         const subcategories = Object.keys(categoriesLogic[category] || []);
         if (mode === 'add' && !formik.values.subcategory) {
             const firstSubcat = subcategories[0] || '';
-            formik.setFieldValue('subcategory', firstSubcat);
-            formik.setFieldValue('type', firstSubcat);
+            setFieldValue('subcategory', firstSubcat);
+            setFieldValue('type', firstSubcat);
         }
-    }, [formik.values.category, formik, mode]);
+    }, [
+        formik.values.category,
+        formik.values.subcategory,
+        mode,
+        setFieldValue,
+    ]);
 
     const availableSubcategories = useMemo((): string[] => {
         const category = formik.values.category as CategoryValue;
@@ -220,6 +348,71 @@ const PostForm: FunctionComponent<PostFormProps> = ({
         if (!subcat) return [];
         return categoriesLogic[category][subcat] || [];
     }, [formik.values.category, formik.values.subcategory]);
+
+    // ─── Wizard logic ───────────────────────────────────────────────────────
+    const stepFields = useMemo<string[][]>(
+        () => [
+            ['product_name', 'image'],
+            ['category', 'subcategory', ...dynamicFields.map((f) => f.name)],
+            ['price', 'description', 'discount'],
+        ],
+        [dynamicFields],
+    );
+
+    const touchStep = (target: number) => {
+        const touched = Object.fromEntries(
+            stepFields[target].map((key) => [key, true]),
+        );
+        formik.setTouched({ ...formik.touched, ...touched } as never, false);
+    };
+
+    const stepHasErrors = (target: number, errors: Record<string, unknown>) =>
+        stepFields[target].some((key) => Boolean(errors[key]));
+
+    const scrollFormToTop = () =>
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    const handleNext = async () => {
+        const errors = (await formik.validateForm()) as Record<string, unknown>;
+        touchStep(step);
+        if (stepHasErrors(step, errors)) return;
+        setStep((s) => Math.min(s + 1, LAST_STEP));
+        scrollFormToTop();
+    };
+
+    const handleBack = () => {
+        setStep((s) => Math.max(s - 1, 0));
+        scrollFormToTop();
+    };
+
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        if (!wizard) {
+            formik.handleSubmit(e);
+            return;
+        }
+
+        // Enter داخل حقل نصي بخطوة غير أخيرة = "التالي" مو إرسال
+        if (step < LAST_STEP) {
+            await handleNext();
+            return;
+        }
+
+        // بالخطوة الأخيرة: لو في خطأ بخطوة سابقة، رجّع المستخدم لأول خطوة فيها خطأ
+        const errors = (await formik.validateForm()) as Record<string, unknown>;
+        const badStep = [0, 1, 2].find((s) => stepHasErrors(s, errors));
+        if (badStep !== undefined) {
+            touchStep(badStep);
+            if (badStep !== step) {
+                setStep(badStep);
+                scrollFormToTop();
+            }
+            return;
+        }
+
+        formik.handleSubmit(e);
+    };
 
     const renderDynamicField = (field: DynamicField) => {
         const fieldName = field.name as keyof Posts;
@@ -313,21 +506,16 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                                     },
                                 )}
                             </MenuItem>
-                            {field.options?.map((option) => {
-                                const category = formik.values
-                                    .category as CategoryValue;
-
-                                return (
-                                    <MenuItem key={option} value={option}>
-                                        {t(
-                                            `categories.${category}.fields.${field.name}Options.${option}`,
-                                            {
-                                                defaultValue: option,
-                                            },
-                                        )}
-                                    </MenuItem>
-                                );
-                            })}
+                            {field.options?.map((option) => (
+                                <MenuItem key={option} value={option}>
+                                    {t(
+                                        `categories.${category}.fields.${field.name}Options.${option}`,
+                                        {
+                                            defaultValue: option,
+                                        },
+                                    )}
+                                </MenuItem>
+                            ))}
                         </Select>
                         {error && (
                             <FormHelperText>{error as string}</FormHelperText>
@@ -550,318 +738,315 @@ const PostForm: FunctionComponent<PostFormProps> = ({
         }
     };
 
-    return (
-        <Box
-            component='form'
-            autoComplete='off'
-            noValidate
-            onSubmit={formik.handleSubmit}
+    // ─── Fields / sections ──────────────────────────────────────────────────
+    const nameField = (
+        <TextField
+            fullWidth
+            size='small'
+            name='product_name'
+            label={`${t('modals.addProductModal.productName')} *`}
+            value={formik.values.product_name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+                Boolean(formik.touched.product_name) &&
+                Boolean(formik.errors.product_name)
+            }
+            helperText={
+                formik.touched.product_name &&
+                (formik.errors.product_name as string)
+            }
+            placeholder={
+                t('modals.addProductModal.productNamePlaceholder') as string
+            }
+        />
+    );
+
+    const priceField = showGeneralPrice ? (
+        <TextField
+            fullWidth
+            size='small'
+            type='number'
+            name='price'
+            label={t('modals.addProductModal.price')}
+            value={formik.values.price ?? ''}
+            onChange={(e) => {
+                const value = e.target.value;
+
+                formik.setFieldValue('price', value === '' ? '' : Number(value));
+            }}
+            onBlur={formik.handleBlur}
+            error={
+                Boolean(formik.touched.price) && Boolean(formik.errors.price)
+            }
+            helperText={
+                formik.touched.price && (formik.errors.price as string)
+            }
+            inputProps={{
+                min: 0,
+                step: 0.01,
+            }}
+            InputProps={{
+                startAdornment: (
+                    <InputAdornment position='start'>
+                        <Typography
+                            sx={{
+                                fontSize: '1rem',
+                                color: 'text.secondary',
+                            }}
+                        >
+                            ₪
+                        </Typography>
+                    </InputAdornment>
+                ),
+            }}
+        />
+    ) : null;
+
+    const basicSection = (
+        <Section
+            icon={<ShoppingBag sx={{ fontSize: 16 }} />}
+            label={t('modals.addProductModal.productName')}
         >
-            {/* ── Basic Info ── */}
+            {nameField}
+            {!wizard && priceField}
+        </Section>
+    );
+
+    const priceSection = priceField ? (
+        <>
             <Section
-                icon={<ShoppingBag sx={{ fontSize: 16 }} />}
-                label={t('modals.addProductModal.productName')}
+                icon={<Payments sx={{ fontSize: 16 }} />}
+                label={t('modals.addProductModal.price')}
             >
-                <TextField
-                    fullWidth
-                    size='small'
-                    name='product_name'
-                    label={`${t('modals.addProductModal.productName')} *`}
-                    value={formik.values.product_name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={
-                        Boolean(formik.touched.product_name) &&
-                        Boolean(formik.errors.product_name)
-                    }
-                    helperText={
-                        formik.touched.product_name &&
-                        (formik.errors.product_name as string)
-                    }
-                    placeholder={
-                        t(
-                            'modals.addProductModal.productNamePlaceholder',
-                        ) as string
-                    }
-                />
-
-                {/* Price */}
-                {showGeneralPrice && (
-                    <TextField
-                        fullWidth
-                        size='small'
-                        type='number'
-                        name='price'
-                        label={t('modals.addProductModal.price')}
-                        value={formik.values.price ?? ''}
-                        onChange={(e) => {
-                            const value = e.target.value;
-
-                            formik.setFieldValue(
-                                'price',
-                                value === '' ? '' : Number(value),
-                            );
-                        }}
-                        onBlur={formik.handleBlur}
-                        error={
-                            Boolean(formik.touched.price) &&
-                            Boolean(formik.errors.price)
-                        }
-                        helperText={
-                            formik.touched.price &&
-                            (formik.errors.price as string)
-                        }
-                        inputProps={{
-                            min: 0,
-                            step: 0.01,
-                        }}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position='start'>
-                                    <Typography
-                                        sx={{
-                                            fontSize: '1rem',
-                                            color: 'text.secondary',
-                                        }}
-                                    >
-                                        ₪
-                                    </Typography>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                )}
+                {priceField}
             </Section>
-
             <SectionDivider />
+        </>
+    ) : null;
 
-            {/* ── Category ── */}
-            <Section
-                icon={<Inventory2 sx={{ fontSize: 16 }} />}
-                label={t('modals.addProductModal.category')}
+    const categorySection = (
+        <Section
+            icon={<Inventory2 sx={{ fontSize: 16 }} />}
+            label={t('modals.addProductModal.category')}
+        >
+            <FormControl
+                fullWidth
+                size='small'
+                error={
+                    Boolean(formik.touched.category) &&
+                    Boolean(formik.errors.category)
+                }
+                required
             >
-                <FormControl
-                    fullWidth
-                    size='small'
-                    error={
-                        Boolean(formik.touched.category) &&
-                        Boolean(formik.errors.category)
-                    }
-                    required
+                <InputLabel>{t('modals.addProductModal.category')}</InputLabel>
+                <Select
+                    name='category'
+                    value={formik.values.category}
+                    label={t('modals.addProductModal.category')}
+                    onChange={handleCategoryChange}
+                    onBlur={formik.handleBlur}
                 >
+                    <MenuItem value=''>
+                        {t('modals.addProductModal.selectCategory')}
+                    </MenuItem>
+                    {postsCategory
+                        .filter((cat) =>
+                            Object.keys(categoriesLogic).includes(cat.id),
+                        )
+                        .map((category) => (
+                            <MenuItem key={category.id} value={category.id}>
+                                {t(`categories.${category.id}.label`)}
+                            </MenuItem>
+                        ))}
+                </Select>
+                {formik.touched.category && formik.errors.category && (
+                    <FormHelperText>
+                        {formik.errors.category as string}
+                    </FormHelperText>
+                )}
+            </FormControl>
+
+            {formik.values.category && availableSubcategories.length > 0 && (
+                <FormControl fullWidth size='small'>
                     <InputLabel>
-                        {t('modals.addProductModal.category')}
+                        {t('modals.addProductModal.subcategory')}
                     </InputLabel>
                     <Select
-                        name='category'
-                        value={formik.values.category}
-                        label={t('modals.addProductModal.category')}
-                        onChange={handleCategoryChange}
+                        name='subcategory'
+                        value={selectedSubcategory}
+                        label={t('modals.addProductModal.subcategory')}
+                        onChange={handleSubcategoryChange}
                         onBlur={formik.handleBlur}
                     >
                         <MenuItem value=''>
-                            {t('modals.addProductModal.selectCategory')}
+                            {t('modals.addProductModal.selectSubcategory')}
                         </MenuItem>
-                        {postsCategory
-                            .filter((cat) =>
-                                Object.keys(categoriesLogic).includes(cat.id),
-                            )
-                            .map((category) => (
-                                <MenuItem key={category.id} value={category.id}>
-                                    {t(`categories.${category.id}.label`)}
-                                </MenuItem>
-                            ))}
+                        {availableSubcategories.map((subcat) => (
+                            <MenuItem key={subcat} value={subcat}>
+                                {t(
+                                    `categories.${formik.values.category}.subCategories.${subcat}`,
+                                    {
+                                        defaultValue: subcat,
+                                    },
+                                )}
+                            </MenuItem>
+                        ))}
                     </Select>
-                    {formik.touched.category && formik.errors.category && (
-                        <FormHelperText>
-                            {formik.errors.category as string}
-                        </FormHelperText>
-                    )}
                 </FormControl>
+            )}
 
-                {formik.values.category &&
-                    availableSubcategories.length > 0 && (
-                        <FormControl fullWidth size='small'>
-                            <InputLabel>
-                                {t('modals.addProductModal.subcategory')}
-                            </InputLabel>
-                            <Select
-                                name='subcategory'
-                                value={selectedSubcategory}
-                                label={t('modals.addProductModal.subcategory')}
-                                onChange={handleSubcategoryChange}
-                                onBlur={formik.handleBlur}
-                            >
-                                <MenuItem value=''>
-                                    {t(
-                                        'modals.addProductModal.selectSubcategory',
-                                    )}
-                                </MenuItem>
-                                {availableSubcategories.map((subcat) => (
-                                    <MenuItem key={subcat} value={subcat}>
-                                        {t(
-                                            `categories.${formik.values.category}.subCategories.${subcat}`,
-                                            {
-                                                defaultValue: subcat,
-                                            },
-                                        )}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
-
-                {/* Dynamic Fields */}
-                {formik.values.category && dynamicFields.length > 0 && (
-                    <Box
-                        sx={{
-                            p: 2,
-                            borderRadius: '12px',
-                            bgcolor: alpha(theme.palette.primary.main, 0.04),
-                            border: '1px solid',
-                            borderColor: alpha(
-                                theme.palette.primary.main,
-                                0.12,
-                            ),
-                        }}
-                    >
-                        <Typography
-                            variant='caption'
-                            fontWeight={600}
-                            color='primary.main'
-                            sx={{ mb: 1.5, display: 'block' }}
-                        >
-                            {t('modals.addProductModal.specifications')}
-                        </Typography>
-                        <Stack gap={2}>
-                            {dynamicFields.map((field: DynamicField) => (
-                                <Box key={field.name}>
-                                    {renderDynamicField(field)}
-                                </Box>
-                            ))}
-                        </Stack>
-                    </Box>
-                )}
-            </Section>
-
-            <SectionDivider />
-
-            {/* ── Description ── */}
-            <Section
-                icon={
-                    <Typography sx={{ fontSize: 14, lineHeight: 1 }}>
-                        ✏️
-                    </Typography>
-                }
-                label={t('modals.addProductModal.description')}
-            >
-                <TextField
-                    fullWidth
-                    multiline
-                    rows={3}
-                    size='small'
-                    name='description'
-                    label={t('modals.addProductModal.description')}
-                    value={formik.values.description || ''}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={
-                        Boolean(formik.touched.description) &&
-                        Boolean(formik.errors.description)
-                    }
-                    helperText={
-                        formik.touched.description &&
-                        (formik.errors.description as string)
-                    }
-                    placeholder={
-                        t(
-                            'modals.addProductModal.descriptionPlaceholder',
-                        ) as string
-                    }
-                    inputProps={{ maxLength: 500 }}
-                />
-                <Typography
-                    variant='caption'
-                    color='text.disabled'
-                    sx={{ textAlign: 'left', display: 'block', mt: -1 }}
+            {/* Dynamic Fields */}
+            {formik.values.category && dynamicFields.length > 0 && (
+                <Box
+                    sx={{
+                        p: 2,
+                        borderRadius: '12px',
+                        bgcolor: alpha(theme.palette.primary.main, 0.04),
+                        border: '1px solid',
+                        borderColor: alpha(theme.palette.primary.main, 0.12),
+                    }}
                 >
-                    {(formik.values.description || '').length} / 500
-                </Typography>
-            </Section>
-
-            <SectionDivider />
-
-            {/* ── Image ── */}
-            <Section
-                icon={
-                    <Typography sx={{ fontSize: 14, lineHeight: 1 }}>
-                        🖼️
+                    <Typography
+                        variant='caption'
+                        fontWeight={600}
+                        color='primary.main'
+                        sx={{ mb: 1.5, display: 'block' }}
+                    >
+                        {t('modals.addProductModal.specifications')}
                     </Typography>
+                    <Stack gap={2}>
+                        {dynamicFields.map((field: DynamicField) => (
+                            <Box key={field.name}>
+                                {renderDynamicField(field)}
+                            </Box>
+                        ))}
+                    </Stack>
+                </Box>
+            )}
+        </Section>
+    );
+
+    const descriptionSection = (
+        <Section
+            icon={<Typography sx={{ fontSize: 14, lineHeight: 1 }}>✏️</Typography>}
+            label={t('modals.addProductModal.description')}
+        >
+            <TextField
+                fullWidth
+                multiline
+                rows={3}
+                size='small'
+                name='description'
+                label={t('modals.addProductModal.description')}
+                value={formik.values.description || ''}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={
+                    Boolean(formik.touched.description) &&
+                    Boolean(formik.errors.description)
                 }
-                label={t('modals.addProductModal.image')}
+                helperText={
+                    formik.touched.description &&
+                    (formik.errors.description as string)
+                }
+                placeholder={
+                    t('modals.addProductModal.descriptionPlaceholder') as string
+                }
+                inputProps={{ maxLength: 500 }}
+            />
+            <Typography
+                variant='caption'
+                color='text.disabled'
+                sx={{ textAlign: 'end', display: 'block', mt: -1 }}
             >
-                <Stack direction='row' gap={1.5} flexWrap='wrap'>
-                    <Button
-                        variant='outlined'
-                        component='label'
-                        startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
-                        size='small'
-                        sx={{
-                            borderRadius: '10px',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            fontSize: '0.8125rem',
-                            borderColor: alpha(theme.palette.primary.main, 0.4),
-                            flex: 1,
-                            py: 1,
-                        }}
-                    >
-                        {t('modals.addProductModal.openCamera')}
-                        <input
-                            type='file'
-                            accept='image/*'
-                            capture='environment'
-                            onChange={handleImageChange}
-                            hidden
-                        />
-                    </Button>
+                {(formik.values.description || '').length} / 500
+            </Typography>
+        </Section>
+    );
 
-                    <Button
-                        variant='outlined'
-                        component='label'
-                        startIcon={<CollectionsIcon sx={{ fontSize: 16 }} />}
-                        size='small'
-                        sx={{
-                            borderRadius: '10px',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            fontSize: '0.8125rem',
-                            borderColor: alpha(theme.palette.primary.main, 0.4),
-                            flex: 1,
-                            py: 1,
-                        }}
-                    >
-                        {t('modals.addProductModal.chooseFromGallery')}
-                        <input
-                            type='file'
-                            accept='image/*'
-                            onChange={handleImageChange}
-                            hidden
-                        />
-                    </Button>
-                </Stack>
+    const imageErrorText =
+        formik.touched.image && formik.errors.image
+            ? typeof formik.errors.image === 'string'
+                ? formik.errors.image
+                : t('wizard.imageRequired', 'أضف صورة للمنتج')
+            : '';
 
-                {formik.values.image?.url && (
-                    <Box
-                        sx={{
-                            position: 'relative',
-                            borderRadius: '14px',
-                            overflow: 'hidden',
-                            border: '2px solid',
-                            borderColor: 'primary.main',
-                            bgcolor: 'action.hover',
-                        }}
-                    >
+    const imageButtonSx = {
+        borderRadius: '10px',
+        textTransform: 'none',
+        fontWeight: 600,
+        fontSize: '0.8125rem',
+        borderColor: alpha(theme.palette.primary.main, 0.4),
+        flex: 1,
+        py: 1,
+    } as const;
+
+    const imageSection = (
+        <Section
+            icon={<Typography sx={{ fontSize: 14, lineHeight: 1 }}>🖼️</Typography>}
+            label={t('modals.addProductModal.image')}
+        >
+            <Stack direction='row' gap={1.5} flexWrap='wrap'>
+                <Button
+                    variant='outlined'
+                    component='label'
+                    disabled={uploading}
+                    startIcon={<PhotoCameraIcon sx={{ fontSize: 16 }} />}
+                    size='small'
+                    sx={imageButtonSx}
+                >
+                    {t('modals.addProductModal.openCamera')}
+                    <input
+                        type='file'
+                        accept='image/*'
+                        capture='environment'
+                        onChange={handleImageChange}
+                        hidden
+                    />
+                </Button>
+
+                <Button
+                    variant='outlined'
+                    component='label'
+                    disabled={uploading}
+                    startIcon={<CollectionsIcon sx={{ fontSize: 16 }} />}
+                    size='small'
+                    sx={imageButtonSx}
+                >
+                    {t('modals.addProductModal.chooseFromGallery')}
+                    <input
+                        type='file'
+                        accept='image/*'
+                        onChange={handleImageChange}
+                        hidden
+                    />
+                </Button>
+            </Stack>
+
+            {uploadError && (
+                <Alert severity='error' sx={{ borderRadius: '10px' }}>
+                    {uploadError}
+                </Alert>
+            )}
+
+            {!uploadError && imageErrorText && !formik.values.image?.url && (
+                <FormHelperText error>{imageErrorText}</FormHelperText>
+            )}
+
+            {(formik.values.image?.url || uploading) && (
+                <Box
+                    sx={{
+                        position: 'relative',
+                        borderRadius: '14px',
+                        overflow: 'hidden',
+                        border: '2px solid',
+                        borderColor: 'primary.main',
+                        bgcolor: 'action.hover',
+                        minHeight: 180,
+                    }}
+                >
+                    {formik.values.image?.url && (
                         <Avatar
                             src={formik.values.image.url}
                             variant='rounded'
@@ -869,9 +1054,30 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                                 width: '100%',
                                 height: 180,
                                 borderRadius: 0,
+                                opacity: uploading ? 0.4 : 1,
                                 '& img': { objectFit: 'cover' },
                             }}
                         />
+                    )}
+                    {uploading && (
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                inset: 0,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexDirection: 'column',
+                                gap: 1,
+                            }}
+                        >
+                            <CircularProgress size={28} sx={{ color: BRAND.gold }} />
+                            <Typography variant='caption' fontWeight={600}>
+                                {t('wizard.uploading', 'عم نرفع الصورة...')}
+                            </Typography>
+                        </Box>
+                    )}
+                    {!uploading && formik.values.image?.url && (
                         <Chip
                             label='✓ تم رفع الصورة'
                             size='small'
@@ -879,185 +1085,304 @@ const PostForm: FunctionComponent<PostFormProps> = ({
                             sx={{
                                 position: 'absolute',
                                 bottom: 8,
-                                left: 8,
+                                insetInlineStart: 8,
                                 fontWeight: 600,
                                 fontSize: '0.75rem',
                             }}
                         />
-                    </Box>
-                )}
-            </Section>
+                    )}
+                </Box>
+            )}
 
-            <SectionDivider />
+            {wizard && !formik.values.image?.url && !uploading && (
+                <Typography variant='caption' color='text.secondary'>
+                    {t(
+                        'wizard.imageTip',
+                        'صورة واضحة بإضاءة جيدة بتفرق كتير بجذب المشترين.',
+                    )}
+                </Typography>
+            )}
+        </Section>
+    );
 
-            {/* ── Toggles ── */}
-            <Section
-                icon={<LocalOffer sx={{ fontSize: 16 }} />}
-                label={t('modals.addProductModal.sale')}
+    const salesSection = (
+        <Section
+            icon={<LocalOffer sx={{ fontSize: 16 }} />}
+            label={t('modals.addProductModal.sale')}
+        >
+            <Box
+                sx={{
+                    p: 2,
+                    borderRadius: '12px',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    bgcolor: alpha(theme.palette.background.paper, 0.6),
+                }}
             >
-                <Box
-                    sx={{
-                        p: 2,
-                        borderRadius: '12px',
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        bgcolor: alpha(theme.palette.background.paper, 0.6),
-                    }}
-                >
-                    <Stack gap={1.5}>
-                        {/* In stock */}
-                        <Stack
-                            direction='row'
-                            alignItems='center'
-                            justifyContent='space-between'
-                        >
-                            <Box>
-                                <Typography variant='body2' fontWeight={600}>
-                                    {formik.values.in_stock
-                                        ? t('modals.addProductModal.in_stock')
-                                        : t(
-                                              'modals.addProductModal.not_in_stock',
-                                          )}
-                                </Typography>
-                                <Typography
-                                    variant='caption'
-                                    color='text.secondary'
-                                >
-                                    {formik.values.in_stock
-                                        ? 'المنتج متوفر للبيع'
-                                        : 'المنتج غير متوفر حالياً'}
-                                </Typography>
-                            </Box>
-                            <Switch
-                                checked={formik.values.in_stock}
-                                onChange={(e) =>
-                                    formik.setFieldValue(
-                                        'in_stock',
-                                        e.target.checked,
-                                    )
-                                }
-                                size='small'
-                                color={
-                                    formik.values.in_stock
-                                        ? 'success'
-                                        : 'default'
-                                }
-                            />
-                        </Stack>
-
-                        <Box
-                            sx={{
-                                height: '1px',
-                                bgcolor: 'divider',
-                                opacity: 0.5,
-                            }}
+                <Stack gap={1.5}>
+                    {/* In stock */}
+                    <Stack
+                        direction='row'
+                        alignItems='center'
+                        justifyContent='space-between'
+                    >
+                        <Box>
+                            <Typography variant='body2' fontWeight={600}>
+                                {formik.values.in_stock
+                                    ? t('modals.addProductModal.in_stock')
+                                    : t('modals.addProductModal.not_in_stock')}
+                            </Typography>
+                            <Typography variant='caption' color='text.secondary'>
+                                {formik.values.in_stock
+                                    ? 'المنتج متوفر للبيع'
+                                    : 'المنتج غير متوفر حالياً'}
+                            </Typography>
+                        </Box>
+                        <Switch
+                            checked={formik.values.in_stock}
+                            onChange={(e) =>
+                                formik.setFieldValue('in_stock', e.target.checked)
+                            }
+                            size='small'
+                            color={formik.values.in_stock ? 'success' : 'default'}
                         />
+                    </Stack>
 
-                        {/* Sale */}
-                        <Stack
-                            direction='row'
-                            alignItems='center'
-                            justifyContent='space-between'
-                        >
-                            <Box>
-                                <Typography variant='body2' fontWeight={600}>
-                                    {t('modals.addProductModal.sale')}
-                                </Typography>
-                                <Typography
-                                    variant='caption'
-                                    color='text.secondary'
-                                >
-                                    تفعيل خصم على المنتج
-                                </Typography>
-                            </Box>
-                            <Switch
-                                name='sale'
-                                checked={formik.values.sale}
-                                onChange={formik.handleChange}
-                                size='small'
-                                color='warning'
-                            />
-                        </Stack>
+                    <Box sx={{ height: '1px', bgcolor: 'divider', opacity: 0.5 }} />
 
-                        {/* Discount */}
-                        {formik.values.sale && (
-                            <TextField
-                                fullWidth
-                                size='small'
-                                type='number'
-                                name='discount'
-                                label={t('modals.addProductModal.discount')}
-                                value={formik.values.discount || 0}
-                                onChange={formik.handleChange}
-                                onBlur={formik.handleBlur}
-                                inputProps={{ min: 0, max: 100 }}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position='end'>
-                                            <Percent
-                                                sx={{
-                                                    fontSize: 16,
-                                                    color: 'text.secondary',
-                                                }}
-                                            />
-                                        </InputAdornment>
-                                    ),
+                    {/* Sale */}
+                    <Stack
+                        direction='row'
+                        alignItems='center'
+                        justifyContent='space-between'
+                    >
+                        <Box>
+                            <Typography variant='body2' fontWeight={600}>
+                                {t('modals.addProductModal.sale')}
+                            </Typography>
+                            <Typography variant='caption' color='text.secondary'>
+                                تفعيل خصم على المنتج
+                            </Typography>
+                        </Box>
+                        <Switch
+                            name='sale'
+                            checked={formik.values.sale}
+                            onChange={formik.handleChange}
+                            size='small'
+                            color='warning'
+                        />
+                    </Stack>
+
+                    {/* Discount */}
+                    {formik.values.sale && (
+                        <TextField
+                            fullWidth
+                            size='small'
+                            type='number'
+                            name='discount'
+                            label={t('modals.addProductModal.discount')}
+                            value={formik.values.discount || 0}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            inputProps={{ min: 0, max: 100 }}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position='end'>
+                                        <Percent
+                                            sx={{
+                                                fontSize: 16,
+                                                color: 'text.secondary',
+                                            }}
+                                        />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{ mt: 0.5 }}
+                        />
+                    )}
+                </Stack>
+            </Box>
+        </Section>
+    );
+
+    // ─── Actions ────────────────────────────────────────────────────────────
+    const cancelButtonSx = {
+        flex: 1,
+        py: 1.25,
+        borderRadius: '12px',
+        fontWeight: 600,
+        textTransform: 'none',
+        fontSize: '0.9375rem',
+        borderColor: 'divider',
+        color: 'text.secondary',
+        '&:hover': {
+            borderColor: 'error.main',
+            color: 'error.main',
+            bgcolor: alpha(theme.palette.error.main, 0.04),
+        },
+    } as const;
+
+    const primaryButtonSx = {
+        flex: 2,
+        py: 1.25,
+        borderRadius: '12px',
+        fontWeight: 700,
+        textTransform: 'none',
+        fontSize: '0.9375rem',
+        background: BRAND.gradient,
+        color: '#fff',
+        '&:hover': {
+            background: BRAND.gradient,
+            filter: 'brightness(1.08)',
+        },
+    } as const;
+
+    const wizardLabels = [
+        t('wizard.step1', 'الصورة والاسم'),
+        t('wizard.step2', 'التصنيف'),
+        t('wizard.step3', 'السعر والوصف'),
+    ];
+
+    return (
+        <Box
+            ref={formRef}
+            component='form'
+            autoComplete='off'
+            noValidate
+            onSubmit={handleFormSubmit}
+        >
+            {wizard ? (
+                <>
+                    <WizardProgress step={step} labels={wizardLabels} />
+
+                    {step === 0 && (
+                        <>
+                            {imageSection}
+                            <SectionDivider />
+                            {basicSection}
+                        </>
+                    )}
+
+                    {step === 1 && categorySection}
+
+                    {step === 2 && (
+                        <>
+                            {priceSection}
+                            {descriptionSection}
+                            <SectionDivider />
+                            {salesSection}
+                        </>
+                    )}
+
+                    {/* Wizard actions — لاصقة تحت عشان تضل ظاهرة عالموبايل */}
+                    <Stack
+                        direction='row'
+                        gap={1.5}
+                        sx={{
+                            mt: 1,
+                            py: 1.5,
+                            position: 'sticky',
+                            bottom: 0,
+                            zIndex: 2,
+                            bgcolor: 'background.paper',
+                            borderTop: '1px dashed',
+                            borderColor: 'divider',
+                        }}
+                    >
+                        {step === 0 ? (
+                            <Button
+                                key='cancel'
+                                variant='outlined'
+                                onClick={onHide}
+                                disabled={formik.isSubmitting}
+                                sx={cancelButtonSx}
+                            >
+                                {t('modals.addProductModal.cancel')}
+                            </Button>
+                        ) : (
+                            <Button
+                                key='back'
+                                variant='outlined'
+                                onClick={handleBack}
+                                disabled={formik.isSubmitting}
+                                sx={{
+                                    ...cancelButtonSx,
+                                    '&:hover': {
+                                        borderColor: BRAND.brown,
+                                        color: BRAND.brown,
+                                        bgcolor: BRAND.ledger(0.05),
+                                    },
                                 }}
-                                sx={{ mt: 0.5 }}
-                            />
+                            >
+                                {t('wizard.back', 'رجوع')}
+                            </Button>
+                        )}
+
+                        {/* key مختلف: بدونه React بيحوّل نفس الزر من button لـ submit وبيرسل الفورم بنفس الضغطة */}
+                        {step < LAST_STEP ? (
+                            <Button
+                                key='next'
+                                type='button'
+                                variant='contained'
+                                onClick={handleNext}
+                                disabled={uploading}
+                                disableElevation
+                                sx={primaryButtonSx}
+                            >
+                                {t('wizard.next', 'التالي')}
+                            </Button>
+                        ) : (
+                            <Button
+                                key='submit'
+                                type='submit'
+                                variant='contained'
+                                loading={formik.isSubmitting}
+                                disabled={uploading}
+                                disableElevation
+                                sx={primaryButtonSx}
+                            >
+                                {t('modals.addProductModal.addProduct')}
+                            </Button>
                         )}
                     </Stack>
-                </Box>
-            </Section>
+                </>
+            ) : (
+                <>
+                    {basicSection}
+                    <SectionDivider />
+                    {categorySection}
+                    <SectionDivider />
+                    {descriptionSection}
+                    <SectionDivider />
+                    {imageSection}
+                    <SectionDivider />
+                    {salesSection}
 
-            {/* ── Actions ── */}
-            <Stack direction='row' gap={1.5} sx={{ mt: 1 }}>
-                <Button
-                    variant='outlined'
-                    onClick={onHide}
-                    disabled={formik.isSubmitting}
-                    sx={{
-                        flex: 1,
-                        py: 1.25,
-                        borderRadius: '12px',
-                        fontWeight: 600,
-                        textTransform: 'none',
-                        fontSize: '0.9375rem',
-                        borderColor: 'divider',
-                        color: 'text.secondary',
-                        '&:hover': {
-                            borderColor: 'error.main',
-                            color: 'error.main',
-                            bgcolor: alpha(theme.palette.error.main, 0.04),
-                        },
-                    }}
-                >
-                    {t('modals.addProductModal.cancel')}
-                </Button>
+                    <Stack direction='row' gap={1.5} sx={{ mt: 1 }}>
+                        <Button
+                            variant='outlined'
+                            onClick={onHide}
+                            disabled={formik.isSubmitting}
+                            sx={cancelButtonSx}
+                        >
+                            {t('modals.addProductModal.cancel')}
+                        </Button>
 
-                <Button
-                    variant='contained'
-                    type='submit'
-                    loading={formik.isSubmitting}
-                    disableElevation
-                    sx={{
-                        flex: 2,
-                        py: 1.25,
-                        borderRadius: '12px',
-                        fontWeight: 700,
-                        textTransform: 'none',
-                        fontSize: '0.9375rem',
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`,
-                        '&:hover': {
-                            background: `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`,
-                        },
-                    }}
-                >
-                    {mode === 'add'
-                        ? t('modals.addProductModal.addProduct')
-                        : t('modals.updateProductModal.updateButton')}
-                </Button>
-            </Stack>
+                        <Button
+                            variant='contained'
+                            type='submit'
+                            loading={formik.isSubmitting}
+                            disabled={uploading}
+                            disableElevation
+                            sx={primaryButtonSx}
+                        >
+                            {mode === 'add'
+                                ? t('modals.addProductModal.addProduct')
+                                : t('modals.updateProductModal.updateButton')}
+                        </Button>
+                    </Stack>
+                </>
+            )}
         </Box>
     );
 };

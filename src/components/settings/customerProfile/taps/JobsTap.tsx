@@ -13,7 +13,6 @@ const BRAND_BROWN = '#8B4513';
 const BRAND_GRADIENT = `linear-gradient(90deg, ${BRAND_GOLD}, ${BRAND_BROWN})`;
 
 interface JobsTabProps {
-   
     jobs: Job[];
     user: User;
 }
@@ -31,6 +30,11 @@ const JobsTab: FunctionComponent<JobsTabProps> = ({ jobs, user }) => {
                 m={3}
             >
                 <Typography
+                    aria-label={t('pages.jobs.postedBy', {
+                        defaultValue: 'وظائف',
+                    })}
+                    data-testid='jobs-tab-title'
+                    title={t('pages.jobs.postedBy', { defaultValue: 'وظائف' })}
                     variant='h5'
                     fontWeight='bold'
                     sx={{ position: 'relative' }}
@@ -51,6 +55,13 @@ const JobsTab: FunctionComponent<JobsTabProps> = ({ jobs, user }) => {
                 </Typography>
 
                 <Chip
+                    aria-label={t('common.availablePosts', {
+                        defaultValue: 'وظائف متاحة',
+                    })}
+                    title={t('common.availablePosts', {
+                        defaultValue: 'وظائف متاحة',
+                    })}
+                    data-testid='available-posts-chip'
                     icon={<LocalOffer />}
                     label={`${jobs.length} ${t('common.availablePosts')}`}
                     variant='outlined'
@@ -90,6 +101,13 @@ const JobsTab: FunctionComponent<JobsTabProps> = ({ jobs, user }) => {
                         }}
                     />
                     <Typography
+                        aria-label={t('pages.jobs.noJobs', {
+                            defaultValue: 'ما في وظائف مضافة',
+                        })}
+                        data-testid='no-jobs-typography'
+                        title={t('pages.jobs.noJobs', {
+                            defaultValue: 'ما في وظائف مضافة',
+                        })}
                         variant='h6'
                         color='text.secondary'
                         gutterBottom
@@ -98,7 +116,18 @@ const JobsTab: FunctionComponent<JobsTabProps> = ({ jobs, user }) => {
                             defaultValue: 'ما في وظائف مضافة',
                         })}
                     </Typography>
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography
+                        variant='body2'
+                        color='text.secondary'
+                        aria-label={t('pages.jobs.noJobsYet', {
+                            defaultValue: `${user.name?.first} لسا ما نشر أي وظيفة`,
+                            name: user.name?.first,
+                        })}
+                        title={t('pages.jobs.noJobsYet', {
+                            defaultValue: `${user.name?.first} لسا ما نشر أي وظيفة`,
+                            name: user.name?.first,
+                        })}
+                    >
                         {t('pages.jobs.noJobsYet', {
                             defaultValue: `${user.name?.first} لسا ما نشر أي وظيفة`,
                             name: user.name?.first,

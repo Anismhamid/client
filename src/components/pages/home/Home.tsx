@@ -5,19 +5,32 @@ import {
     Suspense,
     useCallback,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
-import { Box, Button, Fab, Fade, Grid, Paper, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Container,
+    Fab,
+    Fade,
+    Grid,
+    Paper,
+    Typography,
+} from '@mui/material';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
+import { m, useScroll, useSpring } from 'framer-motion';
 
 import { Link as RouterLink } from 'react-router-dom';
 
 import HeroSection from './HeroSection';
 import StatsStrip from './StatsStrip';
 import AdsSection from './AdsSection';
+import SealBadge from './SealBadge';
+
 import Loader from '../../../atoms/loader/Loader';
 
 const AddProductModal = lazy(
@@ -39,11 +52,14 @@ import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
 import { Posts } from '../../../interfaces/Posts';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
+import { BRAND } from '../../navbar/theme/brand';
+import CategoryBar from './Categorybar';
+import HowItWorks from './Howitworks';
+import { showInfo } from '../../../atoms/toasts/ReactToast';
+// import HowItWorks from './Howitworks';
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
-
-const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 
 const QUICK_HELP_LINKS = [
     {
@@ -82,9 +98,36 @@ const Home: FunctionComponent = () => {
     const [postToDelete, setPostToDelete] = useState('');
     const [posts, setPosts] = useState<Posts[]>([]);
 
-    // Scroll progress + back-to-top FAB
-    const [scrollProgress, setScrollProgress] = useState(0);
+    // Category filter
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        null,
+    );
+
+    const categories = useMemo(() => {
+        const counts = new Map<string, number>();
+        posts.forEach((p) => {
+            const name = p.category ? String(p.category) : '';
+            if (name) counts.set(name, (counts.get(name) || 0) + 1);
+        });
+        return [...counts.entries()]
+            .map(([name, count]) => ({ name, count }))
+            .sort((a, b) => b.count - a.count);
+    }, [posts]);
+
+    const filteredPosts = useMemo(
+        () =>
+            selectedCategory
+                ? posts.filter((p) => String(p.category) === selectedCategory)
+                : posts,
+        [posts, selectedCategory],
+    );
+
+    // Back-to-top FAB (يتحدّث فقط لما تتغيّر القيمة، مو كل scroll)
     const [showBackToTop, setShowBackToTop] = useState(false);
+
+    // Scroll progress بدون re-render للصفحة
+    const { scrollYProgress } = useScroll();
+    const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
     useEffect(() => {
         setPosts(initialPosts);
@@ -92,14 +135,10 @@ const Home: FunctionComponent = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            const scrollTop = window.scrollY;
-            const docHeight =
-                document.documentElement.scrollHeight - window.innerHeight;
-            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-            setScrollProgress(progress);
-            setShowBackToTop(scrollTop > 600);
+            setShowBackToTop(window.scrollY > 600);
         };
 
+        handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -149,7 +188,6 @@ const Home: FunctionComponent = () => {
         <>
             {/* ─── SEO ─── */}
             <title>صفقة | بيع وشراء جديد ومستعمل</title>
-
             <meta
                 name='description'
                 content='صفقة منصة إلكترونية لبيع وشراء المنتجات الجديدة والمستعملة بسهولة وأمان'
@@ -193,7 +231,6 @@ const Home: FunctionComponent = () => {
                     ],
                 }}
             />
-
             {/* ─── SCROLL PROGRESS ─── */}
             <Box
                 sx={{
@@ -206,148 +243,147 @@ const Home: FunctionComponent = () => {
                     pointerEvents: 'none',
                 }}
             >
-                <Box
-                    sx={{
+                <m.div
+                    style={{
                         height: '100%',
-                        width: `${scrollProgress}%`,
-                        background: GRADIENT,
-                        transition: 'width 0.1s linear',
+                        background: BRAND.gradient,
+                        scaleX,
+                        transformOrigin: direction === 'rtl' ? 'right' : 'left',
                     }}
                 />
             </Box>
-
             {/* ─── HERO ─── */}
             <header>
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
-            {/* help section */}
-            <section id='help-section' style={{ margin: 'auto' }}>
-                <Paper
-                    elevation={0}
-                    sx={{
-                        p: { xs: 2, md: 3 },
-                        m: { xs: 1.5, md: 2 },
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        borderRadius: '16px',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            insetInlineStart: 0,
-                            insetInlineEnd: 0,
-                            height: 4,
-                            background: GRADIENT,
-                        },
-                    }}
-                >
-                    <Typography
-                        variant='h6'
-                        gutterBottom
-                        fontWeight='bold'
-                        textAlign='center'
-                        sx={{
-                            pt: 0.5,
-                            fontSize: { xs: '1.05rem', md: '1.25rem' },
-                        }}
-                    >
-                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
-                    </Typography>
-
-                    <Grid container spacing={1.5} mt={0.5}>
-                        {QUICK_HELP_LINKS.map((link) => {
-                            const Icon = link.icon;
-                            const to = link.pathKey
-                                ? path[link.pathKey]
-                                : link.to!;
-                            return (
-                                <Grid key={link.key} size={{ xs: 4, md: 4 }}>
-                                    <Button
-                                        fullWidth
-                                        component={RouterLink}
-                                        to={to}
-                                        disableRipple={false}
-                                        sx={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            gap: 0.75,
-                                            py: 1.5,
-                                            px: 1,
-                                            minHeight: 84,
-                                            borderRadius: '14px',
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            color: 'text.primary',
-                                            textTransform: 'none',
-                                            WebkitTapHighlightColor:
-                                                'transparent',
-                                            transition:
-                                                'transform 0.15s ease, border-color 0.2s ease',
-                                            '&:hover': {
-                                                borderColor: '#8B4513',
-                                                bgcolor: 'primary.50',
-                                            },
-                                            '&:active': {
-                                                transform: 'scale(0.96)',
-                                            },
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 38,
-                                                height: 38,
-                                                borderRadius: '50%',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                background: GRADIENT,
-                                                color: '#fff',
-                                            }}
-                                        >
-                                            <Icon fontSize='small' />
-                                        </Box>
-                                        <Typography
-                                            sx={{
-                                                fontSize: {
-                                                    xs: '0.72rem',
-                                                    sm: '0.85rem',
-                                                },
-                                                fontWeight: 600,
-                                                lineHeight: 1.3,
-                                                textAlign: 'center',
-                                            }}
-                                        >
-                                            {t(link.key, link.fallback)}
-                                        </Typography>
-                                    </Button>
-                                </Grid>
-                            );
-                        })}
-                    </Grid>
-                </Paper>
-            </section>
-            {/* ─── STATS ─── */}
-            <section id='StatsStrip-section'>
-                <StatsStrip postsCount={posts.length} />
-            </section>
-            {/* ─── MAIN ─── */}
+            <HowItWorks />{' '}
             <main id='listing-section' dir={direction}>
-                <AdsSection />
+                {/* ─── STATS (حافة مسننة ملاصقة للـ Hero) ─── */}
+                <section id='StatsStrip-section'>
+                    <StatsStrip postsCount={posts.length} />
+                </section>
 
+                {/* ─── HELP ─── */}
+                <section id='help-section'>
+                    <Container
+                        maxWidth='lg'
+                        sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}
+                    >
+                        <Paper
+                            elevation={0}
+                            sx={{
+                                p: { xs: 2, md: 3 },
+                                my: { xs: 3, md: 4 },
+                                border: '1px dashed',
+                                borderColor: 'divider',
+                                borderRadius: '16px',
+                                bgcolor: 'background.paper',
+                            }}
+                        >
+                            <Typography
+                                variant='h6'
+                                gutterBottom
+                                fontWeight='bold'
+                                textAlign='center'
+                                sx={{
+                                    fontSize: { xs: '1.05rem', md: '1.25rem' },
+                                }}
+                            >
+                                {t(
+                                    'pages.contact.quickHelp',
+                                    'مساعدتك السريعة',
+                                )}
+                            </Typography>
+
+                            <Grid container spacing={1.5} mt={0.5}>
+                                {QUICK_HELP_LINKS.map((link) => {
+                                    const Icon = link.icon;
+                                    const to = link.pathKey
+                                        ? path[link.pathKey]
+                                        : link.to!;
+                                    return (
+                                        <Grid
+                                            key={link.key}
+                                            size={{ xs: 4, md: 4 }}
+                                        >
+                                            <Button
+                                                fullWidth
+                                                component={RouterLink}
+                                                to={to}
+                                                sx={{
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    gap: 0.75,
+                                                    py: 1.5,
+                                                    px: 1,
+                                                    minHeight: 84,
+                                                    borderRadius: '14px',
+                                                    border: '1px solid',
+                                                    borderColor: 'divider',
+                                                    color: 'text.primary',
+                                                    textTransform: 'none',
+                                                    WebkitTapHighlightColor:
+                                                        'transparent',
+                                                    transition:
+                                                        'transform 0.15s ease, border-color 0.2s ease',
+                                                    '&:hover': {
+                                                        borderColor:
+                                                            BRAND.brown,
+                                                        bgcolor:
+                                                            BRAND.ledger(0.05),
+                                                    },
+                                                    '&:active': {
+                                                        transform:
+                                                            'scale(0.96)',
+                                                    },
+                                                }}
+                                            >
+                                                <SealBadge
+                                                    size={40}
+                                                    rotate={-6}
+                                                    tone='outline'
+                                                >
+                                                    <Icon
+                                                        sx={{ fontSize: 18 }}
+                                                    />
+                                                </SealBadge>
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: {
+                                                            xs: '0.72rem',
+                                                            sm: '0.85rem',
+                                                        },
+                                                        fontWeight: 600,
+                                                        lineHeight: 1.3,
+                                                        textAlign: 'center',
+                                                    }}
+                                                >
+                                                    {t(link.key, link.fallback)}
+                                                </Typography>
+                                            </Button>
+                                        </Grid>
+                                    );
+                                })}
+                            </Grid>
+                        </Paper>
+                    </Container>
+                </section>
+
+                <AdsSection />
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />
                 </Suspense>
-                {/* =================================================
-            CATEGORY NAVIGATION
-               ================================================= */}
-
-
+                <CategoryBar
+                    categories={categories}
+                    selected={selectedCategory}
+                    onSelect={setSelectedCategory}
+                    total={posts.length}
+                />
                 <Suspense fallback={<Loader />}>
                     <PostsGrid
-                        posts={posts}
+                        key={selectedCategory ?? 'all'}
+                        posts={filteredPosts}
                         featured={false}
                         canEdit={canEdit}
                         onSetPostIdToUpdate={setPostIdToUpdate}
@@ -363,7 +399,6 @@ const Home: FunctionComponent = () => {
                     <ContactCTA />
                 </Suspense>
             </main>
-
             {/* ─── BACK TO TOP ─── */}
             <Fade in={showBackToTop}>
                 <Fab
@@ -376,11 +411,11 @@ const Home: FunctionComponent = () => {
                         position: 'fixed',
                         bottom: 20,
                         insetInlineStart: 20,
-                        background: GRADIENT,
+                        background: BRAND.gradient,
                         color: '#fff',
-                        boxShadow: '0 8px 20px -6px rgba(139,69,19,0.6)',
+                        boxShadow: `0 8px 20px -6px ${BRAND.ledger(0.6)}`,
                         '&:hover': {
-                            background: GRADIENT,
+                            background: BRAND.gradient,
                             filter: 'brightness(1.1)',
                         },
                     }}
@@ -388,9 +423,8 @@ const Home: FunctionComponent = () => {
                     <KeyboardArrowUpRoundedIcon />
                 </Fab>
             </Fade>
-
+            {/* ─── MODALS ─── */}
             <Suspense fallback={<Loader />}>
-                {/* ─── MODALS ─── */}
                 <UpdateProductModal
                     refresh={refetch}
                     postId={postIdToUpdate}
@@ -427,7 +461,15 @@ const Home: FunctionComponent = () => {
                 <AddProductModal
                     show={showAddModal}
                     onHide={() => setShowAddModal(false)}
-                    onSuccess={refetch}
+                    onSuccess={() => {
+                        refetch();
+                        showInfo(
+                            t(
+                                'posts.pendingReview',
+                                'وصلنا إعلانك وهو قيد المراجعة. رح نبلغك أول ما ينقبل.',
+                            ),
+                        );
+                    }}
                 />
             </Suspense>
         </>

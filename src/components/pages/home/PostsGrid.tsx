@@ -1,5 +1,4 @@
-// components/home/ProductsGrid.tsx
-
+// components/home/PostsGrid.tsx
 import {
     useRef,
     useMemo,
@@ -32,6 +31,7 @@ import JsonLd from '../../../../utils/JsonLd';
 import { generateProductsItemListJsonLd } from '../../../../utils/structuredData';
 
 import SealBadge from './SealBadge';
+import { BRAND } from '../../navbar/theme/brand';
 
 interface PostGridProps {
     posts: Posts[];
@@ -61,95 +61,59 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
 
     const observerRef = useRef<HTMLDivElement | null>(null);
 
-    /* =========================================================
-       SAFE POSTS
-       ========================================================= */
-
+    /* SAFE POSTS */
     const safePosts = useMemo(() => {
-        if (!Array.isArray(posts)) {
-            return [];
-        }
+        if (!Array.isArray(posts)) return [];
 
         return posts.filter((post): post is Posts & { _id: string } =>
             Boolean(post?._id),
         );
     }, [posts]);
 
-    const visibleProducts = useMemo(() => {
-        return safePosts.slice(0, visibleCount);
-    }, [safePosts, visibleCount]);
+    const visibleProducts = useMemo(
+        () => safePosts.slice(0, visibleCount),
+        [safePosts, visibleCount],
+    );
 
-    /* =========================================================
-       LOAD MORE
-       ========================================================= */
-
+    /* LOAD MORE */
     const hasMore = visibleCount < safePosts.length;
 
     const handleLoadMore = useCallback(() => {
         setVisibleCount((previousCount) => {
-            if (previousCount >= safePosts.length) {
-                return previousCount;
-            }
-
+            if (previousCount >= safePosts.length) return previousCount;
             return Math.min(previousCount + LOAD_MORE_STEP, safePosts.length);
         });
     }, [safePosts.length]);
 
-    /* =========================================================
-       INFINITE SCROLL
-       ========================================================= */
-
+    /* INFINITE SCROLL */
     useEffect(() => {
         const target = observerRef.current;
 
-        if (!target || !hasMore) {
-            return;
-        }
+        if (!target || !hasMore) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
-                const entry = entries[0];
-
-                if (entry?.isIntersecting) {
-                    handleLoadMore();
-                }
+                if (entries[0]?.isIntersecting) handleLoadMore();
             },
-            {
-                threshold: 0.1,
-                rootMargin: '150px',
-            },
+            { threshold: 0.1, rootMargin: '150px' },
         );
 
         observer.observe(target);
 
-        return () => {
-            observer.disconnect();
-        };
+        return () => observer.disconnect();
     }, [handleLoadMore, hasMore]);
 
     const isEmpty = safePosts.length === 0;
 
     return (
         <Container>
-            {/* =================================================
-                SEO
-               ================================================= */}
-
+            {/* SEO */}
             <JsonLd
                 data={generateProductsItemListJsonLd(safePosts.slice(0, 20))}
             />
 
-            {/* =================================================
-                PRODUCTS
-               ================================================= */}
-
-            <Container
-                maxWidth='lg'
-                sx={{
-                    py: 4,
-                }}
-                id={'products-section'}
-            >
+            {/* PRODUCTS */}
+            <Container maxWidth='lg' sx={{ py: 4 }} id='products-section'>
                 {!isEmpty && (
                     <Box
                         sx={{
@@ -167,7 +131,10 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             </SealBadge>
                             <Typography
                                 variant='h6'
-                                sx={{ fontWeight: 800, fontSize: { xs: '1.05rem', md: '1.2rem' } }}
+                                sx={{
+                                    fontWeight: 800,
+                                    fontSize: { xs: '1.05rem', md: '1.2rem' },
+                                }}
                             >
                                 {t('latessProducts')}
                             </Typography>
@@ -184,7 +151,10 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                 fontWeight: 600,
                             }}
                         >
-                            {t('post', '{{count}} ', { count: safePosts.length })}
+                            {t('post', {
+                                count: safePosts.length,
+                                defaultValue: '{{count}} منشور',
+                            })}
                         </Typography>
                     </Box>
                 )}
@@ -193,10 +163,6 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                     {!isEmpty ? (
                         <Grid container spacing={2.5}>
                             {visibleProducts.map((post, index) => {
-                                /* -------------------------
-                                       DISCOUNT
-                                       ------------------------- */
-
                                 const discountedPrice = post.sale
                                     ? post.price -
                                       (post.price * (post.discount || 0)) / 100
@@ -205,50 +171,35 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                 return (
                                     <Grid
                                         key={post._id}
-                                        size={{
-                                            xs: 12,
-                                            sm: 6,
-                                            md: 4,
-                                            lg: 3,
-                                        }}
+                                        size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                                     >
+                                        {/* تتحرك مرة وحدة بس، مو كل ما يزيد visibleCount */}
                                         <m.div
-                                            initial={{
-                                                opacity: 0,
-                                                y: 10,
-                                            }}
-                                            animate={{
-                                                opacity: 1,
-                                                y: 0,
+                                            initial={{ opacity: 0, y: 10 }}
+                                            whileInView={{ opacity: 1, y: 0 }}
+                                            viewport={{
+                                                once: true,
+                                                margin: '-40px',
                                             }}
                                             transition={{
                                                 duration: 0.35,
-
                                                 delay:
-                                                    Math.min(
-                                                        index % LOAD_MORE_STEP,
-                                                        12,
-                                                    ) * 0.03,
+                                                    (index % LOAD_MORE_STEP) *
+                                                    0.03,
                                             }}
                                         >
                                             <PostCard
                                                 post={post}
                                                 featured={post.featured}
-                                                discountedPrice={
-                                                    discountedPrice
-                                                }
+                                                discountedPrice={discountedPrice}
                                                 canEdit={canEdit}
                                                 setPostIdToUpdate={() =>
-                                                    onSetPostIdToUpdate(
-                                                        post._id,
-                                                    )
+                                                    onSetPostIdToUpdate(post._id)
                                                 }
                                                 onShowUpdateProductModal={
                                                     onShowUpdateModal
                                                 }
-                                                openDeleteModal={
-                                                    onOpenDeleteModal
-                                                }
+                                                openDeleteModal={onOpenDeleteModal}
                                                 category={post.category}
                                                 onLikeToggle={onLikeToggle}
                                             />
@@ -258,10 +209,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             })}
                         </Grid>
                     ) : (
-                        /* =================================================
-                           EMPTY STATE
-                           ================================================= */
-
+                        /* EMPTY STATE */
                         <m.div
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -270,13 +218,10 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             <Box
                                 sx={{
                                     textAlign: 'center',
-
                                     py: 8,
                                     px: 3,
-
                                     border: '1px dashed',
                                     borderColor: 'divider',
-
                                     borderRadius: '16px',
                                     position: 'relative',
                                     overflow: 'hidden',
@@ -286,8 +231,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                     sx={{
                                         position: 'absolute',
                                         inset: 0,
-                                        backgroundImage:
-                                            'repeating-linear-gradient(rgba(139,69,19,0.04) 0px, rgba(139,69,19,0.04) 1px, transparent 1px, transparent 26px)',
+                                        backgroundImage: BRAND.ledgerLines(0.04),
                                         maskImage:
                                             'radial-gradient(ellipse at center, black 0%, transparent 75%)',
                                         WebkitMaskImage:
@@ -304,25 +248,22 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                     }}
                                 >
                                     <SealBadge size={56} rotate={0} tone='outline'>
-                                        <SearchOffIcon
-                                            sx={{
-                                                fontSize: 24,
-                                            }}
-                                        />
+                                        <SearchOffIcon sx={{ fontSize: 24 }} />
                                     </SealBadge>
                                 </Box>
 
-                                <Typography variant='h6' fontWeight={700} sx={{ position: 'relative' }}>
+                                <Typography
+                                    variant='h6'
+                                    fontWeight={700}
+                                    sx={{ position: 'relative' }}
+                                >
                                     {t('search.noResults', 'لا توجد نتائج')}
                                 </Typography>
 
                                 <Typography
                                     variant='body2'
                                     color='text.secondary'
-                                    sx={{
-                                        mt: 1,
-                                        position: 'relative',
-                                    }}
+                                    sx={{ mt: 1, position: 'relative' }}
                                 >
                                     {t(
                                         'search.tryAnother',
@@ -334,23 +275,18 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                     )}
                 </AnimatePresence>
 
-                {/* =================================================
-                    INFINITE SCROLL LOADER
-                   ================================================= */}
-
+                {/* INFINITE SCROLL LOADER */}
                 {hasMore && (
                     <Box
                         ref={observerRef}
                         sx={{
                             py: 4,
-
                             display: 'flex',
                             justifyContent: 'center',
-
                             minHeight: 60,
                         }}
                     >
-                        <CircularProgress size={20} sx={{ color: '#B8860B' }} />
+                        <CircularProgress size={20} sx={{ color: BRAND.gold }} />
                     </Box>
                 )}
             </Container>

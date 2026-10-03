@@ -110,6 +110,13 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                     }}
                                 >
                                     <Card
+                                        aria-label={t('common.productCard', {
+                                            defaultValue: 'بطاقة المنتج',
+                                        })}
+                                        title={t('common.productCard', {
+                                            defaultValue: 'بطاقة المنتج',
+                                        })}
+                                        data-testid='product-card'
                                         sx={{
                                             height: '100%',
                                             borderRadius: 3,
@@ -133,6 +140,9 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                         >
                                             {product.isNew && (
                                                 <Chip
+                                                    aria-label={t('common.new')}
+                                                    title={t('common.new')}
+                                                    data-testid='new-chip'
                                                     label={t('common.new')}
                                                     color='success'
                                                     size='small'
@@ -168,6 +178,11 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                         >
                                             {product.image?.url ? (
                                                 <CardMedia
+                                                    aria-label={
+                                                        product.product_name
+                                                    }
+                                                    title={product.product_name}
+                                                    data-testid='product-image-card-media'
                                                     component='img'
                                                     image={product.image.url}
                                                     alt={`${product.product_name} للبيع في ${user.address?.city} - متجر ${user.name?.first}`}
@@ -209,6 +224,11 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                         <CardContent sx={{ p: 2.5 }}>
                                             {/* اسم المنتج */}
                                             <Typography
+                                                aria-label={
+                                                    product.product_name
+                                                }
+                                                title={product.product_name}
+                                                data-testid='product-name-typography'
                                                 variant='subtitle1'
                                                 fontWeight='bold'
                                                 component={Link}
@@ -241,6 +261,13 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                                     {product.sale ? (
                                                         <Box>
                                                             <Typography
+                                                                aria-label={t(
+                                                                    'common.discountedPrice',
+                                                                )}
+                                                                title={t(
+                                                                    'common.discountedPrice',
+                                                                )}
+                                                                data-testid='discounted-price-typography'
                                                                 variant='h6'
                                                                 color='error'
                                                                 fontWeight='bold'
@@ -254,6 +281,13 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                                                 )}
                                                             </Typography>
                                                             <Typography
+                                                                aria-label={t(
+                                                                    'common.originalPrice',
+                                                                )}
+                                                                title={t(
+                                                                    'common.originalPrice',
+                                                                )}
+                                                                data-testid='original-price-typography'
                                                                 variant='body2'
                                                                 color='text.secondary'
                                                                 sx={{
@@ -311,6 +345,13 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                                     />
                                                 </Box>
                                                 <IconButton
+                                                    aria-label={t(
+                                                        'common.addToWishlist',
+                                                    )}
+                                                    title={t(
+                                                        'common.addToWishlist',
+                                                    )}
+                                                    data-testid='wishlist-icon-button'
                                                     size='small'
                                                     onClick={() =>
                                                         toggleWishlist(
@@ -368,13 +409,27 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                         }}
                     />
                     <Typography
+                        aria-label={t('common.noProducts')}
+                        data-testid='no-products-typography'
+                        title={t('common.noProducts')}
                         variant='h6'
                         color='text.secondary'
                         gutterBottom
                     >
                         {t('common.noProducts')}
                     </Typography>
-                    <Typography variant='body2' color='text.secondary'>
+                    <Typography
+                        aria-label={t('common.noProductsYet', {
+                            defaultValue: `${user.name?.first} لسا ما نشر أي منتج`,
+                            name: user.name?.first,
+                        })}
+                        title={t('common.noProductsYet', {
+                            defaultValue: `${user.name?.first} لسا ما نشر أي منتج`,
+                            name: user.name?.first,
+                        })}
+                        variant='body2'
+                        color='text.secondary'
+                    >
                         {t('common.noProductsYet', { name: user.name?.first })}
                     </Typography>
                 </Box>

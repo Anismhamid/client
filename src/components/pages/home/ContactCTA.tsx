@@ -68,7 +68,7 @@ const ContactCTA = () => {
                 </Box>
                 <Typography
                     variant='h5'
-                    sx={{ fontWeight: 700, mb: 1.5, color: 'text.primary' }}
+                    sx={{ fontWeight: 700, mb: 1.5, color: 'text.primary.main' }}
                 >
                     {t('contactCTA.title')}
                 </Typography>
@@ -88,7 +88,7 @@ const ContactCTA = () => {
                     <Typography
                         variant='body1'
                         sx={{
-                            color: 'text.secondary',
+                            color: 'text.secondary.main',
                             lineHeight: 1.75,
                         }}
                     >
