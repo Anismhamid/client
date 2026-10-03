@@ -2333,7 +2333,10 @@
             "actions": {
                 "edit": "ערוך",
                 "delete": "מחק",
-                "view": "הצג פרופיל"
+                "view": "הצג פרופיל",
+                "deleteMessage": "האם אתה בטוח שברצונך למחוק את המשתמש {{name}} לצמיתות?",
+                "cancelDelete": "ביטול",
+                "confirmDelete": "מחק משתמש"
             },
 
             "statusActions": {

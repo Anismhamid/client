@@ -2335,7 +2335,11 @@
             "actions": {
                 "edit": "تعديل",
                 "delete": "حذف",
-                "view": "عرض الملف الشخصي"
+                "view": "عرض الملف الشخصي",
+                "deleteMessage": "هل أنت متأكد أنك تريد حذف {{name}} نهائيًا؟ لا يمكن التراجع عن هذا الإجراء."
+                ,
+                "cancelDelete": "إلغاء",
+                "confirmDelete": "حذف المستخدم"
             },
 
             "statusActions": {

@@ -3,39 +3,32 @@ import {
     Box,
     Button,
     FormControl,
-    InputLabel,
+    IconButton,
     MenuItem,
+    Paper,
     Select,
+    Tooltip,
     Typography,
     useTheme,
 } from '@mui/material';
 
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
-import ClearIcon from '@mui/icons-material/Clear';
+import CloseIcon from '@mui/icons-material/Close';
 
 import RoleType from '../../../../interfaces/UserType';
 
 interface BulkUserActionsProps {
     selectedCount: number;
-
     selectedRole: string;
-
     onRoleChange: (role: RoleType | '') => void;
-
     onBulkRoleUpdate: () => Promise<void>;
-
     onActivate: () => Promise<void>;
-
     onDeactivate: () => Promise<void>;
-
     onDelete: () => Promise<void>;
-
     onClear: () => void;
-
     t: (key: string) => string;
-
     direction: 'rtl' | 'ltr';
 }
 
@@ -58,149 +51,109 @@ const BulkUserActions: FunctionComponent<BulkUserActionsProps> = ({
     }
 
     return (
-        <Box
+        <Paper
             dir={direction}
+            elevation={8}
             sx={{
-                mb: 3,
-                p: 2,
-                borderRadius: 3,
+                position: 'fixed',
+                bottom: { xs: 12, md: 24 },
+                left: '50%',
+                transform: 'translateX(-50%)',
+                zIndex: theme.zIndex.modal - 1,
+                width: 'max-content',
+                maxWidth: 'calc(100vw - 24px)',
+                px: 2,
+                py: 1.25,
+                borderRadius: 4,
                 border: `1px solid ${theme.palette.divider}`,
-                bgcolor: theme.palette.background.paper,
-
                 display: 'flex',
                 alignItems: 'center',
-                gap: 2,
+                justifyContent: 'center',
+                gap: 1.5,
                 flexWrap: 'wrap',
             }}
         >
-            <Typography
-                sx={{
-                    fontWeight: 800,
-                    mr: 'auto',
-                }}
-            >
-                {selectedCount}{' '}
-                {t('pages.usersManagement.bulk.selected')}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Tooltip title={t('pages.usersManagement.bulk.clear')}>
+                    <IconButton size='small' onClick={onClear}>
+                        <CloseIcon fontSize='small' />
+                    </IconButton>
+                </Tooltip>
 
-            <Button
-                variant="outlined"
-                color="success"
-                startIcon={<CheckCircleOutlineIcon />}
-                onClick={onActivate}
-                sx={{
-                    borderRadius: 2,
-                    fontWeight: 700,
-                }}
-            >
-                {t('pages.usersManagement.bulk.activate')}
-            </Button>
+                <Typography fontWeight={800} noWrap>
+                    {selectedCount} {t('pages.usersManagement.bulk.selected')}
+                </Typography>
+            </Box>
 
-            <Button
-                variant="outlined"
-                color="warning"
-                startIcon={<BlockOutlinedIcon />}
-                onClick={onDeactivate}
-                sx={{
-                    borderRadius: 2,
-                    fontWeight: 700,
-                }}
-            >
-                {t('pages.usersManagement.bulk.deactivate')}
-            </Button>
-
-            <FormControl
-                size="small"
-                sx={{
-                    minWidth: 160,
-                }}
-            >
-                <InputLabel>
-                    {t('pages.usersManagement.bulk.role')}
-                </InputLabel>
-
-                <Select
-                    value={selectedRole}
-                    label={t(
-                        'pages.usersManagement.bulk.role',
-                    )}
-                    onChange={(event) =>
-                        onRoleChange(
-                            event.target.value as RoleType,
-                        )
-                    }
-                    sx={{
-                        borderRadius: 2,
-                    }}
+            <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                    size='small'
+                    color='success'
+                    startIcon={<CheckCircleOutlineIcon />}
+                    onClick={onActivate}
+                    sx={{ borderRadius: 2, fontWeight: 700 }}
                 >
-                    <MenuItem value="">
-                        {t(
-                            'pages.usersManagement.bulk.selectRole',
-                        )}
-                    </MenuItem>
+                    {t('pages.usersManagement.bulk.activate')}
+                </Button>
 
-                    <MenuItem value={RoleType.Admin}>
-                        {t(
-                            'pages.usersManagement.roles.admin',
-                        )}
-                    </MenuItem>
+                <Button
+                    size='small'
+                    color='warning'
+                    startIcon={<BlockOutlinedIcon />}
+                    onClick={onDeactivate}
+                    sx={{ borderRadius: 2, fontWeight: 700 }}
+                >
+                    {t('pages.usersManagement.bulk.deactivate')}
+                </Button>
+            </Box>
 
-                    <MenuItem value={RoleType.Moderator}>
-                        {t(
-                            'pages.usersManagement.roles.moderator',
-                        )}
-                    </MenuItem>
+            <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <FormControl size='small' sx={{ minWidth: 140 }}>
+                    <Select
+                        displayEmpty
+                        value={selectedRole}
+                        onChange={(event) =>
+                            onRoleChange(event.target.value as RoleType)
+                        }
+                        sx={{ borderRadius: 2 }}
+                    >
+                        <MenuItem value=''>
+                            {t('pages.usersManagement.bulk.selectRole')}
+                        </MenuItem>
+                        <MenuItem value={RoleType.Admin}>
+                            {t('pages.usersManagement.roles.admin')}
+                        </MenuItem>
+                        <MenuItem value={RoleType.Moderator}>
+                            {t('pages.usersManagement.roles.moderator')}
+                        </MenuItem>
+                        <MenuItem value={RoleType.Client}>
+                            {t('pages.usersManagement.roles.client')}
+                        </MenuItem>
+                    </Select>
+                </FormControl>
 
-                    <MenuItem value={RoleType.Client}>
-                        {t(
-                            'pages.usersManagement.roles.client',
-                        )}
-                    </MenuItem>
-                </Select>
-            </FormControl>
+                <Button
+                    size='small'
+                    variant='contained'
+                    disableElevation
+                    disabled={!selectedRole}
+                    onClick={onBulkRoleUpdate}
+                    sx={{ borderRadius: 2, fontWeight: 700 }}
+                >
+                    {t('pages.usersManagement.bulk.updateRole')}
+                </Button>
+            </Box>
 
             <Button
-                variant="contained"
-                disabled={!selectedRole}
-                onClick={onBulkRoleUpdate}
-                sx={{
-                    borderRadius: 2,
-                    fontWeight: 700,
-                }}
-            >
-                {t(
-                    'pages.usersManagement.bulk.updateRole',
-                )}
-            </Button>
-
-            <Button
-                variant="outlined"
-                color="error"
-                startIcon={<DeleteForeverOutlinedIcon />}
+                size='small'
+                color='error'
+                startIcon={<DeleteOutlineIcon />}
                 onClick={onDelete}
-                sx={{
-                    borderRadius: 2,
-                    fontWeight: 700,
-                }}
+                sx={{ borderRadius: 2, fontWeight: 700 }}
             >
-                {t(
-                    'pages.usersManagement.bulk.delete',
-                )}
+                {t('pages.usersManagement.bulk.delete')}
             </Button>
-
-            <Button
-                variant="text"
-                startIcon={<ClearIcon />}
-                onClick={onClear}
-                sx={{
-                    borderRadius: 2,
-                }}
-            >
-                {t(
-                    'pages.usersManagement.bulk.clear',
-                )}
-            </Button>
-        </Box>
+        </Paper>
     );
 };
 

@@ -1,13 +1,17 @@
 import React, { FunctionComponent } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
     Avatar,
+    Badge,
     Box,
     Checkbox,
-    Chip,
     FormControl,
+    IconButton,
     MenuItem,
+    Paper,
     Select,
+    Skeleton,
     Stack,
     Table,
     TableBody,
@@ -15,44 +19,40 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    CircularProgress,
     Tooltip,
     Typography,
-    useTheme,
     alpha,
-    IconButton,
-    Badge,
+    useTheme,
 } from '@mui/material';
 
-import {
-    AdminPanelSettings as AdminIcon,
-    Block as BlockIcon,
-    CheckCircle as CheckCircleIcon,
-    People as PeopleIcon,
-} from '@mui/icons-material';
+import { AdminPanelSettings as AdminIcon } from '@mui/icons-material';
 
 import RoleType from '../../../../interfaces/UserType';
 import { User } from '../../../../interfaces/User';
 import { fontAwesomeIcon } from '../../../../FontAwesome/Icons';
-import UserStatusSwitch from './UserStatusSwitch';
 import { UserPermission } from '../../../../services/usersServices';
-import { Link } from 'react-router-dom';
+import UserStatusSwitch from './UserStatusSwitch';
+import UsersEmptyState from './UsersEmptyState';
 
 // ============================================
-// الأنواع والثوابت
+// Types & constants
 // ============================================
 
 interface UsersTableProps {
     users: User[];
     loading: boolean;
+    filtered?: boolean;
     selectedUserIds: string[];
     onSelectionChange: (ids: string[]) => void;
     onEdit: (userId: string) => void;
     onDelete: (userId: string) => void;
     onRoleChange: (email: string, role: string) => Promise<void>;
     onAccountStatusChange: (userId: string, isActive: boolean) => Promise<boolean>;
-    onPermissionChange: (userId: string, permission: UserPermission, enabled: boolean) => Promise<boolean>;
+    onPermissionChange: (
+        userId: string,
+        permission: UserPermission,
+        enabled: boolean,
+    ) => Promise<boolean>;
 }
 
 const ROLE_LABELS: Record<RoleType, string> = {
@@ -80,73 +80,65 @@ const PERMISSION_FIELDS: {
     { key: 'canAccessExistingData', label: 'الوصول للبيانات', icon: fontAwesomeIcon.databaseLock },
 ];
 
-// ============================================
-// مكونات مساعدة (Helper Components)
-// ============================================
-
 const HEAD_CELL_SX = {
-    bgcolor: 'primary.main',
-    color: 'primary.contrastText',
-    fontWeight: 700,
+    color: 'text.secondary',
+    fontWeight: 600,
+    fontSize: '0.8rem',
     whiteSpace: 'nowrap',
     py: 1.5,
-    position: 'sticky',
-    top: 0,
-    zIndex: 10,
+    borderBottom: 'none',
+    textAlign: 'start',
 } as const;
 
-// مكون عرض المستخدم مع الـ Link
-const UserCell: FunctionComponent<{ user: User; isActive: boolean }> = ({ user, isActive }) => {
+// ============================================
+// User cell
+// ============================================
+
+const UserCell: FunctionComponent<{ user: User; isActive: boolean }> = ({
+    user,
+    isActive,
+}) => {
     const theme = useTheme();
+    const online = Boolean(user.status);
 
     return (
-        <Link to={`/users/customer/${user.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-            <Stack direction="row" spacing={1.5} alignItems="center">
+        <Link
+            to={`/users/customer/${user.slug}`}
+            style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+            <Stack
+                direction='row'
+                spacing={1.5}
+                alignItems='center'
+                sx={{ opacity: isActive ? 1 : 0.6 }}
+            >
                 <Badge
-                    overlap="circular"
+                    overlap='circular'
+                    variant='dot'
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    badgeContent={
-                        isActive ? (
-                            <CheckCircleIcon
-                                sx={{
-                                    fontSize: 14,
-                                    color: 'success.main',
-                                    bgcolor: 'white',
-                                    borderRadius: '50%',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                }}
-                            />
-                        ) : (
-                            <BlockIcon
-                                sx={{
-                                    fontSize: 14,
-                                    color: 'error.main',
-                                    bgcolor: 'white',
-                                    borderRadius: '50%',
-                                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                                }}
-                            />
-                        )
-                    }
+                    sx={{
+                        '& .MuiBadge-badge': {
+                            width: 11,
+                            height: 11,
+                            minWidth: 0,
+                            borderRadius: '50%',
+                            bgcolor: online
+                                ? theme.palette.success.main
+                                : theme.palette.grey[400],
+                            boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+                        },
+                    }}
                 >
                     <Avatar
                         src={user.image?.url}
                         alt={`${user.name.first} ${user.name.last}`}
                         sx={{
-                            width: 40,
-                            height: 40,
-                            fontSize: 14,
+                            width: 42,
+                            height: 42,
+                            fontSize: 15,
                             fontWeight: 700,
-                            bgcolor: user.status
-                                ? alpha(theme.palette.success.main, 0.15)
-                                : alpha(theme.palette.grey[400], 0.3),
-                            color: user.status ? 'success.main' : 'text.secondary',
-                            border: `2px solid ${user.status ? theme.palette.success.main : theme.palette.divider}`,
-                            transition: 'all 0.2s ease',
-                            '&:hover': {
-                                transform: 'scale(1.05)',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                            },
+                            bgcolor: alpha(theme.palette.primary.main, 0.12),
+                            color: 'primary.main',
                         }}
                     >
                         {user.name.first?.[0]}
@@ -154,20 +146,35 @@ const UserCell: FunctionComponent<{ user: User; isActive: boolean }> = ({ user, 
                 </Badge>
 
                 <Box sx={{ minWidth: 0 }}>
-                    <Stack direction="row" alignItems="center" spacing={0.5}>
-                        <Typography variant="body2" fontWeight={700} noWrap>
+                    <Stack direction='row' alignItems='center' spacing={0.5}>
+                        <Typography variant='body2' fontWeight={700} noWrap>
                             {user.name.first} {user.name.last}
                         </Typography>
+
                         {user.role === RoleType.Admin && (
                             <AdminIcon sx={{ fontSize: 16, color: 'error.main' }} />
                         )}
                     </Stack>
-                    <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
+
+                    <Typography
+                        variant='caption'
+                        color='text.secondary'
+                        noWrap
+                        sx={{ display: 'block' }}
+                    >
                         {user.email}
                     </Typography>
-                    {user.phone && (
-                        <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block', fontSize: '0.65rem' }}>
-                            📱 {user.phone.phone_1||''} {user.phone.phone_2 ? ` | ${user.phone.phone_2}` : ''}
+
+                    {user.phone?.phone_1 && (
+                        <Typography
+                            variant='caption'
+                            color='text.secondary'
+                            noWrap
+                            dir='ltr'
+                            sx={{ display: 'block', textAlign: 'start' }}
+                        >
+                            {user.phone.phone_1}
+                            {user.phone.phone_2 ? ` · ${user.phone.phone_2}` : ''}
                         </Typography>
                     )}
                 </Box>
@@ -176,71 +183,66 @@ const UserCell: FunctionComponent<{ user: User; isActive: boolean }> = ({ user, 
     );
 };
 
-// مكون الصلاحيات
-const PermissionGrid: FunctionComponent<{
+// ============================================
+// Permissions (one compact row)
+// ============================================
+
+const PermissionRow: FunctionComponent<{
     user: User;
-    onPermissionChange: (userId: string, permission: UserPermission, enabled: boolean) => Promise<boolean>;
+    onPermissionChange: UsersTableProps['onPermissionChange'];
 }> = ({ user, onPermissionChange }) => {
     const theme = useTheme();
 
     return (
-        <Box
-            sx={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: 0.75,
-                width: 140,
-                mx: 'auto',
-            }}
-        >
+        <Stack direction='row' spacing={0.5}>
             {PERMISSION_FIELDS.map((field) => {
                 const enabled = user.permissions?.[field.key] ?? true;
+                const color = enabled
+                    ? theme.palette.success.main
+                    : theme.palette.error.main;
 
                 return (
-                    <Tooltip key={field.key} title={field.label} arrow placement="top">
-                        <Box
-                            onClick={() => onPermissionChange(user._id!, field.key, !enabled)}
+                    <Tooltip
+                        key={field.key}
+                        title={`${field.label}: ${enabled ? 'مفعّل' : 'معطّل'}`}
+                        arrow
+                        placement='top'
+                    >
+                        <IconButton
+                            size='small'
+                            aria-pressed={enabled}
+                            aria-label={field.label}
+                            onClick={() =>
+                                onPermissionChange(user._id!, field.key, !enabled)
+                            }
                             sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
+                                width: 30,
                                 height: 30,
+                                fontSize: 12,
                                 borderRadius: 1.5,
-                                fontSize: 13,
-                                cursor: 'pointer',
-                                userSelect: 'none',
-                                transition: 'all 0.2s ease',
-                                bgcolor: enabled
-                                    ? alpha(theme.palette.success.main, 0.12)
-                                    : alpha(theme.palette.error.main, 0.08),
-                                color: enabled ? 'success.main' : 'error.main',
-                                '&:hover': {
-                                    transform: 'scale(1.15)',
-                                    bgcolor: enabled
-                                        ? alpha(theme.palette.success.main, 0.25)
-                                        : alpha(theme.palette.error.main, 0.2),
-                                },
-                                '&:active': {
-                                    transform: 'scale(0.95)',
-                                },
+                                color,
+                                bgcolor: alpha(color, enabled ? 0.1 : 0.08),
+                                opacity: enabled ? 1 : 0.75,
+                                '&:hover': { bgcolor: alpha(color, 0.2) },
                             }}
                         >
                             {field.icon}
-                        </Box>
+                        </IconButton>
                     </Tooltip>
                 );
             })}
-        </Box>
+        </Stack>
     );
 };
 
 // ============================================
-// المكون الرئيسي
+// Main
 // ============================================
 
 const UsersTable: FunctionComponent<UsersTableProps> = ({
     users,
     loading,
+    filtered = false,
     selectedUserIds,
     onSelectionChange,
     onEdit,
@@ -251,17 +253,13 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
 }) => {
     const theme = useTheme();
 
-    // ============================================
-    // 🔒 جميع الوظائف الأصلية محفوظة بالكامل
-    // ============================================
-
+    // ---------- Selection logic (unchanged) ----------
     const allSelected =
         users.length > 0 &&
         users.every((user) => selectedUserIds.includes(user._id!));
 
     const someSelected =
-        users.some((user) => selectedUserIds.includes(user._id!)) &&
-        !allSelected;
+        users.some((user) => selectedUserIds.includes(user._id!)) && !allSelected;
 
     const handleSelectAll = () => {
         if (allSelected) {
@@ -272,14 +270,12 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
             return;
         }
 
-        const newIds = [
+        onSelectionChange([
             ...selectedUserIds,
             ...users
                 .map((user) => user._id!)
                 .filter((id) => !selectedUserIds.includes(id)),
-        ];
-
-        onSelectionChange(newIds);
+        ]);
     };
 
     const handleSelectUser = (userId: string) => {
@@ -290,141 +286,71 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
         }
     };
 
-    // ============================================
-    // 📊 حالات التحميل والفارغة
-    // ============================================
+    const shellSx = {
+        borderRadius: 3,
+        border: `1px solid ${theme.palette.divider}`,
+        overflow: 'hidden',
+    } as const;
 
+    // ---------- Loading ----------
     if (loading) {
         return (
-            <Paper
-                elevation={0}
-                sx={{
-                    borderRadius: 3,
-                    border: `1px solid ${theme.palette.divider}`,
-                    overflow: 'hidden',
-                }}
-            >
-                <Box
-                    sx={{
-                        py: 12,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: 2,
-                    }}
-                >
-                    <CircularProgress size={48} thickness={4} />
-                    <Typography variant="body2" color="text.secondary">
-                        جاري تحميل المستخدمين...
-                    </Typography>
-                </Box>
+            <Paper elevation={0} sx={{ ...shellSx, p: 2 }}>
+                <Stack spacing={1.5}>
+                    {Array.from({ length: 6 }).map((_, index) => (
+                        <Stack key={index} direction='row' spacing={2} alignItems='center'>
+                            <Skeleton variant='circular' width={42} height={42} />
+                            <Box sx={{ flex: 1 }}>
+                                <Skeleton width='30%' />
+                                <Skeleton width='20%' />
+                            </Box>
+                            <Skeleton variant='rounded' width={110} height={32} />
+                            <Skeleton variant='rounded' width={90} height={32} />
+                        </Stack>
+                    ))}
+                </Stack>
             </Paper>
         );
     }
 
+    // ---------- Empty ----------
     if (users.length === 0) {
         return (
-            <Paper
-                elevation={0}
-                sx={{
-                    py: 10,
-                    borderRadius: 3,
-                    border: `1px solid ${theme.palette.divider}`,
-                    textAlign: 'center',
-                }}
-            >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: 1.5,
-                    }}
-                >
-                    <Avatar
-                        sx={{
-                            width: 64,
-                            height: 64,
-                            bgcolor: alpha(theme.palette.primary.main, 0.08),
-                            color: 'primary.main',
-                        }}
-                    >
-                        <PeopleIcon sx={{ fontSize: 32 }} />
-                    </Avatar>
-                    <Typography variant="h6" fontWeight={600}>
-                        لا يوجد مستخدمين
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        لم يتم العثور على أي مستخدمين في النظام
-                    </Typography>
-                </Box>
+            <Paper elevation={0} sx={shellSx}>
+                <UsersEmptyState filtered={filtered} />
             </Paper>
         );
     }
 
-    // ============================================
-    // 🎨 التصيير الرئيسي
-    // ============================================
-
+    // ---------- Table ----------
     return (
-        <TableContainer
-            component={Paper}
-            elevation={0}
-            sx={{
-                borderRadius: 3,
-                border: `1px solid ${theme.palette.divider}`,
-                overflowX: 'auto',
-                maxHeight: 640,
-                position: 'relative',
-            }}
-        >
-            <Table stickyHeader size="small">
+        <TableContainer component={Paper} elevation={0} sx={{ ...shellSx, overflowX: 'auto' }}>
+            <Table sx={{ minWidth: 960 }}>
                 <TableHead>
-                    <TableRow>
-                        <TableCell align="center" sx={HEAD_CELL_SX} padding="checkbox">
+                    <TableRow sx={{ bgcolor: alpha(theme.palette.text.primary, 0.03) }}>
+                        <TableCell padding='checkbox' sx={HEAD_CELL_SX}>
                             <Checkbox
                                 checked={allSelected}
                                 indeterminate={someSelected}
                                 onChange={handleSelectAll}
-                                sx={{
-                                    color: 'white',
-                                    '&.Mui-checked': { color: 'white' },
-                                    '&.MuiCheckbox-indeterminate': { color: 'white' },
-                                }}
                             />
                         </TableCell>
-
-                        <TableCell align="right" sx={HEAD_CELL_SX}>
-                            المستخدم
-                        </TableCell>
-
-                        <TableCell align="center" sx={HEAD_CELL_SX}>
-                            الدور
-                        </TableCell>
-
-                        <TableCell align="center" sx={HEAD_CELL_SX}>
-                            حالة الحساب
-                        </TableCell>
-
-                        <TableCell align="center" sx={HEAD_CELL_SX}>
-                            النشاط
-                        </TableCell>
-
-                        <TableCell align="center" sx={HEAD_CELL_SX}>
-                            الصلاحيات
-                        </TableCell>
-
-                        <TableCell align="center" sx={HEAD_CELL_SX}>
-                            الإجراءات
+                        <TableCell sx={HEAD_CELL_SX}>المستخدم</TableCell>
+                        <TableCell sx={HEAD_CELL_SX}>الدور</TableCell>
+                        <TableCell sx={HEAD_CELL_SX}>الحساب</TableCell>
+                        <TableCell sx={HEAD_CELL_SX}>الصلاحيات</TableCell>
+                        <TableCell sx={{ ...HEAD_CELL_SX, textAlign: 'center' }}>
+                            إجراءات
                         </TableCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody>
-                    {users.map((user, index) => {
+                    {users.map((user) => {
                         const selected = selectedUserIds.includes(user._id!);
                         const isActive = user.accountStatus === 'active';
                         const roleColor = ROLE_COLORS[user.role];
+                        const roleMain = theme.palette[roleColor].main;
 
                         return (
                             <TableRow
@@ -432,11 +358,8 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                 hover
                                 selected={selected}
                                 sx={{
-                                    bgcolor:
-                                        index % 2 === 0
-                                            ? 'transparent'
-                                            : alpha(theme.palette.action.hover, 0.3),
-                                    transition: 'background-color 0.15s ease',
+                                    '& td': { py: 1.5 },
+                                    '&:last-child td': { borderBottom: 0 },
                                     '&.Mui-selected': {
                                         bgcolor: alpha(theme.palette.primary.main, 0.06),
                                         '&:hover': {
@@ -445,27 +368,27 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                     },
                                 }}
                             >
-                                {/* ✅ Checkbox */}
-                                <TableCell align="center" padding="checkbox">
+                                <TableCell
+                                    padding='checkbox'
+                                    sx={{
+                                        borderInlineStart: '3px solid',
+                                        borderInlineStartColor: selected
+                                            ? 'primary.main'
+                                            : 'transparent',
+                                    }}
+                                >
                                     <Checkbox
                                         checked={selected}
                                         onChange={() => handleSelectUser(user._id!)}
-                                        sx={{
-                                            '&.Mui-checked': {
-                                                color: 'primary.main',
-                                            },
-                                        }}
                                     />
                                 </TableCell>
 
-                                {/* ✅ المستخدم */}
-                                <TableCell align="right">
+                                <TableCell sx={{ textAlign: 'start' }}>
                                     <UserCell user={user} isActive={isActive} />
                                 </TableCell>
 
-                                {/* ✅ الدور */}
-                                <TableCell align="center">
-                                    <FormControl size="small" sx={{ minWidth: 120 }}>
+                                <TableCell sx={{ textAlign: 'start' }}>
+                                    <FormControl size='small' sx={{ minWidth: 120 }}>
                                         <Select
                                             value={user.role}
                                             onChange={(event) =>
@@ -475,20 +398,26 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                                 borderRadius: 2,
                                                 fontWeight: 600,
                                                 fontSize: '0.8125rem',
+                                                color: roleMain,
+                                                bgcolor: alpha(roleMain, 0.07),
                                                 '& .MuiSelect-select': { py: 0.75 },
                                                 '& .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: alpha(theme.palette[roleColor].main, 0.3),
+                                                    borderColor: 'transparent',
                                                 },
                                                 '&:hover .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: theme.palette[roleColor].main,
+                                                    borderColor: alpha(roleMain, 0.5),
                                                 },
                                                 '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                                                    borderColor: theme.palette[roleColor].main,
+                                                    borderColor: roleMain,
                                                 },
                                             }}
                                         >
                                             {Object.entries(ROLE_LABELS).map(([value, label]) => (
-                                                <MenuItem key={value} value={value} sx={{ fontWeight: 600 }}>
+                                                <MenuItem
+                                                    key={value}
+                                                    value={value}
+                                                    sx={{ fontWeight: 600 }}
+                                                >
                                                     {label}
                                                 </MenuItem>
                                             ))}
@@ -496,98 +425,60 @@ const UsersTable: FunctionComponent<UsersTableProps> = ({
                                     </FormControl>
                                 </TableCell>
 
-                                {/* ✅ حالة الحساب */}
-                                <TableCell align="center">
-                                    <Stack
-                                        direction="row"
-                                        spacing={1}
-                                        alignItems="center"
-                                        justifyContent="center"
-                                    >
+                                <TableCell sx={{ textAlign: 'start' }}>
+                                    <Stack direction='row' alignItems='center' spacing={0.5}>
                                         <UserStatusSwitch
                                             userId={user._id!}
-                                            isActive={user.accountStatus === 'active'}
+                                            isActive={isActive}
                                             onChange={onAccountStatusChange}
                                         />
-
-                                        <Chip
-                                            label={user.accountStatus === 'active' ? 'نشط' : 'معطل'}
-                                            color={user.accountStatus === 'active' ? 'success' : 'error'}
-                                            size="small"
-                                            sx={{ fontWeight: 700, minWidth: 48 }}
-                                        />
+                                        <Typography
+                                            variant='body2'
+                                            fontWeight={700}
+                                            color={isActive ? 'success.main' : 'error.main'}
+                                        >
+                                            {isActive ? 'نشط' : 'معطّل'}
+                                        </Typography>
                                     </Stack>
                                 </TableCell>
 
-                                {/* ✅ النشاط */}
-                                <TableCell align="center">
-                                    <Chip
-                                        icon={
-                                            <Box
-                                                sx={{
-                                                    width: 8,
-                                                    height: 8,
-                                                    borderRadius: '50%',
-                                                    bgcolor: user.status ? 'success.main' : 'error.main',
-                                                    ml: '6px',
-                                                    animation: user.status ? 'pulse 2s infinite' : 'none',
-                                                    '@keyframes pulse': {
-                                                        '0%': { opacity: 1, transform: 'scale(1)' },
-                                                        '50%': { opacity: 0.5, transform: 'scale(0.8)' },
-                                                        '100%': { opacity: 1, transform: 'scale(1)' },
-                                                    },
-                                                }}
-                                            />
-                                        }
-                                        label={user.status ? '🟢 متصل' : '🔴 غير متصل'}
-                                        variant="outlined"
-                                        size="small"
-                                        sx={{
-                                            fontWeight: 600,
-                                            borderColor: user.status ? 'success.main' : 'error.main',
-                                            color: user.status ? 'success.main' : 'error.main',
-                                        }}
+                                <TableCell sx={{ textAlign: 'start' }}>
+                                    <PermissionRow
+                                        user={user}
+                                        onPermissionChange={onPermissionChange}
                                     />
                                 </TableCell>
 
-                                {/* ✅ الصلاحيات */}
-                                <TableCell align="center">
-                                    <PermissionGrid user={user} onPermissionChange={onPermissionChange} />
-                                </TableCell>
-
-                                {/* ✅ الإجراءات */}
-                                <TableCell align="center">
-                                    <Stack direction="row" spacing={0.5} justifyContent="center">
-                                        <Tooltip title="تعديل" arrow>
+                                <TableCell>
+                                    <Stack direction='row' spacing={0.5} justifyContent='center'>
+                                        <Tooltip title='تعديل' arrow>
                                             <IconButton
+                                                size='small'
+                                                aria-label='تعديل'
                                                 onClick={() => onEdit(user._id!)}
-                                                size="small"
                                                 sx={{
-                                                    bgcolor: alpha(theme.palette.warning.main, 0.08),
-                                                    color: 'warning.main',
+                                                    color: 'text.secondary',
                                                     '&:hover': {
-                                                        bgcolor: alpha(theme.palette.warning.main, 0.2),
-                                                        transform: 'scale(1.05)',
+                                                        color: 'primary.main',
+                                                        bgcolor: alpha(theme.palette.primary.main, 0.1),
                                                     },
-                                                    transition: 'all 0.2s ease',
                                                 }}
                                             >
                                                 {fontAwesomeIcon.edit}
                                             </IconButton>
                                         </Tooltip>
 
-                                        <Tooltip title="حذف" arrow>
+                                        <Tooltip title='حذف' arrow>
                                             <IconButton
+                                                size='small'
+                                                aria-label='حذف'
                                                 onClick={() => onDelete(user._id!)}
-                                                size="small"
                                                 sx={{
-                                                    bgcolor: alpha(theme.palette.error.main, 0.08),
-                                                    color: 'error.main',
+                                                    color: 'text.secondary',
                                                     '&:hover': {
-                                                        bgcolor: alpha(theme.palette.error.main, 0.2),
-                                                        transform: 'scale(1.05)',
+                                                        color: 'error.main',
+                                                        bgcolor: alpha(theme.palette.error.main, 0.1),
                                                     },
-                                                    transition: 'all 0.2s ease',
                                                 }}
                                             >
                                                 {fontAwesomeIcon.trash}

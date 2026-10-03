@@ -2334,7 +2334,11 @@
             "actions": {
                 "edit": "Edit",
                 "delete": "Delete",
-                "view": "View profile"
+                "view": "View profile",
+                "deleteMessage": "Are you sure you want to permanently delete the user {{name}}?"
+                ,
+                "cancelDelete": "Cancel",
+                "confirmDelete": "Delete user"
             },
 
             "statusActions": {

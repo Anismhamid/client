@@ -1,12 +1,6 @@
 import { FunctionComponent } from 'react';
 
-import {
-    Box,
-    Typography,
-    useTheme,
-} from '@mui/material';
-
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
+import { Box, Typography } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
 
@@ -14,76 +8,36 @@ interface Props {
     totalUsers: number;
 }
 
-const UsersManagementHeader: FunctionComponent<Props> = ({
-    totalUsers,
-}) => {
-    const theme = useTheme();
+const UsersManagementHeader: FunctionComponent<Props> = ({ totalUsers }) => {
     const { t } = useTranslation();
 
     return (
         <Box
             sx={{
                 display: 'flex',
-                alignItems: {
-                    xs: 'flex-start',
-                    md: 'center',
-                },
+                alignItems: 'baseline',
                 justifyContent: 'space-between',
                 gap: 2,
-                mb: 4,
-                flexDirection: {
-                    xs: 'column',
-                    md: 'row',
-                },
+                flexWrap: 'wrap',
             }}
         >
             <Box>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1.5,
-                        mb: 1,
-                    }}
-                >
-                    <PeopleOutlineIcon
-                        color="primary"
-                        sx={{
-                            fontSize: 34,
-                        }}
-                    />
-
-                    <Typography
-                        component="h1"
-                        variant="h4"
-                        fontWeight={800}
-                    >
-                        {t(
-                            'pages.usersManagement.title',
-                        )}
-                    </Typography>
-                </Box>
-
                 <Typography
-                    color="text.secondary"
+                    component='h1'
+                    variant='h4'
+                    fontWeight={800}
+                    letterSpacing={-0.5}
                 >
-                    {t(
-                        'pages.usersManagement.subtitle',
-                    )}
+                    {t('pages.usersManagement.title')}
+                </Typography>
+
+                <Typography color='text.secondary' sx={{ mt: 0.5 }}>
+                    {t('pages.usersManagement.subtitle')}
                 </Typography>
             </Box>
 
-            <Typography
-                variant="body2"
-                sx={{
-                    color: theme.palette.text
-                        .secondary,
-                }}
-            >
-                {totalUsers}{' '}
-                {t(
-                    'pages.usersManagement.totalUsers',
-                )}
+            <Typography variant='body2' color='text.secondary'>
+                {totalUsers} {t('pages.usersManagement.stats.total')}
             </Typography>
         </Box>
     );

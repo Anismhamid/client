@@ -1,15 +1,11 @@
 import { FunctionComponent, useMemo, useState } from 'react';
 
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { useTranslation } from 'react-i18next';
 
-// ======================================================
-// Components
-// ======================================================
-
 import UsersManagementHeader from './UsersManagementHeader';
-import UsersStats from './UsersStats';
+import UsersStats, { StatKey } from './UsersStats';
 import UsersFilters from './UsersFilters';
 import BulkUserActions from './BulkUserActions';
 import UsersTable from './UsersTable';
@@ -17,17 +13,9 @@ import UsersPagination from './UsersPagination';
 import UserDetailsDialog from './UserDetailsDialog';
 import DeleteUserDialog from './DeleteUserDialog';
 
-// ======================================================
-// Hooks
-// ======================================================
-
 import { useUsers } from '../hooks/useUsers';
 import { useUsersRealtime } from '../hooks/useUsersRealtime';
 import { useUsersFilters } from '../hooks/useUsersFilters';
-
-// ======================================================
-// Types
-// ======================================================
 
 import RoleType from '../../../../interfaces/UserType';
 
@@ -36,26 +24,16 @@ import {
     UserFilterStatus,
 } from '../types/usersManagement.types';
 
-// ======================================================
-// Utils
-// ======================================================
-
 import { calculateUserStats } from '../utils/userStats';
 import handleRTL from '../../../../locales/handleRTL';
 
-// ======================================================
-// Component
-// ======================================================
+const ROWS_PER_PAGE = 10;
 
 const UsersManagement: FunctionComponent = () => {
     const { t } = useTranslation();
-
     const direction = handleRTL();
 
-    // ==================================================
-    // Users
-    // ==================================================
-
+    // ---------- Data ----------
     const {
         users,
         loading,
@@ -66,20 +44,7 @@ const UsersManagement: FunctionComponent = () => {
         handleUserPermission,
     } = useUsers(t);
 
-    // ==================================================
-    // Users Realtime
-    // ==================================================
-
     useUsersRealtime(updateUserStatus);
-
-    // ==================================================
-    // Message Audit Logs
-    // ==================================================
-
-
-    // ==================================================
-    // Filters
-    // ==================================================
 
     const {
         filters,
@@ -90,62 +55,51 @@ const UsersManagement: FunctionComponent = () => {
         resetFilters,
     } = useUsersFilters(users);
 
-    // ==================================================
-    // State
-    // ==================================================
-
+    // ---------- State ----------
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
     const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-
     const [selectedRole, setSelectedRole] = useState<RoleType | ''>('');
-
     const [page, setPage] = useState(1);
 
-    // ==================================================
-    // Pagination
-    // ==================================================
-
-    const rowsPerPage = 10;
-
-    // ==================================================
-    // Derived Data
-    // ==================================================
-
+    // ---------- Derived ----------
     const stats = useMemo(() => calculateUserStats(users), [users]);
 
-    const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+    const totalPages = Math.ceil(filteredUsers.length / ROWS_PER_PAGE);
 
     const paginatedUsers = useMemo(() => {
-        const start = (page - 1) * rowsPerPage;
-
-        return filteredUsers.slice(start, start + rowsPerPage);
+        const start = (page - 1) * ROWS_PER_PAGE;
+        return filteredUsers.slice(start, start + ROWS_PER_PAGE);
     }, [filteredUsers, page]);
 
-    const selectedUser = useMemo(
+    const deleteUserData = useMemo(
         () => users.find((user) => user._id === deleteTarget),
         [users, deleteTarget],
     );
 
-    // ==================================================
-    // Selection
-    // ==================================================
+    const roleFilter = filters.role as string;
+    const statusFilter = filters.status as string;
 
+    const hasActiveFilters =
+        Boolean(filters.search) || roleFilter !== 'all' || statusFilter !== 'all';
+
+    const activeStat = useMemo<StatKey | null>(() => {
+        if (roleFilter === 'Admin') return 'admins';
+        if (statusFilter === 'active') return 'active';
+        if (statusFilter === 'inactive') return 'inactive';
+        if (roleFilter === 'all') return 'total';
+        return null;
+    }, [roleFilter, statusFilter]);
+
+    // ---------- Selection ----------
     const clearSelection = () => {
         setSelectedUserIds([]);
         setSelectedRole('');
     };
 
-    // ==================================================
-    // Bulk Activate
-    // ==================================================
-
+    // ---------- Bulk ----------
     const handleBulkActivate = async () => {
-        if (selectedUserIds.length === 0) {
-            return;
-        }
+        if (selectedUserIds.length === 0) return;
 
         await Promise.all(
             selectedUserIds.map((userId) => updateUserStatus(userId, true)),
@@ -154,14 +108,8 @@ const UsersManagement: FunctionComponent = () => {
         clearSelection();
     };
 
-    // ==================================================
-    // Bulk Deactivate
-    // ==================================================
-
     const handleBulkDeactivate = async () => {
-        if (selectedUserIds.length === 0) {
-            return;
-        }
+        if (selectedUserIds.length === 0) return;
 
         await Promise.all(
             selectedUserIds.map((userId) => updateUserStatus(userId, false)),
@@ -170,60 +118,37 @@ const UsersManagement: FunctionComponent = () => {
         clearSelection();
     };
 
-    // ==================================================
-    // Bulk Role Update
-    // ==================================================
-
     const handleBulkRoleUpdate = async () => {
-        if (!selectedRole || selectedUserIds.length === 0) {
-            return;
-        }
+        if (!selectedRole || selectedUserIds.length === 0) return;
 
         const selectedUsers = users.filter(
             (user) => user._id && selectedUserIds.includes(user._id),
         );
 
         await Promise.all(
-            selectedUsers.map((user) =>
-                updateUserRole(user.email, selectedRole),
-            ),
+            selectedUsers.map((user) => updateUserRole(user.email, selectedRole)),
         );
 
         clearSelection();
     };
 
-    // ==================================================
-    // Bulk Delete
-    // ==================================================
-
     const handleBulkDelete = async () => {
-        if (selectedUserIds.length === 0) {
-            return;
-        }
+        if (selectedUserIds.length === 0) return;
 
         const confirmed = window.confirm(
-            `${t(
-                'pages.usersManagement.bulk.deleteConfirm',
-            )} (${selectedUserIds.length})`,
+            `${t('pages.usersManagement.bulk.deleteConfirm')} (${selectedUserIds.length})`,
         );
 
-        if (!confirmed) {
-            return;
-        }
+        if (!confirmed) return;
 
         await Promise.all(selectedUserIds.map((userId) => deleteUser(userId)));
 
         clearSelection();
     };
 
-    // ==================================================
-    // Single Delete
-    // ==================================================
-
+    // ---------- Single delete ----------
     const handleDelete = async () => {
-        if (!deleteTarget) {
-            return;
-        }
+        if (!deleteTarget) return;
 
         const success = await deleteUser(deleteTarget);
 
@@ -232,17 +157,9 @@ const UsersManagement: FunctionComponent = () => {
         }
     };
 
-    // ==================================================
-    // Filters
-    // ==================================================
-
+    // ---------- Filters ----------
     const handleSearch = (value: string) => {
         setSearch(value);
-        setPage(1);
-    };
-
-    const handleStatus = (value: UserFilterStatus) => {
-        setStatus(value);
         setPage(1);
     };
 
@@ -256,156 +173,85 @@ const UsersManagement: FunctionComponent = () => {
         setPage(1);
     };
 
-    // ==================================================
-    // Render
-    // ==================================================
+    // Stats double as quick filters
+    const handleStatSelect = (key: StatKey) => {
+        setStatus('all' as UserFilterStatus);
+        setRole('all' as UserFilterRole);
 
+        if (key === 'active') setStatus('active' as UserFilterStatus);
+        if (key === 'inactive') setStatus('inactive' as UserFilterStatus);
+        if (key === 'admins') setRole('Admin' as UserFilterRole);
+
+        setPage(1);
+    };
+
+    // ---------- Render ----------
     return (
         <Box
             dir={direction}
             sx={{
                 minHeight: '100vh',
                 bgcolor: 'background.default',
-
-                py: {
-                    xs: 2,
-                    sm: 3,
-                    md: 5,
-                },
-
-                px: {
-                    xs: 1.5,
-                    sm: 2,
-                    md: 4,
-                    lg: 5,
-                },
+                py: { xs: 2, md: 4 },
+                px: { xs: 1.5, sm: 2, md: 4 },
+                // room for the floating bulk bar
+                pb: selectedUserIds.length > 0 ? { xs: 22, md: 14 } : undefined,
             }}
         >
-            <Grid
-                container
-                spacing={{
-                    xs: 2,
-                    md: 3,
-                }}
-            >
-                {/* ==================================================
-                    Header
-                ================================================== */}
+            <Stack spacing={3} sx={{ maxWidth: 1400, mx: 'auto' }}>
+                <UsersManagementHeader totalUsers={stats.total} />
 
-                <Grid size={12}>
-                    <UsersManagementHeader totalUsers={stats.total} />
-                </Grid>
+                <UsersStats
+                    stats={stats}
+                    active={activeStat}
+                    onSelect={handleStatSelect}
+                />
 
-                {/* ==================================================
-                    Statistics
-                ================================================== */}
+                <UsersFilters
+                    search={filters.search}
+                    status={filters.status}
+                    role={filters.role}
+                    onSearch={handleSearch}
+                    onRoleChange={handleRole}
+                    onReset={handleReset}
+                />
 
-                <Grid size={12}>
-                    <UsersStats stats={stats} />
-                </Grid>
+                <Box>
+                    <UsersTable
+                        users={paginatedUsers}
+                        loading={loading}
+                        filtered={hasActiveFilters}
+                        selectedUserIds={selectedUserIds}
+                        onSelectionChange={setSelectedUserIds}
+                        onEdit={setSelectedUserId}
+                        onDelete={setDeleteTarget}
+                        onRoleChange={updateUserRole}
+                        onPermissionChange={handleUserPermission}
+                        onAccountStatusChange={handleAccountStatus}
+                    />
 
-                {/* ==================================================
-                    Main Content
-                ================================================== */}
+                    <UsersPagination
+                        page={page}
+                        totalPages={totalPages}
+                        totalItems={filteredUsers.length}
+                        rowsPerPage={ROWS_PER_PAGE}
+                        onPageChange={setPage}
+                    />
+                </Box>
+            </Stack>
 
-                {/* ==================================================
-                    Sidebar
-                ================================================== */}
-
-                <Grid
-                    size={{
-                        xs: 12,
-                       
-                    }}
-                    sx={{
-                        alignSelf: 'flex-start',
-                    }}
-                >
-                    <Stack
-                        spacing={3}
-                        sx={{
-                            position: {
-                                xs: 'static',
-                                md: 'sticky',
-                            },
-
-                            top: {
-                                md: 24,
-                            },
-                        }}
-                    >
-                        {/* ==========================================
-                            Filters
-                        ========================================== */}
-
-                        <UsersFilters
-                            search={filters.search}
-                            status={filters.status}
-                            role={filters.role}
-                            onSearch={handleSearch}
-                            onStatusChange={handleStatus}
-                            onRoleChange={handleRole}
-                            onReset={handleReset}
-                        />
-
-                        {/* ==========================================
-                            Bulk Actions
-                        ========================================== */}
-
-                        <BulkUserActions
-                            selectedCount={selectedUserIds.length}
-                            selectedRole={selectedRole}
-                            onRoleChange={setSelectedRole}
-                            onBulkRoleUpdate={handleBulkRoleUpdate}
-                            onActivate={handleBulkActivate}
-                            onDeactivate={handleBulkDeactivate}
-                            onDelete={handleBulkDelete}
-                            onClear={clearSelection}
-                            t={t}
-                            direction={direction}
-                        />
-
-
-
-                    </Stack>
-                </Grid>
-
-                <Grid size={{xs:12}}>
-                    <Stack spacing={3}>
-                        {/* ==========================================
-                            Users Table
-                        ========================================== */}
-
-                        <UsersTable
-                            users={paginatedUsers}
-                            loading={loading}
-                            selectedUserIds={selectedUserIds}
-                            onSelectionChange={setSelectedUserIds}
-                            onEdit={setSelectedUserId}
-                            onDelete={setDeleteTarget}
-                            onRoleChange={updateUserRole}
-                            onPermissionChange={handleUserPermission}
-                            onAccountStatusChange={handleAccountStatus}
-                        />
-
-                        {/* ==========================================
-                            Pagination
-                        ========================================== */}
-
-                        <UsersPagination
-                            page={page}
-                            totalPages={totalPages}
-                            totalItems={filteredUsers.length}
-                            rowsPerPage={rowsPerPage}
-                            onPageChange={setPage}
-                        />
-                    </Stack>
-                </Grid>
-            </Grid>
-
-            {/* ==================================================
-                Dialogs
-            ================================================== */}
+            <BulkUserActions
+                selectedCount={selectedUserIds.length}
+                selectedRole={selectedRole}
+                onRoleChange={setSelectedRole}
+                onBulkRoleUpdate={handleBulkRoleUpdate}
+                onActivate={handleBulkActivate}
+                onDeactivate={handleBulkDeactivate}
+                onDelete={handleBulkDelete}
+                onClear={clearSelection}
+                t={t}
+                direction={direction}
+            />
 
             <UserDetailsDialog
                 userId={selectedUserId}
@@ -417,8 +263,8 @@ const UsersManagement: FunctionComponent = () => {
             <DeleteUserDialog
                 open={Boolean(deleteTarget)}
                 userName={
-                    selectedUser
-                        ? `${selectedUser.name.first} ${selectedUser.name.last}`
+                    deleteUserData
+                        ? `${deleteUserData.name.first} ${deleteUserData.name.last}`
                         : undefined
                 }
                 onClose={() => setDeleteTarget(null)}

@@ -1,118 +1,114 @@
 import { FunctionComponent } from 'react';
 
-import {
-    Box,
-    Card,
-    CardContent,
-    Grid,
-    Typography,
-    alpha,
-    useTheme,
-} from '@mui/material';
+import { Box, ButtonBase, Paper, Typography, alpha, useTheme } from '@mui/material';
 
-import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import PersonOffOutlinedIcon from '@mui/icons-material/PersonOffOutlined';
-import AdminPanelSettingsOutlinedIcon from '@mui/icons-material/AdminPanelSettingsOutlined';
+import { useTranslation } from 'react-i18next';
 
 import { UsersStatsData } from '../types/usersManagement.types';
-import { useTranslation } from 'react-i18next';
+
+export type StatKey = 'total' | 'active' | 'inactive' | 'admins';
 
 interface Props {
     stats: UsersStatsData;
+    active: StatKey | null;
+    onSelect: (key: StatKey) => void;
 }
 
-const UsersStats: FunctionComponent<Props> = ({ stats }) => {
+const UsersStats: FunctionComponent<Props> = ({ stats, active, onSelect }) => {
     const theme = useTheme();
     const { t } = useTranslation();
 
-    const cards = [
+    const items: { key: StatKey; label: string; value: number; color: string }[] = [
         {
+            key: 'total',
             label: t('pages.usersManagement.stats.total'),
             value: stats.total,
-            icon: <PeopleOutlineIcon />,
             color: theme.palette.primary.main,
         },
         {
+            key: 'active',
             label: t('pages.usersManagement.stats.active'),
             value: stats.active,
-            icon: <CheckCircleOutlineIcon />,
             color: theme.palette.success.main,
         },
         {
+            key: 'inactive',
             label: t('pages.usersManagement.stats.inactive'),
             value: stats.inactive,
-            icon: <PersonOffOutlinedIcon />,
             color: theme.palette.error.main,
         },
         {
+            key: 'admins',
             label: t('pages.usersManagement.stats.admins'),
             value: stats.admins,
-            icon: <AdminPanelSettingsOutlinedIcon />,
             color: theme.palette.warning.main,
         },
     ];
 
     return (
-        <Grid container spacing={2} sx={{ mb: 3 }}>
-            {cards.map((card) => (
-                <Grid
-                    size={{
-                        xs: 12,
-                        sm: 6,
-                        lg: 3,
-                    }}
-                    key={card.label}
-                >
-                    <Card
-                        elevation={0}
+        <Paper
+            elevation={0}
+            sx={{
+                p: 0.5,
+                borderRadius: 3,
+                border: `1px solid ${theme.palette.divider}`,
+                display: 'grid',
+                gridTemplateColumns: { xs: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+                gap: 0.5,
+            }}
+        >
+            {items.map((item) => {
+                const selected = active === item.key;
+
+                return (
+                    <ButtonBase
+                        key={item.key}
+                        onClick={() => onSelect(item.key)}
+                        aria-pressed={selected}
                         sx={{
-                            borderRadius: 3,
-                            border: `1px solid ${theme.palette.divider}`,
-                            height: '100%',
+                            borderRadius: 2.5,
+                            px: 2.5,
+                            py: 1.75,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-start',
+                            textAlign: 'start',
+                            gap: 0.25,
+                            bgcolor: selected ? alpha(item.color, 0.1) : 'transparent',
+                            transition: 'background-color 0.15s ease',
+                            '&:hover': {
+                                bgcolor: alpha(item.color, selected ? 0.14 : 0.06),
+                            },
+                            '&.Mui-focusVisible': {
+                                outline: `2px solid ${item.color}`,
+                            },
                         }}
                     >
-                        <CardContent>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <Box
                                 sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
+                                    width: 8,
+                                    height: 8,
+                                    borderRadius: '50%',
+                                    bgcolor: item.color,
                                 }}
-                            >
-                                <Box>
-                                    <Typography
-                                        variant='body2'
-                                        color='text.secondary'
-                                    >
-                                        {card.label}
-                                    </Typography>
+                            />
+                            <Typography variant='body2' color='text.secondary'>
+                                {item.label}
+                            </Typography>
+                        </Box>
 
-                                    <Typography variant='h4' fontWeight={800}>
-                                        {card.value}
-                                    </Typography>
-                                </Box>
-
-                                <Box
-                                    sx={{
-                                        width: 48,
-                                        height: 48,
-                                        borderRadius: 2,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: card.color,
-                                        bgcolor: alpha(card.color, 0.1),
-                                    }}
-                                >
-                                    {card.icon}
-                                </Box>
-                            </Box>
-                        </CardContent>
-                    </Card>
-                </Grid>
-            ))}
-        </Grid>
+                        <Typography
+                            variant='h4'
+                            fontWeight={800}
+                            sx={{ fontVariantNumeric: 'tabular-nums' }}
+                        >
+                            {item.value}
+                        </Typography>
+                    </ButtonBase>
+                );
+            })}
+        </Paper>
     );
 };
 
