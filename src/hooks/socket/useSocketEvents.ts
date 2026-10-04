@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useEffect } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 
 import { showNewPostToast } from '../../atoms/bootStrapToast/SocketToast';
+
 import {
     showError,
     showInfo,
@@ -11,42 +13,74 @@ import {
 } from '../../atoms/toasts/ReactToast';
 
 import { useUser } from '../useUSer';
+
 import RoleType from '../../interfaces/UserType';
+
 import socket from '../../socket/globalSocket';
 
 import useNotificationSound from './useNotificationSound';
 
 import { Posts } from '../../interfaces/Posts';
+
 import { productsPathes } from '../../routes/routes';
 
 import { useChat } from '../useChat';
 
 import { LocalMessage } from '../../interfaces/chat/localMessage';
+
 import { User } from '../../interfaces/User';
 
-interface ServerNotification {
+// ============================================================================
+// SERVER NOTIFICATION
+// ============================================================================
+
+export interface ServerNotification {
     _id: string;
+
+    user?: string;
+
     type: 'post_approved' | 'post_rejected' | 'post_pending_review';
+
     title: string;
+
     body?: string;
-    data?: { postId?: string };
+
+    data?: {
+        postId?: string;
+    };
+
+    readAt: string | null;
+
+    createdAt: string;
+
+    updatedAt: string;
 }
 
-// خارج الـ hook عشان يضل محفوظ حتى لو الـ effect أعاد التسجيل (reconnect / re-render)
+// ============================================================================
+// PREVENT DUPLICATE SOCKET NOTIFICATIONS
+// ============================================================================
+//
+// هذا فقط لمنع نفس Socket event من الظهور مرتين.
+// لا تعتمد عليه لمعرفة unread notifications.
+//
+// ============================================================================
+
 const seenNotificationIds = new Set<string>();
+
+// ============================================================================
+// HOOK
+// ============================================================================
 
 const useSocketEvents = () => {
     const { auth, isLoggedIn, isAuthLoading } = useUser();
 
     const userId = auth?._id;
+
     const userRole = auth?.role;
 
     const navigate = useNavigate();
 
-    const {
-        playNotificationSound,
-        showNotification,
-    } = useNotificationSound();
+    const { playNotificationSound, showNotification } = useNotificationSound();
 
     const {
         currentChatId,
@@ -56,9 +90,9 @@ const useSocketEvents = () => {
         messages,
     } = useChat();
 
-    // ======================================================
+    // =========================================================================
     // MARK MESSAGES AS SEEN
-    // ======================================================
+    // =========================================================================
 
     useEffect(() => {
         if (
@@ -71,19 +105,11 @@ const useSocketEvents = () => {
             return;
         }
 
-        const userMessages =
-            messages[currentChatId] || [];
+        const userMessages = messages[currentChatId] || [];
 
         userMessages.forEach((msg) => {
-            if (
-                msg.from?._id !== userId &&
-                msg.status === 'sent'
-            ) {
-                updateMessageStatus(
-                    currentChatId,
-                    msg._id,
-                    'seen',
-                );
+            if (msg.from?._id !== userId && msg.status === 'sent') {
+                updateMessageStatus(currentChatId, msg._id, 'seen');
 
                 socket.emit('message:seen', {
                     messageId: msg._id,
@@ -101,81 +127,70 @@ const useSocketEvents = () => {
         isAuthLoading,
     ]);
 
-    // ======================================================
-    // SOCKET CONNECTION
-    // ======================================================
+    // =========================================================================
+    // SOCKET CONNECTION / EVENTS
+    // =========================================================================
 
     useEffect(() => {
-        if (
-            !isLoggedIn ||
-            isAuthLoading ||
-            !userId
-        ) {
+        if (!isLoggedIn || isAuthLoading || !userId) {
             return;
         }
 
-        // --------------------------------------------------
-        // IMPORTANT:
-        // Do NOT send userId / role / name through socket.auth.
-        //
-        // Authentication is now handled by the HttpOnly cookie.
-        // --------------------------------------------------
+        // =====================================================================
+        // CONNECT
+        // =====================================================================
 
         const handleConnect = () => {
-            console.log(
-                '🔌 Socket connected:',
-                socket.id,
-            );
+            console.log('🔌 Socket connected:', socket.id);
         };
+
+        // =====================================================================
+        // SOCKET ERROR
+        // =====================================================================
 
         const handleError = (err: any) => {
-            console.error(
-                '❌ Socket error:',
-                err,
-            );
+            console.error('❌ Socket error:', err);
         };
+
+        // =====================================================================
+        // CONNECTION ERROR
+        // =====================================================================
 
         const handleConnectError = (err: any) => {
-            console.error(
-                '❌ Socket connection error:',
-                err?.message || err,
-            );
+            console.error('❌ Socket connection error:', err?.message || err);
         };
+
+        // =====================================================================
+        // DISCONNECT
+        // =====================================================================
 
         const handleDisconnect = (reason: any) => {
-            console.warn(
-                '🔌 Socket disconnected:',
-                reason,
-            );
+            console.warn('🔌 Socket disconnected:', reason);
         };
 
-        // ==================================================
+        // =====================================================================
         // NEW USER REGISTERED
-        // ==================================================
+        // =====================================================================
 
-        const handleUserRegistered = (
-            user: User,
-        ) => {
+        const handleUserRegistered = (user: User) => {
             if (userRole !== RoleType.Admin) {
                 return;
             }
 
             playNotificationSound();
 
-            const message =
-                `${user.email} ${user.role} مستخدم جديد تم تسجيله`;
+            const message = `${user.email} ${user.role} مستخدم جديد تم تسجيله`;
 
             showInfo(message);
+
             showNotification(message);
         };
 
-        // ==================================================
+        // =====================================================================
         // USER LOGGED IN
-        // ==================================================
+        // =====================================================================
 
-        const handleUserLoggedIn = (
-            user: User,
-        ) => {
+        const handleUserLoggedIn = (user: User) => {
             if (userRole !== RoleType.Admin) {
                 return;
             }
@@ -190,233 +205,204 @@ const useSocketEvents = () => {
                       : `${user.email} مستخدم سجل الدخول`;
 
             showInfo(message);
+
             showNotification(message);
         };
 
-        // ==================================================
+        // =====================================================================
         // NEW PRODUCT
-        // ==================================================
+        // =====================================================================
+        //
+        // هذا event عام.
+        //
+        // Backend:
+        //
+        // io.emit('product:new', post)
+        //
+        // يجب أن يحدث فقط بعد قبول الإعلان.
+        //
+        // =====================================================================
 
-        const handleNewProduct = (
-            newPost: Posts,
-        ) => {
+        const handleNewProduct = (newPost: Posts) => {
             playNotificationSound();
 
             showNewPostToast({
                 navigate,
+
                 navigateTo:
                     `${productsPathes.postsDetails}/` +
                     `${newPost.category}/` +
                     `${newPost.brand}/` +
                     `${newPost._id}`,
+
                 post: newPost,
             });
 
-            showNotification(
-                `تم إضافة منشور جديد: ${newPost.product_name}`,
-            );
+            showNotification(`تم إضافة منشور جديد: ${newPost.product_name}`);
         };
 
-        // ==================================================
-        // NOTIFICATION (post approved / rejected / pending for staff)
-        // ==================================================
+        // =====================================================================
+        // USER NOTIFICATION
+        // =====================================================================
 
-        const handleNotification = (n: ServerNotification) => {
-            console.log('🔔 notification:new', n);
+        const handleNotification = (notification: ServerNotification) => {
+            console.log('🔔 notification:new', notification);
 
-            if (seenNotificationIds.has(n._id)) return;
-            seenNotificationIds.add(n._id);
+            // -----------------------------------------------------------------
+            // Prevent duplicate event
+            // -----------------------------------------------------------------
 
-            const text = n.body ? `${n.title} — ${n.body}` : n.title;
-
-            if (n.type === 'post_approved') {
-                showSuccess(text);
-            } else if (n.type === 'post_rejected') {
-                showError(text);
-            } else {
-                showInfo(text);
+            if (seenNotificationIds.has(notification._id)) {
+                return;
             }
 
-            playNotificationSound();
-            showNotification(n.title);
+            seenNotificationIds.add(notification._id);
 
-            // أي صفحة (مثل "إعلاناتي") تقدر تسمع وتعمل refetch
+            // -----------------------------------------------------------------
+            // Notification text
+            // -----------------------------------------------------------------
+
+            const text = notification.body
+                ? `${notification.title} — ${notification.body}`
+                : notification.title;
+
+            // -----------------------------------------------------------------
+            // Toast by notification type
+            // -----------------------------------------------------------------
+
+            switch (notification.type) {
+                case 'post_approved':
+                    showSuccess(text);
+                    break;
+
+                case 'post_rejected':
+                    showError(text);
+                    break;
+
+                case 'post_pending_review':
+                    showInfo(text);
+                    break;
+
+                default:
+                    showInfo(text);
+            }
+
+            // -----------------------------------------------------------------
+            // Sound
+            // -----------------------------------------------------------------
+
+            playNotificationSound();
+
+            // -----------------------------------------------------------------
+            // Native / browser notification
+            // -----------------------------------------------------------------
+
+            showNotification(notification.title);
+
+            // -----------------------------------------------------------------
+            // Dispatch global application event
+            //
+            // Pages like My Ads can listen to this and refetch.
+            // -----------------------------------------------------------------
+
             window.dispatchEvent(
-                new CustomEvent('app:notification', { detail: n }),
+                new CustomEvent('app:notification', {
+                    detail: notification,
+                }),
             );
         };
 
-        // ==================================================
+        // =====================================================================
         // MESSAGE RECEIVED
-        // ==================================================
+        // =====================================================================
 
-        const messageReceived = (
-            msg: LocalMessage,
-        ) => {
-            // Ignore messages sent by current user
+        const messageReceived = (msg: LocalMessage) => {
+            // Ignore own messages
             if (msg.from?._id === userId) {
                 return;
             }
 
-            const otherUserId =
-                msg.from?._id;
+            const otherUserId = msg.from?._id;
 
             if (!otherUserId) {
                 return;
             }
 
-            addMessageForUser(
-                otherUserId,
-                msg,
-            );
+            addMessageForUser(otherUserId, msg);
 
-            setUnreadForUser(
-                otherUserId,
-                (prev) => (prev || 0) + 1,
-            );
+            setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
 
-            playNotificationSound(
-                'messageReceived',
-            );
+            playNotificationSound('messageReceived');
 
-            showNotification(
-                `رسالة من ${
-                    msg.from?.name?.first ??
-                    'مستخدم'
-                }`,
-            );
+            showNotification(`رسالة من ${msg.from?.name?.first ?? 'مستخدم'}`);
         };
 
-        // ==================================================
+        // =====================================================================
         // MESSAGE SENT
-        // ==================================================
+        // =====================================================================
 
-        const messageSent = (
-            msg: any,
-        ) => {
+        const messageSent = (msg: any) => {
             if (msg.from?._id === userId) {
-                playNotificationSound(
-                    'messageSent',
-                );
+                playNotificationSound('messageSent');
             }
         };
 
-        // ==================================================
+        // =====================================================================
         // REGISTER EVENTS
-        // ==================================================
+        // =====================================================================
 
-        socket.on(
-            'connect',
-            handleConnect,
-        );
+        socket.on('connect', handleConnect);
 
-        socket.on(
-            'connect_error',
-            handleConnectError,
-        );
+        socket.on('connect_error', handleConnectError);
 
-        socket.on(
-            'error',
-            handleError,
-        );
+        socket.on('error', handleError);
 
-        socket.on(
-            'disconnect',
-            handleDisconnect,
-        );
+        socket.on('disconnect', handleDisconnect);
 
-        socket.on(
-            'message:sent',
-            messageSent,
-        );
+        socket.on('message:sent', messageSent);
 
-        socket.on(
-            'message:received',
-            messageReceived,
-        );
+        socket.on('message:received', messageReceived);
 
-        socket.on(
-            'user:registered',
-            handleUserRegistered,
-        );
+        socket.on('user:registered', handleUserRegistered);
 
-        socket.on(
-            'user:newUserLoggedIn',
-            handleUserLoggedIn,
-        );
+        socket.on('user:newUserLoggedIn', handleUserLoggedIn);
 
-        socket.on(
-            'product:new',
-            handleNewProduct,
-        );
+        socket.on('post:new', handleNewProduct);
 
-        socket.on(
-            'notification:new',
-            handleNotification,
-        );
+        socket.on('notification:new', handleNotification);
 
-        // ==================================================
+        // =====================================================================
         // CONNECT
-        // ==================================================
+        // =====================================================================
 
         if (!socket.connected) {
             socket.connect();
         }
 
-        // ==================================================
+        // =====================================================================
         // CLEANUP
-        // ==================================================
+        // =====================================================================
 
         return () => {
-            socket.off(
-                'connect',
-                handleConnect,
-            );
+            socket.off('connect', handleConnect);
 
-            socket.off(
-                'connect_error',
-                handleConnectError,
-            );
+            socket.off('connect_error', handleConnectError);
 
-            socket.off(
-                'error',
-                handleError,
-            );
+            socket.off('error', handleError);
 
-            socket.off(
-                'disconnect',
-                handleDisconnect,
-            );
+            socket.off('disconnect', handleDisconnect);
 
-            socket.off(
-                'message:sent',
-                messageSent,
-            );
+            socket.off('message:sent', messageSent);
 
-            socket.off(
-                'message:received',
-                messageReceived,
-            );
+            socket.off('message:received', messageReceived);
 
-            socket.off(
-                'user:registered',
-                handleUserRegistered,
-            );
+            socket.off('user:registered', handleUserRegistered);
 
-            socket.off(
-                'user:newUserLoggedIn',
-                handleUserLoggedIn,
-            );
+            socket.off('user:newUserLoggedIn', handleUserLoggedIn);
 
-            socket.off(
-                'product:new',
-                handleNewProduct,
-            );
+            socket.off('product:new', handleNewProduct);
 
-            socket.off(
-                'notification:new',
-                handleNotification,
-            );
+            socket.off('notification:new', handleNotification);
         };
     }, [
         userId,
