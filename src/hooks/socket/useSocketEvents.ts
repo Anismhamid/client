@@ -366,8 +366,8 @@ const useSocketEvents = () => {
         socket.on('user:registered', handleUserRegistered);
 
         socket.on('user:newUserLoggedIn', handleUserLoggedIn);
-
-        socket.on('post:new', handleNewProduct);
+        console.log('📡 REGISTER product:new listener');
+        socket.on('product:new', handleNewProduct);
 
         socket.on('notification:new', handleNotification);
 
@@ -400,6 +400,7 @@ const useSocketEvents = () => {
 
             socket.off('user:newUserLoggedIn', handleUserLoggedIn);
 
+            console.log('🧹 REMOVE product:new listener');
             socket.off('product:new', handleNewProduct);
 
             socket.off('notification:new', handleNotification);
