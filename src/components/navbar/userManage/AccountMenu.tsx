@@ -126,27 +126,18 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 elevation={8}
                 PaperProps={{
                     elevation: 8,
-
                     sx: {
-                        overflow: 'hidden',
                         mt: 1.5,
                         borderRadius: 2,
                         minWidth: 220,
+
+                        maxHeight: 'calc(100dvh - 96px)',
+                        overflowY: 'auto',
+                        overflowX: 'hidden',
+                        overscrollBehavior: 'contain',
+                        WebkitOverflowScrolling: 'touch',
                         boxShadow:
                             '0 10px 40px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.05)',
-                        '&:before': {
-                            content: '""',
-                            display: 'block',
-                            position: 'absolute',
-                            top: 0,
-                            right: direction === 'ltr' ? 14 : 180,
-                            width: 15,
-                            height: 15,
-                            bgcolor: 'background.paper',
-                            transform: 'translateY(-50%) rotate(45deg)',
-                            zIndex: 0,
-                            boxShadow: '-2px -2px 5px rgba(0,0,0,0.05)',
-                        },
                     },
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -381,7 +372,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         />
                     </ListItemIcon>
                     <Typography variant='body2'>
-                        {t('pages.pending.title','pening posts') }
+                        {t('pages.pending.title', 'pening posts')}
                     </Typography>
                 </MenuItem>
 
