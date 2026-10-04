@@ -4,7 +4,11 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { showNewPostToast } from '../../atoms/bootStrapToast/SocketToast';
-import { showInfo } from '../../atoms/toasts/ReactToast';
+import {
+    showError,
+    showInfo,
+    showSuccess,
+} from '../../atoms/toasts/ReactToast';
 
 import { useUser } from '../useUSer';
 import RoleType from '../../interfaces/UserType';
@@ -19,6 +23,17 @@ import { useChat } from '../useChat';
 
 import { LocalMessage } from '../../interfaces/chat/localMessage';
 import { User } from '../../interfaces/User';
+
+interface ServerNotification {
+    _id: string;
+    type: 'post_approved' | 'post_rejected' | 'post_pending_review';
+    title: string;
+    body?: string;
+    data?: { postId?: string };
+}
+
+// خارج الـ hook عشان يضل محفوظ حتى لو الـ effect أعاد التسجيل (reconnect / re-render)
+const seenNotificationIds = new Set<string>();
 
 const useSocketEvents = () => {
     const { auth, isLoggedIn, isAuthLoading } = useUser();
@@ -203,6 +218,35 @@ const useSocketEvents = () => {
         };
 
         // ==================================================
+        // NOTIFICATION (post approved / rejected / pending for staff)
+        // ==================================================
+
+        const handleNotification = (n: ServerNotification) => {
+            console.log('🔔 notification:new', n);
+
+            if (seenNotificationIds.has(n._id)) return;
+            seenNotificationIds.add(n._id);
+
+            const text = n.body ? `${n.title} — ${n.body}` : n.title;
+
+            if (n.type === 'post_approved') {
+                showSuccess(text);
+            } else if (n.type === 'post_rejected') {
+                showError(text);
+            } else {
+                showInfo(text);
+            }
+
+            playNotificationSound();
+            showNotification(n.title);
+
+            // أي صفحة (مثل "إعلاناتي") تقدر تسمع وتعمل refetch
+            window.dispatchEvent(
+                new CustomEvent('app:notification', { detail: n }),
+            );
+        };
+
+        // ==================================================
         // MESSAGE RECEIVED
         // ==================================================
 
@@ -306,6 +350,11 @@ const useSocketEvents = () => {
             handleNewProduct,
         );
 
+        socket.on(
+            'notification:new',
+            handleNotification,
+        );
+
         // ==================================================
         // CONNECT
         // ==================================================
@@ -362,6 +411,11 @@ const useSocketEvents = () => {
             socket.off(
                 'product:new',
                 handleNewProduct,
+            );
+
+            socket.off(
+                'notification:new',
+                handleNotification,
             );
         };
     }, [
