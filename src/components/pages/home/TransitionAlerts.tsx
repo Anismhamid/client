@@ -207,7 +207,6 @@ function TransitionAlerts() {
                             position: 'fixed',
                             bottom: 20,
                             insetInlineEnd: 20,
-                            zIndex: (theme) => theme.zIndex.snackbar,
                             background: BRAND.gradient,
                             color: '#fff',
                             boxShadow: `0 8px 20px -6px ${BRAND.ledger(0.6)}`,
