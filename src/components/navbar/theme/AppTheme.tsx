@@ -6,25 +6,44 @@ import {
     useState,
     Suspense,
 } from 'react';
-import { FormControlLabel } from '@mui/material';
+
+import {
+    Divider,
+    FormControlLabel,
+    List,
+    ListItemButton,
+    ListItemText,
+    Menu,
+    FormGroup,
+    Box,
+    Typography,
+    Tooltip,
+    useMediaQuery,
+    Toolbar,
+    Button,
+    Container,
+    IconButton,
+    Drawer,
+    useTheme,
+    AppBar,
+    Badge,
+} from '@mui/material';
+
 import { PaletteMode } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { Box } from '@mui/material';
-import { Typography } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import { useMediaQuery } from '@mui/material';
-import { Toolbar } from '@mui/material';
-import { Button } from '@mui/material';
-import { Container } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Drawer } from '@mui/material';
-import { useTheme } from '@mui/material';
-import { AppBar } from '@mui/material';
-import { Badge } from '@mui/material';
+
 import { styled } from '@mui/material/styles';
+
 import LanguageSwitcher from '../../../locales/languageSwich';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+
+import {
+    Link,
+    NavLink,
+    useLocation,
+    useNavigate,
+} from 'react-router-dom';
+
 import handleRTL from '../../../locales/handleRTL';
+
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -35,54 +54,627 @@ import ContactIcon from '@mui/icons-material/ContactMail';
 import ListIcon from '@mui/icons-material/List';
 import HelpIcon from '@mui/icons-material/Help';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-// import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import DeleteSharpIcon from '@mui/icons-material/DeleteSharp';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
-import { m, AnimatePresence } from 'framer-motion';
-import { path } from '../../../routes/routes';
-import socket from '../../../socket/globalSocket';
-import RoleType from '../../../interfaces/UserType';
-import { useTranslation } from 'react-i18next';
-const AccountMenu = lazy(() => import('../userManage/AccountMenu'));
-import { useUser } from '../../../hooks/useUSer';
-import JsonLd from '../../../../utils/JsonLd';
-const MobileDrawer = lazy(() => import('./MobileDrawer'));
-import SafqaLogo from '../../../atoms/SafqaLogo';
-import { useChat } from '../../../hooks/useChat';
-import { GradientSwitch } from './GradientSwitch';
 import MailIcon from '@mui/icons-material/Mail';
 
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+
+import { m, AnimatePresence } from 'framer-motion';
+
+import { path, productsPathes } from '../../../routes/routes';
+
+import socket from '../../../socket/globalSocket';
+
+import RoleType from '../../../interfaces/UserType';
+
+import { useTranslation } from 'react-i18next';
+
+const AccountMenu = lazy(() => import('../userManage/AccountMenu'));
+
+import { useUser } from '../../../hooks/useUSer';
+
+import JsonLd from '../../../../utils/JsonLd';
+
+const MobileDrawer = lazy(() => import('./MobileDrawer'));
+
+import SafqaLogo from '../../../atoms/SafqaLogo';
+
+import { useChat } from '../../../hooks/useChat';
+
+import { GradientSwitch } from './GradientSwitch';
+
+import {
+    AppNotifications,
+    NotificationType,
+} from '../../../interfaces/Notification';
+
+import { useNotifications } from '../../../context/NotificationContext';
+
+// إذا كان هذا المسار موجودًا عندك استخدمه.
+// إذا كان اسم الملف مختلفًا غيّره حسب مشروعك.
 
 interface ThemeProps {
     mode: PaletteMode;
     setMode: (mode: PaletteMode) => void;
 }
 
-const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
+const Theme: FunctionComponent<ThemeProps> = ({
+    mode,
+    setMode,
+}) => {
+    const navigate = useNavigate();
+
+    const theme = useTheme();
+
+    const isMobile = useMediaQuery(
+        theme.breakpoints.down('md'),
+    );
+
+    const dir = handleRTL();
+
+    const { t } = useTranslation();
+
+    const { auth, isLoggedIn, logout: contextLogout } =
+        useUser();
+
+    const {
+        notifications,
+        unreadCount,
+        markAsRead,
+        markAllAsRead,
+    } = useNotifications();
+
+    const { unreadCounts } = useChat();
+
+    const totalUnread = Object.values(unreadCounts).reduce(
+        (a, b) => a + b,
+        0,
+    );
+
+    const [notificationAnchor, setNotificationAnchor] =
+        useState<null | HTMLElement>(null);
+
+    const notificationOpen = Boolean(
+        notificationAnchor,
+    );
+
+    const [mobileOpen, setMobileOpen] =
+        useState(false);
+
+    const [expandedMobileMenu, setExpandedMobileMenu] =
+        useState<string | false>(false);
+
+    const [mousePosition, setMousePosition] = useState({
+        x: 0,
+        y: 0,
+    });
+
+    const [hovered, setHovered] =
+        useState(false);
+
+    const { pathname } = useLocation();
+
+    const isAdmin =
+        auth?.role === RoleType.Admin;
+
+    /**
+     * =========================================================
+     * THEME
+     * =========================================================
+     */
+
     const handleThemeChange = (
         _: React.SyntheticEvent<Element, Event>,
         checked: boolean,
     ) => {
-        const newMode: PaletteMode = checked ? 'dark' : 'light';
+        const newMode: PaletteMode = checked
+            ? 'dark'
+            : 'light';
+
         setMode(newMode);
-        localStorage.setItem('theme', newMode);
+
+        localStorage.setItem(
+            'theme',
+            newMode,
+        );
     };
 
-    const dir = handleRTL();
+    /**
+     * =========================================================
+     * NOTIFICATIONS
+     * =========================================================
+     */
 
-    // ✅ استخدم Context فقط — لا useToken ولا setAuth/setIsLoggedIn مباشرة
-    const { auth, isLoggedIn, logout: contextLogout } = useUser();
+    const handleNotificationClick = (
+        event: React.MouseEvent<HTMLElement>,
+    ) => {
+        setNotificationAnchor(
+            event.currentTarget,
+        );
+    };
 
-    const [mobileOpen, setMobileOpen] = useState(false);
-    const [expandedMobileMenu, setExpandedMobileMenu] = useState<
-        string | false
-    >(false);
+    const handleCloseNotifications = () => {
+        setNotificationAnchor(null);
+    };
 
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [hovered, setHovered] = useState(false);
+    /**
+     * Get notification icon according to type
+     */
+    const getNotificationIcon = (
+        notification: AppNotifications,
+    ) => {
+        switch (
+            notification.type as NotificationType
+        ) {
+            case 'post_approved':
+                return (
+                    <CheckCircleIcon
+                        sx={{
+                            color: 'success.main',
+                            fontSize: 24,
+                            mt: 0.3,
+                            mr: 1,
+                            ml: 1,
+                        }}
+                    />
+                );
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
+            case 'post_rejected':
+                return (
+                    <CancelIcon
+                        sx={{
+                            color: 'error.main',
+                            fontSize: 24,
+                            mt: 0.3,
+                            mr: 1,
+                            ml: 1,
+                        }}
+                    />
+                );
+
+            case 'post_pending_review':
+                return (
+                    <ScheduleIcon
+                        sx={{
+                            color: 'warning.main',
+                            fontSize: 24,
+                            mt: 0.3,
+                            mr: 1,
+                            ml: 1,
+                        }}
+                    />
+                );
+
+            default:
+                return (
+                    <NotificationsNoneIcon
+                        sx={{
+                            color: 'primary.main',
+                            fontSize: 24,
+                            mt: 0.3,
+                            mr: 1,
+                            ml: 1,
+                        }}
+                    />
+                );
+        }
+    };
+
+    /**
+     * Navigate to notification target
+     */
+    const handleNotificationItemClick =
+        async (
+            notification: AppNotifications,
+        ) => {
+            try {
+                /**
+                 * Mark notification as read
+                 */
+                if (!notification.readAt) {
+                    await markAsRead(
+                        notification._id,
+                    );
+                }
+
+                handleCloseNotifications();
+
+                /**
+                 * Notification data
+                 *
+                 * Recommended backend structure:
+                 *
+                 * data: {
+                 *   postId,
+                 *   category,
+                 *   brand
+                 * }
+                 */
+                const postId =
+                    notification.data?.postId;
+
+                const category =
+                    notification.data?.category;
+
+                const brand =
+                    notification.data?.brand;
+
+                /**
+                 * If we have full post information,
+                 * navigate to the real Safqa product route.
+                 */
+                if (
+                    postId &&
+                    category &&
+                    brand
+                ) {
+                    navigate(
+                        `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
+                    );
+
+                    return;
+                }
+
+                /**
+                 * Fallback.
+                 *
+                 * If your backend currently sends only postId,
+                 * use this only if /posts/:postId exists.
+                 */
+                if (postId) {
+                    navigate(
+                        `/posts/${postId}`,
+                    );
+                }
+            } catch (error) {
+                console.error(
+                    'Failed to open notification:',
+                    error,
+                );
+            }
+        };
+
+    /**
+     * =========================================================
+     * NOTIFICATION MENU
+     * =========================================================
+     */
+
+    const notificationMenu = (
+        <Menu
+            anchorEl={notificationAnchor}
+            open={notificationOpen}
+            onClose={
+                handleCloseNotifications
+            }
+            dir={dir}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal:
+                    dir === 'rtl'
+                        ? 'left'
+                        : 'right',
+            }}
+            transformOrigin={{
+                vertical: 'top',
+                horizontal:
+                    dir === 'rtl'
+                        ? 'left'
+                        : 'right',
+            }}
+            slotProps={{
+                paper: {
+                    elevation: 8,
+                    sx: {
+                        width: {
+                            xs: 'calc(100vw - 16px)',
+                            sm: 390,
+                        },
+
+                        maxWidth:
+                            'calc(100vw - 16px)',
+
+                        maxHeight: {
+                            xs: 'calc(100vh - 100px)',
+                            sm: 560,
+                        },
+
+                        borderRadius: 3,
+
+                        overflow: 'hidden',
+
+                        mt: 1,
+                    },
+                },
+            }}
+        >
+            {/* Header */}
+            <Box
+                sx={{
+                    px: 2,
+                    py: 1.5,
+
+                    display: 'flex',
+
+                    alignItems: 'center',
+
+                    justifyContent:
+                        'space-between',
+
+                    gap: 1,
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                    }}
+                >
+                    {unreadCount > 0 ? (
+                        <NotificationsActiveIcon
+                            color='primary'
+                        />
+                    ) : (
+                        <NotificationsNoneIcon
+                            color='action'
+                        />
+                    )}
+
+                    <Typography
+                        fontWeight={700}
+                        fontSize={17}
+                    >
+                        الإشعارات
+                    </Typography>
+
+                    {unreadCount > 0 && (
+                        <Badge
+                            badgeContent={
+                                unreadCount > 99
+                                    ? '99+'
+                                    : unreadCount
+                            }
+                            color='error'
+                        />
+                    )}
+                </Box>
+
+                {unreadCount > 0 && (
+                    <Button
+                        size='small'
+                        variant='text'
+                        onClick={() =>
+                            markAllAsRead()
+                        }
+                        sx={{
+                            minWidth: 'auto',
+                            fontSize: 12,
+                            whiteSpace:
+                                'nowrap',
+                        }}
+                    >
+                        تحديد الكل كمقروء
+                    </Button>
+                )}
+            </Box>
+
+            <Divider />
+
+            {/* Empty */}
+            {notifications.length === 0 ? (
+                <Box
+                    sx={{
+                        py: 6,
+                        px: 2,
+                        textAlign: 'center',
+                    }}
+                >
+                    <NotificationsNoneIcon
+                        sx={{
+                            fontSize: 52,
+                            opacity: 0.3,
+                            mb: 1,
+                        }}
+                    />
+
+                    <Typography
+                        variant='body2'
+                        color='text.secondary'
+                    >
+                        لا توجد إشعارات
+                    </Typography>
+                </Box>
+            ) : (
+                <List
+                    disablePadding
+                    sx={{
+                        maxHeight: {
+                            xs:
+                                'calc(100vh - 180px)',
+                            sm: 470,
+                        },
+
+                        overflowY: 'auto',
+
+                        '&::-webkit-scrollbar':
+                            {
+                                width: 6,
+                            },
+                    }}
+                >
+                    {notifications.map(
+                        (
+                            notification: AppNotifications,
+                        ) => {
+                            const isUnread =
+                                !notification.readAt;
+
+                            return (
+                                <ListItemButton
+                                    key={
+                                        notification._id
+                                    }
+                                    onClick={() =>
+                                        handleNotificationItemClick(
+                                            notification,
+                                        )
+                                    }
+                                    sx={{
+                                        alignItems:
+                                            'flex-start',
+
+                                        py: 1.5,
+
+                                        px: 1.5,
+
+                                        bgcolor:
+                                            isUnread
+                                                ? 'action.hover'
+                                                : 'transparent',
+
+                                        borderBottom:
+                                            '1px solid',
+
+                                        borderColor:
+                                            'divider',
+
+                                        transition:
+                                            'background-color .2s',
+
+                                        '&:hover':
+                                            {
+                                                bgcolor:
+                                                    'action.selected',
+                                            },
+                                    }}
+                                >
+                                    {/* Icon */}
+                                    {getNotificationIcon(
+                                        notification,
+                                    )}
+
+                                    {/* Text */}
+                                    <ListItemText
+                                        sx={{
+                                            m: 0,
+                                            minWidth: 0,
+                                        }}
+                                        primary={
+                                            <Box
+                                                sx={{
+                                                    display:
+                                                        'flex',
+
+                                                    alignItems:
+                                                        'flex-start',
+
+                                                    gap: 1,
+                                                }}
+                                            >
+                                                <Typography
+                                                    variant='body2'
+                                                    fontWeight={
+                                                        isUnread
+                                                            ? 700
+                                                            : 500
+                                                    }
+                                                    sx={{
+                                                        flex:
+                                                            1,
+
+                                                        lineHeight:
+                                                            1.5,
+                                                    }}
+                                                >
+                                                    {
+                                                        notification.title
+                                                    }
+                                                </Typography>
+
+                                                {isUnread && (
+                                                    <Box
+                                                        sx={{
+                                                            width: 8,
+                                                            height: 8,
+                                                            minWidth: 8,
+                                                            borderRadius:
+                                                                '50%',
+                                                            bgcolor:
+                                                                'error.main',
+                                                            mt: 0.7,
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        }
+                                        secondary={
+                                            <Box
+                                                sx={{
+                                                    mt: 0.4,
+                                                }}
+                                            >
+                                                {notification.body && (
+                                                    <Typography
+                                                        variant='body2'
+                                                        color='text.secondary'
+                                                        sx={{
+                                                            lineHeight:
+                                                                1.5,
+
+                                                            mb: 0.5,
+                                                        }}
+                                                    >
+                                                        {
+                                                            notification.body
+                                                        }
+                                                    </Typography>
+                                                )}
+
+                                                <Typography
+                                                    variant='caption'
+                                                    color='text.disabled'
+                                                >
+                                                    {new Date(
+                                                        notification.createdAt,
+                                                    ).toLocaleString(
+                                                        'ar',
+                                                        {
+                                                            dateStyle:
+                                                                'short',
+                                                            timeStyle:
+                                                                'short',
+                                                        },
+                                                    )}
+                                                </Typography>
+                                            </Box>
+                                        }
+                                    />
+                                </ListItemButton>
+                            );
+                        },
+                    )}
+                </List>
+            )}
+        </Menu>
+    );
+
+    /**
+     * =========================================================
+     * MOUSE EFFECT
+     * =========================================================
+     */
+
+    const handleMouseMove = (
+        e: React.MouseEvent<HTMLDivElement>,
+    ) => {
+        const rect =
+            e.currentTarget.getBoundingClientRect();
 
         setMousePosition({
             x: e.clientX - rect.left,
@@ -90,144 +682,260 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         });
     };
 
-    const { unreadCounts } = useChat();
-    const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
-
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-    const { t } = useTranslation();
-
-    const navigate = useNavigate();
-
-    const isAdmin = auth?.role === RoleType.Admin;
-
-    const { pathname } = useLocation();
+    /**
+     * =========================================================
+     * SCROLL
+     * =========================================================
+     */
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [pathname]);
 
-    // ✅ دالة logout موحّدة — تستدعي Context.logout الذي يستدعي POST /users/logout
-    const handleLogout = useCallback(async () => {
-        // 1. قطع socket
-        try {
-            socket.disconnect();
-        } catch (err) {
-            console.warn('Socket disconnect failed:', err);
-        }
+    /**
+     * =========================================================
+     * LOGOUT
+     * =========================================================
+     */
 
-        // 2. استدعاء logout من Context — يمسح الكوكي + يحدّث الحالة
-        await contextLogout();
+    const handleLogout = useCallback(
+        async () => {
+            try {
+                socket.disconnect();
+            } catch (err) {
+                console.warn(
+                    'Socket disconnect failed:',
+                    err,
+                );
+            }
 
-        // 4. التوجيه للصفحة الرئيسية
-        navigate(path.Home, { replace: true });
-        setMobileOpen(false);
-    }, [contextLogout, navigate]);
+            await contextLogout();
+
+            navigate(path.Home, {
+                replace: true,
+            });
+
+            setMobileOpen(false);
+
+            /**
+             * Close notifications too
+             */
+            setNotificationAnchor(null);
+        },
+        [contextLogout, navigate],
+    );
+
+    /**
+     * =========================================================
+     * DRAWER
+     * =========================================================
+     */
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    /**
+     * =========================================================
+     * RENDER
+     * =========================================================
+     */
+
     return (
         <>
-            {/* Structured data for SEO */}
+            {/* =================================================
+                SEO
+            ================================================= */}
+
             <JsonLd
                 data={{
-                    '@context': 'https://schema.org',
+                    '@context':
+                        'https://schema.org',
+
                     '@type': 'WebSite',
+
                     name: 'صفقة',
-                    alternateName: 'صفقة - موقع البيع والشراء',
-                    url: window.location.origin,
-                    description: 'أكبر موقع عربي للبيع والشراء عبر الإنترنت',
+
+                    alternateName:
+                        'صفقة - موقع البيع والشراء',
+
+                    url:
+                        window.location.origin,
+
+                    description:
+                        'أكبر موقع عربي للبيع والشراء عبر الإنترنت',
+
                     inLanguage: 'ar',
+
                     potentialAction: {
-                        '@type': 'SearchAction',
+                        '@type':
+                            'SearchAction',
+
                         target: `${window.location.origin}/search?q={search_term_string}`,
-                        'query-input': 'required name=search_term_string',
+
+                        'query-input':
+                            'required name=search_term_string',
                     },
+
                     publisher: {
-                        '@type': 'Organization',
+                        '@type':
+                            'Organization',
+
                         name: 'صفقة',
+
                         logo: `${window.location.origin}/d3.png`,
                     },
                 }}
             />
+
+            {/* =================================================
+                APP BAR
+            ================================================= */}
 
             <AppBar
                 component='header'
                 position='sticky'
                 dir={dir}
                 onMouseMove={handleMouseMove}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
+                onMouseEnter={() =>
+                    setHovered(true)
+                }
+                onMouseLeave={() =>
+                    setHovered(false)
+                }
                 sx={{
-                    background: mode === 'dark' ? '#151B1E' : '#ffffff',
-                    boxShadow: '0 1px 10px #414141',
+                    background:
+                        mode === 'dark'
+                            ? '#151B1E'
+                            : '#ffffff',
+
+                    boxShadow:
+                        '0 1px 10px #414141',
+
                     zIndex: 1100,
+
                     overflow: 'hidden',
+
                     top: 0,
+
                     flexWrap: 'wrap',
+
                     '&::after': {
                         content: '""',
+
                         position: 'absolute',
+
                         inset: 1,
+
                         borderRadius: '21px',
+
                         pointerEvents: 'none',
-                        borderBottom: '3px solid transparent',
+
+                        borderBottom:
+                            '3px solid transparent',
+
                         background: `
-                                                radial-gradient(
-                                                180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
-                                                rgb(255, 167, 38),
-                                                transparent 60%
-                                                )
-                                                border-box
-                                                `,
+                            radial-gradient(
+                                180px circle at
+                                ${mousePosition.x - 10}px
+                                ${mousePosition.y - 10}px,
+                                rgb(255, 167, 38),
+                                transparent 60%
+                            )
+                            border-box
+                        `,
+
                         WebkitMask:
                             'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
-                        WebkitMaskComposite: 'xor',
-                        maskComposite: 'exclude',
-                        opacity: hovered ? 1 : 0,
-                        transition: 'opacity .25s',
+
+                        WebkitMaskComposite:
+                            'xor',
+
+                        maskComposite:
+                            'exclude',
+
+                        opacity: hovered
+                            ? 1
+                            : 0,
+
+                        transition:
+                            'opacity .25s',
                     },
                 }}
                 aria-label='شريط التنقل'
                 title='شريط التنقل'
             >
-                <Container maxWidth='xl' sx={{ px: { xs: 1, sm: 0, md: 0 } }}>
+                <Container
+                    maxWidth='xl'
+                    sx={{
+                        px: {
+                            xs: 1,
+                            sm: 0,
+                            md: 0,
+                        },
+                    }}
+                >
                     <Toolbar
                         component='nav'
                         aria-label='قائمة التنقل الرئيسية'
                         title='قائمة التنقل الرئيسية'
                         sx={{
                             display: 'flex',
-                            justifyContent: 'space-between',
+
+                            justifyContent:
+                                'space-between',
+
                             alignItems: 'center',
+
                             p: 0,
-                            minHeight: { xs: '64px', md: '72px' },
-                            flexWrap: 'noWrap',
+
+                            minHeight: {
+                                xs: '64px',
+                                md: '72px',
+                            },
+
+                            flexWrap:
+                                'nowrap',
                         }}
                     >
-                        {/* Left side: Mobile menu button and Logo */}
+                        {/* =================================================
+                            LEFT SIDE
+                        ================================================= */}
+
                         <Box
                             sx={{
                                 display: 'flex',
-                                alignItems: 'center',
+
+                                alignItems:
+                                    'center',
+
                                 gap: 1,
+
                                 minWidth: 0,
+
                                 flexShrink: 1,
                             }}
                         >
-                            {/* Mobile menu button */}
+                            {/* Mobile Menu */}
                             <IconButton
                                 color='inherit'
                                 aria-label='فتح القائمة'
                                 title='فتح القائمة'
-                                onClick={handleDrawerToggle}
+                                onClick={
+                                    handleDrawerToggle
+                                }
                                 sx={{
-                                    display: { xs: 'flex', md: 'none' },
+                                    display: {
+                                        xs: 'flex',
+                                        md: 'none',
+                                    },
+
                                     color:
-                                        mode === 'dark' ? '#e2e8f0' : '#4a5568',
+                                        mode ===
+                                        'dark'
+                                            ? '#e2e8f0'
+                                            : '#4a5568',
+
                                     flexShrink: 0,
                                 }}
                             >
@@ -235,16 +943,22 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                             </IconButton>
 
                             {/* Logo */}
-
                             <m.div
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
+                                whileHover={{
+                                    scale: 1.05,
+                                }}
+                                whileTap={{
+                                    scale: 0.95,
+                                }}
                             >
                                 <Link
                                     to={path.Home}
                                     style={{
-                                        textDecoration: 'none',
-                                        listStyle: 'none',
+                                        textDecoration:
+                                            'none',
+
+                                        listStyle:
+                                            'none',
                                     }}
                                     aria-label='الرئيسية - موقع صفقة'
                                     title='الرئيسية - موقع صفقة'
@@ -253,82 +967,208 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Link>
                             </m.div>
 
-                            {/* Messages */}
-                            {isMobile && isLoggedIn && (
-                                <Box role='dev' sx={{ flexShrink: 0 }}>
-                                    <Badge
-                                        badgeContent={totalUnread || 0}
-                                        color='error'
-                                    >
-                                        <StyledNavLink
-                                            to={path.MessagesPage}
-                                            aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
-                                            title={`${t('links.messages', 'الرسائل')} الرسائل`}
+                            {/* =================================================
+                                MOBILE ICONS
+                            ================================================= */}
+
+                            {isMobile &&
+                                isLoggedIn && (
+                                    <>
+                                        {/* Messages */}
+                                        <Box
+                                            sx={{
+                                                flexShrink: 0,
+                                            }}
                                         >
-                                            <MailIcon
-                                                sx={{ fontSize: 20 }}
-                                            />
-                                        </StyledNavLink>
-                                    </Badge>
-                                </Box>
-                            )}
-                            {/* Jobs */}
+                                            <Badge
+                                                badgeContent={
+                                                    totalUnread ||
+                                                    0
+                                                }
+                                                color='error'
+                                                max={99}
+                                            >
+                                                <StyledNavLink
+                                                    to={
+                                                        path.MessagesPage
+                                                    }
+                                                    aria-label='الرسائل'
+                                                    title='الرسائل'
+                                                >
+                                                    <MailIcon
+                                                        sx={{
+                                                            fontSize: 20,
+                                                        }}
+                                                    />
+                                                </StyledNavLink>
+                                            </Badge>
+                                        </Box>
+
+                                        {/* Notifications */}
+                                        <IconButton
+                                            onClick={
+                                                handleNotificationClick
+                                            }
+                                            aria-label='الإشعارات'
+                                            title='الإشعارات'
+                                            sx={{
+                                                color:
+                                                    mode ===
+                                                    'dark'
+                                                        ? '#e2e8f0'
+                                                        : '#4a5568',
+
+                                                flexShrink: 0,
+                                            }}
+                                        >
+                                            <Badge
+                                                badgeContent={
+                                                    unreadCount >
+                                                    99
+                                                        ? '99+'
+                                                        : unreadCount
+                                                }
+                                                color='error'
+                                                overlap='circular'
+                                            >
+                                                {unreadCount >
+                                                0 ? (
+                                                    <NotificationsActiveIcon />
+                                                ) : (
+                                                    <NotificationsNoneIcon />
+                                                )}
+                                            </Badge>
+                                        </IconButton>
+                                    </>
+                                )}
+
+                            {/* =================================================
+                                JOBS
+                            ================================================= */}
+
                             <Box
                                 component='li'
                                 role='listitem'
-                                sx={{ flexShrink: 0, listStyle: 'none' }}
+                                sx={{
+                                    flexShrink: 0,
+                                    listStyle:
+                                        'none',
+                                }}
                             >
                                 <StyledNavLink
                                     to={path.jobs}
-                                    aria-label={t('links.jobs') || 'الوظائف'}
-                                    title={t('links.jobs') || 'الوظائف'}
+                                    aria-label={
+                                        t(
+                                            'links.jobs',
+                                        ) ||
+                                        'الوظائف'
+                                    }
+                                    title={
+                                        t(
+                                            'links.jobs',
+                                        ) ||
+                                        'الوظائف'
+                                    }
                                 >
-                                    <WorkOutlineIcon sx={{ fontSize: 20 }} />
+                                    <WorkOutlineIcon
+                                        sx={{
+                                            fontSize: 20,
+                                        }}
+                                    />
                                 </StyledNavLink>
                             </Box>
-                            {/* My Listings - only if logged in */}
+
+                            {/* =================================================
+                                MY LISTINGS
+                            ================================================= */}
+
                             {isLoggedIn && (
                                 <Box
                                     sx={{
-                                        borderRadius: '8px',
-                                        '&.active': {
-                                            backgroundColor:
-                                                'rgba(255, 168, 38, 0.541)',
-                                            color: 'rgb(255, 167, 38)',
-                                            fontWeight: 'bold',
-                                        },
+                                        borderRadius:
+                                            '8px',
+
+                                        '&.active':
+                                            {
+                                                backgroundColor:
+                                                    'rgba(255, 168, 38, 0.541)',
+
+                                                color: 'rgb(255, 167, 38)',
+
+                                                fontWeight:
+                                                    'bold',
+                                            },
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={`${path.CustomerProfile.replace(':slug', '')}/${auth?.slug}`}
+                                        to={`${path.CustomerProfile.replace(
+                                            ':slug',
+                                            '',
+                                        )}/${auth?.slug}`}
                                         aria-label={
-                                            t('footer.myListings') || 'إعلاناتي'
+                                            t(
+                                                'footer.myListings',
+                                            ) ||
+                                            'إعلاناتي'
                                         }
                                         title={
-                                            t('footer.myListings') || 'إعلاناتي'
+                                            t(
+                                                'footer.myListings',
+                                            ) ||
+                                            'إعلاناتي'
                                         }
                                     >
-                                        <ListIcon sx={{ fontSize: 20 }} />
+                                        <ListIcon
+                                            sx={{
+                                                fontSize: 20,
+                                            }}
+                                        />
                                     </StyledNavLink>
                                 </Box>
                             )}
 
-                            {/* Desktop Navigation */}
+                            {/* =================================================
+                                DESKTOP NAVIGATION
+                            ================================================= */}
+
                             <Box
                                 component='ul'
                                 sx={{
-                                    display: { xs: 'none', md: 'flex' },
-                                    listStyle: 'none',
+                                    display: {
+                                        xs: 'none',
+                                        md: 'flex',
+                                    },
+
+                                    listStyle:
+                                        'none',
+
                                     m: 0,
+
                                     p: 0,
-                                    alignItems: 'center',
+
+                                    alignItems:
+                                        'center',
+
                                     gap: 0.5,
+
                                     minWidth: 0,
+
                                     flexShrink: 1,
-                                    flexWrap: 'nowrap',
-                                    overflowX: 'auto',
-                                    '&::-webkit-scrollbar': { display: 'none' },
-                                    scrollbarWidth: 'none',
+
+                                    flexWrap:
+                                        'nowrap',
+
+                                    overflowX:
+                                        'auto',
+
+                                    '&::-webkit-scrollbar':
+                                        {
+                                            display:
+                                                'none',
+                                        },
+
+                                    scrollbarWidth:
+                                        'none',
                                 }}
                                 aria-label='روابط التنقل الرئيسية'
                                 title='روابط التنقل الرئيسية'
@@ -337,53 +1177,151 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <Box
                                     component='li'
                                     role='listitem'
-                                    sx={{ flexShrink: 0, listStyle: 'none' }}
+                                    sx={{
+                                        flexShrink: 0,
+                                        listStyle:
+                                            'none',
+                                    }}
                                 >
                                     <StyledNavLink
-                                        to={path.Home}
-                                        aria-label={t('home')}
-                                        title={t('home')}
-                                    >
-                                        <HomeIcon sx={{ fontSize: 20 }} />
-                                    </StyledNavLink>
-                                </Box>
-
-                                {/* How to delete your account in safqa */}
-                                <Box
-                                    component='li'
-                                    role='listitem'
-                                    sx={{ flexShrink: 0 }}
-                                >
-                                    <StyledNavLink
-                                        to={path.DeleteAccount}
+                                        to={
+                                            path.Home
+                                        }
                                         aria-label={t(
-                                            'pages.deleteAccount.title',
+                                            'home',
                                         )}
-                                        title={t('pages.deleteAccount.title')}
+                                        title={t(
+                                            'home',
+                                        )}
                                     >
-                                        <DeleteSharpIcon
-                                            sx={{ fontSize: 20 }}
+                                        <HomeIcon
+                                            sx={{
+                                                fontSize: 20,
+                                            }}
                                         />
                                     </StyledNavLink>
                                 </Box>
+
+                                {/* Delete Account */}
+                                <Box
+                                    component='li'
+                                    role='listitem'
+                                    sx={{
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    <StyledNavLink
+                                        to={
+                                            path.DeleteAccount
+                                        }
+                                        aria-label={t(
+                                            'pages.deleteAccount.title',
+                                        )}
+                                        title={t(
+                                            'pages.deleteAccount.title',
+                                        )}
+                                    >
+                                        <DeleteSharpIcon
+                                            sx={{
+                                                fontSize: 20,
+                                            }}
+                                        />
+                                    </StyledNavLink>
+                                </Box>
+
                                 {/* Favorites */}
-                                {auth._id && (
+                                {auth?._id && (
                                     <Box
                                         component='li'
                                         role='listitem'
-                                        sx={{ flexShrink: 0 }}
+                                        sx={{
+                                            flexShrink: 0,
+                                        }}
                                     >
                                         <StyledNavLink
-                                            to={path.Favorite}
-                                            aria-label={
-                                                t('favorites') || 'المفضلة'
+                                            to={
+                                                path.Favorite
                                             }
-                                            title={t('favorites') || 'المفضلة'}
+                                            aria-label={
+                                                t(
+                                                    'favorites',
+                                                ) ||
+                                                'المفضلة'
+                                            }
+                                            title={
+                                                t(
+                                                    'favorites',
+                                                ) ||
+                                                'المفضلة'
+                                            }
                                         >
                                             <FavoriteIcon
-                                                sx={{ fontSize: 20 }}
+                                                sx={{
+                                                    fontSize: 20,
+                                                }}
                                             />
                                         </StyledNavLink>
+                                    </Box>
+                                )}
+
+                                {/* =================================================
+                                    DESKTOP NOTIFICATIONS
+                                ================================================= */}
+
+                                {isLoggedIn && (
+                                    <Box
+                                        component='li'
+                                        role='listitem'
+                                        sx={{
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <Tooltip
+                                            title='الإشعارات'
+                                            placement='bottom'
+                                        >
+                                            <IconButton
+                                                onClick={
+                                                    handleNotificationClick
+                                                }
+                                                aria-label='الإشعارات'
+                                                title='الإشعارات'
+                                                sx={{
+                                                    color:
+                                                        mode ===
+                                                        'dark'
+                                                            ? '#fdfeff'
+                                                            : '#33415a',
+
+                                                    borderRadius:
+                                                        2,
+
+                                                    '&:hover':
+                                                        {
+                                                            backgroundColor:
+                                                                'rgba(255, 167, 38, 0.10)',
+                                                        },
+                                                }}
+                                            >
+                                                <Badge
+                                                    badgeContent={
+                                                        unreadCount >
+                                                        99
+                                                            ? '99+'
+                                                            : unreadCount
+                                                    }
+                                                    color='error'
+                                                    overlap='circular'
+                                                >
+                                                    {unreadCount >
+                                                    0 ? (
+                                                        <NotificationsActiveIcon />
+                                                    ) : (
+                                                        <NotificationsNoneIcon />
+                                                    )}
+                                                </Badge>
+                                            </IconButton>
+                                        </Tooltip>
                                     </Box>
                                 )}
 
@@ -391,14 +1329,26 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <Box
                                     component='li'
                                     role='listitem'
-                                    sx={{ flexShrink: 0 }}
+                                    sx={{
+                                        flexShrink: 0,
+                                    }}
                                 >
                                     <StyledNavLink
-                                        to={path.About}
-                                        aria-label={`${t('links.about')} معلومات عن موقع صفقة`}
-                                        title={`${t('links.about')} معلومات عن موقع صفقة`}
+                                        to={
+                                            path.About
+                                        }
+                                        aria-label={`${t(
+                                            'links.about',
+                                        )} معلومات عن موقع صفقة`}
+                                        title={`${t(
+                                            'links.about',
+                                        )} معلومات عن موقع صفقة`}
                                     >
-                                        <InfoIcon sx={{ fontSize: 20 }} />
+                                        <InfoIcon
+                                            sx={{
+                                                fontSize: 20,
+                                            }}
+                                        />
                                     </StyledNavLink>
                                 </Box>
 
@@ -407,104 +1357,188 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <Box
                                         component='li'
                                         role='listitem'
-                                        sx={{ flexShrink: 0 }}
+                                        sx={{
+                                            flexShrink: 0,
+                                        }}
                                     >
                                         <Badge
-                                            badgeContent={totalUnread || 0}
+                                            badgeContent={
+                                                totalUnread ||
+                                                0
+                                            }
                                             color='error'
+                                            max={99}
                                         >
                                             <StyledNavLink
-                                                to={path.MessagesPage}
-                                                aria-label={`${(t('links.messages'), 'الرسائل')} الرسائل`}
-                                                title={`${t('links.messages', 'الرسائل')} الرسائل`}
+                                                to={
+                                                    path.MessagesPage
+                                                }
+                                                aria-label='الرسائل'
+                                                title='الرسائل'
                                             >
                                                 <MailIcon
-                                                    sx={{ fontSize: 20 }}
+                                                    sx={{
+                                                        fontSize: 20,
+                                                    }}
                                                 />
                                             </StyledNavLink>
                                         </Badge>
                                     </Box>
                                 )}
+
                                 {/* Contact */}
                                 <Box
                                     component='li'
                                     role='listitem'
-                                    sx={{ flexShrink: 0 }}
+                                    sx={{
+                                        flexShrink: 0,
+                                    }}
                                 >
                                     <StyledNavLink
-                                        to={path.Contact}
-                                        aria-label={t('links.contact')}
-                                        title={t('links.contact')}
+                                        to={
+                                            path.Contact
+                                        }
+                                        aria-label={t(
+                                            'links.contact',
+                                        )}
+                                        title={t(
+                                            'links.contact',
+                                        )}
                                     >
-                                        <ContactIcon sx={{ fontSize: 18 }} />
-                                        <Typography component='span'></Typography>
+                                        <ContactIcon
+                                            sx={{
+                                                fontSize: 18,
+                                            }}
+                                        />
                                     </StyledNavLink>
                                 </Box>
 
                                 {/* Help */}
-                                <Box component='li' role='listitem'>
+                                <Box
+                                    component='li'
+                                    role='listitem'
+                                    sx={{
+                                        flexShrink: 0,
+                                    }}
+                                >
                                     <StyledNavLink
-                                        to={path.SellingHelp}
-                                        aria-label={t('help')}
+                                        to={
+                                            path.SellingHelp
+                                        }
+                                        aria-label={t(
+                                            'help',
+                                        )}
+                                        title={t(
+                                            'help',
+                                        )}
                                     >
-                                        <HelpIcon sx={{ fontSize: 20 }} />
+                                        <HelpIcon
+                                            sx={{
+                                                fontSize: 20,
+                                            }}
+                                        />
                                     </StyledNavLink>
                                 </Box>
-                                {/* Admin Panel - only if admin */}
 
-                                {isAdmin ||
-                                auth?.role === RoleType.Moderator ? (
-                                    <Box component='li' role='listitem'>
+                                {/* Admin */}
+                                {(isAdmin ||
+                                    auth?.role ===
+                                        RoleType.Moderator) && (
+                                    <Box
+                                        component='li'
+                                        role='listitem'
+                                    >
                                         <StyledNavLink
-                                            to={path.UsersManagement}
-                                            aria-label={t('users-management')}
-                                            title={t('users-management')}
+                                            to={
+                                                path.UsersManagement
+                                            }
+                                            aria-label={t(
+                                                'users-management',
+                                            )}
+                                            title={t(
+                                                'users-management',
+                                            )}
                                         >
                                             <DashboardIcon
-                                                sx={{ fontSize: 20 }}
+                                                sx={{
+                                                    fontSize: 20,
+                                                }}
                                             />
                                         </StyledNavLink>
                                     </Box>
-                                ) : null}
+                                )}
                             </Box>
                         </Box>
 
-                        {/* Left side: Theme toggle, language switcher, and account */}
+                        {/* =================================================
+                            RIGHT SIDE
+                        ================================================= */}
+
                         <Box
                             sx={{
                                 display: 'flex',
-                                alignItems: 'center',
-                                gap: { xs: 1, sm: 2 },
-                                flexWrap: 'nowrap',
+
+                                alignItems:
+                                    'center',
+
+                                gap: {
+                                    xs: 1,
+                                    sm: 2,
+                                },
+
+                                flexWrap:
+                                    'nowrap',
+
+                                flexShrink: 0,
                             }}
                         >
-                            {/* Theme Toggle */}
+                            {/* Theme */}
                             {!isMobile && (
                                 <Tooltip
                                     title={
-                                        mode === 'dark'
-                                            ? t('lightMode')
-                                            : t('darkMode')
+                                        mode ===
+                                        'dark'
+                                            ? t(
+                                                  'lightMode',
+                                              )
+                                            : t(
+                                                  'darkMode',
+                                              )
                                     }
                                 >
                                     <m.div
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.95 }}
+                                        whileHover={{
+                                            scale: 1.1,
+                                        }}
+                                        whileTap={{
+                                            scale: 0.95,
+                                        }}
                                     >
                                         <Box
                                             sx={{
-                                                display: 'flex',
-                                                alignItems: 'center',
+                                                display:
+                                                    'flex',
+
+                                                alignItems:
+                                                    'center',
+
                                                 gap: 1,
                                             }}
                                         >
                                             <FormGroup>
                                                 <FormControlLabel
-                                                    checked={mode === 'dark'}
-                                                    onChange={handleThemeChange}
+                                                    checked={
+                                                        mode ===
+                                                        'dark'
+                                                    }
+                                                    onChange={
+                                                        handleThemeChange
+                                                    }
                                                     control={
                                                         <GradientSwitch
-                                                            sx={{ m: 0 }}
+                                                            sx={{
+                                                                m: 0,
+                                                            }}
                                                         />
                                                     }
                                                     label=''
@@ -514,7 +1548,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
                                             <AnimatePresence mode='wait'>
                                                 <m.div
-                                                    key={mode}
+                                                    key={
+                                                        mode
+                                                    }
                                                     initial={{
                                                         opacity: 0,
                                                         scale: 0.8,
@@ -531,32 +1567,41 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                         duration: 0.3,
                                                     }}
                                                 >
-                                                    {mode === 'dark' ? (
+                                                    {mode ===
+                                                    'dark' ? (
                                                         <Brightness4Icon
                                                             sx={{
                                                                 color: '#ffffff',
-                                                                fontSize: {
-                                                                    xs: 24,
-                                                                    md: 28,
-                                                                },
-                                                                display: {
-                                                                    xs: 'none',
-                                                                    sm: 'block',
-                                                                },
+
+                                                                fontSize:
+                                                                    {
+                                                                        xs: 24,
+                                                                        md: 28,
+                                                                    },
+
+                                                                display:
+                                                                    {
+                                                                        xs: 'none',
+                                                                        sm: 'block',
+                                                                    },
                                                             }}
                                                         />
                                                     ) : (
                                                         <Brightness7Icon
                                                             sx={{
                                                                 color: '#ffd000',
-                                                                fontSize: {
-                                                                    xs: 24,
-                                                                    md: 28,
-                                                                },
-                                                                display: {
-                                                                    xs: 'none',
-                                                                    sm: 'block',
-                                                                },
+
+                                                                fontSize:
+                                                                    {
+                                                                        xs: 24,
+                                                                        md: 28,
+                                                                    },
+
+                                                                display:
+                                                                    {
+                                                                        xs: 'none',
+                                                                        sm: 'block',
+                                                                    },
                                                             }}
                                                         />
                                                     )}
@@ -567,41 +1612,72 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 </Tooltip>
                             )}
 
-                            {/* Language Switcher */}
+                            {/* Language */}
                             {!isMobile && (
                                 <m.div
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
+                                    whileHover={{
+                                        scale: 1.05,
+                                    }}
+                                    whileTap={{
+                                        scale: 0.95,
+                                    }}
                                 >
                                     <LanguageSwitcher />
                                 </m.div>
                             )}
 
-                            {/* Account Menu / Login Button - Desktop only */}
-                            <Suspense fallback={null}>
-                                {' '}
-                                <Box sx={{ display: { xs: 'block' } }}>
+                            {/* Account */}
+                            <Suspense
+                                fallback={null}
+                            >
+                                <Box
+                                    sx={{
+                                        display: {
+                                            xs: 'block',
+                                        },
+                                    }}
+                                >
                                     {!isLoggedIn ? (
                                         <Button
                                             variant='contained'
                                             color='primary'
-                                            onClick={() => navigate(path.Login)}
+                                            onClick={() =>
+                                                navigate(
+                                                    path.Login,
+                                                )
+                                            }
                                             sx={{
-                                                borderRadius: '30px',
-                                                fontWeight: 'bold',
-                                                backgroundColor: '#FBBC05',
+                                                borderRadius:
+                                                    '30px',
+
+                                                fontWeight:
+                                                    'bold',
+
+                                                backgroundColor:
+                                                    '#FBBC05',
+
                                                 color: '#1A1E22',
+
                                                 px: 3,
-                                                '&:hover': {
-                                                    backgroundColor: '#fb9905',
-                                                },
+
+                                                '&:hover':
+                                                    {
+                                                        backgroundColor:
+                                                            '#fb9905',
+                                                    },
                                             }}
                                             aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
                                         >
-                                            {t('links.login')}
+                                            {t(
+                                                'links.login',
+                                            )}
                                         </Button>
                                     ) : (
-                                        <AccountMenu logout={handleLogout} />
+                                        <AccountMenu
+                                            logout={
+                                                handleLogout
+                                            }
+                                        />
                                     )}
                                 </Box>
                             </Suspense>
@@ -610,55 +1686,113 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 </Container>
             </AppBar>
 
-            {/* Mobile Drawer */}
+            {/* =================================================
+                NOTIFICATION MENU
+            ================================================= */}
+
+            {notificationMenu}
+
+            {/* =================================================
+                MOBILE DRAWER
+            ================================================= */}
+
             <Drawer
                 variant='temporary'
-                anchor={dir === 'rtl' ? 'left' : 'right'}
+                anchor={
+                    dir === 'rtl'
+                        ? 'left'
+                        : 'right'
+                }
                 open={mobileOpen}
-                onClose={handleDrawerToggle}
+                onClose={
+                    handleDrawerToggle
+                }
                 ModalProps={{
                     keepMounted: true,
                 }}
                 sx={{
-                    display: { xs: 'block', md: 'none' },
+                    display: {
+                        xs: 'block',
+                        md: 'none',
+                    },
+
                     '& .MuiDrawer-paper': {
-                        boxSizing: 'border-box',
-                        width: { xs: '100%', sm: 320 },
+                        boxSizing:
+                            'border-box',
+
+                        width: {
+                            xs: '100%',
+                            sm: 320,
+                        },
+
                         border: 'none',
+
                         zIndex: 1200,
                     },
                 }}
             >
-                <Suspense fallback={null}>
+                <Suspense
+                    fallback={null}
+                >
                     <MobileDrawer
-                        expandedMobileMenu={expandedMobileMenu}
-                        setExpandedMobileMenu={setExpandedMobileMenu}
+                        expandedMobileMenu={
+                            expandedMobileMenu
+                        }
+                        setExpandedMobileMenu={
+                            setExpandedMobileMenu
+                        }
                         auth={auth}
-                        handleDrawerToggle={handleDrawerToggle}
-                        handleThemeChange={handleThemeChange}
+                        handleDrawerToggle={
+                            handleDrawerToggle
+                        }
+                        handleThemeChange={
+                            handleThemeChange
+                        }
                         isAdmin={isAdmin}
-                        isLoggedIn={isLoggedIn}
-                        logout={handleLogout}
-                        setMobileOpen={setMobileOpen}
+                        isLoggedIn={
+                            isLoggedIn
+                        }
+                        logout={
+                            handleLogout
+                        }
+                        setMobileOpen={
+                            setMobileOpen
+                        }
                         mode={mode}
                     />
                 </Suspense>
             </Drawer>
 
-            {/* Backdrop for drawer */}
+            {/* =================================================
+                MOBILE BACKDROP
+            ================================================= */}
+
             {mobileOpen && (
                 <Box
                     sx={{
                         position: 'fixed',
+
                         top: 0,
+
                         left: 0,
+
                         right: 0,
+
                         bottom: 0,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
+
+                        backgroundColor:
+                            'rgba(0,0,0,0.5)',
+
                         zIndex: 1199,
-                        display: { xs: 'block', md: 'none' },
+
+                        display: {
+                            xs: 'block',
+                            md: 'none',
+                        },
                     }}
-                    onClick={handleDrawerToggle}
+                    onClick={
+                        handleDrawerToggle
+                    }
                 />
             )}
         </>
@@ -667,29 +1801,56 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
 export default Theme;
 
-// Styled NavLink for better SEO and accessibility
-const StyledNavLink = styled(NavLink)(({ theme }) => ({
+/**
+ * =========================================================
+ * STYLED NAV LINK
+ * =========================================================
+ */
+
+const StyledNavLink = styled(
+    NavLink,
+)(({ theme }) => ({
     textDecoration: 'none',
+
     listStyle: 'none',
-    color: theme.palette.mode === 'dark' ? '#fdfeff' : '#33415a',
+
+    color:
+        theme.palette.mode ===
+        'dark'
+            ? '#fdfeff'
+            : '#33415a',
+
     padding: '8px 16px',
+
     borderRadius: '8px',
-    transition: 'all 0.3s ease',
+
+    transition:
+        'all 0.3s ease',
+
     display: 'flex',
+
     alignItems: 'center',
+
     gap: '8px',
+
     '&:hover': {
         backgroundColor:
-            theme.palette.mode === 'dark'
+            theme.palette.mode ===
+            'dark'
                 ? 'rgba(255, 255, 255, 0.1)'
                 : 'rgba(0, 0, 0, 0.04)',
-        transform: 'translateY(-2px)',
+
+        transform:
+            'translateY(-2px)',
     },
+
     '&.active': {
         fontWeight: 'bold',
+
         border:
-            theme.palette.mode === 'dark'
+            theme.palette.mode ===
+            'dark'
                 ? '2px solid rgba(255, 255, 255, 0.884)'
-                : '2px solid  rgb(245, 159, 11)',
+                : '2px solid rgb(245, 159, 11)',
     },
 }));

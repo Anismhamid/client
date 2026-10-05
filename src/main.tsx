@@ -15,6 +15,7 @@ import { SocialLogin } from '@capgo/capacitor-social-login';
 import { ChatWindowProvider } from './context/ChatWindowContext.tsx';
 import { LazyMotion } from 'framer-motion';
 import { i18nReady } from './locales/i18n.tsx';
+import { NotificationProvider } from './context/NotificationContext.tsx';
 
 const loadMotionFeatures = () =>
     import('./motionFeatures').then((mod) => mod.default);
@@ -60,15 +61,17 @@ const AppWithProviders = () => {
 
     return (
         <ChatWindowProvider>
-            <ChatProvider authId={auth._id ?? ''}>
-                <SpeedInsights />
-                <BrowserRouter>
-                    <ErrorBoundary>
-                        <BackButtonHandler />
-                        <App />
-                    </ErrorBoundary>
-                </BrowserRouter>
-            </ChatProvider>
+            <NotificationProvider>
+                <ChatProvider authId={auth._id ?? ''}>
+                    <SpeedInsights />
+                    <BrowserRouter>
+                        <ErrorBoundary>
+                            <BackButtonHandler />
+                            <App />
+                        </ErrorBoundary>
+                    </BrowserRouter>
+                </ChatProvider>
+            </NotificationProvider>
         </ChatWindowProvider>
     );
 };
