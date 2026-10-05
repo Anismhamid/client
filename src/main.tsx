@@ -14,8 +14,9 @@ import { useEffect } from 'react';
 import { SocialLogin } from '@capgo/capacitor-social-login';
 import { ChatWindowProvider } from './context/ChatWindowContext.tsx';
 import { LazyMotion } from 'framer-motion';
-import { i18nReady } from './locales/i18n.tsx';
+import i18n, { i18nReady } from './locales/i18n.tsx';
 import { NotificationProvider } from './context/NotificationContext.tsx';
+import AppUpdateGate from './components/appupdate/AppUpdateGate.tsx';
 
 const loadMotionFeatures = () =>
     import('./motionFeatures').then((mod) => mod.default);
@@ -58,18 +59,25 @@ function BackButtonHandler() {
 // eslint-disable-next-line react-refresh/only-export-components
 const AppWithProviders = () => {
     const { auth } = useUser();
+    const language = i18n.language.startsWith('he')
+        ? 'he'
+        : i18n.language.startsWith('en')
+          ? 'en'
+          : 'ar';
 
     return (
         <ChatWindowProvider>
             <NotificationProvider>
                 <ChatProvider authId={auth._id ?? ''}>
                     <SpeedInsights />
-                    <BrowserRouter>
-                        <ErrorBoundary>
-                            <BackButtonHandler />
-                            <App />
-                        </ErrorBoundary>
-                    </BrowserRouter>
+                    <AppUpdateGate language={language}>
+                        <BrowserRouter>
+                            <ErrorBoundary>
+                                <BackButtonHandler />
+                                <App />
+                            </ErrorBoundary>
+                        </BrowserRouter>
+                    </AppUpdateGate>
                 </ChatProvider>
             </NotificationProvider>
         </ChatWindowProvider>
