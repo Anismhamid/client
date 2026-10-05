@@ -23,28 +23,25 @@ interface NotificationContextType {
 
     refreshNotifications: () => Promise<void>;
 
-    markAsRead: (
-        notificationId: string,
-    ) => Promise<void>;
+    markAsRead: (notificationId: string) => Promise<void>;
 
     markAllAsRead: () => Promise<void>;
 }
 
-const NotificationContext =
-    createContext<NotificationContextType | undefined>(
-        undefined,
-    );
+const NotificationContext = createContext<NotificationContextType | undefined>(
+    undefined,
+);
 
 export const NotificationProvider = ({
     children,
 }: {
     children: React.ReactNode;
 }) => {
-    const [notifications, setNotifications] =
-        useState<AppNotifications[]>([]);
+    const [notifications, setNotifications] = useState<AppNotifications[]>([]);
 
-    const [unreadCount, setUnreadCount] =
-        useState<number>(0);
+    const [unreadCount, setUnreadCount] = useState<number>(0);
+
+    const notificationIdsRef = useRef<Set<string>>(new Set());
 
     /**
      * IDs التي استلمناها من Socket
@@ -52,53 +49,29 @@ export const NotificationProvider = ({
      * تمنع تكرار نفس notification
      * حتى لو Socket أرسلها أكثر من مرة.
      */
-    const receivedNotificationIds =
-        useRef<Set<string>>(new Set());
+    const receivedNotificationIds = useRef<Set<string>>(new Set());
 
     /**
      * =====================================================
      * LOAD NOTIFICATIONS
      * =====================================================
      */
-    const refreshNotifications =
-        useCallback(async () => {
-            try {
-                const response =
-                    await getNotifications(1, 50);
+    const refreshNotifications = useCallback(async () => {
+        try {
+            const response = await getNotifications(1, 50);
 
-                const serverNotifications =
-                    response.notifications ?? [];
+            const items = response.notifications ?? [];
 
-                /**
-                 * تنظيف IDs القديمة
-                 */
-                receivedNotificationIds.current =
-                    new Set(
-                        serverNotifications.map(
-                            (notification) =>
-                                notification._id,
-                        ),
-                    );
+            notificationIdsRef.current = new Set(
+                items.map((notification) => notification._id),
+            );
 
-                /**
-                 * استبدال القائمة بالكامل
-                 *
-                 * وليس append
-                 */
-                setNotifications(
-                    serverNotifications,
-                );
-
-                setUnreadCount(
-                    response.unreadCount ?? 0,
-                );
-            } catch (error) {
-                console.error(
-                    'Failed to load notifications:',
-                    error,
-                );
-            }
-        }, []);
+            setNotifications(items);
+            setUnreadCount(response.unreadCount ?? 0);
+        } catch (error) {
+            console.error('Failed to load notifications:', error);
+        }
+    }, []);
 
     /**
      * =====================================================
@@ -115,47 +88,29 @@ export const NotificationProvider = ({
     useEffect(() => {
         let cancelled = false;
 
-        const loadNotifications =
-            async () => {
-                try {
-                    const response =
-                        await getNotifications(
-                            1,
-                            50,
-                        );
+        const loadNotifications = async () => {
+            try {
+                const response = await getNotifications(1, 50);
 
-                    if (cancelled) {
-                        return;
-                    }
-
-                    const serverNotifications =
-                        response.notifications ??
-                        [];
-
-                    receivedNotificationIds.current =
-                        new Set(
-                            serverNotifications.map(
-                                (notification) =>
-                                    notification._id,
-                            ),
-                        );
-
-                    setNotifications(
-                        serverNotifications,
-                    );
-
-                    setUnreadCount(
-                        response.unreadCount ?? 0,
-                    );
-                } catch (error) {
-                    if (!cancelled) {
-                        console.error(
-                            'Failed to load notifications:',
-                            error,
-                        );
-                    }
+                if (cancelled) {
+                    return;
                 }
-            };
+
+                const serverNotifications = response.notifications ?? [];
+
+                receivedNotificationIds.current = new Set(
+                    serverNotifications.map((notification) => notification._id),
+                );
+
+                setNotifications(serverNotifications);
+
+                setUnreadCount(response.unreadCount ?? 0);
+            } catch (error) {
+                if (!cancelled) {
+                    console.error('Failed to load notifications:', error);
+                }
+            }
+        };
 
         void loadNotifications();
 
@@ -170,21 +125,16 @@ export const NotificationProvider = ({
      * =====================================================
      */
     useEffect(() => {
-        const handleNotification = (
-            notification: AppNotifications,
-        ) => {
+        const handleNotification = (notification: AppNotifications) => {
             if (!notification?._id) {
                 return;
             }
 
             /**
-             * أهم حماية ضد duplicate
+             * منع نفس الإشعار من الدخول
+             * أكثر من مرة.
              */
-            if (
-                receivedNotificationIds.current.has(
-                    notification._id,
-                )
-            ) {
+            if (notificationIdsRef.current.has(notification._id)) {
                 console.log(
                     '[notifications] duplicate ignored:',
                     notification._id,
@@ -193,51 +143,32 @@ export const NotificationProvider = ({
                 return;
             }
 
-            receivedNotificationIds.current.add(
+            notificationIdsRef.current.add(notification._id);
+
+            console.log(
+                '[notifications] new:',
                 notification._id,
+                notification.type,
             );
 
             setNotifications((previous) => {
-                /**
-                 * حماية ثانية
-                 */
-                if (
-                    previous.some(
-                        (item) =>
-                            item._id ===
-                            notification._id,
-                    )
-                ) {
+                // حماية إضافية
+                if (previous.some((item) => item._id === notification._id)) {
                     return previous;
                 }
 
-                return [
-                    notification,
-                    ...previous,
-                ];
+                return [notification, ...previous];
             });
 
-            /**
-             * فقط إذا غير مقروء
-             */
             if (!notification.readAt) {
-                setUnreadCount(
-                    (previous) =>
-                        previous + 1,
-                );
+                setUnreadCount((previous) => previous + 1);
             }
         };
 
-        socket.on(
-            'notification:new',
-            handleNotification,
-        );
+        socket.on('notification:new', handleNotification);
 
         return () => {
-            socket.off(
-                'notification:new',
-                handleNotification,
-            );
+            socket.off('notification:new', handleNotification);
         };
     }, []);
 
@@ -249,56 +180,33 @@ export const NotificationProvider = ({
     const markAsRead = useCallback(
         async (notificationId: string) => {
             try {
-                const notification =
-                    notifications.find(
-                        (item) =>
-                            item._id ===
-                            notificationId,
-                    );
-
-                const wasUnread =
-                    !!notification &&
-                    !notification.readAt;
-
-                await markNotificationAsRead(
-                    notificationId,
+                const notification = notifications.find(
+                    (item) => item._id === notificationId,
                 );
 
-                setNotifications(
-                    (previous) =>
-                        previous.map(
-                            (notification) => {
-                                if (
-                                    notification._id !==
-                                    notificationId
-                                ) {
-                                    return notification;
-                                }
+                const wasUnread = !!notification && !notification.readAt;
 
-                                return {
-                                    ...notification,
-                                    readAt:
-                                        notification.readAt ??
-                                        new Date().toISOString(),
-                                };
-                            },
-                        ),
+                await markNotificationAsRead(notificationId);
+
+                setNotifications((previous) =>
+                    previous.map((notification) => {
+                        if (notification._id !== notificationId) {
+                            return notification;
+                        }
+
+                        return {
+                            ...notification,
+                            readAt:
+                                notification.readAt ?? new Date().toISOString(),
+                        };
+                    }),
                 );
 
                 if (wasUnread) {
-                    setUnreadCount(
-                        (previous) =>
-                            Math.max(
-                                0,
-                                previous - 1,
-                            ),
-                    );
+                    setUnreadCount((previous) => Math.max(0, previous - 1));
                 }
             } catch (error) {
-                console.error(
-                    'Failed to mark notification as read:',
-                    error,
-                );
+                console.error('Failed to mark notification as read:', error);
             }
         },
         [notifications],
@@ -309,34 +217,24 @@ export const NotificationProvider = ({
      * MARK ALL AS READ
      * =====================================================
      */
-    const markAllAsRead =
-        useCallback(async () => {
-            try {
-                await markAllNotificationsAsRead();
+    const markAllAsRead = useCallback(async () => {
+        try {
+            await markAllNotificationsAsRead();
 
-                const now =
-                    new Date().toISOString();
+            const now = new Date().toISOString();
 
-                setNotifications(
-                    (previous) =>
-                        previous.map(
-                            (notification) => ({
-                                ...notification,
-                                readAt:
-                                    notification.readAt ??
-                                    now,
-                            }),
-                        ),
-                );
+            setNotifications((previous) =>
+                previous.map((notification) => ({
+                    ...notification,
+                    readAt: notification.readAt ?? now,
+                })),
+            );
 
-                setUnreadCount(0);
-            } catch (error) {
-                console.error(
-                    'Failed to mark all notifications as read:',
-                    error,
-                );
-            }
-        }, []);
+            setUnreadCount(0);
+        } catch (error) {
+            console.error('Failed to mark all notifications as read:', error);
+        }
+    }, []);
 
     return (
         <NotificationContext.Provider
@@ -358,16 +256,14 @@ export const NotificationProvider = ({
  * useNotifications
  * =========================================================
  */
-export const useNotifications =
-    (): NotificationContextType => {
-        const context =
-            useContext(NotificationContext);
+export const useNotifications = (): NotificationContextType => {
+    const context = useContext(NotificationContext);
 
-        if (!context) {
-            throw new Error(
-                'useNotifications must be used inside NotificationProvider',
-            );
-        }
+    if (!context) {
+        throw new Error(
+            'useNotifications must be used inside NotificationProvider',
+        );
+    }
 
-        return context;
-    };
+    return context;
+};

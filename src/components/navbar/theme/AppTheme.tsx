@@ -35,12 +35,7 @@ import { styled } from '@mui/material/styles';
 
 import LanguageSwitcher from '../../../locales/languageSwich';
 
-import {
-    Link,
-    NavLink,
-    useLocation,
-    useNavigate,
-} from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 import handleRTL from '../../../locales/handleRTL';
 
@@ -88,10 +83,7 @@ import { useChat } from '../../../hooks/useChat';
 
 import { GradientSwitch } from './GradientSwitch';
 
-import {
-    AppNotifications,
-    NotificationType,
-} from '../../../interfaces/Notification';
+import { AppNotifications } from '../../../interfaces/Notification';
 
 import { useNotifications } from '../../../context/NotificationContext';
 
@@ -103,64 +95,47 @@ interface ThemeProps {
     setMode: (mode: PaletteMode) => void;
 }
 
-const Theme: FunctionComponent<ThemeProps> = ({
-    mode,
-    setMode,
-}) => {
+const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const navigate = useNavigate();
 
     const theme = useTheme();
 
-    const isMobile = useMediaQuery(
-        theme.breakpoints.down('md'),
-    );
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const dir = handleRTL();
 
     const { t } = useTranslation();
 
-    const { auth, isLoggedIn, logout: contextLogout } =
-        useUser();
+    const { auth, isLoggedIn, logout: contextLogout } = useUser();
 
-    const {
-        notifications,
-        unreadCount,
-        markAsRead,
-        markAllAsRead,
-    } = useNotifications();
+    const { notifications, unreadCount, markAsRead, markAllAsRead } =
+        useNotifications();
 
     const { unreadCounts } = useChat();
 
-    const totalUnread = Object.values(unreadCounts).reduce(
-        (a, b) => a + b,
-        0,
-    );
+    const totalUnread = Object.values(unreadCounts).reduce((a, b) => a + b, 0);
 
     const [notificationAnchor, setNotificationAnchor] =
         useState<null | HTMLElement>(null);
 
-    const notificationOpen = Boolean(
-        notificationAnchor,
-    );
+    const notificationOpen = Boolean(notificationAnchor);
 
-    const [mobileOpen, setMobileOpen] =
-        useState(false);
+    const [mobileOpen, setMobileOpen] = useState(false);
 
-    const [expandedMobileMenu, setExpandedMobileMenu] =
-        useState<string | false>(false);
+    const [expandedMobileMenu, setExpandedMobileMenu] = useState<
+        string | false
+    >(false);
 
     const [mousePosition, setMousePosition] = useState({
         x: 0,
         y: 0,
     });
 
-    const [hovered, setHovered] =
-        useState(false);
+    const [hovered, setHovered] = useState(false);
 
     const { pathname } = useLocation();
 
-    const isAdmin =
-        auth?.role === RoleType.Admin;
+    const isAdmin = auth?.role === RoleType.Admin;
 
     /**
      * =========================================================
@@ -172,16 +147,11 @@ const Theme: FunctionComponent<ThemeProps> = ({
         _: React.SyntheticEvent<Element, Event>,
         checked: boolean,
     ) => {
-        const newMode: PaletteMode = checked
-            ? 'dark'
-            : 'light';
+        const newMode: PaletteMode = checked ? 'dark' : 'light';
 
         setMode(newMode);
 
-        localStorage.setItem(
-            'theme',
-            newMode,
-        );
+        localStorage.setItem('theme', newMode);
     };
 
     /**
@@ -190,12 +160,8 @@ const Theme: FunctionComponent<ThemeProps> = ({
      * =========================================================
      */
 
-    const handleNotificationClick = (
-        event: React.MouseEvent<HTMLElement>,
-    ) => {
-        setNotificationAnchor(
-            event.currentTarget,
-        );
+    const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
+        setNotificationAnchor(event.currentTarget);
     };
 
     const handleCloseNotifications = () => {
@@ -205,12 +171,8 @@ const Theme: FunctionComponent<ThemeProps> = ({
     /**
      * Get notification icon according to type
      */
-    const getNotificationIcon = (
-        notification: AppNotifications,
-    ) => {
-        switch (
-            notification.type as NotificationType
-        ) {
+    const getNotificationIcon = (notification: AppNotifications) => {
+        switch (notification.type as AppNotifications['type']) {
             case 'post_approved':
                 return (
                     <CheckCircleIcon
@@ -268,77 +230,61 @@ const Theme: FunctionComponent<ThemeProps> = ({
     /**
      * Navigate to notification target
      */
-    const handleNotificationItemClick =
-        async (
-            notification: AppNotifications,
-        ) => {
-            try {
-                /**
-                 * Mark notification as read
-                 */
-                if (!notification.readAt) {
-                    await markAsRead(
-                        notification._id,
-                    );
-                }
-
-                handleCloseNotifications();
-
-                /**
-                 * Notification data
-                 *
-                 * Recommended backend structure:
-                 *
-                 * data: {
-                 *   postId,
-                 *   category,
-                 *   brand
-                 * }
-                 */
-                const postId =
-                    notification.data?.postId;
-
-                const category =
-                    notification.data?.category;
-
-                const brand =
-                    notification.data?.brand;
-
-                /**
-                 * If we have full post information,
-                 * navigate to the real Safqa product route.
-                 */
-                if (
-                    postId &&
-                    category &&
-                    brand
-                ) {
-                    navigate(
-                        `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
-                    );
-
-                    return;
-                }
-
-                /**
-                 * Fallback.
-                 *
-                 * If your backend currently sends only postId,
-                 * use this only if /posts/:postId exists.
-                 */
-                if (postId) {
-                    navigate(
-                        `/posts/${postId}`,
-                    );
-                }
-            } catch (error) {
-                console.error(
-                    'Failed to open notification:',
-                    error,
-                );
+    const handleNotificationItemClick = async (
+        notification: AppNotifications,
+    ) => {
+        try {
+            // Mark as read first
+            if (!notification.readAt) {
+                await markAsRead(notification._id);
             }
-        };
 
+            handleCloseNotifications();
+
+            const postId = notification.data?.postId;
+
+            if (!postId) {
+                return;
+            }
+
+            const category = notification.data?.category;
+            const brand = notification.data?.brand;
+
+            /**
+             * =====================================================
+             * ADMIN / MODERATOR
+             * إعلان جديد بانتظار المراجعة
+             * =====================================================
+             */
+            if (notification.type === 'post_pending_review') {
+                // الأفضل توجيه الأدمن/المودريتور إلى صفحة الإعلانات المعلقة
+                navigate(`${path.UsersManagement}?tab=pending-posts`);
+
+                return;
+            }
+
+            /**
+             * =====================================================
+             * APPROVED / REJECTED
+             * =====================================================
+             */
+
+            if (category && brand) {
+                navigate(
+                    `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
+                );
+
+                return;
+            }
+
+            /**
+             * Fallback
+             */
+            navigate(`/posts/${postId}`);
+        } catch (error) {
+            console.error('Failed to open notification:', error);
+        }
+    };
     /**
      * =========================================================
      * NOTIFICATION MENU
@@ -349,23 +295,15 @@ const Theme: FunctionComponent<ThemeProps> = ({
         <Menu
             anchorEl={notificationAnchor}
             open={notificationOpen}
-            onClose={
-                handleCloseNotifications
-            }
+            onClose={handleCloseNotifications}
             dir={dir}
             anchorOrigin={{
                 vertical: 'bottom',
-                horizontal:
-                    dir === 'rtl'
-                        ? 'left'
-                        : 'right',
+                horizontal: dir === 'rtl' ? 'left' : 'right',
             }}
             transformOrigin={{
                 vertical: 'top',
-                horizontal:
-                    dir === 'rtl'
-                        ? 'left'
-                        : 'right',
+                horizontal: dir === 'rtl' ? 'left' : 'right',
             }}
             slotProps={{
                 paper: {
@@ -376,8 +314,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             sm: 390,
                         },
 
-                        maxWidth:
-                            'calc(100vw - 16px)',
+                        maxWidth: 'calc(100vw - 16px)',
 
                         maxHeight: {
                             xs: 'calc(100vh - 100px)',
@@ -403,8 +340,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                     alignItems: 'center',
 
-                    justifyContent:
-                        'space-between',
+                    justifyContent: 'space-between',
 
                     gap: 1,
                 }}
@@ -417,28 +353,19 @@ const Theme: FunctionComponent<ThemeProps> = ({
                     }}
                 >
                     {unreadCount > 0 ? (
-                        <NotificationsActiveIcon
-                            color='primary'
-                        />
+                        <NotificationsActiveIcon color='primary' />
                     ) : (
-                        <NotificationsNoneIcon
-                            color='action'
-                        />
+                        <NotificationsNoneIcon color='action' />
                     )}
 
-                    <Typography
-                        fontWeight={700}
-                        fontSize={17}
-                    >
+                    <Typography fontWeight={700} fontSize={17}>
                         الإشعارات
                     </Typography>
 
                     {unreadCount > 0 && (
                         <Badge
                             badgeContent={
-                                unreadCount > 99
-                                    ? '99+'
-                                    : unreadCount
+                                unreadCount > 99 ? '99+' : unreadCount
                             }
                             color='error'
                         />
@@ -449,14 +376,11 @@ const Theme: FunctionComponent<ThemeProps> = ({
                     <Button
                         size='small'
                         variant='text'
-                        onClick={() =>
-                            markAllAsRead()
-                        }
+                        onClick={() => markAllAsRead()}
                         sx={{
                             minWidth: 'auto',
                             fontSize: 12,
-                            whiteSpace:
-                                'nowrap',
+                            whiteSpace: 'nowrap',
                         }}
                     >
                         تحديد الكل كمقروء
@@ -483,10 +407,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                         }}
                     />
 
-                    <Typography
-                        variant='body2'
-                        color='text.secondary'
-                    >
+                    <Typography variant='body2' color='text.secondary'>
                         لا توجد إشعارات
                     </Typography>
                 </Box>
@@ -495,170 +416,132 @@ const Theme: FunctionComponent<ThemeProps> = ({
                     disablePadding
                     sx={{
                         maxHeight: {
-                            xs:
-                                'calc(100vh - 180px)',
+                            xs: 'calc(100vh - 180px)',
                             sm: 470,
                         },
 
                         overflowY: 'auto',
 
-                        '&::-webkit-scrollbar':
-                            {
-                                width: 6,
-                            },
+                        '&::-webkit-scrollbar': {
+                            width: 6,
+                        },
                     }}
                 >
-                    {notifications.map(
-                        (
-                            notification: AppNotifications,
-                        ) => {
-                            const isUnread =
-                                !notification.readAt;
+                    {notifications.map((notification: AppNotifications) => {
+                        const isUnread = !notification.readAt;
 
-                            return (
-                                <ListItemButton
-                                    key={
-                                        notification._id
-                                    }
-                                    onClick={() =>
-                                        handleNotificationItemClick(
-                                            notification,
-                                        )
-                                    }
+                        return (
+                            <ListItemButton
+                                key={notification._id}
+                                onClick={() =>
+                                    handleNotificationItemClick(notification)
+                                }
+                                sx={{
+                                    alignItems: 'flex-start',
+
+                                    py: 1.5,
+
+                                    px: 1.5,
+
+                                    bgcolor: isUnread
+                                        ? 'action.hover'
+                                        : 'transparent',
+
+                                    borderBottom: '1px solid',
+
+                                    borderColor: 'divider',
+
+                                    transition: 'background-color .2s',
+
+                                    '&:hover': {
+                                        bgcolor: 'action.selected',
+                                    },
+                                }}
+                            >
+                                {/* Icon */}
+                                {getNotificationIcon(notification)}
+
+                                {/* Text */}
+                                <ListItemText
                                     sx={{
-                                        alignItems:
-                                            'flex-start',
-
-                                        py: 1.5,
-
-                                        px: 1.5,
-
-                                        bgcolor:
-                                            isUnread
-                                                ? 'action.hover'
-                                                : 'transparent',
-
-                                        borderBottom:
-                                            '1px solid',
-
-                                        borderColor:
-                                            'divider',
-
-                                        transition:
-                                            'background-color .2s',
-
-                                        '&:hover':
-                                            {
-                                                bgcolor:
-                                                    'action.selected',
-                                            },
+                                        m: 0,
+                                        minWidth: 0,
                                     }}
-                                >
-                                    {/* Icon */}
-                                    {getNotificationIcon(
-                                        notification,
-                                    )}
+                                    primary={
+                                        <Box
+                                            sx={{
+                                                display: 'flex',
 
-                                    {/* Text */}
-                                    <ListItemText
-                                        sx={{
-                                            m: 0,
-                                            minWidth: 0,
-                                        }}
-                                        primary={
-                                            <Box
+                                                alignItems: 'flex-start',
+
+                                                gap: 1,
+                                            }}
+                                        >
+                                            <Typography
+                                                variant='body2'
+                                                fontWeight={
+                                                    isUnread ? 700 : 500
+                                                }
                                                 sx={{
-                                                    display:
-                                                        'flex',
+                                                    flex: 1,
 
-                                                    alignItems:
-                                                        'flex-start',
-
-                                                    gap: 1,
+                                                    lineHeight: 1.5,
                                                 }}
                                             >
+                                                {notification.title}
+                                            </Typography>
+
+                                            {isUnread && (
+                                                <Box
+                                                    sx={{
+                                                        width: 8,
+                                                        height: 8,
+                                                        minWidth: 8,
+                                                        borderRadius: '50%',
+                                                        bgcolor: 'error.main',
+                                                        mt: 0.7,
+                                                    }}
+                                                />
+                                            )}
+                                        </Box>
+                                    }
+                                    secondary={
+                                        <Box
+                                            sx={{
+                                                mt: 0.4,
+                                            }}
+                                        >
+                                            {notification.body && (
                                                 <Typography
                                                     variant='body2'
-                                                    fontWeight={
-                                                        isUnread
-                                                            ? 700
-                                                            : 500
-                                                    }
+                                                    color='text.secondary'
                                                     sx={{
-                                                        flex:
-                                                            1,
+                                                        lineHeight: 1.5,
 
-                                                        lineHeight:
-                                                            1.5,
+                                                        mb: 0.5,
                                                     }}
                                                 >
-                                                    {
-                                                        notification.title
-                                                    }
+                                                    {notification.body}
                                                 </Typography>
+                                            )}
 
-                                                {isUnread && (
-                                                    <Box
-                                                        sx={{
-                                                            width: 8,
-                                                            height: 8,
-                                                            minWidth: 8,
-                                                            borderRadius:
-                                                                '50%',
-                                                            bgcolor:
-                                                                'error.main',
-                                                            mt: 0.7,
-                                                        }}
-                                                    />
-                                                )}
-                                            </Box>
-                                        }
-                                        secondary={
-                                            <Box
-                                                sx={{
-                                                    mt: 0.4,
-                                                }}
+                                            <Typography
+                                                variant='caption'
+                                                color='text.disabled'
                                             >
-                                                {notification.body && (
-                                                    <Typography
-                                                        variant='body2'
-                                                        color='text.secondary'
-                                                        sx={{
-                                                            lineHeight:
-                                                                1.5,
-
-                                                            mb: 0.5,
-                                                        }}
-                                                    >
-                                                        {
-                                                            notification.body
-                                                        }
-                                                    </Typography>
-                                                )}
-
-                                                <Typography
-                                                    variant='caption'
-                                                    color='text.disabled'
-                                                >
-                                                    {new Date(
-                                                        notification.createdAt,
-                                                    ).toLocaleString(
-                                                        'ar',
-                                                        {
-                                                            dateStyle:
-                                                                'short',
-                                                            timeStyle:
-                                                                'short',
-                                                        },
-                                                    )}
-                                                </Typography>
-                                            </Box>
-                                        }
-                                    />
-                                </ListItemButton>
-                            );
-                        },
-                    )}
+                                                {new Date(
+                                                    notification.createdAt,
+                                                ).toLocaleString('ar', {
+                                                    dateStyle: 'short',
+                                                    timeStyle: 'short',
+                                                })}
+                                            </Typography>
+                                        </Box>
+                                    }
+                                />
+                            </ListItemButton>
+                        );
+                    })}
                 </List>
             )}
         </Menu>
@@ -670,11 +553,8 @@ const Theme: FunctionComponent<ThemeProps> = ({
      * =========================================================
      */
 
-    const handleMouseMove = (
-        e: React.MouseEvent<HTMLDivElement>,
-    ) => {
-        const rect =
-            e.currentTarget.getBoundingClientRect();
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = e.currentTarget.getBoundingClientRect();
 
         setMousePosition({
             x: e.clientX - rect.left,
@@ -698,32 +578,26 @@ const Theme: FunctionComponent<ThemeProps> = ({
      * =========================================================
      */
 
-    const handleLogout = useCallback(
-        async () => {
-            try {
-                socket.disconnect();
-            } catch (err) {
-                console.warn(
-                    'Socket disconnect failed:',
-                    err,
-                );
-            }
+    const handleLogout = useCallback(async () => {
+        try {
+            socket.disconnect();
+        } catch (err) {
+            console.warn('Socket disconnect failed:', err);
+        }
 
-            await contextLogout();
+        await contextLogout();
 
-            navigate(path.Home, {
-                replace: true,
-            });
+        navigate(path.Home, {
+            replace: true,
+        });
 
-            setMobileOpen(false);
+        setMobileOpen(false);
 
-            /**
-             * Close notifications too
-             */
-            setNotificationAnchor(null);
-        },
-        [contextLogout, navigate],
-    );
+        /**
+         * Close notifications too
+         */
+        setNotificationAnchor(null);
+    }, [contextLogout, navigate]);
 
     /**
      * =========================================================
@@ -749,37 +623,30 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
             <JsonLd
                 data={{
-                    '@context':
-                        'https://schema.org',
+                    '@context': 'https://schema.org',
 
                     '@type': 'WebSite',
 
                     name: 'صفقة',
 
-                    alternateName:
-                        'صفقة - موقع البيع والشراء',
+                    alternateName: 'صفقة - موقع البيع والشراء',
 
-                    url:
-                        window.location.origin,
+                    url: window.location.origin,
 
-                    description:
-                        'أكبر موقع عربي للبيع والشراء عبر الإنترنت',
+                    description: 'أكبر موقع عربي للبيع والشراء عبر الإنترنت',
 
                     inLanguage: 'ar',
 
                     potentialAction: {
-                        '@type':
-                            'SearchAction',
+                        '@type': 'SearchAction',
 
                         target: `${window.location.origin}/search?q={search_term_string}`,
 
-                        'query-input':
-                            'required name=search_term_string',
+                        'query-input': 'required name=search_term_string',
                     },
 
                     publisher: {
-                        '@type':
-                            'Organization',
+                        '@type': 'Organization',
 
                         name: 'صفقة',
 
@@ -797,20 +664,12 @@ const Theme: FunctionComponent<ThemeProps> = ({
                 position='sticky'
                 dir={dir}
                 onMouseMove={handleMouseMove}
-                onMouseEnter={() =>
-                    setHovered(true)
-                }
-                onMouseLeave={() =>
-                    setHovered(false)
-                }
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
                 sx={{
-                    background:
-                        mode === 'dark'
-                            ? '#151B1E'
-                            : '#ffffff',
+                    background: mode === 'dark' ? '#151B1E' : '#ffffff',
 
-                    boxShadow:
-                        '0 1px 10px #414141',
+                    boxShadow: '0 1px 10px #414141',
 
                     zIndex: 1100,
 
@@ -831,8 +690,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                         pointerEvents: 'none',
 
-                        borderBottom:
-                            '3px solid transparent',
+                        borderBottom: '3px solid transparent',
 
                         background: `
                             radial-gradient(
@@ -848,18 +706,13 @@ const Theme: FunctionComponent<ThemeProps> = ({
                         WebkitMask:
                             'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
 
-                        WebkitMaskComposite:
-                            'xor',
+                        WebkitMaskComposite: 'xor',
 
-                        maskComposite:
-                            'exclude',
+                        maskComposite: 'exclude',
 
-                        opacity: hovered
-                            ? 1
-                            : 0,
+                        opacity: hovered ? 1 : 0,
 
-                        transition:
-                            'opacity .25s',
+                        transition: 'opacity .25s',
                     },
                 }}
                 aria-label='شريط التنقل'
@@ -882,8 +735,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                         sx={{
                             display: 'flex',
 
-                            justifyContent:
-                                'space-between',
+                            justifyContent: 'space-between',
 
                             alignItems: 'center',
 
@@ -894,8 +746,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                 md: '72px',
                             },
 
-                            flexWrap:
-                                'nowrap',
+                            flexWrap: 'nowrap',
                         }}
                     >
                         {/* =================================================
@@ -906,8 +757,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             sx={{
                                 display: 'flex',
 
-                                alignItems:
-                                    'center',
+                                alignItems: 'center',
 
                                 gap: 1,
 
@@ -921,9 +771,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                 color='inherit'
                                 aria-label='فتح القائمة'
                                 title='فتح القائمة'
-                                onClick={
-                                    handleDrawerToggle
-                                }
+                                onClick={handleDrawerToggle}
                                 sx={{
                                     display: {
                                         xs: 'flex',
@@ -931,10 +779,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     },
 
                                     color:
-                                        mode ===
-                                        'dark'
-                                            ? '#e2e8f0'
-                                            : '#4a5568',
+                                        mode === 'dark' ? '#e2e8f0' : '#4a5568',
 
                                     flexShrink: 0,
                                 }}
@@ -954,11 +799,9 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                 <Link
                                     to={path.Home}
                                     style={{
-                                        textDecoration:
-                                            'none',
+                                        textDecoration: 'none',
 
-                                        listStyle:
-                                            'none',
+                                        listStyle: 'none',
                                     }}
                                     aria-label='الرئيسية - موقع صفقة'
                                     title='الرئيسية - موقع صفقة'
@@ -971,76 +814,65 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                 MOBILE ICONS
                             ================================================= */}
 
-                            {isMobile &&
-                                isLoggedIn && (
-                                    <>
-                                        {/* Messages */}
-                                        <Box
-                                            sx={{
-                                                flexShrink: 0,
-                                            }}
+                            {isMobile && isLoggedIn && (
+                                <>
+                                    {/* Messages */}
+                                    <Box
+                                        sx={{
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <Badge
+                                            badgeContent={totalUnread || 0}
+                                            color='error'
+                                            max={99}
                                         >
-                                            <Badge
-                                                badgeContent={
-                                                    totalUnread ||
-                                                    0
-                                                }
-                                                color='error'
-                                                max={99}
+                                            <StyledNavLink
+                                                to={path.MessagesPage}
+                                                aria-label='الرسائل'
+                                                title='الرسائل'
                                             >
-                                                <StyledNavLink
-                                                    to={
-                                                        path.MessagesPage
-                                                    }
-                                                    aria-label='الرسائل'
-                                                    title='الرسائل'
-                                                >
-                                                    <MailIcon
-                                                        sx={{
-                                                            fontSize: 20,
-                                                        }}
-                                                    />
-                                                </StyledNavLink>
-                                            </Badge>
-                                        </Box>
+                                                <MailIcon
+                                                    sx={{
+                                                        fontSize: 20,
+                                                    }}
+                                                />
+                                            </StyledNavLink>
+                                        </Badge>
+                                    </Box>
 
-                                        {/* Notifications */}
-                                        <IconButton
-                                            onClick={
-                                                handleNotificationClick
+                                    {/* Notifications */}
+                                    <IconButton
+                                        onClick={handleNotificationClick}
+                                        aria-label='الإشعارات'
+                                        title='الإشعارات'
+                                        sx={{
+                                            color:
+                                                mode === 'dark'
+                                                    ? '#e2e8f0'
+                                                    : '#4a5568',
+
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        <Badge
+                                            badgeContent={
+                                                unreadCount > 99
+                                                    ? '99+'
+                                                    : unreadCount
                                             }
-                                            aria-label='الإشعارات'
-                                            title='الإشعارات'
-                                            sx={{
-                                                color:
-                                                    mode ===
-                                                    'dark'
-                                                        ? '#e2e8f0'
-                                                        : '#4a5568',
-
-                                                flexShrink: 0,
-                                            }}
+                                            color='error'
+                                            overlap='circular'
                                         >
-                                            <Badge
-                                                badgeContent={
-                                                    unreadCount >
-                                                    99
-                                                        ? '99+'
-                                                        : unreadCount
-                                                }
-                                                color='error'
-                                                overlap='circular'
-                                            >
-                                                {unreadCount >
-                                                0 ? (
-                                                    <NotificationsActiveIcon />
-                                                ) : (
-                                                    <NotificationsNoneIcon />
-                                                )}
-                                            </Badge>
-                                        </IconButton>
-                                    </>
-                                )}
+                                            {unreadCount > 0 ? (
+                                                <NotificationsActiveIcon />
+                                            ) : (
+                                                <NotificationsNoneIcon />
+                                            )}
+                                        </Badge>
+                                    </IconButton>
+                                </>
+                            )}
 
                             {/* =================================================
                                 JOBS
@@ -1051,24 +883,13 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                 role='listitem'
                                 sx={{
                                     flexShrink: 0,
-                                    listStyle:
-                                        'none',
+                                    listStyle: 'none',
                                 }}
                             >
                                 <StyledNavLink
                                     to={path.jobs}
-                                    aria-label={
-                                        t(
-                                            'links.jobs',
-                                        ) ||
-                                        'الوظائف'
-                                    }
-                                    title={
-                                        t(
-                                            'links.jobs',
-                                        ) ||
-                                        'الوظائف'
-                                    }
+                                    aria-label={t('links.jobs') || 'الوظائف'}
+                                    title={t('links.jobs') || 'الوظائف'}
                                 >
                                     <WorkOutlineIcon
                                         sx={{
@@ -1085,19 +906,16 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             {isLoggedIn && (
                                 <Box
                                     sx={{
-                                        borderRadius:
-                                            '8px',
+                                        borderRadius: '8px',
 
-                                        '&.active':
-                                            {
-                                                backgroundColor:
-                                                    'rgba(255, 168, 38, 0.541)',
+                                        '&.active': {
+                                            backgroundColor:
+                                                'rgba(255, 168, 38, 0.541)',
 
-                                                color: 'rgb(255, 167, 38)',
+                                            color: 'rgb(255, 167, 38)',
 
-                                                fontWeight:
-                                                    'bold',
-                                            },
+                                            fontWeight: 'bold',
+                                        },
                                     }}
                                 >
                                     <StyledNavLink
@@ -1106,16 +924,10 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                             '',
                                         )}/${auth?.slug}`}
                                         aria-label={
-                                            t(
-                                                'footer.myListings',
-                                            ) ||
-                                            'إعلاناتي'
+                                            t('footer.myListings') || 'إعلاناتي'
                                         }
                                         title={
-                                            t(
-                                                'footer.myListings',
-                                            ) ||
-                                            'إعلاناتي'
+                                            t('footer.myListings') || 'إعلاناتي'
                                         }
                                     >
                                         <ListIcon
@@ -1139,15 +951,13 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                         md: 'flex',
                                     },
 
-                                    listStyle:
-                                        'none',
+                                    listStyle: 'none',
 
                                     m: 0,
 
                                     p: 0,
 
-                                    alignItems:
-                                        'center',
+                                    alignItems: 'center',
 
                                     gap: 0.5,
 
@@ -1155,20 +965,15 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                                     flexShrink: 1,
 
-                                    flexWrap:
-                                        'nowrap',
+                                    flexWrap: 'nowrap',
 
-                                    overflowX:
-                                        'auto',
+                                    overflowX: 'auto',
 
-                                    '&::-webkit-scrollbar':
-                                        {
-                                            display:
-                                                'none',
-                                        },
+                                    '&::-webkit-scrollbar': {
+                                        display: 'none',
+                                    },
 
-                                    scrollbarWidth:
-                                        'none',
+                                    scrollbarWidth: 'none',
                                 }}
                                 aria-label='روابط التنقل الرئيسية'
                                 title='روابط التنقل الرئيسية'
@@ -1179,20 +984,13 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     role='listitem'
                                     sx={{
                                         flexShrink: 0,
-                                        listStyle:
-                                            'none',
+                                        listStyle: 'none',
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={
-                                            path.Home
-                                        }
-                                        aria-label={t(
-                                            'home',
-                                        )}
-                                        title={t(
-                                            'home',
-                                        )}
+                                        to={path.Home}
+                                        aria-label={t('home')}
+                                        title={t('home')}
                                     >
                                         <HomeIcon
                                             sx={{
@@ -1211,15 +1009,11 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={
-                                            path.DeleteAccount
-                                        }
+                                        to={path.DeleteAccount}
                                         aria-label={t(
                                             'pages.deleteAccount.title',
                                         )}
-                                        title={t(
-                                            'pages.deleteAccount.title',
-                                        )}
+                                        title={t('pages.deleteAccount.title')}
                                     >
                                         <DeleteSharpIcon
                                             sx={{
@@ -1239,21 +1033,11 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                         }}
                                     >
                                         <StyledNavLink
-                                            to={
-                                                path.Favorite
-                                            }
+                                            to={path.Favorite}
                                             aria-label={
-                                                t(
-                                                    'favorites',
-                                                ) ||
-                                                'المفضلة'
+                                                t('favorites') || 'المفضلة'
                                             }
-                                            title={
-                                                t(
-                                                    'favorites',
-                                                ) ||
-                                                'المفضلة'
-                                            }
+                                            title={t('favorites') || 'المفضلة'}
                                         >
                                             <FavoriteIcon
                                                 sx={{
@@ -1288,33 +1072,28 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                                 title='الإشعارات'
                                                 sx={{
                                                     color:
-                                                        mode ===
-                                                        'dark'
+                                                        mode === 'dark'
                                                             ? '#fdfeff'
                                                             : '#33415a',
 
-                                                    borderRadius:
-                                                        2,
+                                                    borderRadius: 2,
 
-                                                    '&:hover':
-                                                        {
-                                                            backgroundColor:
-                                                                'rgba(255, 167, 38, 0.10)',
-                                                        },
+                                                    '&:hover': {
+                                                        backgroundColor:
+                                                            'rgba(255, 167, 38, 0.10)',
+                                                    },
                                                 }}
                                             >
                                                 <Badge
                                                     badgeContent={
-                                                        unreadCount >
-                                                        99
+                                                        unreadCount > 99
                                                             ? '99+'
                                                             : unreadCount
                                                     }
                                                     color='error'
                                                     overlap='circular'
                                                 >
-                                                    {unreadCount >
-                                                    0 ? (
+                                                    {unreadCount > 0 ? (
                                                         <NotificationsActiveIcon />
                                                     ) : (
                                                         <NotificationsNoneIcon />
@@ -1334,9 +1113,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={
-                                            path.About
-                                        }
+                                        to={path.About}
                                         aria-label={`${t(
                                             'links.about',
                                         )} معلومات عن موقع صفقة`}
@@ -1362,17 +1139,12 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                         }}
                                     >
                                         <Badge
-                                            badgeContent={
-                                                totalUnread ||
-                                                0
-                                            }
+                                            badgeContent={totalUnread || 0}
                                             color='error'
                                             max={99}
                                         >
                                             <StyledNavLink
-                                                to={
-                                                    path.MessagesPage
-                                                }
+                                                to={path.MessagesPage}
                                                 aria-label='الرسائل'
                                                 title='الرسائل'
                                             >
@@ -1395,15 +1167,9 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={
-                                            path.Contact
-                                        }
-                                        aria-label={t(
-                                            'links.contact',
-                                        )}
-                                        title={t(
-                                            'links.contact',
-                                        )}
+                                        to={path.Contact}
+                                        aria-label={t('links.contact')}
+                                        title={t('links.contact')}
                                     >
                                         <ContactIcon
                                             sx={{
@@ -1422,15 +1188,9 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     }}
                                 >
                                     <StyledNavLink
-                                        to={
-                                            path.SellingHelp
-                                        }
-                                        aria-label={t(
-                                            'help',
-                                        )}
-                                        title={t(
-                                            'help',
-                                        )}
+                                        to={path.SellingHelp}
+                                        aria-label={t('help')}
+                                        title={t('help')}
                                     >
                                         <HelpIcon
                                             sx={{
@@ -1442,22 +1202,12 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                                 {/* Admin */}
                                 {(isAdmin ||
-                                    auth?.role ===
-                                        RoleType.Moderator) && (
-                                    <Box
-                                        component='li'
-                                        role='listitem'
-                                    >
+                                    auth?.role === RoleType.Moderator) && (
+                                    <Box component='li' role='listitem'>
                                         <StyledNavLink
-                                            to={
-                                                path.UsersManagement
-                                            }
-                                            aria-label={t(
-                                                'users-management',
-                                            )}
-                                            title={t(
-                                                'users-management',
-                                            )}
+                                            to={path.UsersManagement}
+                                            aria-label={t('users-management')}
+                                            title={t('users-management')}
                                         >
                                             <DashboardIcon
                                                 sx={{
@@ -1478,16 +1228,14 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             sx={{
                                 display: 'flex',
 
-                                alignItems:
-                                    'center',
+                                alignItems: 'center',
 
                                 gap: {
                                     xs: 1,
                                     sm: 2,
                                 },
 
-                                flexWrap:
-                                    'nowrap',
+                                flexWrap: 'nowrap',
 
                                 flexShrink: 0,
                             }}
@@ -1496,14 +1244,9 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             {!isMobile && (
                                 <Tooltip
                                     title={
-                                        mode ===
-                                        'dark'
-                                            ? t(
-                                                  'lightMode',
-                                              )
-                                            : t(
-                                                  'darkMode',
-                                              )
+                                        mode === 'dark'
+                                            ? t('lightMode')
+                                            : t('darkMode')
                                     }
                                 >
                                     <m.div
@@ -1516,24 +1259,17 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                     >
                                         <Box
                                             sx={{
-                                                display:
-                                                    'flex',
+                                                display: 'flex',
 
-                                                alignItems:
-                                                    'center',
+                                                alignItems: 'center',
 
                                                 gap: 1,
                                             }}
                                         >
                                             <FormGroup>
                                                 <FormControlLabel
-                                                    checked={
-                                                        mode ===
-                                                        'dark'
-                                                    }
-                                                    onChange={
-                                                        handleThemeChange
-                                                    }
+                                                    checked={mode === 'dark'}
+                                                    onChange={handleThemeChange}
                                                     control={
                                                         <GradientSwitch
                                                             sx={{
@@ -1548,9 +1284,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                                             <AnimatePresence mode='wait'>
                                                 <m.div
-                                                    key={
-                                                        mode
-                                                    }
+                                                    key={mode}
                                                     initial={{
                                                         opacity: 0,
                                                         scale: 0.8,
@@ -1567,23 +1301,20 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                                         duration: 0.3,
                                                     }}
                                                 >
-                                                    {mode ===
-                                                    'dark' ? (
+                                                    {mode === 'dark' ? (
                                                         <Brightness4Icon
                                                             sx={{
                                                                 color: '#ffffff',
 
-                                                                fontSize:
-                                                                    {
-                                                                        xs: 24,
-                                                                        md: 28,
-                                                                    },
+                                                                fontSize: {
+                                                                    xs: 24,
+                                                                    md: 28,
+                                                                },
 
-                                                                display:
-                                                                    {
-                                                                        xs: 'none',
-                                                                        sm: 'block',
-                                                                    },
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'block',
+                                                                },
                                                             }}
                                                         />
                                                     ) : (
@@ -1591,17 +1322,15 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                                             sx={{
                                                                 color: '#ffd000',
 
-                                                                fontSize:
-                                                                    {
-                                                                        xs: 24,
-                                                                        md: 28,
-                                                                    },
+                                                                fontSize: {
+                                                                    xs: 24,
+                                                                    md: 28,
+                                                                },
 
-                                                                display:
-                                                                    {
-                                                                        xs: 'none',
-                                                                        sm: 'block',
-                                                                    },
+                                                                display: {
+                                                                    xs: 'none',
+                                                                    sm: 'block',
+                                                                },
                                                             }}
                                                         />
                                                     )}
@@ -1627,9 +1356,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             )}
 
                             {/* Account */}
-                            <Suspense
-                                fallback={null}
-                            >
+                            <Suspense fallback={null}>
                                 <Box
                                     sx={{
                                         display: {
@@ -1641,43 +1368,28 @@ const Theme: FunctionComponent<ThemeProps> = ({
                                         <Button
                                             variant='contained'
                                             color='primary'
-                                            onClick={() =>
-                                                navigate(
-                                                    path.Login,
-                                                )
-                                            }
+                                            onClick={() => navigate(path.Login)}
                                             sx={{
-                                                borderRadius:
-                                                    '30px',
+                                                borderRadius: '30px',
 
-                                                fontWeight:
-                                                    'bold',
+                                                fontWeight: 'bold',
 
-                                                backgroundColor:
-                                                    '#FBBC05',
+                                                backgroundColor: '#FBBC05',
 
                                                 color: '#1A1E22',
 
                                                 px: 3,
 
-                                                '&:hover':
-                                                    {
-                                                        backgroundColor:
-                                                            '#fb9905',
-                                                    },
+                                                '&:hover': {
+                                                    backgroundColor: '#fb9905',
+                                                },
                                             }}
                                             aria-label='تسجيل الدخول إلى حسابك في موقع صفقة'
                                         >
-                                            {t(
-                                                'links.login',
-                                            )}
+                                            {t('links.login')}
                                         </Button>
                                     ) : (
-                                        <AccountMenu
-                                            logout={
-                                                handleLogout
-                                            }
-                                        />
+                                        <AccountMenu logout={handleLogout} />
                                     )}
                                 </Box>
                             </Suspense>
@@ -1698,15 +1410,9 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
             <Drawer
                 variant='temporary'
-                anchor={
-                    dir === 'rtl'
-                        ? 'left'
-                        : 'right'
-                }
+                anchor={dir === 'rtl' ? 'left' : 'right'}
                 open={mobileOpen}
-                onClose={
-                    handleDrawerToggle
-                }
+                onClose={handleDrawerToggle}
                 ModalProps={{
                     keepMounted: true,
                 }}
@@ -1717,8 +1423,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                     },
 
                     '& .MuiDrawer-paper': {
-                        boxSizing:
-                            'border-box',
+                        boxSizing: 'border-box',
 
                         width: {
                             xs: '100%',
@@ -1731,33 +1436,17 @@ const Theme: FunctionComponent<ThemeProps> = ({
                     },
                 }}
             >
-                <Suspense
-                    fallback={null}
-                >
+                <Suspense fallback={null}>
                     <MobileDrawer
-                        expandedMobileMenu={
-                            expandedMobileMenu
-                        }
-                        setExpandedMobileMenu={
-                            setExpandedMobileMenu
-                        }
+                        expandedMobileMenu={expandedMobileMenu}
+                        setExpandedMobileMenu={setExpandedMobileMenu}
                         auth={auth}
-                        handleDrawerToggle={
-                            handleDrawerToggle
-                        }
-                        handleThemeChange={
-                            handleThemeChange
-                        }
+                        handleDrawerToggle={handleDrawerToggle}
+                        handleThemeChange={handleThemeChange}
                         isAdmin={isAdmin}
-                        isLoggedIn={
-                            isLoggedIn
-                        }
-                        logout={
-                            handleLogout
-                        }
-                        setMobileOpen={
-                            setMobileOpen
-                        }
+                        isLoggedIn={isLoggedIn}
+                        logout={handleLogout}
+                        setMobileOpen={setMobileOpen}
                         mode={mode}
                     />
                 </Suspense>
@@ -1780,8 +1469,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
 
                         bottom: 0,
 
-                        backgroundColor:
-                            'rgba(0,0,0,0.5)',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
 
                         zIndex: 1199,
 
@@ -1790,9 +1478,7 @@ const Theme: FunctionComponent<ThemeProps> = ({
                             md: 'none',
                         },
                     }}
-                    onClick={
-                        handleDrawerToggle
-                    }
+                    onClick={handleDrawerToggle}
                 />
             )}
         </>
@@ -1807,25 +1493,18 @@ export default Theme;
  * =========================================================
  */
 
-const StyledNavLink = styled(
-    NavLink,
-)(({ theme }) => ({
+const StyledNavLink = styled(NavLink)(({ theme }) => ({
     textDecoration: 'none',
 
     listStyle: 'none',
 
-    color:
-        theme.palette.mode ===
-        'dark'
-            ? '#fdfeff'
-            : '#33415a',
+    color: theme.palette.mode === 'dark' ? '#fdfeff' : '#33415a',
 
     padding: '8px 16px',
 
     borderRadius: '8px',
 
-    transition:
-        'all 0.3s ease',
+    transition: 'all 0.3s ease',
 
     display: 'flex',
 
@@ -1835,21 +1514,18 @@ const StyledNavLink = styled(
 
     '&:hover': {
         backgroundColor:
-            theme.palette.mode ===
-            'dark'
+            theme.palette.mode === 'dark'
                 ? 'rgba(255, 255, 255, 0.1)'
                 : 'rgba(0, 0, 0, 0.04)',
 
-        transform:
-            'translateY(-2px)',
+        transform: 'translateY(-2px)',
     },
 
     '&.active': {
         fontWeight: 'bold',
 
         border:
-            theme.palette.mode ===
-            'dark'
+            theme.palette.mode === 'dark'
                 ? '2px solid rgba(255, 255, 255, 0.884)'
                 : '2px solid rgb(245, 159, 11)',
     },
