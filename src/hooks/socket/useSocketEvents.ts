@@ -328,13 +328,25 @@ const useSocketEvents = () => {
                 return;
             }
 
+            const isCurrentChat = currentChatId === otherUserId;
+
             addMessageForUser(otherUserId, msg);
 
-            setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
+            if (!isCurrentChat) {
+                setUnreadForUser(otherUserId, (prev) => (prev || 0) + 1);
 
-            playNotificationSound('messageReceived');
+                playNotificationSound('messageReceived');
 
-            showNotification(`رسالة من ${msg.from?.name?.first ?? 'مستخدم'}`);
+                showNotification(
+                    `رسالة من ${msg.from?.name?.first ?? 'مستخدم'}`,
+                );
+            } else {
+                socket.emit('message:seen', {
+                    messageId: msg._id,
+                    from: userId,
+                    to: otherUserId,
+                });
+            }
         };
 
         // =====================================================================
