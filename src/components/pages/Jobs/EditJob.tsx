@@ -1,47 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { FunctionComponent, useEffect, useState } from 'react';
-
-import {
-    Box,
-    CircularProgress,
-    Container,
-    Typography,
-} from '@mui/material';
-
+import { CircularProgress, Container } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 import { FormikHelpers } from 'formik';
 
 import JobForm from '../../../components/jobs/JobForm';
-
-import {
-    CreateJobPayload,
-    Job,
-} from '../../../interfaces/jobs.types';
-
-import {
-    getJobById,
-    updateJob,
-} from '../../../services/jobsService';
-
+import { CreateJobPayload, Job } from '../../../interfaces/jobs.types';
+import { getJobById, updateJob } from '../../../services/jobsService';
 import { path } from '../../../routes/routes';
+import JobsPageHeading from './JobsPageHeading';
+import { BRAND_GOLD } from './jobsBrand';
 
 const EditJob: FunctionComponent = () => {
     const { id } = useParams<{ id: string }>();
-
     const navigate = useNavigate();
-
     const { t } = useTranslation();
 
     const [job, setJob] = useState<Job | null>(null);
-
     const [loading, setLoading] = useState(true);
 
-    // =====================================================
-    // Load Job
-    // =====================================================
+    const alert = (
+        icon: 'success' | 'warning' | 'error',
+        title: string,
+        text: string,
+    ) =>
+        Swal.fire({
+            icon,
+            title,
+            text,
+            confirmButtonText: t('pages.jobs.actions.ok'),
+            confirmButtonColor: BRAND_GOLD,
+        });
 
     useEffect(() => {
         if (!id) {
@@ -52,34 +43,25 @@ const EditJob: FunctionComponent = () => {
         const loadJob = async () => {
             try {
                 setLoading(true);
-
-                const data = await getJobById(id);
-
-                setJob(data);
+                setJob(await getJobById(id));
             } catch (error) {
                 console.error('Load job error:', error);
 
-                await Swal.fire({
-                    icon: 'error',
-                    title: t('pages.jobs.errors.loadTitle'),
-                    text: t('pages.jobs.errors.load'),
-                    confirmButtonText: t('pages.jobs.actions.ok'),
-                });
+                await alert(
+                    'error',
+                    t('pages.jobs.errors.loadTitle'),
+                    t('pages.jobs.errors.load'),
+                );
 
-                navigate(path.jobs, {
-                    replace: true,
-                });
+                navigate(path.jobs, { replace: true });
             } finally {
                 setLoading(false);
             }
         };
 
         loadJob();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id, navigate, t]);
-
-    // =====================================================
-    // Submit
-    // =====================================================
 
     const handleSubmit = async (
         values: CreateJobPayload,
@@ -91,160 +73,61 @@ const EditJob: FunctionComponent = () => {
         }
 
         try {
-            const updatedJob = await updateJob(
-                id,
-                values,
+            const updatedJob = await updateJob(id, values);
+
+            await alert(
+                'success',
+                t('pages.jobs.messages.updatedTitle'),
+                t('pages.jobs.messages.updated'),
             );
 
-            await Swal.fire({
-                icon: 'success',
-                title: t('pages.jobs.messages.updatedTitle'),
-                text: t('pages.jobs.messages.updated'),
-                confirmButtonText: t('pages.jobs.actions.ok'),
-            });
-
-            navigate(
-                `${path.jobs}/${updatedJob._id}`,
-                {
-                    replace: true,
-                },
-            );
+            navigate(`${path.jobs}/${updatedJob._id}`, { replace: true });
         } catch (error: any) {
-            console.error(
-                'Update job error:',
-                error,
-            );
+            console.error('Update job error:', error);
 
-            const status =
-                error?.response?.status;
-
-            // =====================================================
-            // Unauthorized
-            // =====================================================
+            const status = error?.response?.status;
 
             if (status === 401) {
-                await Swal.fire({
-                    icon: 'warning',
-                    title: t(
-                        'pages.jobs.errors.unauthorizedTitle',
-                    ),
-                    text: t(
-                        'pages.jobs.errors.unauthorized',
-                    ),
-                    confirmButtonText: t(
-                        'pages.jobs.actions.ok',
-                    ),
-                });
-            }
-
-            // =====================================================
-            // Forbidden
-            // =====================================================
-
-            else if (status === 403) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: t(
-                        'pages.jobs.errors.forbiddenTitle',
-                    ),
-                    text: t(
-                        'pages.jobs.errors.forbidden',
-                    ),
-                    confirmButtonText: t(
-                        'pages.jobs.actions.ok',
-                    ),
-                });
-            }
-
-            // =====================================================
-            // General Error
-            // =====================================================
-
-            else {
-                await Swal.fire({
-                    icon: 'error',
-                    title: t(
-                        'pages.jobs.errors.updateTitle',
-                    ),
-                    text: t(
-                        'pages.jobs.errors.update',
-                    ),
-                    confirmButtonText: t(
-                        'pages.jobs.actions.ok',
-                    ),
-                });
+                await alert(
+                    'warning',
+                    t('pages.jobs.errors.unauthorizedTitle'),
+                    t('pages.jobs.errors.unauthorized'),
+                );
+            } else if (status === 403) {
+                await alert(
+                    'error',
+                    t('pages.jobs.errors.forbiddenTitle'),
+                    t('pages.jobs.errors.forbidden'),
+                );
+            } else {
+                await alert(
+                    'error',
+                    t('pages.jobs.errors.updateTitle'),
+                    t('pages.jobs.errors.update'),
+                );
             }
         } finally {
             helpers.setSubmitting(false);
         }
     };
 
-    // =====================================================
-    // Loading
-    // =====================================================
-
     if (loading) {
         return (
             <Container
                 maxWidth='md'
-                sx={{
-                    py: 8,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
+                sx={{ py: 8, display: 'flex', justifyContent: 'center' }}
             >
-                <CircularProgress />
+                <CircularProgress sx={{ color: BRAND_GOLD }} />
             </Container>
         );
     }
 
-    // =====================================================
-    // Job not found
-    // =====================================================
-
-    if (!job) {
-        return null;
-    }
-
-    // =====================================================
-    // Render
-    // =====================================================
+    if (!job) return null;
 
     return (
-        <Container
-            maxWidth='md'
-            sx={{
-                py: 4,
-            }}
-        >
-            <Typography
-                variant='h4'
-                fontWeight={700}
-                sx={{
-                    mb: 1,
-                    color: '#12161C',
-                }}
-            >
-                {t('pages.jobs.form.update')}
-            </Typography>
-
-            <Box
-                sx={{
-                    width: 56,
-                    height: 4,
-                    borderRadius: 2,
-                    mb: 3,
-                    background:
-                        'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
-                }}
-            />
-
-            <JobForm
-                initialValues={job}
-                onSubmit={handleSubmit}
-                mode='edit'
-            />
+        <Container maxWidth='md' sx={{ py: 4 }}>
+            <JobsPageHeading title={t('pages.jobs.form.update')} />
+            <JobForm initialValues={job} onSubmit={handleSubmit} mode='edit' />
         </Container>
     );
 };

@@ -1,69 +1,102 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, ReactNode, useEffect, useState } from 'react';
 
 import {
-    Container,
-    Typography,
-    Box,
-    Stack,
-    Chip,
-    Divider,
-    CircularProgress,
-    Button,
-    Paper,
+    alpha,
     Avatar,
+    Box,
+    Button,
+    Chip,
+    CircularProgress,
+    Container,
+    Divider,
+    Paper,
+    Stack,
+    Typography,
 } from '@mui/material';
 
 import {
-    LocationOnOutlined,
-    BusinessOutlined,
-    WorkOutline,
-    PaymentsOutlined,
     ArrowBack,
-    EditOutlined,
     ArrowForward,
+    BusinessOutlined,
+    CheckCircleOutline,
+    EditOutlined,
+    LocationOnOutlined,
+    PaymentsOutlined,
+    WorkOutline,
 } from '@mui/icons-material';
+import DeleteOutline from '@mui/icons-material/DeleteOutline';
 
-import { deleteJob } from '../../../services/jobsService';
-
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import { Job } from '../../../interfaces/jobs.types';
-import { getJobById } from '../../../services/jobsService';
+import { deleteJob, getJobById } from '../../../services/jobsService';
 import { useUser } from '../../../hooks/useUSer';
-import DeleteOutline from '@mui/icons-material/DeleteOutline';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
+import { showInfo } from '../../../atoms/toasts/ReactToast';
 import { path } from '../../../routes/routes';
 import handleRTL from '../../../locales/handleRTL';
+import { BRAND_BROWN, BRAND_GOLD, BRAND_GRADIENT } from './jobsBrand';
 
-const BRAND_GOLD = '#B8860B';
-const BRAND_BROWN = '#8B4513';
-const BRAND_GRADIENT = `linear-gradient(135deg, ${BRAND_GOLD} 0%, ${BRAND_BROWN} 100%)`;
+// ─── Helpers ───────────────────────────────────────────────
+
+const Fact = ({ icon, children }: { icon: ReactNode; children: ReactNode }) => (
+    <Stack direction='row' spacing={1.5} alignItems='center'>
+        <Box
+            sx={{
+                width: 40,
+                height: 40,
+                flexShrink: 0,
+                display: 'grid',
+                placeItems: 'center',
+                borderRadius: 2,
+                color: BRAND_BROWN,
+                bgcolor: alpha(BRAND_GOLD, 0.14),
+            }}
+        >
+            {icon}
+        </Box>
+        <Box sx={{ minWidth: 0 }}>{children}</Box>
+    </Stack>
+);
+
+const ListSection = ({ title, items }: { title: string; items: string[] }) => (
+    <Box>
+        <Typography variant='h6' component='h2' fontWeight={700} sx={{ mb: 1.5 }}>
+            {title}
+        </Typography>
+
+        <Stack component='ul' spacing={1.25} sx={{ m: 0, p: 0, listStyle: 'none' }}>
+            {items.map((item, index) => (
+                <Stack
+                    key={index}
+                    component='li'
+                    direction='row'
+                    spacing={1.25}
+                    alignItems='flex-start'
+                >
+                    <CheckCircleOutline
+                        sx={{ fontSize: 20, mt: '2px', color: BRAND_GOLD }}
+                    />
+                    <Typography color='text.secondary'>{item}</Typography>
+                </Stack>
+            ))}
+        </Stack>
+    </Box>
+);
+
+// ─── Page ──────────────────────────────────────────────────
 
 const JobDetails: FunctionComponent = () => {
     const { id } = useParams();
     const { auth } = useUser();
-
     const navigate = useNavigate();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const dir = handleRTL();
 
     const [job, setJob] = useState<Job | null>(null);
-
-    const [deleteDialog, setDeleteDialog] = useState(false);
-
     const [loading, setLoading] = useState(true);
-
-    const handleDelete = async () => {
-        if (!job?._id) return;
-
-        await deleteJob(job._id).then(() => {
-            navigate(-1);
-        });
-
-        navigate('/jobs', {
-            replace: true,
-        });
-    };
+    const [deleteDialog, setDeleteDialog] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -71,10 +104,7 @@ const JobDetails: FunctionComponent = () => {
         const loadJob = async () => {
             try {
                 setLoading(true);
-
-                const result = await getJobById(id);
-
-                setJob(result);
+                setJob(await getJobById(id));
             } catch (error) {
                 console.error('Failed to load job:', error);
             } finally {
@@ -85,15 +115,21 @@ const JobDetails: FunctionComponent = () => {
         loadJob();
     }, [id]);
 
+    const handleDelete = async () => {
+        if (!job?._id) return;
+
+        try {
+            await deleteJob(job._id);
+            navigate(path.jobs, { replace: true });
+        } catch (error) {
+            console.error('Failed to delete job:', error);
+            showInfo(t('pages.jobs.errors.delete'));
+        }
+    };
+
     if (loading) {
         return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    py: 10,
-                }}
-            >
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
                 <CircularProgress sx={{ color: BRAND_GOLD }} />
             </Box>
         );
@@ -109,13 +145,16 @@ const JobDetails: FunctionComponent = () => {
         );
     }
 
-    const salary = job.salaryMin !== undefined || job.salaryMax !== undefined;
+    const salaryText = [job.salaryMin, job.salaryMax]
+        .filter((n) => n !== undefined && n !== null)
+        .map((n) => (n as number).toLocaleString(i18n.language))
+        .join(' - ');
+
+    const hasFacts = Boolean(salaryText || job.location);
 
     const isOwner = Boolean(
         auth?._id && job.seller?._id && auth._id === job.seller._id,
     );
-
-    const dir = handleRTL();
 
     return (
         <Container dir={dir} maxWidth='md' sx={{ py: 4 }}>
@@ -133,84 +172,91 @@ const JobDetails: FunctionComponent = () => {
             </Button>
 
             <Paper
-                elevation={0}
+                variant='outlined'
                 sx={{
                     position: 'relative',
                     overflow: 'hidden',
                     borderRadius: 4,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    boxShadow: '0 4px 20px rgba(18,22,28,0.06)',
                     p: { xs: 2.5, md: 4 },
+                    pt: { xs: 3.5, md: 5 },
                     '&::before': {
                         content: '""',
                         position: 'absolute',
-                        insetInlineStart: 0,
-                        insetBlockStart: 0,
-                        width: '100%',
+                        insetInline: 0,
+                        top: 0,
                         height: 5,
                         background: BRAND_GRADIENT,
                     },
                 }}
             >
-                  <Stack
-                    direction='row'
-                    spacing={1.5}
-                    alignItems='center'
-                    sx={{ mb: 1.5 }}
-                >
-                    <Avatar
-                    component={'a'}
-                    href={`/users/customer/${job.seller.slug}`}
-                        src={job.seller.image.url}
-                        alt={job.seller.name.first}
+                {/* Seller */}
+                {job.seller && (
+                    <Stack
+                        component={RouterLink}
+                        to={`/users/customer/${job.seller.slug}`}
+                        direction='row'
+                        spacing={1.5}
+                        alignItems='center'
                         sx={{
-                            width: 60,
-                            height: 60,
-                            border: '2px solid',
-                            borderColor: BRAND_GOLD,
-                            boxShadow: '0 0 0 3px rgba(184,134,11,0.12)',
+                            width: 'fit-content',
+                            mb: 3,
+                            color: 'text.primary',
+                            textDecoration: 'none',
+                            '&:hover .seller-name': { color: BRAND_BROWN },
                         }}
-                    />
-                    </Stack>
-
-                    {job.companyName && (
-                        <Stack direction='row' spacing={0.75} alignItems='center'>
-                            <BusinessOutlined
-                                fontSize='small'
-                                sx={{ color: 'text.secondary' }}
-                            />
-                            <Typography variant='body2' color='text.secondary'>
-                                {job.companyName}
+                    >
+                        <Avatar
+                            src={job.seller.image?.url}
+                            alt={job.seller.name?.first}
+                            sx={{
+                                width: 48,
+                                height: 48,
+                                border: '2px solid',
+                                borderColor: BRAND_GOLD,
+                            }}
+                        />
+                        <Box>
+                            <Typography variant='caption' color='text.secondary'>
+                                {t('pages.jobs.postedBy', {
+                                    defaultValue: 'Posted by',
+                                })}
                             </Typography>
-                        </Stack>
-                    )}
-                {/* Title */}
+                            <Typography
+                                className='seller-name'
+                                fontWeight={600}
+                                sx={{ lineHeight: 1.2, transition: 'color 0.2s' }}
+                            >
+                                {job.seller.name?.first}
+                            </Typography>
+                        </Box>
+                    </Stack>
+                )}
+
+                {/* Title + company */}
                 <Typography
                     variant='h4'
+                    component='h1'
                     fontWeight={800}
-                    gutterBottom
-                    sx={{ color: 'text.primary', lineHeight: 1.25 }}
+                    sx={{ lineHeight: 1.25, mb: job.companyName ? 1 : 2.5 }}
                 >
                     {job.jobTitle}
                 </Typography>
 
-                {/* Company */}
                 {job.companyName && (
                     <Stack
                         direction='row'
                         spacing={1}
                         alignItems='center'
-                        sx={{ mb: 2.5 }}
+                        sx={{ mb: 2.5, color: 'text.secondary' }}
                     >
-                        <BusinessOutlined sx={{ color: 'text.secondary' }} />
-
-                        <Typography variant='h6' color='text.secondary' fontWeight={500}>
+                        <BusinessOutlined fontSize='small' />
+                        <Typography variant='h6' fontWeight={500}>
                             {job.companyName}
                         </Typography>
                     </Stack>
                 )}
 
+                {/* Chips */}
                 <Stack direction='row' flexWrap='wrap' gap={1} sx={{ mb: 3 }}>
                     <Chip
                         icon={<WorkOutline sx={{ color: '#fff !important' }} />}
@@ -233,8 +279,8 @@ const JobDetails: FunctionComponent = () => {
 
                     {job.remote && (
                         <Chip
-                            label={t('pages.jobs.remote')}
                             variant='outlined'
+                            label={t('pages.jobs.remote')}
                             sx={{ borderColor: BRAND_GOLD, color: BRAND_BROWN }}
                         />
                     )}
@@ -244,138 +290,95 @@ const JobDetails: FunctionComponent = () => {
                     )}
                 </Stack>
 
-                <Divider sx={{ mb: 3 }} />
+                {/* Key facts */}
+                {hasFacts && (
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gridTemplateColumns: {
+                                xs: '1fr',
+                                sm: 'repeat(2, minmax(0, 1fr))',
+                            },
+                            gap: 2.5,
+                            p: 2.5,
+                            mb: 4,
+                            borderRadius: 3,
+                            bgcolor: alpha(BRAND_GOLD, 0.07),
+                            border: '1px solid',
+                            borderColor: alpha(BRAND_GOLD, 0.25),
+                        }}
+                    >
+                        {salaryText && (
+                            <Fact icon={<PaymentsOutlined />}>
+                                <Typography variant='h6' fontWeight={800}>
+                                    {salaryText}
+                                    {job.salaryPeriod && (
+                                        <Box
+                                            component='span'
+                                            sx={{
+                                                color: 'text.secondary',
+                                                fontWeight: 400,
+                                                fontSize: '0.9rem',
+                                            }}
+                                        >
+                                            {' / '}
+                                            {t(
+                                                `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
+                                            )}
+                                        </Box>
+                                    )}
+                                </Typography>
+                            </Fact>
+                        )}
 
-                <Stack spacing={2} sx={{ mb: salary ? 3 : 0 }}>
-                    {/* Location */}
-                    {job.location && (
-                        <Stack direction='row' spacing={1} alignItems='center'>
-                            <LocationOnOutlined sx={{ color: 'text.secondary' }} />
-                            <Typography>{job.location}</Typography>
-                        </Stack>
+                        {job.location && (
+                            <Fact icon={<LocationOnOutlined />}>
+                                <Typography fontWeight={600}>
+                                    {job.location}
+                                </Typography>
+                            </Fact>
+                        )}
+                    </Box>
+                )}
+
+                {/* Requirements + benefits */}
+                <Stack spacing={4}>
+                    {job.requirements && job.requirements.length > 0 && (
+                        <ListSection
+                            title={t('pages.jobs.requirements')}
+                            items={job.requirements}
+                        />
                     )}
 
-                    {/* Salary */}
-                    {salary && (
-                        <Stack direction='row' spacing={1} alignItems='center'>
-                            <PaymentsOutlined sx={{ color: BRAND_BROWN }} />
-
-                            <Typography fontWeight={700} sx={{ color: BRAND_BROWN }}>
-                                {job.salaryMin !== undefined &&
-                                    job.salaryMin.toLocaleString()}
-
-                                {job.salaryMin !== undefined &&
-                                    job.salaryMax !== undefined &&
-                                    ' - '}
-
-                                {job.salaryMax !== undefined &&
-                                    job.salaryMax.toLocaleString()}
-
-                                {job.salaryPeriod && (
-                                    <Box
-                                        component='span'
-                                        sx={{ color: 'text.secondary', fontWeight: 400 }}
-                                    >
-                                        {' / '}
-                                        {t(
-                                            `pages.jobs.salaryPeriods.${job.salaryPeriod}`,
-                                        )}
-                                    </Box>
-                                )}
-                            </Typography>
-                        </Stack>
+                    {job.benefits && job.benefits.length > 0 && (
+                        <ListSection
+                            title={t('pages.jobs.benefits')}
+                            items={job.benefits}
+                        />
                     )}
                 </Stack>
 
-                {/* Requirements */}
-                {job.requirements && job.requirements.length > 0 && (
-                    <Box sx={{ mb: 4 }}>
-                        <Typography
-                            variant='h6'
-                            fontWeight={700}
-                            gutterBottom
-                            sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                '&::before': {
-                                    content: '""',
-                                    width: 4,
-                                    height: 18,
-                                    borderRadius: 1,
-                                    background: BRAND_GRADIENT,
-                                },
-                            }}
-                        >
-                            {t('pages.jobs.requirements')}
-                        </Typography>
-
-                        <Stack spacing={1} sx={{ mt: 1 }}>
-                            {job.requirements.map((requirement, index) => (
-                                <Typography key={index} color='text.secondary'>
-                                    • {requirement}
-                                </Typography>
-                            ))}
-                        </Stack>
-                    </Box>
-                )}
-
-                {/* Benefits */}
-                {job.benefits && job.benefits.length > 0 && (
-                    <Box sx={{ mb: isOwner ? 4 : 0 }}>
-                        <Typography
-                            variant='h6'
-                            fontWeight={700}
-                            gutterBottom
-                            sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                '&::before': {
-                                    content: '""',
-                                    width: 4,
-                                    height: 18,
-                                    borderRadius: 1,
-                                    background: BRAND_GRADIENT,
-                                },
-                            }}
-                        >
-                            {t('pages.jobs.benefits')}
-                        </Typography>
-
-                        <Stack spacing={1} sx={{ mt: 1 }}>
-                            {job.benefits.map((benefit, index) => (
-                                <Typography key={index} color='text.secondary'>
-                                    • {benefit}
-                                </Typography>
-                            ))}
-                        </Stack>
-                    </Box>
-                )}
-
+                {/* Owner actions */}
                 {isOwner && (
                     <>
-                        <Divider sx={{ mb: 3 }} />
+                        <Divider sx={{ my: 4 }} />
 
-                        <Stack
-                            direction='row'
-                            spacing={2}
-                            justifyContent='center'
-                        >
+                        <Stack direction='row' spacing={1.5}>
                             <Button
-                                variant='outlined'
+                                variant='contained'
                                 startIcon={<EditOutlined />}
                                 onClick={() =>
                                     navigate(`${path.jobs}/${job._id}/edit`)
                                 }
                                 sx={{
                                     gap: 1,
-                                    borderColor: 'text.primary',
-                                    color: 'text.primary',
+                                    color: '#fff',
+                                    background: BRAND_GRADIENT,
+                                    boxShadow: 'none',
                                     '&:hover': {
-                                        borderColor: BRAND_BROWN,
-                                        color: BRAND_BROWN,
-                                        bgcolor: 'transparent',
+                                        background: BRAND_GRADIENT,
+                                        filter: 'brightness(0.92)',
+                                        boxShadow: 'none',
                                     },
                                 }}
                             >
@@ -383,11 +386,11 @@ const JobDetails: FunctionComponent = () => {
                             </Button>
 
                             <Button
-                                sx={{ gap: 1 }}
                                 variant='outlined'
                                 color='error'
                                 startIcon={<DeleteOutline />}
                                 onClick={() => setDeleteDialog(true)}
+                                sx={{ gap: 1 }}
                             >
                                 {t('pages.jobs.actions.delete')}
                             </Button>

@@ -7,14 +7,13 @@ import {
     Typography,
     Collapse,
 } from '@mui/material';
-import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { NavLink } from 'react-router-dom';
 import { productsAndCategories, NavCategory } from './navCategoryies';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../locales/handleRTL';
+import FloatingToggle from './FloatingToggle';
 
 // --- Constants ---
 const SIDEBAR_WIDTH = 310;
@@ -187,7 +186,6 @@ const ChipNavigation = () => {
 
     // Determine transform direction based on RTL
     const closedTranslate = isRTL ? '-100%' : '100%';
-    const showRightArrow = (isRTL && !open) || (!isRTL && open);
 
     const handleCategoryToggle = (value: string) => {
         setExpandedCategory((prev) => (prev === value ? false : value));
@@ -201,7 +199,7 @@ const ChipNavigation = () => {
     return (
         <>
             {/* Floating Toggle Button */}
-            <IconButton
+            {/* <IconButton
                 onClick={() => setOpen((prev) => !prev)}
                 aria-label={open ? t('common.close') : t('categories.title')}
                 sx={{
@@ -211,13 +209,23 @@ const ChipNavigation = () => {
                     zIndex: (theme) => theme.zIndex.drawer + 1,
                     width: BUTTON_SIZE,
                     height: 42,
-                    borderRadius: 0,
+                    borderTopEndRadius: 1,
+                    borderBottomEndRadius: 1,
                     bgcolor: 'background.paper',
                     border: '1px solid',
                     borderColor: 'divider',
                     boxShadow: 2,
                     transition: 'inset-inline-end 200ms ease-in-out',
                     '&:hover': { bgcolor: 'background.paper' },
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        width: '100%',
+                        height: '100%',
+                        borderRight: `1px solid ${BRAND.gold}`,
+                        borderRadius: 1,
+                        top: 0,
+                    },
                 }}
             >
                 {showRightArrow ? (
@@ -225,7 +233,8 @@ const ChipNavigation = () => {
                 ) : (
                     <ChevronLeftRoundedIcon fontSize='small' />
                 )}
-            </IconButton>
+            </IconButton> */}
+            <FloatingToggle BUTTON_SIZE={BUTTON_SIZE} SIDEBAR_WIDTH={SIDEBAR_WIDTH}  open={open} setOpen={setOpen} />
 
             {/* Sidebar Drawer */}
             <Box
