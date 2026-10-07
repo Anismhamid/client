@@ -36,13 +36,14 @@ import { useTranslation } from 'react-i18next';
 import handleRTL from '../../../locales/handleRTL';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import LikeButton from '../../../atoms/like/LikeButton';
-import { path, productsPathes } from '../../../routes/routes';
+import { path } from '../../../routes/routes';
 import { formatTimeAgo } from './helpers/helperFunctions';
 import { useUser } from '../../../hooks/useUSer';
 import SealBadge from '../home/SealBadge';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import ReportButton from '../../reports/ReportButton';
+import { getPostUrl } from './helpers/postUrl';
 
 interface PostCardProps {
     post: Posts;
@@ -114,7 +115,8 @@ const PostCard: FunctionComponent<PostCardProps> = ({
 
     const jsonLdData = generateSingleProductJsonLd(post);
 
-    const productUrl = `${productsPathes.postsDetails}/${post.category}/${post?.brand}/${post._id}`;
+    const productUrl = getPostUrl({ _id: post._id, postName: post.product_name });
+
     const isOutOfStock = post.in_stock === false;
     const isOwnPost = auth._id === post.seller?._id;
     const sellerName = post.seller?.name?.first || post.seller?.slug || 'بائع';

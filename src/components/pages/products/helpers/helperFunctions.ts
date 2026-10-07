@@ -19,7 +19,13 @@ export const getAverageRating = (post: Posts) => {
     return sum / post.reviews.length;
 };
 
-export const formatTimeAgo = (createdAt: string, t: TFunction) => {
+/**
+ * Formats the time ago string based on the creation date
+ * @param createdAt 
+ * @param t 
+ * @returns 
+ */
+export const  formatTimeAgo = (createdAt: string | Date, t: TFunction) => {
     const now = new Date();
     const productDate = new Date(createdAt || now);
     const diffMs = now.getTime() - productDate.getTime();

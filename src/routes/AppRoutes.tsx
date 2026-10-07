@@ -171,6 +171,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 element={<PostDetails />}
             />
             <Route
+                path={`/:sellerSlug${productsPathes.postsDetails}/:category/:postSlug`}
+                element={<PostDetails />}
+            />
+            <Route
                 path={`${productsPathes.postsDetails}/:category/:brand/:postId`}
                 element={<PostDetails />}
             />
