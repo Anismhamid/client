@@ -1,6 +1,7 @@
 import api from './api';
 
 import {
+    AdminJobsFilters,
     CreateJobPayload,
     Job,
     JobsFilters,
@@ -106,9 +107,7 @@ export const deleteJob = async (id: string): Promise<void> => {
 // Get gobs by userId
 // =====================================================
 
-export const getJobsByUserId = async (
-    userId: string,
-): Promise<Job[]> => {
+export const getJobsByUserId = async (userId: string): Promise<Job[]> => {
     const { data } = await api.get<{
         success: boolean;
         count: number;
@@ -116,4 +115,50 @@ export const getJobsByUserId = async (
     }>(`${JOBS_BASE}/user/${userId}`);
 
     return data.jobs;
+};
+
+// =====================================================
+// Admin - Get jobs
+// =====================================================
+
+export const getAdminJobs = async (
+    filters: AdminJobsFilters,
+): Promise<JobsResponse> => {
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined && value !== null && value !== '') {
+            params.append(key, String(value));
+        }
+    });
+
+    const { data } = await api.get<JobsResponse>(`${JOBS_BASE}/admin`, {
+        params,
+    });
+
+    return data;
+};
+
+// =====================================================
+// Admin - Update job
+// =====================================================
+
+export const updateJobByAdmin = async (
+    id: string,
+    payload: UpdateJobPayload,
+): Promise<Job> => {
+    const { data } = await api.patch<{
+        success: boolean;
+        job: Job;
+    }>(`${JOBS_BASE}/admin/${id}`, payload);
+
+    return data.job;
+};
+
+// =====================================================
+// Admin - Delete job
+// =====================================================
+
+export const deleteJobByAdmin = async (id: string): Promise<void> => {
+    await api.delete(`${JOBS_BASE}/admin/${id}`);
 };

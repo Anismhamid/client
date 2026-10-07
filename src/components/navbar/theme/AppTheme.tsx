@@ -234,92 +234,69 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         }
     };
 
-    const notificationRoutes: Record<string, string> = {
-        home: path.Home,
-        jobs: path.jobs,
-        // posts: path.Posts,
-        myPosts: path.MyAdsDashboard,
-        profile: path.Profile,
-        notifications: path.Notifications,
-    };
+    // const notificationRoutes: Record<string, string> = {
+    //     home: path.Home,
+    //     jobs: path.jobs,
+    //     // posts: path.Posts,
+    //     myPosts: path.MyAdsDashboard,
+    //     profile: path.Profile,
+    //     notifications: path.Notifications,
+    // };
 
-    const handleNotificationItemClick = async (
-        notification: AppNotifications,
-    ) => {
-        try {
-            // =====================================================
-            // 1. Mark as read
-            // =====================================================
-
-            if (!notification.readAt) {
-                await markAsRead(notification._id);
-            }
-
-            // =====================================================
-            // 2. Close notification menu
-            // =====================================================
-
-            handleCloseNotifications();
-
-            // =====================================================
-            // 3. Admin notification
-            // =====================================================
-
-            if (notification.type === 'admin') {
-                const screen = notification.data?.screen;
-
-                if (typeof screen === 'string') {
-                    const route = notificationRoutes[screen];
-
-                    if (route) {
-                        navigate(route);
-                        return;
-                    }
-                }
-
-                // إشعار Admin بدون صفحة محددة
-                navigate(path.Home);
-                return;
-            }
-
-            // =====================================================
-            // 4. Post notifications
-            // =====================================================
-
-            const postId = notification.data?.postId;
-
-            if (!postId) {
-                return;
-            }
-
-            // -----------------------------------------------------
-            // Pending post
-            // -----------------------------------------------------
-
-            if (notification.type === 'post_pending_review') {
-                navigate(`${path.UsersManagement}?tab=pending-posts`);
-                return;
-            }
-
-            // -----------------------------------------------------
-            // Post details
-            // -----------------------------------------------------
-
-            const category = notification.data?.category;
-            const brand = notification.data?.brand;
-
-            if (category && brand) {
-                navigate(
-                    `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
-                );
-                return;
-            }
-
-            navigate(`${productsPathes.postsDetails}/${postId}`);
-        } catch (error) {
-            console.error('[Notification] Failed to open notification:', error);
+const handleNotificationItemClick = async (
+    notification: AppNotifications,
+) => {
+    try {
+        if (!notification.readAt) {
+            await markAsRead(notification._id);
         }
-    };
+
+        handleCloseNotifications();
+
+        // إشعارات الإدارة
+        if (notification.type === 'admin') {
+            const screen = notification.data?.screen;
+
+            if (typeof screen === 'string' && screen.trim()) {
+                navigate(screen);
+                return;
+            }
+
+            navigate(path.Home);
+            return;
+        }
+
+        // إشعارات الإعلانات
+        const postId = notification.data?.postId;
+
+        if (!postId) {
+            return;
+        }
+
+        // إعلان بانتظار المراجعة
+        if (notification.type === 'post_pending_review') {
+            navigate(`${path.UsersManagement}?tab=pending-posts`);
+            return;
+        }
+
+        const category = notification.data?.category;
+        const brand = notification.data?.brand;
+
+        if (category && brand) {
+            navigate(
+                `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
+            );
+            return;
+        }
+
+        navigate(`${productsPathes.postsDetails}/${postId}`);
+    } catch (error) {
+        console.error(
+            '[Notification] Failed to open notification:',
+            error,
+        );
+    }
+};
 
     const notificationMenu = (
         <Menu

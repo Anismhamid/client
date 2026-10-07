@@ -13,6 +13,12 @@ import { UserMessage } from '../interfaces/chat/usersMessages';
 import { useUser } from '../hooks/useUSer';
 import Loader from '../atoms/loader/Loader';
 
+const AdminJobs = lazy(() => import('../components/admin/Jobs/AdminJobs'));
+
+const AdminJobDetails = lazy(
+    () => import('../components/admin/Jobs/AdminJobDetails'),
+);
+
 /* =========================================================
  * PUBLIC / GENERAL
  * ========================================================= */
@@ -76,7 +82,8 @@ const AdminSendNotification = lazy(
 );
 
 const AdminSentNotifications = lazy(
-    () => import('../components/admin/notifications/AdminSentNotifications'));
+    () => import('../components/admin/notifications/AdminSentNotifications'),
+);
 
 /* =========================================================
  * PRODUCTS
@@ -423,6 +430,11 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                 {/* /admin/posts */}
 
                 <Route path='posts' element={<PendingPosts />} />
+
+                {/* /admin/jobs */}
+
+                <Route path='jobs' element={<AdminJobs />} />
+                <Route path='jobs/:jobId' element={<AdminJobDetails />} />
 
                 {/* /admin/reports */}
 

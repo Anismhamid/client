@@ -1,4 +1,4 @@
-import { User } from "./User";
+import { User } from './User';
 
 export type JobType =
     | 'full_time'
@@ -24,7 +24,7 @@ export type SalaryPeriod =
 export interface Job {
     _id: string;
 
-    seller:User
+    seller: User;
 
     type: JobType;
 
@@ -82,6 +82,10 @@ export interface JobsFilters {
     limit?: number;
 }
 
+export interface AdminJobsFilters extends JobsFilters {
+    search?: string;
+}
+
 export interface CreateJobPayload {
     type: JobType;
     jobTitle: string;
@@ -97,5 +101,4 @@ export interface CreateJobPayload {
     benefits?: string[];
 }
 
-export type UpdateJobPayload =
-    Partial<CreateJobPayload>;
+export type UpdateJobPayload = Partial<CreateJobPayload>;
