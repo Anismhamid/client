@@ -757,7 +757,6 @@ const AdminJobs: FunctionComponent = () => {
                                     }}
                                 >
                                     <Avatar
-                                        component='img'
                                         src={job.seller?.image.url}
                                         alt={job.seller?.image.alt || 'صورة المستخدم'}
                                         sx={{

@@ -122,7 +122,7 @@ const BlockButton = ({
                 slotProps={{
                     root: {
                         sx: {
-                            zIndex: 6000,
+                            zIndex: 6000000,
                         },
                     },
                 }}

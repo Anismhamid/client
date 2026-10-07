@@ -780,7 +780,6 @@ const AdminJobDetails: FunctionComponent = () => {
 
                         <Stack direction='row' spacing={2} alignItems='center'>
                             <Avatar
-                                component='img'
                                 alt={getSellerName(job)}
                                 src={job.seller?.image.url}
                                 sx={{
