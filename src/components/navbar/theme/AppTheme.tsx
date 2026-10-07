@@ -587,9 +587,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
         await contextLogout();
 
-        navigate(path.Home, {
-            replace: true,
-        });
+        navigate(path.Home);
 
         setMobileOpen(false);
 
