@@ -7,7 +7,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import {
     Alert,
@@ -15,16 +15,15 @@ import {
     Box,
     Breadcrumbs,
     Button,
-    Card,
-    CardMedia,
     Chip,
     Container,
     Dialog,
     Divider,
     Grid,
     IconButton,
-    Rating,
+    LinearProgress,
     Paper,
+    Rating,
     Skeleton,
     Stack,
     TextField,
@@ -37,56 +36,44 @@ import {
 
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 import {
+    AccessTimeRounded,
     ArrowBack as ArrowBackIcon,
-    ChevronRight,
     Comment,
     Error as ErrorIcon,
-    Fullscreen,
-    FullscreenExit,
     Home as HomeIcon,
-    Person,
+    LocationOn,
     Phone,
+    Refresh as RefreshIcon,
+    ShieldOutlined,
     Share as ShareIcon,
     Store as StoreIcon,
-    VerifiedRounded,
+    Visibility as ViewIcon,
+    WhatsApp,
     ZoomIn,
     ZoomOut,
-    WhatsApp,
-    Email,
-    LocationOn,
-    CalendarToday,
-    Visibility as ViewIcon,
-    ThumbUp as ThumbUpIcon,
-    Refresh as RefreshIcon,
 } from '@mui/icons-material';
 
-import { initialProductValue, Posts } from '../../../interfaces/Posts';
+import { initialProductValue, Posts, Review } from '../../../interfaces/Posts';
 import { path } from '../../../routes/routes';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
-import ColorsAndSizes from '../../../atoms/productsManage/ColorsAndSizes';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../../hooks/useUSer';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
 import JsonLd from '../../../../utils/JsonLd';
-
 import {
     categoryLabels,
     categoryPathMap,
 } from '../../../interfaces/postsCategoeis';
-
 import LikeButton from '../../../atoms/like/LikeButton';
 import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
-
 import { formatTimeAgo, generatePath } from './helpers/helperFunctions';
-
 import RelatedProductCard from './RelatedProductCard';
-
 import {
     deletePost,
     getPostById,
@@ -94,40 +81,19 @@ import {
     incrementViewCount,
     submitReview,
 } from '../../../services/postsServices';
-
-import { easeOut, m } from 'framer-motion';
-
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import PostSpecifications from './PostSpecifications';
 import handleRTL from '../../../locales/handleRTL';
+import ReportButton from '../../reports/ReportButton';
 
 const SITE_URL = 'https://client-qqq1.vercel.app';
 
-/* =========================================================
-   BRAND
-========================================================= */
+/* ========================= BRAND ========================= */
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 const BRAND_COLOR = '#B8860B';
 const BRAND_DARK = '#8B4513';
-
-/* =========================================================
-   ANIMATIONS
-========================================================= */
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 24 },
-    show: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.5, ease: easeOut },
-    },
-};
-
-/* =========================================================
-   COMMON CARD STYLE
-========================================================= */
 
 const sectionCardSx = {
     borderRadius: 3,
@@ -135,29 +101,41 @@ const sectionCardSx = {
     border: '1px solid',
     borderColor: 'divider',
     boxShadow: '0 4px 20px rgba(0,0,0,.04)',
-    transition: 'all .3s cubic-bezier(.4,0,.2,1)',
-    '&:hover': {
-        boxShadow: '0 8px 40px rgba(0,0,0,.08)',
-    },
+} as const;
+
+const gradientBtnSx = {
+    py: 1.4,
+    fontWeight: 700,
+    color: '#fff',
+    background: BRAND_GRADIENT,
+    '&:hover': { background: BRAND_GRADIENT, filter: 'brightness(1.1)' },
+} as const;
+
+/* ========================= HELPERS ========================= */
+
+/** wa.me يحتاج رقم دولي بدون + أو 0 (افتراض: أرقام إسرائيل 972) */
+const toWhatsAppNumber = (raw?: string) => {
+    const digits = (raw ?? '').replace(/\D/g, '');
+    if (!digits) return '';
+    if (digits.startsWith('972')) return digits;
+    if (digits.startsWith('0')) return `972${digits.slice(1)}`;
+    return digits;
 };
 
-/* =========================================================
-   SECTION TITLE
-========================================================= */
+const getReviewUserId = (review: Review): string => {
+    const u = review.user as { _id?: string } | string | null | undefined;
+    if (!u) return '';
+    return typeof u === 'string' ? u : String(u._id ?? '');
+};
+
+/* ========================= SMALL COMPONENTS ========================= */
 
 const SectionTitle = memo(
     ({ title, subtitle }: { title: string; subtitle?: string }) => (
-        <Box sx={{ mb: 3 }}>
-            <Typography
-                variant='h5'
-                sx={{
-                    fontWeight: 800,
-                    mb: 0.5,
-                }}
-            >
+        <Box sx={{ mb: 2.5 }}>
+            <Typography variant='h6' sx={{ fontWeight: 800 }}>
                 {title}
             </Typography>
-
             {subtitle && (
                 <Typography variant='body2' color='text.secondary'>
                     {subtitle}
@@ -166,110 +144,232 @@ const SectionTitle = memo(
         </Box>
     ),
 );
-
 SectionTitle.displayName = 'SectionTitle';
 
-/* =========================================================
-   STATS BADGE
-========================================================= */
+const RatingSummary = memo(
+    ({ reviews, average }: { reviews: Review[]; average: number }) => {
+        const rated = reviews.filter((r) => Number(r.rating) > 0);
+        const counts = [5, 4, 3, 2, 1].map((star) => ({
+            star,
+            count: rated.filter((r) => Math.round(Number(r.rating)) === star)
+                .length,
+        }));
 
-const StatsBadge = memo(
-    ({
-        icon,
-        label,
-        value,
-    }: {
-        icon: React.ReactNode;
-        label: string;
-        value: string | number;
-    }) => (
-        <Tooltip title={label} arrow>
-            <Stack direction='row' spacing={0.5} alignItems='center'>
-                {icon}
-                <Typography variant='caption' fontWeight={600}>
-                    {value}
-                </Typography>
+        return (
+            <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={3}
+                alignItems={{ xs: 'stretch', sm: 'center' }}
+                sx={{
+                    p: 2.5,
+                    mb: 3,
+                    borderRadius: 2,
+                    bgcolor: alpha(BRAND_COLOR, 0.05),
+                }}
+            >
+                <Box sx={{ textAlign: 'center', minWidth: 120 }}>
+                    <Typography
+                        sx={{ fontSize: '2.75rem', fontWeight: 900, lineHeight: 1 }}
+                    >
+                        {average.toFixed(1)}
+                    </Typography>
+                    <Rating
+                        value={average}
+                        precision={0.1}
+                        size='small'
+                        readOnly
+                    />
+                    <Typography
+                        variant='caption'
+                        color='text.secondary'
+                        display='block'
+                    >
+                        {rated.length}
+                    </Typography>
+                </Box>
+
+                <Stack spacing={0.5} sx={{ flex: 1 }}>
+                    {counts.map(({ star, count }) => (
+                        <Stack
+                            key={star}
+                            direction='row'
+                            alignItems='center'
+                            spacing={1}
+                        >
+                            <Typography variant='caption' sx={{ width: 12 }}>
+                                {star}
+                            </Typography>
+                            <LinearProgress
+                                variant='determinate'
+                                value={
+                                    rated.length
+                                        ? (count / rated.length) * 100
+                                        : 0
+                                }
+                                sx={{
+                                    flex: 1,
+                                    height: 8,
+                                    borderRadius: 4,
+                                    bgcolor: alpha(BRAND_COLOR, 0.15),
+                                    '& .MuiLinearProgress-bar': {
+                                        borderRadius: 4,
+                                        background: BRAND_GRADIENT,
+                                    },
+                                }}
+                            />
+                            <Typography
+                                variant='caption'
+                                color='text.secondary'
+                                sx={{ width: 24, textAlign: 'end' }}
+                            >
+                                {count}
+                            </Typography>
+                        </Stack>
+                    ))}
+                </Stack>
             </Stack>
-        </Tooltip>
-    ),
+        );
+    },
 );
+RatingSummary.displayName = 'RatingSummary';
 
-StatsBadge.displayName = 'StatsBadge';
-
-/* =========================================================
-   COMPONENT
-========================================================= */
+/* ========================= COMPONENT ========================= */
 
 const PostDetails: FunctionComponent = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { postId } = useParams<{ postId: string }>();
+    const { pathname } = useLocation();
     const navigate = useNavigate();
     const { isLoggedIn, auth } = useUser();
     const { openChat } = useChatWindow();
     const dir = handleRTL();
-    /* =====================================================
-       STATE
-    ===================================================== */
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
     const [post, setPost] = useState(initialProductValue as Posts);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-    const [productRating, setProductRating] = useState<number>(0);
-    const [reviewRating, setReviewRating] = useState<number>(0);
-    const [comment, setComment] = useState('');
-    const [showUpdateModal, setShowUpdateModal] = useState<boolean>(false);
-    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
-    const [isSharing, setIsSharing] = useState<boolean>(false);
-    const [zoomLevel, setZoomLevel] = useState<number>(1);
-    const [isZoomed, setIsZoomed] = useState<boolean>(false);
-    const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-    const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
     const [relatedProducts, setRelatedProducts] = useState<Posts[]>([]);
+
+    const [reviewRating, setReviewRating] = useState(0);
+    const [comment, setComment] = useState('');
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [showAllReviews, setShowAllReviews] = useState(false);
+
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [isSharing, setIsSharing] = useState(false);
     const [imageDialogOpen, setImageDialogOpen] = useState(false);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const imageContainerRef = useRef<HTMLDivElement | null>(null);
+    /* ---------- derived ---------- */
 
-    /* =====================================================
-       SELLER
-    ===================================================== */
+    const pageUrl = `${SITE_URL}${pathname}`;
+    const reviews = useMemo(() => post.reviews ?? [], [post.reviews]);
 
-    const sellerDisplayName = useMemo(() => {
-        return (
+    const sellerDisplayName = useMemo(
+        () =>
             [post.seller?.name?.first, post.seller?.name?.last]
                 .filter(Boolean)
-                .join(' ') || 'user'
-        );
-    }, [post.seller?.name?.first, post.seller?.name?.last]);
-
-    /* =====================================================
-       CATEGORY
-    ===================================================== */
+                .join(' ') || 'user',
+        [post.seller?.name?.first, post.seller?.name?.last],
+    );
 
     const categoryLabel = useMemo(() => {
-        if (!post.category) {
-            return t('common.product.category') || 'التصنيف';
-        }
+        if (!post.category) return t('common.product.category') || 'التصنيف';
         return categoryLabels[post.category] || t(post.category);
     }, [post.category, t]);
 
-    /* =====================================================
-       OWNER
-    ===================================================== */
+    const isOwner = Boolean(
+        auth?._id &&
+        post?._id &&
+        String(auth._id) === String(post.seller?._id),
+    );
 
-    const isOwner = useMemo(() => {
-        return Boolean(
-            auth?._id &&
-            post?._id &&
-            String(auth._id) === String(post.seller?._id),
-        );
-    }, [auth?._id, post?._id, post.seller?._id]);
+    const finalPrice = useMemo(
+        () =>
+            post.sale
+                ? post.price - (post.price * (post.discount || 0)) / 100
+                : post.price,
+        [post.sale, post.price, post.discount],
+    );
 
-    /* =====================================================
-       CONTACT SELLER
-    ===================================================== */
+    const averageRating = useMemo(() => {
+        const rated = reviews.filter((r) => Number(r.rating) > 0);
+        if (!rated.length) return 0;
+        return rated.reduce((sum, r) => sum + Number(r.rating), 0) / rated.length;
+    }, [reviews]);
+
+    const hasReviewed = useMemo(
+        () =>
+            auth?._id
+                ? reviews.some((r) => getReviewUserId(r) === String(auth._id))
+                : false,
+        [reviews, auth?._id],
+    );
+
+    const sellerPhone = post.seller?.phone?.phone_1 ?? '';
+    const whatsappNumber = toWhatsAppNumber(sellerPhone);
+
+    const memberSince = useMemo(() => {
+        const raw = post.seller?.registrAt || post.seller?.createdAt;
+        if (!raw) return '';
+        const d = new Date(raw);
+        return Number.isNaN(d.getTime())
+            ? ''
+            : d.toLocaleDateString(i18n.language, {
+                  year: 'numeric',
+                  month: 'long',
+              });
+    }, [post.seller?.registrAt, post.seller?.createdAt, i18n.language]);
+
+    /* ---------- data ---------- */
+
+    const loadPost = useCallback(
+        async (silent = false) => {
+            if (!postId) {
+                setError(t('common.product.idMissing'));
+                setLoading(false);
+                return;
+            }
+            if (!silent) {
+                setLoading(true);
+                setError('');
+            }
+            try {
+                setPost(await getPostById(postId));
+            } catch (fetchError) {
+                console.error('Error fetching post:', fetchError);
+                if (silent) showError(t('common.product.loadError'));
+                else setError(t('common.product.loadPostError'));
+            } finally {
+                if (!silent) setLoading(false);
+            }
+        },
+        [postId, t],
+    );
+
+    useEffect(() => {
+        void loadPost();
+    }, [loadPost, auth._id]);
+
+    useEffect(() => {
+        if (!post._id || !post.category) return;
+        getRelatedPosts(post.category, post._id, 4)
+            .then(setRelatedProducts)
+            .catch((relatedError) =>
+                console.error('Related products error:', relatedError),
+            );
+    }, [post._id, post.category]);
+
+    const incrementedRef = useRef<string | null>(null);
+    useEffect(() => {
+        const id = post._id;
+        if (!id || incrementedRef.current === id) return;
+        incrementedRef.current = id;
+        incrementViewCount(id);
+    }, [post._id]);
+
+    /* ---------- actions ---------- */
 
     const handleContactSeller = useCallback(() => {
         const seller = post.seller;
@@ -278,50 +378,37 @@ const PostDetails: FunctionComponent = () => {
             navigate(path.Login);
             return;
         }
-
         if (!seller?._id) {
             showError(t('common.product.sellerUnavailable'));
             return;
         }
-
         if (String(auth._id) === String(seller._id)) {
             showError(t('common.product.cannotContactSelf'));
             return;
         }
 
-        const productUrl = `${SITE_URL}${location.pathname}`;
-        const discountedPrice = post.sale
-            ? post.price - (post.price * (post.discount || 0)) / 100
-            : post.price;
         const initialMessage =
             `${t('chat.interestedIn')} "${post.product_name}" 💬\n\n` +
-            `📦 ${t('common.product.currentPrice')}: ${formatPrice(discountedPrice)}\n` +
+            `📦 ${t('common.product.currentPrice')}: ${formatPrice(finalPrice)}\n` +
             `📂 ${t('common.product.category')}: ${categoryLabel}\n` +
-            `🔗 ${t('common.product.productLink')}: ${productUrl}\n\n` +
+            `🔗 ${t('common.product.productLink')}: ${pageUrl}\n\n` +
             t('chat.isStillAvailable');
 
         openChat(seller as UserMessage, initialMessage);
     }, [
         post.seller,
-        post.sale,
-        post.price,
-        post.discount,
         post.product_name,
         auth._id,
-        t,
+        finalPrice,
         categoryLabel,
+        pageUrl,
+        t,
         openChat,
         navigate,
     ]);
 
-    /* =====================================================
-       PROFILE
-    ===================================================== */
-
     const goToProfile = useCallback(() => {
-        if (!post.seller?.slug) {
-            return;
-        }
+        if (!post.seller?.slug) return;
         navigate(
             generatePath(path.CustomerProfile, {
                 slug: encodeURIComponent(post.seller.slug),
@@ -329,93 +416,15 @@ const PostDetails: FunctionComponent = () => {
         );
     }, [navigate, post.seller?.slug]);
 
-    /* =====================================================
-       ZOOM
-    ===================================================== */
-
-    const handleZoomIn = useCallback(() => {
-        setZoomLevel((prev) => Math.min(prev + 0.5, 3));
-        setIsZoomed(true);
-    }, []);
-
-    const handleZoomOut = useCallback(() => {
-        setZoomLevel((prev) => {
-            const nextZoom = Math.max(prev - 0.5, 1);
-            if (nextZoom === 1) {
-                setIsZoomed(false);
-            }
-            return nextZoom;
-        });
-    }, []);
-
-    const handleResetZoom = useCallback(() => {
-        setZoomLevel(1);
-        setIsZoomed(false);
-        setMousePosition({ x: 50, y: 50 });
-    }, []);
-
-    const handleMouseMove = useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-            if (!isZoomed || !imageContainerRef.current) {
-                return;
-            }
-            const container = imageContainerRef.current;
-            const { left, top, width, height } =
-                container.getBoundingClientRect();
-            const x = ((e.clientX - left) / width) * 100;
-            const y = ((e.clientY - top) / height) * 100;
-            setMousePosition({ x, y });
-        },
-        [isZoomed],
-    );
-
-    /* =====================================================
-       FULLSCREEN
-    ===================================================== */
-
-    const handleFullscreenToggle = useCallback(async () => {
-        try {
-            if (!document.fullscreenElement) {
-                await imageContainerRef.current?.requestFullscreen();
-                setIsFullscreen(true);
-                return;
-            }
-            await document.exitFullscreen();
-            setIsFullscreen(false);
-        } catch {
-            showError(t('common.product.fullscreenError'));
-        }
-    }, [t]);
-
-    useEffect(() => {
-        const handleFullscreenChange = () => {
-            setIsFullscreen(Boolean(document.fullscreenElement));
-        };
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        return () => {
-            document.removeEventListener(
-                'fullscreenchange',
-                handleFullscreenChange,
-            );
-        };
-    }, []);
-
-    /* =====================================================
-       SHARE
-    ===================================================== */
-
     const handleShare = useCallback(async () => {
         setIsSharing(true);
-        const shareUrl = `${SITE_URL}${location.pathname}`;
         try {
             const shareData = {
                 title: t('common.product.shareTitle', {
                     name: post.product_name,
                 }),
-                text: t('common.product.shareText', {
-                    name: post.product_name,
-                }),
-                url: shareUrl,
+                text: t('common.product.shareText', { name: post.product_name }),
+                url: pageUrl,
             };
 
             if (navigator.share) {
@@ -423,8 +432,7 @@ const PostDetails: FunctionComponent = () => {
                 showSuccess(t('common.product.shareSuccess'));
                 return;
             }
-
-            await navigator.clipboard.writeText(shareUrl);
+            await navigator.clipboard.writeText(pageUrl);
             showSuccess(t('common.product.linkCopied'));
         } catch (shareError) {
             if ((shareError as Error).name !== 'AbortError') {
@@ -433,156 +441,94 @@ const PostDetails: FunctionComponent = () => {
         } finally {
             setIsSharing(false);
         }
-    }, [post.product_name, t]);
-
-    /* =====================================================
-       DELETE POST
-    ===================================================== */
+    }, [post.product_name, pageUrl, t]);
 
     const handleDeletePost = useCallback(async () => {
-        if (!postId) {
-            return;
-        }
+        if (!postId) return;
         try {
             await deletePost(postId);
             showSuccess(t('common.product.deleteSuccess'));
             const categoryPath = post.category
                 ? categoryPathMap[post.category]
                 : undefined;
-            navigate(categoryPath || path.Home, {
-                replace: true,
-            });
+            navigate(categoryPath || path.Home, { replace: true });
         } catch (deleteError) {
             console.error('Delete post error:', deleteError);
             showError(deleteError as string);
         }
     }, [navigate, post.category, postId, t]);
 
-    /* =====================================================
-       EDIT
-    ===================================================== */
-
-    const handleEditProduct = useCallback(() => {
-        setShowUpdateModal(true);
-    }, []);
-
-    const handleCloseUpdateModal = useCallback(() => {
-        setShowUpdateModal(false);
-    }, []);
-
-    /* =====================================================
-       REFRESH POST
-    ===================================================== */
-
-    const handleRefreshPost = useCallback(() => {
-        if (!postId) {
+    const handleSubmitReview = useCallback(async () => {
+        if (!isLoggedIn) {
+            navigate(path.Login);
             return;
         }
-        setLoading(true);
-        getPostById(postId)
-            .then((res) => {
-                setPost(res);
-                setProductRating(res.rating || 0);
-            })
-            .catch(() => {
-                setError(t('common.product.loadError'));
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, [postId, t]);
-
-    /* =====================================================
-       GET POST
-    ===================================================== */
-
-    useEffect(() => {
-        if (!postId) {
-            setError(t('common.product.idMissing'));
-            setLoading(false);
+        if (!post._id || !auth?._id) {
+            showError(t('review.missingData'));
             return;
         }
 
-        setLoading(true);
-        setError('');
-
-        getPostById(postId)
-            .then((res) => {
-                setPost(res);
-                setProductRating(Number(res.rating || 0));
-            })
-            .catch((fetchError) => {
-                console.error('Error fetching post:', fetchError);
-                setError(t('common.product.loadPostError'));
-            })
-            .finally(() => {
-                setLoading(false);
+        setIsSubmittingReview(true);
+        try {
+            await submitReview(post._id, {
+                userId: auth._id,
+                rating: reviewRating,
+                comment: comment.trim(),
             });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth._id, postId]);
-
-    /* =====================================================
-       RELATED PRODUCTS
-    ===================================================== */
-
-    useEffect(() => {
-        if (!post._id || !post.category) {
-            return;
+            setComment('');
+            setReviewRating(0);
+            showSuccess(t('review.submitted'));
+            // نعيد الجلب ليرجع التقييم مع بيانات المستخدم populated
+            await loadPost(true);
+        } catch (submitError) {
+            console.error('Submit review error:', submitError);
+            showError(t('review.submitError') || 'حدث خطأ أثناء نشر التقييم');
+        } finally {
+            setIsSubmittingReview(false);
         }
-        getRelatedPosts(post.category, post._id, 4)
-            .then(setRelatedProducts)
-            .catch((relatedError) => {
-                console.error('Related products error:', relatedError);
-            });
-    }, [post._id, post.category]);
+    }, [
+        isLoggedIn,
+        post._id,
+        auth._id,
+        reviewRating,
+        comment,
+        t,
+        navigate,
+        loadPost,
+    ]);
 
-    /* =====================================================
-       VIEW COUNT
-    ===================================================== */
-    const incrementedRef = useRef<string | null>(null);
-    useEffect(() => {
-        const id = post._id;
-        if (!post._id || incrementedRef.current === id) return;
+    const scrollToReviews = () =>
+        document
+            .getElementById('reviews')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-        incrementedRef.current = id as string;
-        incrementViewCount(post._id);
-    }, [post._id]);
-
-    /* =====================================================
-       LOADING
-    ===================================================== */
+    /* ========================= LOADING / ERROR ========================= */
 
     if (loading) {
         return (
-            <Container maxWidth='xl' sx={{ py: 5 }}>
-                <Stack spacing={3}>
-                    <Skeleton variant='rounded' height={90} />
-                    <Grid container spacing={3}>
-                        <Grid size={{ xs: 12, lg: 7 }}>
-                            <Skeleton variant='rounded' height={520} />
-                        </Grid>
-                        <Grid size={{ xs: 12, lg: 5 }}>
-                            <Stack spacing={2}>
-                                <Skeleton variant='rounded' height={220} />
-                                <Skeleton variant='rounded' height={260} />
-                            </Stack>
-                        </Grid>
+            <Container maxWidth='xl' sx={{ py: 4 }}>
+                <Skeleton variant='text' width={260} height={32} />
+                <Grid container spacing={3} sx={{ mt: 1 }}>
+                    <Grid size={{ xs: 12, lg: 8 }}>
+                        <Skeleton variant='rounded' height={480} />
                     </Grid>
-                </Stack>
+                    <Grid size={{ xs: 12, lg: 4 }}>
+                        <Stack spacing={2}>
+                            <Skeleton variant='rounded' height={320} />
+                            <Skeleton variant='rounded' height={160} />
+                        </Stack>
+                    </Grid>
+                </Grid>
             </Container>
         );
     }
 
-    /* =====================================================
-       ERROR / NOT FOUND
-    ===================================================== */
-
-    if (error) {
+    if (error || !post?._id) {
         return (
             <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
                 <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
                 <Typography variant='h5' color='error' gutterBottom>
-                    {error}
+                    {error || t('common.product.notFound') || 'المنتج غير موجود'}
                 </Typography>
                 <Button
                     variant='contained'
@@ -595,46 +541,19 @@ const PostDetails: FunctionComponent = () => {
             </Container>
         );
     }
-
-    if (!post?._id) {
-        return (
-            <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
-                <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
-                <Typography variant='h5' color='error' gutterBottom>
-                    {t('common.product.notFound') || 'المنتج غير موجود'}
-                </Typography>
-                <Button
-                    variant='contained'
-                    startIcon={<ArrowBackIcon />}
-                    onClick={() => navigate(-1)}
-                    sx={{ mt: 3, background: BRAND_GRADIENT }}
-                >
-                    {t('backOneStep')}
-                </Button>
-            </Container>
-        );
-    }
-
-    /* =====================================================
-       SEO
-    ===================================================== */
 
     const productJsonLd = generateSingleProductJsonLd(post);
-    const currentUrl = `${SITE_URL}${location.pathname}`;
+    const visibleReviews = showAllReviews ? reviews : reviews.slice(0, 3);
+    const isSold = post.status === 'sold';
 
-    /* =====================================================
-       RENDER
-    ===================================================== */
+    /* ========================= RENDER ========================= */
 
     return (
         <>
             <JsonLd data={productJsonLd} />
             <title>{post.product_name} | صفقة</title>
-            <link rel='canonical' href={currentUrl} />
-            <meta
-                name='description'
-                content={post.description?.slice(0, 160)}
-            />
+            <link rel='canonical' href={pageUrl} />
+            <meta name='description' content={post.description?.slice(0, 160)} />
             <meta property='og:title' content={post.product_name} />
             <meta
                 property='og:description'
@@ -644,1914 +563,906 @@ const PostDetails: FunctionComponent = () => {
             <meta property='og:type' content='product' />
             <meta
                 property='product:price:amount'
-                content={String(post.price || 0)}
+                content={String(finalPrice || 0)}
             />
             <meta property='product:price:currency' content='ILS' />
 
             <Box
                 component='main'
-                sx={{ backgroundColor: 'background.default', pb: 8 }}
                 dir={dir}
+                sx={{
+                    bgcolor: 'background.default',
+                    pb: { xs: 14, lg: 8 },
+                }}
             >
-                <Container maxWidth='xl' sx={{ pt: { xs: 2, md: 5 }, pb: 10 }}>
-                    <Stack spacing={4}>
-                        {/* =================================================
-                            SELLER TOP BAR
-                        ================================================= */}
-
-                        <Paper
-                            elevation={0}
-                            sx={{
-                                ...sectionCardSx,
-                                p: { xs: 2, md: 3 },
-                                borderRadius: 3,
-                            }}
+                <Container maxWidth='xl' sx={{ pt: { xs: 2, md: 3 } }}>
+                    {/* ───────── BREADCRUMBS ───────── */}
+                    <Breadcrumbs
+                        separator='›'
+                        aria-label={
+                            t('common.product.breadcrumbNavigation') ||
+                            'مسار التنقل'
+                        }
+                        sx={{ mb: 2 }}
+                    >
+                        <Button
+                            component={Link}
+                            to={path.Home}
+                            size='small'
+                            startIcon={<HomeIcon sx={{ fontSize: 18 }} />}
+                            sx={{ textTransform: 'none', gap: 0.5 }}
                         >
-                            <Stack
-                                direction={{ xs: 'column', md: 'row' }}
-                                spacing={{ xs: 2, md: 2 }}
-                                alignItems={{ xs: 'stretch', md: 'center' }}
-                                justifyContent='space-between'
+                            {t('home')}
+                        </Button>
+
+                        {post.category && (
+                            <Button
+                                size='small'
+                                startIcon={<StoreIcon sx={{ fontSize: 18 }} />}
+                                disabled={!categoryPathMap[post.category]}
+                                onClick={() =>
+                                    navigate(categoryPathMap[post.category])
+                                }
+                                sx={{ textTransform: 'none', gap: 0.5 }}
                             >
-                                <Stack
-                                    direction='row'
-                                    spacing={2}
-                                    alignItems='center'
-                                    sx={{ flex: 1, minWidth: 0 }}
-                                >
-                                    <Avatar
-                                        src={
-                                            post.seller?.image?.url ||
-                                            '/user.png'
-                                        }
-                                        alt={sellerDisplayName}
-                                        onClick={goToProfile}
-                                        sx={{
-                                            width: 56,
-                                            height: 56,
-                                            border: '2px solid',
-                                            borderColor: BRAND_COLOR,
-                                            cursor: 'pointer',
-                                            transition: 'transform 0.2s',
-                                            '&:hover': {
-                                                transform: 'scale(1.05)',
-                                            },
-                                        }}
-                                    />
+                                {categoryLabel}
+                            </Button>
+                        )}
 
-                                    <Box sx={{ minWidth: 0, flex: 1 }}>
-                                        <Stack
-                                            direction='row'
-                                            spacing={1}
-                                            alignItems='center'
-                                            flexWrap='wrap'
-                                        >
-                                            <Typography
-                                                variant='h6'
-                                                sx={{
-                                                    fontWeight: 700,
-                                                    fontSize: {
-                                                        xs: '1rem',
-                                                        md: '1.1rem',
-                                                    },
-                                                }}
-                                            >
-                                                {sellerDisplayName}
-                                            </Typography>
+                        <Typography
+                            variant='body2'
+                            noWrap
+                            sx={{ fontWeight: 700, maxWidth: 200 }}
+                        >
+                            {post.product_name}
+                        </Typography>
+                    </Breadcrumbs>
 
-                                            {isOwner && (
-                                                <Chip
-                                                    label={t(
-                                                        'common.product.postOwner',
-                                                    )}
-                                                    size='small'
-                                                    sx={{
-                                                        fontWeight: 700,
-                                                        height: 24,
-                                                        '& .MuiChip-label': {
-                                                            px: 1.5,
-                                                            fontSize: '0.7rem',
-                                                        },
-                                                    }}
-                                                />
-                                            )}
-
-                                            {post.seller?.slug && (
-                                                <Tooltip
-                                                    title={t('verifiedSeller')}
-                                                >
-                                                    <VerifiedRounded
-                                                        sx={{
-                                                            color: BRAND_COLOR,
-                                                            fontSize: 20,
-                                                        }}
-                                                    />
-                                                </Tooltip>
-                                            )}
-                                        </Stack>
-
-                                        <Stack
-                                            direction={{
-                                                xs: 'column',
-                                                sm: 'row',
-                                            }}
-                                            spacing={{ xs: 0.5, sm: 1.5 }}
-                                            divider={
-                                                <Divider
-                                                    orientation='vertical'
-                                                    flexItem
-                                                    sx={{
-                                                        display: {
-                                                            xs: 'none',
-                                                            sm: 'block',
-                                                        },
-                                                    }}
-                                                />
-                                            }
-                                            sx={{ mt: 0.5 }}
-                                        >
-                                            <Typography
-                                                variant='body2'
-                                                color='text.secondary'
-                                                sx={{ fontSize: '0.8125rem' }}
-                                            >
-                                                @{post.seller?.slug || 'seller'}
-                                            </Typography>
-
-                                            <Typography
-                                                variant='body2'
-                                                color='text.secondary'
-                                                sx={{ fontSize: '0.8125rem' }}
-                                            >
-                                                {t(
-                                                    'common.product.postedSince',
-                                                )}{' '}
-                                                {formatTimeAgo(
-                                                    String(
-                                                        post.createdAt || '',
-                                                    ),
-                                                    t,
-                                                )}
-                                            </Typography>
-
-                                            <StatsBadge
-                                                icon={
-                                                    <ViewIcon
-                                                        sx={{ fontSize: 14 }}
-                                                    />
-                                                }
-                                                label={t(
-                                                    'common.product.views',
-                                                )}
-                                                value={post.views ?? 0}
-                                            />
-                                            <StatsBadge
-                                                icon={
-                                                    <ThumbUpIcon
-                                                        sx={{ fontSize: 14 }}
-                                                    />
-                                                }
-                                                label={t(
-                                                    'common.product.likes',
-                                                )}
-                                                value={post.likes?.length || 0}
-                                            />
-                                        </Stack>
-                                    </Box>
-                                </Stack>
-
-                                <Stack
-                                    direction='row'
-                                    spacing={1}
-                                    sx={{
-                                        flexShrink: 0,
-                                        '& .MuiButton-root': {
-                                            py: 1,
-                                            px: { xs: 1.5, sm: 2.5 },
-                                            fontSize: '0.8125rem',
-                                            fontWeight: 600,
-                                            whiteSpace: 'nowrap',
-                                        },
-                                    }}
-                                >
-                                    <Tooltip
-                                        title={t('common.product.refreshData')}
-                                    >
-                                        <IconButton
-                                            onClick={handleRefreshPost}
-                                            size='small'
-                                            sx={{
-                                                borderColor: 'divider',
-                                                color: 'text.secondary',
-                                                '&:hover': {
-                                                    borderColor: BRAND_COLOR,
-                                                    color: BRAND_COLOR,
-                                                    bgcolor: alpha(
-                                                        BRAND_COLOR,
-                                                        0.04,
-                                                    ),
-                                                },
-                                            }}
-                                        >
-                                            <RefreshIcon />
-                                        </IconButton>
-                                    </Tooltip>
-
-                                    <Button
-                                        variant='outlined'
-                                        startIcon={
-                                            <Person sx={{ fontSize: 20 }} />
-                                        }
-                                        onClick={goToProfile}
-                                        sx={{
-                                            gap: 1,
-                                            borderColor: 'divider',
-                                            color: 'text.secondary',
-                                            '&:hover': {
-                                                borderColor: BRAND_COLOR,
-                                                color: BRAND_COLOR,
-                                                bgcolor: alpha(
-                                                    BRAND_COLOR,
-                                                    0.04,
-                                                ),
-                                            },
-                                        }}
-                                    >
-                                        {t('profile.customer')}
-                                    </Button>
-
-                                    {isOwner ? (
-                                        <>
-                                            <Button
-                                                variant='outlined'
-                                                startIcon={
-                                                    <EditIcon
-                                                        sx={{ fontSize: 20 }}
-                                                    />
-                                                }
-                                                onClick={handleEditProduct}
-                                                sx={{
-                                                    gap: 1,
-                                                    borderColor: 'warning.main',
-                                                    '&:hover': {
-                                                        bgcolor: alpha(
-                                                            '#ED6C02',
-                                                            0.04,
-                                                        ),
-                                                    },
-                                                }}
-                                            >
-                                                {t('postCard.edit')}
-                                            </Button>
-
-                                            <Button
-                                                variant='outlined'
-                                                startIcon={
-                                                    <DeleteIcon
-                                                        sx={{ fontSize: 20 }}
-                                                    />
-                                                }
-                                                onClick={() =>
-                                                    setShowDeleteModal(true)
-                                                }
-                                                sx={{
-                                                    gap: 1,
-                                                    borderColor: 'error.main',
-                                                    color: 'error.main',
-                                                    '&:hover': {
-                                                        bgcolor: alpha(
-                                                            '#D32F2F',
-                                                            0.04,
-                                                        ),
-                                                    },
-                                                }}
-                                            >
-                                                {t('postCard.delete')}
-                                            </Button>
-                                        </>
-                                    ) : (
-                                        <Button
-                                            variant='outlined'
-                                            startIcon={
-                                                <Comment
-                                                    sx={{ fontSize: 20 }}
-                                                />
-                                            }
-                                            onClick={handleContactSeller}
-                                            sx={{
-                                                gap: 1,
-                                                borderColor: 'divider',
-                                                color: 'text.secondary',
-                                                '&:hover': {
-                                                    borderColor: BRAND_COLOR,
-                                                    color: BRAND_COLOR,
-                                                    bgcolor: alpha(
-                                                        BRAND_COLOR,
-                                                        0.04,
-                                                    ),
-                                                },
-                                            }}
-                                        >
-                                            {t('common.product.contactSeller')}
-                                        </Button>
+                    {/* ───────── MAIN LAYOUT ───────── */}
+                    <Box
+                        sx={{
+                            display: 'grid',
+                            gap: 3,
+                            alignItems: 'start',
+                            gridTemplateColumns: {
+                                xs: 'minmax(0, 1fr)',
+                                lg: 'minmax(0, 1fr) 400px',
+                            },
+                            gridTemplateAreas: {
+                                xs: '"gallery" "buy" "details"',
+                                lg: '"gallery buy" "details buy"',
+                            },
+                        }}
+                    >
+                        {/* ───────── GALLERY ───────── */}
+                        <Box sx={{ gridArea: 'gallery' }}>
+                            <Paper
+                                elevation={0}
+                                sx={{ ...sectionCardSx, overflow: 'hidden' }}
+                            >
+                                <Box
+                                    role='button'
+                                    tabIndex={0}
+                                    aria-label={t(
+                                        'common.product.zoomIn',
+                                        'تكبير الصورة',
                                     )}
-                                </Stack>
-                            </Stack>
-                        </Paper>
-
-                        {/* =================================================
-                            BREADCRUMBS
-                        ================================================= */}
-
-                        <Box>
-                            <Breadcrumbs
-                                aria-label={
-                                    t('common.product.breadcrumbNavigation') ||
-                                    'مسار التنقل'
-                                }
-                                separator={
-                                    <ChevronRight
-                                        sx={{
-                                            fontSize: 20,
-                                            color: 'text.disabled',
-                                        }}
-                                    />
-                                }
-                            >
-                                <Button
-                                    component={Link}
-                                    to={path.Home}
-                                    startIcon={
-                                        <HomeIcon sx={{ fontSize: 18, m: 1 }} />
+                                    onClick={() =>
+                                        post.image?.url &&
+                                        setImageDialogOpen(true)
                                     }
-                                    sx={{
-                                        textTransform: 'none',
-                                        fontSize: '0.875rem',
+                                    onKeyDown={(e) => {
+                                        if (
+                                            e.key === 'Enter' &&
+                                            post.image?.url
+                                        ) {
+                                            setImageDialogOpen(true);
+                                        }
                                     }}
-                                >
-                                    {t('home')}
-                                </Button>
-
-                                {post.category && (
-                                    <Button
-                                        startIcon={
-                                            <StoreIcon
-                                                sx={{ fontSize: 18, m: 1 }}
-                                            />
-                                        }
-                                        onClick={() => {
-                                            const catPath =
-                                                categoryPathMap[
-                                                    post.category
-                                                ] || '';
-                                            if (catPath) {
-                                                navigate(catPath);
-                                            }
-                                        }}
-                                        disabled={
-                                            !categoryPathMap[post.category]
-                                        }
-                                        sx={{
-                                            textTransform: 'none',
-                                            fontSize: '0.875rem',
-                                        }}
-                                    >
-                                        {categoryLabel}
-                                    </Button>
-                                )}
-
-                                <Typography
-                                    variant='body2'
                                     sx={{
-                                        fontWeight: 700,
-                                        color: 'text.primary',
-                                        fontSize: '0.875rem',
-                                        maxWidth: 200,
+                                        position: 'relative',
+                                        height: { xs: 300, sm: 420, md: 520 },
                                         overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
+                                        bgcolor: 'action.hover',
+                                        cursor: post.image?.url
+                                            ? 'zoom-in'
+                                            : 'default',
                                     }}
                                 >
-                                    {post.product_name}
-                                </Typography>
-                            </Breadcrumbs>
-                        </Box>
-
-                        {/* =================================================
-                            MAIN GRID
-                        ================================================= */}
-
-                        <Grid container spacing={4}>
-                            {/* =================================================
-                                LEFT COLUMN
-                            ================================================= */}
-
-                            <Grid size={{ xs: 12, lg: 7 }}>
-                                <Stack spacing={3}>
-                                    {/* IMAGE */}
-                                    <m.div
-                                        variants={fadeUp}
-                                        initial='hidden'
-                                        whileInView='show'
-                                        viewport={{ once: true, amount: 0.2 }}
-                                    >
-                                        <Card
-                                            sx={{
-                                                ...sectionCardSx,
-                                                overflow: 'hidden',
-                                                borderRadius: 3,
-                                            }}
-                                        >
+                                    {post.image?.url ? (
+                                        <>
+                                            {/* خلفية ضبابية من نفس الصورة */}
                                             <Box
-                                                ref={imageContainerRef}
-                                                onMouseMove={handleMouseMove}
-                                                onClick={() => {
-                                                    if (isMobile) {
-                                                        setImageDialogOpen(
-                                                            true,
-                                                        );
-                                                        return;
-                                                    }
-                                                    setIsZoomed(
-                                                        (prev) => !prev,
-                                                    );
+                                                aria-hidden
+                                                sx={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    backgroundImage: `url(${post.image.url})`,
+                                                    backgroundSize: 'cover',
+                                                    backgroundPosition: 'center',
+                                                    filter: 'blur(28px) brightness(0.9)',
+                                                    transform: 'scale(1.15)',
                                                 }}
+                                            />
+                                            <Box
+                                                component='img'
+                                                src={post.image.url}
+                                                alt={post.product_name}
                                                 sx={{
                                                     position: 'relative',
-                                                    left: 'auto',
-                                                    right: 'auto',
-                                                    height: {
-                                                        xs: 'auto',
-                                                        sm: 'auto',
-                                                    },
-                                                    minHeight: {
-                                                        xs: 240,
-                                                        sm: 400,
-                                                    },
                                                     width: '100%',
-                                                    maxWidth: {
-                                                        xs: '100%',
-                                                        sm: 450,
-                                                    },
-                                                    mx: 'auto',
-                                                    maxHeight: {
-                                                        xs: '70vh',
-                                                        sm: 'unset',
-                                                    },
-                                                    borderRadius: 3,
-                                                    overflow: 'hidden',
-                                                    cursor: isMobile
-                                                        ? 'pointer'
-                                                        : isZoomed
-                                                          ? 'zoom-out'
-                                                          : 'zoom-in',
-                                                    background:
-                                                        'radial-gradient(circle at top, #f8fafc 0%, #f1ede4 100%)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    '&::before': {
-                                                        content: '""',
-                                                        position: 'absolute',
-                                                        inset: 0,
-                                                        background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(184,134,11,.12), transparent 40%)`,
-                                                        pointerEvents: 'none',
-                                                        transition: '0.2s',
-                                                        zIndex: 1,
-                                                    },
-                                                    // ✅ fullscreen: الصورة تاخد كامل الشاشة بدون قص
-                                                    '&:fullscreen': {
-                                                        maxWidth: '100vw',
-                                                        maxHeight: '100vh',
-                                                        width: '100vw',
-                                                        height: '100vh',
-                                                        backgroundColor: '#000',
-                                                    },
-                                                }}
-                                            >
-                                                {post.image?.url ? (
-                                                    <Box
-                                                        sx={{
-                                                            position:
-                                                                'relative',
-                                                            width: '100%',
-                                                            height: '100%',
-                                                            // ✅ على الهاتف: نحافظ على نسبة الصورة
-                                                            display: 'flex',
-                                                            alignItems:
-                                                                'center',
-                                                            justifyContent:
-                                                                'center',
-                                                        }}
-                                                    >
-                                                        <CardMedia
-                                                            component='img'
-                                                            image={
-                                                                post.image.url
-                                                            }
-                                                            alt={
-                                                                post.product_name
-                                                            }
-                                                            sx={{
-                                                                width: '100%',
-                                                                height: {
-                                                                    xs: 'auto',
-                                                                    sm: '100%',
-                                                                },
-                                                                maxHeight: {
-                                                                    xs: '70vh',
-                                                                    sm: '100%',
-                                                                },
-                                                                objectFit:
-                                                                    isFullscreen
-                                                                        ? 'contain'
-                                                                        : {
-                                                                              xs: 'contain',
-                                                                              sm: 'cover',
-                                                                          },
-                                                                display:
-                                                                    'block',
-                                                                transition:
-                                                                    'transform 0.3s ease',
-                                                                transform:
-                                                                    isZoomed
-                                                                        ? `scale(${zoomLevel}) translate(${(mousePosition.x - 50) * 0.1}%, ${(mousePosition.y - 50) * 0.1}%)`
-                                                                        : 'scale(1)',
-                                                                transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
-                                                            }}
-                                                        />
-
-                                                        {/* IMAGE CONTROLS */}
-                                                        <Stack
-                                                            direction='row'
-                                                            spacing={0.5}
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                left: '50%',
-                                                                bottom: 16,
-                                                                transform:
-                                                                    'translateX(-50%)',
-                                                                background:
-                                                                    'rgba(0,0,0,0.6)',
-                                                                backdropFilter:
-                                                                    'blur(12px)',
-                                                                borderRadius: 99,
-                                                                px: 1,
-                                                                py: 0.75,
-                                                                boxShadow:
-                                                                    '0 4px 20px rgba(0,0,0,0.2)',
-                                                                zIndex: 2,
-                                                                scale: {
-                                                                    xs: 0.85,
-                                                                    sm: 1,
-                                                                },
-                                                                // ✅ جديد: إخفاء على الهاتف (التحكم عبر Dialog)
-                                                                display: {
-                                                                    xs: 'none',
-                                                                    sm: 'flex',
-                                                                },
-                                                            }}
-                                                        >
-                                                            <Tooltip
-                                                                title={t(
-                                                                    'common.product.zoomIn',
-                                                                )}
-                                                                placement='top'
-                                                            >
-                                                                <IconButton
-                                                                    size='small'
-                                                                    onClick={(
-                                                                        e,
-                                                                    ) => {
-                                                                        e.stopPropagation();
-                                                                        handleZoomIn();
-                                                                    }}
-                                                                    sx={{
-                                                                        color: 'common.white',
-                                                                    }}
-                                                                >
-                                                                    <ZoomIn
-                                                                        sx={{
-                                                                            fontSize: 20,
-                                                                        }}
-                                                                    />
-                                                                </IconButton>
-                                                            </Tooltip>
-
-                                                            <Tooltip
-                                                                title={t(
-                                                                    'common.product.zoomOut',
-                                                                )}
-                                                                placement='top'
-                                                            >
-                                                                <span>
-                                                                    <IconButton
-                                                                        size='small'
-                                                                        disabled={
-                                                                            zoomLevel <=
-                                                                            1
-                                                                        }
-                                                                        onClick={(
-                                                                            e,
-                                                                        ) => {
-                                                                            e.stopPropagation();
-                                                                            handleZoomOut();
-                                                                        }}
-                                                                        sx={{
-                                                                            color: 'common.white',
-                                                                        }}
-                                                                    >
-                                                                        <ZoomOut
-                                                                            sx={{
-                                                                                fontSize: 20,
-                                                                            }}
-                                                                        />
-                                                                    </IconButton>
-                                                                </span>
-                                                            </Tooltip>
-
-                                                            <Divider
-                                                                orientation='vertical'
-                                                                flexItem
-                                                                sx={{
-                                                                    bgcolor:
-                                                                        'rgba(255,255,255,0.2)',
-                                                                }}
-                                                            />
-
-                                                            <Tooltip
-                                                                title={
-                                                                    isFullscreen
-                                                                        ? t(
-                                                                              'common.product.exitFullscreen',
-                                                                          )
-                                                                        : t(
-                                                                              'common.product.fullscreen',
-                                                                          )
-                                                                }
-                                                                placement='top'
-                                                            >
-                                                                <IconButton
-                                                                    size='small'
-                                                                    onClick={(
-                                                                        e,
-                                                                    ) => {
-                                                                        e.stopPropagation();
-                                                                        void handleFullscreenToggle();
-                                                                    }}
-                                                                    sx={{
-                                                                        color: 'common.white',
-                                                                    }}
-                                                                >
-                                                                    {isFullscreen ? (
-                                                                        <FullscreenExit
-                                                                            sx={{
-                                                                                fontSize: 20,
-                                                                            }}
-                                                                        />
-                                                                    ) : (
-                                                                        <Fullscreen
-                                                                            sx={{
-                                                                                fontSize: 20,
-                                                                            }}
-                                                                        />
-                                                                    )}
-                                                                </IconButton>
-                                                            </Tooltip>
-
-                                                            {isZoomed && (
-                                                                <>
-                                                                    <Divider
-                                                                        orientation='vertical'
-                                                                        flexItem
-                                                                        sx={{
-                                                                            bgcolor:
-                                                                                'rgba(255,255,255,0.2)',
-                                                                        }}
-                                                                    />
-                                                                    <Tooltip
-                                                                        title={t(
-                                                                            'common.product.resetZoom',
-                                                                        )}
-                                                                        placement='top'
-                                                                    >
-                                                                        <IconButton
-                                                                            size='small'
-                                                                            onClick={(
-                                                                                e,
-                                                                            ) => {
-                                                                                e.stopPropagation();
-                                                                                handleResetZoom();
-                                                                            }}
-                                                                            sx={{
-                                                                                color: 'common.white',
-                                                                            }}
-                                                                        >
-                                                                            <ZoomOut
-                                                                                sx={{
-                                                                                    fontSize: 20,
-                                                                                    transform:
-                                                                                        'rotate(45deg)',
-                                                                                }}
-                                                                            />
-                                                                        </IconButton>
-                                                                    </Tooltip>
-                                                                </>
-                                                            )}
-                                                        </Stack>
-
-                                                        {/* ZOOM LEVEL */}
-                                                        {isZoomed &&
-                                                            !isMobile && (
-                                                                <Box
-                                                                    sx={{
-                                                                        position:
-                                                                            'absolute',
-                                                                        top: 16,
-                                                                        right: 16,
-                                                                        px: 1.5,
-                                                                        py: 0.5,
-                                                                        borderRadius: 99,
-                                                                        bgcolor:
-                                                                            'rgba(0,0,0,0.7)',
-                                                                        color: '#fff',
-                                                                        fontWeight: 700,
-                                                                        fontSize: 12,
-                                                                        backdropFilter:
-                                                                            'blur(8px)',
-                                                                    }}
-                                                                >
-                                                                    {zoomLevel.toFixed(
-                                                                        1,
-                                                                    )}
-                                                                    x
-                                                                </Box>
-                                                            )}
-
-                                                        {/* ZOOM HINT */}
-                                                        <Box
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                left: 16,
-                                                                top: 16,
-                                                                backgroundColor:
-                                                                    'rgba(255,255,255,0.9)',
-                                                                backdropFilter:
-                                                                    'blur(4px)',
-                                                                borderRadius: 99,
-                                                                px: 1.5,
-                                                                py: 0.5,
-                                                                boxShadow:
-                                                                    '0 2px 8px rgba(0,0,0,0.08)',
-                                                                // ✅ جديد: إخفاء على الهاتف
-                                                                display: {
-                                                                    xs: 'none',
-                                                                    sm: 'block',
-                                                                },
-                                                            }}
-                                                        >
-                                                            <Typography
-                                                                variant='caption'
-                                                                sx={{
-                                                                    fontWeight: 700,
-                                                                    color: 'text.secondary',
-                                                                    fontSize:
-                                                                        '0.6875rem',
-                                                                    display: {
-                                                                        xs: 'none',
-                                                                        sm: 'block',
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {isZoomed
-                                                                    ? t(
-                                                                          'common.product.clickToCancelZoom',
-                                                                      )
-                                                                    : t(
-                                                                          'common.product.clickToZoom',
-                                                                      )}
-                                                            </Typography>
-
-                                                            {/* 📱 على الهاتف: "tap" */}
-                                                            <Typography
-                                                                variant='caption'
-                                                                sx={{
-                                                                    fontWeight: 700,
-                                                                    color: 'text.secondary',
-                                                                    fontSize:
-                                                                        '0.6875rem',
-                                                                    display: {
-                                                                        xs: 'block',
-                                                                        sm: 'none',
-                                                                    },
-                                                                }}
-                                                            >
-                                                                {isZoomed
-                                                                    ? t(
-                                                                          'common.product.tapToCancelZoom',
-                                                                      )
-                                                                    : t(
-                                                                          'common.product.tapToZoom',
-                                                                      )}
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-                                                ) : (
-                                                    <Stack
-                                                        justifyContent='center'
-                                                        alignItems='center'
-                                                        spacing={1.5}
-                                                        sx={{ height: '100%' }}
-                                                    >
-                                                        <Typography
-                                                            variant='h6'
-                                                            color='text.secondary'
-                                                        >
-                                                            {t(
-                                                                'common.product.noImage',
-                                                            )}
-                                                        </Typography>
-                                                        <Typography
-                                                            variant='body2'
-                                                            color='text.disabled'
-                                                        >
-                                                            {t(
-                                                                'common.product.addImageLater',
-                                                            )}
-                                                        </Typography>
-                                                    </Stack>
-                                                )}
-                                            </Box>
-
-                                            {/* ACTIONS */}
-                                            <Box
-                                                sx={{
-                                                    p: 2,
-                                                    borderTop: 1,
-                                                    borderColor: 'divider',
-                                                    bgcolor: alpha(
-                                                        '#000',
-                                                        0.01,
-                                                    ),
-                                                }}
-                                            >
-                                                <Stack
-                                                    direction='row'
-                                                    justifyContent='space-between'
-                                                    alignItems='center'
-                                                    flexWrap='wrap'
-                                                    gap={1}
-                                                >
-                                                    <Stack
-                                                        direction='row'
-                                                        spacing={0.5}
-                                                    >
-                                                        <LikeButton
-                                                            product={post}
-                                                            setProduct={setPost}
-                                                        />
-
-                                                        <IconButton
-                                                            onClick={
-                                                                handleShare
-                                                            }
-                                                            disabled={isSharing}
-                                                            sx={{
-                                                                color: 'text.secondary',
-                                                                '&:hover': {
-                                                                    color: BRAND_COLOR,
-                                                                    bgcolor:
-                                                                        alpha(
-                                                                            BRAND_COLOR,
-                                                                            0.08,
-                                                                        ),
-                                                                },
-                                                            }}
-                                                        >
-                                                            <ShareIcon />
-                                                        </IconButton>
-                                                    </Stack>
-
-                                                    <Typography
-                                                        variant='caption'
-                                                        color='text.secondary'
-                                                        sx={{
-                                                            fontSize: '0.75rem',
-                                                            opacity: 0.7,
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'common.product.viewImageHint',
-                                                        )}
-                                                    </Typography>
-                                                </Stack>
-                                            </Box>
-                                        </Card>
-                                    </m.div>
-
-                                    {/* PRODUCT INFO */}
-                                    <Card
-                                        sx={{
-                                            ...sectionCardSx,
-                                            p: { xs: 2.25, md: 3 },
-                                            borderRadius: 3,
-                                        }}
-                                    >
-                                        <Stack spacing={2.5}>
-                                            <Box>
-                                                <Typography
-                                                    variant='h4'
-                                                    component='h1'
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        lineHeight: 1.2,
-                                                        mb: 1.5,
-                                                        fontSize: {
-                                                            xs: '1.5rem',
-                                                            md: '2rem',
-                                                        },
-                                                    }}
-                                                >
-                                                    {post.product_name}
-                                                </Typography>
-
-                                                <Stack
-                                                    direction='row'
-                                                    spacing={1.25}
-                                                    alignItems='center'
-                                                    flexWrap='wrap'
-                                                >
-                                                    <Rating
-                                                        value={productRating}
-                                                        precision={0.5}
-                                                        size='medium'
-                                                        readOnly
-                                                    />
-
-                                                    <Typography
-                                                        variant='body2'
-                                                        color='text.secondary'
-                                                    >
-                                                        {post.reviews?.length ??
-                                                            0}{' '}
-                                                        {t('reviews') ||
-                                                            'تقييم'}
-                                                    </Typography>
-                                                </Stack>
-                                            </Box>
-
-                                            {/* PRICE */}
-                                            <Box
-                                                sx={{
-                                                    p: 3,
-                                                    borderRadius: 2,
-                                                    background: `linear-gradient(135deg, ${alpha(BRAND_COLOR, 0.08)}, ${alpha(BRAND_DARK, 0.04)})`,
-                                                    border: `1px solid ${alpha(BRAND_COLOR, 0.12)}`,
-                                                }}
-                                            >
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                    sx={{ mb: 0.5 }}
-                                                >
-                                                    {t(
-                                                        'common.product.currentPrice',
-                                                    )}
-                                                </Typography>
-
-                                                <Typography
-                                                    variant='h3'
-                                                    sx={{
-                                                        fontWeight: 900,
-                                                        background:
-                                                            BRAND_GRADIENT,
-                                                        WebkitBackgroundClip:
-                                                            'text',
-                                                        WebkitTextFillColor:
-                                                            'transparent',
-                                                        fontSize: {
-                                                            xs: '2rem',
-                                                            md: '2.5rem',
-                                                        },
-                                                    }}
-                                                >
-                                                    {formatPrice(post.price)}
-                                                </Typography>
-
-                                                <Stack
-                                                    direction='row'
-                                                    spacing={1}
-                                                    sx={{ mt: 2 }}
-                                                >
-                                                    <Chip
-                                                        label={
-                                                            post.in_stock
-                                                                ? t(
-                                                                      'common.product.available',
-                                                                  )
-                                                                : t(
-                                                                      'common.product.notAvailable',
-                                                                  )
-                                                        }
-                                                        color={
-                                                            post.in_stock
-                                                                ? 'success'
-                                                                : 'default'
-                                                        }
-                                                        size='small'
-                                                        sx={{ fontWeight: 600 }}
-                                                    />
-
-                                                    <Chip
-                                                        label={t(
-                                                            'common.product.quickResponse',
-                                                        )}
-                                                        size='small'
-                                                        sx={{
-                                                            bgcolor: alpha(
-                                                                BRAND_COLOR,
-                                                                0.1,
-                                                            ),
-                                                            color: BRAND_DARK,
-                                                            fontWeight: 600,
-                                                        }}
-                                                    />
-                                                </Stack>
-                                            </Box>
-
-                                            {/* OPTIONS */}
-                                            {post.category && (
-                                                <Box>
-                                                    <Typography
-                                                        variant='h6'
-                                                        sx={{
-                                                            fontWeight: 700,
-                                                            mb: 1.5,
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'common.product.availableOptions',
-                                                        )}
-                                                    </Typography>
-                                                    <ColorsAndSizes
-                                                        category={post.category}
-                                                    />
-                                                </Box>
-                                            )}
-
-                                            <Divider />
-
-                                            {/* DESCRIPTION */}
-                                            <Box>
-                                                <Typography
-                                                    variant='h6'
-                                                    fontWeight={800}
-                                                    mb={1}
-                                                >
-                                                    {t(
-                                                        'common.product.description',
-                                                    )}
-                                                </Typography>
-                                                <Typography
-                                                    color='text.secondary'
-                                                    sx={{ lineHeight: 1.9 }}
-                                                >
-                                                    {post.description ||
-                                                        t(
-                                                            'common.product.noDescription',
-                                                        )}
-                                                </Typography>
-                                            </Box>
-
-                                            {/* ACTIONS */}
-                                            <Stack spacing={1.5}>
-                                                {!isOwner && (
-                                                    <Button
-                                                        fullWidth
-                                                        variant='contained'
-                                                        size='large'
-                                                        startIcon={<Comment />}
-                                                        onClick={
-                                                            handleContactSeller
-                                                        }
-                                                        sx={{
-                                                            py: 1.5,
-                                                            background:
-                                                                BRAND_GRADIENT,
-                                                            '&:hover': {
-                                                                opacity: 0.9,
-                                                                transform:
-                                                                    'translateY(-2px)',
-                                                                boxShadow:
-                                                                    '0 4px 20px rgba(184,134,11,0.3)',
-                                                            },
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'common.product.contactSeller',
-                                                        )}
-                                                    </Button>
-                                                )}
-
-                                                <Button
-                                                    fullWidth
-                                                    variant='outlined'
-                                                    size='large'
-                                                    startIcon={<Phone />}
-                                                    href={`tel:${post.seller?.phone?.phone_1}`}
-                                                    sx={{
-                                                        py: 1.5,
-                                                        borderColor:
-                                                            BRAND_COLOR,
-                                                        color: BRAND_DARK,
-                                                        '&:hover': {
-                                                            borderColor:
-                                                                BRAND_DARK,
-                                                            bgcolor: alpha(
-                                                                BRAND_COLOR,
-                                                                0.04,
-                                                            ),
-                                                        },
-                                                    }}
-                                                >
-                                                    {t(
-                                                        'common.product.callNow',
-                                                    )}
-                                                </Button>
-
-                                                <Button
-                                                    fullWidth
-                                                    variant='text'
-                                                    size='large'
-                                                    startIcon={
-                                                        <ArrowBackIcon />
-                                                    }
-                                                    onClick={() => navigate(-1)}
-                                                    sx={{ py: 1.25 }}
-                                                >
-                                                    {t('backOneStep')}
-                                                </Button>
-                                            </Stack>
-                                        </Stack>
-                                    </Card>
-
-                                    {/* SPECIFICATIONS */}
-                                    <PostSpecifications
-                                        product={post}
-                                        categoryLabel={categoryLabel}
-                                        t={t}
-                                    />
-
-                                    {/* =================================================
-                                        REVIEWS
-                                    ================================================= */}
-
-                                    <Card
-                                        sx={{
-                                            ...sectionCardSx,
-                                            p: { xs: 2.25, md: 3 },
-                                            borderRadius: 3,
-                                        }}
-                                    >
-                                        <SectionTitle
-                                            title={t(
-                                                'review.questionsAndReviews',
-                                            )}
-                                            subtitle={t(
-                                                'review.questionsAndReviewsSubtitle',
-                                            )}
-                                        />
-
-                                        {!post.reviews ||
-                                        post.reviews.length === 0 ? (
-                                            <Alert
-                                                severity='info'
-                                                sx={{
-                                                    mb: 3,
-                                                    borderRadius: 2,
-                                                    bgcolor: alpha(
-                                                        '#0288D1',
-                                                        0.04,
-                                                    ),
-                                                }}
-                                            >
-                                                {t('review.noReviewsYet')}
-                                            </Alert>
-                                        ) : (
-                                            <Box
-                                                sx={{
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    gap: 2,
-                                                    mb: 3,
-                                                }}
-                                            >
-                                                {post.reviews.map(
-                                                    (review, index) => {
-                                                        const reviewUserName = [
-                                                            review.user?.name
-                                                                ?.first,
-                                                            review.user?.name
-                                                                ?.last,
-                                                        ]
-                                                            .filter(Boolean)
-                                                            .join(' ');
-                                                        const isCurrentUser =
-                                                            !!review.user
-                                                                ?._id &&
-                                                            !!auth?._id &&
-                                                            String(
-                                                                review.user._id,
-                                                            ) ===
-                                                                String(
-                                                                    auth._id,
-                                                                );
-
-                                                        return (
-                                                            <Card
-                                                                key={index}
-                                                                sx={{
-                                                                    ...sectionCardSx,
-                                                                    p: 2.5,
-                                                                    display:
-                                                                        'flex',
-                                                                    gap: 2,
-                                                                    alignItems:
-                                                                        'flex-start',
-                                                                    borderRadius: 2,
-                                                                }}
-                                                            >
-                                                                <Avatar
-                                                                    src={
-                                                                        review
-                                                                            .user
-                                                                            ?.image
-                                                                            ?.url ||
-                                                                        '/user.png'
-                                                                    }
-                                                                    alt={
-                                                                        [
-                                                                            review
-                                                                                .user
-                                                                                ?.name
-                                                                                ?.first,
-                                                                            review
-                                                                                .user
-                                                                                ?.name
-                                                                                ?.last,
-                                                                        ]
-                                                                            .filter(
-                                                                                Boolean,
-                                                                            )
-                                                                            .join(
-                                                                                ' ',
-                                                                            ) ||
-                                                                        'user'
-                                                                    }
-                                                                    sx={{
-                                                                        width: 44,
-                                                                        height: 44,
-                                                                    }}
-                                                                />
-
-                                                                <Box flex={1}>
-                                                                    <Stack
-                                                                        direction='row'
-                                                                        justifyContent='space-between'
-                                                                        alignItems='center'
-                                                                        flexWrap='wrap'
-                                                                        gap={
-                                                                            0.5
-                                                                        }
-                                                                    >
-                                                                        <Typography
-                                                                            fontWeight={
-                                                                                700
-                                                                            }
-                                                                        >
-                                                                            {isCurrentUser
-                                                                                ? t(
-                                                                                      'you',
-                                                                                  )
-                                                                                : reviewUserName ||
-                                                                                  'user'}
-                                                                        </Typography>
-
-                                                                        <Typography
-                                                                            variant='caption'
-                                                                            color='text.secondary'
-                                                                        >
-                                                                            {review.createdAt &&
-                                                                                formatTimeAgo(
-                                                                                    String(
-                                                                                        review.createdAt,
-                                                                                    ),
-                                                                                    t,
-                                                                                )}
-                                                                        </Typography>
-                                                                    </Stack>
-
-                                                                    <Rating
-                                                                        value={Number(
-                                                                            review.rating ||
-                                                                                0,
-                                                                        )}
-                                                                        size='small'
-                                                                        readOnly
-                                                                        precision={
-                                                                            0.5
-                                                                        }
-                                                                        sx={{
-                                                                            mt: 0.5,
-                                                                        }}
-                                                                    />
-
-                                                                    <Typography
-                                                                        variant='body2'
-                                                                        sx={{
-                                                                            mt: 1,
-                                                                            color: 'text.secondary',
-                                                                            lineHeight: 1.7,
-                                                                        }}
-                                                                    >
-                                                                        {
-                                                                            review.comment
-                                                                        }
-                                                                    </Typography>
-                                                                </Box>
-                                                            </Card>
-                                                        );
-                                                    },
-                                                )}
-                                            </Box>
-                                        )}
-
-                                        {/* REVIEW FORM */}
-                                        <Stack spacing={2.5}>
-                                            <TextField
-                                                multiline
-                                                rows={4}
-                                                fullWidth
-                                                value={comment}
-                                                onChange={(event) =>
-                                                    setComment(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                                placeholder={t(
-                                                    'review.reviewPlaceholder',
-                                                )}
-                                                variant='outlined'
-                                                sx={{
-                                                    '& .MuiOutlinedInput-root':
-                                                        {
-                                                            borderRadius: 2,
-                                                            bgcolor: alpha(
-                                                                '#000',
-                                                                0.01,
-                                                            ),
-                                                        },
+                                                    height: '100%',
+                                                    objectFit: 'contain',
+                                                    display: 'block',
                                                 }}
                                             />
-
-                                            <Stack
-                                                direction={{
-                                                    xs: 'column',
-                                                    sm: 'row',
-                                                }}
-                                                justifyContent='space-between'
-                                                alignItems={{
-                                                    xs: 'flex-start',
-                                                    sm: 'center',
-                                                }}
-                                                spacing={2}
-                                            >
-                                                <Stack spacing={0.75}>
-                                                    <Typography
-                                                        variant='body2'
-                                                        color='text.secondary'
-                                                    >
-                                                        {t(
-                                                            'review.reviewExperience',
-                                                        )}
-                                                    </Typography>
-                                                    <Rating
-                                                        value={reviewRating}
-                                                        onChange={(
-                                                            _,
-                                                            newValue,
-                                                        ) =>
-                                                            setReviewRating(
-                                                                newValue ?? 0,
-                                                            )
-                                                        }
-                                                        precision={0.5}
-                                                        size='large'
-                                                    />
-                                                </Stack>
-
-                                                <Button
-                                                    variant='contained'
-                                                    disabled={
-                                                        !comment.trim() ||
-                                                        !reviewRating ||
-                                                        isSubmittingReview ||
-                                                        !isLoggedIn
-                                                    }
-                                                    sx={{
-                                                        background:
-                                                            BRAND_GRADIENT,
-                                                        px: 4,
-                                                        py: 1.25,
-                                                        fontWeight: 600,
-                                                        '&:hover': {
-                                                            opacity: 0.9,
-                                                            transform:
-                                                                'translateY(-1px)',
-                                                        },
-                                                        '&:disabled': {
-                                                            opacity: 0.5,
-                                                        },
-                                                    }}
-                                                    onClick={async () => {
-                                                        if (!isLoggedIn) {
-                                                            navigate(
-                                                                path.Login,
-                                                            );
-                                                            return;
-                                                        }
-
-                                                        if (
-                                                            !post._id ||
-                                                            !auth?._id
-                                                        ) {
-                                                            showError(
-                                                                t(
-                                                                    'review.missingData',
-                                                                ),
-                                                            );
-                                                            return;
-                                                        }
-
-                                                        setIsSubmittingReview(
-                                                            true,
-                                                        );
-
-                                                        try {
-                                                            const response =
-                                                                await submitReview(
-                                                                    post._id,
-                                                                    {
-                                                                        userId: auth._id,
-                                                                        rating: reviewRating,
-                                                                        comment:
-                                                                            comment.trim(),
-                                                                    },
-                                                                );
-
-                                                            if (
-                                                                response &&
-                                                                response.review
-                                                            ) {
-                                                                setPost(
-                                                                    (
-                                                                        prevPost,
-                                                                    ) => {
-                                                                        const oldReviews =
-                                                                            prevPost.reviews ||
-                                                                            [];
-                                                                        const updatedReviews =
-                                                                            [
-                                                                                response.review,
-                                                                                ...oldReviews,
-                                                                            ];
-
-                                                                        const calculatedRating =
-                                                                            response.rating !==
-                                                                                undefined &&
-                                                                            response.rating !==
-                                                                                null
-                                                                                ? Number(
-                                                                                      response.rating,
-                                                                                  )
-                                                                                : updatedReviews.length >
-                                                                                    0
-                                                                                  ? updatedReviews.reduce(
-                                                                                        (
-                                                                                            sum,
-                                                                                            review,
-                                                                                        ) =>
-                                                                                            sum +
-                                                                                            Number(
-                                                                                                review.rating ||
-                                                                                                    0,
-                                                                                            ),
-                                                                                        0,
-                                                                                    ) /
-                                                                                    updatedReviews.length
-                                                                                  : 0;
-
-                                                                        return {
-                                                                            ...prevPost,
-                                                                            reviews:
-                                                                                updatedReviews,
-                                                                            reviewCount:
-                                                                                response.reviewCount !==
-                                                                                    undefined &&
-                                                                                response.reviewCount !==
-                                                                                    null
-                                                                                    ? Number(
-                                                                                          response.reviewCount,
-                                                                                      )
-                                                                                    : updatedReviews.length,
-                                                                            rating: calculatedRating,
-                                                                        };
-                                                                    },
-                                                                );
-
-                                                                setProductRating(
-                                                                    (
-                                                                        prevRating,
-                                                                    ) =>
-                                                                        response.rating !==
-                                                                            undefined &&
-                                                                        response.rating !==
-                                                                            null
-                                                                            ? Number(
-                                                                                  response.rating,
-                                                                              )
-                                                                            : prevRating,
-                                                                );
-
-                                                                setComment('');
-                                                                setReviewRating(
-                                                                    0,
-                                                                );
-                                                                showSuccess(
-                                                                    t(
-                                                                        'review.submitted',
-                                                                    ),
-                                                                );
-                                                            }
-                                                        } catch (submitError) {
-                                                            console.error(
-                                                                'Submit review error:',
-                                                                submitError,
-                                                            );
-                                                            showError(
-                                                                t(
-                                                                    'review.submitError',
-                                                                ) ||
-                                                                    'حدث خطأ أثناء نشر التقييم',
-                                                            );
-                                                        } finally {
-                                                            setIsSubmittingReview(
-                                                                false,
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    {isSubmittingReview
-                                                        ? t(
-                                                              'review.submitting',
-                                                          ) || 'جارٍ النشر...'
-                                                        : t('review.publish') ||
-                                                          'نشر التعليق'}
-                                                </Button>
-                                            </Stack>
-
-                                            {!isLoggedIn && (
-                                                <Alert
-                                                    severity='warning'
-                                                    sx={{
-                                                        mt: 1,
-                                                        borderRadius: 2,
-                                                        bgcolor: alpha(
-                                                            '#ED6C02',
-                                                            0.04,
-                                                        ),
-                                                    }}
-                                                >
-                                                    {t('review.loginToReview')}
-                                                </Alert>
-                                            )}
+                                        </>
+                                    ) : (
+                                        <Stack
+                                            alignItems='center'
+                                            justifyContent='center'
+                                            sx={{ height: '100%' }}
+                                        >
+                                            <Typography color='text.secondary'>
+                                                {t('common.product.noImage')}
+                                            </Typography>
                                         </Stack>
-                                    </Card>
-                                </Stack>
-                            </Grid>
+                                    )}
 
-                            {/* =================================================
-                                RIGHT COLUMN
-                            ================================================= */}
+                                    {post.sale && (
+                                        <Chip
+                                            label={`-${post.discount}%`}
+                                            color='error'
+                                            size='small'
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 12,
+                                                insetInlineStart: 12,
+                                                fontWeight: 800,
+                                            }}
+                                        />
+                                    )}
 
-                            <Grid size={{ xs: 12, lg: 5 }}>
-                                <Stack
-                                    spacing={3}
-                                    sx={{
-                                        position: { lg: 'sticky' },
-                                        top: { lg: 80 },
-                                    }}
+                                    {post.image?.url && (
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                bottom: 12,
+                                                insetInlineEnd: 12,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: 0.5,
+                                                px: 1.25,
+                                                py: 0.5,
+                                                borderRadius: 99,
+                                                color: '#fff',
+                                                bgcolor: 'rgba(18,22,28,0.6)',
+                                                backdropFilter: 'blur(6px)',
+                                            }}
+                                        >
+                                            <ZoomIn sx={{ fontSize: 16 }} />
+                                            <Typography
+                                                variant='caption'
+                                                fontWeight={600}
+                                            >
+                                                {t(
+                                                    'common.product.zoomIn',
+                                                    'تكبير',
+                                                )}
+                                            </Typography>
+                                        </Box>
+                                    )}
+                                </Box>
+                            </Paper>
+                        </Box>
+
+                        {/* ───────── BUY BOX (sticky) ───────── */}
+                        <Box sx={{ gridArea: 'buy', alignSelf: 'stretch' }}>
+                            <Stack
+                                spacing={2.5}
+                                sx={{
+                                    position: { lg: 'sticky' },
+                                    top: { lg: 80 },
+                                }}
+                            >
+                                <Paper
+                                    elevation={0}
+                                    sx={{ ...sectionCardSx, p: { xs: 2, md: 3 } }}
                                 >
-                                    {/* SELLER CARD */}
-                                    <Card
-                                        sx={{
-                                            ...sectionCardSx,
-                                            p: 3,
-                                            borderRadius: 3,
-                                        }}
-                                    >
-                                        <Stack spacing={2}>
+                                    <Stack spacing={2}>
+                                        {/* chips */}
+                                        <Stack
+                                            direction='row'
+                                            flexWrap='wrap'
+                                            gap={0.75}
+                                        >
+                                            <Chip
+                                                label={categoryLabel}
+                                                size='small'
+                                                onClick={() => {
+                                                    const p =
+                                                        categoryPathMap[
+                                                            post.category
+                                                        ];
+                                                    if (p) navigate(p);
+                                                }}
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    bgcolor: alpha(BRAND_COLOR, 0.1),
+                                                    color: BRAND_DARK,
+                                                }}
+                                            />
+                                            {post.isNew !== undefined && (
+                                                <Chip
+                                                    size='small'
+                                                    label={
+                                                        post.isNew
+                                                            ? `🆕 ${t('postCard.new')}`
+                                                            : `🔄 ${t('postCard.used')}`
+                                                    }
+                                                    variant='outlined'
+                                                />
+                                            )}
+                                            <Chip
+                                                size='small'
+                                                label={
+                                                    isSold
+                                                        ? t(
+                                                              'common.product.sold',
+                                                              'تم البيع',
+                                                          )
+                                                        : post.in_stock
+                                                          ? t('common.product.available')
+                                                          : t('common.product.notAvailable')
+                                                }
+                                                color={
+                                                    isSold || !post.in_stock
+                                                        ? 'default'
+                                                        : 'success'
+                                                }
+                                                sx={{ fontWeight: 600 }}
+                                            />
+                                        </Stack>
+
+                                        {/* title */}
+                                        <Typography
+                                            variant='h4'
+                                            component='h1'
+                                            sx={{
+                                                fontWeight: 800,
+                                                lineHeight: 1.3,
+                                                fontSize: {
+                                                    xs: '1.4rem',
+                                                    md: '1.65rem',
+                                                },
+                                            }}
+                                        >
+                                            {post.product_name}
+                                        </Typography>
+
+                                        {/* rating */}
+                                        <Stack
+                                            direction='row'
+                                            alignItems='center'
+                                            spacing={1}
+                                            onClick={scrollToReviews}
+                                            sx={{ cursor: 'pointer', width: 'fit-content' }}
+                                        >
+                                            <Rating
+                                                value={averageRating}
+                                                precision={0.1}
+                                                size='small'
+                                                readOnly
+                                            />
+                                            <Typography
+                                                variant='body2'
+                                                color='text.secondary'
+                                                sx={{ '&:hover': { textDecoration: 'underline' } }}
+                                            >
+                                                {reviews.length > 0
+                                                    ? `${averageRating.toFixed(1)} · ${reviews.length} ${t('reviews') || 'تقييم'}`
+                                                    : t('review.noReviewsYet')}
+                                            </Typography>
+                                        </Stack>
+
+                                        {/* price */}
+                                        <Box
+                                            sx={{
+                                                p: 2,
+                                                borderRadius: 2,
+                                                background: `linear-gradient(135deg, ${alpha(BRAND_COLOR, 0.1)}, ${alpha(BRAND_DARK, 0.04)})`,
+                                                border: `1px solid ${alpha(BRAND_COLOR, 0.18)}`,
+                                            }}
+                                        >
                                             <Stack
                                                 direction='row'
-                                                spacing={2}
-                                                alignItems='center'
+                                                alignItems='baseline'
+                                                flexWrap='wrap'
+                                                columnGap={1.5}
                                             >
-                                                <Avatar
-                                                    src={
-                                                        post.seller?.image
-                                                            ?.url || '/user.png'
-                                                    }
+                                                <Typography
                                                     sx={{
-                                                        width: 56,
-                                                        height: 56,
-                                                        border: '2px solid',
-                                                        borderColor:
-                                                            BRAND_COLOR,
+                                                        fontSize: { xs: '1.9rem', md: '2.2rem' },
+                                                        fontWeight: 900,
+                                                        lineHeight: 1.1,
                                                     }}
-                                                />
-
-                                                <Box flex={1}>
-                                                    <Typography
-                                                        fontWeight={800}
-                                                    >
-                                                        {sellerDisplayName}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant='body2'
-                                                        color='text.secondary'
-                                                    >
-                                                        {t(
-                                                            'common.product.seller',
-                                                        )}{' '}
-                                                        • @{post.seller?.slug}
-                                                    </Typography>
-                                                </Box>
-
-                                                {isOwner && (
-                                                    <Chip
-                                                        label={t(
-                                                            'common.product.yourListing',
-                                                        )}
-                                                        size='small'
-                                                        sx={{
-                                                            background:
-                                                                BRAND_GRADIENT,
-                                                            color: '#fff',
-                                                            fontWeight: 700,
-                                                        }}
-                                                    />
+                                                >
+                                                    {formatPrice(finalPrice)}
+                                                </Typography>
+                                                {post.sale && (
+                                                    <>
+                                                        <Typography
+                                                            sx={{
+                                                                color: 'text.disabled',
+                                                                textDecoration: 'line-through',
+                                                            }}
+                                                        >
+                                                            {formatPrice(post.price)}
+                                                        </Typography>
+                                                        <Chip
+                                                            label={`-${post.discount}%`}
+                                                            color='error'
+                                                            size='small'
+                                                            sx={{ fontWeight: 700 }}
+                                                        />
+                                                    </>
                                                 )}
                                             </Stack>
+                                        </Box>
 
-                                            <Box
-                                                sx={{
-                                                    px: 1.5,
-                                                    py: 1,
-                                                    borderRadius: 2,
-                                                    bgcolor: alpha(
-                                                        BRAND_COLOR,
-                                                        0.06,
-                                                    ),
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    gap: 1,
-                                                }}
-                                            >
-                                                <VerifiedRounded
-                                                    sx={{
-                                                        color: BRAND_COLOR,
-                                                        fontSize: 20,
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant='body2'
-                                                    sx={{ fontWeight: 600 }}
-                                                >
-                                                    {t('verifiedSeller')} •{' '}
-                                                    {t(
-                                                        'common.product.quickResponse',
-                                                    )}
+                                        {/* meta */}
+                                        <Stack spacing={1} sx={{ color: 'text.secondary' }}>
+                                            <Stack direction='row' alignItems='center' spacing={1}>
+                                                <LocationOn sx={{ fontSize: 18 }} />
+                                                {post.location ? (
+                                                    <Typography
+                                                        variant='body2'
+                                                        component='a'
+                                                        href={`https://waze.com/ul?q=${encodeURIComponent(post.location)}&navigate=yes`}
+                                                        target='_blank'
+                                                        rel='noopener noreferrer'
+                                                        sx={{
+                                                            color: 'inherit',
+                                                            textDecoration: 'none',
+                                                            '&:hover': { textDecoration: 'underline' },
+                                                        }}
+                                                    >
+                                                        {post.location}
+                                                    </Typography>
+                                                ) : (
+                                                    <Typography variant='body2'>
+                                                        {t('common.product.locationNotSpecified')}
+                                                    </Typography>
+                                                )}
+                                            </Stack>
+                                            <Stack direction='row' alignItems='center' spacing={1}>
+                                                <AccessTimeRounded sx={{ fontSize: 18 }} />
+                                                <Typography variant='body2'>
+                                                    {formatTimeAgo(String(post.createdAt || ''), t)}
                                                 </Typography>
-                                            </Box>
+                                            </Stack>
+                                            <Stack direction='row' alignItems='center' spacing={1}>
+                                                <ViewIcon sx={{ fontSize: 18 }} />
+                                                <Typography variant='body2'>
+                                                    {post.views ?? 0} {t('common.product.viewsCount')}
+                                                </Typography>
+                                            </Stack>
+                                        </Stack>
 
+                                        <Divider />
+
+                                        {/* CTA */}
+                                        {isOwner ? (
                                             <Stack direction='row' spacing={1}>
                                                 <Button
                                                     fullWidth
                                                     variant='outlined'
-                                                    startIcon={<WhatsApp />}
-                                                    sx={{
-                                                        gap: 1,
-                                                        borderColor: '#25D366',
-                                                        color: '#25D366',
-                                                        '&:hover': {
-                                                            bgcolor: alpha(
-                                                                '#25D366',
-                                                                0.04,
-                                                            ),
-                                                            borderColor:
-                                                                '#128C7E',
-                                                        },
-                                                    }}
-                                                    href={`https://wa.me/${post.seller?.phone?.phone_1}`}
-                                                    target='_blank'
+                                                    startIcon={<EditIcon />}
+                                                    onClick={() => setShowUpdateModal(true)}
+                                                    sx={{ gap: 0.5 }}
                                                 >
-                                                    {t('whatsapp')}
+                                                    {t('postCard.edit')}
                                                 </Button>
                                                 <Button
                                                     fullWidth
                                                     variant='outlined'
-                                                    startIcon={<Email />}
-                                                    sx={{
-                                                        gap: 1,
-                                                        borderColor:
-                                                            'info.main',
-                                                        color: 'info.main',
-                                                        '&:hover': {
-                                                            bgcolor: alpha(
-                                                                '#0288D1',
-                                                                0.04,
-                                                            ),
-                                                        },
-                                                    }}
-                                                    href={`mailto:${post.seller?.email}`}
+                                                    color='error'
+                                                    startIcon={<DeleteIcon />}
+                                                    onClick={() => setShowDeleteModal(true)}
+                                                    sx={{ gap: 0.5 }}
                                                 >
-                                                    {t('common.product.email')}
+                                                    {t('postCard.delete')}
                                                 </Button>
                                             </Stack>
+                                        ) : (
+                                            <Stack spacing={1}>
+                                                <Button
+                                                    fullWidth
+                                                    variant='contained'
+                                                    size='large'
+                                                    startIcon={<Comment />}
+                                                    onClick={handleContactSeller}
+                                                    sx={{ ...gradientBtnSx, gap: 1 }}
+                                                >
+                                                    {t('common.product.contactSeller')}
+                                                </Button>
 
+                                                {(sellerPhone || whatsappNumber) && (
+                                                    <Stack direction='row' spacing={1}>
+                                                        {sellerPhone && (
+                                                            <Button
+                                                                fullWidth
+                                                                variant='outlined'
+                                                                startIcon={<Phone />}
+                                                                href={`tel:${sellerPhone}`}
+                                                                sx={{
+                                                                    gap: 0.5,
+                                                                    borderColor: BRAND_COLOR,
+                                                                    color: BRAND_DARK,
+                                                                }}
+                                                            >
+                                                                {t('common.product.callNow')}
+                                                            </Button>
+                                                        )}
+                                                        {whatsappNumber && (
+                                                            <Button
+                                                                fullWidth
+                                                                variant='outlined'
+                                                                startIcon={<WhatsApp />}
+                                                                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`${t('chat.interestedIn')} "${post.product_name}"\n${pageUrl}`)}`}
+                                                                target='_blank'
+                                                                rel='noopener noreferrer'
+                                                                sx={{
+                                                                    gap: 0.5,
+                                                                    borderColor: '#25D366',
+                                                                    color: '#128C7E',
+                                                                }}
+                                                            >
+                                                                {t('whatsapp')}
+                                                            </Button>
+                                                        )}
+                                                    </Stack>
+                                                )}
+                                            </Stack>
+                                        )}
+
+                                        {/* secondary actions */}
+                                        <Stack
+                                            direction='row'
+                                            alignItems='center'
+                                            justifyContent='space-around'
+                                        >
+                                            <LikeButton product={post} setProduct={setPost} />
+                                            <Tooltip title={t('common.product.shareProduct')}>
+                                                <span>
+                                                    <IconButton
+                                                        onClick={handleShare}
+                                                        disabled={isSharing}
+                                                        aria-label={t('common.product.shareProduct')}
+                                                    >
+                                                        <ShareIcon />
+                                                    </IconButton>
+                                                </span>
+                                            </Tooltip>
+                                            {!isOwner && post._id && (
+                                                <ReportButton
+                                                    targetId={post._id}
+                                                    type='post'
+                                                />
+                                            )}
+                                        </Stack>
+                                    </Stack>
+                                </Paper>
+
+                                {/* ───────── SELLER ───────── */}
+                                <Paper
+                                    elevation={0}
+                                    sx={{ ...sectionCardSx, p: { xs: 2, md: 2.5 } }}
+                                >
+                                    <Stack spacing={2}>
+                                        <Stack direction='row' spacing={1.5} alignItems='center'>
+                                            <Avatar
+                                                src={post.seller?.image?.url || '/user.png'}
+                                                alt={sellerDisplayName}
+                                                onClick={goToProfile}
+                                                sx={{
+                                                    width: 56,
+                                                    height: 56,
+                                                    cursor: 'pointer',
+                                                    border: '2px solid',
+                                                    borderColor: BRAND_COLOR,
+                                                }}
+                                            />
+                                            <Box sx={{ minWidth: 0, flex: 1 }}>
+                                                <Typography fontWeight={800} noWrap>
+                                                    {sellerDisplayName}
+                                                </Typography>
+                                                {post.seller?.slug && (
+                                                    <Typography
+                                                        variant='body2'
+                                                        color='text.secondary'
+                                                        noWrap
+                                                    >
+                                                        @{post.seller.slug}
+                                                    </Typography>
+                                                )}
+                                                {memberSince && (
+                                                    <Typography
+                                                        variant='caption'
+                                                        color='text.disabled'
+                                                    >
+                                                        {t('common.product.memberSince', 'عضو منذ')}{' '}
+                                                        {memberSince}
+                                                    </Typography>
+                                                )}
+                                            </Box>
+                                            {isOwner && (
+                                                <Chip
+                                                    size='small'
+                                                    label={t('common.product.yourListing')}
+                                                    sx={{
+                                                        background: BRAND_GRADIENT,
+                                                        color: '#fff',
+                                                        fontWeight: 700,
+                                                    }}
+                                                />
+                                            )}
+                                        </Stack>
+
+                                        {post.seller?.slug && (
                                             <Button
                                                 fullWidth
-                                                variant='text'
-                                                startIcon={<ShareIcon />}
-                                                onClick={handleShare}
-                                                disabled={isSharing}
+                                                variant='outlined'
+                                                onClick={goToProfile}
                                                 sx={{
-                                                    color: 'text.secondary',
+                                                    borderColor: 'divider',
+                                                    color: 'text.primary',
                                                     '&:hover': {
+                                                        borderColor: BRAND_COLOR,
                                                         color: BRAND_COLOR,
-                                                        bgcolor: alpha(
-                                                            BRAND_COLOR,
-                                                            0.04,
-                                                        ),
                                                     },
                                                 }}
                                             >
                                                 {t(
-                                                    'common.product.shareProduct',
+                                                    'common.product.viewSellerProfile',
+                                                    'عرض ملف البائع وإعلاناته',
                                                 )}
                                             </Button>
-                                        </Stack>
-                                    </Card>
+                                        )}
+                                    </Stack>
+                                </Paper>
 
-                                    {/* معلومات إضافية */}
-                                    <Card
+                                {/* ───────── SAFETY ───────── */}
+                                {!isOwner && (
+                                    <Paper
+                                        elevation={0}
                                         sx={{
                                             ...sectionCardSx,
-                                            p: 3,
-                                            borderRadius: 3,
+                                            p: 2.5,
+                                            display: { xs: 'none', lg: 'block' },
                                         }}
                                     >
-                                        <Typography
-                                            variant='subtitle2'
-                                            fontWeight={700}
-                                            gutterBottom
-                                        >
-                                            {t('common.product.additionalInfo')}
-                                        </Typography>
-                                        <Stack spacing={1.5}>
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                                alignItems='center'
-                                            >
-                                                <LocationOn
-                                                    sx={{
-                                                        fontSize: 18,
-                                                        color: 'text.secondary',
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                >
-                                                    {post.location ||
-                                                        t(
-                                                            'common.product.locationNotSpecified',
-                                                        )}
-                                                </Typography>
-                                            </Stack>
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                                alignItems='center'
-                                            >
-                                                <CalendarToday
-                                                    sx={{
-                                                        fontSize: 18,
-                                                        color: 'text.secondary',
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                >
-                                                    {t(
-                                                        'common.product.publishedDate',
-                                                    )}
-                                                    :{' '}
-                                                    {formatTimeAgo(
-                                                        String(post.createdAt),
-                                                        t,
-                                                    )}
-                                                </Typography>
-                                            </Stack>
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                                alignItems='center'
-                                            >
-                                                <ViewIcon
-                                                    sx={{
-                                                        fontSize: 18,
-                                                        color: 'text.secondary',
-                                                    }}
-                                                />
-                                                <Typography
-                                                    variant='body2'
-                                                    color='text.secondary'
-                                                >
-                                                    {post.views ?? 0}{' '}
-                                                    {t(
-                                                        'common.product.viewsCount',
-                                                    )}
-                                                </Typography>
-                                            </Stack>
+                                        <Stack direction='row' spacing={1} alignItems='center' sx={{ mb: 1 }}>
+                                            <ShieldOutlined sx={{ color: BRAND_COLOR, fontSize: 20 }} />
+                                            <Typography variant='subtitle2' fontWeight={800}>
+                                                {t('common.product.safetyTitle', 'نصائح للشراء الآمن')}
+                                            </Typography>
                                         </Stack>
-                                    </Card>
-                                </Stack>
-                            </Grid>
-                        </Grid>
+                                        <Stack
+                                            component='ul'
+                                            spacing={0.5}
+                                            sx={{ m: 0, ps: 2.5, color: 'text.secondary' }}
+                                        >
+                                            <Typography component='li' variant='body2'>
+                                                {t('common.product.safety1', 'عاين المنتج شخصياً قبل الدفع')}
+                                            </Typography>
+                                            <Typography component='li' variant='body2'>
+                                                {t('common.product.safety2', 'قابل البائع في مكان عام')}
+                                            </Typography>
+                                            <Typography component='li' variant='body2'>
+                                                {t('common.product.safety3', 'لا تحوّل أموالاً مسبقاً لأي شخص')}
+                                            </Typography>
+                                        </Stack>
+                                    </Paper>
+                                )}
+                            </Stack>
+                        </Box>
 
-                        {/* =================================================
-                            RELATED PRODUCTS
-                        ================================================= */}
+                        {/* ───────── DETAILS + REVIEWS ───────── */}
+                        <Stack spacing={3} sx={{ gridArea: 'details' }}>
+                            <Paper
+                                elevation={0}
+                                sx={{ ...sectionCardSx, p: { xs: 2, md: 3 } }}
+                            >
+                                <SectionTitle title={t('common.product.description')} />
+                                <Typography
+                                    color='text.secondary'
+                                    sx={{ lineHeight: 1.9, whiteSpace: 'pre-line' }}
+                                >
+                                    {post.description || t('common.product.noDescription')}
+                                </Typography>
+                            </Paper>
 
-                        {relatedProducts.length > 0 && (
-                            <Box sx={{ mt: 6 }}>
+                            <PostSpecifications
+                                product={post}
+                                categoryLabel={categoryLabel}
+                                t={t}
+                            />
+
+                            {/* REVIEWS */}
+                            <Paper
+                                id='reviews'
+                                elevation={0}
+                                sx={{
+                                    ...sectionCardSx,
+                                    p: { xs: 2, md: 3 },
+                                    scrollMarginTop: '80px',
+                                }}
+                            >
                                 <SectionTitle
-                                    title={t('common.product.relatedProducts')}
-                                    subtitle={t(
-                                        'common.product.discoverRelatedProducts',
-                                    )}
+                                    title={t('review.questionsAndReviews')}
+                                    subtitle={t('review.questionsAndReviewsSubtitle')}
                                 />
 
-                                <Stack
-                                    direction='row'
-                                    spacing={2}
-                                    sx={{
-                                        overflowX: 'auto',
-                                        pb: 2,
-                                        '&::-webkit-scrollbar': {
-                                            display: 'none',
-                                        },
-                                        scrollBehavior: 'smooth',
-                                    }}
-                                >
-                                    {relatedProducts.map((product) => (
-                                        <Box
-                                            key={product._id}
+                                {reviews.length === 0 ? (
+                                    <Alert severity='info' sx={{ mb: 3, borderRadius: 2 }}>
+                                        {t('review.noReviewsYet')}
+                                    </Alert>
+                                ) : (
+                                    <>
+                                        <RatingSummary
+                                            reviews={reviews}
+                                            average={averageRating}
+                                        />
+
+                                        <Stack spacing={2} sx={{ mb: 2 }}>
+                                            {visibleReviews.map((review, index) => {
+                                                const reviewUserName = [
+                                                    review.user?.name?.first,
+                                                    review.user?.name?.last,
+                                                ]
+                                                    .filter(Boolean)
+                                                    .join(' ');
+                                                const isMine =
+                                                    !!auth?._id &&
+                                                    getReviewUserId(review) ===
+                                                        String(auth._id);
+
+                                                return (
+                                                    <Stack
+                                                        key={review._id ?? index}
+                                                        direction='row'
+                                                        spacing={2}
+                                                        sx={{
+                                                            p: 2,
+                                                            borderRadius: 2,
+                                                            border: '1px solid',
+                                                            borderColor: 'divider',
+                                                        }}
+                                                    >
+                                                        <Avatar
+                                                            src={review.user?.image?.url || '/user.png'}
+                                                            alt={reviewUserName || 'user'}
+                                                            sx={{ width: 40, height: 40 }}
+                                                        />
+                                                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                            <Stack
+                                                                direction='row'
+                                                                justifyContent='space-between'
+                                                                alignItems='center'
+                                                                flexWrap='wrap'
+                                                                gap={0.5}
+                                                            >
+                                                                <Typography fontWeight={700}>
+                                                                    {isMine
+                                                                        ? t('you')
+                                                                        : reviewUserName || 'user'}
+                                                                </Typography>
+                                                                <Typography variant='caption' color='text.secondary'>
+                                                                    {review.createdAt &&
+                                                                        formatTimeAgo(String(review.createdAt), t)}
+                                                                </Typography>
+                                                            </Stack>
+                                                            <Rating
+                                                                value={Number(review.rating || 0)}
+                                                                size='small'
+                                                                readOnly
+                                                                sx={{ mt: 0.5 }}
+                                                            />
+                                                            <Typography
+                                                                variant='body2'
+                                                                color='text.secondary'
+                                                                sx={{ mt: 0.75, lineHeight: 1.7, whiteSpace: 'pre-line' }}
+                                                            >
+                                                                {review.comment}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Stack>
+                                                );
+                                            })}
+                                        </Stack>
+
+                                        {reviews.length > 3 && (
+                                            <Button
+                                                fullWidth
+                                                variant='text'
+                                                onClick={() => setShowAllReviews((v) => !v)}
+                                                sx={{ mb: 2, color: BRAND_DARK }}
+                                            >
+                                                {showAllReviews
+                                                    ? t('review.showLess', 'عرض أقل')
+                                                    : `${t('review.showMore', 'عرض كل التقييمات')} (${reviews.length})`}
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
+
+                                <Divider sx={{ mb: 3 }} />
+
+                                {/* REVIEW FORM */}
+                                {!isLoggedIn ? (
+                                    <Alert
+                                        severity='info'
+                                        sx={{ borderRadius: 2 }}
+                                        action={
+                                            <Button
+                                                color='inherit'
+                                                size='small'
+                                                onClick={() => navigate(path.Login)}
+                                            >
+                                                {t('login', 'تسجيل الدخول')}
+                                            </Button>
+                                        }
+                                    >
+                                        {t('review.loginToReview')}
+                                    </Alert>
+                                ) : isOwner ? (
+                                    <Alert severity='info' sx={{ borderRadius: 2 }}>
+                                        {t('review.ownerCannotReview', 'لا يمكنك تقييم منتجك الخاص')}
+                                    </Alert>
+                                ) : hasReviewed ? (
+                                    <Alert severity='success' sx={{ borderRadius: 2 }}>
+                                        {t('review.alreadyReviewed', 'شكراً، لقد قيّمت هذا المنتج')}
+                                    </Alert>
+                                ) : (
+                                    <Stack spacing={2}>
+                                        <Stack spacing={0.5}>
+                                            <Typography variant='body2' color='text.secondary'>
+                                                {t('review.reviewExperience')}
+                                            </Typography>
+                                            <Rating
+                                                value={reviewRating}
+                                                onChange={(_, v) => setReviewRating(v ?? 0)}
+                                                size='large'
+                                            />
+                                        </Stack>
+
+                                        <TextField
+                                            multiline
+                                            rows={3}
+                                            fullWidth
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                            placeholder={t('review.reviewPlaceholder')}
+                                            slotProps={{ htmlInput: { maxLength: 500 } }}
+                                            helperText={`${comment.length}/500`}
+                                        />
+
+                                        <Button
+                                            variant='contained'
+                                            disabled={
+                                                !comment.trim() ||
+                                                !reviewRating ||
+                                                isSubmittingReview
+                                            }
+                                            onClick={handleSubmitReview}
                                             sx={{
-                                                minWidth: { xs: 200, sm: 260 },
+                                                ...gradientBtnSx,
+                                                alignSelf: { sm: 'flex-start' },
+                                                px: 4,
+                                                '&:disabled': { opacity: 0.5, color: '#fff' },
                                             }}
                                         >
-                                            <RelatedProductCard
-                                                product={product}
-                                            />
-                                        </Box>
-                                    ))}
-                                </Stack>
-                            </Box>
-                        )}
-                    </Stack>
+                                            {isSubmittingReview
+                                                ? t('review.submitting') || 'جارٍ النشر...'
+                                                : t('review.publish') || 'نشر التقييم'}
+                                        </Button>
+                                    </Stack>
+                                )}
+                            </Paper>
+                        </Stack>
+                    </Box>
+
+                    {/* ───────── RELATED ───────── */}
+                    {relatedProducts.length > 0 && (
+                        <Box sx={{ mt: 6 }}>
+                            <SectionTitle
+                                title={t('common.product.relatedProducts')}
+                                subtitle={t('common.product.discoverRelatedProducts')}
+                            />
+                            <Grid container spacing={2}>
+                                {relatedProducts.map((product) => (
+                                    <Grid key={product._id} size={{ xs: 6, md: 3 }}>
+                                        <RelatedProductCard product={product} />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Box>
+                    )}
                 </Container>
             </Box>
 
-            {/* =========================================================
-                DELETE MODAL
-            ========================================================= */}
+            {/* ───────── MOBILE STICKY BAR ───────── */}
+            {isMobile && (
+                <Paper
+                    elevation={8}
+                    sx={{
+                        position: 'fixed',
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 1100,
+                        px: 2,
+                        pt: 1.25,
+                        pb: 'calc(10px + env(safe-area-inset-bottom, 0px))',
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: '16px 16px 0 0',
+                    }}
+                >
+                    <Stack direction='row' alignItems='center' spacing={1.5} dir={dir}>
+                        <Box sx={{ minWidth: 0 }}>
+                            <Typography variant='caption' color='text.secondary'>
+                                {t('common.product.currentPrice')}
+                            </Typography>
+                            <Typography sx={{ fontWeight: 900, lineHeight: 1.1, fontSize: '1.15rem' }}>
+                                {formatPrice(finalPrice)}
+                            </Typography>
+                        </Box>
 
+                        {isOwner ? (
+                            <Button
+                                fullWidth
+                                variant='contained'
+                                startIcon={<EditIcon />}
+                                onClick={() => setShowUpdateModal(true)}
+                                sx={{ ...gradientBtnSx, py: 1.1, gap: 0.5 }}
+                            >
+                                {t('postCard.edit')}
+                            </Button>
+                        ) : (
+                            <>
+                                {sellerPhone && (
+                                    <IconButton
+                                        component='a'
+                                        href={`tel:${sellerPhone}`}
+                                        aria-label={t('common.product.callNow')}
+                                        sx={{
+                                            border: '1px solid',
+                                            borderColor: BRAND_COLOR,
+                                            color: BRAND_DARK,
+                                            borderRadius: '12px',
+                                        }}
+                                    >
+                                        <Phone />
+                                    </IconButton>
+                                )}
+                                <Button
+                                    fullWidth
+                                    variant='contained'
+                                    startIcon={<Comment />}
+                                    onClick={handleContactSeller}
+                                    sx={{ ...gradientBtnSx, py: 1.1, gap: 0.5 }}
+                                >
+                                    {t('common.product.contactSeller')}
+                                </Button>
+                            </>
+                        )}
+                    </Stack>
+                </Paper>
+            )}
+
+            {/* ───────── MODALS ───────── */}
             <AlertDialogs
                 onConfirm={handleDeletePost}
                 onHide={() => setShowDeleteModal(false)}
@@ -2563,90 +1474,47 @@ const PostDetails: FunctionComponent = () => {
                     productName: post.product_name,
                 })}
             />
-            {/* =========================================================
-                UPDATE MODAL
-            ========================================================= */}
 
             <UpdateProductModal
                 show={showUpdateModal}
-                onHide={handleCloseUpdateModal}
+                onHide={() => setShowUpdateModal(false)}
                 postId={post._id as string}
-                refresh={handleRefreshPost}
+                refresh={() => void loadPost(true)}
             />
-            {/* =========================================================
-    IMAGE FULLSCREEN DIALOG (Mobile Pinch to Zoom)
-========================================================= */}
+
+            {/* ───────── LIGHTBOX (pinch / wheel / double-tap) ───────── */}
             <Dialog
                 fullScreen
                 open={imageDialogOpen}
                 onClose={() => setImageDialogOpen(false)}
-                sx={{
-                    zIndex: 9999,
-                    '& .MuiDialog-paper': {
-                        backgroundColor: '#000',
-                    },
-                }}
+                sx={{ zIndex: 9999, '& .MuiDialog-paper': { bgcolor: '#000' } }}
             >
                 <Box
                     sx={{
                         position: 'relative',
                         width: '100vw',
                         height: '100vh',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        backgroundColor: '#000',
+                        bgcolor: '#000',
                         overflow: 'hidden',
                     }}
                 >
-                    {/* زر الإغلاق */}
                     <IconButton
                         onClick={() => setImageDialogOpen(false)}
+                        aria-label='close'
                         sx={{
                             position: 'absolute',
                             top: 16,
-                            right: 16,
+                            insetInlineEnd: 16,
                             zIndex: 10,
-                            backgroundColor: 'rgba(255,255,255,0.15)',
-                            backdropFilter: 'blur(8px)',
                             color: '#fff',
-                            '&:hover': {
-                                backgroundColor: 'rgba(255,255,255,0.25)',
-                            },
+                            bgcolor: 'rgba(255,255,255,0.15)',
+                            backdropFilter: 'blur(8px)',
+                            '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
                         }}
-                        aria-label='close'
                     >
                         <CloseIcon />
                     </IconButton>
 
-                    {/* تلميح الاستخدام */}
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 16,
-                            left: 16,
-                            zIndex: 10,
-                            backgroundColor: 'rgba(255,255,255,0.15)',
-                            backdropFilter: 'blur(8px)',
-                            borderRadius: 99,
-                            px: 1.5,
-                            py: 0.5,
-                        }}
-                    >
-                        <Typography
-                            variant='caption'
-                            sx={{
-                                color: '#fff',
-                                fontWeight: 600,
-                                fontSize: '0.6875rem',
-                            }}
-                        >
-                            {t('common.product.pinchToZoomHint') ||
-                                'اسحب للتنقل · إصبعان للتكبير'}
-                        </Typography>
-                    </Box>
-
-                    {/* الصورة مع الإيماءات */}
                     {post.image?.url && (
                         <TransformWrapper
                             initialScale={1}
@@ -2656,15 +1524,11 @@ const PostDetails: FunctionComponent = () => {
                             doubleClick={{ mode: 'toggle' }}
                             wheel={{ step: 0.1 }}
                             pinch={{ step: 5 }}
-                            panning={{ velocityDisabled: false }}
                         >
                             {({ zoomIn, zoomOut, resetTransform }) => (
                                 <>
                                     <TransformComponent
-                                        wrapperStyle={{
-                                            width: '100vw',
-                                            height: '100vh',
-                                        }}
+                                        wrapperStyle={{ width: '100vw', height: '100vh' }}
                                         contentStyle={{
                                             width: '100vw',
                                             height: '100vh',
@@ -2676,21 +1540,16 @@ const PostDetails: FunctionComponent = () => {
                                         <img
                                             src={post.image.url}
                                             alt={post.product_name}
+                                            draggable={false}
                                             style={{
                                                 maxWidth: '100%',
                                                 maxHeight: '100%',
-                                                width: 'auto',
-                                                height: 'auto',
                                                 objectFit: 'contain',
-                                                display: 'block',
                                                 userSelect: 'none',
-                                                pointerEvents: 'auto',
                                             }}
-                                            draggable={false}
                                         />
                                     </TransformComponent>
 
-                                    {/* أزرار التحكم بالزوم */}
                                     <Stack
                                         direction='row'
                                         spacing={1}
@@ -2699,7 +1558,7 @@ const PostDetails: FunctionComponent = () => {
                                             bottom: 24,
                                             left: '50%',
                                             transform: 'translateX(-50%)',
-                                            backgroundColor: 'rgba(0,0,0,0.6)',
+                                            bgcolor: 'rgba(0,0,0,0.6)',
                                             backdropFilter: 'blur(12px)',
                                             borderRadius: 99,
                                             px: 1.5,
@@ -2707,25 +1566,13 @@ const PostDetails: FunctionComponent = () => {
                                             zIndex: 10,
                                         }}
                                     >
-                                        <IconButton
-                                            onClick={() => zoomOut()}
-                                            sx={{ color: '#fff' }}
-                                            size='small'
-                                        >
+                                        <IconButton onClick={() => zoomOut()} sx={{ color: '#fff' }} size='small'>
                                             <ZoomOut />
                                         </IconButton>
-                                        <IconButton
-                                            onClick={() => resetTransform()}
-                                            sx={{ color: '#fff' }}
-                                            size='small'
-                                        >
+                                        <IconButton onClick={() => resetTransform()} sx={{ color: '#fff' }} size='small'>
                                             <RefreshIcon />
                                         </IconButton>
-                                        <IconButton
-                                            onClick={() => zoomIn()}
-                                            sx={{ color: '#fff' }}
-                                            size='small'
-                                        >
+                                        <IconButton onClick={() => zoomIn()} sx={{ color: '#fff' }} size='small'>
                                             <ZoomIn />
                                         </IconButton>
                                     </Stack>

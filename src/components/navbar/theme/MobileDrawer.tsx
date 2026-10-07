@@ -10,13 +10,14 @@ import {
     Divider,
     FormControlLabel,
     FormGroup,
-    Collapse,
     PaletteMode,
     useTheme,
     Badge,
     Grid,
     Tooltip,
 } from '@mui/material';
+import { generatePath } from 'react-router-dom';
+import { List as ListIconMui } from '@mui/icons-material';
 import {
     Brightness4,
     Brightness7,
@@ -37,7 +38,6 @@ import { m } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Capacitor } from '@capacitor/core';
 
-import { productsAndCategories, NavCategory } from '../navCategoryies';
 import LanguageSwitcher from '../../../locales/languageSwich';
 import handleRTL from '../../../locales/handleRTL';
 import { path } from '../../../routes/routes';
@@ -90,7 +90,6 @@ const navItemSxRed = {
 const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
     mode,
     setMobileOpen,
-    expandedMobileMenu = false,
     setExpandedMobileMenu,
     isLoggedIn,
     handleDrawerToggle,
@@ -225,27 +224,29 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
-
-                    {/* Delete account */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton
-                            component={NavLink}
-                            to={path.DeleteAccount}
-                            onClick={handleNavLinkClick}
-                            sx={navItemSx}
-                        >
-                            <Delete sx={{ ml: 1 }} />
-                            <ListItemText
-                                primary={t('pages.deleteAccount.title')}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: 500 },
-                                    'aria-label': t(
-                                        'pages.deleteAccount.title',
-                                    ),
-                                }}
-                            />
-                        </ListItemButton>
-                    </ListItem>
+                    {/* My listings */}
+                    {isLoggedIn && auth.slug && (
+                        <ListItem disablePadding sx={{ mb: 1 }}>
+                            <ListItemButton
+                                component={NavLink}
+                                to={generatePath(path.CustomerProfile, {
+                                    slug: encodeURIComponent(auth.slug),
+                                })}
+                                onClick={handleNavLinkClick}
+                                sx={navItemSx}
+                            >
+                                <ListIconMui sx={{ ml: 1 }} />
+                                <ListItemText
+                                    primary={
+                                        t('footer.myListings') || 'إعلاناتي'
+                                    }
+                                    primaryTypographyProps={{
+                                        sx: { fontWeight: 500 },
+                                    }}
+                                />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
 
                     {/* Messages */}
                     {isLoggedIn && (
@@ -279,182 +280,6 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                             </ListItemButton>
                         </ListItem>
                     )}
-
-                    <Collapse
-                        in={expandedMobileMenu === 'products'}
-                        unmountOnExit
-                    >
-                        <List component='div' disablePadding>
-                            {/* View all products */}
-                            <ListItemButton
-                                component={NavLink}
-                                to={path.Home}
-                                onClick={handleNavLinkClick}
-                                sx={{
-                                    pl: 4,
-                                    borderRadius: '8px',
-                                    mb: 0.5,
-                                    '&.active': {
-                                        backgroundColor:
-                                            'rgba(220, 53, 69, 0.05)',
-                                        color: '#f59f0b',
-                                    },
-                                }}
-                            >
-                                <ListItemText
-                                    primary='جميع المنتجات'
-                                    primaryTypographyProps={{
-                                        fontSize: '0.95rem',
-                                    }}
-                                />
-                            </ListItemButton>
-
-                            {/* Categories and subcategories */}
-                            {productsAndCategories.map(
-                                (category: NavCategory) => (
-                                    <ListItemButton
-                                        key={category.value}
-                                        component={NavLink}
-                                        to={category.path}
-                                        onClick={handleNavLinkClick}
-                                        aria-label={t(category.labelKey)}
-                                        sx={{
-                                            pl: 4,
-                                            borderRadius: 2,
-                                            mb: 0.5,
-                                            textDecoration: 'none',
-                                            color: 'text.primary',
-                                            position: 'relative',
-                                            '&.active': {
-                                                backgroundColor:
-                                                    mode === 'dark'
-                                                        ? 'rgba(220, 53, 69, 0.15)'
-                                                        : 'rgba(220, 53, 69, 0.08)',
-                                                color: '#f59f0b',
-                                                fontWeight: 600,
-                                                '&::before': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    left: 12,
-                                                    top: '50%',
-                                                    transform:
-                                                        'translateY(-50%)',
-                                                    width: 4,
-                                                    height: '60%',
-                                                    backgroundColor: '#f59f0b',
-                                                    borderRadius: 2,
-                                                },
-                                            },
-                                            '&:hover': {
-                                                backgroundColor:
-                                                    mode === 'dark'
-                                                        ? 'rgba(255, 255, 255, 0.05)'
-                                                        : 'rgba(0, 0, 0, 0.04)',
-                                                transform: 'translateX(4px)',
-                                                transition: 'all 0.2s ease',
-                                            },
-                                            '&:focus-visible': {
-                                                outline: `2px solid ${theme.palette.primary.main}`,
-                                                outlineOffset: 2,
-                                            },
-                                        }}
-                                    >
-                                        <Box
-                                            component='img'
-                                            sx={{
-                                                mr: 1.5,
-                                                fontSize: '1.2rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                width: 24,
-                                                height: 24,
-                                            }}
-                                            src={category.icon}
-                                            aria-hidden='true'
-                                        />
-                                        <ListItemText
-                                            primary={
-                                                <Typography
-                                                    component='span'
-                                                    sx={{
-                                                        fontSize: '0.95rem',
-                                                        fontWeight: 500,
-                                                        lineHeight: 1.3,
-                                                    }}
-                                                >
-                                                    {t(category.labelKey)}
-                                                    <Typography
-                                                        component='span'
-                                                        sx={{
-                                                            display: 'block',
-                                                            fontSize: '0.75rem',
-                                                            fontWeight: 400,
-                                                            color: 'text.secondary',
-                                                            mt: 0.25,
-                                                            lineHeight: 1.2,
-                                                        }}
-                                                        aria-hidden='true'
-                                                    >
-                                                        {t(
-                                                            category.labelKey ||
-                                                                '',
-                                                        )}
-                                                    </Typography>
-                                                </Typography>
-                                            }
-                                            secondary={
-                                                <Typography
-                                                    component='span'
-                                                    sx={{
-                                                        fontSize: '0.8rem',
-                                                        color: 'text.secondary',
-                                                        display: 'block',
-                                                        mt: 0.5,
-                                                    }}
-                                                    aria-label={`${category.subCategories.length} تصنيفات فرعية`}
-                                                >
-                                                    {category.subCategories
-                                                        .slice(0, 3)
-                                                        .map((sub) =>
-                                                            t(sub.labelKey),
-                                                        )
-                                                        .join(' • ')}
-                                                    {category.subCategories
-                                                        .length > 3 && ' • ...'}
-                                                </Typography>
-                                            }
-                                            primaryTypographyProps={{
-                                                component: 'div',
-                                            }}
-                                            secondaryTypographyProps={{
-                                                component: 'div',
-                                                sx: {
-                                                    mt: 0.5,
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 2,
-                                                    WebkitBoxOrient: 'vertical',
-                                                },
-                                            }}
-                                        />
-                                        {category.subCategories.length > 0 && (
-                                            <Badge
-                                                badgeContent={
-                                                    category.subCategories
-                                                        .length
-                                                }
-                                                color='primary'
-                                                sx={{ ml: 1 }}
-                                                aria-label={`${category.subCategories.length} sub categories`}
-                                            />
-                                        )}
-                                    </ListItemButton>
-                                ),
-                            )}
-                        </List>
-                    </Collapse>
 
                     {/* About */}
                     <ListItem disablePadding sx={{ mb: 1 }}>
@@ -571,7 +396,28 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     )}
                 </List>
             </Box>
-
+            {/* Delete account */}
+            {isLoggedIn && (
+                <>
+                    <Divider sx={{ my: 2 }} />
+                    <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItemButton
+                            component={NavLink}
+                            to={path.DeleteAccount}
+                            onClick={handleNavLinkClick}
+                            sx={{ ...navItemSx, color: 'error.main' }}
+                        >
+                            <Delete sx={{ ml: 1 }} color='error' />
+                            <ListItemText
+                                primary={t('pages.deleteAccount.title')}
+                                primaryTypographyProps={{
+                                    sx: { fontWeight: 500 },
+                                }}
+                            />
+                        </ListItemButton>
+                    </ListItem>
+                </>
+            )}
             {/* Footer with theme and language */}
             <Grid
                 container
