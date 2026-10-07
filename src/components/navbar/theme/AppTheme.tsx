@@ -205,13 +205,26 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
     const getNotificationIcon = (notification: AppNotifications) => {
         const sx = { fontSize: 24, mt: 0.3, mx: 1 };
-        switch (notification.type as AppNotifications['type']) {
+
+        switch (notification.type) {
             case 'post_approved':
-                return <CheckCircleIcon sx={{ ...sx, color: 'success.main' }} />;
+                return (
+                    <CheckCircleIcon sx={{ ...sx, color: 'success.main' }} />
+                );
+
             case 'post_rejected':
                 return <CancelIcon sx={{ ...sx, color: 'error.main' }} />;
+
             case 'post_pending_review':
                 return <ScheduleIcon sx={{ ...sx, color: 'warning.main' }} />;
+
+            case 'admin':
+                return (
+                    <NotificationsActiveIcon
+                        sx={{ ...sx, color: 'primary.main' }}
+                    />
+                );
+
             default:
                 return (
                     <NotificationsNoneIcon
@@ -221,26 +234,79 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         }
     };
 
+    const notificationRoutes: Record<string, string> = {
+        home: path.Home,
+        jobs: path.jobs,
+        // posts: path.Posts,
+        myPosts: path.MyAdsDashboard,
+        profile: path.Profile,
+        notifications: path.Notifications,
+    };
+
     const handleNotificationItemClick = async (
         notification: AppNotifications,
     ) => {
         try {
+            // =====================================================
+            // 1. Mark as read
+            // =====================================================
+
             if (!notification.readAt) {
                 await markAsRead(notification._id);
             }
 
+            // =====================================================
+            // 2. Close notification menu
+            // =====================================================
+
             handleCloseNotifications();
 
-            const postId = notification.data?.postId;
-            if (!postId) return;
+            // =====================================================
+            // 3. Admin notification
+            // =====================================================
 
-            const category = notification.data?.category;
-            const brand = notification.data?.brand;
+            if (notification.type === 'admin') {
+                const screen = notification.data?.screen;
+
+                if (typeof screen === 'string') {
+                    const route = notificationRoutes[screen];
+
+                    if (route) {
+                        navigate(route);
+                        return;
+                    }
+                }
+
+                // إشعار Admin بدون صفحة محددة
+                navigate(path.Home);
+                return;
+            }
+
+            // =====================================================
+            // 4. Post notifications
+            // =====================================================
+
+            const postId = notification.data?.postId;
+
+            if (!postId) {
+                return;
+            }
+
+            // -----------------------------------------------------
+            // Pending post
+            // -----------------------------------------------------
 
             if (notification.type === 'post_pending_review') {
                 navigate(`${path.UsersManagement}?tab=pending-posts`);
                 return;
             }
+
+            // -----------------------------------------------------
+            // Post details
+            // -----------------------------------------------------
+
+            const category = notification.data?.category;
+            const brand = notification.data?.brand;
 
             if (category && brand) {
                 navigate(
@@ -249,9 +315,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                 return;
             }
 
-            navigate(`/posts/${postId}`);
+            navigate(`${productsPathes.postsDetails}/${postId}`);
         } catch (error) {
-            console.error('Failed to open notification:', error);
+            console.error('[Notification] Failed to open notification:', error);
         }
     };
 
@@ -304,7 +370,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     </Typography>
                     {unreadCount > 0 && (
                         <Badge
-                            badgeContent={unreadCount > 99 ? '99+' : unreadCount}
+                            badgeContent={
+                                unreadCount > 99 ? '99+' : unreadCount
+                            }
                             color='error'
                         />
                     )}
@@ -382,8 +450,13 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         >
                                             <Typography
                                                 variant='body2'
-                                                fontWeight={isUnread ? 700 : 500}
-                                                sx={{ flex: 1, lineHeight: 1.5 }}
+                                                fontWeight={
+                                                    isUnread ? 700 : 500
+                                                }
+                                                sx={{
+                                                    flex: 1,
+                                                    lineHeight: 1.5,
+                                                }}
                                             >
                                                 {notification.title}
                                             </Typography>
@@ -407,7 +480,10 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                 <Typography
                                                     variant='body2'
                                                     color='text.secondary'
-                                                    sx={{ lineHeight: 1.5, mb: 0.5 }}
+                                                    sx={{
+                                                        lineHeight: 1.5,
+                                                        mb: 0.5,
+                                                    }}
                                                 >
                                                     {notification.body}
                                                 </Typography>
@@ -418,10 +494,13 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             >
                                                 {new Date(
                                                     notification.createdAt,
-                                                ).toLocaleString(i18n.language, {
-                                                    dateStyle: 'short',
-                                                    timeStyle: 'short',
-                                                })}
+                                                ).toLocaleString(
+                                                    i18n.language,
+                                                    {
+                                                        dateStyle: 'short',
+                                                        timeStyle: 'short',
+                                                    },
+                                                )}
                                             </Typography>
                                         </Box>
                                     }
@@ -541,15 +620,24 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                         <IconButton
                             aria-label='فتح القائمة'
                             onClick={handleDrawerToggle}
-                            sx={{ ...iconBtnSx, display: { xs: 'flex', md: 'none' } }}
+                            sx={{
+                                ...iconBtnSx,
+                                display: { xs: 'flex', md: 'none' },
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
 
-                        <m.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                        <m.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
                             <Link
                                 to={path.Home}
-                                style={{ textDecoration: 'none', display: 'block' }}
+                                style={{
+                                    textDecoration: 'none',
+                                    display: 'block',
+                                }}
                                 aria-label='الرئيسية - موقع صفقة'
                             >
                                 <SafqaLogo />
@@ -581,7 +669,11 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <NavItem
                                     to={path.jobs}
                                     label={t('links.jobs') || 'الوظائف'}
-                                    icon={<WorkOutlineIcon sx={{ fontSize: 22 }} />}
+                                    icon={
+                                        <WorkOutlineIcon
+                                            sx={{ fontSize: 22 }}
+                                        />
+                                    }
                                 />
                             </li>
                             {auth?._id && (
@@ -589,7 +681,11 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <NavItem
                                         to={path.Favorite}
                                         label={t('favorites') || 'المفضلة'}
-                                        icon={<FavoriteIcon sx={{ fontSize: 22 }} />}
+                                        icon={
+                                            <FavoriteIcon
+                                                sx={{ fontSize: 22 }}
+                                            />
+                                        }
                                     />
                                 </li>
                             )}
@@ -597,8 +693,12 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <li>
                                     <NavItem
                                         to={myListingsPath}
-                                        label={t('footer.myListings') || 'إعلاناتي'}
-                                        icon={<ListIcon sx={{ fontSize: 22 }} />}
+                                        label={
+                                            t('footer.myListings') || 'إعلاناتي'
+                                        }
+                                        icon={
+                                            <ListIcon sx={{ fontSize: 22 }} />
+                                        }
                                     />
                                 </li>
                             )}
@@ -607,7 +707,11 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     <NavItem
                                         to={path.UsersManagement}
                                         label={t('users-management')}
-                                        icon={<DashboardIcon sx={{ fontSize: 22 }} />}
+                                        icon={
+                                            <DashboardIcon
+                                                sx={{ fontSize: 22 }}
+                                            />
+                                        }
                                     />
                                 </li>
                             )}
@@ -628,17 +732,32 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                 <>
                                     <NavItem
                                         to={path.MessagesPage}
-                                        label={t('accountMenu.messages') || 'الرسائل'}
+                                        label={
+                                            t('accountMenu.messages') ||
+                                            'الرسائل'
+                                        }
                                         badge={totalUnread}
-                                        icon={<MailIcon sx={{ fontSize: 22 }} />}
+                                        icon={
+                                            <MailIcon sx={{ fontSize: 22 }} />
+                                        }
                                     />
 
-                                    <Tooltip title={t('notifications.title', 'الإشعارات')}>
+                                    <Tooltip
+                                        title={t(
+                                            'notifications.title',
+                                            'الإشعارات',
+                                        )}
+                                    >
                                         <IconButton
                                             onClick={(e) =>
-                                                setNotificationAnchor(e.currentTarget)
+                                                setNotificationAnchor(
+                                                    e.currentTarget,
+                                                )
                                             }
-                                            aria-label={t('notifications.title', 'الإشعارات')}
+                                            aria-label={t(
+                                                'notifications.title',
+                                                'الإشعارات',
+                                            )}
                                             sx={iconBtnSx}
                                         >
                                             <Badge
@@ -669,7 +788,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                         <IconButton
                                             onClick={() =>
                                                 applyMode(
-                                                    mode === 'dark' ? 'light' : 'dark',
+                                                    mode === 'dark'
+                                                        ? 'light'
+                                                        : 'dark',
                                                 )
                                             }
                                             aria-label='تبديل وضع السمة'
@@ -678,7 +799,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                             {mode === 'dark' ? (
                                                 <Brightness4Icon />
                                             ) : (
-                                                <Brightness7Icon sx={{ color: '#ffb300' }} />
+                                                <Brightness7Icon
+                                                    sx={{ color: '#ffb300' }}
+                                                />
                                             )}
                                         </IconButton>
                                     </Tooltip>
@@ -687,7 +810,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
                                     <Tooltip title={t('more', 'المزيد')}>
                                         <IconButton
-                                            onClick={(e) => setMoreAnchor(e.currentTarget)}
+                                            onClick={(e) =>
+                                                setMoreAnchor(e.currentTarget)
+                                            }
                                             aria-label={t('more', 'المزيد')}
                                             aria-haspopup='menu'
                                             sx={iconBtnSx}
@@ -711,7 +836,9 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                                 color: '#1A1E22',
                                                 px: { xs: 2, sm: 3 },
                                                 whiteSpace: 'nowrap',
-                                                '&:hover': { backgroundColor: '#fb9905' },
+                                                '&:hover': {
+                                                    backgroundColor: '#fb9905',
+                                                },
                                             }}
                                         >
                                             {t('links.login')}
@@ -746,16 +873,34 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     },
                 }}
             >
-                <MenuItem component={Link} to={path.About} onClick={() => setMoreAnchor(null)}>
-                    <ListItemIcon><InfoIcon fontSize='small' /></ListItemIcon>
+                <MenuItem
+                    component={Link}
+                    to={path.About}
+                    onClick={() => setMoreAnchor(null)}
+                >
+                    <ListItemIcon>
+                        <InfoIcon fontSize='small' />
+                    </ListItemIcon>
                     {t('links.about')}
                 </MenuItem>
-                <MenuItem component={Link} to={path.Contact} onClick={() => setMoreAnchor(null)}>
-                    <ListItemIcon><ContactIcon fontSize='small' /></ListItemIcon>
+                <MenuItem
+                    component={Link}
+                    to={path.Contact}
+                    onClick={() => setMoreAnchor(null)}
+                >
+                    <ListItemIcon>
+                        <ContactIcon fontSize='small' />
+                    </ListItemIcon>
                     {t('links.contact')}
                 </MenuItem>
-                <MenuItem component={Link} to={path.SellingHelp} onClick={() => setMoreAnchor(null)}>
-                    <ListItemIcon><HelpIcon fontSize='small' /></ListItemIcon>
+                <MenuItem
+                    component={Link}
+                    to={path.SellingHelp}
+                    onClick={() => setMoreAnchor(null)}
+                >
+                    <ListItemIcon>
+                        <HelpIcon fontSize='small' />
+                    </ListItemIcon>
                     {t('help')}
                 </MenuItem>
 

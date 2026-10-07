@@ -20,57 +20,42 @@ import SendIcon from '@mui/icons-material/Send';
 
 import { useState } from 'react';
 
-import {
-    useUsers,
-    AdminUserOption,
-} from '../../../hooks/useUsers';
+import { useUsers, AdminUserOption } from '../../../hooks/useUsers';
 
 import {
     sendAdminNotification,
     AdminNotificationTarget,
 } from '../../../services/notificationServices';
+import { path, productsPathes } from '../../../routes/routes';
 
 const AdminSendNotification = () => {
-    const [target, setTarget] =
-        useState<AdminNotificationTarget>('all');
+    const [target, setTarget] = useState<AdminNotificationTarget>('all');
 
     const [role, setRole] = useState<
         'Admin' | 'Moderator' | 'Client' | 'delivery'
     >('Client');
 
-    const {
-        users,
-        loading: usersLoading,
-        getUserName,
-    } = useUsers();
+    const { users, loading: usersLoading, getUserName } = useUsers();
 
-    const [selectedUser, setSelectedUser] =
-        useState<AdminUserOption | null>(null);
+    const [selectedUser, setSelectedUser] = useState<AdminUserOption | null>(
+        null,
+    );
 
-    const [userIds, setUserIds] =
-        useState('');
+    const [userIds, setUserIds] = useState('');
 
-    const [title, setTitle] =
-        useState('');
+    const [title, setTitle] = useState('');
 
-    const [body, setBody] =
-        useState('');
+    const [body, setBody] = useState('');
 
-    const [screen, setScreen] =
-        useState('');
+    const [screen, setScreen] = useState('');
 
-    const [loading, setLoading] =
-        useState(false);
+    const [loading, setLoading] = useState(false);
 
-    const [success, setSuccess] =
-        useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
 
-    const [error, setError] =
-        useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleTargetChange = (
-        value: AdminNotificationTarget,
-    ) => {
+    const handleTargetChange = (value: AdminNotificationTarget) => {
         setTarget(value);
 
         // تنظيف الاختيارات القديمة
@@ -81,9 +66,7 @@ const AdminSendNotification = () => {
         setError(null);
     };
 
-    const handleSubmit = async (
-        event: React.FormEvent,
-    ) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         setSuccess(null);
@@ -94,18 +77,12 @@ const AdminSendNotification = () => {
             return;
         }
 
-        if (
-            target === 'user' &&
-            !selectedUser?._id
-        ) {
+        if (target === 'user' && !selectedUser?._id) {
             setError('اختر المستخدم المطلوب إرسال الإشعار إليه');
             return;
         }
 
-        if (
-            target === 'users' &&
-            !userIds.trim()
-        ) {
+        if (target === 'users' && !userIds.trim()) {
             setError('أدخل معرفات المستخدمين');
             return;
         }
@@ -115,10 +92,7 @@ const AdminSendNotification = () => {
             .map((id) => id.trim())
             .filter(Boolean);
 
-        if (
-            target === 'users' &&
-            !parsedUserIds.length
-        ) {
+        if (target === 'users' && !parsedUserIds.length) {
             setError('أدخل معرفات مستخدمين صحيحة');
             return;
         }
@@ -126,35 +100,31 @@ const AdminSendNotification = () => {
         try {
             setLoading(true);
 
-            const response =
-                await sendAdminNotification({
-                    target,
+            const response = await sendAdminNotification({
+                target,
 
-                    ...(target === 'user' && {
-                        userId:
-                            selectedUser!._id,
-                    }),
+                ...(target === 'user' && {
+                    userId: selectedUser!._id,
+                }),
 
-                    ...(target === 'users' && {
-                        userIds:
-                            parsedUserIds,
-                    }),
+                ...(target === 'users' && {
+                    userIds: parsedUserIds,
+                }),
 
-                    ...(target === 'role' && {
-                        role,
-                    }),
+                ...(target === 'role' && {
+                    role,
+                }),
 
-                    title: title.trim(),
+                title: title.trim(),
 
-                    body: body.trim(),
+                body: body.trim(),
 
-                    data: screen.trim()
-                        ? {
-                              screen:
-                                  screen.trim(),
-                          }
-                        : {},
-                });
+                data: screen.trim()
+                    ? {
+                          screen: screen.trim(),
+                      }
+                    : {},
+            });
 
             setSuccess(
                 `تم إرسال الإشعار بنجاح. تم الإرسال إلى ${response.sentCount} مستخدم.`,
@@ -167,10 +137,7 @@ const AdminSendNotification = () => {
             setSelectedUser(null);
             setUserIds('');
         } catch (err: any) {
-            setError(
-                err?.response?.data?.message ||
-                    'فشل إرسال الإشعار',
-            );
+            setError(err?.response?.data?.message || 'فشل إرسال الإشعار');
         } finally {
             setLoading(false);
         }
@@ -178,7 +145,7 @@ const AdminSendNotification = () => {
 
     return (
         <Paper
-            component="form"
+            component='form'
             onSubmit={handleSubmit}
             elevation={0}
             sx={{
@@ -196,45 +163,30 @@ const AdminSendNotification = () => {
                 {/* HEADER */}
 
                 <Box>
-                    <Typography
-                        variant="h5"
-                        fontWeight={800}
-                    >
+                    <Typography variant='h5' fontWeight={800}>
                         إرسال إشعار
                     </Typography>
 
                     <Typography
-                        color="text.secondary"
+                        color='text.secondary'
                         sx={{
                             mt: 0.5,
                         }}
                     >
-                        أرسل إشعارًا مباشرًا
-                        للمستخدمين عبر التطبيق
-                        والموقع.
+                        أرسل إشعارًا مباشرًا للمستخدمين عبر التطبيق والموقع.
                     </Typography>
                 </Box>
 
                 {/* ALERTS */}
 
                 {error && (
-                    <Alert
-                        severity="error"
-                        onClose={() =>
-                            setError(null)
-                        }
-                    >
+                    <Alert severity='error' onClose={() => setError(null)}>
                         {error}
                     </Alert>
                 )}
 
                 {success && (
-                    <Alert
-                        severity="success"
-                        onClose={() =>
-                            setSuccess(null)
-                        }
-                    >
+                    <Alert severity='success' onClose={() => setSuccess(null)}>
                         {success}
                     </Alert>
                 )}
@@ -242,35 +194,24 @@ const AdminSendNotification = () => {
                 {/* TARGET */}
 
                 <FormControl fullWidth>
-                    <InputLabel>
-                        المستهدفون
-                    </InputLabel>
+                    <InputLabel>المستهدفون</InputLabel>
 
                     <Select
                         value={target}
-                        label="المستهدفون"
+                        label='المستهدفون'
                         onChange={(event) =>
                             handleTargetChange(
-                                event.target
-                                    .value as AdminNotificationTarget,
+                                event.target.value as AdminNotificationTarget,
                             )
                         }
                     >
-                        <MenuItem value="all">
-                            جميع المستخدمين
-                        </MenuItem>
+                        <MenuItem value='all'>جميع المستخدمين</MenuItem>
 
-                        <MenuItem value="role">
-                            حسب الدور
-                        </MenuItem>
+                        <MenuItem value='role'>حسب الدور</MenuItem>
 
-                        <MenuItem value="user">
-                            مستخدم واحد
-                        </MenuItem>
+                        <MenuItem value='user'>مستخدم واحد</MenuItem>
 
-                        <MenuItem value="users">
-                            عدة مستخدمين
-                        </MenuItem>
+                        <MenuItem value='users'>عدة مستخدمين</MenuItem>
                     </Select>
                 </FormControl>
 
@@ -278,17 +219,14 @@ const AdminSendNotification = () => {
 
                 {target === 'role' && (
                     <FormControl fullWidth>
-                        <InputLabel>
-                            الدور
-                        </InputLabel>
+                        <InputLabel>الدور</InputLabel>
 
                         <Select
                             value={role}
-                            label="الدور"
+                            label='الدور'
                             onChange={(event) =>
                                 setRole(
-                                    event.target
-                                        .value as
+                                    event.target.value as
                                         | 'Admin'
                                         | 'Moderator'
                                         | 'Client'
@@ -296,21 +234,13 @@ const AdminSendNotification = () => {
                                 )
                             }
                         >
-                            <MenuItem value="Client">
-                                المستخدمون
-                            </MenuItem>
+                            <MenuItem value='Client'>المستخدمون</MenuItem>
 
-                            <MenuItem value="delivery">
-                                التوصيل
-                            </MenuItem>
+                            <MenuItem value='delivery'>التوصيل</MenuItem>
 
-                            <MenuItem value="Moderator">
-                                المشرفون
-                            </MenuItem>
+                            <MenuItem value='Moderator'>المشرفون</MenuItem>
 
-                            <MenuItem value="Admin">
-                                المدراء
-                            </MenuItem>
+                            <MenuItem value='Admin'>المدراء</MenuItem>
                         </Select>
                     </FormControl>
                 )}
@@ -323,157 +253,99 @@ const AdminSendNotification = () => {
                         options={users}
                         loading={usersLoading}
                         value={selectedUser}
-                        onChange={(
-                            _event,
-                            user,
-                        ) => {
-                            setSelectedUser(
-                                user,
-                            );
+                        onChange={(_event, user) => {
+                            setSelectedUser(user);
                         }}
                         getOptionLabel={(user) => {
-                            const name =
-                                getUserName(
-                                    user,
-                                );
+                            const name = getUserName(user);
 
-                            if (
-                                user.email
-                            ) {
+                            if (user.email) {
                                 return `${name} — ${user.email}`;
                             }
 
                             return name;
                         }}
-                        isOptionEqualToValue={(
-                            option,
-                            value,
-                        ) =>
-                            option._id ===
-                            value._id
+                        isOptionEqualToValue={(option, value) =>
+                            option._id === value._id
                         }
-                        filterOptions={(
-                            options,
-                            state,
-                        ) => {
-                            const search =
-                                state.inputValue
-                                    .trim()
-                                    .toLowerCase();
+                        filterOptions={(options, state) => {
+                            const search = state.inputValue
+                                .trim()
+                                .toLowerCase();
 
                             if (!search) {
                                 return options;
                             }
 
-                            return options.filter(
-                                (user) => {
-                                    const name =
-                                        getUserName(
-                                            user,
-                                        ).toLowerCase();
+                            return options.filter((user) => {
+                                const name = getUserName(user).toLowerCase();
 
-                                    const email =
-                                        user.email?.toLowerCase() ??
-                                        '';
+                                const email = user.email?.toLowerCase() ?? '';
 
-                                    const username =
-                                        user.username?.toLowerCase() ??
-                                        '';
+                                const username =
+                                    user.username?.toLowerCase() ?? '';
 
-                                    return (
-                                        name.includes(
-                                            search,
-                                        ) ||
-                                        email.includes(
-                                            search,
-                                        ) ||
-                                        username.includes(
-                                            search,
-                                        )
-                                    );
-                                },
-                            );
+                                return (
+                                    name.includes(search) ||
+                                    email.includes(search) ||
+                                    username.includes(search)
+                                );
+                            });
                         }}
-                        noOptionsText="لا يوجد مستخدمون"
-                        loadingText="جاري تحميل المستخدمين..."
-                        renderOption={(
-                            props,
-                            user,
-                        ) => (
+                        noOptionsText='لا يوجد مستخدمون'
+                        loadingText='جاري تحميل المستخدمين...'
+                        renderOption={(props, user) => (
                             <Box
-                                component="li"
+                                component='li'
                                 {...props}
                                 key={user._id}
                                 sx={{
-                                    direction:
-                                        'rtl',
-                                    display:
-                                        'flex !important',
-                                    flexDirection:
-                                        'column',
-                                    alignItems:
-                                        'flex-start !important',
+                                    direction: 'rtl',
+                                    display: 'flex !important',
+                                    flexDirection: 'column',
+                                    alignItems: 'flex-start !important',
                                 }}
                             >
-                                <Typography
-                                    fontWeight={
-                                        700
-                                    }
-                                >
-                                    {getUserName(
-                                        user,
-                                    )}
+                                <Typography fontWeight={700}>
+                                    {getUserName(user)}
                                 </Typography>
 
                                 {user.email && (
                                     <Typography
-                                        variant="body2"
-                                        color="text.secondary"
+                                        variant='body2'
+                                        color='text.secondary'
                                     >
-                                        {
-                                            user.email
-                                        }
+                                        {user.email}
                                     </Typography>
                                 )}
 
                                 {user.username && (
                                     <Typography
-                                        variant="caption"
-                                        color="text.secondary"
+                                        variant='caption'
+                                        color='text.secondary'
                                     >
                                         @{user.username}
                                     </Typography>
                                 )}
                             </Box>
                         )}
-                        renderInput={(
-                            params,
-                        ) => (
+                        renderInput={(params) => (
                             <TextField
                                 {...params}
-                                label="اختر المستخدم"
-                                placeholder="ابحث بالاسم أو البريد أو اسم المستخدم"
+                                label='اختر المستخدم'
+                                placeholder='ابحث بالاسم أو البريد أو اسم المستخدم'
                                 InputProps={{
                                     ...params.InputProps,
 
-                                    endAdornment:
-                                        (
-                                            <>
-                                                {usersLoading && (
-                                                    <CircularProgress
-                                                        size={
-                                                            20
-                                                        }
-                                                    />
-                                                )}
+                                    endAdornment: (
+                                        <>
+                                            {usersLoading && (
+                                                <CircularProgress size={20} />
+                                            )}
 
-                                                {
-                                                    params
-                                                        .InputProps
-                                                        .endAdornment
-                                                }
-                                            </>
-                                        ),
+                                            {params.InputProps.endAdornment}
+                                        </>
+                                    ),
                                 }}
                             />
                         )}
@@ -487,16 +359,11 @@ const AdminSendNotification = () => {
                         fullWidth
                         multiline
                         minRows={3}
-                        label="معرفات المستخدمين"
-                        placeholder="ID1, ID2, ID3"
+                        label='معرفات المستخدمين'
+                        placeholder='ID1, ID2, ID3'
                         value={userIds}
-                        onChange={(event) =>
-                            setUserIds(
-                                event.target
-                                    .value,
-                            )
-                        }
-                        helperText="افصل بين المعرفات بفاصلة أو مسافة أو سطر جديد"
+                        onChange={(event) => setUserIds(event.target.value)}
+                        helperText='افصل بين المعرفات بفاصلة أو مسافة أو سطر جديد'
                     />
                 )}
 
@@ -505,13 +372,9 @@ const AdminSendNotification = () => {
                 <TextField
                     fullWidth
                     required
-                    label="عنوان الإشعار"
+                    label='عنوان الإشعار'
                     value={title}
-                    onChange={(event) =>
-                        setTitle(
-                            event.target.value,
-                        )
-                    }
+                    onChange={(event) => setTitle(event.target.value)}
                     inputProps={{
                         maxLength: 200,
                     }}
@@ -523,13 +386,9 @@ const AdminSendNotification = () => {
                     fullWidth
                     multiline
                     minRows={4}
-                    label="نص الإشعار"
+                    label='نص الإشعار'
                     value={body}
-                    onChange={(event) =>
-                        setBody(
-                            event.target.value,
-                        )
-                    }
+                    onChange={(event) => setBody(event.target.value)}
                     inputProps={{
                         maxLength: 2000,
                     }}
@@ -537,39 +396,46 @@ const AdminSendNotification = () => {
 
                 {/* SCREEN */}
 
-                <TextField
-                    fullWidth
-                    label="المسار عند الضغط — اختياري"
-                    placeholder="/jobs"
-                    value={screen}
-                    onChange={(event) =>
-                        setScreen(
-                            event.target.value,
-                        )
-                    }
-                    helperText="مثال: /jobs أو /home"
-                />
+                <FormControl fullWidth>
+                    <InputLabel>الصفحة عند الضغط</InputLabel>
+
+                    <Select
+                        value={screen}
+                        label='الصفحة عند الضغط'
+                        onChange={(event) => setScreen(event.target.value)}
+                    >
+                        <MenuItem value=''>بدون انتقال</MenuItem>
+
+                        <MenuItem value={path.Home}>الرئيسية</MenuItem>
+
+                        <MenuItem value={path.jobs}>الوظائف</MenuItem>
+
+                        <MenuItem value={productsPathes.postsDetails}>الإعلانات</MenuItem>
+
+                        {/* <MenuItem value={`${path.CustomerProfile}/${user.slug}`}>إعلاناتي</MenuItem> */}
+
+                        <MenuItem value={path.Profile}>الملف الشخصي</MenuItem>
+
+                        {/* <MenuItem value={path.Notifications}>الإشعارات</MenuItem> */}
+                    </Select>
+                </FormControl>
 
                 {/* SUBMIT */}
 
                 <Box
                     sx={{
                         display: 'flex',
-                        justifyContent:
-                            'flex-start',
+                        justifyContent: 'flex-start',
                     }}
                 >
                     <Button
-                        type="submit"
-                        variant="contained"
-                        size="large"
+                        type='submit'
+                        variant='contained'
+                        size='large'
                         disabled={loading}
                         startIcon={
                             loading ? (
-                                <CircularProgress
-                                    size={20}
-                                    color="inherit"
-                                />
+                                <CircularProgress size={20} color='inherit' />
                             ) : (
                                 <SendIcon />
                             )
@@ -581,9 +447,7 @@ const AdminSendNotification = () => {
                             fontWeight: 700,
                         }}
                     >
-                        {loading
-                            ? 'جاري الإرسال...'
-                            : 'إرسال الإشعار'}
+                        {loading ? 'جاري الإرسال...' : 'إرسال الإشعار'}
                     </Button>
                 </Box>
             </Stack>

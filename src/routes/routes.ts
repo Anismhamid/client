@@ -61,7 +61,6 @@ export const productsPathes = {
     postsDetails: '/posts',
 } as const;
 
-
 /**
  * ============================================================
  * Application Routes
@@ -87,6 +86,7 @@ export enum path {
     Register = '/register',
 
     Profile = '/profile',
+    Notifications = '/notifications',
 
     FeaturedAdsDashboard = '/adsDashboard',
 
@@ -188,8 +188,7 @@ export enum path {
 
     AdminAuditLogs = '/admin/security/audit-logs',
 
-    AdminMessageInvestigation =
-        '/admin/security/investigation',
+    AdminMessageInvestigation = '/admin/security/investigation',
 
     // ---------------------------------------------------------
     // Notifications
@@ -197,14 +196,11 @@ export enum path {
 
     AdminNotifications = '/admin/notifications',
 
-    AdminSendNotification =
-        '/admin/notifications/send',
+    AdminSendNotification = '/admin/notifications/send',
 
-    AdminSentNotifications =
-        '/admin/notifications/sent',
+    AdminSentNotifications = '/admin/notifications/sent',
 
-    AdminNotificationTemplates =
-        '/admin/notifications/templates',
+    AdminNotificationTemplates = '/admin/notifications/templates',
 
     // ---------------------------------------------------------
     // Jobs Administration
@@ -222,8 +218,7 @@ export enum path {
 
     AdminRoles = '/admin/settings/roles',
 
-    AdminPermissions =
-        '/admin/settings/permissions',
+    AdminPermissions = '/admin/settings/permissions',
 
     // =========================================================
     // Pages
@@ -299,8 +294,7 @@ export enum path {
      * الجديد:
      * /admin/security/investigation
      */
-    MessageInvestigation =
-        '/admin/message-investigation',
+    MessageInvestigation = '/admin/message-investigation',
 
     /**
      * القديم:

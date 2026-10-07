@@ -1,18 +1,49 @@
-// hooks/usePostReviewNotifications.ts
-// يسمع على 'notification:new' ويعرض توست لما الإعلان ينقبل/ينرفض.
-// الـ socket singleton من globalSocket، والـ toast بيجي كبارامتر لأني ما أعرف مكتبتك.
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import socket from '../socket/globalSocket'; // ⚠️ عدّل المسار حسب مكان الملف
+
+import socket from '../socket/globalSocket';
+import { path, productsPathes } from '../routes/routes';
+
+export type NotificationType =
+    | 'post_approved'
+    | 'post_rejected'
+    | 'post_pending_review'
+    | 'admin';
+
+export interface AppNotificationData {
+    postId?: string | null;
+
+    screen?: string | null;
+
+    category?: string;
+
+    subcategory?: string;
+
+    brand?: string;
+
+    productName?: string;
+
+    rejectionReason?: string;
+
+    [key: string]: unknown;
+}
 
 export interface AppNotification {
     _id: string;
-    type: 'post_approved' | 'post_rejected' | 'post_pending_review';
+
+    type: NotificationType | string;
+
     title: string;
+
     body?: string;
-    data?: { postId?: string };
+
+    data?: AppNotificationData;
+
     readAt?: string | null;
+
     createdAt: string;
+
+    updatedAt?: string;
 }
 
 type ToastFn = (
@@ -22,71 +53,197 @@ type ToastFn = (
 ) => void;
 
 interface Options {
-    /** true لما المستخدم مسجّل دخول */
     enabled: boolean;
+
     toast: ToastFn;
-    /** مثلًا لتحديث عدّاد الإشعارات أو إعادة جلب "إعلاناتي" */
-    onReceive?: (n: AppNotification) => void;
+
+    onReceive?: (notification: AppNotification) => void;
 }
 
-export function usePostReviewNotifications({ enabled, toast, onReceive }: Options) {
+/**
+ * الصفحات المسموح للإشعارات بالانتقال إليها.
+ *
+ * الأدمن لا يرسل URL.
+ * الأدمن يرسل فقط:
+ *
+ * home
+ * jobs
+ * posts
+ * myPosts
+ * notifications
+ *
+ * وهنا نحولها إلى Route حقيقي.
+ */
+const notificationRoutes: Record<string, string> = {
+    home: path.Home,
+    jobs: path.jobs,
+    posts: productsPathes.categories,
+    myPosts: path.MyAdsDashboard,
+    profile: path.Profile,
+    notifications: path.Notifications,
+};
+
+const getNotificationRoute = (screen?: string | null): string | null => {
+    if (!screen) {
+        return null;
+    }
+
+    return notificationRoutes[screen] ?? null;
+};
+
+export function usePostReviewNotifications({
+    enabled,
+    toast,
+    onReceive,
+}: Options) {
     const navigate = useNavigate();
 
-    // refs عشان الـ listener يتسجّل مرة وحدة بدون ما يتأثر بتغيّر الدوال
-    const toastRef = useRef(toast);
-    const onReceiveRef = useRef(onReceive);
+    const toastRef = useRef<ToastFn>(toast);
+
+    const onReceiveRef = useRef<
+        ((notification: AppNotification) => void) | undefined
+    >(onReceive);
+
     const navigateRef = useRef(navigate);
 
-    // تحديث الـ refs بعد الـ render (مو أثناءه) — يتنفّذ قبل effect الاشتراك تحت
-    useEffect(() => {
-        toastRef.current = toast;
-        onReceiveRef.current = onReceive;
-        navigateRef.current = navigate;
-    }, [toast, onReceive, navigate]);
-
-    // لتفادي توست مكرر لو وصل نفس الإشعار مرتين (reconnect مثلًا)
     const seenRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
-        if (!enabled) return;
+        toastRef.current = toast;
 
-        const handler = (n: AppNotification) => {
-            if (seenRef.current.has(n._id)) return;
-            seenRef.current.add(n._id);
+        onReceiveRef.current = onReceive;
 
-            onReceiveRef.current?.(n);
+        navigateRef.current = navigate;
+    }, [toast, onReceive, navigate]);
 
-            if (n.type === 'post_approved') {
-                const postId = n.data?.postId;
+    useEffect(() => {
+        if (!enabled) {
+            return;
+        }
+
+        const handler = (notification: AppNotification) => {
+            if (!notification?._id) {
+                return;
+            }
+
+            /**
+             * منع الإشعار المكرر
+             * خصوصًا بعد reconnect.
+             */
+            if (seenRef.current.has(notification._id)) {
+                return;
+            }
+
+            seenRef.current.add(notification._id);
+
+            /**
+             * أخبر NotificationContext
+             * أو أي component مستمع.
+             */
+            onReceiveRef.current?.(notification);
+
+            /**
+             * المسار القادم من Admin.
+             *
+             * مثال:
+             *
+             * data: {
+             *     screen: 'jobs'
+             * }
+             *
+             * يتحول إلى:
+             *
+             * /jobs
+             */
+            const route = getNotificationRoute(notification.data?.screen);
+
+            const navigateToNotification = route
+                ? () => {
+                      navigateRef.current(route);
+                  }
+                : undefined;
+
+            /**
+             * ADMIN NOTIFICATION
+             */
+            if (notification.type === 'admin') {
                 toastRef.current(
-                    `${n.title} — ${n.body ?? ''}`,
+                    notification.body
+                        ? `${notification.title} — ${notification.body}`
+                        : notification.title,
+                    'info',
+                    navigateToNotification,
+                );
+
+                return;
+            }
+
+            /**
+             * POST APPROVED
+             */
+            if (notification.type === 'post_approved') {
+                const postId = notification.data?.postId;
+
+                toastRef.current(
+                    notification.body
+                        ? `${notification.title} — ${notification.body}`
+                        : notification.title,
                     'success',
                     postId
-                        ? () => navigateRef.current(`/post-details/${postId}`) // ⚠️ عدّل المسار
-                        : undefined,
+                        ? () => navigateRef.current(`/post-details/${postId}`)
+                        : navigateToNotification,
                 );
-            } else if (n.type === 'post_rejected') {
-                toastRef.current(
-                    `${n.title}. ${n.body ?? ''}`,
-                    'error',
-                    () => navigateRef.current('/my-posts'), // ⚠️ عدّل المسار
-                );
+
+                return;
             }
+
+            /**
+             * POST REJECTED
+             */
+            if (notification.type === 'post_rejected') {
+                toastRef.current(
+                    notification.body
+                        ? `${notification.title} — ${notification.body}`
+                        : notification.title,
+                    'error',
+                    navigateToNotification ??
+                        (() => navigateRef.current('/my-posts')),
+                );
+
+                return;
+            }
+
+            /**
+             * POST PENDING REVIEW
+             */
+            if (notification.type === 'post_pending_review') {
+                toastRef.current(
+                    notification.body
+                        ? `${notification.title} — ${notification.body}`
+                        : notification.title,
+                    'info',
+                    navigateToNotification,
+                );
+
+                return;
+            }
+
+            /**
+             * أي نوع جديد مستقبلاً
+             */
+            toastRef.current(
+                notification.body
+                    ? `${notification.title} — ${notification.body}`
+                    : notification.title,
+                'info',
+                navigateToNotification,
+            );
         };
 
         socket.on('notification:new', handler);
+
         return () => {
             socket.off('notification:new', handler);
         };
     }, [enabled]);
 }
-
-/* ────────────────────────────────────────────────────────────────────────────
-   استعمله مرة وحدة بمكان المستخدم مسجّل فيه دايمًا (بجانب useSocketEvents):
-
-   usePostReviewNotifications({
-       enabled: Boolean(auth?._id),
-       toast: (msg, severity) => showToast(msg, severity),   // مكتبة التوست تبعتك
-       onReceive: () => refetchMyPosts(),
-   });
-   ──────────────────────────────────────────────────────────────────────────── */
