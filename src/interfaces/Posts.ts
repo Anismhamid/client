@@ -18,7 +18,7 @@ export type Review = {
     comment: string;
 };
 
-type SellerUser = {
+export type SellerUser = {
     _id?: string;
     id?: string;
     googleId?: string;

@@ -67,6 +67,21 @@ const BlockedUsers = lazy(() => import('../components/pages/BlockedUsers'));
  * PRODUCTS
  * ========================================================= */
 
+const AdminNotifications = lazy(
+    () => import('../components/admin/notifications/AdminNotifications'),
+);
+
+const AdminSendNotification = lazy(
+    () => import('../components/admin/notifications/AdminSendNotification'),
+);
+
+const AdminSentNotifications = lazy(
+    () => import('../components/admin/notifications/AdminSentNotifications'));
+
+/* =========================================================
+ * PRODUCTS
+ * ========================================================= */
+
 const Products = lazy(() => import('../components/pages/products/Posts'));
 
 const PostDetails = lazy(
@@ -430,6 +445,14 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
                     path='security/audit-logs'
                     element={<MessageAuditLogs />}
                 />
+
+                <Route path='notifications' element={<AdminNotifications />}>
+                    <Route index element={<Navigate to='send' replace />} />
+
+                    <Route path='send' element={<AdminSendNotification />} />
+
+                    <Route path='sent' element={<AdminSentNotifications />} />
+                </Route>
 
                 {/* /admin/security/investigation */}
 
