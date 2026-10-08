@@ -74,15 +74,15 @@ const BlockedUsers = lazy(() => import('../components/pages/BlockedUsers'));
  * ========================================================= */
 
 const AdminNotifications = lazy(
-    () => import('../components/admin/notifications/AdminNotifications'),
+    () => import('../components/admin/Notifications/AdminNotifications'),
 );
 
 const AdminSendNotification = lazy(
-    () => import('../components/admin/notifications/AdminSendNotification'),
+    () => import('../components/admin/Notifications/AdminSendNotification'),
 );
 
 const AdminSentNotifications = lazy(
-    () => import('../components/admin/notifications/AdminSentNotifications'),
+    () => import('../components/admin/Notifications/AdminSentNotifications'),
 );
 
 /* =========================================================
