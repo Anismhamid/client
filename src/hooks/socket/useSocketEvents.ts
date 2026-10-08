@@ -137,38 +137,6 @@ const useSocketEvents = () => {
         }
 
         // =====================================================================
-        // CONNECT
-        // =====================================================================
-
-        const handleConnect = () => {
-            console.log('🔌 Socket connected:', socket.id);
-        };
-
-        // =====================================================================
-        // SOCKET ERROR
-        // =====================================================================
-
-        const handleError = (err: any) => {
-            console.error('❌ Socket error:', err);
-        };
-
-        // =====================================================================
-        // CONNECTION ERROR
-        // =====================================================================
-
-        const handleConnectError = (err: any) => {
-            console.error('❌ Socket connection error:', err?.message || err);
-        };
-
-        // =====================================================================
-        // DISCONNECT
-        // =====================================================================
-
-        const handleDisconnect = (reason: any) => {
-            console.warn('🔌 Socket disconnected:', reason);
-        };
-
-        // =====================================================================
         // NEW USER REGISTERED
         // =====================================================================
 
@@ -246,8 +214,6 @@ const useSocketEvents = () => {
         // =====================================================================
 
         const handleNotification = (notification: ServerNotification) => {
-            console.log('🔔 notification:new', notification);
-
             // -----------------------------------------------------------------
             // Prevent duplicate event
             // -----------------------------------------------------------------
@@ -363,14 +329,6 @@ const useSocketEvents = () => {
         // REGISTER EVENTS
         // =====================================================================
 
-        socket.on('connect', handleConnect);
-
-        socket.on('connect_error', handleConnectError);
-
-        socket.on('error', handleError);
-
-        socket.on('disconnect', handleDisconnect);
-
         socket.on('message:sent', messageSent);
 
         socket.on('message:received', messageReceived);
@@ -378,7 +336,7 @@ const useSocketEvents = () => {
         socket.on('user:registered', handleUserRegistered);
 
         socket.on('user:newUserLoggedIn', handleUserLoggedIn);
-        console.log('📡 REGISTER product:new listener');
+
         socket.on('product:new', handleNewProduct);
 
         socket.on('notification:new', handleNotification);
@@ -396,14 +354,6 @@ const useSocketEvents = () => {
         // =====================================================================
 
         return () => {
-            socket.off('connect', handleConnect);
-
-            socket.off('connect_error', handleConnectError);
-
-            socket.off('error', handleError);
-
-            socket.off('disconnect', handleDisconnect);
-
             socket.off('message:sent', messageSent);
 
             socket.off('message:received', messageReceived);
@@ -412,7 +362,6 @@ const useSocketEvents = () => {
 
             socket.off('user:newUserLoggedIn', handleUserLoggedIn);
 
-            console.log('🧹 REMOVE product:new listener');
             socket.off('product:new', handleNewProduct);
 
             socket.off('notification:new', handleNotification);
@@ -427,6 +376,7 @@ const useSocketEvents = () => {
         showNotification,
         isLoggedIn,
         isAuthLoading,
+        currentChatId,
     ]);
 };
 

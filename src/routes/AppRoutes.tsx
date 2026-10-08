@@ -212,15 +212,6 @@ const AdminGuard: FunctionComponent<AdminGuardProps> = ({ children }) => {
     const isAdminOrModerator =
         auth?.role === RoleType.Admin || auth?.role === RoleType.Moderator;
 
-    console.log('🔐 ADMIN AUTH:', {
-        email: auth?.email,
-        id: auth?._id,
-        role: auth?.role,
-        isAuthLoading,
-        isAuthenticated,
-        isAdminOrModerator,
-    });
-
     /*
      * ⏳ انتظر حتى ينتهي استرجاع جلسة المستخدم
      *
