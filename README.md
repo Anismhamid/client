@@ -1,20 +1,40 @@
 # Safqa Marketplace | C2C Marketplace Frontend
 
-A modern consumer-to-consumer marketplace frontend built with React, TypeScript, and Vite, designed to enable users to buy and sell products securely and effortlessly across multiple categories.
+A modern consumer-to-consumer marketplace frontend built with React, TypeScript, and Vite, designed to let users buy and sell products securely across multiple categories.
 
-Safqa supports user authentication, real-time chat, ad management, product discovery, jobs, notifications, moderation, and role-based administration in a responsive, mobile-friendly experience.
+Safqa supports authentication, real-time chat, ad management, product discovery, jobs, notifications, moderation, and role-based administration in a responsive, mobile-friendly experience.
 
-![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-6-646cff?logo=vite)
-![Socket.io](https://img.shields.io/badge/Socket.io-4-010101?logo=socket.io)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-This client app connects to a backend API and event server to provide a complete marketplace experience for users, sellers, and administrators.
+This client connects to a backend API and Socket.IO event server.
 
-Backend repository: [github.com/Anismhamid/server](https://github.com/Anismhamid/server)
+**Backend repository:** [github.com/Anismhamid/server](https://github.com/Anismhamid/server)
 
----
+## Screenshots
+
+| Home | Product Details | Messages |
+| --- | --- | --- |
+| ![Home](public/home.png) | ![Product](public/productDetails.png) | ![Messages](public/messages.png) |
+
+| Admin Center | Jobs | Mobile (Android) |
+| --- | --- | --- |
+| ![Admin](public/adminCenter.png) | ![Jobs](public/jobs.png) | ![Mobile](public/mobile.png) |
+
+## What's New
+
+- Centralized Admin Center with improved navigation.
+- Enhanced user management, roles, and permission controls.
+- Improved product and advertisement moderation.
+- Jobs management with search, filtering, and pagination.
+- Notification management and broadcasting.
+- Message audit logs and user block management.
+- Real-time messaging with read/delivery states and push notifications.
+- Improved responsive UI, localization, and stability.
+- Hardened frontend security practices and backend authorization handling.
 
 ## Table of Contents
 
@@ -24,21 +44,21 @@ Backend repository: [github.com/Anismhamid/server](https://github.com/Anismhamid
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Android (Capacitor)](#android-capacitor)
 - [Project Structure](#project-structure)
 - [Main Routes](#main-routes)
 - [Jobs Platform](#jobs-platform)
 - [Admin Center](#admin-center)
-- [Security & Stability Considerations](#security--stability-considerations)
+- [Security & Stability](#security--stability)
 - [Contributing](#contributing)
 - [License](#license)
 
----
-
 ## Overview
 
-Safqa Marketplace is a feature-rich frontend for a C2C trading platform that helps people discover, list, and negotiate the sale of products in a trusted and streamlined way.
+Safqa Marketplace is a feature-rich frontend for a C2C trading platform where people discover, list, and negotiate the sale of products.
 
-It supports a wide variety of listings including:
+Supported listings:
 
 - Vehicles
 - Electronics
@@ -50,31 +70,28 @@ It supports a wide variety of listings including:
 - Services
 - Jobs
 
-The frontend includes multiple user journeys, from browsing and filtering listings to messaging sellers, managing favorites, creating ads, viewing profiles, discovering jobs, and interacting with administrative tools.
-
----
+User journeys include browsing and filtering listings, messaging sellers, managing favorites, creating ads, viewing profiles, discovering jobs, and using administrative tools.
 
 ## Key Features
 
 ### Marketplace
 
-- Responsive marketplace UI built with React and Material UI
-- Product categories and filtered browsing experience
-- Search and discovery flows for product listings
+- Responsive UI built with React and Material UI
+- Category browsing with filters
+- Search and discovery
 - Product details and seller profiles
 - Favorites and saved listings
 - Premium and featured ad management
 - Product sharing and external navigation integrations
-- Responsive mobile and desktop experience
 
 ### Authentication & Accounts
 
-- User registration and login
-- Google OAuth login support
+- Registration and login
+- Google OAuth login
 - Role-based access control
 - Account status management
 - Permission-based feature access
-- User profile management
+- Profile management
 
 ### Messaging
 
@@ -83,16 +100,13 @@ The frontend includes multiple user journeys, from browsing and filtering listin
 - Message editing and deletion
 - Read and delivery states
 - Typing indicators
-- Unread message indicators
-- Push notification integration
+- Unread indicators
+- Push notifications
 
 ### Jobs
 
-- Jobs marketplace
 - Job listing creation and management
-- Job search
-- Filtering
-- Pagination
+- Search, filtering, and pagination
 - Job details pages
 - User-based job retrieval
 - Administrative job management
@@ -113,72 +127,63 @@ The frontend includes multiple user journeys, from browsing and filtering listin
 
 ### Platform
 
-- Dark and light theme support
-- Arabic, Hebrew, and English localization
+- Dark and light themes
+- Arabic (RTL), Hebrew, and English localization
 - SEO-friendly pages and structured metadata
-- Capacitor-based Android application support
-- Responsive and mobile-first architecture
-
----
+- Android app via Capacitor
+- Mobile-first responsive architecture
 
 ## Tech Stack
 
 ### Frontend
 
 | Category | Technology |
-|---|---|
+| --- | --- |
 | Framework | React 19 |
 | Build Tool | Vite |
 | Language | TypeScript |
 | Routing | React Router DOM |
-| UI Library | Material UI + Bootstrap 5 |
-| Form Handling | Formik + Yup |
-| Real-time Communication | Socket.IO Client |
+| UI Library | Material UI (primary), Bootstrap 5 (grid and utilities) |
+| Forms | Formik + Yup |
+| Real-time | Socket.IO Client |
 | Charts | Recharts |
 | Icons | Font Awesome + Lucide |
-| Notifications | react-toastify |
-| Localization | react-i18next |
+| Toasts | react-toastify |
+| i18n | react-i18next |
 
-### Additional Integrations
+### Integrations
 
 | Integration | Purpose |
-|---|---|
+| --- | --- |
 | Capacitor | Android / hybrid app packaging |
 | Google OAuth | Social authentication |
-| PDF Rendering | Document generation and export |
+| `<PDF_LIBRARY>` | PDF generation and export |
 | Context + Hooks | State management and application logic |
-
----
 
 ## Prerequisites
 
-Before running the project, make sure you have:
-
 - Node.js 20 or newer
-- npm or yarn installed
-- A running backend service
-- Access to a MongoDB-powered backend or equivalent API service
-
----
+- npm or yarn
+- A running backend API (see the [server repository](https://github.com/Anismhamid/server))
 
 ## Getting Started
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/Anismhamid/client.git
 cd client
 ```
 
-### 2. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Configure Environment Variables
+### 3. Configure environment variables
 
-Create a `.env` file in the root of the project:
+Create a `.env` file in the project root:
 
 ```env
 VITE_API_URL=http://localhost:8209/api
@@ -186,87 +191,94 @@ VITE_SOCKET_URL=http://localhost:8209
 VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
 ```
 
-If the backend is running on a different port or host, adjust the values accordingly.
+Adjust the values if the backend runs on a different host or port.
 
-### 4. Run the App in Development Mode
+### 4. Run in development
 
 ```bash
 npm run dev
 ```
 
-The application should be available at:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8209
 
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:8209`
-
-### 5. Build for Production
+### 5. Build for production
 
 ```bash
 npm run build
 npm run preview
 ```
 
----
-
 ## Environment Variables
 
 | Variable | Description |
-|---|---|
-| `VITE_API_URL` | Base URL for the backend API |
-| `VITE_SOCKET_URL` | Real-time Socket.IO server URL |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID used for login |
+| --- | --- |
+| `VITE_API_URL` | Base URL of the backend API |
+| `VITE_SOCKET_URL` | Socket.IO server URL |
+| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID |
 
----
+## Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Serve the production build locally |
+| `npm run lint` | Run ESLint |
+
+## Android (Capacitor)
+
+```bash
+npm run build          # build the web assets first
+npx cap sync android   # copy assets and update native plugins
+npx cap open android   # open the project in Android Studio
+```
+
+Re-run `npm run build` and `npx cap sync android` after every frontend change you want reflected in the app.
 
 ## Project Structure
 
-```text
-client/
-
-├── public/                    # Static assets and public files
-├── src/
-│   ├── App.tsx                # Main app component
-│   ├── main.tsx               # React bootstrap entry
-│   ├── assets/                # Images, icons, and static assets
-│   ├── atoms/                 # Reusable small UI elements
-│   ├── components/            # Feature-rich UI components
-│   ├── context/               # Application context providers
-│   ├── helpers/               # Utility functions
-│   ├── hooks/                 # Custom React hooks
-│   ├── interfaces/            # TypeScript type definitions
-│   ├── locales/               # Localization files
-│   ├── routes/                # Application routing configuration
-│   ├── services/              # API and integration services
-│   ├── socket/                # Socket.IO-related logic
-│   ├── index.css              # Core styling
-│   └── ...
-│
-├── android/                   # Android project (Capacitor)
-├── package.json               # Dependencies and scripts
-├── vite.config.ts             # Vite configuration
-├── vercel.json                # Deployment configuration
-├── tsconfig*.json             # TypeScript configuration
-├── README.md                  # Project documentation
-├── .gitignore                 # Ignored files
-└── LICENSE                    # License file
 ```
-
----
+client/
+├── public/            # Static assets
+├── src/
+│   ├── App.tsx        # Main app component
+│   ├── main.tsx       # React entry point
+│   ├── assets/        # Images, icons, static assets
+│   ├── atoms/         # Small reusable UI elements
+│   ├── components/    # Feature UI components
+│   ├── context/       # Context providers
+│   ├── helpers/       # Utility functions
+│   ├── hooks/         # Custom hooks
+│   ├── interfaces/    # TypeScript types
+│   ├── locales/       # Localization files
+│   ├── routes/        # Routing configuration
+│   ├── services/      # API and integration services
+│   ├── socket/        # Socket.IO logic
+│   └── index.css      # Core styles
+├── android/           # Capacitor Android project
+├── package.json
+├── vite.config.ts
+├── vercel.json        # Deployment and security headers
+├── tsconfig*.json
+├── LICENSE
+└── README.md
+```
 
 ## Main Routes
 
 ### Core Pages
 
 | Route | Description |
-|---|---|
+| --- | --- |
 | `/` | Homepage |
-| `/login` | Login page |
-| `/register` | Registration page |
+| `/login` | Login |
+| `/register` | Registration |
 | `/profile` | User profile |
 | `/messages` | Messaging center |
-| `/favorites` | Saved favorite listings |
-| `/about` | About page |
-| `/contact` | Contact page |
+| `/favorites` | Saved listings |
+| `/about` | About |
+| `/contact` | Contact |
 | `/privacy-and-policy` | Privacy policy |
 | `/term-of-use` | Terms of use |
 | `/discounts-and-offers` | Promotions and offers |
@@ -274,7 +286,7 @@ client/
 ### Product & Category Pages
 
 | Route | Description |
-|---|---|
+| --- | --- |
 | `/category/cars` | Cars |
 | `/category/motorcycles` | Motorcycles |
 | `/category/electronics` | Electronics |
@@ -290,69 +302,51 @@ client/
 ### Admin & Management Pages
 
 | Route | Description |
-|---|---|
+| --- | --- |
 | `/users-management` | User and account management |
 | `/admins` | Admin Center |
-| `/adsDashboard` | Featured ad dashboard |
-| `/reports` | Report and moderation management |
+| `/ads-dashboard` | Featured ads dashboard |
+| `/reports` | Reports and moderation |
 
-> Additional administrative modules such as Jobs, Notifications, Audit Logs, Blocks, and Permissions are integrated into the Admin Center according to the application's current route configuration.
-
----
+Jobs, Notifications, Audit Logs, Blocks, and Permissions are integrated into the Admin Center according to the current route configuration.
 
 ## Jobs Platform
 
-Safqa provides a dedicated jobs platform integrated into the marketplace ecosystem.
-
-### Features
+A dedicated jobs platform integrated into the marketplace.
 
 - Job listing creation and management
-- Job search
-- Filtering
-- Pagination
+- Search, filtering, and pagination
 - Job details pages
 - User-based job retrieval
 - Administrative job management
 - Role-based access control
-- Responsive jobs interface
-
-The jobs platform is designed to allow users to discover and manage employment opportunities while providing administrators with dedicated management tools.
-
----
+- Responsive interface
 
 ## Admin Center
 
-Safqa includes a centralized Admin Center designed to provide secure and efficient platform management.
-
-### Administration Features
+A centralized area for secure platform management.
 
 - User and account management
-- Role-based access control
-- Granular permission management
+- Role-based access control and granular permissions
 - Product and advertisement moderation
 - Job listing management
 - Reports and moderation workflows
-- Administrative notification management
+- Notification management
 - Message Audit Logs
 - User Blocks management
 - Pagination and filtering
-- Administrative actions protected by backend authorization
-- Auditability of sensitive administrative operations
+- Backend-authorized actions with auditability of sensitive operations
 
 ### Roles
 
-The platform supports role-based administration, including:
-
-- `Admin`
-- `Moderator`
-- `Client`
-- `delivery`
+- Admin
+- Moderator
+- Client
+- Delivery
 
 ### Permissions
 
-Administrative permissions are enforced on the backend and reflected in the frontend UI.
-
-Examples include:
+Permissions are enforced on the backend and reflected in the frontend UI. Examples:
 
 - `canLogin`
 - `canUseAccount`
@@ -362,124 +356,79 @@ Examples include:
 - `canAccessExistingData`
 - `canViewMessageAuditLogs`
 
-Frontend permission checks are primarily used to provide an appropriate user experience.
-
-The backend remains the source of truth for authorization and security.
+Frontend permission checks only shape the user experience. The backend is the source of truth for authorization.
 
 ### Notification Center
 
-The Admin Center includes a centralized notification management system.
-
-Features include:
-
-- Send notifications to individual users
-- Send notifications to multiple users
-- Broadcast notifications
-- Notification title and message
+- Send to a single user, multiple users, or broadcast
+- Title and message
 - Optional related post or resource
-- Notification preview
-- Notification history
-- Permission-protected administrative actions
+- Preview and history
+- Permission-protected actions
 
 ### Message Audit Logs
 
-Sensitive message-related administrative activity can be tracked through audit logs.
-
-The audit system supports:
-
 - Administrative access tracking
 - Conversation-related audit events
-- Administrator identification
-- Target user identification
-- Conversation identification
+- Administrator, target user, and conversation identification
 - Timestamped actions
 - Permission-controlled access
 
 ### Blocks Management
 
-Administrative block management provides tools for reviewing and managing user blocking relationships.
-
-Features include:
-
 - View blocking relationships
 - Search and filtering
 - Review blocker and blocked users
 - Administrative unblock actions
-- Permission-protected operations
-- Administrative auditing
+- Permission-protected and audited
 
----
+## Security & Stability
 
-## Security & Stability Considerations
+### Frontend
 
-This project applies a layered security approach.
-
-### Frontend Security
-
-Key practices include:
-
-- `withCredentials: true` for authenticated API requests
+- `withCredentials: true` on authenticated API requests (cookie-based authentication)
 - Centralized API configuration in `src/services/api.ts`
-- Automatic authentication handling for unauthorized responses
-- Role and permission-aware UI
-- Secure HTTP headers configured in `vercel.json`
-
-Configured security headers include:
-
-- Content-Security-Policy
-- Strict-Transport-Security
-- X-Content-Type-Options
-- Referrer-Policy
-- Permissions-Policy
+- Automatic handling of unauthorized responses
+- Role- and permission-aware UI
+- Security headers configured in `vercel.json`:
+  - `Content-Security-Policy`
+  - `Strict-Transport-Security`
+  - `X-Content-Type-Options`
+  - `Referrer-Policy`
+  - `Permissions-Policy`
 
 ### Backend Authorization
 
-Frontend protection is not considered sufficient for sensitive operations.
+Frontend checks are not sufficient for sensitive operations. The backend is responsible for:
 
-Critical authorization responsibilities remain on the backend, including:
-
-- Authentication validation
-- Role checks
-- Permission checks
+- Authentication and JWT/session validation
+- Role and permission checks
 - Account status validation
-- Input validation
-- Input sanitization
-- CSRF protection when cookie-based authentication is used
-- JWT/session validation
+- Input validation and sanitization
+- **CSRF protection** (required, since authentication uses cookies with `withCredentials`)
 - Safe handling of user-generated content
 - Administrative authorization
 - Audit logging for sensitive operations
 
-Administrative requests should be validated using the authenticated user's identity, role, account status, and required permissions.
-
----
+Administrative requests are validated against the authenticated user's identity, role, account status, and required permissions.
 
 ## Contributing
 
 Contributions are welcome.
 
-To propose changes:
-
 ```bash
 git checkout -b feature/my-improvement
-
 # make your changes
-
 git add .
 git commit -m "Add my improvement"
-
 git push origin feature/my-improvement
 ```
 
-Then open a pull request from your branch into the `main` branch.
-
----
+Then open a pull request into the `main` branch.
 
 ## License
 
-This project is licensed under the MIT License.
-
-See [LICENSE](./LICENSE) for more information.
+Licensed under the MIT License. See [LICENSE](LICENSE) for details.
 
 ---
 

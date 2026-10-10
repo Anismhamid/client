@@ -45,6 +45,10 @@ const ForgotPassword = lazy(
     () => import('../components/settings/ForgotPassword'),
 );
 
+const SavedSearchesPage = lazy(
+    () => import('../components/savedSearches/SavedSearchesPage'),
+);
+
 const ResetPassword = lazy(
     () => import('../components/settings/ResetPassword'),
 );
@@ -277,6 +281,8 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
             />
 
             <Route path={path.TermOfUse} element={<TermOfUse />} />
+
+            <Route path={path.smartSearch} element={<SavedSearchesPage />} />
 
             {/* =================================================
              * ACCOUNT

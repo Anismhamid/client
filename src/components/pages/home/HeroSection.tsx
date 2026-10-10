@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import SealBadge from './SealBadge';
 import AISearch from '../../../atoms/AISearch';
 import { BRAND } from '../../navbar/theme/brand';
+import { Search } from '@mui/icons-material';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
@@ -330,6 +331,15 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                     </Box>
                 </m.div>
                 <AISearch />
+                <Button
+                    variant='contained'
+                    size='small'
+                    startIcon={<Search />}
+                    onClick={()=>navigate(path.smartSearch)}
+                    sx={{gap:1,my:2}}
+                >
+                    صفقة ذكيه
+                </Button>
                 {/* Trust ticker — quiet reassurance strip under the CTAs */}
                 <m.div
                     initial={{ opacity: 0 }}
@@ -353,7 +363,9 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                     color: 'text.secondary',
                                 }}
                             >
-                                <Icon sx={{ fontSize: 16, color: BRAND.gold }} />
+                                <Icon
+                                    sx={{ fontSize: 16, color: BRAND.gold }}
+                                />
                                 <Typography
                                     variant='caption'
                                     sx={{ fontWeight: 600, letterSpacing: 0.2 }}
