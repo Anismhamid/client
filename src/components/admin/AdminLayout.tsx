@@ -33,23 +33,11 @@ import {
     NavigateNext,
 } from '@mui/icons-material';
 
-import {
-    Outlet,
-    useLocation,
-    useNavigate,
-} from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-import {
-    motion,
-    AnimatePresence,
-} from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-import {
-    useCallback,
-    useMemo,
-    useState,
-    type ReactNode,
-} from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import { useTranslation } from 'react-i18next';
 
@@ -193,9 +181,7 @@ const AdminLayout = () => {
 
     const { t, i18n } = useTranslation();
 
-    const isMobile = useMediaQuery(
-        theme.breakpoints.down('md'),
-    );
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -207,9 +193,7 @@ const AdminLayout = () => {
 
     const isRTL =
         i18n.dir?.() === 'rtl' ||
-        ['ar', 'he'].includes(
-            i18n.language?.split('-')[0] ?? '',
-        );
+        ['ar', 'he'].includes(i18n.language?.split('-')[0] ?? '');
 
     const direction = isRTL ? 'rtl' : 'ltr';
 
@@ -242,9 +226,7 @@ const AdminLayout = () => {
             }
 
             if (item.children?.length) {
-                return item.children.some((child) =>
-                    isPathActive(child.path),
-                );
+                return item.children.some((child) => isPathActive(child.path));
             }
 
             return false;
@@ -277,10 +259,7 @@ const AdminLayout = () => {
             path?: string;
         }> = [
             {
-                label: t(
-                    'admin.home',
-                    'الرئيسية',
-                ),
+                label: t('admin.home', 'الرئيسية'),
                 path: path.Admin,
             },
         ];
@@ -288,10 +267,7 @@ const AdminLayout = () => {
         // Dashboard
         if (location.pathname === path.Admin) {
             result.push({
-                label: t(
-                    'admin.dashboard',
-                    'لوحة التحكم',
-                ),
+                label: t('admin.dashboard', 'لوحة التحكم'),
             });
 
             return result;
@@ -301,17 +277,12 @@ const AdminLayout = () => {
             items: AdminMenuItem[],
         ): AdminMenuItem | undefined => {
             for (const item of items) {
-                if (
-                    item.path !== path.Admin &&
-                    isPathActive(item.path)
-                ) {
+                if (item.path !== path.Admin && isPathActive(item.path)) {
                     return item;
                 }
 
                 if (item.children?.length) {
-                    const child = findMenuItem(
-                        item.children,
-                    );
+                    const child = findMenuItem(item.children);
 
                     if (child) {
                         return child;
@@ -322,25 +293,16 @@ const AdminLayout = () => {
             return undefined;
         };
 
-        const activeItem = findMenuItem(
-            ADMIN_MENU,
-        );
+        const activeItem = findMenuItem(ADMIN_MENU);
 
         if (activeItem) {
             result.push({
-                label: t(
-                    activeItem.labelKey,
-                    activeItem.fallbackLabel,
-                ),
+                label: t(activeItem.labelKey, activeItem.fallbackLabel),
             });
         }
 
         return result;
-    }, [
-        isPathActive,
-        location.pathname,
-        t,
-    ]);
+    }, [isPathActive, location.pathname, t]);
 
     // ========================================================
     // Sidebar
@@ -352,8 +314,7 @@ const AdminLayout = () => {
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
-                bgcolor:
-                    theme.palette.background.paper,
+                bgcolor: theme.palette.background.paper,
                 direction,
             }}
         >
@@ -367,21 +328,13 @@ const AdminLayout = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent:
-                        collapsed && !isMobile
-                            ? 'center'
-                            : 'space-between',
-                    px:
-                        collapsed && !isMobile
-                            ? 1
-                            : 2,
-                    borderBottom:
-                        `1px solid ${theme.palette.divider}`,
+                        collapsed && !isMobile ? 'center' : 'space-between',
+                    px: collapsed && !isMobile ? 1 : 2,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
                 }}
             >
                 <ButtonBase
-                    onClick={() =>
-                        handleNavigate(path.Admin)
-                    }
+                    onClick={() => handleNavigate(path.Admin)}
                     sx={{
                         borderRadius: 2,
                         px: 1,
@@ -404,11 +357,8 @@ const AdminLayout = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                bgcolor:
-                                    theme.palette.primary.main,
-                                color:
-                                    theme.palette.primary
-                                        .contrastText,
+                                bgcolor: theme.palette.primary.main,
+                                color: theme.palette.primary.contrastText,
                                 fontWeight: 800,
                                 fontSize: 18,
                             }}
@@ -416,31 +366,21 @@ const AdminLayout = () => {
                             ص
                         </Box>
 
-                        {(!collapsed ||
-                            isMobile) && (
+                        {(!collapsed || isMobile) && (
                             <Box
                                 sx={{
-                                    textAlign:
-                                        isRTL
-                                            ? 'right'
-                                            : 'left',
+                                    textAlign: isRTL ? 'right' : 'left',
                                 }}
                             >
-                                <Typography
-                                    fontWeight={800}
-                                    lineHeight={1.1}
-                                >
+                                <Typography fontWeight={800} lineHeight={1.1}>
                                     صفقة
                                 </Typography>
 
                                 <Typography
-                                    variant="caption"
-                                    color="text.secondary"
+                                    variant='caption'
+                                    color='text.secondary'
                                 >
-                                    {t(
-                                        'admin.center',
-                                        'مركز الإدارة',
-                                    )}
+                                    {t('admin.center', 'مركز الإدارة')}
                                 </Typography>
                             </Box>
                         )}
@@ -462,28 +402,17 @@ const AdminLayout = () => {
                 <List
                     disablePadding
                     sx={{
-                        px:
-                            collapsed && !isMobile
-                                ? 1
-                                : 1.5,
+                        px: collapsed && !isMobile ? 1 : 1.5,
                     }}
                 >
                     {ADMIN_MENU.map((item) => {
-                        const active =
-                            isMenuItemActive(item);
+                        const active = isMenuItemActive(item);
 
-                        const hasChildren =
-                            Boolean(
-                                item.children?.length,
-                            );
+                        const hasChildren = Boolean(item.children?.length);
 
                         const targetPath =
-                            hasChildren &&
-                            item.path ===
-                                path.AdminSecurity
-                                ? item.children?.[0]
-                                      ?.path ??
-                                  item.path
+                            hasChildren && item.path === path.AdminSecurity
+                                ? (item.children?.[0]?.path ?? item.path)
                                 : item.path;
 
                         return (
@@ -492,29 +421,20 @@ const AdminLayout = () => {
 
                                 <Tooltip
                                     title={
-                                        collapsed &&
-                                        !isMobile
+                                        collapsed && !isMobile
                                             ? t(
                                                   item.labelKey,
                                                   item.fallbackLabel,
                                               )
                                             : ''
                                     }
-                                    placement={
-                                        isRTL
-                                            ? 'left'
-                                            : 'right'
-                                    }
+                                    placement={isRTL ? 'left' : 'right'}
                                     arrow
                                 >
                                     <ListItemButton
-                                        selected={
-                                            active
-                                        }
+                                        selected={active}
                                         onClick={() =>
-                                            handleNavigate(
-                                                targetPath,
-                                            )
+                                            handleNavigate(targetPath)
                                         }
                                         sx={{
                                             minHeight: 48,
@@ -522,42 +442,32 @@ const AdminLayout = () => {
                                             borderRadius: 2,
 
                                             justifyContent:
-                                                collapsed &&
-                                                !isMobile
+                                                collapsed && !isMobile
                                                     ? 'center'
                                                     : 'initial',
 
-                                            '&.Mui-selected':
-                                                {
-                                                    bgcolor:
-                                                        'action.selected',
-                                                    color:
-                                                        'primary.main',
+                                            '&.Mui-selected': {
+                                                bgcolor: 'action.selected',
+                                                color: 'primary.main',
 
-                                                    '& .MuiListItemIcon-root':
-                                                        {
-                                                            color:
-                                                                'primary.main',
-                                                        },
+                                                '& .MuiListItemIcon-root': {
+                                                    color: 'primary.main',
                                                 },
+                                            },
 
-                                            '&:hover':
-                                                {
-                                                    bgcolor:
-                                                        'action.hover',
-                                                },
+                                            '&:hover': {
+                                                bgcolor: 'action.hover',
+                                            },
                                         }}
                                     >
                                         <ListItemIcon
                                             sx={{
                                                 minWidth:
-                                                    collapsed &&
-                                                    !isMobile
+                                                    collapsed && !isMobile
                                                         ? 0
                                                         : 42,
 
-                                                justifyContent:
-                                                    'center',
+                                                justifyContent: 'center',
 
                                                 color: active
                                                     ? 'primary.main'
@@ -567,18 +477,16 @@ const AdminLayout = () => {
                                             {item.icon}
                                         </ListItemIcon>
 
-                                        {(!collapsed ||
-                                            isMobile) && (
+                                        {(!collapsed || isMobile) && (
                                             <ListItemText
                                                 primary={t(
                                                     item.labelKey,
                                                     item.fallbackLabel,
                                                 )}
                                                 primaryTypographyProps={{
-                                                    fontWeight:
-                                                        active
-                                                            ? 700
-                                                            : 500,
+                                                    fontWeight: active
+                                                        ? 700
+                                                        : 500,
                                                 }}
                                             />
                                         )}
@@ -591,8 +499,7 @@ const AdminLayout = () => {
 
                                 {hasChildren &&
                                     active &&
-                                    (!collapsed ||
-                                        isMobile) && (
+                                    (!collapsed || isMobile) && (
                                         <List
                                             disablePadding
                                             sx={{
@@ -600,91 +507,73 @@ const AdminLayout = () => {
                                                 mt: 0.5,
                                                 mb: 1,
 
-                                                borderInlineStart:
-                                                    `2px solid ${theme.palette.divider}`,
+                                                borderInlineStart: `2px solid ${theme.palette.divider}`,
                                             }}
                                         >
-                                            {item.children!.map(
-                                                (
-                                                    child,
-                                                ) => {
-                                                    const childActive =
-                                                        isPathActive(
-                                                            child.path,
-                                                        );
+                                            {item.children!.map((child) => {
+                                                const childActive =
+                                                    isPathActive(child.path);
 
-                                                    return (
-                                                        <ListItemButton
-                                                            key={
-                                                                child.path
-                                                            }
-                                                            selected={
-                                                                childActive
-                                                            }
-                                                            onClick={() =>
-                                                                handleNavigate(
-                                                                    child.path,
-                                                                )
-                                                            }
+                                                return (
+                                                    <ListItemButton
+                                                        key={child.path}
+                                                        selected={childActive}
+                                                        onClick={() =>
+                                                            handleNavigate(
+                                                                child.path,
+                                                            )
+                                                        }
+                                                        sx={{
+                                                            minHeight: 42,
+                                                            mx: 1,
+                                                            mb: 0.25,
+                                                            borderRadius: 1.5,
+
+                                                            '&.Mui-selected': {
+                                                                bgcolor:
+                                                                    'action.selected',
+                                                                color: 'primary.main',
+
+                                                                '& .MuiListItemIcon-root':
+                                                                    {
+                                                                        color: 'primary.main',
+                                                                    },
+                                                            },
+
+                                                            '&:hover': {
+                                                                bgcolor:
+                                                                    'action.hover',
+                                                            },
+                                                        }}
+                                                    >
+                                                        <ListItemIcon
                                                             sx={{
-                                                                minHeight: 42,
-                                                                mx: 1,
-                                                                mb: 0.25,
-                                                                borderRadius: 1.5,
-
-                                                                '&.Mui-selected':
-                                                                    {
-                                                                        bgcolor:
-                                                                            'action.selected',
-                                                                        color:
-                                                                            'primary.main',
-
-                                                                        '& .MuiListItemIcon-root':
-                                                                            {
-                                                                                color:
-                                                                                    'primary.main',
-                                                                            },
-                                                                    },
-
-                                                                '&:hover':
-                                                                    {
-                                                                        bgcolor:
-                                                                            'action.hover',
-                                                                    },
+                                                                minWidth: 34,
+                                                                color: childActive
+                                                                    ? 'primary.main'
+                                                                    : 'text.secondary',
                                                             }}
                                                         >
-                                                            <ListItemIcon
-                                                                sx={{
-                                                                    minWidth: 34,
-                                                                    color:
-                                                                        childActive
-                                                                            ? 'primary.main'
-                                                                            : 'text.secondary',
-                                                                }}
-                                                            >
-                                                                {
-                                                                    child.icon
-                                                                }
-                                                            </ListItemIcon>
+                                                            {child.icon}
+                                                        </ListItemIcon>
 
-                                                            <ListItemText
-                                                                primary={t(
-                                                                    child.labelKey,
-                                                                    child.fallbackLabel,
-                                                                )}
-                                                                primaryTypographyProps={{
-                                                                    variant:
-                                                                        'body2',
-                                                                    fontWeight:
-                                                                        childActive
-                                                                            ? 700
-                                                                            : 400,
-                                                                }}
-                                                            />
-                                                        </ListItemButton>
-                                                    );
-                                                },
-                                            )}
+                                                        <ListItemText
+                                                            primary={t(
+                                                                child.labelKey,
+                                                                child.fallbackLabel,
+                                                            )}
+                                                            primaryTypographyProps={{
+                                                                variant:
+                                                                    'body2',
+                                                                fontWeight:
+                                                                    childActive
+                                                                        ? 700
+                                                                        : 400,
+                                                            }}
+                                                        />
+                                                    </ListItemButton>
+                                                );
+                                            })}
                                         </List>
                                     )}
                             </Box>
@@ -703,57 +592,34 @@ const AdminLayout = () => {
                 <Tooltip
                     title={
                         collapsed && !isMobile
-                            ? t(
-                                  'admin.backToHome',
-                                  'العودة للموقع',
-                              )
+                            ? t('admin.backToHome', 'العودة للموقع')
                             : ''
                     }
-                    placement={
-                        isRTL
-                            ? 'left'
-                            : 'right'
-                    }
+                    placement={isRTL ? 'left' : 'right'}
                     arrow
                 >
                     <ListItemButton
-                        onClick={() =>
-                            handleNavigate(
-                                path.Home,
-                            )
-                        }
+                        onClick={() => handleNavigate(path.Home)}
                         sx={{
                             minHeight: 46,
                             borderRadius: 2,
                             justifyContent:
-                                collapsed &&
-                                !isMobile
-                                    ? 'center'
-                                    : 'initial',
+                                collapsed && !isMobile ? 'center' : 'initial',
                         }}
                     >
                         <ListItemIcon
                             sx={{
-                                minWidth:
-                                    collapsed &&
-                                    !isMobile
-                                        ? 0
-                                        : 42,
+                                minWidth: collapsed && !isMobile ? 0 : 42,
 
-                                justifyContent:
-                                    'center',
+                                justifyContent: 'center',
                             }}
                         >
                             <Home />
                         </ListItemIcon>
 
-                        {(!collapsed ||
-                            isMobile) && (
+                        {(!collapsed || isMobile) && (
                             <ListItemText
-                                primary={t(
-                                    'admin.backToHome',
-                                    'العودة للموقع',
-                                )}
+                                primary={t('admin.backToHome', 'العودة للموقع')}
                             />
                         )}
                     </ListItemButton>
@@ -761,6 +627,8 @@ const AdminLayout = () => {
             </Box>
         </Box>
     );
+
+    const NAVBAR_HEIGHT = 77;
 
     // ========================================================
     // Render
@@ -771,8 +639,7 @@ const AdminLayout = () => {
             sx={{
                 minHeight: '100vh',
                 display: 'flex',
-                bgcolor:
-                    theme.palette.background.default,
+                bgcolor: theme.palette.background.default,
                 direction,
             }}
         >
@@ -782,45 +649,30 @@ const AdminLayout = () => {
 
             {!isMobile && (
                 <Drawer
-                    variant="permanent"
-                    anchor={
-                        isRTL
-                            ? 'right'
-                            : 'left'
-                    }
+                    variant='permanent'
+                    anchor={isRTL ? 'right' : 'left'}
                     sx={{
-                        width:
-                            collapsed
-                                ? COLLAPSED_DRAWER_WIDTH
-                                : DRAWER_WIDTH,
+                        width: collapsed
+                            ? COLLAPSED_DRAWER_WIDTH
+                            : DRAWER_WIDTH,
 
                         flexShrink: 0,
 
                         '& .MuiDrawer-paper': {
-                            width:
-                                collapsed
-                                    ? COLLAPSED_DRAWER_WIDTH
-                                    : DRAWER_WIDTH,
-
-                            boxSizing:
-                                'border-box',
-
+                            width: collapsed
+                                ? COLLAPSED_DRAWER_WIDTH
+                                : DRAWER_WIDTH,
+                            top: NAVBAR_HEIGHT,
+                            height: `calc(100vh - ${NAVBAR_HEIGHT}px)`,
+                            boxSizing: 'border-box',
                             border: 0,
-
-                            borderInlineEnd:
-                                isRTL
-                                    ? 'none'
-                                    : `1px solid ${theme.palette.divider}`,
-
-                            borderInlineStart:
-                                isRTL
-                                    ? `1px solid ${theme.palette.divider}`
-                                    : 'none',
-
-                            transition:
-                                theme.transitions.create(
-                                    'width',
-                                ),
+                            borderInlineEnd: isRTL
+                                ? 'none'
+                                : `1px solid ${theme.palette.divider}`,
+                            borderInlineStart: isRTL
+                                ? `1px solid ${theme.palette.divider}`
+                                : 'none',
+                            transition: theme.transitions.create('width'),
                         },
                     }}
                 >
@@ -834,25 +686,17 @@ const AdminLayout = () => {
 
             {isMobile && (
                 <Drawer
-                    variant="temporary"
+                    variant='temporary'
                     open={mobileOpen}
-                    onClose={() =>
-                        setMobileOpen(false)
-                    }
-                    anchor={
-                        isRTL
-                            ? 'right'
-                            : 'left'
-                    }
+                    onClose={() => setMobileOpen(false)}
+                    anchor={isRTL ? 'right' : 'left'}
                     ModalProps={{
                         keepMounted: true,
                     }}
                     sx={{
                         '& .MuiDrawer-paper': {
-                            width:
-                                MOBILE_DRAWER_WIDTH,
-                            boxSizing:
-                                'border-box',
+                            width: MOBILE_DRAWER_WIDTH,
+                            boxSizing: 'border-box',
                         },
                     }}
                 >
@@ -865,7 +709,7 @@ const AdminLayout = () => {
             ================================================== */}
 
             <Box
-                component="main"
+                component='main'
                 sx={{
                     flexGrow: 1,
                     minWidth: 0,
@@ -879,18 +723,16 @@ const AdminLayout = () => {
                 ================================================== */}
 
                 <AppBar
-                    position="sticky"
+                    position='sticky'
                     elevation={0}
-                    color="inherit"
+                    color='inherit'
                     sx={{
-                        borderBottom:
-                            `1px solid ${theme.palette.divider}`,
+                        top: NAVBAR_HEIGHT,
+                        borderBottom: `1px solid ${theme.palette.divider}`,
 
-                        bgcolor:
-                            theme.palette.background.paper,
+                        bgcolor: theme.palette.background.paper,
 
-                        zIndex:
-                            theme.zIndex.drawer - 1,
+                        zIndex: theme.zIndex.drawer - 1,
                     }}
                 >
                     <Toolbar
@@ -905,20 +747,12 @@ const AdminLayout = () => {
                         <IconButton
                             onClick={() => {
                                 if (isMobile) {
-                                    setMobileOpen(
-                                        true,
-                                    );
+                                    setMobileOpen(true);
                                 } else {
-                                    setCollapsed(
-                                        (value) =>
-                                            !value,
-                                    );
+                                    setCollapsed((value) => !value);
                                 }
                             }}
-                            aria-label={t(
-                                'admin.toggleSidebar',
-                                'فتح القائمة',
-                            )}
+                            aria-label={t('admin.toggleSidebar', 'فتح القائمة')}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -929,20 +763,13 @@ const AdminLayout = () => {
                                 minWidth: 0,
                             }}
                         >
-                            <Typography
-                                variant="h6"
-                                fontWeight={800}
-                                noWrap
-                            >
-                                {t(
-                                    'admin.title',
-                                    'مركز إدارة صفقة',
-                                )}
+                            <Typography variant='h6' fontWeight={800} noWrap>
+                                {t('admin.title', 'مركز إدارة صفقة')}
                             </Typography>
 
                             <Typography
-                                variant="caption"
-                                color="text.secondary"
+                                variant='caption'
+                                color='text.secondary'
                                 noWrap
                             >
                                 {t(
@@ -952,18 +779,9 @@ const AdminLayout = () => {
                             </Typography>
                         </Box>
 
-                        <Tooltip
-                            title={t(
-                                'admin.backToHome',
-                                'العودة للموقع',
-                            )}
-                        >
+                        <Tooltip title={t('admin.backToHome', 'العودة للموقع')}>
                             <IconButton
-                                onClick={() =>
-                                    handleNavigate(
-                                        path.Home,
-                                    )
-                                }
+                                onClick={() => handleNavigate(path.Home)}
                             >
                                 <Home />
                             </IconButton>
@@ -988,69 +806,49 @@ const AdminLayout = () => {
                     <Breadcrumbs
                         separator={
                             <NavigateNext
-                                fontSize="small"
+                                fontSize='small'
                                 sx={
                                     isRTL
                                         ? {
-                                              transform:
-                                                  'rotate(180deg)',
+                                              transform: 'rotate(180deg)',
                                           }
                                         : undefined
                                 }
                             />
                         }
-                        aria-label="breadcrumb"
+                        aria-label='breadcrumb'
                     >
-                        {breadcrumbs.map(
-                            (
-                                breadcrumb,
-                                index,
-                            ) => {
-                                const last =
-                                    index ===
-                                    breadcrumbs.length -
-                                        1;
+                        {breadcrumbs.map((breadcrumb, index) => {
+                            const last = index === breadcrumbs.length - 1;
 
-                                return (
-                                    <ButtonBase
-                                        key={`${breadcrumb.label}-${index}`}
-                                        disabled={
-                                            last ||
-                                            !breadcrumb.path
+                            return (
+                                <ButtonBase
+                                    key={`${breadcrumb.label}-${index}`}
+                                    disabled={last || !breadcrumb.path}
+                                    onClick={() =>
+                                        breadcrumb.path &&
+                                        navigate(breadcrumb.path)
+                                    }
+                                    sx={{
+                                        borderRadius: 1,
+                                        px: 0.5,
+                                        py: 0.25,
+                                    }}
+                                >
+                                    <Typography
+                                        variant='body2'
+                                        color={
+                                            last
+                                                ? 'text.primary'
+                                                : 'text.secondary'
                                         }
-                                        onClick={() =>
-                                            breadcrumb.path &&
-                                            navigate(
-                                                breadcrumb.path,
-                                            )
-                                        }
-                                        sx={{
-                                            borderRadius: 1,
-                                            px: 0.5,
-                                            py: 0.25,
-                                        }}
+                                        fontWeight={last ? 700 : 400}
                                     >
-                                        <Typography
-                                            variant="body2"
-                                            color={
-                                                last
-                                                    ? 'text.primary'
-                                                    : 'text.secondary'
-                                            }
-                                            fontWeight={
-                                                last
-                                                    ? 700
-                                                    : 400
-                                            }
-                                        >
-                                            {
-                                                breadcrumb.label
-                                            }
-                                        </Typography>
-                                    </ButtonBase>
-                                );
-                            },
-                        )}
+                                        {breadcrumb.label}
+                                    </Typography>
+                                </ButtonBase>
+                            );
+                        })}
                     </Breadcrumbs>
                 </Box>
 
@@ -1074,19 +872,13 @@ const AdminLayout = () => {
                         overflow: 'hidden',
                     }}
                 >
-                    <AnimatePresence
-                        mode="wait"
-                    >
+                    <AnimatePresence mode='wait'>
                         <motion.div
-                            key={
-                                location.pathname
-                            }
-                            variants={
-                                pageVariants
-                            }
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
+                            key={location.pathname}
+                            variants={pageVariants}
+                            initial='initial'
+                            animate='animate'
+                            exit='exit'
                             transition={{
                                 duration: 0.22,
                                 ease: 'easeOut',

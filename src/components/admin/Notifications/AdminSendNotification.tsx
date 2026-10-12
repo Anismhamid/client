@@ -410,7 +410,9 @@ const AdminSendNotification = () => {
 
                         <MenuItem value={path.jobs}>الوظائف</MenuItem>
 
-                        <MenuItem value={productsPathes.postsDetails}>الإعلانات</MenuItem>
+                        <MenuItem value={productsPathes.postsDetails}>
+                            الإعلانات
+                        </MenuItem>
 
                         {/* <MenuItem value={`${path.CustomerProfile}/${user.slug}`}>إعلاناتي</MenuItem> */}
 
