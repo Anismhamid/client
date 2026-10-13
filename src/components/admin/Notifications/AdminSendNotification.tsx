@@ -31,9 +31,9 @@ import { path, productsPathes } from '../../../routes/routes';
 const AdminSendNotification = () => {
     const [target, setTarget] = useState<AdminNotificationTarget>('all');
 
-    const [role, setRole] = useState<
-        'Admin' | 'Moderator' | 'Client' | 'delivery'
-    >('Client');
+    const [role, setRole] = useState<'Admin' | 'Moderator' | 'Client'>(
+        'Client',
+    );
 
     const { users, loading: usersLoading, getUserName } = useUsers();
 
@@ -229,8 +229,7 @@ const AdminSendNotification = () => {
                                     event.target.value as
                                         | 'Admin'
                                         | 'Moderator'
-                                        | 'Client'
-                                        | 'delivery',
+                                        | 'Client',
                                 )
                             }
                         >
