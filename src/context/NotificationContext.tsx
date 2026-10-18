@@ -21,12 +21,14 @@ import { AppNotifications } from '../interfaces/Notification';
 interface NotificationContextType {
     notifications: AppNotifications[];
     unreadCount: number;
-
     refreshNotifications: () => Promise<void>;
-
     markAsRead: (notificationId: string) => Promise<void>;
-
     markAllAsRead: () => Promise<void>;
+}
+
+interface NotificationProviderProps {
+    children: React.ReactNode;
+    isAuthenticated: boolean;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -35,130 +37,107 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
 
 export const NotificationProvider = ({
     children,
-}: {
-    children: React.ReactNode;
-}) => {
+    isAuthenticated,
+}: NotificationProviderProps) => {
     const [notifications, setNotifications] = useState<AppNotifications[]>([]);
 
-    const [unreadCount, setUnreadCount] = useState<number>(0);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const notificationIdsRef = useRef<Set<string>>(new Set());
+    const authenticatedRef = useRef(isAuthenticated);
+    const requestVersionRef = useRef(0);
 
-    /**
-     * IDs التي استلمناها من Socket
-     *
-     * تمنع تكرار نفس notification
-     * حتى لو Socket أرسلها أكثر من مرة.
-     */
-    const receivedNotificationIds = useRef<Set<string>>(new Set());
+    useEffect(() => {
+        authenticatedRef.current = isAuthenticated;
+    }, [isAuthenticated]);
 
-    /**
-     * =====================================================
-     * LOAD NOTIFICATIONS
-     * =====================================================
-     */
+    const clearNotifications = useCallback(() => {
+        requestVersionRef.current += 1;
+        notificationIdsRef.current.clear();
+        setNotifications([]);
+        setUnreadCount(0);
+    }, []);
+
     const refreshNotifications = useCallback(async () => {
+        if (!authenticatedRef.current) {
+            clearNotifications();
+            return;
+        }
+
+        const requestVersion = requestVersionRef.current;
+
         try {
             const response = await getNotifications(1, 50);
 
+            // تجاهل النتيجة إذا تغيّرت جلسة المستخدم أثناء الطلب.
+            if (
+                !authenticatedRef.current ||
+                requestVersion !== requestVersionRef.current
+            ) {
+                return;
+            }
+
             const items = response.notifications ?? [];
 
-            notificationIdsRef.current = new Set(
-                items.map((notification) => notification._id),
-            );
+            notificationIdsRef.current = new Set(items.map((item) => item._id));
 
             setNotifications(items);
             setUnreadCount(response.unreadCount ?? 0);
         } catch (error) {
-            console.error('Failed to load notifications:', error);
-        }
-    }, []);
-
-    /**
-     * =====================================================
-     * INITIAL LOAD
-     * =====================================================
-     *
-     * مهم:
-     * إذا كان عندك lint يمنع setState داخل effect،
-     * نستطيع لاحقًا نقل initial load للـ Navbar.
-     *
-     * حاليًا هذا الكود آمن من ناحية duplicate state
-     * لأننا نستبدل القائمة وليس نضيف إليها.
-     */
-    useEffect(() => {
-        let cancelled = false;
-
-        const loadNotifications = async () => {
-            try {
-                const response = await getNotifications(1, 50);
-
-                if (cancelled) {
-                    return;
-                }
-
-                const serverNotifications = response.notifications ?? [];
-
-                receivedNotificationIds.current = new Set(
-                    serverNotifications.map((notification) => notification._id),
-                );
-
-                setNotifications(serverNotifications);
-
-                setUnreadCount(response.unreadCount ?? 0);
-            } catch (error) {
-                if (!cancelled) {
-                    console.error('Failed to load notifications:', error);
-                }
+            if (
+                authenticatedRef.current &&
+                requestVersion === requestVersionRef.current
+            ) {
+                console.error('Failed to load notifications:', error);
             }
-        };
+        }
+    }, [clearNotifications]);
 
-        void loadNotifications();
-
-        return () => {
-            cancelled = true;
-        };
-    }, []);
-
-    /**
-     * =====================================================
-     * REALTIME SOCKET
-     * =====================================================
-     */
+    // تحميل الإشعارات فقط بعد تسجيل الدخول.
     useEffect(() => {
+        if (!isAuthenticated) {
+            const requestVersion = requestVersionRef.current;
+            queueMicrotask(() => {
+                if (
+                    !authenticatedRef.current &&
+                    requestVersion === requestVersionRef.current
+                ) {
+                    clearNotifications();
+                }
+            });
+            return;
+        }
+
+        queueMicrotask(() => {
+            if (authenticatedRef.current) {
+                void refreshNotifications();
+            }
+        });
+    }, [isAuthenticated, refreshNotifications, clearNotifications]);
+
+    // استقبال الإشعارات المباشرة للمستخدم المسجّل فقط.
+    useEffect(() => {
+        if (!isAuthenticated) {
+            return;
+        }
+
         const handleNotification = (notification: AppNotifications) => {
-            if (!notification?._id) {
+            if (!authenticatedRef.current || !notification?._id) {
                 return;
             }
 
-            /**
-             * منع نفس الإشعار من الدخول
-             * أكثر من مرة.
-             */
             if (notificationIdsRef.current.has(notification._id)) {
-                console.log(
-                    '[notifications] duplicate ignored:',
-                    notification._id,
-                );
-
                 return;
             }
 
             notificationIdsRef.current.add(notification._id);
 
-            console.log(
-                '[notifications] new:',
-                notification._id,
-                notification.type,
-            );
-
             setNotifications((previous) => {
-                // حماية إضافية
                 if (previous.some((item) => item._id === notification._id)) {
                     return previous;
                 }
 
-                return [notification, ...previous];
+                return [notification, ...previous].slice(0, 50);
             });
 
             if (!notification.readAt) {
@@ -171,36 +150,42 @@ export const NotificationProvider = ({
         return () => {
             socket.off('notification:new', handleNotification);
         };
-    }, []);
+    }, [isAuthenticated]);
 
-    /**
-     * =====================================================
-     * MARK ONE AS READ
-     * =====================================================
-     */
     const markAsRead = useCallback(
         async (notificationId: string) => {
+            if (!authenticatedRef.current) {
+                return;
+            }
+
+            const requestVersion = requestVersionRef.current;
+
+            const notification = notifications.find(
+                (item) => item._id === notificationId,
+            );
+
+            const wasUnread = !!notification && !notification.readAt;
+
             try {
-                const notification = notifications.find(
-                    (item) => item._id === notificationId,
-                );
-
-                const wasUnread = !!notification && !notification.readAt;
-
                 await markNotificationAsRead(notificationId);
 
-                setNotifications((previous) =>
-                    previous.map((notification) => {
-                        if (notification._id !== notificationId) {
-                            return notification;
-                        }
+                if (
+                    !authenticatedRef.current ||
+                    requestVersion !== requestVersionRef.current
+                ) {
+                    return;
+                }
 
-                        return {
-                            ...notification,
-                            readAt:
-                                notification.readAt ?? new Date().toISOString(),
-                        };
-                    }),
+                setNotifications((previous) =>
+                    previous.map((item) =>
+                        item._id === notificationId
+                            ? {
+                                  ...item,
+                                  readAt:
+                                      item.readAt ?? new Date().toISOString(),
+                              }
+                            : item,
+                    ),
                 );
 
                 if (wasUnread) {
@@ -213,21 +198,29 @@ export const NotificationProvider = ({
         [notifications],
     );
 
-    /**
-     * =====================================================
-     * MARK ALL AS READ
-     * =====================================================
-     */
     const markAllAsRead = useCallback(async () => {
+        if (!authenticatedRef.current) {
+            return;
+        }
+
+        const requestVersion = requestVersionRef.current;
+
         try {
             await markAllNotificationsAsRead();
+
+            if (
+                !authenticatedRef.current ||
+                requestVersion !== requestVersionRef.current
+            ) {
+                return;
+            }
 
             const now = new Date().toISOString();
 
             setNotifications((previous) =>
-                previous.map((notification) => ({
-                    ...notification,
-                    readAt: notification.readAt ?? now,
+                previous.map((item) => ({
+                    ...item,
+                    readAt: item.readAt ?? now,
                 })),
             );
 
@@ -252,11 +245,6 @@ export const NotificationProvider = ({
     );
 };
 
-/**
- * =========================================================
- * useNotifications
- * =========================================================
- */
 export const useNotifications = (): NotificationContextType => {
     const context = useContext(NotificationContext);
 
