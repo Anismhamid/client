@@ -67,7 +67,7 @@ const AppWithProviders = () => {
 
     return (
         <ChatWindowProvider>
-            <NotificationProvider>
+            <NotificationProvider isAuthenticated={Boolean(auth?._id)}>
                 <ChatProvider authId={auth._id ?? ''}>
                     <SpeedInsights />
                     <AppUpdateGate language={language}>

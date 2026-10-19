@@ -69,9 +69,9 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
      * The frontend never reads or stores the JWT.
      */
     const refreshAuth = useCallback(async () => {
-        try {
-            setIsAuthLoading(true);
+        setIsAuthLoading(true);
 
+        try {
             const user = await getCurrentUser();
 
             if (!user) {
@@ -83,7 +83,13 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
             setAuth(user);
             setIsLoggedIn(true);
         } catch (error) {
-            console.error('Failed to restore authentication:', error);
+            const status = (error as { response?: { status?: number } })
+                ?.response?.status;
+
+            // الزائر غير المسجل: حالة طبيعية وليست خطأً برمجيًا.
+            if (status !== 401) {
+                console.error('Failed to restore authentication:', error);
+            }
 
             setAuth(emptyAuthValues);
             setIsLoggedIn(false);
