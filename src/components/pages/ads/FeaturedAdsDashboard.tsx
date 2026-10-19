@@ -16,10 +16,18 @@ import {
     useTheme,
     Snackbar as MuiSnackbar,
     Alert,
+    Divider,
+    alpha,
+    Paper,
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import type { TFunction } from 'i18next';
+
+import CheckRoundedIcon from '@mui/icons-material/CheckRounded';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
+import ReceiptLongRoundedIcon from '@mui/icons-material/ReceiptLongRounded';
+import CalendarMonthRoundedIcon from '@mui/icons-material/CalendarMonthRounded';
 
 import { AdType, FeaturedAd } from '../../../interfaces/featuredAd';
 import useSnackbar from '../../../hooks/useSnackbar';
@@ -27,31 +35,10 @@ import { getCustomerProfilePostsBySlug } from '../../../services/postsServices';
 import { useUser } from '../../../hooks/useUSer';
 import { Posts } from '../../../interfaces/Posts';
 import { formatDate } from '../../../helpers/dateAndPriceFormat';
-import {
-    FEATURED_AD_EMOJI,
-    FEATURED_AD_PRICES,
-    FEATURED_AD_TIERS,
-} from '../../../interfaces/featuredAdsMeta';
 import api from '../../../services/api';
 
-// ✅ Correct TFunction usage — no `=> string`
-const buildPlanMeta = (
-    type: AdType,
-    isDark: boolean,
-    t: TFunction<'translation', undefined>,
-) => {
-    const tier = FEATURED_AD_TIERS[type];
-    return {
-        label: t(`ads.promotionPackages.${type}.name`),
-        color: isDark ? tier.darkBg : tier.bg,
-        accent: tier.accent,
-        icon: FEATURED_AD_EMOJI[type],
-        desc: t(`ads.promotionPackages.${type}.description`),
-        price: t(`ads.promotionPackages.${type}.price`, {
-            price: FEATURED_AD_PRICES[type],
-        }),
-    };
-};
+// ✅ استيراد ملف الباقات المركزي الجديد
+import { getPlanById, PlanConfig, PLANS } from '../../../interfaces/PlanConfig';
 
 const FeaturedAdsDashboard = () => {
     const theme = useTheme();
@@ -64,7 +51,9 @@ const FeaturedAdsDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [userListings, setUserListings] = useState<Posts[]>([]);
-    const [selectedPlan, setSelectedPlan] = useState<AdType>('homepage');
+
+    // الباقة المختارة افتراضياً هي الأرخص (أول عنصر في المصفوفة)
+    const [selectedPlan, setSelectedPlan] = useState<AdType>(PLANS[0].id);
 
     const [newAd, setNewAd] = useState<{
         listingId: string;
@@ -73,22 +62,11 @@ const FeaturedAdsDashboard = () => {
         endDate: string;
     }>({
         listingId: '',
-        type: 'homepage',
+        type: PLANS[0].id,
         startDate: dayjs().format('YYYY-MM-DD'),
         endDate: dayjs().add(7, 'day').format('YYYY-MM-DD'),
     });
 
-    // ✅ Memoized — rebuilds only when theme or language changes
-    const PLAN_META = useMemo(
-        () => ({
-            homepage: buildPlanMeta('homepage', isDark, t),
-            top: buildPlanMeta('top', isDark, t),
-            highlight: buildPlanMeta('highlight', isDark, t),
-        }),
-        [isDark, t],
-    );
-
-    // ── Load user's own listings ────────────────────────────────────────
     useEffect(() => {
         if (!auth?.slug) return;
         getCustomerProfilePostsBySlug(auth.slug)
@@ -99,7 +77,6 @@ const FeaturedAdsDashboard = () => {
             });
     }, [auth?.slug]);
 
-    // ── Load current ads ────────────────────────────────────────────────
     const fetchAds = useCallback(async () => {
         setLoading(true);
         try {
@@ -117,7 +94,6 @@ const FeaturedAdsDashboard = () => {
         fetchAds();
     }, [fetchAds]);
 
-    // ── Change handlers ─────────────────────────────────────────────────
     const handleTextChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
@@ -127,28 +103,29 @@ const FeaturedAdsDashboard = () => {
 
     const handleSelectChange = (e: SelectChangeEvent) => {
         const { name, value } = e.target;
-
         if (name === 'type') {
             const adType = value as AdType;
             setNewAd((prev) => ({ ...prev, type: adType }));
             setSelectedPlan(adType);
             return;
         }
-
         setNewAd((prev) => ({ ...prev, [name]: value }));
     };
 
     const isDateRangeValid = dayjs(newAd.endDate).isAfter(
         dayjs(newAd.startDate),
     );
+    const durationDays = dayjs(newAd.endDate).diff(
+        dayjs(newAd.startDate),
+        'day',
+    );
 
-    // ── Submit ──────────────────────────────────────────────────────────
     const handleSubmit = async () => {
         setSaving(true);
         try {
             const { data } = await api.post('featured-ads/buy', newAd);
             window.location.href = data.url;
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             showSnackbar(
                 err.response?.data?.message || t('ads.common.error'),
@@ -159,27 +136,28 @@ const FeaturedAdsDashboard = () => {
         }
     };
 
-    const activeCounts = ads.reduce(
-        (acc, ad) => {
-            if (ad?.isActive && ad?.type) {
-                acc[ad.type] = (acc[ad.type] || 0) + 1;
-            }
-            return acc;
-        },
-        {} as Record<string, number>,
+    const activeCounts = useMemo(
+        () =>
+            ads.reduce(
+                (acc, ad) => {
+                    if (ad?.isActive && ad?.type) {
+                        acc[ad.type] = (acc[ad.type] || 0) + 1;
+                    }
+                    return acc;
+                },
+                {} as Record<string, number>,
+            ),
+        [ads],
     );
 
-    const plan = PLAN_META[selectedPlan];
+    // جلب تفاصيل الخطة المختارة حالياً من المصدر المركزي
+    const currentPlan = getPlanById(selectedPlan) || PLANS[0];
 
     const textPrimary = isDark ? '#fff' : '#0f172a';
     const textSecondary = isDark ? '#94a3b8' : '#475569';
     const textTertiary = isDark ? '#64748b' : '#64748b';
-    const surfaceColor = isDark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
     const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
-
-    const selectedCardBg = isDark
-        ? `linear-gradient(135deg, ${plan.color}, #1e293b)`
-        : `linear-gradient(135deg, ${plan.color}, #f8fafc)`;
+    const amber = '#f59e0b';
 
     return (
         <Box
@@ -188,11 +166,11 @@ const FeaturedAdsDashboard = () => {
             sx={{
                 minHeight: '100vh',
                 fontFamily: "'Cairo', 'Tajawal', sans-serif",
-                py: 6,
+                py: { xs: 4, md: 6 },
                 px: { xs: 2, md: 4 },
                 position: 'relative',
                 overflow: 'hidden',
-                bgcolor: isDark ? 'transparent' : '#f8fafc',
+                bgcolor: isDark ? 'transparent' : '#fafaf7',
                 '&::before': {
                     content: '""',
                     position: 'fixed',
@@ -203,7 +181,7 @@ const FeaturedAdsDashboard = () => {
                     borderRadius: '50%',
                     background: isDark
                         ? 'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)'
-                        : 'radial-gradient(circle, rgba(245,158,11,0.1) 0%, transparent 70%)',
+                        : 'radial-gradient(circle, rgba(245,158,11,0.10) 0%, transparent 70%)',
                     pointerEvents: 'none',
                 },
             }}
@@ -223,17 +201,57 @@ const FeaturedAdsDashboard = () => {
                 </Alert>
             </MuiSnackbar>
 
-            {/* ── Hero Header ─────────────────────────────────────────── */}
-            <Box sx={{ textAlign: 'center', mb: 8, position: 'relative' }}>
+            {/* ── Editorial masthead ──────────────────────────────────── */}
+            <Box
+                sx={{
+                    textAlign: 'center',
+                    mb: { xs: 6, md: 8 },
+                    position: 'relative',
+                }}
+            >
+                <Box
+                    sx={{
+                        width: 56,
+                        height: 56,
+                        mx: 'auto',
+                        mb: 2.5,
+                        borderRadius: '18px',
+                        background: `linear-gradient(135deg, ${amber}, ${alpha(amber, 0.6)})`,
+                        display: 'grid',
+                        placeItems: 'center',
+                        boxShadow: `0 16px 32px -16px ${alpha(amber, 0.7)}`,
+                        position: 'relative',
+                        transform: 'rotate(-6deg)',
+                    }}
+                >
+                    <LocalOfferOutlinedIcon
+                        sx={{ fontSize: 28, color: '#fff' }}
+                    />
+                    <VerifiedRoundedIcon
+                        sx={{
+                            position: 'absolute',
+                            bottom: -6,
+                            insetInlineEnd: -6,
+                            fontSize: 20,
+                            color: '#fff',
+                            bgcolor: '#3E7B6A',
+                            borderRadius: '50%',
+                            p: '3px',
+                            border: '2px solid',
+                            borderColor: isDark ? '#12161C' : '#fafaf7',
+                        }}
+                    />
+                </Box>
+
                 <Typography
                     variant='overline'
                     sx={{
-                        color: '#f59e0b',
-                        letterSpacing: 4,
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
+                        color: amber,
+                        letterSpacing: 5,
+                        fontSize: '0.7rem',
+                        fontWeight: 800,
                         display: 'block',
-                        mb: 2,
+                        mb: 1.5,
                     }}
                 >
                     {t('ads.promotionPackages.title')}
@@ -243,9 +261,10 @@ const FeaturedAdsDashboard = () => {
                     sx={{
                         color: textPrimary,
                         fontWeight: 900,
-                        fontSize: { xs: '2rem', md: '3.2rem' },
-                        lineHeight: 1.2,
+                        fontSize: { xs: '1.9rem', md: '3rem' },
+                        lineHeight: 1.15,
                         mb: 2,
+                        letterSpacing: '-0.02em',
                     }}
                 >
                     {t('ads.promotionPackages.subtitle')}
@@ -253,197 +272,389 @@ const FeaturedAdsDashboard = () => {
                 <Typography
                     sx={{
                         color: textSecondary,
-                        maxWidth: 520,
+                        maxWidth: 560,
                         mx: 'auto',
-                        fontSize: '1.05rem',
+                        fontSize: '1rem',
+                        lineHeight: 1.7,
                     }}
                 >
                     {t('ads.promotionPackages.description')}
                 </Typography>
             </Box>
 
-            {/* ── Plan Cards ──────────────────────────────────────────── */}
-            <Grid container spacing={3} justifyContent='center' sx={{ mb: 8 }}>
-                {(Object.entries(PLAN_META) as [AdType, typeof plan][]).map(
-                    ([key, meta]) => {
-                        const isSelected = selectedPlan === key;
-                        const count = activeCounts[key] || 0;
-                        return (
-                            <Grid size={{ xs: 12, sm: 4 }} key={key}>
+            {/* ── Plan Cards (The Selector) ────────────────────────── */}
+            <Grid
+                container
+                spacing={3}
+                justifyContent='center'
+                alignItems='stretch'
+                sx={{ mb: { xs: 6, md: 8 } }}
+            >
+                {PLANS.map((meta: PlanConfig) => {
+                    const isSelected = selectedPlan === meta.id;
+                    const Icon = meta.icon;
+
+                    return (
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={meta.id}>
+                            <Box
+                                onClick={() => {
+                                    setSelectedPlan(meta.id);
+                                    setNewAd((p) => ({ ...p, type: meta.id }));
+                                }}
+                                sx={{
+                                    position: 'relative',
+                                    cursor: 'pointer',
+                                    height: '100%',
+                                    borderRadius: '24px',
+                                    overflow: 'hidden',
+                                    bgcolor: 'background.paper',
+                                    border: '2px solid',
+                                    borderColor: isSelected
+                                        ? meta.accent
+                                        : borderColor,
+                                    boxShadow: isSelected
+                                        ? `0 20px 50px -12px ${alpha(meta.accent, 0.4)}`
+                                        : 'none',
+                                    transform: isSelected
+                                        ? 'translateY(-6px)'
+                                        : 'none',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        transform: isSelected
+                                            ? 'translateY(-6px)'
+                                            : 'translateY(-4px)',
+                                        borderColor: isSelected
+                                            ? meta.accent
+                                            : alpha(meta.accent, 0.5),
+                                    },
+                                }}
+                            >
+                                {/* شريط علوي */}
                                 <Box
-                                    onClick={() => {
-                                        setSelectedPlan(key);
-                                        setNewAd((p) => ({
-                                            ...p,
-                                            type: key,
-                                        }));
-                                    }}
                                     sx={{
-                                        cursor: 'pointer',
-                                        borderRadius: 4,
-                                        p: 3.5,
-                                        height: '100%',
+                                        height: 5,
                                         background: isSelected
-                                            ? selectedCardBg
-                                            : surfaceColor,
-                                        border: `2px solid ${isSelected ? meta.accent : borderColor}`,
-                                        boxShadow: isSelected
-                                            ? `0 0 40px ${meta.accent}30`
-                                            : isDark
-                                              ? 'none'
-                                              : '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s ease',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        '&:hover': {
-                                            border: `2px solid ${meta.accent}80`,
-                                            transform: 'translateY(-4px)',
-                                            boxShadow: isDark
-                                                ? '0 8px 30px rgba(0,0,0,0.3)'
-                                                : '0 8px 30px rgba(0,0,0,0.1)',
-                                        },
+                                            ? meta.accent
+                                            : alpha(meta.accent, 0.3),
                                     }}
-                                >
-                                    {isSelected && (
-                                        <Box
-                                            sx={{
-                                                position: 'absolute',
-                                                top: 16,
-                                                left: 16,
-                                                background: meta.accent,
-                                                color: isDark ? '#000' : '#fff',
-                                                fontSize: '0.65rem',
-                                                fontWeight: 800,
-                                                px: 1.5,
-                                                py: 0.4,
-                                                borderRadius: 10,
-                                                letterSpacing: 1,
-                                            }}
-                                        >
-                                            {t('ads.common.selected')}
-                                        </Box>
-                                    )}
-                                    <Typography
-                                        sx={{ fontSize: '2.2rem', mb: 1.5 }}
+                                />
+
+                                {/* شارة "مختار" */}
+                                {isSelected && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 20,
+                                            insetInlineEnd: 20,
+                                            px: 1.5,
+                                            py: 0.5,
+                                            borderRadius: '20px',
+                                            bgcolor: meta.accent,
+                                            color: isDark ? '#000' : '#fff',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 900,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.5,
+                                            boxShadow: `0 4px 12px -4px ${alpha(meta.accent, 0.6)}`,
+                                        }}
                                     >
-                                        {meta.icon}
-                                    </Typography>
+                                        <CheckRoundedIcon
+                                            sx={{ fontSize: 14 }}
+                                        />
+                                        مختار
+                                    </Box>
+                                )}
+
+                                {/* شارة "الأكثر شعبية" */}
+                                {meta.recommended && !isSelected && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            top: 20,
+                                            insetInlineEnd: 20,
+                                            px: 1.5,
+                                            py: 0.5,
+                                            borderRadius: '20px',
+                                            bgcolor: alpha(meta.accent, 0.15),
+                                            color: meta.accent,
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            border: `1px solid ${alpha(meta.accent, 0.3)}`,
+                                        }}
+                                    >
+                                        الأكثر شعبية
+                                    </Box>
+                                )}
+
+                                <Box sx={{ p: { xs: 3, md: 3.5 } }}>
+                                    <Box
+                                        sx={{
+                                            width: 60,
+                                            height: 60,
+                                            borderRadius: '18px',
+                                            bgcolor: alpha(
+                                                meta.accent,
+                                                isSelected ? 0.15 : 0.08,
+                                            ),
+                                            display: 'grid',
+                                            placeItems: 'center',
+                                            mb: 2,
+                                        }}
+                                    >
+                                        <Icon
+                                            sx={{
+                                                fontSize: 30,
+                                                color: meta.accent,
+                                            }}
+                                        />
+                                    </Box>
+
                                     <Typography
                                         sx={{
                                             color: textPrimary,
-                                            fontWeight: 800,
-                                            fontSize: '1.2rem',
-                                            mb: 1,
+                                            fontWeight: 900,
+                                            fontSize: '1.25rem',
+                                            mb: 0.5,
                                         }}
                                     >
-                                        {meta.label}
+                                        {meta.title}
                                     </Typography>
                                     <Typography
                                         sx={{
                                             color: textSecondary,
-                                            fontSize: '0.88rem',
-                                            mb: 2,
-                                            lineHeight: 1.6,
+                                            fontSize: '0.9rem',
+                                            mb: 3,
+                                            minHeight: 44,
                                         }}
                                     >
-                                        {meta.desc}
+                                        {meta.description}
                                     </Typography>
-                                    <Typography
+
+                                    <Box
                                         sx={{
-                                            color: meta.accent,
-                                            fontWeight: 800,
-                                            fontSize: '1.1rem',
-                                            mb: 1,
+                                            display: 'flex',
+                                            alignItems: 'baseline',
+                                            gap: 0.75,
+                                            mb: 3,
+                                            pb: 2,
+                                            borderBottom: `1px dashed ${alpha(meta.accent, 0.25)}`,
                                         }}
                                     >
-                                        {meta.price}
-                                    </Typography>
-                                    {count > 0 && (
-                                        <Chip
-                                            label={t('ads.stats.activeCount', {
-                                                count,
-                                            })}
-                                            size='small'
+                                        <Typography
                                             sx={{
-                                                background: `${meta.accent}20`,
                                                 color: meta.accent,
-                                                border: `1px solid ${meta.accent}40`,
-                                                fontWeight: 700,
-                                                fontSize: '0.75rem',
+                                                fontWeight: 900,
+                                                fontSize: '2rem',
+                                                lineHeight: 1,
                                             }}
-                                        />
-                                    )}
+                                        >
+                                            ₪{meta.price}
+                                        </Typography>
+                                        <Typography
+                                            sx={{
+                                                color: textTertiary,
+                                                fontSize: '0.85rem',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            / {meta.days} أيام
+                                        </Typography>
+                                    </Box>
+
+                                    <Stack spacing={1.25} sx={{ mb: 3 }}>
+                                        {meta.perks.map((perk, i) => (
+                                            <Stack
+                                                key={i}
+                                                direction='row'
+                                                alignItems='center'
+                                                gap={1}
+                                            >
+                                                <Box
+                                                    sx={{
+                                                        width: 18,
+                                                        height: 18,
+                                                        borderRadius: '50%',
+                                                        bgcolor: alpha(
+                                                            meta.accent,
+                                                            0.15,
+                                                        ),
+                                                        color: meta.accent,
+                                                        display: 'grid',
+                                                        placeItems: 'center',
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+                                                    <CheckRoundedIcon
+                                                        sx={{ fontSize: 12 }}
+                                                    />
+                                                </Box>
+                                                <Typography
+                                                    sx={{
+                                                        color: textSecondary,
+                                                        fontSize: '0.85rem',
+                                                    }}
+                                                >
+                                                    {perk}
+                                                </Typography>
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+
+                                    <Button
+                                        fullWidth
+                                        variant={
+                                            isSelected
+                                                ? 'contained'
+                                                : 'outlined'
+                                        }
+                                        sx={{
+                                            py: 1,
+                                            borderRadius: '12px',
+                                            fontWeight: 800,
+                                            fontSize: '0.85rem',
+                                            bgcolor: isSelected
+                                                ? meta.accent
+                                                : 'transparent',
+                                            color: isSelected
+                                                ? isDark
+                                                    ? '#000'
+                                                    : '#fff'
+                                                : meta.accent,
+                                            borderColor: alpha(
+                                                meta.accent,
+                                                0.4,
+                                            ),
+                                            '&:hover': {
+                                                bgcolor: isSelected
+                                                    ? alpha(meta.accent, 0.9)
+                                                    : alpha(meta.accent, 0.05),
+                                            },
+                                        }}
+                                    >
+                                        {isSelected
+                                            ? 'تم الاختيار'
+                                            : 'اختيار هذه الباقة'}
+                                    </Button>
                                 </Box>
-                            </Grid>
-                        );
-                    },
-                )}
+                            </Box>
+                        </Grid>
+                    );
+                })}
             </Grid>
 
-            {/* ── Purchase Form ───────────────────────────────────────── */}
-            <Box sx={{ maxWidth: 820, mx: 'auto', mb: 8 }}>
-                <Box
+            {/* ── Checkout panel (receipt) ──────────────────────────── */}
+            <Box sx={{ maxWidth: 860, mx: 'auto', mb: { xs: 6, md: 8 } }}>
+                <Paper
+                    elevation={0}
                     sx={{
-                        borderRadius: 4,
-                        p: { xs: 3, md: 5 },
-                        background: isDark
+                        position: 'relative',
+                        borderRadius: '24px',
+                        p: { xs: 3, md: 4.5 },
+                        bgcolor: isDark
                             ? 'rgba(255,255,255,0.04)'
-                            : 'rgba(255,255,255,0.9)',
-                        border: `1px solid ${plan.accent}30`,
+                            : 'background.paper',
+                        border: `1px solid ${alpha(currentPlan.accent, 0.25)}`,
                         backdropFilter: isDark ? 'blur(20px)' : 'none',
                         boxShadow: isDark
-                            ? `0 0 60px ${plan.accent}10`
-                            : '0 8px 40px rgba(0,0,0,0.08)',
+                            ? `0 24px 60px -32px ${alpha(currentPlan.accent, 0.25)}`
+                            : '0 20px 60px -32px rgba(0,0,0,0.15)',
+                        overflow: 'hidden',
                         transition:
-                            'box-shadow 0.4s ease, border-color 0.4s ease',
+                            'border-color 0.4s ease, box-shadow 0.4s ease',
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            insetInlineStart: 0,
+                            insetInlineEnd: 0,
+                            height: 4,
+                            background: `linear-gradient(90deg, ${currentPlan.accent}, ${alpha(currentPlan.accent, 0.3)})`,
+                        },
                     }}
                 >
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 2,
-                            mb: 4,
-                        }}
+                    <Stack
+                        direction='row'
+                        alignItems='center'
+                        justifyContent='space-between'
+                        flexWrap='wrap'
+                        gap={2}
+                        sx={{ mb: 3 }}
                     >
-                        <Box
+                        <Stack direction='row' alignItems='center' gap={2}>
+                            <Box
+                                sx={{
+                                    width: 48,
+                                    height: 48,
+                                    borderRadius: '14px',
+                                    bgcolor: alpha(currentPlan.accent, 0.12),
+                                    border: `1px solid ${alpha(currentPlan.accent, 0.3)}`,
+                                    display: 'grid',
+                                    placeItems: 'center',
+                                    fontSize: '1.5rem',
+                                }}
+                            >
+                                {/* هنا استخدمنا الأيقونة كـ Component وليس كنص */}
+                                <currentPlan.icon
+                                    sx={{
+                                        fontSize: 24,
+                                        color: currentPlan.accent,
+                                    }}
+                                />
+                            </Box>
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        color: textPrimary,
+                                        fontWeight: 900,
+                                        fontSize: '1.1rem',
+                                        mb: 0.25,
+                                    }}
+                                >
+                                    {t('ads.purchase.title')} —{' '}
+                                    {currentPlan.title}
+                                </Typography>
+                                <Typography
+                                    sx={{
+                                        color: textTertiary,
+                                        fontSize: '0.82rem',
+                                    }}
+                                >
+                                    {t('ads.purchase.subtitle')}
+                                </Typography>
+                            </Box>
+                        </Stack>
+                        <Chip
+                            icon={
+                                <ReceiptLongRoundedIcon
+                                    sx={{ fontSize: '14px !important' }}
+                                />
+                            }
+                            label={t('ads.purchase.summary', 'ملخص الطلب')}
+                            size='small'
                             sx={{
-                                width: 48,
-                                height: 48,
-                                borderRadius: 3,
-                                background: `${plan.accent}20`,
-                                border: `1px solid ${plan.accent}40`,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '1.5rem',
+                                bgcolor: alpha(currentPlan.accent, 0.1),
+                                color: currentPlan.accent,
+                                border: `1px solid ${alpha(currentPlan.accent, 0.25)}`,
+                                fontWeight: 800,
+                                fontSize: '0.72rem',
+                                '& .MuiChip-icon': {
+                                    color: currentPlan.accent,
+                                },
                             }}
-                        >
-                            {plan.icon}
-                        </Box>
-                        <Box>
-                            <Typography
-                                sx={{
-                                    color: textPrimary,
-                                    fontWeight: 800,
-                                    fontSize: '1.2rem',
-                                }}
-                            >
-                                {t('ads.purchase.title')} — {plan.label}
-                            </Typography>
-                            <Typography
-                                sx={{
-                                    color: textTertiary,
-                                    fontSize: '0.85rem',
-                                }}
-                            >
-                                {t('ads.purchase.subtitle')}
-                            </Typography>
-                        </Box>
-                    </Box>
+                        />
+                    </Stack>
 
+                    <Divider
+                        sx={{
+                            mb: 3,
+                            borderStyle: 'dashed',
+                            borderColor: alpha(currentPlan.accent, 0.2),
+                        }}
+                    />
+
+                    {/* Form */}
                     <Grid container spacing={2.5}>
-                        {/* Listing select */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel sx={{ color: textTertiary }}>
@@ -454,7 +665,7 @@ const FeaturedAdsDashboard = () => {
                                     value={newAd.listingId}
                                     onChange={handleSelectChange}
                                     label={t('ads.purchase.selectListing')}
-                                    sx={selectSx(plan.accent, isDark)}
+                                    sx={selectSx(currentPlan.accent, isDark)}
                                 >
                                     {userListings.map((listing) => (
                                         <MenuItem
@@ -469,7 +680,6 @@ const FeaturedAdsDashboard = () => {
                             </FormControl>
                         </Grid>
 
-                        {/* Type select */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
                                 <InputLabel sx={{ color: textTertiary }}>
@@ -480,25 +690,22 @@ const FeaturedAdsDashboard = () => {
                                     value={newAd.type}
                                     onChange={handleSelectChange}
                                     label={t('ads.purchase.selectPromotion')}
-                                    sx={selectSx(plan.accent, isDark)}
+                                    sx={selectSx(currentPlan.accent, isDark)}
                                 >
-                                    <MenuItem value='homepage'>
-                                        {FEATURED_AD_EMOJI.homepage}{' '}
-                                        {PLAN_META.homepage.label}
-                                    </MenuItem>
-                                    <MenuItem value='top'>
-                                        {FEATURED_AD_EMOJI.top}{' '}
-                                        {PLAN_META.top.label}
-                                    </MenuItem>
-                                    <MenuItem value='highlight'>
-                                        {FEATURED_AD_EMOJI.highlight}{' '}
-                                        {PLAN_META.highlight.label}
-                                    </MenuItem>
+                                    {/* ✅ جلب الباقات من PLANS المرتبة */}
+                                    {PLANS.map(
+                                        (
+                                            p: PlanConfig, // <--- أضف : PlanConfig هنا
+                                        ) => (
+                                            <MenuItem key={p.id} value={p.id}>
+                                                {p.emoji} {p.title}
+                                            </MenuItem>
+                                        ),
+                                    )}
                                 </Select>
                             </FormControl>
                         </Grid>
 
-                        {/* Dates */}
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <TextField
                                 label={t('ads.purchase.startDate')}
@@ -508,7 +715,7 @@ const FeaturedAdsDashboard = () => {
                                 onChange={handleTextChange}
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
-                                sx={inputSx(plan.accent, isDark)}
+                                sx={inputSx(currentPlan.accent, isDark)}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
@@ -521,58 +728,65 @@ const FeaturedAdsDashboard = () => {
                                 InputLabelProps={{ shrink: true }}
                                 fullWidth
                                 error={!isDateRangeValid}
-                                sx={inputSx(plan.accent, isDark)}
+                                sx={inputSx(currentPlan.accent, isDark)}
                             />
                         </Grid>
 
-                        {/* Duration info */}
+                        {/* Summary */}
                         <Grid size={{ xs: 12 }}>
                             <Box
                                 sx={{
                                     display: 'flex',
                                     justifyContent: 'space-between',
                                     alignItems: 'center',
-                                    p: 2,
-                                    borderRadius: 3,
+                                    flexWrap: 'wrap',
+                                    gap: 1.5,
+                                    p: 2.25,
+                                    borderRadius: '14px',
                                     background: isDateRangeValid
-                                        ? `${plan.accent}10`
-                                        : 'rgba(239,68,68,0.1)',
-                                    border: `1px solid ${
-                                        isDateRangeValid
-                                            ? `${plan.accent}25`
-                                            : 'rgba(239,68,68,0.3)'
-                                    }`,
+                                        ? alpha(currentPlan.accent, 0.06)
+                                        : 'rgba(239,68,68,0.08)',
+                                    border: `1px dashed ${isDateRangeValid ? alpha(currentPlan.accent, 0.3) : 'rgba(239,68,68,0.35)'}`,
                                 }}
                             >
                                 {isDateRangeValid ? (
                                     <>
-                                        <Typography
-                                            sx={{
-                                                color: textSecondary,
-                                                fontSize: '0.9rem',
-                                            }}
+                                        <Stack
+                                            direction='row'
+                                            alignItems='center'
+                                            gap={1}
                                         >
-                                            {t('ads.purchase.duration')}:{' '}
-                                            <strong
-                                                style={{
-                                                    color: textPrimary,
+                                            <CalendarMonthRoundedIcon
+                                                sx={{
+                                                    fontSize: 18,
+                                                    color: currentPlan.accent,
+                                                }}
+                                            />
+                                            <Typography
+                                                sx={{
+                                                    color: textSecondary,
+                                                    fontSize: '0.9rem',
                                                 }}
                                             >
-                                                {dayjs(newAd.endDate).diff(
-                                                    dayjs(newAd.startDate),
-                                                    'day',
-                                                )}{' '}
-                                                {t('ads.purchase.days')}
-                                            </strong>
-                                        </Typography>
+                                                {t('ads.purchase.duration')}:{' '}
+                                                <strong
+                                                    style={{
+                                                        color: textPrimary,
+                                                    }}
+                                                >
+                                                    {durationDays}{' '}
+                                                    {t('ads.purchase.days')}
+                                                </strong>
+                                            </Typography>
+                                        </Stack>
                                         <Typography
                                             sx={{
-                                                color: plan.accent,
-                                                fontWeight: 800,
-                                                fontSize: '1rem',
+                                                color: currentPlan.accent,
+                                                fontWeight: 900,
+                                                fontSize: '1.15rem',
                                             }}
                                         >
-                                            {plan.price}
+                                            ₪{currentPlan.price}
                                         </Typography>
                                     </>
                                 ) : (
@@ -580,7 +794,7 @@ const FeaturedAdsDashboard = () => {
                                         sx={{
                                             color: '#ef4444',
                                             fontSize: '0.9rem',
-                                            fontWeight: 600,
+                                            fontWeight: 700,
                                         }}
                                     >
                                         {t('ads.purchase.invalidDateRange')}
@@ -602,16 +816,17 @@ const FeaturedAdsDashboard = () => {
                                 onClick={handleSubmit}
                                 sx={{
                                     py: 1.8,
-                                    borderRadius: 3,
-                                    fontSize: '1.05rem',
-                                    fontWeight: 800,
+                                    borderRadius: '14px',
+                                    fontSize: '1rem',
+                                    fontWeight: 900,
                                     fontFamily: 'inherit',
-                                    background: `linear-gradient(90deg, ${plan.accent}, ${plan.accent}cc)`,
+                                    letterSpacing: 0.3,
+                                    background: `linear-gradient(135deg, ${currentPlan.accent}, ${alpha(currentPlan.accent, 0.85)})`,
                                     color: isDark ? '#000' : '#fff',
-                                    boxShadow: `0 4px 30px ${plan.accent}40`,
+                                    boxShadow: `0 12px 32px -12px ${alpha(currentPlan.accent, 0.7)}`,
                                     '&:hover': {
-                                        background: `linear-gradient(90deg, ${plan.accent}ee, ${plan.accent})`,
-                                        boxShadow: `0 6px 40px ${plan.accent}60`,
+                                        background: `linear-gradient(135deg, ${currentPlan.accent}ee, ${currentPlan.accent})`,
+                                        boxShadow: `0 16px 40px -12px ${alpha(currentPlan.accent, 0.85)}`,
                                         transform: 'translateY(-1px)',
                                     },
                                     '&:disabled': {
@@ -623,60 +838,72 @@ const FeaturedAdsDashboard = () => {
                             >
                                 {saving ? (
                                     <CircularProgress
-                                        size={24}
-                                        sx={{
-                                            color: isDark ? '#000' : '#fff',
-                                        }}
+                                        size={22}
+                                        sx={{ color: isDark ? '#000' : '#fff' }}
                                     />
                                 ) : (
-                                    `${t('ads.purchase.payNow')} — ${plan.price}`
+                                    `${t('ads.purchase.payNow')} — ₪${currentPlan.price}`
                                 )}
                             </Button>
                         </Grid>
                     </Grid>
-                </Box>
+                </Paper>
             </Box>
 
-            {/* ── My Current Ads ──────────────────────────────────────── */}
+            {/* ── Current ads ───────────────────────────────────────── */}
             <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        mb: 3,
-                        flexWrap: 'wrap',
-                        gap: 2,
-                    }}
+                <Stack
+                    direction='row'
+                    alignItems='center'
+                    justifyContent='space-between'
+                    flexWrap='wrap'
+                    gap={2}
+                    sx={{ mb: 3 }}
                 >
-                    <Typography
-                        sx={{
-                            color: textPrimary,
-                            fontWeight: 800,
-                            fontSize: '1.3rem',
-                        }}
-                    >
-                        {t('ads.currentAds')}
-                    </Typography>
+                    <Box>
+                        <Typography
+                            variant='overline'
+                            sx={{
+                                display: 'block',
+                                fontWeight: 800,
+                                letterSpacing: '0.18em',
+                                fontSize: '0.62rem',
+                                color: currentPlan.accent,
+                                lineHeight: 1,
+                                mb: 0.5,
+                            }}
+                        >
+                            {t('ads.yourPromotions', 'ترقياتك')}
+                        </Typography>
+                        <Typography
+                            sx={{
+                                color: textPrimary,
+                                fontWeight: 900,
+                                fontSize: '1.3rem',
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            {t('ads.currentAds')}
+                        </Typography>
+                    </Box>
                     <Stack direction='row' spacing={1}>
-                        {(
-                            Object.entries(PLAN_META) as [AdType, typeof plan][]
-                        ).map(([key, meta]) => (
+                        {/* ✅ استخدام PLANS بدلاً من PLAN_META */}
+                        {PLANS.map((meta:PlanConfig) => (
                             <Chip
-                                key={key}
-                                label={`${meta.icon} ${activeCounts[key] || 0}`}
+                                key={meta.id}
+                                label={`${meta.emoji} ${activeCounts[meta.id] || 0}`}
                                 size='small'
                                 sx={{
-                                    background: `${meta.accent}15`,
+                                    background: alpha(meta.accent, 0.1),
                                     color: meta.accent,
-                                    border: `1px solid ${meta.accent}30`,
-                                    fontWeight: 700,
-                                    fontSize: '0.8rem',
+                                    border: `1px solid ${alpha(meta.accent, 0.3)}`,
+                                    fontWeight: 800,
+                                    fontSize: '0.75rem',
                                 }}
                             />
                         ))}
                     </Stack>
-                </Box>
+                </Stack>
 
                 {loading ? (
                     <Box
@@ -686,32 +913,46 @@ const FeaturedAdsDashboard = () => {
                             py: 8,
                         }}
                     >
-                        <CircularProgress sx={{ color: '#f59e0b' }} />
+                        <CircularProgress sx={{ color: amber }} />
                     </Box>
                 ) : ads.length === 0 ? (
                     <Box
                         sx={{
                             textAlign: 'center',
-                            py: 10,
-                            borderRadius: 4,
-                            border: `1px dashed ${borderColor}`,
-                            bgcolor: surfaceColor,
+                            py: 8,
+                            px: 2,
+                            borderRadius: '20px',
+                            border: `1.5px dashed ${alpha(amber, 0.3)}`,
+                            bgcolor: alpha(amber, 0.03),
                         }}
                     >
-                        <Typography sx={{ fontSize: '3rem', mb: 2 }}>
-                            📭
-                        </Typography>
+                        <Box
+                            sx={{
+                                width: 56,
+                                height: 56,
+                                borderRadius: '16px',
+                                bgcolor: alpha(amber, 0.1),
+                                color: amber,
+                                display: 'grid',
+                                placeItems: 'center',
+                                mx: 'auto',
+                                mb: 2,
+                            }}
+                        >
+                            <LocalOfferOutlinedIcon sx={{ fontSize: 26 }} />
+                        </Box>
                         <Typography
-                            sx={{ color: textSecondary, fontSize: '1rem' }}
+                            sx={{
+                                color: textSecondary,
+                                fontWeight: 700,
+                                fontSize: '1rem',
+                                mb: 0.5,
+                            }}
                         >
                             {t('ads.noPromotedAds')}
                         </Typography>
                         <Typography
-                            sx={{
-                                color: textTertiary,
-                                fontSize: '0.85rem',
-                                mt: 1,
-                            }}
+                            sx={{ color: textTertiary, fontSize: '0.85rem' }}
                         >
                             {t('ads.startPromoting')}
                         </Typography>
@@ -722,12 +963,13 @@ const FeaturedAdsDashboard = () => {
                             const isActive =
                                 ad.isActive &&
                                 dayjs().isBefore(dayjs(ad.endDate));
-                            const meta =
-                                PLAN_META[ad.type] || PLAN_META.homepage;
+                            // جلب تفاصيل الخطة الخاصة بهذا الإعلان
+                            const meta = getPlanById(ad.type) || PLANS[0];
                             const daysLeft = dayjs(ad.endDate).diff(
                                 dayjs(),
                                 'day',
                             );
+
                             return (
                                 <Grid
                                     size={{ xs: 12, sm: 6, md: 4 }}
@@ -735,43 +977,54 @@ const FeaturedAdsDashboard = () => {
                                 >
                                     <Box
                                         sx={{
-                                            borderRadius: 3,
-                                            p: 3,
-                                            background: isActive
-                                                ? isDark
-                                                    ? `linear-gradient(135deg, ${meta.color}cc, #1e293b)`
-                                                    : `linear-gradient(135deg, ${meta.color}, #f8fafc)`
-                                                : surfaceColor,
-                                            border: `1px solid ${
-                                                isActive
-                                                    ? meta.accent + '40'
-                                                    : borderColor
-                                            }`,
-                                            transition:
-                                                'transform 0.2s ease, box-shadow 0.2s ease',
-                                            boxShadow: isDark
-                                                ? 'none'
-                                                : '0 2px 8px rgba(0,0,0,0.04)',
-                                            '&:hover': {
-                                                transform: 'translateY(-3px)',
-                                                boxShadow: isDark
-                                                    ? '0 8px 30px rgba(0,0,0,0.3)'
-                                                    : '0 8px 30px rgba(0,0,0,0.08)',
+                                            position: 'relative',
+                                            borderRadius: '16px',
+                                            p: 2.5,
+                                            bgcolor: 'background.paper',
+                                            border: '1.5px solid',
+                                            borderColor: isActive
+                                                ? alpha(meta.accent, 0.35)
+                                                : borderColor,
+                                            opacity: isActive ? 1 : 0.7,
+                                            overflow: 'hidden',
+                                            boxShadow: isActive
+                                                ? `0 8px 24px -16px ${alpha(meta.accent, 0.4)}`
+                                                : 'none',
+                                            '&::before': {
+                                                content: '""',
+                                                position: 'absolute',
+                                                insetInlineStart: 0,
+                                                top: 0,
+                                                bottom: 0,
+                                                width: 3,
+                                                bgcolor: isActive
+                                                    ? meta.accent
+                                                    : 'divider',
                                             },
                                         }}
                                     >
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                mb: 2,
-                                            }}
+                                        <Stack
+                                            direction='row'
+                                            justifyContent='space-between'
+                                            alignItems='center'
+                                            mb={1.5}
                                         >
-                                            <Typography
-                                                sx={{ fontSize: '1.6rem' }}
+                                            <Box
+                                                sx={{
+                                                    width: 36,
+                                                    height: 36,
+                                                    borderRadius: '10px',
+                                                    bgcolor: alpha(
+                                                        meta.accent,
+                                                        0.12,
+                                                    ),
+                                                    display: 'grid',
+                                                    placeItems: 'center',
+                                                    fontSize: '1.15rem',
+                                                }}
                                             >
-                                                {meta.icon}
-                                            </Typography>
+                                                {meta.emoji}
+                                            </Box>
                                             <Chip
                                                 label={
                                                     isActive
@@ -786,29 +1039,29 @@ const FeaturedAdsDashboard = () => {
                                                 size='small'
                                                 sx={{
                                                     background: isActive
-                                                        ? `${meta.accent}20`
-                                                        : isDark
-                                                          ? 'rgba(239,68,68,0.15)'
-                                                          : 'rgba(239,68,68,0.1)',
+                                                        ? alpha(
+                                                              meta.accent,
+                                                              0.12,
+                                                          )
+                                                        : 'rgba(239,68,68,0.1)',
                                                     color: isActive
                                                         ? meta.accent
                                                         : '#f87171',
-                                                    border: `1px solid ${
-                                                        isActive
-                                                            ? meta.accent + '40'
-                                                            : '#f8717140'
-                                                    }`,
-                                                    fontWeight: 700,
-                                                    fontSize: '0.72rem',
+                                                    border: `1px solid ${isActive ? alpha(meta.accent, 0.3) : 'rgba(248,113,113,0.3)'}`,
+                                                    fontWeight: 800,
+                                                    fontSize: '0.7rem',
                                                 }}
                                             />
-                                        </Box>
+                                        </Stack>
                                         <Typography
                                             sx={{
                                                 color: textPrimary,
-                                                fontWeight: 700,
+                                                fontWeight: 800,
                                                 mb: 0.5,
-                                                fontSize: '0.95rem',
+                                                fontSize: '0.92rem',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
                                             }}
                                         >
                                             {ad.listingId?.product_name ||
@@ -817,22 +1070,30 @@ const FeaturedAdsDashboard = () => {
                                         <Typography
                                             sx={{
                                                 color: meta.accent,
-                                                fontSize: '0.8rem',
-                                                fontWeight: 600,
-                                                mb: 1.5,
+                                                fontSize: '0.75rem',
+                                                fontWeight: 800,
+                                                mb: 1,
+                                                letterSpacing: 0.2,
                                             }}
                                         >
-                                            {meta.label}
+                                            {meta.title}
                                         </Typography>
-                                        <Typography
-                                            sx={{
-                                                color: textTertiary,
-                                                fontSize: '0.8rem',
-                                            }}
+                                        <Stack
+                                            direction='row'
+                                            alignItems='center'
+                                            gap={0.5}
+                                            sx={{ color: textTertiary }}
                                         >
-                                            {formatDate(ad.startDate)} ←{' '}
-                                            {formatDate(ad.endDate)}
-                                        </Typography>
+                                            <CalendarMonthRoundedIcon
+                                                sx={{ fontSize: 12 }}
+                                            />
+                                            <Typography
+                                                sx={{ fontSize: '0.75rem' }}
+                                            >
+                                                {formatDate(ad.startDate)} ←{' '}
+                                                {formatDate(ad.endDate)}
+                                            </Typography>
+                                        </Stack>
                                     </Box>
                                 </Grid>
                             );
@@ -847,28 +1108,39 @@ const FeaturedAdsDashboard = () => {
 // ─── Shared style helpers ────────────────────────────────────────────────
 const selectSx = (accent: string, isDark: boolean) => ({
     color: isDark ? '#e2e8f0' : '#0f172a',
+    borderRadius: '12px',
+    fontSize: '0.9rem',
     '.MuiOutlinedInput-notchedOutline': {
         borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        transition: 'border-color 0.2s ease',
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,
     },
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: accent,
+        borderWidth: 1.5,
     },
     '.MuiSvgIcon-root': { color: isDark ? '#64748b' : '#94a3b8' },
+    '& .MuiMenu-paper': { borderRadius: '12px', mt: 0.5 },
 });
 
 const inputSx = (accent: string, isDark: boolean) => ({
-    '& .MuiInputBase-root': { color: isDark ? '#e2e8f0' : '#0f172a' },
+    '& .MuiInputBase-root': {
+        color: isDark ? '#e2e8f0' : '#0f172a',
+        borderRadius: '12px',
+        fontSize: '0.9rem',
+    },
     '& .MuiOutlinedInput-notchedOutline': {
         borderColor: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.12)',
+        transition: 'border-color 0.2s ease',
     },
     '& .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: `${accent}60`,
     },
     '& .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline': {
         borderColor: accent,
+        borderWidth: 1.5,
     },
     '& .MuiInputLabel-root': { color: isDark ? '#64748b' : '#94a3b8' },
     '& .MuiInputLabel-root.Mui-focused': { color: accent },

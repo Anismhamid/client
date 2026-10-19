@@ -71,3 +71,27 @@ export const useTopAds = () => {
 
     return { ads, loading, error };
 };
+
+// ✅ دالة جديدة لجلب كل الإعلانات وترتيبها من الأغلى للأرخص
+export const useAllFeaturedAds = () => {
+    const [ads, setAds] = useState<FeaturedAd[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        axios
+            .get(`${api}/all`)
+            .then(({ data }) => {
+                setAds(data);
+                setError(null);
+            })
+            .catch((err) => {
+                console.error('❌ خطأ في جلب الإعلانات المميزة:', err);
+                setError('حدث خطأ في تحميل الإعلانات');
+                setAds([]);
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    return { ads, loading, error };
+};

@@ -9,9 +9,8 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StarIcon from '@mui/icons-material/Star';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import EastIcon from '@mui/icons-material/East';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import CleaningServicesIcon from '@mui/icons-material/CleaningServices';
@@ -22,11 +21,22 @@ import ChildCareIcon from '@mui/icons-material/ChildCare';
 import SpaIcon from '@mui/icons-material/Spa';
 import GarageIcon from '@mui/icons-material/Garage';
 import PedalBikeIcon from '@mui/icons-material/PedalBike';
-import { SvgIconComponent } from '@mui/icons-material';
+import {
+    CameraAlt,
+    Construction,
+    Factory,
+    Handyman,
+    MenuBook,
+    Piano,
+    Print,
+    SvgIconComponent,
+    Whatshot,
+} from '@mui/icons-material';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import PetsIcon from '@mui/icons-material/Pets';
 import WeekendIcon from '@mui/icons-material/Weekend';
+import VerifiedRoundedIcon from '@mui/icons-material/VerifiedRounded';
 
 import {
     Box,
@@ -40,14 +50,12 @@ import {
     CardMedia,
     CardContent,
     CardActions,
-    Divider,
     useTheme,
     alpha,
     Avatar,
     Paper,
     Tabs,
     Tab,
-    Container,
 } from '@mui/material';
 import { m } from 'framer-motion';
 import { useState, useMemo } from 'react';
@@ -56,10 +64,11 @@ import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { productsPathes } from '../../../routes/routes';
 import { categoryLabels } from '../../../interfaces/postsCategoeis';
 import { useNavigate } from 'react-router-dom';
-import { useHomePageAds } from '../../../hooks/ads/useFeaturedAds';
+import { useAllFeaturedAds } from '../../../hooks/ads/useFeaturedAds';
+import { getPlanById } from '../../../interfaces/PlanConfig'; // ✅ المسار الصحيح
 import { useTranslation } from 'react-i18next';
 
-// تعريف الفئات مع أيقوناتها وألوانها
+/* ── Category metadata ─────────────────────────────── */
 const CATEGORY_META: Record<
     string,
     { icon: SvgIconComponent; color: string; label: string }
@@ -150,6 +159,42 @@ const CATEGORY_META: Record<
         color: '#78350f',
         label: categoryLabels.Furniture,
     },
+    Cameras: {
+        icon: CameraAlt,
+        color: '#e11d48',
+        label: categoryLabels.Cameras,
+    },
+    Books: { icon: MenuBook, color: '#854d0e', label: categoryLabels.Books },
+    MusicalInstruments: {
+        icon: Piano,
+        color: '#6366f1',
+        label: categoryLabels.MusicalInstruments,
+    },
+    ConstructionEquipment: {
+        icon: Construction,
+        color: '#f59e0b',
+        label: categoryLabels.ConstructionEquipment,
+    },
+    IndustrialEquipment: {
+        icon: Factory,
+        color: '#475569',
+        label: categoryLabels.IndustrialEquipment,
+    },
+    WeldingEquipment: {
+        icon: Whatshot,
+        color: '#ef4444',
+        label: categoryLabels.WeldingEquipment,
+    },
+    OfficeEquipment: {
+        icon: Print,
+        color: '#0ea5e9',
+        label: categoryLabels.OfficeEquipment,
+    },
+    Services: {
+        icon: Handyman,
+        color: '#0ea5e9',
+        label: categoryLabels.Services,
+    },
 };
 
 /* ── Category icon helper ───────────────────────────── */
@@ -161,16 +206,14 @@ function getCategoryIcon(category?: string, size = 24) {
         const IconComponent = meta.icon;
         return <IconComponent sx={iconSx} />;
     }
-
-    // Fallback للفئات غير الموجودة
     if (cat.includes('Home') || cat.includes('apartment'))
         return <HomeIcon sx={iconSx} />;
     if (cat.includes('Cars')) return <DirectionsCarIcon sx={iconSx} />;
     if (cat.includes('Electronics')) return <DevicesIcon sx={iconSx} />;
     if (cat.includes('Kids')) return <SportsEsportsIcon sx={iconSx} />;
     if (cat.includes('Furniture')) return <ChairIcon sx={iconSx} />;
-    if (cat.includes('womenClothes')) return <CheckroomIcon sx={iconSx} />;
-
+    if (cat.includes('WomenClothes')) return <CheckroomIcon sx={iconSx} />;
+    if (cat.includes('Services')) return <Handyman sx={iconSx} />;
     return <CategoryIcon sx={iconSx} />;
 }
 
@@ -178,6 +221,7 @@ function getCategoryIcon(category?: string, size = 24) {
 function AdCardSkeleton() {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
+    const skeletonBg = isDark ? 'rgba(255,255,255,0.1)' : undefined;
 
     return (
         <Card
@@ -194,96 +238,44 @@ function AdCardSkeleton() {
                 variant='rectangular'
                 height={200}
                 animation='wave'
-                sx={{ bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined }}
+                sx={{ bgcolor: skeletonBg }}
             />
-            <CardContent>
-                <Stack direction='row' spacing={1} sx={{ mb: 1 }}>
+            <CardContent sx={{ p: 2 }}>
+                <Stack
+                    direction='row'
+                    spacing={1.5}
+                    alignItems='center'
+                    sx={{ mb: 1.5 }}
+                >
                     <Skeleton
                         variant='circular'
-                        width={40}
-                        height={40}
-                        sx={{
-                            bgcolor: isDark
-                                ? 'rgba(255,255,255,0.1)'
-                                : undefined,
-                        }}
+                        width={44}
+                        height={44}
+                        sx={{ bgcolor: skeletonBg }}
                     />
                     <Box sx={{ flex: 1 }}>
                         <Skeleton
                             variant='text'
-                            width='80%'
-                            height={24}
-                            sx={{
-                                bgcolor: isDark
-                                    ? 'rgba(255,255,255,0.1)'
-                                    : undefined,
-                            }}
+                            width='60%'
+                            height={18}
+                            sx={{ bgcolor: skeletonBg }}
                         />
                         <Skeleton
                             variant='text'
-                            width='60%'
-                            height={20}
-                            sx={{
-                                bgcolor: isDark
-                                    ? 'rgba(255,255,255,0.1)'
-                                    : undefined,
-                            }}
+                            width='80%'
+                            height={22}
+                            sx={{ bgcolor: skeletonBg }}
                         />
                     </Box>
                 </Stack>
                 <Skeleton
                     variant='text'
                     width='90%'
-                    height={32}
-                    sx={{
-                        mb: 1,
-                        bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined,
-                    }}
-                />
-                <Skeleton
-                    variant='text'
-                    width='70%'
                     height={20}
-                    sx={{
-                        bgcolor: isDark ? 'rgba(255,255,255,0.1)' : undefined,
-                    }}
+                    sx={{ bgcolor: skeletonBg }}
                 />
             </CardContent>
         </Card>
-    );
-}
-
-/* ── Featured badge component ───────────────────────── */
-function FeaturedBadge({ endDate }: { endDate: Date | string }) {
-    const theme = useTheme();
-    const { t } = useTranslation();
-    const daysLeft = Math.ceil(
-        (new Date(endDate).getTime() - new Date().getTime()) /
-            (1000 * 3600 * 24),
-    );
-
-    return (
-        <Chip
-            icon={
-                <TrendingUpIcon
-                    sx={{ fontSize: 12, color: 'white !important' }}
-                />
-            }
-            label={`${t('ads.featuredBadge', 'مميز')}${
-                daysLeft > 0
-                    ? ` · ${t('ads.daysLeft', '{{count}} يوم متبقي', { count: daysLeft })}`
-                    : ''
-            }`}
-            size='small'
-            sx={{
-                bgcolor: theme.palette.primary.main,
-                color: 'white',
-                fontSize: 11,
-                height: 24,
-                fontWeight: 600,
-                '& .MuiChip-icon': { color: 'white' },
-            }}
-        />
     );
 }
 
@@ -303,7 +295,18 @@ export function HomepageAdCard({
 
     if (!listing) return null;
 
+    const catMeta = CATEGORY_META[listing.category ?? ''];
+    const accent = catMeta?.color ?? theme.palette.primary.main;
     const path = `${productsPathes.postsDetails}/${listing.category}/Ads/${listing._id}`;
+
+    const planMeta = getPlanById(ad.type);
+    const planAccent = planMeta?.accent || accent;
+
+    // حساب الأيام المتبقية
+    const daysLeft = Math.ceil(
+        (new Date(ad.endDate).getTime() - new Date().getTime()) /
+            (1000 * 3600 * 24),
+    );
 
     return (
         <m.div
@@ -312,54 +315,67 @@ export function HomepageAdCard({
             transition={{ duration: 0.4, delay: index * 0.05 }}
         >
             <Card
-                onClick={() => {
-                    navigate(path);
-                }}
+                onClick={() => navigate(path)}
                 sx={{
                     position: 'relative',
-                    borderRadius: 3,
+                    borderRadius: '18px',
                     overflow: 'hidden',
                     cursor: 'pointer',
-                    transition: 'all 0.25s ease-in-out',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     boxShadow: isDark
                         ? '0 2px 8px rgba(0,0,0,0.3)'
-                        : '0 2px 8px rgba(0,0,0,0.06)',
+                        : `0 4px 16px -8px ${alpha(accent, 0.25)}, 0 1px 3px rgba(0,0,0,0.06)`,
                     bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#ffffff',
+                    border: `1px solid ${alpha(accent, isDark ? 0.15 : 0.12)}`,
                     '&:hover': {
                         transform: 'translateY(-6px)',
+                        borderColor: alpha(accent, 0.4),
                         boxShadow: isDark
-                            ? '0 12px 24px rgba(0,0,0,0.5)'
-                            : '0 12px 24px rgba(0,0,0,0.12)',
+                            ? '0 16px 32px rgba(0,0,0,0.5)'
+                            : `0 24px 48px -16px ${alpha(accent, 0.45)}`,
                         '& .media-overlay': { opacity: 1 },
                         '& .view-button': {
                             opacity: 1,
-                            transform: 'translateX(0)',
+                            transform: 'translateY(0)',
                         },
+                        '& .card-media-img': { transform: 'scale(1.06)' },
                     },
                 }}
             >
-                <Box sx={{ position: 'relative' }}>
+                {/* شريط علوي بلون الباقة */}
+                <Box
+                    sx={{
+                        height: 3,
+                        background: `linear-gradient(90deg, ${planAccent} 0%, ${alpha(planAccent, 0.3)} 100%)`,
+                    }}
+                />
+
+                <Box sx={{ position: 'relative', overflow: 'hidden' }}>
                     <CardMedia
                         component='img'
                         height='200'
-                        image={listing.image?.url}
+                        image={listing.image?.url || '/placeholder.png'}
                         alt={listing.product_name}
-                        sx={{ objectFit: 'cover' }}
+                        className='card-media-img'
+                        sx={{
+                            objectFit: 'cover',
+                            transition: 'transform 0.5s ease',
+                        }}
                     />
+
+                    {/* Overlay لعرض التفاصيل */}
                     <Box
                         className='media-overlay'
                         sx={{
                             position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            bgcolor: alpha(theme.palette.common.black, 0.4),
+                            inset: 0,
+                            background: `linear-gradient(180deg, ${alpha(theme.palette.common.black, 0)} 30%, ${alpha(theme.palette.common.black, 0.65)} 100%)`,
                             opacity: 0,
                             transition: 'opacity 0.25s ease',
                             display: 'flex',
-                            alignItems: 'center',
+                            alignItems: 'flex-end',
                             justifyContent: 'center',
+                            p: 2,
                         }}
                     >
                         <Chip
@@ -368,45 +384,89 @@ export function HomepageAdCard({
                             label={t('postCard.viewDetails', 'عرض التفاصيل')}
                             sx={{
                                 bgcolor: 'white',
-                                color: theme.palette.primary.main,
-                                fontWeight: 600,
+                                color: accent,
+                                fontWeight: 700,
                                 opacity: 0,
-                                transform: 'translateX(-10px)',
+                                transform: 'translateY(10px)',
                                 transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    bgcolor: theme.palette.primary.main,
-                                    color: 'white',
-                                },
+                                '&:hover': { bgcolor: accent, color: 'white' },
                             }}
                         />
                     </Box>
 
-                    {listing.price && (
+                    {/* ✅ الشارات العلوية (الباقة + الأيام المتبقية) */}
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 12,
+                            insetInlineStart: 12,
+                            insetInlineEnd: 12,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            pointerEvents: 'none',
+                        }}
+                    >
+                        {/* شارة الباقة (يسار) */}
+                        {planMeta && (
+                            <Chip
+                                label={planMeta.title}
+                                size='small'
+                                sx={{
+                                    bgcolor: planMeta.accent,
+                                    color: '#fff',
+                                    fontSize: 10,
+                                    height: 22,
+                                    fontWeight: 800,
+                                    boxShadow: `0 4px 12px -4px ${alpha(planMeta.accent, 0.6)}`,
+                                    border: '1px solid rgba(255,255,255,0.2)',
+                                    '& .MuiChip-label': { px: 1 },
+                                }}
+                            />
+                        )}
+
+                        {/* شارة الأيام المتبقية (يمين) */}
+                        {Number.isFinite(daysLeft) && daysLeft > 0 && (
+                            <Chip
+                                label={t('ads.daysLeft', '{{count}} يوم', {
+                                    count: daysLeft,
+                                })}
+                                size='small'
+                                sx={{
+                                    bgcolor: 'rgba(0,0,0,0.6)',
+                                    color: '#fff',
+                                    fontSize: 10,
+                                    height: 22,
+                                    fontWeight: 700,
+                                    backdropFilter: 'blur(4px)',
+                                    '& .MuiChip-label': { px: 1 },
+                                }}
+                            />
+                        )}
+                    </Box>
+
+                    {/* ✅ شارة السعر (أسفل يسار) - تظهر فقط إذا كان السعر > 0 */}
+                    {listing.price && listing.price > 0 && (
                         <Chip
                             label={formatPrice(listing.price)}
                             size='small'
                             sx={{
                                 position: 'absolute',
                                 bottom: 12,
-                                left: 12,
-                                bgcolor: alpha(
-                                    theme.palette.common.black,
-                                    0.75,
-                                ),
-                                color: isDark ? '#4caf50' : '#2e7d32',
-                                fontWeight: 700,
-                                fontSize: 14,
-                                backdropFilter: 'blur(4px)',
+                                insetInlineStart: 12,
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                color: accent,
+                                fontWeight: 800,
+                                fontSize: 13,
+                                height: 28,
+                                backdropFilter: 'blur(6px)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                             }}
                         />
                     )}
-
-                    <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
-                        <FeaturedBadge endDate={ad.endDate} />
-                    </Box>
                 </Box>
 
-                <CardContent sx={{ p: 2.5 }}>
+                <CardContent sx={{ p: 2.25, pb: '12px !important' }}>
                     <Stack
                         direction='row'
                         spacing={1.5}
@@ -415,32 +475,43 @@ export function HomepageAdCard({
                     >
                         <Avatar
                             sx={{
-                                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                                width: 44,
-                                height: 44,
-                                borderRadius: 2,
+                                bgcolor: alpha(accent, 0.12),
+                                width: 42,
+                                height: 42,
+                                borderRadius: '12px',
+                                border: `1px solid ${alpha(accent, 0.2)}`,
+                                color: accent,
+                                '& svg': { color: accent },
                             }}
                         >
-                            {getCategoryIcon(listing.category, 22)}
+                            {getCategoryIcon(listing.category, 20)}
                         </Avatar>
-                        <Box sx={{ flex: 1 }}>
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
                             <Typography
-                                variant='body2'
-                                color='text.secondary'
-                                sx={{ fontSize: 12 }}
+                                variant='caption'
+                                sx={{
+                                    color: accent,
+                                    fontWeight: 700,
+                                    fontSize: 11,
+                                    letterSpacing: 0.4,
+                                    textTransform: 'uppercase',
+                                }}
                             >
-                                {categoryLabels[
-                                    listing.category as keyof typeof categoryLabels
-                                ] ||
-                                    listing.category ||
+                                {catMeta?.label ??
+                                    listing.category ??
                                     t('postCard.genericProduct', 'منتج')}
                             </Typography>
                             <Typography
-                                variant='h6'
+                                variant='subtitle1'
                                 fontWeight={700}
                                 sx={{
                                     lineHeight: 1.3,
                                     color: isDark ? '#fff' : 'inherit',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    display: '-webkit-box',
+                                    WebkitLineClamp: 1,
+                                    WebkitBoxOrient: 'vertical',
                                 }}
                             >
                                 {listing.product_name}
@@ -448,9 +519,7 @@ export function HomepageAdCard({
                         </Box>
                     </Stack>
 
-                    <Divider sx={{ my: 1.5 }} />
-
-                    <Stack spacing={1}>
+                    <Stack spacing={0.75}>
                         {listing.location && (
                             <Stack
                                 direction='row'
@@ -459,14 +528,15 @@ export function HomepageAdCard({
                             >
                                 <LocationOnIcon
                                     sx={{
-                                        fontSize: 16,
+                                        fontSize: 15,
                                         color: 'text.disabled',
                                     }}
                                 />
                                 <Typography
-                                    variant='body2'
+                                    variant='caption'
                                     color='text.secondary'
                                     noWrap
+                                    sx={{ fontSize: 12 }}
                                 >
                                     {listing.location}
                                 </Typography>
@@ -478,11 +548,12 @@ export function HomepageAdCard({
                             spacing={0.75}
                         >
                             <CalendarTodayIcon
-                                sx={{ fontSize: 14, color: 'text.disabled' }}
+                                sx={{ fontSize: 13, color: 'text.disabled' }}
                             />
                             <Typography
                                 variant='caption'
                                 color='text.secondary'
+                                sx={{ fontSize: 11.5 }}
                             >
                                 {formatDate(ad.startDate)} →{' '}
                                 {formatDate(ad.endDate)}
@@ -495,20 +566,20 @@ export function HomepageAdCard({
                     <Button
                         size='small'
                         fullWidth
-                        variant='outlined'
-                        endIcon={<EastIcon sx={{ fontSize: 16 }} />}
+                        endIcon={
+                            <ArrowForwardRoundedIcon sx={{ fontSize: 16 }} />
+                        }
                         sx={{
-                            borderRadius: 2,
+                            borderRadius: '10px',
                             textTransform: 'none',
-                            fontWeight: 600,
-                            borderColor: alpha(theme.palette.primary.main, 0.3),
-                            color: isDark ? '#fff' : 'inherit',
+                            fontWeight: 700,
+                            fontSize: '0.82rem',
+                            py: 1,
+                            bgcolor: alpha(accent, 0.08),
+                            color: accent,
                             '&:hover': {
-                                borderColor: theme.palette.primary.main,
-                                bgcolor: alpha(
-                                    theme.palette.primary.main,
-                                    0.05,
-                                ),
+                                bgcolor: accent,
+                                color: '#fff',
                             },
                         }}
                     >
@@ -520,109 +591,30 @@ export function HomepageAdCard({
     );
 }
 
-/* ── Category Section Component ─────────────────────────── */
-function CategorySection({
-    ads,
-    categoryInfo,
-}: {
-    ads: FeaturedAd[];
-    categoryInfo: (typeof CATEGORY_META)[string];
-}) {
+/* ── Main section ───────────────────────────────────── */
+export default function HomepageFeaturedSection() {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
-    const { t } = useTranslation();
-
-    if (ads.length === 0) return null;
-
-    return (
-        <Container component={'article'} sx={{ mb: 5, px: { xs: 0, sm: 0 } }}>
-            <Stack
-                direction='row'
-                alignItems='center'
-                spacing={1.5}
-                sx={{
-                    mb: 2.5,
-                    borderRight: `3px solid ${categoryInfo.color}`,
-                    pr: 2,
-                }}
-            >
-                {categoryInfo.icon &&
-                    (() => {
-                        const Icon = categoryInfo.icon;
-                        return (
-                            <Icon
-                                sx={{ fontSize: 28, color: categoryInfo.color }}
-                            />
-                        );
-                    })()}
-                <Typography
-                    variant='h6'
-                    fontWeight={700}
-                    sx={{ color: isDark ? '#fff' : 'inherit' }}
-                >
-                    {categoryInfo.label}
-                </Typography>
-                <Chip
-                    label={t('ads.countLabel', '{{count}} إعلان', {
-                        count: ads.length,
-                    })}
-                    size='small'
-                    sx={{
-                        bgcolor: alpha(categoryInfo.color, 0.1),
-                        color: categoryInfo.color,
-                        fontWeight: 600,
-                    }}
-                />
-            </Stack>
-
-            <Grid container spacing={2.5}>
-                {ads.map((ad, idx) => (
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
-                        <HomepageAdCard ad={ad} index={idx} />
-                    </Grid>
-                ))}
-            </Grid>
-        </Container>
-    );
-}
-
-/* ── Main Section Component ─────────────────────────── */
-interface HomepageFeaturedSectionProps {
-    onViewAll?: () => void;
-}
-
-export default function HomepageFeaturedSection({
-    onViewAll,
-}: HomepageFeaturedSectionProps) {
-    const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
-    const { homePageAds, loading } = useHomePageAds();
+    const { ads: allAds, loading } = useAllFeaturedAds();
     const [selectedTab, setSelectedTab] = useState<string>('all');
     const { t } = useTranslation();
 
-    // Group ads by category
     const adsByCategory = useMemo(() => {
-        const grouped: Record<string, FeaturedAd[]> = {
-            all: homePageAds,
-        };
-
-        // Get categories that have ads
+        const grouped: Record<string, FeaturedAd[]> = { all: allAds };
         const categoriesWithAds = [
             ...new Set(
-                homePageAds.map((ad) => ad.listingId?.category).filter(Boolean),
+                allAds.map((ad) => ad.listingId?.category).filter(Boolean),
             ),
         ];
-
         categoriesWithAds.forEach((cat) => {
             if (cat) {
-                grouped[cat] = homePageAds.filter(
+                grouped[cat] = allAds.filter(
                     (ad) => ad.listingId?.category === cat,
                 );
             }
         });
-
         return grouped;
-    }, [homePageAds]);
+    }, [allAds]);
 
     const handleTabChange = (
         _event: React.SyntheticEvent,
@@ -631,60 +623,102 @@ export default function HomepageFeaturedSection({
         setSelectedTab(newValue);
     };
 
-    if (!loading && homePageAds.length === 0) return null;
+    if (!loading && allAds.length === 0) return null;
 
     return (
         <Paper
             elevation={0}
             sx={{
+                position: 'relative',
                 px: { xs: 2, sm: 3, md: 4 },
-                py: { xs: 3, md: 4 },
+                py: { xs: 4, md: 5 },
                 bgcolor: isDark
                     ? 'rgba(255,255,255,0.03)'
                     : 'background.default',
-                borderRadius: 3,
-                border: isDark ? '1px solid rgba(255,255,255,0.08)' : 'none',
+                borderRadius: 4,
+                border: isDark
+                    ? '1px solid rgba(255,255,255,0.08)'
+                    : '1px solid',
+                borderColor: isDark ? undefined : 'divider',
+                overflow: 'hidden',
+                '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    insetInlineStart: 0,
+                    insetInlineEnd: 0,
+                    height: 3,
+                    background: `linear-gradient(90deg, ${theme.palette.primary.main} 0%, ${alpha(theme.palette.primary.main, 0.15)} 100%)`,
+                },
             }}
         >
-            {/* Header Section */}
             <Stack
-                direction='row'
+                direction={{ xs: 'column', sm: 'row' }}
                 justifyContent='space-between'
-                alignItems='flex-end'
+                alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
                 sx={{ mb: 3 }}
-                flexWrap='wrap'
                 gap={2}
             >
-                <Stack direction='row' alignItems='center' spacing={1.5}>
+                <Stack direction='row' alignItems='center' spacing={1.75}>
                     <Box
                         sx={{
-                            width: 48,
-                            height: 48,
-                            borderRadius: 2,
-                            bgcolor: alpha(theme.palette.primary.main, 0.1),
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            position: 'relative',
+                            width: 52,
+                            height: 52,
+                            borderRadius: '16px',
+                            background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${alpha(theme.palette.primary.main, 0.7)})`,
+                            display: 'grid',
+                            placeItems: 'center',
+                            boxShadow: `0 12px 24px -12px ${alpha(theme.palette.primary.main, 0.7)}`,
                         }}
                     >
-                        <StarIcon
+                        <StarIcon sx={{ fontSize: 26, color: 'white' }} />
+                        <VerifiedRoundedIcon
                             sx={{
-                                fontSize: 28,
-                                color: theme.palette.primary.main,
+                                position: 'absolute',
+                                bottom: -4,
+                                insetInlineEnd: -4,
+                                fontSize: 18,
+                                color: '#fff',
+                                bgcolor: theme.palette.success.main,
+                                borderRadius: '50%',
+                                p: '2px',
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
                             }}
                         />
                     </Box>
                     <Box>
                         <Typography
+                            variant='overline'
+                            sx={{
+                                fontWeight: 800,
+                                letterSpacing: '0.18em',
+                                fontSize: '0.65rem',
+                                color: theme.palette.primary.main,
+                            }}
+                        >
+                            {t('ads.showcaseEyebrow', 'مختارات المحرر')}
+                        </Typography>
+                        <Typography
                             variant='h5'
-                            fontWeight={800}
-                            sx={{ mb: 0.5, color: isDark ? '#fff' : 'inherit' }}
+                            fontWeight={900}
+                            sx={{
+                                mb: 0.5,
+                                color: isDark ? '#fff' : 'inherit',
+                                letterSpacing: '-0.02em',
+                                lineHeight: 1.1,
+                                fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                            }}
                         >
                             {t('ads.financed')}
                         </Typography>
-                        {!loading && homePageAds.length > 0 && (
-                            <Typography variant='body2' color='text.secondary'>
-                                {homePageAds.length}{' '}
+                        {!loading && allAds.length > 0 && (
+                            <Typography
+                                variant='body2'
+                                color='text.secondary'
+                                sx={{ fontSize: '0.82rem' }}
+                            >
+                                {allAds.length}{' '}
                                 {t(
                                     'ads.promotionPackages.homepage.FeaturedAdOnTheHomepage',
                                 )}
@@ -692,31 +726,20 @@ export default function HomepageFeaturedSection({
                         )}
                     </Box>
                 </Stack>
-
-                {onViewAll && (
-                    <Button
-                        variant='text'
-                        onClick={onViewAll}
-                        endIcon={<EastIcon />}
-                        sx={{
-                            fontWeight: 600,
-                            color: theme.palette.primary.main,
-                            '&:hover': {
-                                bgcolor: alpha(
-                                    theme.palette.primary.main,
-                                    0.08,
-                                ),
-                            },
-                        }}
-                    >
-                        {t('showAll')}
-                    </Button>
-                )}
             </Stack>
 
-            {/* Category Tabs */}
-            {!loading && homePageAds.length > 0 && (
-                <Box sx={{ mb: 4, borderBottom: 1, borderColor: 'divider' }}>
+            {!loading && allAds.length > 0 && (
+                <Box
+                    sx={{
+                        mb: 4,
+                        borderBottom: 1,
+                        borderColor: 'divider',
+                        '& .MuiTabs-indicator': {
+                            height: 3,
+                            borderRadius: '3px 3px 0 0',
+                        },
+                    }}
+                >
                     <Tabs
                         value={selectedTab}
                         onChange={handleTabChange}
@@ -725,16 +748,16 @@ export default function HomepageFeaturedSection({
                         sx={{
                             '& .MuiTab-root': {
                                 textTransform: 'none',
-                                fontWeight: 600,
-                                fontSize: '0.9rem',
+                                fontWeight: 700,
+                                fontSize: '0.88rem',
                                 minWidth: 'auto',
-                                px: 2,
+                                px: 2.25,
                                 color: isDark
                                     ? 'rgba(255,255,255,0.7)'
-                                    : 'inherit',
-                            },
-                            '& .Mui-selected': {
-                                color: theme.palette.primary.main,
+                                    : 'text.secondary',
+                                '&.Mui-selected': {
+                                    color: theme.palette.primary.main,
+                                },
                             },
                             '& .MuiTabs-indicator': {
                                 backgroundColor: theme.palette.primary.main,
@@ -759,7 +782,6 @@ export default function HomepageFeaturedSection({
                 </Box>
             )}
 
-            {/* Loading State */}
             {loading && (
                 <Grid container spacing={2.5}>
                     {Array.from({ length: 6 }).map((_, i) => (
@@ -770,29 +792,12 @@ export default function HomepageFeaturedSection({
                 </Grid>
             )}
 
-            {/* All Categories View */}
-            {!loading && selectedTab === 'all' && (
-                <Box>
-                    {Object.entries(adsByCategory)
-                        .filter(([key]) => key !== 'all')
-                        .map(([category, categoryAds]) => {
-                            const categoryInfo = CATEGORY_META[category];
-                            if (!categoryInfo) return null;
-                            return (
-                                <CategorySection
-                                    key={category}
-                                    ads={categoryAds}
-                                    categoryInfo={categoryInfo}
-                                />
-                            );
-                        })}
-                </Box>
-            )}
-
-            {/* Single Category View */}
-            {!loading && selectedTab !== 'all' && (
+            {!loading && allAds.length > 0 && (
                 <Grid container spacing={2.5}>
-                    {adsByCategory[selectedTab]?.map((ad, idx) => (
+                    {(selectedTab === 'all'
+                        ? allAds
+                        : adsByCategory[selectedTab] || []
+                    ).map((ad, idx) => (
                         <Grid size={{ xs: 12, sm: 6, md: 4 }} key={ad._id}>
                             <HomepageAdCard ad={ad} index={idx} />
                         </Grid>
@@ -800,14 +805,14 @@ export default function HomepageFeaturedSection({
                 </Grid>
             )}
 
-            {/* Empty State */}
-            {!loading && homePageAds.length === 0 && (
+            {!loading && allAds.length === 0 && (
                 <Box
                     sx={{
                         textAlign: 'center',
                         py: 8,
                         bgcolor: alpha(theme.palette.grey[500], 0.05),
                         borderRadius: 3,
+                        border: `1px dashed ${alpha(theme.palette.grey[500], 0.25)}`,
                     }}
                 >
                     <Typography

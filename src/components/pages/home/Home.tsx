@@ -17,11 +17,18 @@ import {
     Grid,
     Paper,
     Typography,
+    Stack,
+    Divider,
+    Chip,
+    alpha,
+    useTheme,
 } from '@mui/material';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import GavelOutlinedIcon from '@mui/icons-material/GavelOutlined';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import SparkleRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import { m, useScroll, useSpring } from 'framer-motion';
 
 import { Link as RouterLink } from 'react-router-dom';
@@ -29,7 +36,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import HeroSection from './HeroSection';
 import StatsStrip from './StatsStrip';
 import AdsSection from './AdsSection';
-import SealBadge from './SealBadge';
 
 import Loader from '../../../atoms/loader/Loader';
 
@@ -37,7 +43,6 @@ const AddProductModal = lazy(
     () =>
         import('../../../atoms/productsManage/addAndUpdateProduct/CreatePostModal'),
 );
-
 const UpdateProductModal = lazy(
     () =>
         import('../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal'),
@@ -56,7 +61,7 @@ import { BRAND } from '../../navbar/theme/brand';
 import CategoryBar from './Categorybar';
 import HowItWorks from './Howitworks';
 import { showInfo } from '../../../atoms/toasts/ReactToast';
-// import HowItWorks from './Howitworks';
+
 const DiscountsAndOffers = lazy(() => import('../products/DiscountsAndOffers'));
 const ContactCTA = lazy(() => import('./ContactCTA'));
 const PostsGrid = lazy(() => import('./PostsGrid'));
@@ -67,6 +72,7 @@ const QUICK_HELP_LINKS = [
         to: '/help/selling',
         key: 'pages.contact.howToSell',
         fallback: 'كيفية البيع',
+        accent: '#C8783C',
     },
     {
         icon: ShieldOutlinedIcon,
@@ -74,6 +80,7 @@ const QUICK_HELP_LINKS = [
         pathKey: 'SafetyHelp' as const,
         key: 'pages.contact.safetyTips',
         fallback: 'نصائح الأمان',
+        accent: '#3E7B6A',
     },
     {
         icon: GavelOutlinedIcon,
@@ -81,6 +88,7 @@ const QUICK_HELP_LINKS = [
         pathKey: 'DisputesHelp' as const,
         key: 'pages.contact.resolveDisputes',
         fallback: 'حل النزاعات',
+        accent: '#7A5C8E',
     },
 ];
 
@@ -88,20 +96,16 @@ const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
     const direction = handleRTL();
+    const theme = useTheme();
     const { posts: initialPosts, refetch } = usePosts();
 
-    // Modals state
     const [showAddModal, setShowAddModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [postIdToUpdate, setPostIdToUpdate] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
     const [posts, setPosts] = useState<Posts[]>([]);
-
-    // Category filter
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(
-        null,
-    );
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
     const categories = useMemo(() => {
         const counts = new Map<string, number>();
@@ -122,10 +126,8 @@ const Home: FunctionComponent = () => {
         [posts, selectedCategory],
     );
 
-    // Back-to-top FAB (يتحدّث فقط لما تتغيّر القيمة، مو كل scroll)
     const [showBackToTop, setShowBackToTop] = useState(false);
 
-    // Scroll progress بدون re-render للصفحة
     const { scrollYProgress } = useScroll();
     const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
@@ -134,10 +136,7 @@ const Home: FunctionComponent = () => {
     }, [initialPosts]);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setShowBackToTop(window.scrollY > 600);
-        };
-
+        const handleScroll = () => setShowBackToTop(window.scrollY > 600);
         handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
@@ -147,8 +146,6 @@ const Home: FunctionComponent = () => {
         async (postId: string) => {
             if (!auth?._id) return;
             const userId = auth._id;
-
-            // optimistic update
             setPosts((prev) =>
                 prev.map((p) => {
                     if (p._id !== postId) return p;
@@ -172,9 +169,7 @@ const Home: FunctionComponent = () => {
     const handleDelete = useCallback(async (postId: string) => {
         try {
             await deletePost(postId);
-
             setPosts((prev) => prev.filter((p) => p._id !== postId));
-
             setPostToDelete('');
         } catch (err) {
             console.error(err);
@@ -196,14 +191,8 @@ const Home: FunctionComponent = () => {
             <link rel='apple-touch-icon' href='/d3.png' />
             <link rel='canonical' href={currentUrl} />
             <meta property='og:title' content='صفقة | بيع وشراء جديد ومستعمل' />
-            <meta
-                property='og:description'
-                content='بيع وشراء المنتجات بسهولة وأمان'
-            />
-            <meta
-                property='og:image'
-                content='https://client-qqq1.vercel.app/d3.png'
-            />
+            <meta property='og:description' content='بيع وشراء المنتجات بسهولة وأمان' />
+            <meta property='og:image' content='https://client-qqq1.vercel.app/d3.png' />
             <meta property='og:url' content={currentUrl} />
             <meta property='og:type' content='website' />
             <JsonLd
@@ -231,6 +220,7 @@ const Home: FunctionComponent = () => {
                     ],
                 }}
             />
+
             {/* ─── SCROLL PROGRESS ─── */}
             <Box
                 sx={{
@@ -252,6 +242,7 @@ const Home: FunctionComponent = () => {
                     }}
                 />
             </Box>
+
             {/* ─── HERO ─── */}
             <header>
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
@@ -259,117 +250,212 @@ const Home: FunctionComponent = () => {
 
             <main id='listing-section' dir={direction}>
                 <AdsSection />
-                {/* ─── STATS (حافة مسننة ملاصقة للـ Hero) ─── */}
+
+                {/* ─── STATS ─── */}
                 <section id='StatsStrip-section'>
                     <StatsStrip postsCount={posts.length} />
                 </section>
-                {/* ─── HELP ─── */}
+
+                {/* ─── HELP — Editorial Card Redesign ─── */}
                 <section id='help-section'>
-                    <Container
-                        maxWidth='lg'
-                        sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}
-                    >
+                    <Container maxWidth='lg' sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
                         <Paper
                             elevation={0}
                             sx={{
-                                p: { xs: 2, md: 3 },
-                                my: { xs: 3, md: 4 },
-                                border: '1px dashed',
-                                borderColor: 'divider',
-                                borderRadius: '16px',
-                                bgcolor: 'background.paper',
+                                position: 'relative',
+                                my: { xs: 4, md: 6 },
+                                p: { xs: 2.5, md: 4 },
+                                borderRadius: '24px',
+                                overflow: 'hidden',
+                                background: `
+                                    radial-gradient(120% 140% at ${direction === 'rtl' ? '100%' : '0%'} 0%,
+                                        ${alpha(BRAND.brown, 0.08)} 0%,
+                                        transparent 55%),
+                                    ${theme.palette.background.paper}
+                                `,
+                                border: `1px solid ${alpha(BRAND.brown, 0.15)}`,
+                                boxShadow: `0 24px 60px -32px ${alpha(BRAND.brown, 0.35)}`,
+                                '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    inset: 0,
+                                    backgroundImage: `
+                                        repeating-linear-gradient(
+                                            45deg,
+                                            ${alpha(BRAND.brown, 0.03)} 0px,
+                                            ${alpha(BRAND.brown, 0.03)} 1px,
+                                            transparent 1px,
+                                            transparent 12px
+                                        )
+                                    `,
+                                    pointerEvents: 'none',
+                                },
                             }}
                         >
-                            <Typography
-                                variant='h6'
-                                gutterBottom
-                                fontWeight='bold'
-                                textAlign='center'
-                                sx={{
-                                    fontSize: { xs: '1.05rem', md: '1.25rem' },
-                                }}
+                            {/* Header row */}
+                            <Stack
+                                direction={{ xs: 'column', sm: 'row' }}
+                                alignItems={{ xs: 'flex-start', sm: 'center' }}
+                                justifyContent='space-between'
+                                gap={1.5}
+                                mb={3}
+                                sx={{ position: 'relative' }}
                             >
-                                {t(
-                                    'pages.contact.quickHelp',
-                                    'مساعدتك السريعة',
-                                )}
-                            </Typography>
+                                <Box>
+                                    <Stack direction='row' alignItems='center' gap={1} mb={0.5}>
+                                        <Chip
+                                            size='small'
+                                            icon={<SparkleRoundedIcon sx={{ fontSize: 14 }} />}
+                                            label={t('pages.contact.helpEyebrow', 'مصمّم لمساعدتك')}
+                                            sx={{
+                                                bgcolor: alpha(BRAND.brown, 0.1),
+                                                color: BRAND.brown,
+                                                fontWeight: 700,
+                                                fontSize: '0.7rem',
+                                                '& .MuiChip-icon': { color: BRAND.brown },
+                                            }}
+                                        />
+                                    </Stack>
+                                    <Typography
+                                        variant='h5'
+                                        fontWeight={800}
+                                        sx={{
+                                            fontSize: { xs: '1.25rem', md: '1.6rem' },
+                                            letterSpacing: '-0.02em',
+                                            lineHeight: 1.2,
+                                        }}
+                                    >
+                                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
+                                    </Typography>
+                                    <Typography
+                                        variant='body2'
+                                        color='text.secondary'
+                                        sx={{ mt: 0.5, maxWidth: 460, fontSize: '0.85rem' }}
+                                    >
+                                        {t(
+                                            'pages.contact.quickHelpSub',
+                                            'خطوات بسيطة تنقلك من الفكرة إلى الصفقة بأمان.',
+                                        )}
+                                    </Typography>
+                                </Box>
+                            </Stack>
 
-                            <Grid container spacing={1.5} mt={0.5}>
-                                {QUICK_HELP_LINKS.map((link) => {
+                            {/* Cards */}
+                            <Grid container spacing={2}>
+                                {QUICK_HELP_LINKS.map((link, idx) => {
                                     const Icon = link.icon;
-                                    const to = link.pathKey
-                                        ? path[link.pathKey]
-                                        : link.to!;
+                                    const to = link.pathKey ? path[link.pathKey] : link.to!;
                                     return (
-                                        <Grid
-                                            key={link.key}
-                                            size={{ xs: 4, md: 4 }}
-                                        >
+                                        <Grid key={link.key} size={{ xs: 12, sm: 4 }}>
                                             <Button
                                                 fullWidth
-                                                aria-label={t(
-                                                    link.key,
-                                                    link.fallback,
-                                                )}
-                                                title={t(
-                                                    link.key,
-                                                    link.fallback,
-                                                )}
+                                                aria-label={t(link.key, link.fallback)}
                                                 component={RouterLink}
                                                 to={to}
                                                 sx={{
+                                                    position: 'relative',
                                                     display: 'flex',
                                                     flexDirection: 'column',
-                                                    alignItems: 'center',
-                                                    gap: 0.75,
-                                                    py: 1.5,
-                                                    px: 1,
-                                                    minHeight: 84,
-                                                    borderRadius: '14px',
-                                                    border: '1px solid',
-                                                    borderColor: 'divider',
-                                                    color: 'text.primary',
+                                                    alignItems: 'flex-start',
+                                                    justifyContent: 'space-between',
+                                                    gap: 2,
+                                                    p: 2.5,
+                                                    minHeight: 168,
+                                                    borderRadius: '18px',
+                                                    bgcolor: 'background.paper',
+                                                    border: `1px solid ${alpha(link.accent, 0.18)}`,
                                                     textTransform: 'none',
-                                                    WebkitTapHighlightColor:
-                                                        'transparent',
-                                                    transition:
-                                                        'transform 0.15s ease, border-color 0.2s ease',
+                                                    textAlign: 'start',
+                                                    color: 'text.primary',
+                                                    overflow: 'hidden',
+                                                    WebkitTapHighlightColor: 'transparent',
+                                                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&::after': {
+                                                        content: '""',
+                                                        position: 'absolute',
+                                                        insetInlineEnd: -30,
+                                                        top: -30,
+                                                        width: 100,
+                                                        height: 100,
+                                                        borderRadius: '50%',
+                                                        background: `radial-gradient(circle, ${alpha(link.accent, 0.12)} 0%, transparent 70%)`,
+                                                        transition: 'transform 0.35s ease',
+                                                    },
                                                     '&:hover': {
-                                                        borderColor:
-                                                            BRAND.brown,
-                                                        bgcolor:
-                                                            BRAND.ledger(0.05),
+                                                        transform: 'translateY(-4px)',
+                                                        borderColor: link.accent,
+                                                        boxShadow: `0 20px 40px -20px ${alpha(link.accent, 0.5)}`,
+                                                        '&::after': { transform: 'scale(1.4)' },
+                                                        '& .help-arrow': {
+                                                            transform: direction === 'rtl' ? 'translateX(-4px)' : 'translateX(4px)',
+                                                            opacity: 1,
+                                                        },
                                                     },
-                                                    '&:active': {
-                                                        transform:
-                                                            'scale(0.96)',
-                                                    },
+                                                    '&:active': { transform: 'translateY(-2px) scale(0.99)' },
                                                 }}
                                             >
-                                                <SealBadge
-                                                    size={40}
-                                                    rotate={-6}
-                                                    tone='outline'
-                                                >
-                                                    <Icon
-                                                        aria-hidden='true'
-                                                        sx={{ fontSize: 18 }}
-                                                    />
-                                                </SealBadge>
+                                                {/* Index numeral */}
                                                 <Typography
                                                     sx={{
-                                                        fontSize: {
-                                                            xs: '0.72rem',
-                                                            sm: '0.85rem',
-                                                        },
-                                                        fontWeight: 600,
-                                                        lineHeight: 1.3,
-                                                        textAlign: 'center',
+                                                        position: 'absolute',
+                                                        top: 12,
+                                                        insetInlineEnd: 16,
+                                                        fontSize: '2.5rem',
+                                                        fontWeight: 900,
+                                                        lineHeight: 1,
+                                                        color: alpha(link.accent, 0.1),
+                                                        fontFamily: '"Georgia", serif',
                                                     }}
                                                 >
-                                                    {t(link.key, link.fallback)}
+                                                    0{idx + 1}
                                                 </Typography>
+
+                                                <Box
+                                                    sx={{
+                                                        width: 48,
+                                                        height: 48,
+                                                        borderRadius: '14px',
+                                                        display: 'grid',
+                                                        placeItems: 'center',
+                                                        bgcolor: alpha(link.accent, 0.1),
+                                                        color: link.accent,
+                                                        border: `1px solid ${alpha(link.accent, 0.2)}`,
+                                                    }}
+                                                >
+                                                    <Icon sx={{ fontSize: 22 }} />
+                                                </Box>
+
+                                                <Box sx={{ width: '100%' }}>
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 700,
+                                                            fontSize: '0.95rem',
+                                                            mb: 0.5,
+                                                            lineHeight: 1.3,
+                                                        }}
+                                                    >
+                                                        {t(link.key, link.fallback)}
+                                                    </Typography>
+                                                    <Stack
+                                                        direction='row'
+                                                        alignItems='center'
+                                                        gap={0.5}
+                                                        sx={{ color: link.accent }}
+                                                    >
+                                                        <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                                                            {t('common.learnMore', 'اعرف المزيد')}
+                                                        </Typography>
+                                                        <ArrowForwardRoundedIcon
+                                                            className='help-arrow'
+                                                            sx={{
+                                                                fontSize: 14,
+                                                                opacity: 0.6,
+                                                                transition: 'all 0.25s ease',
+                                                                transform: direction === 'rtl' ? 'scaleX(-1)' : 'none',
+                                                            }}
+                                                        />
+                                                    </Stack>
+                                                </Box>
                                             </Button>
                                         </Grid>
                                     );
@@ -378,16 +464,78 @@ const Home: FunctionComponent = () => {
                         </Paper>
                     </Container>
                 </section>
+
                 <HowItWorks />
+
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />
                 </Suspense>
+
+                {/* ─── LISTINGS — Section header ─── */}
+                <Container maxWidth='lg' sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
+                    <Stack
+                        direction={{ xs: 'column', sm: 'row' }}
+                        alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
+                        justifyContent='space-between'
+                        gap={1}
+                        sx={{ pt: { xs: 4, md: 6 }, pb: { xs: 1.5, md: 2 } }}
+                    >
+                        <Box>
+                            <Typography
+                                variant='overline'
+                                sx={{
+                                    fontWeight: 800,
+                                    letterSpacing: '0.15em',
+                                    color: BRAND.brown,
+                                    fontSize: '0.68rem',
+                                }}
+                            >
+                                {t('home.listingEyebrow', 'استكشف السوق')}
+                            </Typography>
+                            <Typography
+                                variant='h4'
+                                fontWeight={800}
+                                sx={{
+                                    fontSize: { xs: '1.5rem', md: '2rem' },
+                                    letterSpacing: '-0.03em',
+                                    lineHeight: 1.15,
+                                }}
+                            >
+                                {t('home.latestListings', 'أحدث الإعلانات')}
+                            </Typography>
+                        </Box>
+                        <Divider
+                            sx={{
+                                flex: 1,
+                                display: { xs: 'none', sm: 'block' },
+                                borderColor: 'divider',
+                                mb: 1.2,
+                                mx: 2,
+                            }}
+                        />
+                        <Chip
+                            label={t('home.totalCount', {
+                                count: filteredPosts.length,
+                                defaultValue: '{{count}} إعلان',
+                            })}
+                            size='small'
+                            sx={{
+                                fontWeight: 700,
+                                bgcolor: alpha(BRAND.brown, 0.08),
+                                color: BRAND.brown,
+                                mb: 0.5,
+                            }}
+                        />
+                    </Stack>
+                </Container>
+
                 <CategoryBar
                     categories={categories}
                     selected={selectedCategory}
                     onSelect={setSelectedCategory}
                     total={posts.length}
                 />
+
                 <Suspense fallback={<Loader />}>
                     <PostsGrid
                         key={selectedCategory ?? 'all'}
@@ -403,17 +551,17 @@ const Home: FunctionComponent = () => {
                         onLikeToggle={handleLikeToggle}
                     />
                 </Suspense>
+
                 <Suspense fallback={<Loader />}>
                     <ContactCTA />
                 </Suspense>
             </main>
+
             {/* ─── BACK TO TOP ─── */}
             <Fade in={showBackToTop}>
                 <Fab
                     size='small'
-                    onClick={() =>
-                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                    }
+                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                     aria-label={t('common.backToTop', 'العودة للأعلى')}
                     sx={{
                         position: 'fixed',
@@ -431,6 +579,7 @@ const Home: FunctionComponent = () => {
                     <KeyboardArrowUpRoundedIcon />
                 </Fab>
             </Fade>
+
             {/* ─── MODALS ─── */}
             <Suspense fallback={<Loader />}>
                 <UpdateProductModal
@@ -440,31 +589,23 @@ const Home: FunctionComponent = () => {
                     onHide={() => setShowUpdateModal(false)}
                 />
             </Suspense>
+
             <Suspense fallback={<Loader />}>
                 <AlertDialogs
                     show={showDeleteModal}
                     onHide={() => setShowDeleteModal(false)}
                     title={t('alerts.deletePost.title')}
-                    description={t('alerts.deletePost.description', {
-                        name: postToDelete,
-                    })}
+                    description={t('alerts.deletePost.description', { name: postToDelete })}
                     onConfirm={() => {
-                        if (postToDelete) {
-                            return handleDelete(postToDelete);
-                        }
+                        if (postToDelete) return handleDelete(postToDelete);
                     }}
                     confirmText={t('common.delete', 'حذف')}
                     cancelText={t('common.cancel', 'إلغاء')}
-                    successText={t(
-                        'alerts.deletePost.success',
-                        'تم حذف المنتج بنجاح',
-                    )}
-                    errorText={t(
-                        'alerts.deletePost.error',
-                        'حدث خطأ أثناء حذف المنتج',
-                    )}
+                    successText={t('alerts.deletePost.success', 'تم حذف المنتج بنجاح')}
+                    errorText={t('alerts.deletePost.error', 'حدث خطأ أثناء حذف المنتج')}
                 />
             </Suspense>
+
             <Suspense fallback={<Loader />}>
                 <AddProductModal
                     show={showAddModal}

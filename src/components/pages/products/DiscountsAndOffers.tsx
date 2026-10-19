@@ -55,7 +55,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
-
+    
     // Ref to control Swiper manually
     const swiperRef = useRef<SwiperType | null>(null);
 
@@ -193,13 +193,10 @@ const DiscountsAndOffers: FunctionComponent = () => {
 
                         {/* Controls: View All + Navigation Arrows */}
                         <Stack
-                            direction='row'
-                            alignItems='center'
+                            direction="row"
+                            alignItems="center"
                             spacing={2}
-                            sx={{
-                                width: { xs: '100%', sm: 'auto' },
-                                justifyContent: 'space-between',
-                            }}
+                            sx={{ width: { xs: '100%', sm: 'auto' }, justifyContent: 'space-between' }}
                         >
                             <Link
                                 component={RouterLink}
@@ -242,6 +239,8 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                     />
                                 )}
                             </Link>
+
+                          
                         </Stack>
                     </Box>
 
@@ -265,11 +264,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                         height={220}
                                         sx={{ mb: 2, borderRadius: 2 }}
                                     />
-                                    <Skeleton
-                                        variant='text'
-                                        width='80%'
-                                        height={32}
-                                    />
+                                    <Skeleton variant='text' width='80%' height={32} />
                                     <Skeleton variant='text' width='60%' />
                                 </Box>
                             ))}
@@ -279,17 +274,16 @@ const DiscountsAndOffers: FunctionComponent = () => {
                             sx={{
                                 '& .swiper': {
                                     pb: { xs: 6, md: 4 },
-                                    px: 0.5,
+                                    px: 0.5, 
                                 },
                                 '& .swiper-slide': {
                                     height: 'auto',
                                     display: 'flex',
                                 },
                                 // Hide default Swiper arrows since we use custom ones
-                                '& .swiper-button-prev, & .swiper-button-next':
-                                    {
-                                        display: 'none',
-                                    },
+                                '& .swiper-button-prev, & .swiper-button-next': {
+                                    display: 'none',
+                                },
                                 '& .swiper-pagination-bullet': {
                                     bgcolor: 'text.secondary',
                                     opacity: 0.3,
@@ -305,6 +299,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                 },
                             }}
                         >
+                            
                             <Swiper
                                 onSwiper={(swiper) => {
                                     swiperRef.current = swiper;
@@ -353,25 +348,19 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         borderRadius: 2,
-                                                        bgcolor:
-                                                            'background.paper',
+                                                        bgcolor: 'background.paper',
                                                         border: '1px solid',
                                                         borderColor: 'divider',
-                                                        transition:
-                                                            'box-shadow 0.2s ease, transform 0.2s ease',
+                                                        transition: 'box-shadow 0.2s ease, transform 0.2s ease',
                                                         '&:hover': {
                                                             boxShadow: 6,
-                                                            transform:
-                                                                'translateY(-4px)',
-                                                            '& .product-image':
-                                                                {
-                                                                    transform:
-                                                                        'scale(1.05)',
-                                                                },
+                                                            transform: 'translateY(-4px)',
+                                                            '& .product-image': {
+                                                                transform: 'scale(1.05)',
+                                                            },
                                                             '& .view-btn': {
                                                                 opacity: 1,
-                                                                transform:
-                                                                    'translateY(0)',
+                                                                transform: 'translateY(0)',
                                                             },
                                                         },
                                                     }}
@@ -379,8 +368,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                     {/* Image Container */}
                                                     <Box
                                                         sx={{
-                                                            position:
-                                                                'relative',
+                                                            position: 'relative',
                                                             pt: '75%',
                                                             overflow: 'hidden',
                                                             bgcolor: 'grey.50',
@@ -392,40 +380,26 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                             <Skeleton
                                                                 variant='rectangular'
                                                                 sx={{
-                                                                    position:
-                                                                        'absolute',
+                                                                    position: 'absolute',
                                                                     inset: 0,
                                                                 }}
                                                             />
                                                         )}
                                                         <img
-                                                            src={
-                                                                product.image
-                                                                    ?.url
-                                                            }
-                                                            alt={
-                                                                product.product_name
-                                                            }
+                                                            src={product.image?.url}
+                                                            alt={product.product_name}
                                                             className='product-image'
                                                             onLoad={() =>
-                                                                setImageLoaded(
-                                                                    product._id as string,
-                                                                )
+                                                                setImageLoaded(product._id as string)
                                                             }
                                                             style={{
-                                                                position:
-                                                                    'absolute',
+                                                                position: 'absolute',
                                                                 inset: 0,
                                                                 width: '100%',
                                                                 height: '100%',
-                                                                objectFit:
-                                                                    'cover',
-                                                                opacity:
-                                                                    isLoaded
-                                                                        ? 1
-                                                                        : 0,
-                                                                transition:
-                                                                    'opacity 0.3s ease, transform 0.3s ease',
+                                                                objectFit: 'cover',
+                                                                opacity: isLoaded ? 1 : 0,
+                                                                transition: 'opacity 0.3s ease, transform 0.3s ease',
                                                             }}
                                                         />
 
@@ -434,16 +408,13 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                             label={`-${product.discount}%`}
                                                             size='small'
                                                             sx={{
-                                                                position:
-                                                                    'absolute',
+                                                                position: 'absolute',
                                                                 top: 10,
                                                                 left: 10,
-                                                                bgcolor:
-                                                                    'error.dark',
+                                                                bgcolor: 'error.main',
                                                                 color: '#fff',
                                                                 fontWeight: 700,
-                                                                fontSize:
-                                                                    '0.75rem',
+                                                                fontSize: '0.75rem',
                                                                 borderRadius: 1,
                                                                 zIndex: 2,
                                                             }}
@@ -453,39 +424,27 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         <Box
                                                             className='view-btn'
                                                             sx={{
-                                                                position:
-                                                                    'absolute',
+                                                                position: 'absolute',
                                                                 bottom: 10,
                                                                 left: '50%',
-                                                                transform:
-                                                                    'translate(-50%, 10px)',
+                                                                transform: 'translate(-50%, 10px)',
                                                                 opacity: 0,
-                                                                transition:
-                                                                    'all 0.2s ease',
-                                                                bgcolor:
-                                                                    'rgba(255,255,255,0.95)',
+                                                                transition: 'all 0.2s ease',
+                                                                bgcolor: 'rgba(255,255,255,0.95)',
                                                                 color: 'text.primary',
                                                                 px: 1.5,
                                                                 py: 0.5,
                                                                 borderRadius: 16,
                                                                 display: 'flex',
-                                                                alignItems:
-                                                                    'center',
+                                                                alignItems: 'center',
                                                                 gap: 0.5,
-                                                                fontSize:
-                                                                    '0.75rem',
+                                                                fontSize: '0.75rem',
                                                                 fontWeight: 600,
                                                                 boxShadow: 1,
                                                             }}
                                                         >
-                                                            <VisibilityIcon
-                                                                sx={{
-                                                                    fontSize: 14,
-                                                                }}
-                                                            />
-                                                            {t(
-                                                                'pages.messageAuditLogs.viewDetails',
-                                                            ) || 'عرض'}
+                                                            <VisibilityIcon sx={{ fontSize: 14 }} />
+                                                            {t('pages.messageAuditLogs.viewDetails') || 'عرض'}
                                                         </Box>
                                                     </Box>
 
@@ -494,8 +453,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         sx={{
                                                             p: 2,
                                                             display: 'flex',
-                                                            flexDirection:
-                                                                'column',
+                                                            flexDirection: 'column',
                                                             flexGrow: 1,
                                                         }}
                                                     >
@@ -506,21 +464,15 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 fontWeight: 600,
                                                                 color: 'text.primary',
                                                                 lineHeight: 1.4,
-                                                                display:
-                                                                    '-webkit-box',
+                                                                display: '-webkit-box',
                                                                 WebkitLineClamp: 2,
-                                                                WebkitBoxOrient:
-                                                                    'vertical',
-                                                                overflow:
-                                                                    'hidden',
-                                                                minHeight:
-                                                                    '2.8em',
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                minHeight: '2.8em',
                                                                 mb: 1,
                                                             }}
                                                         >
-                                                            {
-                                                                product.product_name
-                                                            }
+                                                            {product.product_name}
                                                         </Typography>
 
                                                         {/* Category */}
@@ -530,8 +482,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 color: 'text.secondary',
                                                                 mb: 2,
                                                                 display: 'flex',
-                                                                alignItems:
-                                                                    'center',
+                                                                alignItems: 'center',
                                                                 gap: 0.5,
                                                             }}
                                                         >
@@ -540,10 +491,8 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 sx={{
                                                                     width: 4,
                                                                     height: 4,
-                                                                    borderRadius:
-                                                                        '50%',
-                                                                    bgcolor:
-                                                                        'text.disabled',
+                                                                    borderRadius: '50%',
+                                                                    bgcolor: 'text.disabled',
                                                                 }}
                                                             />
                                                             {product.category}
@@ -553,64 +502,43 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         <Box
                                                             sx={{
                                                                 display: 'flex',
-                                                                alignItems:
-                                                                    'baseline',
+                                                                alignItems: 'baseline',
                                                                 gap: 1,
                                                                 mt: 'auto',
                                                                 pt: 1,
-                                                                borderTop:
-                                                                    '1px dashed',
-                                                                borderColor:
-                                                                    'divider',
+                                                                borderTop: '1px dashed',
+                                                                borderColor: 'divider',
                                                             }}
                                                         >
                                                             <Typography
                                                                 variant='subtitle1'
                                                                 fontWeight={800}
                                                                 color='error.main'
-                                                                sx={{
-                                                                    lineHeight: 1,
-                                                                }}
+                                                                sx={{ lineHeight: 1 }}
                                                             >
-                                                                {formatPrice(
-                                                                    discountedPrice,
-                                                                )}
+                                                                {formatPrice(discountedPrice)}
                                                             </Typography>
                                                             <Typography
                                                                 variant='caption'
                                                                 color='text.secondary'
-                                                                sx={{
-                                                                    textDecoration:
-                                                                        'line-through',
-                                                                }}
+                                                                sx={{ textDecoration: 'line-through' }}
                                                             >
-                                                                {formatPrice(
-                                                                    product.price,
-                                                                )}
+                                                                {formatPrice(product.price)}
                                                             </Typography>
                                                         </Box>
                                                     </Box>
                                                 </Box>
                                             </Link>
+                                            
                                         </SwiperSlide>
                                     );
                                 })}
                             </Swiper>
-                            {/* Custom Navigation Buttons */}
+                              {/* Custom Navigation Buttons */}
                             {!isMobile && (
-                                <Stack
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-around',
-                                    }}
-                                    direction='row'
-                                    spacing={1}
-                                >
-                                    <IconButton
-                                        onClick={() =>
-                                            swiperRef.current?.slideNext()
-                                        }
+                                <Stack style={{display:'flex',alignItems:'center',justifyContent:'space-around'}} direction="row" spacing={1}>
+                                                                        <IconButton
+                                        onClick={() => swiperRef.current?.slideNext()}
                                         sx={{
                                             bgcolor: 'background.paper',
                                             border: '1px solid',
@@ -626,16 +554,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        {dir === 'rtl' ? (
-                                            <ChevronRightIcon />
-                                        ) : (
-                                            <ChevronLeftIcon />
-                                        )}
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() =>
-                                            swiperRef.current?.slidePrev()
-                                        }
+                                        {dir === 'rtl' ?  <ChevronRightIcon /> :<ChevronLeftIcon />}
+                                    </IconButton><IconButton
+                                        onClick={() => swiperRef.current?.slidePrev()}
                                         sx={{
                                             bgcolor: 'background.paper',
                                             border: '1px solid',
@@ -651,12 +572,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        {dir === 'rtl' ? (
-                                            <ChevronLeftIcon />
-                                        ) : (
-                                            <ChevronRightIcon />
-                                        )}
+                                        {dir === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                                     </IconButton>
+
                                 </Stack>
                             )}
                         </Box>

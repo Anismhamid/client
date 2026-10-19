@@ -110,7 +110,7 @@ function App() {
                               primary: { main: '#f59f0b' },
                               secondary: { main: '#1976d2' },
                               background: {
-                                  default: '#f5f5f5',
+                                  default: '#F8F5EF',
                                   paper: '#ffffff',
                               },
                               text: {

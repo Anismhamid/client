@@ -1,5 +1,5 @@
 export interface ListingRef {
-    likes: never[];
+    likes: string[];
     createdAt: string;
     seller: null;
     sale: boolean;
@@ -10,6 +10,11 @@ export interface ListingRef {
     location?: string;
     price?: number;
     image?: { url: string; alt: string };
+    // ✅ إضافة الحقول الخاصة بالخدمات
+    serviceTitle?: string;
+    priceFrom?: number;
+    priceTo?: number;
+    providerName?: string;
 }
 
 export type AdType = 'homepage' | 'top' | 'highlight';
