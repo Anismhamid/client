@@ -258,6 +258,7 @@ const Home: FunctionComponent = () => {
             </header>
 
             <main id='listing-section' dir={direction}>
+                <AdsSection />
                 {/* ─── STATS (حافة مسننة ملاصقة للـ Hero) ─── */}
                 <section id='StatsStrip-section'>
                     <StatsStrip postsCount={posts.length} />
@@ -377,7 +378,6 @@ const Home: FunctionComponent = () => {
                         </Paper>
                     </Container>
                 </section>
-                <AdsSection />
                 <HowItWorks />
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />

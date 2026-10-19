@@ -12,7 +12,10 @@ const AdsSection = () => {
     const { t } = useTranslation();
 
     return (
-        <Box sx={{ borderBottom: '1px solid', borderColor: 'divider', pb: 1 }}>
+        <Box
+            component={'aside'}
+            sx={{ borderBottom: '1px solid', borderColor: 'divider', pb: 1 }}
+        >
             <Container
                 maxWidth='lg'
                 sx={{ px: { xs: 1.5, sm: 3, md: 4 }, mb: { xs: 3, md: 4 } }}

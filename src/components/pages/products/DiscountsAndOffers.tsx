@@ -439,7 +439,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 top: 10,
                                                                 left: 10,
                                                                 bgcolor:
-                                                                    'error.main',
+                                                                    'error.dark',
                                                                 color: '#fff',
                                                                 fontWeight: 700,
                                                                 fontSize:

@@ -636,6 +636,7 @@
 
     "categories": {
         "title": "الفئات",
+        "all":"الكل",
         "House": {
             "label": "البيت",
             "heading": "مستلزمات البيت",
