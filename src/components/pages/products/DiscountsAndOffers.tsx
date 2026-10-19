@@ -4,6 +4,7 @@ import {
     useState,
     useCallback,
     useMemo,
+    useRef,
 } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -15,12 +16,19 @@ import {
     Skeleton,
     Link,
     Container,
+    Chip,
+    IconButton,
+    Stack,
 } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import ArrowBack from '@mui/icons-material/ArrowBack';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -47,6 +55,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+
+    // Ref to control Swiper manually
+    const swiperRef = useRef<SwiperType | null>(null);
 
     useEffect(() => {
         let isMounted = true;
@@ -84,9 +95,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
     }, []);
 
     const slidesPerView = useMemo(() => {
-        if (isMobile) return 1;
-        if (isTablet) return 2;
-        return 3;
+        if (isMobile) return 1.15;
+        if (isTablet) return 2.15;
+        return 3.15;
     }, [isMobile, isTablet]);
 
     if (error) {
@@ -134,43 +145,104 @@ const DiscountsAndOffers: FunctionComponent = () => {
             <Box
                 component='section'
                 sx={{
-                    py: { xs: 4, sm: 6, md: 8 },
+                    py: { xs: 5, sm: 7, md: 9 },
+                    bgcolor: '#f4f6f8',
                 }}
                 dir={dir}
             >
                 <Container maxWidth='lg'>
-                    {/* Header */}
+                    {/* Header - Organized Layout with Navigation Buttons */}
                     <Box
                         sx={{
                             display: 'flex',
                             flexDirection: { xs: 'column', sm: 'row' },
                             justifyContent: 'space-between',
-                            alignItems: 'center',
-                            mb: { xs: 3, md: 5 },
-                            gap: { xs: 2, sm: 0 },
+                            alignItems: { xs: 'flex-start', sm: 'flex-end' },
+                            mb: { xs: 4, md: 6 },
+                            gap: 2,
+                            borderBottom: '1px solid',
+                            borderColor: 'divider',
+                            pb: 3,
                         }}
                     >
-                        <Box>
+                        {/* Title & Description */}
+                        <Box sx={{ maxWidth: 600 }}>
                             <Typography
                                 variant={isMobile ? 'h5' : 'h4'}
                                 component='h2'
-                                fontWeight={700}
-                                sx={{ mt: 0.5 }}
+                                fontWeight={800}
+                                sx={{
+                                    color: 'text.primary',
+                                    mb: 1,
+                                }}
                             >
                                 {t(
                                     'categories.discountsAndOffers.categories.discountsAndOffers.title',
                                 )}
                             </Typography>
                             <Typography
-                                variant='body2'
+                                variant='body1'
                                 color='text.secondary'
-                                sx={{ mt: 1, maxWidth: 500 }}
+                                sx={{ lineHeight: 1.6 }}
                             >
                                 {t(
                                     'categories.discountsAndOffers.categories.discountsAndOffers.description',
                                 )}
                             </Typography>
                         </Box>
+
+                        {/* Controls: View All + Navigation Arrows */}
+                        <Stack
+                            direction='row'
+                            alignItems='center'
+                            spacing={2}
+                            sx={{
+                                width: { xs: '100%', sm: 'auto' },
+                                justifyContent: 'space-between',
+                            }}
+                        >
+                            <Link
+                                component={RouterLink}
+                                to={path.DiscountsAndOffers}
+                                underline='none'
+                                sx={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: 1,
+                                    color: 'primary.main',
+                                    fontWeight: 700,
+                                    fontSize: '0.95rem',
+                                    whiteSpace: 'nowrap',
+                                    '&:hover .arrow-icon': {
+                                        transform:
+                                            dir === 'ltr'
+                                                ? 'translateX(4px)'
+                                                : 'translateX(-4px)',
+                                    },
+                                }}
+                            >
+                                {t(
+                                    'categories.discountsAndOffers.common.viewAll',
+                                ) || 'View All Offers'}
+                                {dir === 'ltr' ? (
+                                    <ArrowForwardIcon
+                                        className='arrow-icon'
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            transition: 'transform 0.2s ease',
+                                        }}
+                                    />
+                                ) : (
+                                    <ArrowBackIcon
+                                        className='arrow-icon'
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            transition: 'transform 0.2s ease',
+                                        }}
+                                    />
+                                )}
+                            </Link>
+                        </Stack>
                     </Box>
 
                     {/* Content */}
@@ -186,15 +258,19 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                 gap: 3,
                             }}
                         >
-                            {[...Array(slidesPerView)].map((_, index) => (
+                            {[...Array(3)].map((_, index) => (
                                 <Box key={index}>
                                     <Skeleton
                                         variant='rounded'
-                                        height={200}
-                                        sx={{ mb: 2 }}
+                                        height={220}
+                                        sx={{ mb: 2, borderRadius: 2 }}
                                     />
-                                    <Skeleton variant='text' width='70%' />
-                                    <Skeleton variant='text' width='50%' />
+                                    <Skeleton
+                                        variant='text'
+                                        width='80%'
+                                        height={32}
+                                    />
+                                    <Skeleton variant='text' width='60%' />
                                 </Box>
                             ))}
                         </Box>
@@ -202,40 +278,47 @@ const DiscountsAndOffers: FunctionComponent = () => {
                         <Box
                             sx={{
                                 '& .swiper': {
-                                    pb: { xs: 5, md: 2 },
+                                    pb: { xs: 6, md: 4 },
+                                    px: 0.5,
                                 },
+                                '& .swiper-slide': {
+                                    height: 'auto',
+                                    display: 'flex',
+                                },
+                                // Hide default Swiper arrows since we use custom ones
                                 '& .swiper-button-prev, & .swiper-button-next':
                                     {
-                                        color: 'text.primary',
-                                        bgcolor: 'background.paper',
-                                        width: 40,
-                                        height: 40,
-                                        borderRadius: '50%',
-                                        boxShadow: 2,
-                                        '&::after': {
-                                            fontSize: 16,
-                                            fontWeight: 'bold',
-                                        },
-                                        '&:hover': {
-                                            bgcolor: 'grey.100',
-                                        },
+                                        display: 'none',
                                     },
+                                '& .swiper-pagination-bullet': {
+                                    bgcolor: 'text.secondary',
+                                    opacity: 0.3,
+                                    width: 8,
+                                    height: 8,
+                                    transition: 'all 0.2s ease',
+                                },
                                 '& .swiper-pagination-bullet-active': {
                                     bgcolor: 'primary.main',
+                                    opacity: 1,
+                                    width: 24,
+                                    borderRadius: 4,
                                 },
                             }}
                         >
                             <Swiper
+                                onSwiper={(swiper) => {
+                                    swiperRef.current = swiper;
+                                }}
                                 modules={[Autoplay, Navigation, Pagination]}
                                 autoplay={{
-                                    delay: 4000,
+                                    delay: 4500,
                                     disableOnInteraction: false,
                                     pauseOnMouseEnter: true,
                                 }}
                                 loop={postsInDiscount.length > slidesPerView}
-                                navigation={!isMobile}
-                                pagination={true}
-                                spaceBetween={24}
+                                navigation={false} // Disabled default navigation
+                                pagination={{ clickable: true }}
+                                spaceBetween={16}
                                 slidesPerView={slidesPerView}
                                 grabCursor={true}
                             >
@@ -258,23 +341,38 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                 style={{
                                                     textDecoration: 'none',
                                                     color: 'inherit',
+                                                    display: 'flex',
+                                                    width: '100%',
+                                                    height: '100%',
                                                 }}
                                             >
                                                 <Box
                                                     component='article'
                                                     sx={{
+                                                        width: '100%',
+                                                        display: 'flex',
+                                                        flexDirection: 'column',
                                                         borderRadius: 2,
-                                                        overflow: 'hidden',
                                                         bgcolor:
                                                             'background.paper',
                                                         border: '1px solid',
                                                         borderColor: 'divider',
                                                         transition:
-                                                            'box-shadow 0.3s ease, transform 0.3s ease',
+                                                            'box-shadow 0.2s ease, transform 0.2s ease',
                                                         '&:hover': {
-                                                            boxShadow: 4,
+                                                            boxShadow: 6,
                                                             transform:
                                                                 'translateY(-4px)',
+                                                            '& .product-image':
+                                                                {
+                                                                    transform:
+                                                                        'scale(1.05)',
+                                                                },
+                                                            '& .view-btn': {
+                                                                opacity: 1,
+                                                                transform:
+                                                                    'translateY(0)',
+                                                            },
                                                         },
                                                     }}
                                                 >
@@ -285,7 +383,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 'relative',
                                                             pt: '75%',
                                                             overflow: 'hidden',
-                                                            bgcolor: 'grey.100',
+                                                            bgcolor: 'grey.50',
+                                                            borderTopLeftRadius: 8,
+                                                            borderTopRightRadius: 8,
                                                         }}
                                                     >
                                                         {!isLoaded && (
@@ -306,6 +406,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                             alt={
                                                                 product.product_name
                                                             }
+                                                            className='product-image'
                                                             onLoad={() =>
                                                                 setImageLoaded(
                                                                     product._id as string,
@@ -324,40 +425,87 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                         ? 1
                                                                         : 0,
                                                                 transition:
-                                                                    'opacity 0.3s ease',
+                                                                    'opacity 0.3s ease, transform 0.3s ease',
                                                             }}
                                                         />
 
                                                         {/* Discount Badge */}
-                                                        <Box
+                                                        <Chip
+                                                            label={`-${product.discount}%`}
+                                                            size='small'
                                                             sx={{
                                                                 position:
                                                                     'absolute',
-                                                                top: 12,
-                                                                left: 12,
+                                                                top: 10,
+                                                                left: 10,
                                                                 bgcolor:
                                                                     'error.main',
                                                                 color: '#fff',
-                                                                px: 1.5,
-                                                                py: 0.5,
-                                                                borderRadius: 1,
-                                                                fontSize:
-                                                                    '0.8rem',
                                                                 fontWeight: 700,
+                                                                fontSize:
+                                                                    '0.75rem',
+                                                                borderRadius: 1,
                                                                 zIndex: 2,
                                                             }}
+                                                        />
+
+                                                        {/* Hover View Button */}
+                                                        <Box
+                                                            className='view-btn'
+                                                            sx={{
+                                                                position:
+                                                                    'absolute',
+                                                                bottom: 10,
+                                                                left: '50%',
+                                                                transform:
+                                                                    'translate(-50%, 10px)',
+                                                                opacity: 0,
+                                                                transition:
+                                                                    'all 0.2s ease',
+                                                                bgcolor:
+                                                                    'rgba(255,255,255,0.95)',
+                                                                color: 'text.primary',
+                                                                px: 1.5,
+                                                                py: 0.5,
+                                                                borderRadius: 16,
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                                gap: 0.5,
+                                                                fontSize:
+                                                                    '0.75rem',
+                                                                fontWeight: 600,
+                                                                boxShadow: 1,
+                                                            }}
                                                         >
-                                                            -{product.discount}%
+                                                            <VisibilityIcon
+                                                                sx={{
+                                                                    fontSize: 14,
+                                                                }}
+                                                            />
+                                                            {t(
+                                                                'pages.messageAuditLogs.viewDetails',
+                                                            ) || 'عرض'}
                                                         </Box>
                                                     </Box>
 
-                                                    {/* Content */}
-                                                    <Box sx={{ p: 2 }}>
+                                                    {/* Content Container */}
+                                                    <Box
+                                                        sx={{
+                                                            p: 2,
+                                                            display: 'flex',
+                                                            flexDirection:
+                                                                'column',
+                                                            flexGrow: 1,
+                                                        }}
+                                                    >
+                                                        {/* Title */}
                                                         <Typography
                                                             variant='subtitle2'
                                                             sx={{
                                                                 fontWeight: 600,
-                                                                mb: 0.5,
+                                                                color: 'text.primary',
+                                                                lineHeight: 1.4,
                                                                 display:
                                                                     '-webkit-box',
                                                                 WebkitLineClamp: 2,
@@ -365,6 +513,9 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                     'vertical',
                                                                 overflow:
                                                                     'hidden',
+                                                                minHeight:
+                                                                    '2.8em',
+                                                                mb: 1,
                                                             }}
                                                         >
                                                             {
@@ -372,33 +523,53 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                             }
                                                         </Typography>
 
+                                                        {/* Category */}
                                                         <Typography
                                                             variant='caption'
-                                                            color='text.secondary'
                                                             sx={{
-                                                                mb: 1.5,
-                                                                display:
-                                                                    'block',
+                                                                color: 'text.secondary',
+                                                                mb: 2,
+                                                                display: 'flex',
+                                                                alignItems:
+                                                                    'center',
+                                                                gap: 0.5,
                                                             }}
                                                         >
+                                                            <Box
+                                                                component='span'
+                                                                sx={{
+                                                                    width: 4,
+                                                                    height: 4,
+                                                                    borderRadius:
+                                                                        '50%',
+                                                                    bgcolor:
+                                                                        'text.disabled',
+                                                                }}
+                                                            />
                                                             {product.category}
                                                         </Typography>
 
+                                                        {/* Price Row */}
                                                         <Box
                                                             sx={{
                                                                 display: 'flex',
                                                                 alignItems:
-                                                                    'center',
+                                                                    'baseline',
                                                                 gap: 1,
+                                                                mt: 'auto',
+                                                                pt: 1,
+                                                                borderTop:
+                                                                    '1px dashed',
+                                                                borderColor:
+                                                                    'divider',
                                                             }}
                                                         >
                                                             <Typography
-                                                                variant='h6'
-                                                                fontWeight={700}
+                                                                variant='subtitle1'
+                                                                fontWeight={800}
                                                                 color='error.main'
                                                                 sx={{
-                                                                    fontSize:
-                                                                        '1.1rem',
+                                                                    lineHeight: 1,
                                                                 }}
                                                             >
                                                                 {formatPrice(
@@ -406,8 +577,8 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                                 )}
                                                             </Typography>
                                                             <Typography
-                                                                variant='body2'
-                                                                color='text.disabled'
+                                                                variant='caption'
+                                                                color='text.secondary'
                                                                 sx={{
                                                                     textDecoration:
                                                                         'line-through',
@@ -425,34 +596,69 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                     );
                                 })}
                             </Swiper>
-                        </Box>
-                    )}
-                    {postsInDiscount && (
-                        <Box textAlign='center' mt={2}>
-                            <Link
-                                component={RouterLink}
-                                to={path.DiscountsAndOffers}
-                                underline='none'
-                                sx={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: 0.5,
-                                    color: 'primary.main',
-                                    fontWeight: 600,
-                                    fontSize: '0.9rem',
-                                }}
-                            >
-                                {t(
-                                    'categories.discountsAndOffers.common.viewAll',
-                                ) || 'View All Offers'}
-                                {dir === 'ltr' ? (
-                                    <ArrowForwardIcon
-                                        sx={{ fontSize: '1.1rem' }}
-                                    />
-                                ) : (
-                                    <ArrowBack sx={{ fontSize: '1.1rem' }} />
-                                )}
-                            </Link>
+                            {/* Custom Navigation Buttons */}
+                            {!isMobile && (
+                                <Stack
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-around',
+                                    }}
+                                    direction='row'
+                                    spacing={1}
+                                >
+                                    <IconButton
+                                        onClick={() =>
+                                            swiperRef.current?.slideNext()
+                                        }
+                                        sx={{
+                                            bgcolor: 'background.paper',
+                                            border: '1px solid',
+                                            borderColor: 'divider',
+                                            color: 'text.primary',
+                                            width: 40,
+                                            height: 40,
+                                            transition: 'all 0.2s ease',
+                                            '&:hover': {
+                                                bgcolor: 'primary.main',
+                                                color: 'primary.contrastText',
+                                                borderColor: 'primary.main',
+                                            },
+                                        }}
+                                    >
+                                        {dir === 'rtl' ? (
+                                            <ChevronRightIcon />
+                                        ) : (
+                                            <ChevronLeftIcon />
+                                        )}
+                                    </IconButton>
+                                    <IconButton
+                                        onClick={() =>
+                                            swiperRef.current?.slidePrev()
+                                        }
+                                        sx={{
+                                            bgcolor: 'background.paper',
+                                            border: '1px solid',
+                                            borderColor: 'divider',
+                                            color: 'text.primary',
+                                            width: 40,
+                                            height: 40,
+                                            transition: 'all 0.2s ease',
+                                            '&:hover': {
+                                                bgcolor: 'primary.main',
+                                                color: 'primary.contrastText',
+                                                borderColor: 'primary.main',
+                                            },
+                                        }}
+                                    >
+                                        {dir === 'rtl' ? (
+                                            <ChevronLeftIcon />
+                                        ) : (
+                                            <ChevronRightIcon />
+                                        )}
+                                    </IconButton>
+                                </Stack>
+                            )}
                         </Box>
                     )}
                 </Container>

@@ -83,6 +83,7 @@ const AMBER = '#f59f0b';
 
 /* ========================= STYLED ========================= */
 
+// FIX: Contrast issues for NavLink (Active / Hover states)
 const StyledNavLink = styled(NavLink)(({ theme }) => ({
     position: 'relative',
     display: 'flex',
@@ -91,6 +92,7 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
     padding: '8px 12px',
     borderRadius: 10,
     textDecoration: 'none',
+    // FIX: Darkened text color to ensure contrast on white/grey background
     color: theme.palette.mode === 'dark' ? '#e2e8f0' : '#33415a',
     transition: 'background-color .2s, color .2s',
 
@@ -99,12 +101,14 @@ const StyledNavLink = styled(NavLink)(({ theme }) => ({
             theme.palette.mode === 'dark'
                 ? 'rgba(255,255,255,0.08)'
                 : 'rgba(0,0,0,0.05)',
+        color: theme.palette.mode === 'dark' ? '#fff' : '#1A1E22',
     },
 
     '&.active': {
-        color: AMBER,
+        // FIX: Changed from AMBER to a dark color for text to pass contrast check
+        color: theme.palette.mode === 'dark' ? '#fff' : '#1A1E22',
         fontWeight: 700,
-        backgroundColor: alpha(AMBER, 0.12),
+        backgroundColor: alpha(AMBER, 0.15),
         '&::after': {
             content: '""',
             position: 'absolute',
@@ -127,7 +131,6 @@ interface NavItemProps {
     end?: boolean;
 }
 
-/** أيقونة + Tooltip دايماً، والنص بيظهر من lg وطالع (ما في شي بيختفي بدون بديل) */
 const NavItem = ({ to, icon, label, badge = 0, end }: NavItemProps) => (
     <Tooltip title={label}>
         <StyledNavLink to={to} end={end} aria-label={label}>
@@ -180,10 +183,14 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const isAdmin = auth?.role === RoleType.Admin;
     const isStaff = isAdmin || auth?.role === RoleType.Moderator;
 
+    // FIX: Ensure icon buttons have sufficient contrast
     const iconBtnSx = {
         color: mode === 'dark' ? '#e2e8f0' : '#33415a',
         borderRadius: '10px',
-        '&:hover': { backgroundColor: alpha(AMBER, 0.12) },
+        '&:hover': { 
+            backgroundColor: alpha(AMBER, 0.15),
+            color: mode === 'dark' ? '#fff' : '#1A1E22',
+        },
     } as const;
 
     /* ---------- THEME ---------- */
@@ -193,7 +200,6 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         localStorage.setItem('theme', newMode);
     };
 
-    // يُستعمل من MobileDrawer (نفس الـ signature القديم)
     const handleThemeChange = (
         _: React.SyntheticEvent<Element, Event>,
         checked: boolean,
@@ -234,69 +240,57 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
         }
     };
 
-    // const notificationRoutes: Record<string, string> = {
-    //     home: path.Home,
-    //     jobs: path.jobs,
-    //     // posts: path.Posts,
-    //     myPosts: path.MyAdsDashboard,
-    //     profile: path.Profile,
-    //     notifications: path.Notifications,
-    // };
+    const handleNotificationItemClick = async (
+        notification: AppNotifications,
+    ) => {
+        try {
+            if (!notification.readAt) {
+                await markAsRead(notification._id);
+            }
 
-const handleNotificationItemClick = async (
-    notification: AppNotifications,
-) => {
-    try {
-        if (!notification.readAt) {
-            await markAsRead(notification._id);
-        }
+            handleCloseNotifications();
 
-        handleCloseNotifications();
+            if (notification.type === 'admin') {
+                const screen = notification.data?.screen;
 
-        // إشعارات الإدارة
-        if (notification.type === 'admin') {
-            const screen = notification.data?.screen;
+                if (typeof screen === 'string' && screen.trim()) {
+                    navigate(screen);
+                    return;
+                }
 
-            if (typeof screen === 'string' && screen.trim()) {
-                navigate(screen);
+                navigate(path.Home);
                 return;
             }
 
-            navigate(path.Home);
-            return;
-        }
+            const postId = notification.data?.postId;
 
-        // إشعارات الإعلانات
-        const postId = notification.data?.postId;
+            if (!postId) {
+                return;
+            }
 
-        if (!postId) {
-            return;
-        }
+            if (notification.type === 'post_pending_review') {
+                navigate(`${path.UsersManagement}?tab=pending-posts`);
+                return;
+            }
 
-        // إعلان بانتظار المراجعة
-        if (notification.type === 'post_pending_review') {
-            navigate(`${path.UsersManagement}?tab=pending-posts`);
-            return;
-        }
+            const category = notification.data?.category;
+            const brand = notification.data?.brand;
 
-        const category = notification.data?.category;
-        const brand = notification.data?.brand;
+            if (category && brand) {
+                navigate(
+                    `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
+                );
+                return;
+            }
 
-        if (category && brand) {
-            navigate(
-                `${productsPathes.postsDetails}/${category}/${brand}/${postId}`,
+            navigate(`${productsPathes.postsDetails}/${postId}`);
+        } catch (error) {
+            console.error(
+                '[Notification] Failed to open notification:',
+                error,
             );
-            return;
         }
-
-        navigate(`${productsPathes.postsDetails}/${postId}`);
-    } catch (error) {
-        console.error(
-            '[Notification] Failed to open notification:',
-            error,
-        );
-    }
-};
+    };
 
     const notificationMenu = (
         <Menu
@@ -810,7 +804,7 @@ const handleNotificationItemClick = async (
                                                 borderRadius: '30px',
                                                 fontWeight: 'bold',
                                                 backgroundColor: '#FBBC05',
-                                                color: '#1A1E22',
+                                                color: '#1A1E22', // Excellent contrast
                                                 px: { xs: 2, sm: 3 },
                                                 whiteSpace: 'nowrap',
                                                 '&:hover': {
@@ -900,7 +894,7 @@ const handleNotificationItemClick = async (
 
             {notificationMenu}
 
-            {/* ───── MOBILE DRAWER (له backdrop خاص فيه) ───── */}
+            {/* ───── MOBILE DRAWER ───── */}
             <Drawer
                 variant='temporary'
                 anchor={dir === 'rtl' ? 'left' : 'right'}
