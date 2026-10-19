@@ -256,13 +256,12 @@ const Home: FunctionComponent = () => {
             <header>
                 <HeroSection onAddProduct={() => setShowAddModal(true)} />
             </header>
-            <HowItWorks />{' '}
+
             <main id='listing-section' dir={direction}>
                 {/* ─── STATS (حافة مسننة ملاصقة للـ Hero) ─── */}
                 <section id='StatsStrip-section'>
                     <StatsStrip postsCount={posts.length} />
                 </section>
-
                 {/* ─── HELP ─── */}
                 <section id='help-section'>
                     <Container
@@ -308,6 +307,14 @@ const Home: FunctionComponent = () => {
                                         >
                                             <Button
                                                 fullWidth
+                                                aria-label={t(
+                                                    link.key,
+                                                    link.fallback,
+                                                )}
+                                                title={t(
+                                                    link.key,
+                                                    link.fallback,
+                                                )}
                                                 component={RouterLink}
                                                 to={to}
                                                 sx={{
@@ -345,6 +352,7 @@ const Home: FunctionComponent = () => {
                                                     tone='outline'
                                                 >
                                                     <Icon
+                                                        aria-hidden='true'
                                                         sx={{ fontSize: 18 }}
                                                     />
                                                 </SealBadge>
@@ -369,8 +377,8 @@ const Home: FunctionComponent = () => {
                         </Paper>
                     </Container>
                 </section>
-
                 <AdsSection />
+                <HowItWorks />
                 <Suspense fallback={<Loader />}>
                     <DiscountsAndOffers />
                 </Suspense>

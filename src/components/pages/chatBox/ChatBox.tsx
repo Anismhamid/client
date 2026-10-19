@@ -1239,6 +1239,18 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                 minRows={1}
                                                 maxRows={5}
                                                 size='small'
+                                                label={t(
+                                                    'messages.editMessage',
+                                                    'تعديل الرسالة',
+                                                )}
+                                                aria-label={t(
+                                                    'messages.editMessage',
+                                                    'تعديل الرسالة',
+                                                )}
+                                                title={t(
+                                                    'messages.editMessage',
+                                                    'تعديل الرسالة',
+                                                )}
                                                 value={editingText}
                                                 onChange={(e) =>
                                                     setEditingText(
@@ -1331,7 +1343,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                             {msg.fileType?.includes('image') ? (
                                                 <img
                                                     src={msg.fileUrl}
-                                                    alt='sent file'
+                                                    alt={t(
+                                                        'messages.sentImage',
+                                                        'صورة مرفقة في المحادثة',
+                                                    )}
                                                     style={{
                                                         maxWidth: '100%',
                                                         borderRadius: 4,
@@ -1349,29 +1364,18 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                 <Box
                                                     sx={{
                                                         display: 'flex',
-
                                                         alignItems: 'center',
-
                                                         gap: 1,
-
                                                         p: 1,
-
-                                                        bgcolor:
-                                                            'rgba(0,0,0,0.05)',
-
+                                                        bgcolor: 'action.hover',
                                                         borderRadius: 1,
                                                     }}
                                                 >
-                                                    <InsertDriveFileIcon />
+                                                    <InsertDriveFileIcon aria-hidden='true' />
 
-                                                    <Typography
-                                                        variant='caption'
-                                                        sx={{
-                                                            textDecoration:
-                                                                'underline',
-
-                                                            cursor: 'pointer',
-                                                        }}
+                                                    <Button
+                                                        variant='text'
+                                                        size='small'
                                                         onClick={() =>
                                                             window.open(
                                                                 msg.fileUrl,
@@ -1379,9 +1383,16 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                                 'noopener,noreferrer',
                                                             )
                                                         }
+                                                        aria-label={t(
+                                                            'messages.viewFile',
+                                                            'عرض الملف المرفق',
+                                                        )}
                                                     >
-                                                        {t('messages.viewFile')}
-                                                    </Typography>
+                                                        {t(
+                                                            'messages.viewFile',
+                                                            'عرض الملف',
+                                                        )}
+                                                    </Button>
                                                 </Box>
                                             )}
                                         </Box>
@@ -1615,19 +1626,26 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         maxRows={4}
                         value={input}
                         onChange={handleInputChange}
+                        title={t('messages.typeMessage')}
+                        aria-label={t('messages.typeMessage')}
                         placeholder={t('messages.typeMessage')}
                         helperText={
                             t('messages.attachmentHint') ||
                             'Attachments: images, PDF, or Word documents'
                         }
                         InputProps={{
+                            'aria-label': t(
+                                'messages.typeMessage',
+                                'اكتب رسالة',
+                            ),
                             endAdornment: (
                                 <InputAdornment position='end'>
                                     <IconButton
                                         color='primary'
-                                        aria-label={
-                                            t('messages.send') || 'Send message'
-                                        }
+                                        aria-label={t(
+                                            'messages.send',
+                                            'اكتب رسالة',
+                                        )}
                                         onClick={() =>
                                             sendMessage(
                                                 input,
@@ -1642,6 +1660,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                         disabled={!input.trim()}
                                     >
                                         <SendIcon
+                                            aria-hidden={true}
                                             sx={{
                                                 transform:
                                                     dir === 'rtl'
@@ -1662,7 +1681,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     />
                 </Box>
             </Box>
-            <Suspense fallback={<Loader/>}>
+            <Suspense fallback={<Loader />}>
                 <AlertDialogs
                     onConfirm={() => handleConfirmDeleteMessage()}
                     onHide={() => {

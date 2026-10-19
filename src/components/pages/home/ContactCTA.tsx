@@ -68,7 +68,11 @@ const ContactCTA = () => {
                 </Box>
                 <Typography
                     variant='h5'
-                    sx={{ fontWeight: 700, mb: 1.5, color: 'text.primary.main' }}
+                    sx={{
+                        fontWeight: 700,
+                        mb: 1.5,
+                        color: 'text.primary.main',
+                    }}
                 >
                     {t('contactCTA.title')}
                 </Typography>
@@ -102,6 +106,8 @@ const ContactCTA = () => {
                     whileTap={{ scale: 0.98 }}
                 >
                     <Button
+                        title={t('contactCTA.button')}
+                        aria-label={t('contactCTA.button')}
                         variant='contained'
                         size='large'
                         onClick={() => navigate(path.Contact)}

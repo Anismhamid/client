@@ -116,6 +116,7 @@ function TransitionAlerts() {
                             onClick={handleClose}
                             size='small'
                             aria-label='إغلاق'
+                            title='إغلاق'
                             sx={{ color: 'rgba(255,255,255,0.85)' }}
                         >
                             <CloseIcon fontSize='small' />
@@ -178,7 +179,9 @@ function TransitionAlerts() {
                                 },
                             }}
                         >
-                            <ChatBubbleOutlineRoundedIcon sx={{ fontSize: 17 }} />
+                            <ChatBubbleOutlineRoundedIcon
+                                sx={{ fontSize: 17 }}
+                            />
                             {t('common.contact')}
                         </Box>
 

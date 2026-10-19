@@ -276,6 +276,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             <Button
                                 variant='contained'
                                 size='large'
+                                aria-label={t('create-post')}
+                                title={t('create-post')}
                                 startIcon={<AddIcon />}
                                 onClick={handleAddClick}
                                 sx={{
@@ -303,6 +305,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             <Button
                                 variant='outlined'
                                 size='large'
+                                aria-label={t('browse-posts') || 'تصفح المنتجات'}
+                                title={t('browse-posts') || 'تصفح المنتجات'}
                                 sx={{
                                     px: 3.5,
                                     py: 1.25,
@@ -334,6 +338,8 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 <Button
                     variant='contained'
                     size='small'
+                    title='صفقة ذكيه'
+                    aria-label='صفقة ذكيه'
                     startIcon={<Search />}
                     onClick={()=>navigate(path.smartSearch)}
                     sx={{gap:1,my:2}}
