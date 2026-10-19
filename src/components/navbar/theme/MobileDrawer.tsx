@@ -6,6 +6,7 @@ import {
     List,
     ListItem,
     ListItemButton,
+    ListItemIcon,
     ListItemText,
     Divider,
     FormControlLabel,
@@ -15,6 +16,7 @@ import {
     Badge,
     Grid,
     Tooltip,
+    alpha,
 } from '@mui/material';
 import { generatePath } from 'react-router-dom';
 import { List as ListIconMui } from '@mui/icons-material';
@@ -68,25 +70,6 @@ interface MobileDrawerProps {
     logout: () => void;
 }
 
-// Shared style helpers (previously duplicated per-item)
-const navItemSx = {
-    borderRadius: '8px',
-    '&.active': {
-        backgroundColor: 'rgba(220, 53, 69, 0.1)',
-        color: '#f59f0b',
-        fontWeight: 'bold',
-    },
-} as const;
-
-const navItemSxRed = {
-    borderRadius: '8px',
-    '&.active': {
-        backgroundColor: 'rgba(220, 53, 69, 0.1)',
-        color: '#f59f0b',
-        fontWeight: 'bold',
-    },
-} as const;
-
 const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
     mode,
     setMobileOpen,
@@ -107,6 +90,32 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
         setMobileOpen(false);
         setExpandedMobileMenu(false);
     };
+
+    // دالة موحدة لتنسيق روابط التنقل (تحل مشكلة التباين وتنظم الكود)
+    const getNavItemStyle = (isDestructive = false) => ({
+        borderRadius: '8px',
+        mb: 0.5,
+        color: isDestructive
+            ? 'error.main'
+            : mode === 'dark'
+              ? '#e2e8f0'
+              : '#33415a',
+        '& .MuiListItemIcon-root': {
+            color: 'inherit',
+            minWidth: 36,
+        },
+        '&.active': {
+            backgroundColor: alpha('#f59f0b', 0.15),
+            // إصلاح التباين: نص داكن على خلفية برتقالية شفافة
+            color: mode === 'dark' ? '#ffffff' : '#1A1E22',
+            fontWeight: 700,
+        },
+        '&:hover': {
+            backgroundColor: isDestructive
+                ? alpha(theme.palette.error.main, 0.1)
+                : alpha(theme.palette.text.primary, 0.05),
+        },
+    });
 
     return (
         <Box
@@ -129,7 +138,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     p: 2,
-                    borderBottom: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    borderBottom: `1px solid ${theme.palette.divider}`,
                 }}
             >
                 <Typography variant='h6' sx={{ fontWeight: 700 }}>
@@ -143,14 +152,14 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     <IconButton
                         onClick={handleDrawerToggle}
                         aria-label='إغلاق القائمة'
-                        sx={{ color: mode === 'dark' ? '#e2e8f0' : '#4a5568' }}
+                        sx={{ color: 'text.primary' }}
                     >
                         <CloseIcon />
                     </IconButton>
                 </m.div>
             </Box>
 
-            {/* Scrollable content */}
+            {/* Scrollable Content */}
             <Box sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
                 <List
                     component='nav'
@@ -158,7 +167,7 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     sx={{ pt: 0 }}
                 >
                     {/* Search */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding sx={{ mb: 2 }}>
                         <Box sx={{ width: '100%' }}>
                             <AISearch />
                         </Box>
@@ -169,9 +178,11 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                         <ListItem disablePadding sx={{ mb: 1 }}>
                             <ListItemButton
                                 onClick={openAppSettings}
-                                sx={{ borderRadius: '8px' }}
+                                sx={getNavItemStyle()}
                             >
-                                <NotificationsActiveIcon sx={{ ml: 1 }} />
+                                <ListItemIcon>
+                                    <NotificationsActiveIcon />
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={
                                         t('notificationSettings') ||
@@ -186,19 +197,20 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     )}
 
                     {/* Home */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding>
                         <ListItemButton
                             component={NavLink}
                             to={path.Home}
                             onClick={handleNavLinkClick}
-                            sx={navItemSx}
+                            sx={getNavItemStyle()}
                         >
-                            <HomeIcon sx={{ ml: 1 }} />
+                            <ListItemIcon>
+                                <HomeIcon />
+                            </ListItemIcon>
                             <ListItemText
                                 primary={t('home')}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label': 'الصفحة الرئيسية - موقع صفقة',
                                 }}
                             />
                         </ListItemButton>
@@ -206,36 +218,40 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 
                     {/* Favorites */}
                     {auth._id && (
-                        <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItem disablePadding>
                             <ListItemButton
                                 component={NavLink}
                                 to={path.Favorite}
                                 onClick={handleNavLinkClick}
-                                sx={navItemSx}
+                                sx={getNavItemStyle()}
                             >
-                                <FavoriteIcon sx={{ ml: 1 }} />
+                                <ListItemIcon>
+                                    <FavoriteIcon />
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={t('favorites') || 'المفضلة'}
                                     primaryTypographyProps={{
                                         sx: { fontWeight: 500 },
-                                        'aria-label': 'المفضلة - موقع صفقة',
                                     }}
                                 />
                             </ListItemButton>
                         </ListItem>
                     )}
+
                     {/* My listings */}
                     {isLoggedIn && auth.slug && (
-                        <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItem disablePadding>
                             <ListItemButton
                                 component={NavLink}
                                 to={generatePath(path.CustomerProfile, {
                                     slug: encodeURIComponent(auth.slug),
                                 })}
                                 onClick={handleNavLinkClick}
-                                sx={navItemSx}
+                                sx={getNavItemStyle()}
                             >
-                                <ListIconMui sx={{ ml: 1 }} />
+                                <ListItemIcon>
+                                    <ListIconMui />
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={
                                         t('footer.myListings') || 'إعلاناتي'
@@ -250,136 +266,129 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
 
                     {/* Messages */}
                     {isLoggedIn && (
-                        <ListItem disablePadding sx={{ mb: 1 }}>
+                        <ListItem disablePadding>
                             <ListItemButton
                                 component={NavLink}
                                 to={path.MessagesPage}
                                 onClick={handleNavLinkClick}
-                                sx={{
-                                    ...navItemSx,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                }}
+                                sx={getNavItemStyle()}
                             >
-                                <Badge
-                                    badgeContent={totalUnread || 0}
-                                    color='error'
-                                    sx={{ ml: 1 }}
-                                >
-                                    <ChatBubble sx={{ fontSize: 20 }} />
-                                </Badge>
+                                <ListItemIcon>
+                                    <Badge
+                                        badgeContent={totalUnread || 0}
+                                        color='error'
+                                    >
+                                        <ChatBubble />
+                                    </Badge>
+                                </ListItemIcon>
                                 <ListItemText
                                     primary={
                                         t('accountMenu.messages') || 'الرسائل'
                                     }
                                     primaryTypographyProps={{
                                         sx: { fontWeight: 500 },
-                                        'aria-label': 'الرسائل - موقع صفقة',
                                     }}
                                 />
                             </ListItemButton>
                         </ListItem>
                     )}
 
+                    <Divider sx={{ my: 1.5 }} />
+
                     {/* About */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding>
                         <ListItemButton
                             component={NavLink}
                             to={path.About}
                             onClick={handleNavLinkClick}
-                            sx={navItemSxRed}
+                            sx={getNavItemStyle()}
                         >
-                            <InfoIcon sx={{ ml: 1 }} />
+                            <ListItemIcon>
+                                <InfoIcon />
+                            </ListItemIcon>
                             <ListItemText
                                 primary={t('links.about')}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label':
-                                        'من نحن - معلومات عن موقع صفقة',
                                 }}
                             />
                         </ListItemButton>
                     </ListItem>
 
                     {/* Contact */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding>
                         <ListItemButton
                             component={NavLink}
                             to={path.Contact}
                             onClick={handleNavLinkClick}
-                            sx={navItemSxRed}
+                            sx={getNavItemStyle()}
                         >
-                            <ContactIcon sx={{ ml: 1 }} />
+                            <ListItemIcon>
+                                <ContactIcon />
+                            </ListItemIcon>
                             <ListItemText
                                 primary={t('links.contact')}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label':
-                                        'اتصل بنا - خدمة عملاء موقع صفقة',
                                 }}
                             />
                         </ListItemButton>
                     </ListItem>
 
                     {/* Jobs */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding>
                         <ListItemButton
                             component={NavLink}
                             to={path.jobs}
                             onClick={handleNavLinkClick}
-                            sx={navItemSxRed}
+                            sx={getNavItemStyle()}
                         >
-                            <WorkOutlineIcon sx={{ ml: 1 }} />
+                            <ListItemIcon>
+                                <WorkOutlineIcon />
+                            </ListItemIcon>
                             <ListItemText
                                 primary={t('links.jobs') || 'الوظائف'}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label': t('links.jobs') || 'الوظائف',
                                 }}
                             />
                         </ListItemButton>
                     </ListItem>
 
                     {/* Help */}
-                    <ListItem disablePadding sx={{ mb: 1 }}>
+                    <ListItem disablePadding>
                         <ListItemButton
                             component={NavLink}
                             to={path.SellingHelp}
                             onClick={handleNavLinkClick}
-                            sx={navItemSxRed}
+                            sx={getNavItemStyle()}
                         >
-                            <HelpIcon sx={{ ml: 1 }} />
+                            <ListItemIcon>
+                                <HelpIcon />
+                            </ListItemIcon>
                             <ListItemText
                                 primary={t('help')}
                                 primaryTypographyProps={{
                                     sx: { fontWeight: 500 },
-                                    'aria-label':
-                                        'صفحة مساعدة - مساعدة موقع صفقة',
                                 }}
                             />
                         </ListItemButton>
                     </ListItem>
 
-                    {/* Admin Panel - only if admin */}
+                    {/* Admin Panel */}
                     {isAdmin && (
                         <>
-                            <Divider
-                                sx={{
-                                    my: 2,
-                                    borderColor:
-                                        mode === 'dark'
-                                            ? 'rgba(255,255,255,0.1)'
-                                            : 'rgba(0,0,0,0.1)',
-                                }}
-                            />
-                            <ListItem disablePadding sx={{ mb: 1 }}>
+                            <Divider sx={{ my: 1.5 }} />
+                            <ListItem disablePadding>
                                 <ListItemButton
                                     component={NavLink}
                                     to={path.UsersManagement}
                                     onClick={handleNavLinkClick}
-                                    sx={navItemSxRed}
+                                    sx={getNavItemStyle()}
                                 >
-                                    <DashboardIcon sx={{ ml: 1 }} />
+                                    <ListItemIcon>
+                                        <DashboardIcon />
+                                    </ListItemIcon>
                                     <ListItemText
                                         primary={
                                             t('users-management') ||
@@ -387,7 +396,31 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                                         }
                                         primaryTypographyProps={{
                                             sx: { fontWeight: 500 },
-                                            'aria-label': 'لوحة تحكم الإدارة',
+                                        }}
+                                    />
+                                </ListItemButton>
+                            </ListItem>
+                        </>
+                    )}
+
+                    {/* Delete Account */}
+                    {isLoggedIn && (
+                        <>
+                            <Divider sx={{ my: 1.5 }} />
+                            <ListItem disablePadding>
+                                <ListItemButton
+                                    component={NavLink}
+                                    to={path.DeleteAccount}
+                                    onClick={handleNavLinkClick}
+                                    sx={getNavItemStyle(true)}
+                                >
+                                    <ListItemIcon>
+                                        <Delete color='error' />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={t('pages.deleteAccount.title')}
+                                        primaryTypographyProps={{
+                                            sx: { fontWeight: 500 },
                                         }}
                                     />
                                 </ListItemButton>
@@ -396,112 +429,86 @@ const MobileDrawer: FunctionComponent<MobileDrawerProps> = ({
                     )}
                 </List>
             </Box>
-            {/* Delete account */}
-            {isLoggedIn && (
-                <>
-                    <Divider sx={{ my: 2 }} />
-                    <ListItem disablePadding sx={{ mb: 1 }}>
-                        <ListItemButton
-                            component={NavLink}
-                            to={path.DeleteAccount}
-                            onClick={handleNavLinkClick}
-                            sx={{ ...navItemSx, color: 'error.main' }}
-                        >
-                            <Delete sx={{ ml: 1 }} color='error' />
-                            <ListItemText
-                                primary={t('pages.deleteAccount.title')}
-                                primaryTypographyProps={{
-                                    sx: { fontWeight: 500 },
-                                }}
-                            />
-                        </ListItemButton>
-                    </ListItem>
-                </>
-            )}
-            {/* Footer with theme and language */}
-            <Grid
-                container
+
+            {/* Footer (Theme & Language) - Fixed at bottom */}
+            <Box
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-around',
-                    borderTop: `1px solid ${mode === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`,
+                    borderTop: `1px solid ${theme.palette.divider}`,
                     backgroundColor:
                         mode === 'dark'
                             ? 'rgba(0,0,0,0.2)'
                             : 'rgba(0,0,0,0.02)',
+                    p: 2,
+                    pb: 1,
                 }}
             >
-                {/* Theme toggle */}
-                <Grid
-                    size={{ xs: 6 }}
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            px: 1,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                        }}
-                    >
-                        {mode === 'dark' ? (
-                            <Brightness4 sx={{ color: '#ffffff' }} />
-                        ) : (
-                            <Brightness7 sx={{ color: '#ffd000' }} />
-                        )}
-                        <Typography variant='body2'>
-                            {mode === 'dark' ? t('darkMode') : t('lightMode')}
-                        </Typography>
-                    </Box>
-                    <FormGroup>
-                        <FormControlLabel
-                            checked={mode === 'dark'}
-                            onChange={handleThemeChange}
-                            control={<GradientSwitch sx={{ m: 0 }} />}
-                            label=''
-                            aria-label='تبديل وضع السمة'
-                        />
-                    </FormGroup>
-                </Grid>
-
-                {/* Language switcher */}
-                <Grid
-                    size={{ xs: 6 }}
-                    sx={{
-                        display: 'flex',
-                        alignContent: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
-                    <Tooltip
-                        children={<LanguageSwitcher />}
-                        title={t('language')}
-                    />
-                </Grid>
-
-                {/* Copyright */}
-                <Grid size={{ xs: 12 }}>
-                    <Box borderTop={1} borderColor='divider' textAlign='center'>
-                        <Typography variant='body2' color='text.secondary'>
-                            © {new Date().getFullYear()} {t('footer.siteName')}{' '}
-                            - {t('allRightsReserved')}
-                        </Typography>
-                        <Typography
-                            variant='caption'
-                            color='text.disabled'
-                            display='block'
-                            mt={1}
+                <Grid container spacing={2} alignItems='center'>
+                    {/* Theme toggle */}
+                    <Grid size={{ xs: 6 }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 1,
+                            }}
                         >
-                            {t('footer.version', { version: '2.6.1' })}
-                        </Typography>
-                    </Box>
+                            {mode === 'dark' ? (
+                                <Brightness4 sx={{ color: 'text.primary' }} />
+                            ) : (
+                                <Brightness7 sx={{ color: '#ffb300' }} />
+                            )}
+                            <FormGroup>
+                                <FormControlLabel
+                                    checked={mode === 'dark'}
+                                    onChange={handleThemeChange}
+                                    control={<GradientSwitch sx={{ m: 0 }} />}
+                                    label=''
+                                    aria-label='تبديل وضع السمة'
+                                />
+                            </FormGroup>
+                        </Box>
+                    </Grid>
+
+                    {/* Language switcher */}
+                    <Grid size={{ xs: 6 }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <Tooltip
+                                children={<LanguageSwitcher />}
+                                title={t('language')}
+                            />
+                        </Box>
+                    </Grid>
+
+                    {/* Copyright */}
+                    <Grid size={{ xs: 12 }}>
+                        <Box
+                            textAlign='center'
+                            pt={1}
+                            borderTop={`1px dashed ${theme.palette.divider}`}
+                        >
+                            <Typography variant='caption' color='text.secondary'>
+                                © {new Date().getFullYear()}{' '}
+                                {t('footer.siteName')} -{' '}
+                                {t('allRightsReserved')}
+                            </Typography>
+                            <Typography
+                                variant='caption'
+                                color='text.disabled'
+                                display='block'
+                            >
+                                {t('footer.version', { version: '2.6.1' })}
+                            </Typography>
+                        </Box>
+                    </Grid>
                 </Grid>
-            </Grid>
+            </Box>
         </Box>
     );
 };
