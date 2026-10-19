@@ -17,13 +17,6 @@ main {
     margin: 50px auto;
 }
 
-.header-image {
-    background-image: url(../public/2d.png);
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
 .MuiFormGroup-root {
     margin-bottom: 5px;
 }
