@@ -129,6 +129,7 @@ const ConversationItem = memo(
                     >
                         <Avatar
                             src={conv.user?.image?.url}
+                            alt={userName}
                             sx={{ width: 48, height: 48, fontWeight: 700 }}
                         >
                             {userName?.charAt(0).toUpperCase()}
@@ -167,7 +168,7 @@ const ConversationItem = memo(
                                     color:
                                         unreadCount > 0
                                             ? theme.palette.primary.main
-                                            : theme.palette.text.disabled,
+                                            : theme.palette.text.secondary,
                                     fontSize: '0.68rem',
                                     fontWeight: unreadCount > 0 ? 600 : 400,
                                     flexShrink: 0,
@@ -188,10 +189,8 @@ const ConversationItem = memo(
                                 color:
                                     unreadCount > 0
                                         ? theme.palette.text.secondary
-                                        : alpha(
-                                              theme.palette.text.secondary,
-                                              0.7,
-                                          ),
+                                        : theme.palette.text.secondary,
+
                                 fontSize: '0.78rem',
                                 lineHeight: 1.4,
                                 letterSpacing: '0.01em',
@@ -376,7 +375,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                                 border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
                             },
                             '&.Mui-focused': {
-                                bgcolor: alpha(theme.palette.primary.main, 0.04),
+                                bgcolor: alpha(
+                                    theme.palette.primary.main,
+                                    0.04,
+                                ),
                                 border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
                                 boxShadow: `0 0 0 3px ${alpha(theme.palette.primary.main, 0.08)}`,
                             },
@@ -411,7 +413,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                             transition: 'all 0.18s ease',
                             '&:hover': {
                                 color: theme.palette.text.primary,
-                                bgcolor: alpha(theme.palette.primary.main, 0.06),
+                                bgcolor: alpha(
+                                    theme.palette.primary.main,
+                                    0.06,
+                                ),
                             },
                         },
                         '& .Mui-selected': {
@@ -468,7 +473,10 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                                 width: 56,
                                 height: 56,
                                 borderRadius: '16px',
-                                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                bgcolor: alpha(
+                                    theme.palette.primary.main,
+                                    0.08,
+                                ),
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',

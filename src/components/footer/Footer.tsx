@@ -125,7 +125,7 @@ const Footer: FunctionComponent = () => {
                                 {t('footer.contact')}:
                                 <MuiLink
                                     href='mailto:anesmhamed1@gmail.com'
-                                    color='primary.main'
+                                    color='text.secondary'
                                     sx={{ ml: 1, textDecoration: 'none' }}
                                 >
                                     anesmhamed1@gmail.com
@@ -134,7 +134,7 @@ const Footer: FunctionComponent = () => {
                             <Typography variant='body2' color='text.secondary'>
                                 {t('footer.phone')}:
                                 <MuiLink
-                                    href='tel:++972538316915'
+                                    href='tel:+972538316915'
                                     color='primary.main'
                                     sx={{ ml: 1, textDecoration: 'none' }}
                                 >

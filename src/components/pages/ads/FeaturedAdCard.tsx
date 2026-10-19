@@ -2,6 +2,7 @@ import { Box, Chip, IconButton, Stack, Typography } from '@mui/material';
 import { FeaturedAd } from '../../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useTranslation } from 'react-i18next';
 
 import {
     FEATURED_AD_ICONS,
@@ -15,6 +16,7 @@ interface FeaturedAdCardProps {
 }
 
 export default function FeaturedAdCard({ ad, onDelete }: FeaturedAdCardProps) {
+    const { t } = useTranslation();
     const tier = FEATURED_AD_TIERS[ad.type];
     const Icon = FEATURED_AD_ICONS[ad.type];
 
@@ -45,7 +47,7 @@ export default function FeaturedAdCard({ ad, onDelete }: FeaturedAdCardProps) {
                     mb={1.5}
                 >
                     <Chip
-                        icon={<Icon sx={{ fontSize: 14 }} />}
+                        icon={<Icon sx={{ fontSize: 14 }} aria-hidden='true' />}
                         label={tier.label}
                         size='small'
                         sx={{
@@ -92,16 +94,17 @@ export default function FeaturedAdCard({ ad, onDelete }: FeaturedAdCardProps) {
                 <Stack
                     direction='row'
                     justifyContent='space-between'
+                    alignItems='center'
                     sx={{
                         borderTop: '0.5px solid',
                         borderColor: 'divider',
                         pt: 1,
                     }}
                 >
-                    <Typography variant='caption' color='text.disabled'>
+                    <Typography variant='caption' color='text.secondary'>
                         {formatDate(ad.startDate)}
                     </Typography>
-                    <Typography variant='caption' color='text.disabled'>
+                    <Typography variant='caption' color='text.secondary'>
                         {formatDate(ad.endDate)}
                     </Typography>
                     <Typography
@@ -111,20 +114,24 @@ export default function FeaturedAdCard({ ad, onDelete }: FeaturedAdCardProps) {
                     >
                         {formatPrice(FEATURED_AD_PRICES[ad.type])}
                     </Typography>
+                    {onDelete && (
+                        <IconButton
+                            size='small'
+                            onClick={() => onDelete(ad._id)}
+                            aria-label={t('ads.delete', 'حذف الإعلان')}
+                            sx={{
+                                ml: 0.5,
+                                color: 'text.secondary',
+                                '&:hover': { color: 'error.main' },
+                            }}
+                        >
+                            <DeleteOutlineIcon
+                                sx={{ fontSize: 16 }}
+                                aria-hidden='true'
+                            />
+                        </IconButton>
+                    )}
                 </Stack>
-                {onDelete && (
-                    <IconButton
-                        size='small'
-                        onClick={() => onDelete(ad._id)}
-                        sx={{
-                            ml: 0.5,
-                            color: 'text.disabled',
-                            '&:hover': { color: 'error.main' },
-                        }}
-                    >
-                        <DeleteOutlineIcon sx={{ fontSize: 16 }} />
-                    </IconButton>
-                )}
             </Box>
         </Box>
     );

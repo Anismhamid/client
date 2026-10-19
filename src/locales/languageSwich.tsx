@@ -11,17 +11,20 @@ const LANGUAGES: { code: Lang; country: string; label: string }[] = [
     { code: 'en', country: 'GB', label: 'English' },
 ];
 
-const Flag = ({ country }: { country: string }) => (
+const Flag = ({ country, label }: { country: string; label?: string }) => (
     <ReactCountryFlag
         countryCode={country}
         svg
+        aria-hidden='true'
+        title={label}
         style={{ marginInlineEnd: 8 }}
     />
 );
 
 const LanguageSwitcher: FunctionComponent = () => {
-    const { i18n } = useTranslation();
+    const { i18n, t } = useTranslation();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
     const current =
         LANGUAGES.find((l) => l.code === i18n.language) ?? LANGUAGES[2];
@@ -31,8 +34,12 @@ const LanguageSwitcher: FunctionComponent = () => {
 
         if (!lang || lang === i18n.language) return;
 
-        await loadLanguage(lang);
-        localStorage.setItem('lang', lang);
+        try {
+            await loadLanguage(lang);
+            localStorage.setItem('lang', lang);
+        } catch (error) {
+            console.error('Failed to change language:', error);
+        }
     };
 
     return (
@@ -41,18 +48,28 @@ const LanguageSwitcher: FunctionComponent = () => {
                 color='primary'
                 onClick={(e) => setAnchorEl(e.currentTarget)}
                 size='large'
+                aria-label={`${t('changeLanguage', 'تغيير اللغة')}: ${current.label}`}
+                aria-controls={open ? 'language-menu' : undefined}
+                aria-haspopup='true'
+                aria-expanded={open ? 'true' : undefined}
             >
-                <Language />
+                <Language aria-hidden='true' />
                 <Flag country={current.country} />
             </IconButton>
 
             <Menu
+                id='language-menu'
                 anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
+                open={open}
                 onClose={() => handleSelect()}
             >
                 {LANGUAGES.map(({ code, country, label }) => (
-                    <MenuItem key={code} onClick={() => handleSelect(code)}>
+                    <MenuItem
+                        key={code}
+                        selected={code === current.code}
+                        onClick={() => handleSelect(code)}
+                        lang={code}
+                    >
                         <Flag country={country} />
                         {label}
                     </MenuItem>

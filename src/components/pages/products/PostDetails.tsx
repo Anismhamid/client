@@ -15,6 +15,7 @@ import {
     Box,
     Breadcrumbs,
     Button,
+    ButtonBase,
     Chip,
     Container,
     Dialog,
@@ -137,7 +138,7 @@ const getReviewUserId = (review: Review): string => {
 const SectionTitle = memo(
     ({ title, subtitle }: { title: string; subtitle?: string }) => (
         <Box sx={{ mb: 2.5 }}>
-            <Typography variant='h6' sx={{ fontWeight: 800 }}>
+            <Typography variant='h6' component='h2' sx={{ fontWeight: 800 }}>
                 {title}
             </Typography>
             {subtitle && (
@@ -208,6 +209,7 @@ const RatingSummary = memo(
                         precision={0.1}
                         size='small'
                         readOnly
+                        aria-label={`${average.toFixed(1)} / 5`}
                     />
                     <Typography
                         variant='caption'
@@ -231,6 +233,7 @@ const RatingSummary = memo(
                             </Typography>
                             <LinearProgress
                                 variant='determinate'
+                                aria-label={`${star} ★`}
                                 value={
                                     rated.length
                                         ? (count / rated.length) * 100
@@ -429,7 +432,7 @@ const PostDetails: FunctionComponent = () => {
 
     useEffect(() => {
         void loadPost();
-    }, [loadPost, auth._id]);
+    }, [loadPost, auth?._id]);
 
     useEffect(() => {
         if (!post._id || !post.category) return;
@@ -477,7 +480,7 @@ const PostDetails: FunctionComponent = () => {
     }, [
         post.seller,
         post.product_name,
-        auth._id,
+        auth?._id,
         finalPrice,
         categoryLabel,
         pageUrl,
@@ -573,7 +576,7 @@ const PostDetails: FunctionComponent = () => {
     }, [
         isLoggedIn,
         post._id,
-        auth._id,
+        auth?._id,
         reviewRating,
         comment,
         t,
@@ -611,7 +614,10 @@ const PostDetails: FunctionComponent = () => {
     if (error || !post?._id) {
         return (
             <Container maxWidth='md' sx={{ py: 8, textAlign: 'center' }}>
-                <ErrorIcon sx={{ fontSize: 64, color: 'error.main', mb: 3 }} />
+                <ErrorIcon
+                    aria-hidden='true'
+                    sx={{ fontSize: 64, color: 'error.main', mb: 3 }}
+                />
                 <Typography variant='h5' color='error' gutterBottom>
                     {error ||
                         t('common.product.notFound') ||
@@ -619,7 +625,7 @@ const PostDetails: FunctionComponent = () => {
                 </Typography>
                 <Button
                     variant='contained'
-                    startIcon={<ArrowBackIcon />}
+                    startIcon={<ArrowBackIcon aria-hidden='true' />}
                     onClick={() => navigate(-1)}
                     sx={{ mt: 3, background: BRAND_GRADIENT }}
                 >
@@ -688,24 +694,29 @@ const PostDetails: FunctionComponent = () => {
                                 alignItems='center'
                                 sx={{ flex: 1, minWidth: 0 }}
                             >
-                                <Avatar
-                                    src={
-                                        post.seller?.image?.url || '/user.png'
-                                    }
-                                    alt={sellerDisplayName}
+                                <ButtonBase
                                     onClick={goToProfile}
-                                    sx={{
-                                        width: 56,
-                                        height: 56,
-                                        border: '2px solid',
-                                        borderColor: BRAND_COLOR,
-                                        cursor: 'pointer',
-                                        transition: 'transform 0.2s',
-                                        '&:hover': {
-                                            transform: 'scale(1.05)',
-                                        },
-                                    }}
-                                />
+                                    aria-label={sellerDisplayName}
+                                    sx={{ borderRadius: '50%' }}
+                                >
+                                    <Avatar
+                                        src={
+                                            post.seller?.image?.url ||
+                                            '/user.png'
+                                        }
+                                        alt={sellerDisplayName}
+                                        sx={{
+                                            width: 56,
+                                            height: 56,
+                                            border: '2px solid',
+                                            borderColor: BRAND_COLOR,
+                                            transition: 'transform 0.2s',
+                                            '&:hover': {
+                                                transform: 'scale(1.05)',
+                                            },
+                                        }}
+                                    />
+                                </ButtonBase>
 
                                 <Box sx={{ minWidth: 0, flex: 1 }}>
                                     <Stack
@@ -716,6 +727,7 @@ const PostDetails: FunctionComponent = () => {
                                     >
                                         <Typography
                                             variant='h6'
+                                            component='p'
                                             sx={{
                                                 fontWeight: 700,
                                                 fontSize: {
@@ -749,6 +761,9 @@ const PostDetails: FunctionComponent = () => {
                                                 title={t('verifiedSeller')}
                                             >
                                                 <VerifiedRounded
+                                                    aria-label={t(
+                                                        'verifiedSeller',
+                                                    )}
                                                     sx={{
                                                         color: BRAND_COLOR,
                                                         fontSize: 20,
@@ -798,6 +813,7 @@ const PostDetails: FunctionComponent = () => {
                                         <StatsBadge
                                             icon={
                                                 <ViewIcon
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 14 }}
                                                 />
                                             }
@@ -807,6 +823,7 @@ const PostDetails: FunctionComponent = () => {
                                         <StatsBadge
                                             icon={
                                                 <ThumbUpIcon
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 14 }}
                                                 />
                                             }
@@ -839,6 +856,9 @@ const PostDetails: FunctionComponent = () => {
                                     <IconButton
                                         onClick={() => void loadPost(true)}
                                         size='small'
+                                        aria-label={t(
+                                            'common.product.refreshData',
+                                        )}
                                         sx={{
                                             border: '1px solid',
                                             borderColor: 'divider',
@@ -853,13 +873,21 @@ const PostDetails: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        <RefreshIcon fontSize='small' />
+                                        <RefreshIcon
+                                            fontSize='small'
+                                            aria-hidden='true'
+                                        />
                                     </IconButton>
                                 </Tooltip>
 
                                 <Button
                                     variant='outlined'
-                                    startIcon={<Person sx={{ fontSize: 18 }} />}
+                                    startIcon={
+                                        <Person
+                                            aria-hidden='true'
+                                            sx={{ fontSize: 18 }}
+                                        />
+                                    }
                                     onClick={goToProfile}
                                     sx={{
                                         gap: 0.5,
@@ -880,7 +908,10 @@ const PostDetails: FunctionComponent = () => {
                                         <Button
                                             variant='outlined'
                                             startIcon={
-                                                <EditIcon sx={{ fontSize: 18 }} />
+                                                <EditIcon
+                                                    aria-hidden='true'
+                                                    sx={{ fontSize: 18 }}
+                                                />
                                             }
                                             onClick={() =>
                                                 setShowUpdateModal(true)
@@ -904,6 +935,7 @@ const PostDetails: FunctionComponent = () => {
                                             variant='outlined'
                                             startIcon={
                                                 <DeleteIcon
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 18 }}
                                                 />
                                             }
@@ -929,7 +961,10 @@ const PostDetails: FunctionComponent = () => {
                                     <Button
                                         variant='outlined'
                                         startIcon={
-                                            <Comment sx={{ fontSize: 18 }} />
+                                            <Comment
+                                                aria-hidden='true'
+                                                sx={{ fontSize: 18 }}
+                                            />
                                         }
                                         onClick={handleContactSeller}
                                         sx={{
@@ -966,7 +1001,12 @@ const PostDetails: FunctionComponent = () => {
                             component={Link}
                             to={path.Home}
                             size='small'
-                            startIcon={<HomeIcon sx={{ fontSize: 18 }} />}
+                            startIcon={
+                                <HomeIcon
+                                    aria-hidden='true'
+                                    sx={{ fontSize: 18 }}
+                                />
+                            }
                             sx={{ textTransform: 'none', gap: 0.5 }}
                         >
                             {t('home')}
@@ -975,7 +1015,12 @@ const PostDetails: FunctionComponent = () => {
                         {post.category && (
                             <Button
                                 size='small'
-                                startIcon={<StoreIcon sx={{ fontSize: 18 }} />}
+                                startIcon={
+                                    <StoreIcon
+                                        aria-hidden='true'
+                                        sx={{ fontSize: 18 }}
+                                    />
+                                }
                                 disabled={!categoryPathMap[post.category]}
                                 onClick={() =>
                                     navigate(categoryPathMap[post.category])
@@ -1030,9 +1075,11 @@ const PostDetails: FunctionComponent = () => {
                                     }
                                     onKeyDown={(e) => {
                                         if (
-                                            e.key === 'Enter' &&
+                                            (e.key === 'Enter' ||
+                                                e.key === ' ') &&
                                             post.image?.url
                                         ) {
+                                            e.preventDefault();
                                             setImageDialogOpen(true);
                                         }
                                     }}
@@ -1102,6 +1149,7 @@ const PostDetails: FunctionComponent = () => {
 
                                     {post.image?.url && (
                                         <Box
+                                            aria-hidden='true'
                                             sx={{
                                                 position: 'absolute',
                                                 bottom: 12,
@@ -1229,7 +1277,18 @@ const PostDetails: FunctionComponent = () => {
                                             direction='row'
                                             alignItems='center'
                                             spacing={1}
+                                            role='button'
+                                            tabIndex={0}
                                             onClick={scrollToReviews}
+                                            onKeyDown={(e) => {
+                                                if (
+                                                    e.key === 'Enter' ||
+                                                    e.key === ' '
+                                                ) {
+                                                    e.preventDefault();
+                                                    scrollToReviews();
+                                                }
+                                            }}
                                             sx={{
                                                 cursor: 'pointer',
                                                 width: 'fit-content',
@@ -1240,6 +1299,7 @@ const PostDetails: FunctionComponent = () => {
                                                 precision={0.1}
                                                 size='small'
                                                 readOnly
+                                                aria-label={`${averageRating.toFixed(1)} / 5`}
                                             />
                                             <Typography
                                                 variant='body2'
@@ -1287,7 +1347,7 @@ const PostDetails: FunctionComponent = () => {
                                                     <>
                                                         <Typography
                                                             sx={{
-                                                                color: 'text.disabled',
+                                                                color: 'text.secondary',
                                                                 textDecoration:
                                                                     'line-through',
                                                             }}
@@ -1319,6 +1379,7 @@ const PostDetails: FunctionComponent = () => {
                                                 spacing={1}
                                             >
                                                 <LocationOn
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 18 }}
                                                 />
                                                 {post.location ? (
@@ -1354,6 +1415,7 @@ const PostDetails: FunctionComponent = () => {
                                                 spacing={1}
                                             >
                                                 <AccessTimeRounded
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 18 }}
                                                 />
                                                 <Typography variant='body2'>
@@ -1369,6 +1431,7 @@ const PostDetails: FunctionComponent = () => {
                                                 spacing={1}
                                             >
                                                 <ViewIcon
+                                                    aria-hidden='true'
                                                     sx={{ fontSize: 18 }}
                                                 />
                                                 <Typography variant='body2'>
@@ -1390,7 +1453,9 @@ const PostDetails: FunctionComponent = () => {
                                                 <Button
                                                     fullWidth
                                                     variant='outlined'
-                                                    startIcon={<EditIcon />}
+                                                    startIcon={
+                                                        <EditIcon aria-hidden='true' />
+                                                    }
                                                     onClick={() =>
                                                         setShowUpdateModal(true)
                                                     }
@@ -1402,7 +1467,9 @@ const PostDetails: FunctionComponent = () => {
                                                     fullWidth
                                                     variant='outlined'
                                                     color='error'
-                                                    startIcon={<DeleteIcon />}
+                                                    startIcon={
+                                                        <DeleteIcon aria-hidden='true' />
+                                                    }
                                                     onClick={() =>
                                                         setShowDeleteModal(true)
                                                     }
@@ -1417,7 +1484,9 @@ const PostDetails: FunctionComponent = () => {
                                                     fullWidth
                                                     variant='contained'
                                                     size='large'
-                                                    startIcon={<Comment />}
+                                                    startIcon={
+                                                        <Comment aria-hidden='true' />
+                                                    }
                                                     onClick={
                                                         handleContactSeller
                                                     }
@@ -1442,7 +1511,7 @@ const PostDetails: FunctionComponent = () => {
                                                                 fullWidth
                                                                 variant='outlined'
                                                                 startIcon={
-                                                                    <Phone />
+                                                                    <Phone aria-hidden='true' />
                                                                 }
                                                                 href={`tel:${sellerPhone}`}
                                                                 sx={{
@@ -1462,7 +1531,7 @@ const PostDetails: FunctionComponent = () => {
                                                                 fullWidth
                                                                 variant='outlined'
                                                                 startIcon={
-                                                                    <WhatsApp />
+                                                                    <WhatsApp aria-hidden='true' />
                                                                 }
                                                                 href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`${t('chat.interestedIn')} "${post.product_name}"\n${pageUrl}`)}`}
                                                                 target='_blank'
@@ -1504,7 +1573,7 @@ const PostDetails: FunctionComponent = () => {
                                                             'common.product.shareProduct',
                                                         )}
                                                     >
-                                                        <ShareIcon />
+                                                        <ShareIcon aria-hidden='true' />
                                                     </IconButton>
                                                 </span>
                                             </Tooltip>
@@ -1532,21 +1601,26 @@ const PostDetails: FunctionComponent = () => {
                                             spacing={1.5}
                                             alignItems='center'
                                         >
-                                            <Avatar
-                                                src={
-                                                    post.seller?.image?.url ||
-                                                    '/user.png'
-                                                }
-                                                alt={sellerDisplayName}
+                                            <ButtonBase
                                                 onClick={goToProfile}
-                                                sx={{
-                                                    width: 56,
-                                                    height: 56,
-                                                    cursor: 'pointer',
-                                                    border: '2px solid',
-                                                    borderColor: BRAND_COLOR,
-                                                }}
-                                            />
+                                                aria-label={sellerDisplayName}
+                                                sx={{ borderRadius: '50%' }}
+                                            >
+                                                <Avatar
+                                                    src={
+                                                        post.seller?.image
+                                                            ?.url || '/user.png'
+                                                    }
+                                                    alt={sellerDisplayName}
+                                                    sx={{
+                                                        width: 56,
+                                                        height: 56,
+                                                        border: '2px solid',
+                                                        borderColor:
+                                                            BRAND_COLOR,
+                                                    }}
+                                                />
+                                            </ButtonBase>
                                             <Box sx={{ minWidth: 0, flex: 1 }}>
                                                 <Typography
                                                     fontWeight={800}
@@ -1566,7 +1640,7 @@ const PostDetails: FunctionComponent = () => {
                                                 {memberSince && (
                                                     <Typography
                                                         variant='caption'
-                                                        color='text.disabled'
+                                                        color='text.secondary'
                                                     >
                                                         {t(
                                                             'common.product.memberSince',
@@ -1609,6 +1683,7 @@ const PostDetails: FunctionComponent = () => {
                                                 }}
                                             >
                                                 <VerifiedRounded
+                                                    aria-hidden='true'
                                                     sx={{
                                                         color: BRAND_COLOR,
                                                         fontSize: 20,
@@ -1628,28 +1703,24 @@ const PostDetails: FunctionComponent = () => {
 
                                         {/* Full contact actions: WhatsApp + Email */}
                                         {!isOwner && (
-                                            <Stack
-                                                direction='row'
-                                                spacing={1}
-                                            >
+                                            <Stack direction='row' spacing={1}>
                                                 {whatsappNumber && (
                                                     <Button
                                                         fullWidth
                                                         variant='outlined'
                                                         startIcon={
-                                                            <WhatsApp />
+                                                            <WhatsApp aria-hidden='true' />
                                                         }
                                                         sx={{
                                                             gap: 1,
                                                             borderColor:
                                                                 '#25D366',
-                                                            color: '#25D366',
+                                                            color: '#128C7E',
                                                             '&:hover': {
-                                                                bgcolor:
-                                                                    alpha(
-                                                                        '#25D366',
-                                                                        0.04,
-                                                                    ),
+                                                                bgcolor: alpha(
+                                                                    '#25D366',
+                                                                    0.04,
+                                                                ),
                                                                 borderColor:
                                                                     '#128C7E',
                                                             },
@@ -1665,18 +1736,19 @@ const PostDetails: FunctionComponent = () => {
                                                     <Button
                                                         fullWidth
                                                         variant='outlined'
-                                                        startIcon={<Email />}
+                                                        startIcon={
+                                                            <Email aria-hidden='true' />
+                                                        }
                                                         sx={{
                                                             gap: 1,
                                                             borderColor:
                                                                 'info.main',
-                                                            color: 'info.main',
+                                                            color: 'info.dark',
                                                             '&:hover': {
-                                                                bgcolor:
-                                                                    alpha(
-                                                                        '#0288D1',
-                                                                        0.04,
-                                                                    ),
+                                                                bgcolor: alpha(
+                                                                    '#0288D1',
+                                                                    0.04,
+                                                                ),
                                                             },
                                                         }}
                                                         href={`mailto:${sellerEmail}`}
@@ -1714,7 +1786,9 @@ const PostDetails: FunctionComponent = () => {
                                         <Button
                                             fullWidth
                                             variant='text'
-                                            startIcon={<ShareIcon />}
+                                            startIcon={
+                                                <ShareIcon aria-hidden='true' />
+                                            }
                                             onClick={handleShare}
                                             disabled={isSharing}
                                             sx={{
@@ -1728,9 +1802,7 @@ const PostDetails: FunctionComponent = () => {
                                                 },
                                             }}
                                         >
-                                            {t(
-                                                'common.product.shareProduct',
-                                            )}
+                                            {t('common.product.shareProduct')}
                                         </Button>
                                     </Stack>
                                 </Paper>
@@ -1755,6 +1827,7 @@ const PostDetails: FunctionComponent = () => {
                                             sx={{ mb: 1 }}
                                         >
                                             <ShieldOutlined
+                                                aria-hidden='true'
                                                 sx={{
                                                     color: BRAND_COLOR,
                                                     fontSize: 20,
@@ -1762,6 +1835,7 @@ const PostDetails: FunctionComponent = () => {
                                             />
                                             <Typography
                                                 variant='subtitle2'
+                                                component='h2'
                                                 fontWeight={800}
                                             >
                                                 {t(
@@ -1963,6 +2037,7 @@ const PostDetails: FunctionComponent = () => {
                                                                     )}
                                                                     size='small'
                                                                     readOnly
+                                                                    aria-label={`${Number(review.rating || 0)} / 5`}
                                                                     sx={{
                                                                         mt: 0.5,
                                                                     }}
@@ -2081,7 +2156,12 @@ const PostDetails: FunctionComponent = () => {
                                                 'review.reviewPlaceholder',
                                             )}
                                             slotProps={{
-                                                htmlInput: { maxLength: 500 },
+                                                htmlInput: {
+                                                    maxLength: 500,
+                                                    'aria-label': t(
+                                                        'review.reviewPlaceholder',
+                                                    ),
+                                                },
                                             }}
                                             helperText={`${comment.length}/500`}
                                         />
@@ -2146,8 +2226,8 @@ const PostDetails: FunctionComponent = () => {
                     elevation={8}
                     sx={{
                         position: 'fixed',
-                        left: 200,
-                        right: 200,
+                        left: 0,
+                        right: 0,
                         bottom: 0,
                         zIndex: 1100,
                         px: 2,
@@ -2182,44 +2262,30 @@ const PostDetails: FunctionComponent = () => {
                             </Typography>
                         </Box>
 
-                        {isOwner ? (
-                            <Button
-                                fullWidth
-                                variant='contained'
-                                startIcon={<EditIcon />}
-                                onClick={() => setShowUpdateModal(true)}
-                                sx={{ ...gradientBtnSx, py: 1.1, gap: 0.5 }}
+                        {sellerPhone && (
+                            <IconButton
+                                component='a'
+                                href={`tel:${sellerPhone}`}
+                                aria-label={t('common.product.callNow')}
+                                sx={{
+                                    border: '1px solid',
+                                    borderColor: BRAND_COLOR,
+                                    color: BRAND_DARK,
+                                    borderRadius: '12px',
+                                }}
                             >
-                                {t('postCard.edit')}
-                            </Button>
-                        ) : (
-                            <>
-                                {sellerPhone && (
-                                    <IconButton
-                                        component='a'
-                                        href={`tel:${sellerPhone}`}
-                                        aria-label={t('common.product.callNow')}
-                                        sx={{
-                                            border: '1px solid',
-                                            borderColor: BRAND_COLOR,
-                                            color: BRAND_DARK,
-                                            borderRadius: '12px',
-                                        }}
-                                    >
-                                        <Phone />
-                                    </IconButton>
-                                )}
-                                <Button
-                                    fullWidth
-                                    variant='contained'
-                                    startIcon={<Comment />}
-                                    onClick={handleContactSeller}
-                                    sx={{ ...gradientBtnSx, py: 1.1, gap: 0.5 }}
-                                >
-                                    {t('common.product.contactSeller')}
-                                </Button>
-                            </>
+                                <Phone aria-hidden='true' />
+                            </IconButton>
                         )}
+                        <Button
+                            fullWidth
+                            variant='contained'
+                            startIcon={<Comment aria-hidden='true' />}
+                            onClick={handleContactSeller}
+                            sx={{ ...gradientBtnSx, py: 1.1, gap: 0.5 }}
+                        >
+                            {t('common.product.contactSeller')}
+                        </Button>
                     </Stack>
                 </Paper>
             )}
@@ -2249,6 +2315,7 @@ const PostDetails: FunctionComponent = () => {
                 fullScreen
                 open={imageDialogOpen}
                 onClose={() => setImageDialogOpen(false)}
+                aria-label={post.product_name}
                 sx={{ zIndex: 9999, '& .MuiDialog-paper': { bgcolor: '#000' } }}
             >
                 <Box
@@ -2262,7 +2329,7 @@ const PostDetails: FunctionComponent = () => {
                 >
                     <IconButton
                         onClick={() => setImageDialogOpen(false)}
-                        aria-label='close'
+                        aria-label={t('common.close', 'إغلاق')}
                         sx={{
                             position: 'absolute',
                             top: 16,
@@ -2274,7 +2341,7 @@ const PostDetails: FunctionComponent = () => {
                             '&:hover': { bgcolor: 'rgba(255,255,255,0.25)' },
                         }}
                     >
-                        <CloseIcon />
+                        <CloseIcon aria-hidden='true' />
                     </IconButton>
 
                     {post.image?.url && (
@@ -2333,24 +2400,36 @@ const PostDetails: FunctionComponent = () => {
                                     >
                                         <IconButton
                                             onClick={() => zoomOut()}
+                                            aria-label={t(
+                                                'common.product.zoomOut',
+                                                'تصغير',
+                                            )}
                                             sx={{ color: '#fff' }}
                                             size='small'
                                         >
-                                            <ZoomOut />
+                                            <ZoomOut aria-hidden='true' />
                                         </IconButton>
                                         <IconButton
                                             onClick={() => resetTransform()}
+                                            aria-label={t(
+                                                'common.product.resetZoom',
+                                                'إعادة الضبط',
+                                            )}
                                             sx={{ color: '#fff' }}
                                             size='small'
                                         >
-                                            <RefreshIcon />
+                                            <RefreshIcon aria-hidden='true' />
                                         </IconButton>
                                         <IconButton
                                             onClick={() => zoomIn()}
+                                            aria-label={t(
+                                                'common.product.zoomIn',
+                                                'تكبير',
+                                            )}
                                             sx={{ color: '#fff' }}
                                             size='small'
                                         >
-                                            <ZoomIn />
+                                            <ZoomIn aria-hidden='true' />
                                         </IconButton>
                                     </Stack>
                                 </>

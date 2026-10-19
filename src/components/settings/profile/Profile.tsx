@@ -87,7 +87,6 @@ const Profile: FunctionComponent = () => {
     const [hovered, setHovered] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-    // ✅ احذف useToken، استخدم Context فقط
     const { auth, logout: contextLogout } = useUser();
 
     const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -171,33 +170,39 @@ const Profile: FunctionComponent = () => {
         return Number(avg.toFixed(1));
     };
 
-    const handleShareProfile = () => {
+    const handleShareProfile = async () => {
         const profileUrl = `${window.location.origin}/users/customer/${user.slug}`;
-        if (navigator.share) {
-            navigator.share({
-                title: `${t('profile.title')} ${user.name.first} ${user.name.last}`,
-                text: t('profile.shareText', {
-                    defaultValue: 'اطلع على ملفي الشخصي على موقع صفقه',
-                }),
-                url: profileUrl,
-            });
-        } else {
-            navigator.clipboard.writeText(profileUrl);
-            showSuccess(
-                t('profile.linkCopied', {
-                    defaultValue: 'تم نسخ رابط الملف الشخصي',
-                }),
-            );
+
+        try {
+            if (navigator.share) {
+                await navigator.share({
+                    title: `${t('profile.title')} ${user.name.first} ${user.name.last}`,
+                    text: t('profile.shareText', {
+                        defaultValue: 'اطلع على ملفي الشخصي على موقع صفقه',
+                    }),
+                    url: profileUrl,
+                });
+            } else {
+                await navigator.clipboard.writeText(profileUrl);
+                showSuccess(
+                    t('profile.linkCopied', {
+                        defaultValue: 'تم نسخ رابط الملف الشخصي',
+                    }),
+                );
+            }
+        } catch (shareError) {
+            // المستخدم سكّر نافذة المشاركة
+            if ((shareError as Error).name !== 'AbortError') {
+                console.error('Share profile error:', shareError);
+            }
         }
     };
 
-    // ✅ استخدم logout من Context
     const handleLogout = async () => {
         await contextLogout();
         navigate(path.Home, { replace: true });
     };
 
-    // ✅ احصل على userId من auth
     const targetId = id || auth?._id;
 
     useEffect(() => {
@@ -247,8 +252,6 @@ const Profile: FunctionComponent = () => {
         }
 
         await deleteUserById(auth._id);
-
-        // ✅ استخدم logout من Context (سيمسح الكوكي)
         await contextLogout();
     };
 
@@ -259,9 +262,15 @@ const Profile: FunctionComponent = () => {
     if (loading || productsLoading) return <Loader />;
 
     const tabs = [
-        { label: t('profile.title'), icon: <Person /> },
-        { label: t('profile.myFavorites'), icon: <Favorite /> },
-        { label: t('profile.settings'), icon: <Settings /> },
+        { label: t('profile.title'), icon: <Person aria-hidden='true' /> },
+        {
+            label: t('profile.myFavorites'),
+            icon: <Favorite aria-hidden='true' />,
+        },
+        {
+            label: t('profile.settings'),
+            icon: <Settings aria-hidden='true' />,
+        },
     ];
 
     const currentUrl = `https://client-qqq1.vercel.app/profile`;
@@ -269,21 +278,21 @@ const Profile: FunctionComponent = () => {
 
     const statItems = [
         {
-            icon: <ShoppingCart sx={{ fontSize: 24 }} />,
+            icon: <ShoppingCart aria-hidden='true' sx={{ fontSize: 24 }} />,
             color: theme.palette.primary.main,
             value: userPosts.length || 0,
             label: t('profile.myPosts'),
             to: `/users/customer/${user.slug}`,
         },
         {
-            icon: <Favorite sx={{ fontSize: 24 }} />,
+            icon: <Favorite aria-hidden='true' sx={{ fontSize: 24 }} />,
             color: '#ef4444',
             value: stats.totalFavorites,
             label: t('profile.myFavorites'),
             to: path.Favorite,
         },
         {
-            icon: <Star sx={{ fontSize: 24 }} />,
+            icon: <Star aria-hidden='true' sx={{ fontSize: 24 }} />,
             color: ACCENT,
             value: stats.rating.toFixed(1),
             label: t('profile.ratings'),
@@ -291,6 +300,17 @@ const Profile: FunctionComponent = () => {
     ];
 
     const dir = handleRTL();
+    const fullName = `${user.name.first} ${user.name.last}`.trim();
+    const shareLabel = t('common.share') as string;
+    const logoutLabel = t('logout') as string;
+
+    const pillButtonSx = {
+        color: 'inherit',
+        border: '1px solid',
+        borderColor: alpha('#fff', 0.2),
+    } as const;
+
+    const activityList = user.activity?.slice(-5).reverse() ?? [];
 
     return (
         <>
@@ -374,14 +394,13 @@ const Profile: FunctionComponent = () => {
                                     {t('profile.membershipCard')}
                                 </Typography>
                                 <Stack direction='row' gap={1}>
-                                    <Tooltip title={t('common.share')}>
+                                    <Tooltip title={shareLabel}>
                                         <IconButton
                                             onClick={handleShareProfile}
                                             size='small'
+                                            aria-label={shareLabel}
                                             sx={{
-                                                color: 'inherit',
-                                                border: '1px solid',
-                                                borderColor: alpha('#fff', 0.2),
+                                                ...pillButtonSx,
                                                 '&:hover': {
                                                     borderColor: alpha(
                                                         '#272aee',
@@ -390,24 +409,29 @@ const Profile: FunctionComponent = () => {
                                                 },
                                             }}
                                         >
-                                            <Share fontSize='small' />
+                                            <Share
+                                                fontSize='small'
+                                                aria-hidden='true'
+                                            />
                                         </IconButton>
                                     </Tooltip>
-                                    <Tooltip title={t('logout') as string}>
+                                    <Tooltip title={logoutLabel}>
                                         <IconButton
                                             onClick={handleLogout}
                                             size='small'
+                                            aria-label={logoutLabel}
                                             sx={{
-                                                color: 'inherit',
-                                                border: '1px solid',
-                                                borderColor: alpha('#fff', 0.2),
+                                                ...pillButtonSx,
                                                 '&:hover': {
                                                     borderColor: 'error.main',
                                                     color: 'error.light',
                                                 },
                                             }}
                                         >
-                                            <Logout fontSize='small' />
+                                            <Logout
+                                                fontSize='small'
+                                                aria-hidden='true'
+                                            />
                                         </IconButton>
                                     </Tooltip>
                                 </Stack>
@@ -450,6 +474,10 @@ const Profile: FunctionComponent = () => {
                                             title={t('profile.verifiedAccount')}
                                         >
                                             <Box
+                                                role='img'
+                                                aria-label={t(
+                                                    'profile.verifiedAccount',
+                                                )}
                                                 sx={{
                                                     position: 'absolute',
                                                     bottom: -8,
@@ -477,6 +505,7 @@ const Profile: FunctionComponent = () => {
                                                     }}
                                                 >
                                                     <VerifiedUser
+                                                        aria-hidden='true'
                                                         sx={{
                                                             fontSize: 18,
                                                             color: '#fff',
@@ -494,6 +523,7 @@ const Profile: FunctionComponent = () => {
                                 >
                                     <Typography
                                         variant='h4'
+                                        component='h1'
                                         fontWeight={800}
                                         gutterBottom
                                         sx={{
@@ -503,7 +533,7 @@ const Profile: FunctionComponent = () => {
                                             },
                                         }}
                                     >
-                                        {user.name.first} {user.name.last}
+                                        {fullName}
                                     </Typography>
                                     <Stack
                                         direction='row'
@@ -519,7 +549,7 @@ const Profile: FunctionComponent = () => {
                                     >
                                         <Typography
                                             variant='body2'
-                                            sx={{ opacity: 0.8 }}
+                                            sx={{ opacity: 0.9 }}
                                         >
                                             @
                                             {user.slug ||
@@ -556,7 +586,7 @@ const Profile: FunctionComponent = () => {
                                                     : alpha('#fff', 0.1),
                                                 color: user.status
                                                     ? '#4ade80'
-                                                    : alpha('#fff', 0.6),
+                                                    : alpha('#fff', 0.8),
                                             }}
                                         />
                                     </Stack>
@@ -570,7 +600,8 @@ const Profile: FunctionComponent = () => {
                                             >
                                                 <Email
                                                     fontSize='small'
-                                                    sx={{ opacity: 0.6 }}
+                                                    aria-hidden='true'
+                                                    sx={{ opacity: 0.8 }}
                                                 />
                                                 <Typography variant='body2'>
                                                     {user.email}
@@ -585,7 +616,8 @@ const Profile: FunctionComponent = () => {
                                             >
                                                 <Phone
                                                     fontSize='small'
-                                                    sx={{ opacity: 0.6 }}
+                                                    aria-hidden='true'
+                                                    sx={{ opacity: 0.8 }}
                                                 />
                                                 <Typography variant='body2'>
                                                     {user.phone.phone_1}
@@ -600,13 +632,15 @@ const Profile: FunctionComponent = () => {
                                             >
                                                 <LocationOn
                                                     fontSize='small'
-                                                    sx={{ opacity: 0.6 }}
+                                                    aria-hidden='true'
+                                                    sx={{ opacity: 0.8 }}
                                                 />
                                                 <Typography variant='body2'>
                                                     {user.address.street}،{' '}
                                                     {user.address.city}
-                                                    {user.address.houseNumber &&
-                                                        `، رقم ${user.address.houseNumber}`}
+                                                    {user.address.houseNumber
+                                                        ? `، رقم ${user.address.houseNumber}`
+                                                        : ''}
                                                 </Typography>
                                             </Box>
                                         )}
@@ -618,7 +652,8 @@ const Profile: FunctionComponent = () => {
                                             >
                                                 <CalendarToday
                                                     fontSize='small'
-                                                    sx={{ opacity: 0.6 }}
+                                                    aria-hidden='true'
+                                                    sx={{ opacity: 0.8 }}
                                                 />
                                                 <Typography variant='body2'>
                                                     {t('profile.memberSince')} :{' '}
@@ -641,9 +676,7 @@ const Profile: FunctionComponent = () => {
                             }}
                         >
                             <Grid container>
-                                {statItems.map((s, i) => {
-                                    const totalCells = statItems.length + 1;
-                                    const isLast = i === totalCells - 1;
+                                {statItems.map((s) => {
                                     const content = (
                                         <Box
                                             sx={{
@@ -679,6 +712,7 @@ const Profile: FunctionComponent = () => {
                                             </Box>
                                             <Typography
                                                 variant='h5'
+                                                component='p'
                                                 fontWeight={800}
                                             >
                                                 {s.value}
@@ -696,9 +730,7 @@ const Profile: FunctionComponent = () => {
                                             key={s.label}
                                             size={{ xs: 6, sm: 3 }}
                                             sx={{
-                                                borderInlineEnd: !isLast
-                                                    ? '1px solid'
-                                                    : 'none',
+                                                borderInlineEnd: '1px solid',
                                                 borderColor: 'divider',
                                             }}
                                         >
@@ -753,6 +785,8 @@ const Profile: FunctionComponent = () => {
                                                     value={100}
                                                     size={64}
                                                     thickness={4}
+                                                    aria-hidden='true'
+                                                    role='presentation'
                                                     sx={{
                                                         color: alpha(
                                                             completionColor,
@@ -768,6 +802,9 @@ const Profile: FunctionComponent = () => {
                                                     }
                                                     size={64}
                                                     thickness={4}
+                                                    aria-label={t(
+                                                        'profile.completed',
+                                                    )}
                                                     sx={{
                                                         color: completionColor,
                                                     }}
@@ -817,9 +854,12 @@ const Profile: FunctionComponent = () => {
                             <Tabs
                                 value={activeTab}
                                 onChange={handleTabChange}
+                                aria-label={t('profile.title')}
                                 variant={isMobile ? 'scrollable' : 'standard'}
                                 scrollButtons={isMobile ? 'auto' : false}
-                                TabIndicatorProps={{ sx: { display: 'none' } }}
+                                slotProps={{
+                                    indicator: { sx: { display: 'none' } },
+                                }}
                                 sx={{
                                     p: 0.75,
                                     bgcolor: (th) =>
@@ -915,17 +955,21 @@ const Profile: FunctionComponent = () => {
                                                                 .primary.main,
                                                         }}
                                                     >
-                                                        <HistoryIcon fontSize='small' />
+                                                        <HistoryIcon
+                                                            fontSize='small'
+                                                            aria-hidden='true'
+                                                        />
                                                     </Box>
                                                     <Typography
                                                         variant='h6'
+                                                        component='h2'
                                                         fontWeight={800}
                                                     >
                                                         {t('activity.title')}
                                                     </Typography>
                                                 </Stack>
 
-                                                {user.activity?.length ? (
+                                                {activityList.length ? (
                                                     <Box
                                                         sx={{
                                                             position:
@@ -933,6 +977,7 @@ const Profile: FunctionComponent = () => {
                                                         }}
                                                     >
                                                         <Box
+                                                            aria-hidden='true'
                                                             sx={{
                                                                 position:
                                                                     'absolute',
@@ -944,92 +989,88 @@ const Profile: FunctionComponent = () => {
                                                             }}
                                                         />
                                                         <Stack spacing={2.5}>
-                                                            {user.activity
-                                                                .slice(-5)
-                                                                .reverse()
-                                                                .map(
-                                                                    (
-                                                                        timestamp,
-                                                                        index,
-                                                                    ) => (
+                                                            {activityList.map(
+                                                                (
+                                                                    timestamp,
+                                                                    index,
+                                                                ) => (
+                                                                    <Box
+                                                                        key={`${timestamp}-${index}`}
+                                                                        sx={{
+                                                                            position:
+                                                                                'relative',
+                                                                            paddingInlineStart:
+                                                                                '38px',
+                                                                        }}
+                                                                    >
                                                                         <Box
-                                                                            key={
-                                                                                index
-                                                                            }
+                                                                            aria-hidden='true'
                                                                             sx={{
                                                                                 position:
-                                                                                    'relative',
-                                                                                paddingInlineStart:
-                                                                                    '38px',
+                                                                                    'absolute',
+                                                                                insetInlineStart: 6,
+                                                                                top: 2,
+                                                                                width: 20,
+                                                                                height: 20,
+                                                                                borderRadius:
+                                                                                    '50%',
+                                                                                display:
+                                                                                    'flex',
+                                                                                alignItems:
+                                                                                    'center',
+                                                                                justifyContent:
+                                                                                    'center',
+                                                                                bgcolor:
+                                                                                    index ===
+                                                                                    0
+                                                                                        ? ACCENT
+                                                                                        : theme
+                                                                                              .palette
+                                                                                              .background
+                                                                                              .paper,
+                                                                                border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
+                                                                                boxShadow:
+                                                                                    index ===
+                                                                                    0
+                                                                                        ? `0 0 0 4px ${alpha(ACCENT, 0.15)}`
+                                                                                        : 'none',
                                                                             }}
                                                                         >
-                                                                            <Box
-                                                                                sx={{
-                                                                                    position:
-                                                                                        'absolute',
-                                                                                    insetInlineStart: 6,
-                                                                                    top: 2,
-                                                                                    width: 20,
-                                                                                    height: 20,
-                                                                                    borderRadius:
-                                                                                        '50%',
-                                                                                    display:
-                                                                                        'flex',
-                                                                                    alignItems:
-                                                                                        'center',
-                                                                                    justifyContent:
-                                                                                        'center',
-                                                                                    bgcolor:
-                                                                                        index ===
-                                                                                        0
-                                                                                            ? ACCENT
-                                                                                            : theme
-                                                                                                  .palette
-                                                                                                  .background
-                                                                                                  .paper,
-                                                                                    border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
-                                                                                    boxShadow:
-                                                                                        index ===
-                                                                                        0
-                                                                                            ? `0 0 0 4px ${alpha(ACCENT, 0.15)}`
-                                                                                            : 'none',
-                                                                                }}
-                                                                            >
-                                                                                {index ===
-                                                                                    0 && (
-                                                                                    <Box
-                                                                                        sx={{
-                                                                                            width: 6,
-                                                                                            height: 6,
-                                                                                            borderRadius:
-                                                                                                '50%',
-                                                                                            bgcolor:
-                                                                                                '#fff',
-                                                                                        }}
-                                                                                    />
-                                                                                )}
-                                                                            </Box>
-                                                                            <Typography
-                                                                                variant='body2'
-                                                                                fontWeight={
-                                                                                    600
-                                                                                }
-                                                                            >
-                                                                                {getRelativeDate(
-                                                                                    timestamp,
-                                                                                )}
-                                                                            </Typography>
-                                                                            <Typography
-                                                                                variant='caption'
-                                                                                color='text.secondary'
-                                                                            >
-                                                                                {t(
-                                                                                    'activity.lastLogin',
-                                                                                )}
-                                                                            </Typography>
+                                                                            {index ===
+                                                                                0 && (
+                                                                                <Box
+                                                                                    sx={{
+                                                                                        width: 6,
+                                                                                        height: 6,
+                                                                                        borderRadius:
+                                                                                            '50%',
+                                                                                        bgcolor:
+                                                                                            '#fff',
+                                                                                    }}
+                                                                                />
+                                                                            )}
                                                                         </Box>
-                                                                    ),
-                                                                )}
+                                                                        <Typography
+                                                                            variant='body2'
+                                                                            fontWeight={
+                                                                                600
+                                                                            }
+                                                                        >
+                                                                            {getRelativeDate(
+                                                                                timestamp,
+                                                                            )}
+                                                                        </Typography>
+                                                                        <Typography
+                                                                            variant='caption'
+                                                                            color='text.secondary'
+                                                                        >
+                                                                            {t(
+                                                                                'activity.lastLogin',
+                                                                            )}
+                                                                        </Typography>
+                                                                    </Box>
+                                                                ),
+                                                            )}
                                                         </Stack>
                                                     </Box>
                                                 ) : (
@@ -1065,7 +1106,7 @@ const Profile: FunctionComponent = () => {
                                                                 color: 'text.secondary',
                                                             }}
                                                         >
-                                                            <HistoryIcon />
+                                                            <HistoryIcon aria-hidden='true' />
                                                         </Box>
                                                         <Typography
                                                             color='text.secondary'
@@ -1091,6 +1132,7 @@ const Profile: FunctionComponent = () => {
                                 <CardContent>
                                     <Typography
                                         variant='h6'
+                                        component='h2'
                                         gutterBottom
                                         fontWeight={800}
                                     >
@@ -1104,6 +1146,7 @@ const Profile: FunctionComponent = () => {
                                             >
                                                 <Typography
                                                     variant='subtitle1'
+                                                    component='h3'
                                                     fontWeight={700}
                                                     gutterBottom
                                                 >
@@ -1114,7 +1157,7 @@ const Profile: FunctionComponent = () => {
                                                         disabled
                                                         variant='outlined'
                                                         startIcon={
-                                                            <VisibilityIcon />
+                                                            <VisibilityIcon aria-hidden='true' />
                                                         }
                                                         sx={{
                                                             justifyContent:
@@ -1130,7 +1173,9 @@ const Profile: FunctionComponent = () => {
                                                     <Button
                                                         disabled
                                                         variant='outlined'
-                                                        startIcon={<Lock />}
+                                                        startIcon={
+                                                            <Lock aria-hidden='true' />
+                                                        }
                                                         sx={{
                                                             justifyContent:
                                                                 'flex-start',
@@ -1145,7 +1190,9 @@ const Profile: FunctionComponent = () => {
                                                     <Button
                                                         disabled
                                                         variant='outlined'
-                                                        startIcon={<Email />}
+                                                        startIcon={
+                                                            <Email aria-hidden='true' />
+                                                        }
                                                         sx={{
                                                             justifyContent:
                                                                 'flex-start',
@@ -1184,6 +1231,7 @@ const Profile: FunctionComponent = () => {
                             <Button
                                 variant='outlined'
                                 onClick={handleShowIdit}
+                                aria-expanded={showEdit}
                                 sx={{ borderRadius: 999, px: 3 }}
                             >
                                 {showEdit

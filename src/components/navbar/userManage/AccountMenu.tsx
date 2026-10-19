@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import RoleType from '../../../interfaces/UserType';
 import handleRTL from '../../../locales/handleRTL';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import BlockIcon from '@mui/icons-material/Block';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -66,7 +67,13 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
         return t('accountMenu.client') || 'Client';
     };
 
-    // Fixed: Pass theme as parameter
+    const userFullName =
+        auth?.name?.first && auth?.name?.last
+            ? `${auth.name.first} ${auth.name.last}`
+            : auth?.name?.first || 'User';
+
+    const accountLabel = t('account-management') || 'Account Settings';
+
     const menuItemSx = () => ({
         py: 1.25,
         px: 2,
@@ -78,13 +85,25 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
         },
     });
 
+    const sectionTitleSx = {
+        display: 'block',
+        px: 2,
+        pt: 1,
+        pb: 0.5,
+        color: 'text.secondary',
+        fontWeight: 600,
+        letterSpacing: 0.5,
+        textTransform: 'uppercase',
+    } as const;
+
     return (
         <>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Tooltip title={t('account-management') || 'Account Settings'}>
+                <Tooltip title={accountLabel}>
                     <IconButton
                         onClick={handleClick}
                         size='small'
+                        aria-label={accountLabel}
                         aria-controls={open ? 'account-menu' : undefined}
                         aria-haspopup='true'
                         aria-expanded={open ? 'true' : undefined}
@@ -101,6 +120,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         }}
                     >
                         <Avatar
+                            alt={userFullName}
                             sx={{
                                 width: 32,
                                 height: 32,
@@ -124,20 +144,21 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 open={open}
                 onClose={handleClose}
                 elevation={8}
-                PaperProps={{
-                    elevation: 8,
-                    sx: {
-                        mt: 1.5,
-                        borderRadius: 2,
-                        minWidth: 220,
-
-                        maxHeight: 'calc(100dvh - 96px)',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                        overscrollBehavior: 'contain',
-                        WebkitOverflowScrolling: 'touch',
-                        boxShadow:
-                            '0 10px 40px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.05)',
+                slotProps={{
+                    paper: {
+                        elevation: 8,
+                        sx: {
+                            mt: 1.5,
+                            borderRadius: 2,
+                            minWidth: 220,
+                            maxHeight: 'calc(100dvh - 96px)',
+                            overflowY: 'auto',
+                            overflowX: 'hidden',
+                            overscrollBehavior: 'contain',
+                            WebkitOverflowScrolling: 'touch',
+                            boxShadow:
+                                '0 10px 40px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.05)',
+                        },
                     },
                 }}
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
@@ -155,6 +176,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     }}
                 >
                     <Avatar
+                        alt={userFullName}
                         sx={{
                             width: 40,
                             height: 40,
@@ -171,13 +193,12 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     <Box sx={{ overflow: 'hidden' }}>
                         <Typography
                             variant='subtitle2'
+                            component='p'
                             fontWeight={600}
                             noWrap
                             sx={{ lineHeight: 1.3 }}
                         >
-                            {auth?.name?.first && auth?.name?.last
-                                ? `${auth.name.first} ${auth.name.last}`
-                                : auth?.name?.first || 'User'}
+                            {userFullName}
                         </Typography>
 
                         <Typography
@@ -189,7 +210,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                             {auth?.email || ''}
                         </Typography>
 
-                        {/* Role badge — shown for all roles */}
+                        {/* Role badge */}
                         <Typography
                             variant='caption'
                             sx={{
@@ -224,6 +245,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
                         <PersonOutlineIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'text.secondary' }}
                         />
                     </ListItemIcon>
@@ -236,7 +258,8 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     sx={menuItemSx()}
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
-                        <PersonOutlineIcon
+                        <BlockIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'text.secondary' }}
                         />
                     </ListItemIcon>
@@ -251,16 +274,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     <Typography
                         key='privileged-title'
                         variant='caption'
-                        sx={{
-                            display: 'block',
-                            px: 2,
-                            pt: 1,
-                            pb: 0.5,
-                            color: 'text.secondary',
-                            fontWeight: 600,
-                            letterSpacing: 0.5,
-                            textTransform: 'uppercase',
-                        }}
+                        sx={sectionTitleSx}
                     >
                         {getRoleLabel()}
                     </Typography>,
@@ -272,6 +286,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     >
                         <ListItemIcon sx={{ minWidth: 36 }}>
                             <EmailIcon
+                                aria-hidden='true'
                                 sx={{ fontSize: 20, color: 'text.secondary' }}
                             />
                         </ListItemIcon>
@@ -288,6 +303,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     >
                         <ListItemIcon sx={{ minWidth: 36 }}>
                             <SettingsIcon
+                                aria-hidden='true'
                                 sx={{ fontSize: 20, color: 'text.secondary' }}
                             />
                         </ListItemIcon>
@@ -304,6 +320,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                     >
                         <ListItemIcon sx={{ minWidth: 36 }}>
                             <DashboardIcon
+                                aria-hidden='true'
                                 sx={{ fontSize: 20, color: 'text.secondary' }}
                             />
                         </ListItemIcon>
@@ -315,22 +332,9 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 )}
 
                 {/* Ads (available to all users) */}
-                {isPrivileged && <Divider />}
-                {!isPrivileged && <Divider />}
+                <Divider />
 
-                <Typography
-                    variant='caption'
-                    sx={{
-                        display: 'block',
-                        px: 2,
-                        pt: 1,
-                        pb: 0.5,
-                        color: 'text.secondary',
-                        fontWeight: 600,
-                        letterSpacing: 0.5,
-                        textTransform: 'uppercase',
-                    }}
-                >
+                <Typography variant='caption' sx={sectionTitleSx}>
                     {t('accountMenu.ads') || 'Ads'}
                 </Typography>
 
@@ -341,6 +345,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
                         <DashboardIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'text.secondary' }}
                         />
                     </ListItemIcon>
@@ -355,6 +360,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
                         <DashboardIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'text.secondary' }}
                         />
                     </ListItemIcon>
@@ -368,11 +374,12 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
                         <DashboardIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'text.secondary' }}
                         />
                     </ListItemIcon>
                     <Typography variant='body2'>
-                        {t('pages.pending.title', 'pening posts')}
+                        {t('pages.pending.title', 'المنشورات قيد المراجعة')}
                     </Typography>
                 </MenuItem>
 
@@ -387,15 +394,13 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
                         ...menuItemSx(),
                         '&:hover': {
                             bgcolor: alpha(theme.palette.error.main, 0.08),
-                            transform:
-                                direction === 'rtl'
-                                    ? 'translateX(4px)'
-                                    : 'translateX(4px)',
+                            transform: 'translateX(4px)',
                         },
                     }}
                 >
                     <ListItemIcon sx={{ minWidth: 36 }}>
                         <LogoutIcon
+                            aria-hidden='true'
                             sx={{ fontSize: 20, color: 'error.main' }}
                         />
                     </ListItemIcon>

@@ -24,8 +24,6 @@ import axios from 'axios';
 import { useUser } from '../../hooks/useUSer';
 import handleRTL from '../../locales/handleRTL';
 import AlertDialogs from '../../atoms/toasts/Sweetalert';
-
-// ✅ استخدم api instance بدل axios مباشرة
 import api from '../../services/api';
 
 interface BlockedUser {
@@ -69,8 +67,6 @@ const BlockedUsers: FunctionComponent = () => {
             setLoading(true);
             setError('');
 
-            // ✅ لم نعد نتحقق من token — الكوكي تُرسَل تلقائياً
-            // ✅ استخدم api instance بدل axios
             const response = await api.get('/blocks/my');
 
             setUsers(response.data?.blocks || []);
@@ -95,10 +91,6 @@ const BlockedUsers: FunctionComponent = () => {
         }
     }, [t]);
 
-    // ============================================
-    // Initial load
-    // ============================================
-
     useEffect(() => {
         if (auth?._id) {
             fetchBlockedUsers();
@@ -106,7 +98,7 @@ const BlockedUsers: FunctionComponent = () => {
     }, [auth?._id, fetchBlockedUsers]);
 
     // ============================================
-    // Get user name
+    // Helpers
     // ============================================
 
     const getUserName = useCallback(
@@ -123,20 +115,12 @@ const BlockedUsers: FunctionComponent = () => {
         [t],
     );
 
-    // ============================================
-    // Get initials
-    // ============================================
-
     const getInitials = useCallback((user: BlockedUser) => {
         const first = user.name?.first?.[0] || '';
         const last = user.name?.last?.[0] || '';
 
         return `${first}${last}`.toUpperCase() || 'U';
     }, []);
-
-    // ============================================
-    // Format date
-    // ============================================
 
     const formatDate = useCallback((date?: string) => {
         if (!date) return '';
@@ -151,10 +135,6 @@ const BlockedUsers: FunctionComponent = () => {
             day: 'numeric',
         }).format(parsedDate);
     }, []);
-
-    // ============================================
-    // Expiration text
-    // ============================================
 
     const getExpirationText = useCallback(
         (user: BlockedUser) => {
@@ -179,7 +159,6 @@ const BlockedUsers: FunctionComponent = () => {
                 setUnblockingId(userId);
                 setError('');
 
-                // ✅ استخدم api instance — بدون token يدوي
                 await api.delete(`/blocks/${userId}`);
 
                 setUsers((prev) => prev.filter((user) => user._id !== userId));
@@ -215,26 +194,22 @@ const BlockedUsers: FunctionComponent = () => {
                 return false;
             } finally {
                 setUnblockingId(null);
-                setConfirmUnblockId(null);
             }
         },
         [t],
     );
 
-    // ============================================
-    // Selected user
-    // ============================================
-
     const selectedUser = users.find((user) => user._id === confirmUnblockId);
-
-    // ============================================
-    // Confirm unblock
-    // ============================================
 
     const handleConfirmUnblock = useCallback(async () => {
         if (!confirmUnblockId) return;
 
-        await handleUnblock(confirmUnblockId);
+        const ok = await handleUnblock(confirmUnblockId);
+
+        // AlertDialogs يعرض رسالة الخطأ لما نرمي exception
+        if (!ok) {
+            throw new Error('Unblock failed');
+        }
     }, [confirmUnblockId, handleUnblock]);
 
     // ============================================
@@ -252,7 +227,9 @@ const BlockedUsers: FunctionComponent = () => {
                     justifyContent: 'center',
                 }}
             >
-                <CircularProgress />
+                <CircularProgress
+                    aria-label={t('common.loading', 'جاري التحميل')}
+                />
             </Box>
         );
     }
@@ -281,9 +258,13 @@ const BlockedUsers: FunctionComponent = () => {
             >
                 <Box>
                     <Stack direction='row' alignItems='center' spacing={1}>
-                        <BlockIcon color='error' />
+                        <BlockIcon color='error' aria-hidden='true' />
 
-                        <Typography variant='h5' fontWeight={700}>
+                        <Typography
+                            variant='h5'
+                            component='h1'
+                            fontWeight={700}
+                        >
                             {t('modals.blockedUsers.title') || 'Blocked Users'}
                         </Typography>
                     </Stack>
@@ -303,8 +284,11 @@ const BlockedUsers: FunctionComponent = () => {
                         <IconButton
                             onClick={fetchBlockedUsers}
                             disabled={loading || Boolean(unblockingId)}
+                            aria-label={
+                                t('modals.blockedUsers.refresh') || 'Refresh'
+                            }
                         >
-                            <RefreshIcon />
+                            <RefreshIcon aria-hidden='true' />
                         </IconButton>
                     </span>
                 </Tooltip>
@@ -316,6 +300,11 @@ const BlockedUsers: FunctionComponent = () => {
                     severity='error'
                     sx={{ mb: 3 }}
                     onClose={() => setError('')}
+                    slotProps={{
+                        closeButton: {
+                            'aria-label': t('common.close', 'إغلاق'),
+                        },
+                    }}
                 >
                     {error}
                 </Alert>
@@ -333,14 +322,20 @@ const BlockedUsers: FunctionComponent = () => {
                 >
                     <CardContent sx={{ py: 7, textAlign: 'center' }}>
                         <BlockIcon
+                            aria-hidden='true'
                             sx={{
                                 fontSize: 60,
-                                color: 'text.disabled',
+                                color: 'text.secondary',
                                 mb: 2,
                             }}
                         />
 
-                        <Typography variant='h6' fontWeight={600} gutterBottom>
+                        <Typography
+                            variant='h6'
+                            component='h2'
+                            fontWeight={600}
+                            gutterBottom
+                        >
                             {t('modals.blockedUsers.empty') ||
                                 'No blocked users'}
                         </Typography>
@@ -352,7 +347,6 @@ const BlockedUsers: FunctionComponent = () => {
                     </CardContent>
                 </Card>
             ) : (
-                /* Users */
                 <Stack spacing={1.5}>
                     {users.map((user) => {
                         const userName = getUserName(user);
@@ -398,6 +392,7 @@ const BlockedUsers: FunctionComponent = () => {
                                                 src={
                                                     user.image?.url || undefined
                                                 }
+                                                alt={userName}
                                                 sx={{
                                                     width: 52,
                                                     height: 52,
@@ -482,9 +477,13 @@ const BlockedUsers: FunctionComponent = () => {
                                                 isUnblocking ? (
                                                     <CircularProgress
                                                         size={18}
+                                                        aria-label={t(
+                                                            'modals.blockedUsers.unblocking',
+                                                            'جاري إلغاء الحظر...',
+                                                        )}
                                                     />
                                                 ) : (
-                                                    <PersonRemoveIcon />
+                                                    <PersonRemoveIcon aria-hidden='true' />
                                                 )
                                             }
                                             disabled={Boolean(unblockingId)}
@@ -515,7 +514,7 @@ const BlockedUsers: FunctionComponent = () => {
 
             {/* Confirm Dialog */}
             <AlertDialogs
-                show={Boolean(confirmUnblockId) && !unblockingId}
+                show={Boolean(confirmUnblockId)}
                 title={
                     t('modals.blockedUsers.confirmUnblockTitle') ||
                     'Unblock User'
@@ -535,12 +534,12 @@ const BlockedUsers: FunctionComponent = () => {
                     t('modals.blockedUsers.unblockedSuccessfully') ||
                     'User unblocked successfully'
                 }
+                errorText={
+                    t('modals.blockedUsers.unblockError') ||
+                    'Failed to unblock user'
+                }
                 onConfirm={handleConfirmUnblock}
-                onHide={() => {
-                    if (!unblockingId) {
-                        setConfirmUnblockId(null);
-                    }
-                }}
+                onHide={() => setConfirmUnblockId(null)}
             />
         </Box>
     );
