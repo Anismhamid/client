@@ -1,31 +1,24 @@
-# robots.txt - محسن لتحسين SEO
-
-# السماح لجميع محركات البحث
 User-agent: *
 Allow: /
 
-# منع الصفحات الخاصة
-Disallow: /profile/
-Disallow: /messages/
-Disallow: /admin-settings/
-Disallow: /users-management/
-Disallow: /cart/
-Disallow: /favorites/
-Disallow: /login/
-Disallow: /register/
-Disallow: /reset-password/
-Disallow: /forgot-password/
+Disallow: /profile
+Disallow: /messages
+Disallow: /admin-settings
+Disallow: /users-management
+Disallow: /favorites
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /admin
+Disallow: /blog/manage
+Disallow: /blog/new
+Disallow: /blog/edit/
+
 Disallow: /api/
-Disallow: /admin/
+Allow: /api/blog/
+Allow: /api/posts/
+Disallow: /api/blog/admin/
 
-# منع الملفات غير المهمة
-Disallow: /*.json$
-Disallow: /*.xml$
-Disallow: /*.txt$
-Disallow: /*.log$
-
-# تأخير الزحف للصفحات الثقيلة
-Crawl-delay: 1
-
-# موقع Sitemap
-Sitemap: https://client-qqq1.vercel.app/api/sitemap/sitemap.xml
+Sitemap: https://client-qqq1.vercel.app/sitemap/sitemap.xml
+Sitemap: https://client-qqq1.vercel.app/sitemap/blog.xml

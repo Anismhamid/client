@@ -28,6 +28,7 @@ import {
     Button,
     ListItemIcon,
     ListItemText,
+    Tooltip,
 } from '@mui/material';
 
 import SendIcon from '@mui/icons-material/Send';
@@ -923,6 +924,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                 flexDirection: 'column',
                 bgcolor: 'background.paper',
                 position: 'relative',
+                overflow: 'hidden',
             }}
         >
             {/* ================================================= */}
@@ -944,6 +946,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     vertical: 'top',
                     horizontal: dir === 'rtl' ? 'left' : 'right',
                 }}
+                TransitionComponent={Fade}
+                transitionDuration={150}
                 slotProps={{
                     root: {
                         sx: {
@@ -955,13 +959,21 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         sx: {
                             minWidth: 160,
 
-                            borderRadius: 2,
+                            mt: 0.5,
+
+                            borderRadius: 2.5,
 
                             boxShadow: 6,
 
                             overflow: 'hidden',
 
                             zIndex: 999999,
+
+                            '& .MuiMenuItem-root': {
+                                fontSize: '0.875rem',
+                                py: 1,
+                                gap: 1,
+                            },
                         },
                     },
                 }}
@@ -1051,19 +1063,45 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                     overflowY: 'auto',
 
-                    p: 2,
+                    p: { xs: 1.5, sm: 2.5 },
 
-                    pb: 15,
+                    pb: 3,
 
                     display: 'flex',
 
                     flexDirection: 'column',
 
-                    gap: 1.5,
+                    gap: 1,
 
                     overflowAnchor: 'auto',
 
                     overscrollBehaviorY: 'contain',
+
+                    background: (theme) =>
+                        theme.palette.mode === 'dark'
+                            ? `radial-gradient(circle at 20% 20%, ${theme.palette.primary.dark}1A, transparent 45%),
+                               radial-gradient(circle at 80% 80%, ${theme.palette.secondary.dark}1A, transparent 45%),
+                               ${theme.palette.background.default}`
+                            : `radial-gradient(circle at 20% 20%, ${theme.palette.primary.light}25, transparent 45%),
+                               radial-gradient(circle at 80% 80%, ${theme.palette.secondary.light}25, transparent 45%),
+                               ${theme.palette.background.default}`,
+
+                    '&::-webkit-scrollbar': { width: 6 },
+
+                    '&::-webkit-scrollbar-track': { bgcolor: 'transparent' },
+
+                    '&::-webkit-scrollbar-thumb': {
+                        bgcolor: 'divider',
+                        borderRadius: 3,
+                        '&:hover': { bgcolor: 'text.disabled' },
+                    },
+
+                    '@media (hover: hover)': {
+                        '& .message-row:not(:hover) .message-menu-button': {
+                            opacity: 0,
+                            transform: 'scale(0.85)',
+                        },
+                    },
                 }}
             >
                 {/* PAGINATION LOADER */}
@@ -1110,11 +1148,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                                     position: 'relative',
 
-                                    maxWidth: '85%',
+                                    maxWidth: { xs: '88%', sm: '75%' },
                                 }}
                             >
                                 <Paper
-                                    elevation={isMe ? 0 : 1}
+                                    elevation={0}
                                     sx={{
                                         p: '10px 14px',
 
@@ -1124,32 +1162,53 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                                         display: 'flex',
 
-                                        gap: 1.5,
+                                        flexDirection: 'column',
 
-                                        flexDirection: isMe
-                                            ? 'row'
-                                            : 'row-reverse',
+                                        gap: 0.5,
+
+                                        position: 'relative',
+
+                                        wordBreak: 'break-word',
 
                                         borderRadius: isMe
-                                            ? '12px 4px 18px 18px'
-                                            : '4px 12px 18px 18px',
+                                            ? '18px 18px 4px 18px'
+                                            : '18px 18px 18px 4px',
 
                                         background: isMe
                                             ? (theme) =>
-                                                  `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`
-                                            : undefined,
+                                                  theme.palette.mode === 'dark'
+                                                      ? `linear-gradient(135deg, ${theme.palette.primary.dark}, ${theme.palette.primary.main})`
+                                                      : `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.light})`
+                                            : (theme) =>
+                                                  theme.palette.mode === 'dark'
+                                                      ? theme.palette.grey[800]
+                                                      : theme.palette.background
+                                                            .paper,
 
-                                        bgcolor: !isMe
-                                            ? 'background.paper'
-                                            : undefined,
+                                        color: isMe
+                                            ? 'primary.contrastText'
+                                            : 'text.primary',
+
+                                        boxShadow: isMe
+                                            ? (theme) =>
+                                                  `0 2px 8px ${theme.palette.primary.main}30`
+                                            : (theme) =>
+                                                  `0 1px 3px ${theme.palette.common.black}0F`,
 
                                         border: !isMe ? '1px solid' : 'none',
 
                                         borderColor: 'divider',
 
-                                        wordBreak: 'break-word',
+                                        transition:
+                                            'box-shadow 0.2s ease, transform 0.15s ease',
 
-                                        position: 'relative',
+                                        '&:hover': {
+                                            boxShadow: isMe
+                                                ? (theme) =>
+                                                      `0 4px 14px ${theme.palette.primary.main}45`
+                                                : (theme) =>
+                                                      `0 3px 10px ${theme.palette.common.black}18`,
+                                        },
                                     }}
                                 >
                                     {/* ================================= */}
@@ -1182,33 +1241,42 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                             sx={{
                                                 position: 'absolute',
 
-                                                top: -10,
+                                                top: -20,
 
-                                                right: -10,
+                                                [dir === 'rtl'
+                                                    ? 'left'
+                                                    : 'right']:'90%',
 
-                                                width: 30,
+                                                width: 28,
 
-                                                height: 30,
+                                                height: 28,
 
                                                 bgcolor: 'background.paper',
+
+                                                border: '1px solid',
+
+                                                borderColor: 'divider',
 
                                                 boxShadow: 2,
 
                                                 zIndex: 100,
 
-                                                opacity: {
-                                                    xs: 1,
-                                                    sm: 1,
-                                                },
+                                                // 👇 ظاهر دايماً
+                                                opacity: 1,
+
+                                                transform: 'scale(1)',
 
                                                 transition:
-                                                    'opacity 0.15s ease',
+                                                    'opacity 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease',
 
                                                 '&:hover': {
                                                     bgcolor: 'action.hover',
+                                                    boxShadow: 3,
+                                                    transform: 'scale(1.08)',
                                                 },
 
                                                 '& .MuiSvgIcon-root': {
+                                                    fontSize: 16,
                                                     color: 'text.secondary',
                                                 },
                                             }}
@@ -1349,8 +1417,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                     )}
                                                     style={{
                                                         maxWidth: '100%',
-                                                        borderRadius: 4,
+                                                        maxHeight: 260,
+                                                        borderRadius: 10,
                                                         cursor: 'pointer',
+                                                        objectFit: 'cover',
                                                     }}
                                                     onClick={() =>
                                                         window.open(
@@ -1368,7 +1438,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                         gap: 1,
                                                         p: 1,
                                                         bgcolor: 'action.hover',
-                                                        borderRadius: 1,
+                                                        borderRadius: 1.5,
                                                     }}
                                                 >
                                                     <InsertDriveFileIcon aria-hidden='true' />
@@ -1414,6 +1484,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                     lineHeight: 1.5,
 
                                                     whiteSpace: 'pre-wrap',
+
+                                                    fontSize: '0.9rem',
                                                 }}
                                             >
                                                 <Linkify
@@ -1432,13 +1504,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                     component='span'
                                                     variant='caption'
                                                     sx={{
-                                                        display: 'block',
+                                                        display: 'inline-block',
 
                                                         mt: 0.25,
 
-                                                        opacity: 0.65,
+                                                        opacity: 0.7,
 
                                                         fontSize: '0.68rem',
+
+                                                        fontStyle: 'italic',
                                                     }}
                                                 >
                                                     {t('messages.edited') ||
@@ -1449,7 +1523,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     )}
 
                                     {/* ================================= */}
-                                    {/* STATUS */}
+                                    {/* STATUS + TIME (مدمجين) */}
                                     {/* ================================= */}
 
                                     {!isEditingThis && (
@@ -1457,44 +1531,58 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                             sx={{
                                                 display: 'flex',
 
-                                                alignItems: 'flex-end',
+                                                alignItems: 'center',
 
                                                 justifyContent: 'flex-end',
 
                                                 gap: 0.5,
 
-                                                mt: 0.3,
+                                                mt: 0.25,
+
+                                                minHeight: 14,
                                             }}
                                         >
-                                            {isMe && getStatusIcon(msg.status)}
+                                            <Typography
+                                                component='span'
+                                                sx={{
+                                                    fontSize: '0.65rem',
+
+                                                    opacity: isMe ? 0.8 : 0.65,
+
+                                                    color: isMe
+                                                        ? 'inherit'
+                                                        : 'text.secondary',
+
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {String(
+                                                    formatMessageTime(
+                                                        msg?.createdAt
+                                                            ? new Date(
+                                                                  msg.createdAt,
+                                                              )
+                                                            : new Date(),
+                                                    ),
+                                                )}
+                                            </Typography>
+
+                                            {isMe && (
+                                                <Box
+                                                    sx={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        '& svg': {
+                                                            fontSize: 14,
+                                                        },
+                                                    }}
+                                                >
+                                                    {getStatusIcon(msg.status)}
+                                                </Box>
+                                            )}
                                         </Box>
                                     )}
                                 </Paper>
-
-                                {/* ================================= */}
-                                {/* TIME */}
-                                {/* ================================= */}
-
-                                <Typography
-                                    variant='caption'
-                                    sx={{
-                                        color: 'text.secondary',
-
-                                        display: 'block',
-
-                                        textAlign: isMe ? 'left' : 'right',
-
-                                        mt: 0.25,
-                                    }}
-                                >
-                                    {String(
-                                        formatMessageTime(
-                                            msg?.createdAt
-                                                ? new Date(msg.createdAt)
-                                                : new Date(),
-                                        ),
-                                    )}
-                                </Typography>
                             </Box>
                         );
                     })
@@ -1510,17 +1598,62 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             sx={{
                                 alignSelf: 'flex-end',
 
-                                bgcolor: 'action.hover',
+                                bgcolor: 'background.paper',
+
+                                border: '1px solid',
+
+                                borderColor: 'divider',
 
                                 px: 1.5,
 
-                                py: 0.5,
+                                py: 0.75,
 
-                                borderRadius: 2,
+                                borderRadius: '18px 18px 18px 4px',
 
                                 maxWidth: 'fit-content',
+
+                                boxShadow: 1,
+
+                                display: 'flex',
+
+                                alignItems: 'center',
+
+                                gap: 0.75,
                             }}
                         >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    gap: 0.3,
+                                }}
+                            >
+                                {[0, 1, 2].map((i) => (
+                                    <Box
+                                        key={i}
+                                        sx={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: '50%',
+                                            bgcolor: 'text.secondary',
+                                            animation:
+                                                'typingBounce 1.2s infinite',
+                                            animationDelay: `${i * 0.15}s`,
+                                            '@keyframes typingBounce': {
+                                                '0%, 60%, 100%': {
+                                                    transform: 'translateY(0)',
+                                                    opacity: 0.4,
+                                                },
+                                                '30%': {
+                                                    transform:
+                                                        'translateY(-4px)',
+                                                    opacity: 1,
+                                                },
+                                            },
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+
                             <Typography
                                 variant='caption'
                                 sx={{
@@ -1552,20 +1685,33 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             scrollToBottom('smooth', chatContainerRef)
                         }
                         sx={{
-                            position: 'absolute',
+                            position: 'sticky',
 
-                            bottom: 70,
+                            bottom: 8,
 
-                            right: dir === 'rtl' ? 'auto' : 20,
+                            alignSelf:
+                                dir === 'rtl' ? 'flex-start' : 'flex-end',
 
-                            left: dir === 'rtl' ? 20 : 'auto',
+                            ml: dir === 'rtl' ? 1 : 'auto',
+
+                            mr: dir === 'rtl' ? 'auto' : 1,
 
                             zIndex: 10,
 
-                            boxShadow: 3,
+                            boxShadow: 4,
+
+                            width: 38,
+
+                            height: 38,
+
+                            transition: 'transform 0.15s',
+
+                            '&:hover': {
+                                transform: 'translateY(-2px)',
+                            },
                         }}
                     >
-                        <ArrowDownwardIcon />
+                        <ArrowDownwardIcon fontSize='small' />
                     </Fab>
                 </Zoom>
             </Box>
@@ -1576,13 +1722,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
             <Box
                 sx={{
-                    p: 1,
+                    p: { xs: 1, sm: 1.5 },
 
                     bgcolor: 'background.paper',
 
                     borderTop: '1px solid',
 
                     borderColor: 'divider',
+
+                    backdropFilter: 'blur(8px)',
                 }}
             >
                 <input
@@ -1598,24 +1746,51 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     sx={{
                         display: 'flex',
 
-                        alignItems: 'center',
+                        alignItems: 'flex-end',
 
                         gap: 1,
+
+                        p: 0.75,
+
+                        borderRadius: 3,
+
+                        bgcolor: 'action.hover',
+
+                        border: '1px solid',
+
+                        borderColor: 'divider',
+
+                        transition: 'border-color 0.2s, box-shadow 0.2s',
+
+                        '&:focus-within': {
+                            borderColor: 'primary.main',
+
+                            boxShadow: (theme) =>
+                                `0 0 0 3px ${theme.palette.primary.main}20`,
+                        },
                     }}
                 >
                     {/* ATTACH */}
 
-                    <IconButton
-                        color='primary'
-                        aria-label={t('messages.attachFile') || 'Attach a file'}
+                    <Tooltip
                         title={
-                            t('messages.attachFile') ||
-                            'Attach an image, PDF, or Word document'
+                            t('messages.attachmentHint') ||
+                            'Attachments: images, PDF, or Word documents'
                         }
-                        onClick={() => fileInputRef.current?.click()}
+                        arrow
                     >
-                        <AttachFileIcon />
-                    </IconButton>
+                        <IconButton
+                            color='primary'
+                            size='small'
+                            aria-label={
+                                t('messages.attachFile') || 'Attach a file'
+                            }
+                            onClick={() => fileInputRef.current?.click()}
+                            sx={{ alignSelf: 'flex-end', mb: 0.25 }}
+                        >
+                            <AttachFileIcon fontSize='small' />
+                        </IconButton>
+                    </Tooltip>
 
                     {/* INPUT */}
 
@@ -1629,19 +1804,22 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         title={t('messages.typeMessage')}
                         aria-label={t('messages.typeMessage')}
                         placeholder={t('messages.typeMessage')}
-                        helperText={
-                            t('messages.attachmentHint') ||
-                            'Attachments: images, PDF, or Word documents'
-                        }
+                        variant='standard'
                         InputProps={{
+                            disableUnderline: true,
+
+                            sx: { px: 0.5, py: 0.25 },
+
                             'aria-label': t(
                                 'messages.typeMessage',
                                 'اكتب رسالة',
                             ),
+
                             endAdornment: (
                                 <InputAdornment position='end'>
                                     <IconButton
                                         color='primary'
+                                        size='small'
                                         aria-label={t(
                                             'messages.send',
                                             'اكتب رسالة',
@@ -1658,10 +1836,41 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                             )
                                         }
                                         disabled={!input.trim()}
+                                        sx={{
+                                            bgcolor: 'primary.main',
+
+                                            color: 'primary.contrastText',
+
+                                            width: 34,
+
+                                            height: 34,
+
+                                            ml: 0.5,
+
+                                            transition:
+                                                'transform 0.15s, opacity 0.15s, background-color 0.15s',
+
+                                            '&:hover': {
+                                                bgcolor: 'primary.dark',
+                                            },
+
+                                            '&.Mui-disabled': {
+                                                bgcolor:
+                                                    'action.disabledBackground',
+
+                                                color: 'action.disabled',
+                                            },
+
+                                            '&:active': {
+                                                transform: 'scale(0.92)',
+                                            },
+                                        }}
                                     >
                                         <SendIcon
                                             aria-hidden={true}
                                             sx={{
+                                                fontSize: 18,
+
                                                 transform:
                                                     dir === 'rtl'
                                                         ? 'rotate(180deg)'
@@ -1671,16 +1880,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     </IconButton>
                                 </InputAdornment>
                             ),
-
-                            sx: {
-                                borderRadius: 0,
-
-                                backgroundColor: 'action.hover',
-                            },
                         }}
                     />
                 </Box>
             </Box>
+
             <Suspense fallback={<Loader />}>
                 <AlertDialogs
                     onConfirm={() => handleConfirmDeleteMessage()}

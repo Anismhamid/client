@@ -1,4 +1,11 @@
-import { Paper, Avatar, Box, Typography, keyframes } from '@mui/material';
+import {
+    Paper,
+    Avatar,
+    Box,
+    Typography,
+    keyframes,
+    Badge,
+} from '@mui/material';
 import { BaseUser } from '../../../interfaces/chat/chatUser';
 import { memo } from 'react';
 
@@ -11,11 +18,20 @@ interface Props {
 const slideIn = keyframes`
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-20px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+`;
+
+const pulse = keyframes`
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0);
   }
 `;
 
@@ -28,7 +44,7 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
             onClick={onOpen}
             role='button'
             tabIndex={0}
-            elevation={8}
+            elevation={6}
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -37,26 +53,39 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
             }}
             aria-label={`Open chat with ${name?.first || 'Unknown'} ${name?.last || ''}`}
             sx={{
-                animation: `${slideIn} 0.3s ease-out`,
+                animation: `${slideIn} 0.35s cubic-bezier(0.4, 0, 0.2, 1)`,
                 position: 'relative',
-                left: 50,
-                width: 220,
-                height: 40,
+                width: { xs: 200, sm: 240 },
+                height: 56,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                px: 2,
+                gap: 1.25,
+                px: 1.5,
+
+                py: 1,
                 cursor: 'pointer',
-                boxShadow: 5,
-                transition: 'all 0.2s ease-in-out',
+                borderRadius: 2.5,
+                overflow: 'visible',
+                border: '1px solid',
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                boxShadow: 3,
+                transition:
+                    'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
+
                 '&:hover': {
-                    transform: 'scale(1.02)',
+                    transform: 'translateY(-2px) scale(1.02)',
                     boxShadow: 8,
                     borderColor: 'primary.main',
+                    '& .mini-chat-avatar': {
+                        transform: 'scale(1.08)',
+                    },
                 },
+
                 '&:active': {
-                    transform: 'scale(0.98)',
+                    transform: 'translateY(0) scale(0.98)',
                 },
+
                 '&:focus-visible': {
                     outline: 2,
                     outlineColor: 'primary.main',
@@ -64,45 +93,105 @@ const MiniChat = ({ user, onOpen, unreadCount }: Props) => {
                 },
             }}
         >
-            <Avatar src={image?.url}>{name?.first?.[0]}</Avatar>
-            <Box>
-                <Typography fontWeight={600} noWrap>
-                    {name?.first} {name?.last}
-                </Typography>
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box
+            {/* Avatar مع الحالة */}
+            <Box
+                sx={{
+                    position: 'relative',
+                    flexShrink: 0,
+                }}
+            >
+                <Avatar
+                    className='mini-chat-avatar'
+                    src={image?.url}
                     sx={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        bgcolor: status ? 'success.main' : 'error.main',
+                        width: 40,
+                        height: 40,
+                        bgcolor: 'primary.main',
+                        fontSize: '0.9rem',
+                        fontWeight: 600,
+                        transition: 'transform 0.2s ease',
+                        border: '2px solid',
+                        borderColor: 'background.paper',
+                        boxShadow: 1,
                     }}
-                />
-                <Typography variant='caption'>{statusLabel}</Typography>
-            </Box>
+                >
+                    {name?.first?.[0]}
+                </Avatar>
 
-            {Boolean(unreadCount) && unreadCount! > 0 && (
+                {/* Status dot على الـ avatar */}
                 <Box
                     sx={{
                         position: 'absolute',
-                        top: -8,
-                        right: -8,
-                        bgcolor: 'error.main',
-                        color: 'white',
+                        bottom: -1,
+                        right: -1,
+                        width: 12,
+                        height: 12,
                         borderRadius: '50%',
-                        width: 20,
-                        height: 20,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '0.75rem',
-                        fontWeight: 'bold',
+                        bgcolor: status ? 'success.main' : 'error.main',
+                        border: '2px solid',
+                        borderColor: 'background.paper',
+                        animation: status ? `${pulse} 2s infinite` : 'none',
+                    }}
+                />
+            </Box>
+
+            {/* الاسم + الحالة */}
+            <Box
+                sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    gap: 0.25,
+                }}
+            >
+                <Typography
+                    fontWeight={600}
+                    noWrap
+                    sx={{
+                        fontSize: '0.875rem',
+                        lineHeight: 1.2,
+                        color: 'text.primary',
                     }}
                 >
-                    {unreadCount! > 99 ? '99+' : unreadCount}
-                </Box>
+                    {name?.first} {name?.last}
+                </Typography>
+
+                <Typography
+                    variant='caption'
+                    noWrap
+                    sx={{
+                        fontSize: '0.7rem',
+                        lineHeight: 1.2,
+                        color: status ? 'success.main' : 'text.secondary',
+                        fontWeight: 500,
+                    }}
+                >
+                    {statusLabel}
+                </Typography>
+            </Box>
+
+            {/* Unread Badge */}
+            {Boolean(unreadCount) && unreadCount! > 0 && (
+                <Badge
+                    badgeContent={unreadCount! > 99 ? '99+' : unreadCount}
+                    color='error'
+                    sx={{
+                        flexShrink: 0,
+                        '& .MuiBadge-badge': {
+                            position: 'relative',
+                            transform: 'none',
+                            fontSize: '0.7rem',
+                            fontWeight: 700,
+                            height: 20,
+                            minWidth: 20,
+                            borderRadius: 10,
+                            px: 0.75,
+                            animation: `${pulse} 2s infinite`,
+                        },
+                    }}
+                />
             )}
         </Paper>
     );

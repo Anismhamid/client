@@ -17,7 +17,8 @@ import { useEffect, useState } from 'react';
 import SealBadge from './SealBadge';
 import AISearch from '../../../atoms/AISearch';
 import { BRAND } from '../../navbar/theme/brand';
-import { Search } from '@mui/icons-material';
+import { ArticleOutlined, NotificationsActiveOutlined, Search, WorkOutlineOutlined } from '@mui/icons-material';
+import { Link as RouterLink } from 'react-router-dom';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
@@ -51,6 +52,12 @@ const TRUST_ITEMS = [
         key: 'trust.verifiedDeals',
         fallback: 'صفقات موثوقة',
     },
+];
+
+const QUICK_LINKS = [
+    { to: '/jobs', icon: WorkOutlineOutlined, key: 'hero.jobs', fallback: 'الوظائف' },
+    { to: '/blog', icon: ArticleOutlined, key: 'hero.blog', fallback: 'مقالات صفقة' },
+    { to: '/saved-searches', icon: NotificationsActiveOutlined, key: 'hero.savedSearches', fallback: 'تنبيهاتي' }, // عدّل المسار
 ];
 
 const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
@@ -446,47 +453,86 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                 {referenceNumber}
                             </Typography>
                         </Stack>
+                        <Stack spacing={1.25} sx={{ mb: 2 }}>
+                            <Button
+                                component={RouterLink}
+                                to={path.smartSearch}
+                                variant='contained'
+                                fullWidth
+                                startIcon={<Search />}
+                                endIcon={
+                                    <ArrowForwardRoundedIcon
+                                        sx={{
+                                            fontSize: 16,
+                                            transform: rtl
+                                                ? 'scaleX(-1)'
+                                                : 'none',
+                                        }}
+                                    />
+                                }
+                                sx={{
+                                    justifyContent: 'space-between',
+                                    borderRadius: '10px',
+                                    fontWeight: 700,
+                                    fontSize: '0.85rem',
+                                    background: BRAND.gradient,
+                                    '&:hover': {
+                                        background: BRAND.gradient,
+                                        filter: 'brightness(1.06)',
+                                    },
+                                    '& .MuiButton-endIcon': {
+                                        marginInlineStart: 'auto',
+                                    },
+                                }}
+                            >
+                                {t('hero.smartSearch', 'البحث الذكي')}
+                            </Button>
 
+                            <Box
+                                sx={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: 1.25,
+                                }}
+                            >
+                                {QUICK_LINKS.map(
+                                    ({ to, icon: Icon, key, fallback }) => (
+                                        <Button
+                                            key={to}
+                                            component={RouterLink}
+                                            to={to}
+                                            variant='outlined'
+                                            startIcon={
+                                                <Icon sx={{ fontSize: 18 }} />
+                                            }
+                                            sx={{
+                                                borderRadius: '10px',
+                                                fontWeight: 700,
+                                                fontSize: '0.85rem',
+                                                borderColor: alpha(
+                                                    BRAND.brown,
+                                                    0.35,
+                                                ),
+                                                color: 'text.primary',
+                                                '&:hover': {
+                                                    borderColor: BRAND.brown,
+                                                    color: BRAND.brown,
+                                                    bgcolor: alpha(
+                                                        BRAND.brown,
+                                                        0.05,
+                                                    ),
+                                                },
+                                            }}
+                                        >
+                                            {t(key, fallback)}
+                                        </Button>
+                                    ),
+                                )}
+                            </Box>
+                        </Stack>
                         {/* AI search lives inside the panel — the "engine" */}
                         <AISearch />
-
                         {/* Smart search shortcut */}
-                        <Button
-                            fullWidth
-                            variant='outlined'
-                            size='medium'
-                            title='صفقة ذكيه'
-                            aria-label='صفقة ذكيه'
-                            startIcon={<Search />}
-                            endIcon={
-                                <ArrowForwardRoundedIcon
-                                    sx={{
-                                        fontSize: 16,
-                                        transform: rtl ? 'scaleX(-1)' : 'none',
-                                    }}
-                                />
-                            }
-                            onClick={() => navigate(path.smartSearch)}
-                            sx={{
-                                mt: 1.5,
-                                justifyContent: 'space-between',
-                                borderRadius: '10px',
-                                borderColor: alpha(BRAND.brown, 0.25),
-                                color: BRAND.brown,
-                                fontWeight: 700,
-                                fontSize: '0.85rem',
-                                '&:hover': {
-                                    borderColor: BRAND.brown,
-                                    bgcolor: alpha(BRAND.brown, 0.05),
-                                },
-                                '& .MuiButton-endIcon': {
-                                    marginInlineStart: 'auto',
-                                },
-                            }}
-                        >
-                            {t('hero.smartSearch', 'البحث الذكي')}
-                        </Button>
-
                         {/* Trust ticker */}
                         <Stack
                             direction='row'

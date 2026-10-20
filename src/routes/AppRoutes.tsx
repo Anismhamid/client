@@ -13,6 +13,11 @@ import { UserMessage } from '../interfaces/chat/usersMessages';
 import { useUser } from '../hooks/useUSer';
 import Loader from '../atoms/loader/Loader';
 
+const BlogList = lazy(() => import('../components/blog/BlogList'));
+const BlogPostPage = lazy(() => import('../components/pages/BlogPostPage'));
+const BlogEditor = lazy(() => import('../components/blog/BlogEditor'));
+const BlogManage = lazy(() => import("../components/blog/BlogManage"));
+
 const AdminJobs = lazy(() => import('../components/admin/Jobs/AdminJobs'));
 
 const AdminJobDetails = lazy(
@@ -284,6 +289,12 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
 
             <Route path={path.smartSearch} element={<SavedSearchesPage />} />
 
+            <Route path='/blog' element={<BlogList />} />
+            <Route path='/blog/new' element={<BlogEditor />} />
+            <Route path="/blog/manage" element={<BlogManage />} />
+            <Route path='/blog/:slug' element={<BlogPostPage />} />
+            <Route path='/blog/edit/:id' element={<BlogEditor />} />
+
             {/* =================================================
              * ACCOUNT
              * ================================================= */}
@@ -460,7 +471,10 @@ const AppRoutes: FunctionComponent<AppRoutesProps> = ({ auth }) => {
 
                     <Route path='send' element={<AdminSendNotification />} />
 
-                    <Route path='sent' element={<AdminSentNotifications />} />
+                    <Route
+                        path='sent'
+                        element={<AdminSentNotifications auth={auth} />}
+                    />
                 </Route>
 
                 {/* /admin/security/investigation */}
