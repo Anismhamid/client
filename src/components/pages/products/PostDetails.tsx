@@ -647,14 +647,17 @@ const PostDetails: FunctionComponent = () => {
             <link rel='canonical' href={pageUrl} />
             <meta
                 name='description'
-                content={post.description?.slice(0, 160)}
+                content={
+                    post.description?.trim().slice(0, 160) ||
+                    `${post.product_name} - صفقة`
+                }
             />
             <meta property='og:title' content={post.product_name} />
             <meta
                 property='og:description'
-                content={post.description?.substring(0, 160) || ''}
+                content={post.description?.trim().slice(0, 160) || `${post.product_name} - صفقة`}
             />
-            <meta property='og:image' content={post.image?.url || ''} />
+            <meta property='og:image' content={post.image?.url || '/d3.png'} />
             <meta property='og:type' content='product' />
             <meta
                 property='product:price:amount'

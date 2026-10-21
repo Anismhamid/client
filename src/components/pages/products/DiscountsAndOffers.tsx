@@ -139,7 +139,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
             <meta
                 name='description'
                 content={t(
-                    `categories.discountsAndOffers.categories.discountsAndOffers.title`,
+                    `categories.discountsAndOffers.categories.discountsAndOffers.description`,
                 )}
             />
 
