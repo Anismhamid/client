@@ -1,3 +1,4 @@
+import { getAbsolutePostUrl } from '../src/components/pages/products/helpers/postUrl';
 import { Posts } from '../src/interfaces/Posts';
 
 const SITE_URL = 'https://client-qqq1.vercel.app';
@@ -14,7 +15,7 @@ const getSellerName = (seller: Posts['seller'] | undefined): string => {
     return [name.first, name.last].filter(Boolean).join(' ').trim();
 };
 
-const buildItems = (posts: Posts[], getUrl: PostUrlFn) =>
+const buildItems = (posts: Posts[], getUrl: PostUrlFn = getAbsolutePostUrl) =>
     posts.flatMap((post) => {
         const url = getUrl(post);
         return url ? [{ post, url }] : [];
@@ -24,7 +25,7 @@ const buildItems = (posts: Posts[], getUrl: PostUrlFn) =>
 export const generateCategoryJsonLd = (
     categoryName: string,
     posts: Posts[] = [],
-    getUrl: PostUrlFn,
+    getUrl: PostUrlFn = getAbsolutePostUrl,
     pageUrl?: string,
 ) => {
     const items = buildItems(posts, getUrl);
@@ -136,7 +137,7 @@ export const generateSingleProductJsonLd = (post: Posts, postUrl?: string) => {
 // Product/listing cards
 export const generateProductsItemListJsonLd = (
     posts: Posts[],
-    getUrl: PostUrlFn,
+    getUrl: PostUrlFn = getAbsolutePostUrl,
 ) => ({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -151,7 +152,7 @@ export const generateProductsItemListJsonLd = (
 // Discounted listings
 export const generateDiscountsJsonLd = (
     posts: Posts[] = [],
-    getUrl: PostUrlFn,
+    getUrl: PostUrlFn = getAbsolutePostUrl,
 ) => ({
     '@context': 'https://schema.org',
     '@graph': buildItems(posts, getUrl).flatMap(({ post, url }) => {
