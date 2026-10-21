@@ -1,183 +1,165 @@
 import { Posts } from '../src/interfaces/Posts';
 
-const getPostUrl = (post: Posts) =>
-    `https://client-qqq1.vercel.app/product/${post.category}/${post.brand}/${post._id}`;
+const SITE_URL = 'https://client-qqq1.vercel.app';
 
-// For a general product (category or type)
+export type PostUrlFn = (post: Posts) => string | undefined;
+
+const getSellerName = (seller: Posts['seller'] | undefined): string => {
+    const name = seller?.name as
+        | string
+        | { first?: string; last?: string }
+        | undefined;
+    if (!name) return '';
+    if (typeof name === 'string') return name.trim();
+    return [name.first, name.last].filter(Boolean).join(' ').trim();
+};
+
+const buildItems = (posts: Posts[], getUrl: PostUrlFn) =>
+    posts.flatMap((post) => {
+        const url = getUrl(post);
+        return url ? [{ post, url }] : [];
+    });
+
+// Category page structured data
 export const generateCategoryJsonLd = (
     categoryName: string,
     posts: Posts[] = [],
-) => ({
-    '@context': 'https://schema.org',
-    '@type': 'CollectionPage',
-    name: categoryName,
-    description: `منشورات معروضة للبيع ضمن تصنيف ${categoryName}`,
-    mainEntity: {
-        '@type': 'ItemList',
-        itemListOrder: 'https://schema.org/ItemListOrderAscending',
-        numberOfItems: posts.length,
-        itemListElement: posts.map((post, index) => ({
-            '@type': 'ListItem',
-            position: index + 1,
-            url: getPostUrl(post),
-        })),
-    },
-});
+    getUrl: PostUrlFn,
+    pageUrl?: string,
+) => {
+    const items = buildItems(posts, getUrl);
 
-// On an individual product page
-export const generateSingleProductJsonLd = (post: Posts) => {
-    const finalPrice =
-        post.sale && post.discount
-            ? post.price - (post.price * post.discount) / 100
-            : (post.price ?? 0);
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: categoryName,
+        description: `إعلانات وخدمات ضمن تصنيف ${categoryName} على صفقة`,
+        url:
+            pageUrl ??
+            `${SITE_URL}/category/${encodeURIComponent(categoryName)}`,
+        mainEntity: {
+            '@type': 'ItemList',
+            itemListOrder: 'https://schema.org/ItemListOrderAscending',
+            numberOfItems: items.length,
+            itemListElement: items.map(({ post, url }, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: post.product_name,
+                url,
+            })),
+        },
+    };
+};
 
-    const postUrl = getPostUrl(post);
+// Single listing structured data
+// postUrl = absolute URL (نفس الـ canonical)
+export const generateSingleProductJsonLd = (post: Posts, postUrl?: string) => {
+    if (!postUrl || !post._id || !post.product_name) return null;
+
+    const price =
+        typeof post.price === 'number' && Number.isFinite(post.price)
+            ? post.sale && typeof post.discount === 'number'
+                ? Math.max(0, post.price - (post.price * post.discount) / 100)
+                : post.price
+            : undefined;
+
+    const isService = String(post.category).toLowerCase() === 'services';
+    const sellerName = getSellerName(post.seller);
+
+    const description =
+        post.description?.trim() ||
+        `${post.product_name} - إعلان على منصة صفقة للبيع والشراء بين المستخدمين.`;
+
+    const imageUrl = post.image?.url?.trim() || `${SITE_URL}/d3.png`;
+
+    const offer: Record<string, unknown> = {
+        '@type': 'Offer',
+        url: postUrl,
+        priceCurrency: 'ILS',
+        itemCondition:
+            post.isNew === true
+                ? 'https://schema.org/NewCondition'
+                : 'https://schema.org/UsedCondition',
+        availability:
+            post.in_stock === true && post.status !== 'sold'
+                ? 'https://schema.org/InStock'
+                : 'https://schema.org/OutOfStock',
+    };
+
+    if (price !== undefined) offer.price = Number(price.toFixed(2));
+
+    if (sellerName) {
+        offer.seller = {
+            '@type': 'Person',
+            name: sellerName,
+            ...(post.seller?.slug
+                ? {
+                      url: `${SITE_URL}/user/customer/${encodeURIComponent(post.seller.slug)}`,
+                  }
+                : {}),
+        };
+    }
+
+    if (isService) {
+        return {
+            '@context': 'https://schema.org',
+            '@type': 'Service',
+            '@id': `${postUrl}#service`,
+            name: post.product_name,
+            description,
+            image: imageUrl,
+            url: postUrl,
+            category: post.category,
+            ...(sellerName
+                ? { provider: { '@type': 'Person', name: sellerName } }
+                : {}),
+            offers: offer,
+        };
+    }
 
     return {
         '@context': 'https://schema.org',
         '@type': 'Product',
         '@id': `${postUrl}#product`,
-        sku: post._id,
+        sku: String(post._id),
         name: post.product_name,
-        description: post.description || 'منتج معروض للبيع على موقع صفقة',
-        image: [post.image?.url || 'https://client-qqq1.vercel.app/d3.png'],
+        description,
+        image: [imageUrl],
         category: post.category,
-        brand: {
-            '@type': 'Brand',
-            name: post.brand || 'غير محدد',
-        },
-        offers: {
-            '@type': 'Offer',
-            url: postUrl,
-            priceCurrency: 'ILS',
-            price: Number(finalPrice.toFixed(2)),
-            itemCondition: 'https://schema.org/UsedCondition',
-            availability:
-                post.in_stock && post.in_stock === true
-                    ? 'https://schema.org/InStock'
-                    : 'https://schema.org/OutOfStock',
-            hasMerchantReturnPolicy: {
-                '@type': 'MerchantReturnPolicy',
-                returnPolicyCategory:
-                    'https://schema.org/MerchantReturnNotPermitted',
-            },
-            seller: {
-                '@type': 'Person',
-                name: post.seller?.name || 'مستخدم مسجل',
-                url: post.seller?.slug
-                    ? `https://client-qqq1.vercel.app/user/customer/${post.seller.slug}`
-                    : undefined,
-            },
-
-            priceValidUntil: '2026-12-31',
-            shippingDetails: {
-                '@type': 'OfferShippingDetails',
-                shippingRate: {
-                    '@type': 'MonetaryAmount',
-                    value: 0,
-                    currency: 'ILS',
-                },
-            },
-            serviceArea: {
-                '@type': 'GeoCircle',
-                itemOffered: {
-                    '@type': 'Service',
-                    name: 'Marketplace',
-                },
-                geoMidpoint: {
-                    '@type': 'GeoCoordinates',
-                    latitude: '32.5186',
-                    longitude: '35.1524',
-                },
-                geoRadius: '50000',
-            },
-        },
+        ...(post.brand
+            ? { brand: { '@type': 'Brand', name: post.brand } }
+            : {}),
+        offers: offer,
     };
 };
 
-// When displaying a list of products on a page
-export const generateProductsItemListJsonLd = (posts: Posts[]) => ({
+// Product/listing cards
+export const generateProductsItemListJsonLd = (
+    posts: Posts[],
+    getUrl: PostUrlFn,
+) => ({
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    itemListElement: posts.map((post, index) => ({
+    itemListElement: buildItems(posts, getUrl).map(({ post, url }, index) => ({
         '@type': 'ListItem',
-        '@id': `${getPostUrl(post)}#product`,
         position: index + 1,
         name: post.product_name,
-        url: getPostUrl(post),
-        serviceArea: {
-            '@type': 'GeoCircle',
-            itemOffered: {
-                '@type': 'Service',
-                name: 'Marketplace',
-            },
-            geoMidpoint: {
-                '@type': 'GeoCoordinates',
-                latitude: '32.5186',
-                longitude: '35.1524',
-            },
-            geoRadius: '50000',
-        },
+        url,
     })),
 });
 
-// export const generateDiscountsJsonLd = (products: Products[]) => ({
-// 	"@context": "https://schema.org",
-// 	"@graph": products.map((product) => {
-// 		const discountedPrice =
-// 			product.price && product.discount
-// 				? product.price - (product.price * product.discount) / 100
-// 				: (product.price ?? 0);
-
-// 		return {
-// 			"@type": "Product",
-// 			"@id": `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
-// 				product.product_name,
-// 			)}#product`,
-// 			name: product.product_name,
-// 			description: product.description || "منتج معروض للبيع من قبل مستخدم",
-// 			image: product.image.url || "https://client-qqq1.vercel.app/myLogo.png",
-// 			category: product.category || "General",
-// 			brand: {
-// 				"@type": "Brand",
-// 				name: "بيع وشراء",
-// 			},
-// 			offers: {
-// 				"@type": "Offer",
-// 				hasMerchantReturnPolicy: {
-// 					"@type": "MerchantReturnPolicy",
-// 					returnPolicyCategory: "https://schema.org/DynamicReturnPolicy",
-// 				},
-// 				shippingDetails: {
-// 					"@type": "OfferShippingDetails",
-// 					shippingRate: {
-// 						"@type": "MonetaryAmount",
-// 						value: 0,
-// 						currency: "ILS",
-// 					},
-// 				},
-// 				priceCurrency: "ILS",
-// 				price: Number(discountedPrice.toFixed(2)),
-// 				url: `https://client-qqq1.vercel.app/product-details/${encodeURIComponent(
-// 					product.product_name,
-// 				)}`,
-// 				availability:
-// 					product.in_stock && product.in_stock === true
-// 						? "https://schema.org/InStock"
-// 						: "https://schema.org/OutOfStock",
-// 				seller: {
-// 					"@type": "Person",
-// 					name: product.seller?.name || "مستخدم مسجل",
-// 					url: product.seller?.sellerId
-// 						? `https://client-qqq1.vercel.app/user/customer/${product.seller.slug}`
-// 						: `https://client-qqq1.vercel.app/`,
-// 				},
-// 			},
-// 		};
-// 	}),
-// });
-
-export const generateDiscountsJsonLd = (posts: Posts[]) => ({
+// Discounted listings
+export const generateDiscountsJsonLd = (
+    posts: Posts[] = [],
+    getUrl: PostUrlFn,
+) => ({
     '@context': 'https://schema.org',
-    '@graph': posts.map((post) => generateSingleProductJsonLd(post)),
+    '@graph': buildItems(posts, getUrl).flatMap(({ post, url }) => {
+        const jsonLd = generateSingleProductJsonLd(post, url);
+        if (!jsonLd) return [];
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { '@context': _context, ...node } = jsonLd;
+        return [node];
+    }),
 });

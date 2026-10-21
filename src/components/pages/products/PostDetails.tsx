@@ -91,7 +91,11 @@ import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import PostSpecifications from './PostSpecifications';
 import handleRTL from '../../../locales/handleRTL';
 import ReportButton from '../../reports/ReportButton';
-import { extractPostId, getPostUrl } from './helpers/postUrl';
+import {
+    extractPostId,
+    getAbsolutePostUrl,
+    getPostUrl,
+} from './helpers/postUrl';
 
 const SITE_URL = 'https://client-qqq1.vercel.app';
 
@@ -272,6 +276,11 @@ const PostDetails: FunctionComponent = () => {
     const { t, i18n } = useTranslation();
     const { postId, postSlug } = useParams();
 
+    const requestedId = useMemo(
+        () => extractPostId(postSlug ?? postId ?? ''),
+        [postSlug, postId],
+    );
+
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { isLoggedIn, auth } = useUser();
@@ -312,27 +321,17 @@ const PostDetails: FunctionComponent = () => {
             }
         };
 
-        const canonical = getPostUrl({
-            _id: post._id,
-            postName: post.product_name,
-            category: post.category,
-            seller: post.seller,
-        });
+        const canonical = getPostUrl(post);
 
         if (safeDecode(pathname) !== safeDecode(canonical)) {
             navigate(canonical, { replace: true });
         }
-    }, [loading, post, postId, postSlug, pathname, navigate]);
+    }, [loading, post, requestedId, pathname, navigate, postSlug, postId]);
 
     /* ---------- derived ---------- */
 
     const pageUrl = post._id
-        ? `${SITE_URL}${getPostUrl({
-              _id: post._id,
-              postName: post.product_name,
-              category: post.category,
-              seller: post.seller,
-          })}`
+        ? getAbsolutePostUrl(post)
         : `${SITE_URL}${pathname}`;
     const reviews = useMemo(() => post.reviews ?? [], [post.reviews]);
 
@@ -397,7 +396,7 @@ const PostDetails: FunctionComponent = () => {
 
     const loadPost = useCallback(
         async (silent = false) => {
-            const id = extractPostId(postSlug ?? postId ?? '');
+            const id = requestedId;
 
             if (!id) {
                 setError(t('common.product.idMissing'));
@@ -427,7 +426,7 @@ const PostDetails: FunctionComponent = () => {
                 }
             }
         },
-        [postSlug, postId, t],
+        [requestedId, t],
     );
 
     useEffect(() => {
@@ -635,7 +634,7 @@ const PostDetails: FunctionComponent = () => {
         );
     }
 
-    const productJsonLd = generateSingleProductJsonLd(post);
+    const productJsonLd = generateSingleProductJsonLd(post, pageUrl);
     const visibleReviews = showAllReviews ? reviews : reviews.slice(0, 3);
     const isSold = post.status === 'sold';
 
@@ -643,7 +642,7 @@ const PostDetails: FunctionComponent = () => {
 
     return (
         <>
-            <JsonLd data={productJsonLd} />
+            {productJsonLd && <JsonLd data={productJsonLd} />}
             <title>{post.product_name} | صفقة</title>
             <link rel='canonical' href={pageUrl} />
             <meta

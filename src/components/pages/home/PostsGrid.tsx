@@ -32,6 +32,7 @@ import { generateProductsItemListJsonLd } from '../../../../utils/structuredData
 
 import SealBadge from './SealBadge';
 import { BRAND } from '../../navbar/theme/brand';
+import { getAbsolutePostUrl } from '../products/helpers/postUrl';
 
 interface PostGridProps {
     posts: Posts[];
@@ -109,7 +110,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
         <Container>
             {/* SEO */}
             <JsonLd
-                data={generateProductsItemListJsonLd(safePosts.slice(0, 20))}
+                data={generateProductsItemListJsonLd(safePosts.slice(0, 20),getAbsolutePostUrl)}
             />
 
             {/* PRODUCTS */}

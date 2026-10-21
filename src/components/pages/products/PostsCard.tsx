@@ -30,8 +30,6 @@ import { FunctionComponent, Dispatch, SetStateAction, useState } from 'react';
 import { generatePath, Link, useNavigate } from 'react-router-dom';
 import { Posts } from '../../../interfaces/Posts';
 import { formatPrice } from '../../../helpers/dateAndPriceFormat';
-import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
-import JsonLd from '../../../../utils/JsonLd';
 import { useTranslation } from 'react-i18next';
 import handleRTL from '../../../locales/handleRTL';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
@@ -113,9 +111,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
 
-    const jsonLdData = generateSingleProductJsonLd(post);
-
-    const productUrl = getPostUrl({ _id: post._id, postName: post.product_name });
+    const productUrl = getPostUrl(post);
 
     const isOutOfStock = post.in_stock === false;
     const isOwnPost = auth._id === post.seller?._id;
@@ -236,8 +232,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
             role='article'
             aria-label={`${t('postCard.listing')}: ${post.product_name}`}
         >
-            <JsonLd data={jsonLdData} />
-
             {/* ── FEATURED STRIP ── */}
             {featured && (
                 <Box

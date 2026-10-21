@@ -33,11 +33,13 @@ import { Posts } from '../../../interfaces/Posts';
 import PostCard from './PostsCard';
 import { usePosts } from '../../../hooks/usePosts';
 import handleRTL from '../../../locales/handleRTL';
+import { getAbsolutePostUrl } from './helpers/postUrl';
+
+const PAGE_SIZE = 12;
 
 interface PostsCategoryProps {
     category: string;
-    // ✅ جديد: بارامتر اختياري - نفس الكومبوننت بيخدم كل تصنيف فرعي
-    // بدل ما نعمل كومبوننت منفصل لكل subCategory
+    // بارامتر اختياري - نفس الكومبوننت بيخدم كل تصنيف فرعي
     subCategory?: string;
 }
 
@@ -46,7 +48,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     subCategory,
 }: PostsCategoryProps) => {
     const [postIdToUpdate, setPostIdToUpdate] = useState<string>('');
-    const [visibleCount, setVisibleCount] = useState(12);
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
     const { posts, setPosts, loading, refetch } = usePosts(
         category,
@@ -64,25 +66,38 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     );
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const loadMoreRef = useRef<HTMLDivElement>(null);
+    const loadMoreTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { t } = useTranslation();
     const theme = useTheme();
+    const navigate = useNavigate();
+    const dir = handleRTL();
 
     const categoryKey = `${category}-${subCategory ?? ''}`;
 
-    const [state, setState] = useState({
-        key: categoryKey,
-        visibleCount: 12,
-        searchQuery: '',
-    });
-
-    if (state.key !== categoryKey) {
-        setState({
-            key: categoryKey,
-            visibleCount: 12,
-            searchQuery: '',
-        });
+    // Reset عند تغيير التصنيف (setState أثناء الـ render مسموح لنفس الكومبوننت)
+    const [prevKey, setPrevKey] = useState(categoryKey);
+    if (prevKey !== categoryKey) {
+        setPrevKey(categoryKey);
+        setVisibleCount(PAGE_SIZE);
+        setSearchQuery('');
+        setIsLoadingMore(false);
     }
+
+    const handleSearchChange = useCallback((value: string) => {
+        setSearchQuery(value);
+        setVisibleCount(PAGE_SIZE);
+    }, []);
+
+    // نظّف الـ timer عند تغيير التصنيف أو الـ unmount
+    useEffect(() => {
+        return () => {
+            if (loadMoreTimerRef.current) {
+                clearTimeout(loadMoreTimerRef.current);
+                loadMoreTimerRef.current = null;
+            }
+        };
+    }, [categoryKey]);
 
     const onShowUpdateProductModal = () => setOnShowUpdateProductModal(true);
     const onHideUpdateProductModal = () => setOnShowUpdateProductModal(false);
@@ -114,14 +129,15 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 productName.toLowerCase().includes(searchLower) ||
                 productDescription.toLowerCase().includes(searchLower) ||
                 productBrand.toLowerCase().includes(searchLower) ||
-                productPrice.includes(searchQuery)
+                productPrice.includes(searchLower)
             );
         });
     }, [posts, searchQuery]);
 
-    const visibleProducts = useMemo(() => {
-        return filteredProducts.slice(0, visibleCount);
-    }, [filteredProducts, visibleCount]);
+    const visibleProducts = useMemo(
+        () => filteredProducts.slice(0, visibleCount),
+        [filteredProducts, visibleCount],
+    );
 
     const handleShowMore = useCallback(() => {
         if (isLoadingMore || visibleCount >= filteredProducts.length) {
@@ -130,12 +146,12 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
         setIsLoadingMore(true);
 
-        setTimeout(() => {
+        loadMoreTimerRef.current = setTimeout(() => {
             setVisibleCount((prev) =>
-                Math.min(prev + 12, filteredProducts.length),
+                Math.min(prev + PAGE_SIZE, filteredProducts.length),
             );
-
             setIsLoadingMore(false);
+            loadMoreTimerRef.current = null;
         }, 300);
     }, [isLoadingMore, visibleCount, filteredProducts.length]);
 
@@ -162,8 +178,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
             observer.disconnect();
         };
     }, [handleShowMore, isLoadingMore, visibleCount, filteredProducts.length]);
-
-    const navigate = useNavigate();
 
     const handleToggleLike = (productId: string, liked: boolean) => {
         if (!auth?._id) {
@@ -209,9 +223,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const isModerator = auth?.role === RoleType.Moderator;
     const canEdit = isAdmin || isModerator;
 
-    // ✅ لو في subCategory، دور على ترجمة خاصة فيه أول، وإذا مش موجودة
-    // ارجع لترجمة التصنيف الرئيسي (fallback) - هيك ما تضطر تضيف مفاتيح
-    // ترجمة لكل تصنيف فرعي إذا مش ضروري
+    // لو في subCategory، دور على ترجمة خاصة فيه أول، وإذا مش موجودة
+    // ارجع لترجمة التصنيف الرئيسي (fallback)
     const categoryTitle = subCategory
         ? t(
               `categories.${category}.subCategories.${subCategory}.heading`,
@@ -239,9 +252,9 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
     if (loading) return <Loader />;
 
-    if (!loading && posts.length === 0)
+    if (posts.length === 0)
         return (
-            <main>
+            <main dir={dir}>
                 {/* React 19: these tags are hoisted to <head> automatically */}
                 <title>{categoryTitle} | صفقة</title>
                 <link rel='canonical' href={currentUrl} />
@@ -252,7 +265,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                         color='text.secondary'
                         sx={{ mb: 3 }}
                     >
-                        {t("categories.notFound")}
+                        {t('categories.notFound')}
                     </Typography>
                     <Button
                         onClick={refreshAfterChange}
@@ -271,14 +284,13 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
             </main>
         );
 
-    // ✅ لو في subCategory بنبعتها مع الـ category عشان الـ structured data
-    // يعكس التصنيف الفرعي الفعلي مش بس الرئيسي
+    // الـ structured data بيعكس التصنيف الفرعي الفعلي
     const generateCategory = generateCategoryJsonLd(
         subCategory ? `${category}/${subCategory}` : category,
         posts,
+        getAbsolutePostUrl,
+        currentUrl,
     );
-
-    const dir = handleRTL()
 
     return (
         <Box component={'main'} p={3} dir={dir}>
@@ -288,8 +300,8 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
             <JsonLd data={generateCategory} />
 
-            {/* FIX 2: h1 always visible — visually hidden on mobile via clip trick,
-			    still readable by crawlers and screen readers */}
+            {/* h1 always present — visually hidden on mobile, still readable
+                by crawlers and screen readers */}
             <Typography
                 component='h1'
                 sx={{
@@ -297,7 +309,6 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                     width: { xs: '1px', md: 'auto' },
                     height: { xs: '1px', md: 'auto' },
                     overflow: { xs: 'hidden', md: 'visible' },
-
                     whiteSpace: { xs: 'nowrap', md: 'normal' },
                     color: theme.palette.primary.main,
                     fontWeight: 600,
@@ -321,7 +332,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 <Box sx={{ flex: 1 }}>
                     <SearchBox
                         searchQuery={searchQuery}
-                        setSearchQuery={setSearchQuery}
+                        setSearchQuery={handleSearchChange}
                         text={searchPlaceholder}
                     />
                 </Box>
@@ -367,10 +378,10 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                                         onLikeToggle={handleToggleLike}
                                         updateProductInList={(updatedPost) => {
                                             setPosts((prev) =>
-                                                prev.map((post) =>
-                                                    post._id === updatedPost._id
+                                                prev.map((p) =>
+                                                    p._id === updatedPost._id
                                                         ? updatedPost
-                                                        : post,
+                                                        : p,
                                                 ),
                                             );
                                         }}
