@@ -46,17 +46,26 @@ const HowItWorks = () => {
                     position: 'absolute',
                     inset: 0,
                     backgroundImage: BRAND.ledgerLines(0.04),
-                    maskImage: 'radial-gradient(ellipse at center, black 0%, transparent 70%)',
+                    maskImage:
+                        'radial-gradient(ellipse at center, black 0%, transparent 70%)',
                     WebkitMaskImage:
                         'radial-gradient(ellipse at center, black 0%, transparent 70%)',
                     pointerEvents: 'none',
                 }}
             />
 
-            <Container maxWidth='md' sx={{ position: 'relative', px: { xs: 2, md: 4 } }}>
+            <Container
+                maxWidth='md'
+                sx={{ position: 'relative', px: { xs: 2, md: 4 } }}
+            >
                 <Typography
                     variant='h5'
-                    sx={{ fontWeight: 800, textAlign: 'center', mb: { xs: 4, md: 5 } }}
+                    component={'h2'}
+                    sx={{
+                        fontWeight: 800,
+                        textAlign: 'center',
+                        mb: { xs: 4, md: 5 },
+                    }}
                 >
                     {t('howItWorks.title', 'كيف تتم الصفقة؟')}
                 </Typography>
@@ -65,7 +74,10 @@ const HowItWorks = () => {
                     sx={{
                         position: 'relative',
                         display: 'grid',
-                        gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' },
+                        gridTemplateColumns: {
+                            xs: '1fr',
+                            sm: 'repeat(3, 1fr)',
+                        },
                         gap: { xs: 4, sm: 2 },
                     }}
                 >
@@ -88,10 +100,23 @@ const HowItWorks = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: '-40px' }}
                             transition={{ duration: 0.45, delay: i * 0.12 }}
-                            style={{ position: 'relative', textAlign: 'center' }}
+                            style={{
+                                position: 'relative',
+                                textAlign: 'center',
+                            }}
                         >
-                            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5 }}>
-                                <SealBadge size={56} rotate={i % 2 === 0 ? -6 : 6} pulse={i === 2}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    mb: 1.5,
+                                }}
+                            >
+                                <SealBadge
+                                    size={56}
+                                    rotate={i % 2 === 0 ? -6 : 6}
+                                    pulse={i === 2}
+                                >
                                     <Typography
                                         component='span'
                                         sx={{
@@ -104,7 +129,10 @@ const HowItWorks = () => {
                                     </Typography>
                                 </SealBadge>
                             </Box>
-                            <Typography sx={{ fontWeight: 700, mb: 0.5 }}>
+                            <Typography
+                                component='h3'
+                                sx={{ fontWeight: 700, mb: 0.5 }}
+                            >
                                 {t(step.key, step.title)}
                             </Typography>
                             <Typography

@@ -257,7 +257,7 @@ const Home: FunctionComponent = () => {
             </header>
 
             <main id='listing-section' dir={direction}>
-                <section  id='ads-section'>
+                <section id='ads-section'>
                     <AdsSection />
                 </section>
 
@@ -348,6 +348,7 @@ const Home: FunctionComponent = () => {
                                     </Stack>
                                     <Typography
                                         variant='h5'
+                                        component='h3'
                                         fontWeight={800}
                                         sx={{
                                             fontSize: {
@@ -365,6 +366,7 @@ const Home: FunctionComponent = () => {
                                     </Typography>
                                     <Typography
                                         variant='body2'
+                                        component='h4'
                                         color='text.secondary'
                                         sx={{
                                             mt: 0.5,
@@ -576,6 +578,7 @@ const Home: FunctionComponent = () => {
                         <Box>
                             <Typography
                                 variant='overline'
+                                component='p'
                                 sx={{
                                     fontWeight: 800,
                                     letterSpacing: '0.15em',
@@ -587,6 +590,7 @@ const Home: FunctionComponent = () => {
                             </Typography>
                             <Typography
                                 variant='h4'
+                                component='h2'
                                 fontWeight={800}
                                 sx={{
                                     fontSize: { xs: '1.5rem', md: '2rem' },
