@@ -147,7 +147,6 @@ const DiscountsAndOffers: FunctionComponent = () => {
                 component='section'
                 sx={{
                     py: { xs: 5, sm: 7, md: 9 },
-                    bgcolor: '#f4f6f8',
                 }}
                 dir={dir}
             >
@@ -268,7 +267,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                     />
                                     <Skeleton
                                         variant='text'
-                                        width='80%'
+                                        width='100%'
                                         height={32}
                                     />
                                     <Skeleton variant='text' width='60%' />
@@ -294,14 +293,14 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                 '& .swiper-pagination-bullet': {
                                     bgcolor: 'text.secondary',
                                     opacity: 0.3,
-                                    width: 8,
-                                    height: 8,
+                                    width: 10,
+                                    height: 10,
                                     transition: 'all 0.2s ease',
                                 },
                                 '& .swiper-pagination-bullet-active': {
                                     bgcolor: 'primary.main',
                                     opacity: 1,
-                                    width: 24,
+                                    width: 20,
                                     borderRadius: 4,
                                 },
                             }}
@@ -312,14 +311,14 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                 }}
                                 modules={[Autoplay, Navigation, Pagination]}
                                 autoplay={{
-                                    delay: 4500,
+                                    delay: 5000,
                                     disableOnInteraction: false,
                                     pauseOnMouseEnter: true,
                                 }}
                                 loop={postsInDiscount.length > slidesPerView}
                                 navigation={false} // Disabled default navigation
                                 pagination={{ clickable: true }}
-                                spaceBetween={16}
+                                spaceBetween={100}
                                 slidesPerView={slidesPerView}
                                 grabCursor={true}
                             >
@@ -509,6 +508,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         {/* Title */}
                                                         <Typography
                                                             variant='subtitle2'
+                                                            component='h3'
                                                             sx={{
                                                                 fontWeight: 600,
                                                                 color: 'text.primary',
@@ -573,6 +573,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                         >
                                                             <Typography
                                                                 variant='subtitle1'
+                                                                component='span'
                                                                 fontWeight={800}
                                                                 color='error.main'
                                                                 sx={{
@@ -585,6 +586,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                                             </Typography>
                                                             <Typography
                                                                 variant='caption'
+                                                                component='span'
                                                                 color='text.secondary'
                                                                 sx={{
                                                                     textDecoration:
@@ -675,4 +677,3 @@ const DiscountsAndOffers: FunctionComponent = () => {
 };
 
 export default DiscountsAndOffers;
-

@@ -468,6 +468,8 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                 {/* title */}
                 <Link to={productUrl} style={{ textDecoration: 'none' }}>
                     <Typography
+                        variant='subtitle2'
+                        component={'p'}
                         itemProp='name'
                         sx={{
                             fontSize: '0.9688rem',
@@ -534,6 +536,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                 {post.description && (
                     <Typography
                         variant='body2'
+                        component='p'
                         sx={{
                             mt: 0.75,
                             fontSize: '0.8125rem',
@@ -567,6 +570,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             <LocationOn sx={{ fontSize: 14 }} />
                             <Typography
                                 variant='caption'
+                                component="p"
                                 sx={{ fontSize: '0.72rem' }}
                             >
                                 {post.location}
@@ -577,6 +581,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <AccessTimeRounded sx={{ fontSize: 13 }} />
                         <Typography
                             variant='caption'
+                            component="span"
                             sx={{ fontSize: '0.72rem' }}
                         >
                             {formatTimeAgo(String(post.createdAt), t) || ''}
@@ -586,6 +591,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <VisibilityRounded sx={{ fontSize: 13 }} />
                         <Typography
                             variant='caption'
+                            component="p"
                             sx={{ fontSize: '0.72rem' }}
                         >
                             {post.views || 0}

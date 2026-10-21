@@ -503,6 +503,7 @@ export function HomepageAdCard({
                             </Typography>
                             <Typography
                                 variant='subtitle1'
+                                component='p'
                                 fontWeight={700}
                                 sx={{
                                     lineHeight: 1.3,
@@ -701,6 +702,7 @@ export default function HomepageFeaturedSection() {
                         </Typography>
                         <Typography
                             variant='h5'
+                            component='h3'
                             fontWeight={900}
                             sx={{
                                 mb: 0.5,
@@ -817,6 +819,7 @@ export default function HomepageFeaturedSection() {
                 >
                     <Typography
                         variant='h6'
+                        component='p'
                         color='text.secondary'
                         gutterBottom
                     >

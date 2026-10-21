@@ -67,7 +67,7 @@ const AdsSection = () => {
                                 {t('featuredAds.eyebrow', 'إعلانات مميزة')}
                             </Typography>
                             <Typography
-                                variant='h6'
+                                variant='h2'
                                 fontWeight={800}
                                 sx={{
                                     fontSize: { xs: '1rem', sm: '1.1rem' },
