@@ -606,6 +606,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                                     textDecoration: 'none',
                                     display: 'block',
                                 }}
+                                title='الرئيسية - موقع صفقة'
                                 aria-label='الرئيسية - موقع صفقة'
                             >
                                 <SafqaLogo />
