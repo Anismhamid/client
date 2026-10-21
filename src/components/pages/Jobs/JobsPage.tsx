@@ -278,7 +278,7 @@ const JobsPage: FunctionComponent = () => {
                                 py: 8,
                             }}
                         >
-                            <CircularProgress sx={{ color: BRAND_GOLD }} />
+                            <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND_GOLD }} />
                         </Box>
                     ) : (
                         <>

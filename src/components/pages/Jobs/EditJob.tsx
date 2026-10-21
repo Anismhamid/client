@@ -117,7 +117,7 @@ const EditJob: FunctionComponent = () => {
                 maxWidth='md'
                 sx={{ py: 8, display: 'flex', justifyContent: 'center' }}
             >
-                <CircularProgress sx={{ color: BRAND_GOLD }} />
+                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND_GOLD }} />
             </Container>
         );
     }

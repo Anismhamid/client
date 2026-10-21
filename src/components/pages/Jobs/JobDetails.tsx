@@ -130,7 +130,7 @@ const JobDetails: FunctionComponent = () => {
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
-                <CircularProgress sx={{ color: BRAND_GOLD }} />
+                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND_GOLD }} />
             </Box>
         );
     }

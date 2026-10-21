@@ -644,7 +644,8 @@ const EditUserData: FunctionComponent<EditUserDataProps> = ({ userId }) => {
                             startIcon={
                                 formik.isSubmitting ? (
                                     <CircularProgress
-                                        size={18}
+                                       aria-label={t('common.loading', 'جاري التحميل')} 
+                                    size={18}
                                         color='inherit'
                                     />
                                 ) : (

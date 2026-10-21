@@ -410,7 +410,7 @@ function AdRow({
                             }}
                         >
                             {deleting ? (
-                                <CircularProgress size={14} />
+                                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={14} />
                             ) : (
                                 <DeleteOutlineIcon sx={{ fontSize: 17 }} />
                             )}

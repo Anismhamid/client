@@ -575,7 +575,7 @@ const SavedSearchesPage = () => {
                                         fullWidth
                                     >
                                         {saving ? (
-                                            <CircularProgress size={22} color="inherit" />
+                                            <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={22} color="inherit" />
                                         ) : (
                                             'حفظ البحث'
                                         )}

@@ -158,6 +158,7 @@ const UserSearchField = ({
                             <>
                                 {loading && (
                                     <CircularProgress
+                                        aria-label={'جاري التحميل'}
                                         size={20}
                                         aria-hidden='true'
                                     />

@@ -287,7 +287,7 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             minHeight: 60,
                         }}
                     >
-                        <CircularProgress size={20} sx={{ color: BRAND.gold }} />
+                        <CircularProgress size={20} aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND.gold }} />
                     </Box>
                 )}
             </Container>

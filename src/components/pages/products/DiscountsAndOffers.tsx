@@ -620,6 +620,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                         onClick={() =>
                                             swiperRef.current?.slideNext()
                                         }
+                                        aria-label={t('common.next', 'التالي')}
                                         sx={{
                                             bgcolor: 'background.paper',
                                             border: '1px solid',
@@ -645,6 +646,10 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                         onClick={() =>
                                             swiperRef.current?.slidePrev()
                                         }
+                                        aria-label={t(
+                                            'common.previous',
+                                            'السابق',
+                                        )}
                                         sx={{
                                             bgcolor: 'background.paper',
                                             border: '1px solid',

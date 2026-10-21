@@ -49,7 +49,7 @@ export default function PaymentSuccess() {
                 alignItems='center'
                 minHeight='60vh'
             >
-                <CircularProgress />
+                <CircularProgress aria-label='جاري التحميل' size={20} />
             </Box>
         );
     }

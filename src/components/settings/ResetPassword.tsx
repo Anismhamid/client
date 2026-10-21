@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FunctionComponent, useActionState, useState } from 'react';
 import * as yup from 'yup';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+    Link,
+    useNavigate,
+    useParams,
+    useSearchParams,
+} from 'react-router-dom';
 import { path } from '../../routes/routes';
 import { resetPassword } from '../../services/usersServices';
 import { showError, showSuccess } from '../../atoms/toasts/ReactToast';
@@ -160,9 +165,7 @@ const ResetPassword: FunctionComponent<ResetPasswordProps> = ({ mode }) => {
                                             variant='contained'
                                             fullWidth
                                             size='large'
-                                            onClick={() =>
-                                                navigate(path.Login)
-                                            }
+                                            onClick={() => navigate(path.Login)}
                                             sx={{
                                                 borderRadius: 3,
                                                 py: 1.5,
@@ -226,9 +229,8 @@ const ResetPassword: FunctionComponent<ResetPasswordProps> = ({ mode }) => {
 
                                         <TextField
                                             label={
-                                                t(
-                                                    'login.confirmPassword',
-                                                ) || 'تأكيد كلمة السر'
+                                                t('login.confirmPassword') ||
+                                                'تأكيد كلمة السر'
                                             }
                                             type={
                                                 showConfirmPassword
@@ -284,6 +286,10 @@ const ResetPassword: FunctionComponent<ResetPasswordProps> = ({ mode }) => {
                                                 startIcon={
                                                     isPending ? (
                                                         <CircularProgress
+                                                            aria-label={t(
+                                                                'common.loading',
+                                                                'جاري التحميل',
+                                                            )}
                                                             size={20}
                                                             color='inherit'
                                                         />

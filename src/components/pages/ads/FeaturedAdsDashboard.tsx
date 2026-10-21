@@ -125,7 +125,7 @@ const FeaturedAdsDashboard = () => {
         try {
             const { data } = await api.post('featured-ads/buy', newAd);
             window.location.href = data.url;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             showSnackbar(
                 err.response?.data?.message || t('ads.common.error'),
@@ -838,6 +838,10 @@ const FeaturedAdsDashboard = () => {
                             >
                                 {saving ? (
                                     <CircularProgress
+                                        aria-label={t(
+                                            'common.loading',
+                                            'جاري التحميل',
+                                        )}
                                         size={22}
                                         sx={{ color: isDark ? '#000' : '#fff' }}
                                     />
@@ -888,7 +892,7 @@ const FeaturedAdsDashboard = () => {
                     </Box>
                     <Stack direction='row' spacing={1}>
                         {/* ✅ استخدام PLANS بدلاً من PLAN_META */}
-                        {PLANS.map((meta:PlanConfig) => (
+                        {PLANS.map((meta: PlanConfig) => (
                             <Chip
                                 key={meta.id}
                                 label={`${meta.emoji} ${activeCounts[meta.id] || 0}`}
@@ -913,7 +917,7 @@ const FeaturedAdsDashboard = () => {
                             py: 8,
                         }}
                     >
-                        <CircularProgress sx={{ color: amber }} />
+                        <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: amber }} />
                     </Box>
                 ) : ads.length === 0 ? (
                     <Box

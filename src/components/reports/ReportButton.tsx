@@ -71,7 +71,7 @@ const ReportButton = ({
                 aria-label={t('modals.report.checking')}
                 sx={showLabel ? { width: '100%', justifyContent: 'flex-start', px: 1, gap: 1 } : undefined}
             >
-                <CircularProgress size={16} />
+                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={16} />
                 {showLabel && (
                     <Typography variant='body2' sx={{ fontSize: '0.8125rem' }}>
                         {t('modals.report.checking')}

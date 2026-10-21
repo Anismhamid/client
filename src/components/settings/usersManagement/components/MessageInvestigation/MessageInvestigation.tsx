@@ -103,7 +103,9 @@ const MessageInvestigation = () => {
 
     if (auth.role !== RoleType.Admin && auth.role !== RoleType.Moderator) {
         return (
-            <Alert severity='error'>You are not authorized to access this page.</Alert>
+            <Alert severity='error'>
+                You are not authorized to access this page.
+            </Alert>
         );
     }
 
@@ -216,6 +218,7 @@ const MessageInvestigation = () => {
                                 startIcon={
                                     loading ? (
                                         <CircularProgress
+                                            aria-label={'جاري التحميل'}
                                             size={18}
                                             color='inherit'
                                         />

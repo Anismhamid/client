@@ -91,7 +91,7 @@ const BlockButton = ({
     };
 
     if (checking) {
-        return <CircularProgress size={18} />;
+        return <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={18} />;
     }
 
     return (
@@ -185,6 +185,7 @@ const BlockButton = ({
                         {loading ? (
                             <CircularProgress
                                 size={20}
+                                aria-label={t('common.loading', 'جاري التحميل')} 
                                 sx={{ color: '#fff' }}
                             />
                         ) : (

@@ -228,6 +228,7 @@ const BlockedUsers: FunctionComponent = () => {
                 }}
             >
                 <CircularProgress
+                size={20}
                     aria-label={t('common.loading', 'جاري التحميل')}
                 />
             </Box>

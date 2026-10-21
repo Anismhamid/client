@@ -781,6 +781,10 @@ const Profile: FunctionComponent = () => {
                                                 }}
                                             >
                                                 <CircularProgress
+                                                    aria-label={t(
+                                                        'common.loading',
+                                                        'جاري التحميل',
+                                                    )}
                                                     variant='determinate'
                                                     value={100}
                                                     size={64}

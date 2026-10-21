@@ -185,7 +185,7 @@ const MessageAuditLogs: FunctionComponent = () => {
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
-                <CircularProgress size={48} thickness={4} />
+                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={48} thickness={4} />
             </Box>
         );
     }

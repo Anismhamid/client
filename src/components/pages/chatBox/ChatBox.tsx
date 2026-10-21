@@ -1114,7 +1114,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             py: 1,
                         }}
                     >
-                        <CircularProgress size={20} />
+                        <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={20} />
                     </Box>
                 )}
 
@@ -1128,7 +1128,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             mt: 4,
                         }}
                     >
-                        <CircularProgress size={24} />
+                        <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={24} />
                     </Box>
                 ) : (
                     userMessages.map((msg) => {
@@ -1384,6 +1384,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                 >
                                                     {isEditing ? (
                                                         <CircularProgress
+                                                        aria-label={t('common.loading', 'جاري التحميل')} 
                                                             size={16}
                                                         />
                                                     ) : (

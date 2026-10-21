@@ -238,7 +238,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
                                     endAdornment: (
                                         <>
                                             {loadingStreets ? (
-                                                <CircularProgress size={16} />
+                                                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={16} />
                                             ) : null}
                                             {params.InputProps.endAdornment}
                                         </>
@@ -336,6 +336,7 @@ const UserInfoModal: FunctionComponent<UserInfoModalProps> = ({
                             startIcon={
                                 isBusy ? (
                                     <CircularProgress
+                                    aria-label={t('common.loading', 'جاري التحميل')} 
                                         size={18}
                                         color='inherit'
                                     />

@@ -179,6 +179,10 @@ const ForgotPassword: FunctionComponent<ForgotPasswordProps> = ({ mode }) => {
                                                 startIcon={
                                                     isPending ? (
                                                         <CircularProgress
+                                                            aria-label={t(
+                                                                'common.loading',
+                                                                'جاري التحميل',
+                                                            )}
                                                             size={20}
                                                             color='inherit'
                                                         />

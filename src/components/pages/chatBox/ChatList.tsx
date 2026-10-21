@@ -449,6 +449,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                         }}
                     >
                         <CircularProgress
+                        aria-label={t('common.loading', 'جاري التحميل')} 
                             size={28}
                             thickness={5}
                             sx={{

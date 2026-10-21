@@ -358,6 +358,7 @@ const CustomerProfile: FunctionComponent = () => {
                 gap={3}
             >
                 <CircularProgress
+                aria-label={t('common.loading', 'جاري التحميل')} 
                     size={52}
                     thickness={4}
                     sx={{ color: BRAND_GOLD }}

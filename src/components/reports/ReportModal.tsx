@@ -311,7 +311,7 @@ const ReportModal: FunctionComponent<ReportModalProps> = ({
                     }
                     startIcon={
                         loading ? (
-                            <CircularProgress size={18} color='inherit' />
+                            <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={18} color='inherit' />
                         ) : (
                             <FlagOutlinedIcon />
                         )

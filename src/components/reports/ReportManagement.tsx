@@ -550,7 +550,13 @@ const ReportManagement: FunctionComponent = () => {
                             {loading && reports.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={6} align='center'>
-                                        <CircularProgress />
+                                        <CircularProgress
+                                            size={20}
+                                            aria-label={t(
+                                                'common.loading',
+                                                'جاري التحميل',
+                                            )}
+                                        />
                                     </TableCell>
                                 </TableRow>
                             ) : reports.length === 0 ? (
@@ -962,7 +968,7 @@ const ReportManagement: FunctionComponent = () => {
                         }}
                         startIcon={
                             actionLoading ? (
-                                <CircularProgress size={16} color='inherit' />
+                                <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={16} color='inherit' />
                             ) : (
                                 <DeleteForeverOutlined />
                             )

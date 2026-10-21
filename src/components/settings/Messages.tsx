@@ -919,7 +919,11 @@ const MessagingPage: React.FC = () => {
                 size='large'
                 startIcon={
                     sending ? (
-                        <CircularProgress size={20} color='inherit' />
+                        <CircularProgress
+                            aria-label='جاري التحميل'
+                            size={20}
+                            color='inherit'
+                        />
                     ) : (
                         <SendIcon />
                     )

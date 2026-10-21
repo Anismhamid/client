@@ -18,7 +18,6 @@ import {
     checkSlugAvailability,
 } from '../../../services/usersServices';
 
-
 import {
     Autocomplete,
     Alert,
@@ -596,8 +595,18 @@ const Register: FunctionComponent = () => {
 
         if (checkingSlug) {
             return (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
-                    <CircularProgress size={16} />
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        mt: 1,
+                    }}
+                >
+                    <CircularProgress
+                        aria-label={t('common.loading', 'جاري التحميل')}
+                        size={16}
+                    />
 
                     <Typography variant='caption' color='text.secondary'>
                         {t('register.checkingSlug')}
@@ -608,7 +617,14 @@ const Register: FunctionComponent = () => {
 
         if (slugAvailable === true) {
             return (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        mt: 1,
+                    }}
+                >
                     <CheckIcon
                         sx={{ color: theme.palette.success.main, fontSize: 16 }}
                     />
@@ -625,7 +641,14 @@ const Register: FunctionComponent = () => {
 
         if (slugAvailable === false) {
             return (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        mt: 1,
+                    }}
+                >
                     <CloseIcon
                         sx={{ color: theme.palette.error.main, fontSize: 16 }}
                     />
@@ -662,8 +685,14 @@ const Register: FunctionComponent = () => {
                                 transition: 'all 0.2s ease',
                                 backgroundColor:
                                     theme.palette.mode === 'dark'
-                                        ? alpha(theme.palette.common.white, 0.05)
-                                        : alpha(theme.palette.common.black, 0.02),
+                                        ? alpha(
+                                              theme.palette.common.white,
+                                              0.05,
+                                          )
+                                        : alpha(
+                                              theme.palette.common.black,
+                                              0.02,
+                                          ),
                                 '&.Mui-focused fieldset': {
                                     borderColor: theme.palette.primary.main,
                                     borderWidth: 2,
@@ -746,11 +775,19 @@ const Register: FunctionComponent = () => {
                             {t('register.success.title')}
                         </Typography>
 
-                        <Typography variant='body1' color='text.secondary' paragraph>
+                        <Typography
+                            variant='body1'
+                            color='text.secondary'
+                            paragraph
+                        >
                             {t('register.success.message')}
                         </Typography>
 
-                        <Typography variant='body2' color='text.secondary' paragraph>
+                        <Typography
+                            variant='body2'
+                            color='text.secondary'
+                            paragraph
+                        >
                             {t('register.success.profileLink')}:
                         </Typography>
 
@@ -760,7 +797,10 @@ const Register: FunctionComponent = () => {
                                 px: 2,
                                 py: 1,
                                 borderRadius: 2,
-                                bgcolor: alpha(theme.palette.primary.main, 0.08),
+                                bgcolor: alpha(
+                                    theme.palette.primary.main,
+                                    0.08,
+                                ),
                                 border: `1px solid ${alpha(
                                     theme.palette.primary.main,
                                     0.2,
@@ -781,11 +821,19 @@ const Register: FunctionComponent = () => {
                             </Typography>
                         </Box>
 
-                        <Typography variant='body2' color='text.secondary' paragraph>
+                        <Typography
+                            variant='body2'
+                            color='text.secondary'
+                            paragraph
+                        >
                             {t('register.success.redirect')}
                         </Typography>
 
-                        <CircularProgress size={24} sx={{ mt: 2 }} />
+                        <CircularProgress
+                            aria-label={t('common.loading', 'جاري التحميل')}
+                            size={24}
+                            sx={{ mt: 2 }}
+                        />
                     </Card>
                 </Box>
             </>
@@ -808,7 +856,10 @@ const Register: FunctionComponent = () => {
 
             <title>{t('register.title')} | صفقة</title>
 
-            <meta name='description' content={`${t('register.title')} | صفقة`} />
+            <meta
+                name='description'
+                content={`${t('register.title')} | صفقة`}
+            />
 
             <Box
                 dir={dir}
@@ -830,7 +881,9 @@ const Register: FunctionComponent = () => {
                     <Grid container justifyContent='center'>
                         <Grid size={{ xs: 12, md: 10, lg: 8 }}>
                             <Paper
-                                elevation={theme.palette.mode === 'dark' ? 8 : 24}
+                                elevation={
+                                    theme.palette.mode === 'dark' ? 8 : 24
+                                }
                                 sx={{
                                     borderRadius: 4,
                                     overflow: 'hidden',
@@ -910,7 +963,8 @@ const Register: FunctionComponent = () => {
                                                 ),
                                                 '&:hover': {
                                                     bgcolor: alpha(
-                                                        theme.palette.common.white,
+                                                        theme.palette.common
+                                                            .white,
                                                         0.25,
                                                     ),
                                                 },
@@ -966,16 +1020,19 @@ const Register: FunctionComponent = () => {
 
                                                 '& .MuiStepLabel-root .Mui-completed':
                                                     {
-                                                        color: theme.palette.success
-                                                            .main,
+                                                        color: theme.palette
+                                                            .success.main,
                                                     },
 
-                                                '& .MuiStepLabel-root .Mui-active': {
-                                                    color: theme.palette.primary.main,
-                                                },
+                                                '& .MuiStepLabel-root .Mui-active':
+                                                    {
+                                                        color: theme.palette
+                                                            .primary.main,
+                                                    },
 
                                                 '& .MuiStepConnector-line': {
-                                                    borderColor: theme.palette.divider,
+                                                    borderColor:
+                                                        theme.palette.divider,
                                                 },
                                             }}
                                         >
@@ -984,16 +1041,20 @@ const Register: FunctionComponent = () => {
                                                     <StepLabel
                                                         StepIconProps={{
                                                             sx: {
-                                                                '&.Mui-active': {
-                                                                    color: theme
-                                                                        .palette
-                                                                        .primary.main,
-                                                                },
-                                                                '&.Mui-completed': {
-                                                                    color: theme
-                                                                        .palette
-                                                                        .success.main,
-                                                                },
+                                                                '&.Mui-active':
+                                                                    {
+                                                                        color: theme
+                                                                            .palette
+                                                                            .primary
+                                                                            .main,
+                                                                    },
+                                                                '&.Mui-completed':
+                                                                    {
+                                                                        color: theme
+                                                                            .palette
+                                                                            .success
+                                                                            .main,
+                                                                    },
                                                             },
                                                         }}
                                                     >
@@ -1055,21 +1116,26 @@ const Register: FunctionComponent = () => {
                                                             height: 10,
                                                             borderRadius: '50%',
                                                             bgcolor:
-                                                                index === currentStep
-                                                                    ? theme.palette
-                                                                          .primary.main
+                                                                index ===
+                                                                currentStep
+                                                                    ? theme
+                                                                          .palette
+                                                                          .primary
+                                                                          .main
                                                                     : index <
                                                                         currentStep
                                                                       ? theme
                                                                             .palette
                                                                             .success
                                                                             .main
-                                                                      : theme.palette
+                                                                      : theme
+                                                                            .palette
                                                                             .divider,
                                                         }}
                                                     />
 
-                                                    {index < steps.length - 1 && (
+                                                    {index <
+                                                        steps.length - 1 && (
                                                         <Box
                                                             sx={{
                                                                 width: 20,
@@ -1101,14 +1167,17 @@ const Register: FunctionComponent = () => {
                                         >
                                             <Alert
                                                 severity='error'
-                                                onClose={() => setSubmitError(null)}
+                                                onClose={() =>
+                                                    setSubmitError(null)
+                                                }
                                                 icon={<ErrorIcon />}
                                                 sx={{
                                                     mb: 3,
                                                     borderRadius: 2,
                                                     borderLeft: `4px solid ${theme.palette.error.main}`,
                                                     bgcolor: alpha(
-                                                        theme.palette.error.main,
+                                                        theme.palette.error
+                                                            .main,
                                                         0.05,
                                                     ),
                                                 }}
@@ -1143,29 +1212,73 @@ const Register: FunctionComponent = () => {
 
                                                 {currentStep === 0 && (
                                                     <Grid container spacing={3}>
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <StyledTextField
                                                                 autoFocus
-                                                                label={t('register.firstName')}
+                                                                label={t(
+                                                                    'register.firstName',
+                                                                )}
                                                                 name='name.first'
-                                                                value={formik.values.name.first}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('name.first'))}
-                                                                helperText={fieldError('name.first')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .name
+                                                                        .first
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'name.first',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'name.first',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
 
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <StyledTextField
-                                                                label={t('register.lastName')}
+                                                                label={t(
+                                                                    'register.lastName',
+                                                                )}
                                                                 name='name.last'
-                                                                value={formik.values.name.last}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('name.last'))}
-                                                                helperText={fieldError('name.last')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .name
+                                                                        .last
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'name.last',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'name.last',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
@@ -1175,8 +1288,10 @@ const Register: FunctionComponent = () => {
                                                         <Grid size={{ xs: 12 }}>
                                                             <Box
                                                                 sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'flex-start',
+                                                                    display:
+                                                                        'flex',
+                                                                    alignItems:
+                                                                        'flex-start',
                                                                     gap: 2,
                                                                     flexWrap: {
                                                                         xs: 'wrap',
@@ -1184,12 +1299,25 @@ const Register: FunctionComponent = () => {
                                                                     },
                                                                 }}
                                                             >
-                                                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                                <Box
+                                                                    sx={{
+                                                                        flex: 1,
+                                                                        minWidth: 0,
+                                                                    }}
+                                                                >
                                                                     <StyledTextField
-                                                                        label={t('register.slug')}
+                                                                        label={t(
+                                                                            'register.slug',
+                                                                        )}
                                                                         name='slug'
-                                                                        value={formik.values.slug}
-                                                                        onChange={(event) => {
+                                                                        value={
+                                                                            formik
+                                                                                .values
+                                                                                .slug
+                                                                        }
+                                                                        onChange={(
+                                                                            event,
+                                                                        ) => {
                                                                             const value =
                                                                                 event.target.value
                                                                                     .toLowerCase()
@@ -1203,19 +1331,30 @@ const Register: FunctionComponent = () => {
                                                                                 value,
                                                                             );
                                                                         }}
-                                                                        onBlur={formik.handleBlur}
-                                                                        error={Boolean(fieldError('slug'))}
+                                                                        onBlur={
+                                                                            formik.handleBlur
+                                                                        }
+                                                                        error={Boolean(
+                                                                            fieldError(
+                                                                                'slug',
+                                                                            ),
+                                                                        )}
                                                                         helperText={
-                                                                            fieldError('slug') ||
-                                                                            t('register.slugHint')
+                                                                            fieldError(
+                                                                                'slug',
+                                                                            ) ||
+                                                                            t(
+                                                                                'register.slugHint',
+                                                                            )
                                                                         }
                                                                         fullWidth
                                                                         InputProps={{
-                                                                            startAdornment: (
-                                                                                <InputAdornment position='start'>
-                                                                                    <Tag />
-                                                                                </InputAdornment>
-                                                                            ),
+                                                                            startAdornment:
+                                                                                (
+                                                                                    <InputAdornment position='start'>
+                                                                                        <Tag />
+                                                                                    </InputAdornment>
+                                                                                ),
                                                                         }}
                                                                     />
 
@@ -1224,23 +1363,42 @@ const Register: FunctionComponent = () => {
 
                                                                 <Button
                                                                     variant='outlined'
-                                                                    onClick={generateSlugFromName}
-                                                                    disabled={
-                                                                        !formik.values.name.first &&
-                                                                        !formik.values.name.last
+                                                                    onClick={
+                                                                        generateSlugFromName
                                                                     }
-                                                                    sx={{ mt: 1, flexShrink: 0 }}
+                                                                    disabled={
+                                                                        !formik
+                                                                            .values
+                                                                            .name
+                                                                            .first &&
+                                                                        !formik
+                                                                            .values
+                                                                            .name
+                                                                            .last
+                                                                    }
+                                                                    sx={{
+                                                                        mt: 1,
+                                                                        flexShrink: 0,
+                                                                    }}
                                                                 >
-                                                                    {t('register.generateSlug')}
+                                                                    {t(
+                                                                        'register.generateSlug',
+                                                                    )}
                                                                 </Button>
                                                             </Box>
 
                                                             <Typography
                                                                 variant='caption'
                                                                 color='text.secondary'
-                                                                sx={{ display: 'block', mt: 1 }}
+                                                                sx={{
+                                                                    display:
+                                                                        'block',
+                                                                    mt: 1,
+                                                                }}
                                                             >
-                                                                {t('register.slugExample')}
+                                                                {t(
+                                                                    'register.slugExample',
+                                                                )}
                                                             </Typography>
                                                         </Grid>
 
@@ -1248,15 +1406,31 @@ const Register: FunctionComponent = () => {
 
                                                         <Grid size={{ xs: 12 }}>
                                                             <StyledTextField
-                                                                label={t('register.email')}
+                                                                label={t(
+                                                                    'register.email',
+                                                                )}
                                                                 name='email'
                                                                 type='email'
                                                                 autoComplete='email'
-                                                                value={formik.values.email}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('email'))}
-                                                                helperText={fieldError('email')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .email
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'email',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'email',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
@@ -1265,15 +1439,31 @@ const Register: FunctionComponent = () => {
 
                                                         <Grid size={{ xs: 12 }}>
                                                             <StyledTextField
-                                                                label={t('register.personalEmail')}
+                                                                label={t(
+                                                                    'register.personalEmail',
+                                                                )}
                                                                 name='personalEmail'
                                                                 type='email'
                                                                 autoComplete='email'
-                                                                value={formik.values.personalEmail}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('personalEmail'))}
-                                                                helperText={fieldError('personalEmail')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .personalEmail
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'personalEmail',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'personalEmail',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
@@ -1283,25 +1473,47 @@ const Register: FunctionComponent = () => {
                                                         <Grid size={{ xs: 12 }}>
                                                             <StyledTextField
                                                                 select
-                                                                label={t('register.gender')}
+                                                                label={t(
+                                                                    'register.gender',
+                                                                )}
                                                                 name='gender'
-                                                                value={formik.values.gender}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('gender'))}
-                                                                helperText={fieldError('gender')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .gender
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'gender',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'gender',
+                                                                )}
                                                                 fullWidth
                                                             >
                                                                 <MenuItem value=''>
-                                                                    {t('register.selectGender')}
+                                                                    {t(
+                                                                        'register.selectGender',
+                                                                    )}
                                                                 </MenuItem>
 
                                                                 <MenuItem value='male'>
-                                                                    {t('register.male')}
+                                                                    {t(
+                                                                        'register.male',
+                                                                    )}
                                                                 </MenuItem>
 
                                                                 <MenuItem value='female'>
-                                                                    {t('register.female')}
+                                                                    {t(
+                                                                        'register.female',
+                                                                    )}
                                                                 </MenuItem>
                                                             </StyledTextField>
                                                         </Grid>
@@ -1312,45 +1524,104 @@ const Register: FunctionComponent = () => {
 
                                                 {currentStep === 1 && (
                                                     <Grid container spacing={3}>
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <StyledTextField
-                                                                label={t('register.phone1')}
+                                                                label={t(
+                                                                    'register.phone1',
+                                                                )}
                                                                 name='phone.phone_1'
                                                                 type='tel'
                                                                 placeholder='05x-xxxxxxx'
-                                                                value={formik.values.phone.phone_1}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('phone.phone_1'))}
-                                                                helperText={fieldError('phone.phone_1')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .phone
+                                                                        .phone_1
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'phone.phone_1',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'phone.phone_1',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
 
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <StyledTextField
-                                                                label={t('register.phone2')}
+                                                                label={t(
+                                                                    'register.phone2',
+                                                                )}
                                                                 name='phone.phone_2'
                                                                 type='tel'
-                                                                value={formik.values.phone.phone_2}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
-                                                                error={Boolean(fieldError('phone.phone_2'))}
-                                                                helperText={fieldError('phone.phone_2')}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .phone
+                                                                        .phone_2
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'phone.phone_2',
+                                                                    ),
+                                                                )}
+                                                                helperText={fieldError(
+                                                                    'phone.phone_2',
+                                                                )}
                                                                 fullWidth
                                                             />
                                                         </Grid>
 
                                                         {/* CITY */}
 
-                                                        <Grid size={{ xs: 12, md: 4 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 4,
+                                                            }}
+                                                        >
                                                             <Autocomplete
                                                                 options={cities}
-                                                                value={formik.values.address.city || null}
-                                                                onChange={(_event, value) => {
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .address
+                                                                        .city ||
+                                                                    null
+                                                                }
+                                                                onChange={(
+                                                                    _event,
+                                                                    value,
+                                                                ) => {
                                                                     formik.setFieldValue(
                                                                         'address.city',
-                                                                        value || '',
+                                                                        value ||
+                                                                            '',
                                                                     );
 
                                                                     formik.setFieldValue(
@@ -1364,12 +1635,22 @@ const Register: FunctionComponent = () => {
                                                                         true,
                                                                     )
                                                                 }
-                                                                renderInput={(params) => (
+                                                                renderInput={(
+                                                                    params,
+                                                                ) => (
                                                                     <StyledTextField
                                                                         {...params}
-                                                                        label={t('register.city')}
-                                                                        error={Boolean(fieldError('address.city'))}
-                                                                        helperText={fieldError('address.city')}
+                                                                        label={t(
+                                                                            'register.city',
+                                                                        )}
+                                                                        error={Boolean(
+                                                                            fieldError(
+                                                                                'address.city',
+                                                                            ),
+                                                                        )}
+                                                                        helperText={fieldError(
+                                                                            'address.city',
+                                                                        )}
                                                                     />
                                                                 )}
                                                             />
@@ -1377,14 +1658,31 @@ const Register: FunctionComponent = () => {
 
                                                         {/* STREET */}
 
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <Autocomplete
-                                                                options={streets}
-                                                                value={formik.values.address.street || null}
-                                                                onChange={(_event, value) =>
+                                                                options={
+                                                                    streets
+                                                                }
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .address
+                                                                        .street ||
+                                                                    null
+                                                                }
+                                                                onChange={(
+                                                                    _event,
+                                                                    value,
+                                                                ) =>
                                                                     formik.setFieldValue(
                                                                         'address.street',
-                                                                        value || '',
+                                                                        value ||
+                                                                            '',
                                                                     )
                                                                 }
                                                                 onBlur={() =>
@@ -1394,16 +1692,31 @@ const Register: FunctionComponent = () => {
                                                                     )
                                                                 }
                                                                 disabled={
-                                                                    !formik.values.address.city ||
+                                                                    !formik
+                                                                        .values
+                                                                        .address
+                                                                        .city ||
                                                                     loadingStreets
                                                                 }
-                                                                loading={loadingStreets}
-                                                                renderInput={(params) => (
+                                                                loading={
+                                                                    loadingStreets
+                                                                }
+                                                                renderInput={(
+                                                                    params,
+                                                                ) => (
                                                                     <StyledTextField
                                                                         {...params}
-                                                                        label={t('register.street')}
-                                                                        error={Boolean(fieldError('address.street'))}
-                                                                        helperText={fieldError('address.street')}
+                                                                        label={t(
+                                                                            'register.street',
+                                                                        )}
+                                                                        error={Boolean(
+                                                                            fieldError(
+                                                                                'address.street',
+                                                                            ),
+                                                                        )}
+                                                                        helperText={fieldError(
+                                                                            'address.street',
+                                                                        )}
                                                                     />
                                                                 )}
                                                             />
@@ -1411,13 +1724,29 @@ const Register: FunctionComponent = () => {
 
                                                         {/* HOUSE NUMBER */}
 
-                                                        <Grid size={{ xs: 12, md: 6 }}>
+                                                        <Grid
+                                                            size={{
+                                                                xs: 12,
+                                                                md: 6,
+                                                            }}
+                                                        >
                                                             <StyledTextField
-                                                                label={t('register.houseNumber')}
+                                                                label={t(
+                                                                    'register.houseNumber',
+                                                                )}
                                                                 name='address.houseNumber'
-                                                                value={formik.values.address.houseNumber}
-                                                                onChange={formik.handleChange}
-                                                                onBlur={formik.handleBlur}
+                                                                value={
+                                                                    formik
+                                                                        .values
+                                                                        .address
+                                                                        .houseNumber
+                                                                }
+                                                                onChange={
+                                                                    formik.handleChange
+                                                                }
+                                                                onBlur={
+                                                                    formik.handleBlur
+                                                                }
                                                                 fullWidth
                                                             />
                                                         </Grid>
@@ -1427,75 +1756,117 @@ const Register: FunctionComponent = () => {
                                                         <Grid size={{ xs: 12 }}>
                                                             <Box
                                                                 sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
+                                                                    display:
+                                                                        'flex',
+                                                                    alignItems:
+                                                                        'center',
                                                                     gap: 2,
                                                                     p: 2,
                                                                     borderRadius: 2,
                                                                     border: `1px dashed ${theme.palette.divider}`,
-                                                                    flexWrap: 'wrap',
+                                                                    flexWrap:
+                                                                        'wrap',
                                                                 }}
                                                             >
                                                                 <Avatar
-                                                                    src={avatarPreview || undefined}
-                                                                    sx={{ width: 72, height: 72 }}
+                                                                    src={
+                                                                        avatarPreview ||
+                                                                        undefined
+                                                                    }
+                                                                    sx={{
+                                                                        width: 72,
+                                                                        height: 72,
+                                                                    }}
                                                                 >
                                                                     {formik.values.name.first
-                                                                        ?.charAt(0)
-                                                                        .toUpperCase() || 'U'}
+                                                                        ?.charAt(
+                                                                            0,
+                                                                        )
+                                                                        .toUpperCase() ||
+                                                                        'U'}
                                                                 </Avatar>
 
-                                                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                                                <Box
+                                                                    sx={{
+                                                                        flex: 1,
+                                                                        minWidth: 0,
+                                                                    }}
+                                                                >
                                                                     <Typography
                                                                         variant='body2'
-                                                                        fontWeight={600}
+                                                                        fontWeight={
+                                                                            600
+                                                                        }
                                                                     >
-                                                                        {t('register.profileImage')}
+                                                                        {t(
+                                                                            'register.profileImage',
+                                                                        )}
                                                                     </Typography>
 
                                                                     <Typography
                                                                         variant='caption'
                                                                         color='text.secondary'
                                                                     >
-                                                                        {t('register.profileImageHint')}
+                                                                        {t(
+                                                                            'register.profileImageHint',
+                                                                        )}
                                                                     </Typography>
 
                                                                     {avatarError && (
                                                                         <Typography
                                                                             variant='caption'
                                                                             color='error'
-                                                                            sx={{ display: 'block' }}
+                                                                            sx={{
+                                                                                display:
+                                                                                    'block',
+                                                                            }}
                                                                         >
-                                                                            {avatarError}
+                                                                            {
+                                                                                avatarError
+                                                                            }
                                                                         </Typography>
                                                                     )}
                                                                 </Box>
 
                                                                 <input
-                                                                    ref={fileInputRef}
+                                                                    ref={
+                                                                        fileInputRef
+                                                                    }
                                                                     type='file'
                                                                     accept='image/jpeg,image/png,image/webp'
                                                                     hidden
-                                                                    onChange={handleAvatarChange}
+                                                                    onChange={
+                                                                        handleAvatarChange
+                                                                    }
                                                                 />
 
                                                                 <Button
                                                                     variant='outlined'
-                                                                    startIcon={<PhotoCamera />}
+                                                                    startIcon={
+                                                                        <PhotoCamera />
+                                                                    }
                                                                     onClick={() =>
                                                                         fileInputRef.current?.click()
                                                                     }
                                                                 >
                                                                     {avatarFile
-                                                                        ? t('register.changeImage')
-                                                                        : t('register.chooseImage')}
+                                                                        ? t(
+                                                                              'register.changeImage',
+                                                                          )
+                                                                        : t(
+                                                                              'register.chooseImage',
+                                                                          )}
                                                                 </Button>
 
                                                                 {avatarFile && (
                                                                     <IconButton
                                                                         color='error'
-                                                                        onClick={handleRemoveAvatar}
-                                                                        aria-label={t('common.delete')}
+                                                                        onClick={
+                                                                            handleRemoveAvatar
+                                                                        }
+                                                                        aria-label={t(
+                                                                            'common.delete',
+                                                                        )}
                                                                     >
                                                                         <DeleteIcon />
                                                                     </IconButton>
@@ -1515,31 +1886,59 @@ const Register: FunctionComponent = () => {
                                                             <FormControl
                                                                 fullWidth
                                                                 variant='outlined'
-                                                                error={Boolean(fieldError('password'))}
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'password',
+                                                                    ),
+                                                                )}
                                                             >
                                                                 <InputLabel htmlFor='password'>
-                                                                    {t('register.password')}
+                                                                    {t(
+                                                                        'register.password',
+                                                                    )}
                                                                 </InputLabel>
 
                                                                 <OutlinedInput
                                                                     id='password'
                                                                     name='password'
-                                                                    type={showPassword ? 'text' : 'password'}
-                                                                    value={formik.values.password}
-                                                                    onChange={formik.handleChange}
-                                                                    onBlur={formik.handleBlur}
+                                                                    type={
+                                                                        showPassword
+                                                                            ? 'text'
+                                                                            : 'password'
+                                                                    }
+                                                                    value={
+                                                                        formik
+                                                                            .values
+                                                                            .password
+                                                                    }
+                                                                    onChange={
+                                                                        formik.handleChange
+                                                                    }
+                                                                    onBlur={
+                                                                        formik.handleBlur
+                                                                    }
                                                                     autoComplete='new-password'
-                                                                    label={t('register.password')}
+                                                                    label={t(
+                                                                        'register.password',
+                                                                    )}
                                                                     endAdornment={
                                                                         <InputAdornment position='end'>
                                                                             <IconButton
-                                                                                onClick={handleClickShowPassword}
-                                                                                onMouseDown={handleMouseDownPassword}
+                                                                                onClick={
+                                                                                    handleClickShowPassword
+                                                                                }
+                                                                                onMouseDown={
+                                                                                    handleMouseDownPassword
+                                                                                }
                                                                                 edge='end'
                                                                                 aria-label={
                                                                                     showPassword
-                                                                                        ? t('register.hidePassword')
-                                                                                        : t('register.showPassword')
+                                                                                        ? t(
+                                                                                              'register.hidePassword',
+                                                                                          )
+                                                                                        : t(
+                                                                                              'register.showPassword',
+                                                                                          )
                                                                                 }
                                                                             >
                                                                                 {showPassword ? (
@@ -1550,18 +1949,29 @@ const Register: FunctionComponent = () => {
                                                                             </IconButton>
                                                                         </InputAdornment>
                                                                     }
-                                                                    sx={{ borderRadius: 2 }}
+                                                                    sx={{
+                                                                        borderRadius: 2,
+                                                                    }}
                                                                 />
 
-                                                                {fieldError('password') && (
+                                                                {fieldError(
+                                                                    'password',
+                                                                ) && (
                                                                     <FormHelperText>
-                                                                        {fieldError('password')}
+                                                                        {fieldError(
+                                                                            'password',
+                                                                        )}
                                                                     </FormHelperText>
                                                                 )}
 
-                                                                {formik.values.password && (
+                                                                {formik.values
+                                                                    .password && (
                                                                     <PasswordStrengthIndicator
-                                                                        password={formik.values.password}
+                                                                        password={
+                                                                            formik
+                                                                                .values
+                                                                                .password
+                                                                        }
                                                                     />
                                                                 )}
                                                             </FormControl>
@@ -1573,10 +1983,16 @@ const Register: FunctionComponent = () => {
                                                             <FormControl
                                                                 fullWidth
                                                                 variant='outlined'
-                                                                error={Boolean(fieldError('confirmPassword'))}
+                                                                error={Boolean(
+                                                                    fieldError(
+                                                                        'confirmPassword',
+                                                                    ),
+                                                                )}
                                                             >
                                                                 <InputLabel htmlFor='confirmPassword'>
-                                                                    {t('register.confirmPassword')}
+                                                                    {t(
+                                                                        'register.confirmPassword',
+                                                                    )}
                                                                 </InputLabel>
 
                                                                 <OutlinedInput
@@ -1587,18 +2003,30 @@ const Register: FunctionComponent = () => {
                                                                             ? 'text'
                                                                             : 'password'
                                                                     }
-                                                                    value={formik.values.confirmPassword}
-                                                                    onChange={formik.handleChange}
-                                                                    onBlur={formik.handleBlur}
+                                                                    value={
+                                                                        formik
+                                                                            .values
+                                                                            .confirmPassword
+                                                                    }
+                                                                    onChange={
+                                                                        formik.handleChange
+                                                                    }
+                                                                    onBlur={
+                                                                        formik.handleBlur
+                                                                    }
                                                                     autoComplete='new-password'
-                                                                    label={t('register.confirmPassword')}
+                                                                    label={t(
+                                                                        'register.confirmPassword',
+                                                                    )}
                                                                     endAdornment={
                                                                         <InputAdornment position='end'>
                                                                             <IconButton
                                                                                 onClick={
                                                                                     handleClickShowConfirmPassword
                                                                                 }
-                                                                                onMouseDown={handleMouseDownPassword}
+                                                                                onMouseDown={
+                                                                                    handleMouseDownPassword
+                                                                                }
                                                                                 edge='end'
                                                                             >
                                                                                 {showConfirmPassword ? (
@@ -1609,12 +2037,18 @@ const Register: FunctionComponent = () => {
                                                                             </IconButton>
                                                                         </InputAdornment>
                                                                     }
-                                                                    sx={{ borderRadius: 2 }}
+                                                                    sx={{
+                                                                        borderRadius: 2,
+                                                                    }}
                                                                 />
 
-                                                                {fieldError('confirmPassword') && (
+                                                                {fieldError(
+                                                                    'confirmPassword',
+                                                                ) && (
                                                                     <FormHelperText>
-                                                                        {fieldError('confirmPassword')}
+                                                                        {fieldError(
+                                                                            'confirmPassword',
+                                                                        )}
                                                                     </FormHelperText>
                                                                 )}
                                                             </FormControl>
@@ -1632,40 +2066,68 @@ const Register: FunctionComponent = () => {
                                                                     <Checkbox
                                                                         id='terms'
                                                                         name='terms'
-                                                                        checked={formik.values.terms}
-                                                                        onChange={formik.handleChange}
-                                                                        onBlur={formik.handleBlur}
+                                                                        checked={
+                                                                            formik
+                                                                                .values
+                                                                                .terms
+                                                                        }
+                                                                        onChange={
+                                                                            formik.handleChange
+                                                                        }
+                                                                        onBlur={
+                                                                            formik.handleBlur
+                                                                        }
                                                                     />
                                                                 }
                                                                 label={
                                                                     <>
-                                                                        {t('register.agreeTo')}{' '}
+                                                                        {t(
+                                                                            'register.agreeTo',
+                                                                        )}{' '}
                                                                         <Link
-                                                                            to={path.TermOfUse}
+                                                                            to={
+                                                                                path.TermOfUse
+                                                                            }
                                                                             target='_blank'
                                                                             rel='noopener noreferrer'
                                                                         >
-                                                                            {t('register.termsOfService')}
+                                                                            {t(
+                                                                                'register.termsOfService',
+                                                                            )}
                                                                         </Link>{' '}
-                                                                        {t('register.and')}{' '}
+                                                                        {t(
+                                                                            'register.and',
+                                                                        )}{' '}
                                                                         <Link
-                                                                            to={path.PrivacyAndPolicy}
+                                                                            to={
+                                                                                path.PrivacyAndPolicy
+                                                                            }
                                                                             target='_blank'
                                                                             rel='noopener noreferrer'
                                                                         >
-                                                                            {t('register.privacyPolicy')}
+                                                                            {t(
+                                                                                'register.privacyPolicy',
+                                                                            )}
                                                                         </Link>
                                                                     </>
                                                                 }
                                                             />
 
-                                                            {fieldError('terms') && (
+                                                            {fieldError(
+                                                                'terms',
+                                                            ) && (
                                                                 <Typography
                                                                     color='error'
                                                                     variant='caption'
-                                                                    sx={{ display: 'block', mt: 1 }}
+                                                                    sx={{
+                                                                        display:
+                                                                            'block',
+                                                                        mt: 1,
+                                                                    }}
                                                                 >
-                                                                    {fieldError('terms')}
+                                                                    {fieldError(
+                                                                        'terms',
+                                                                    )}
                                                                 </Typography>
                                                             )}
                                                         </Grid>
@@ -1681,13 +2143,19 @@ const Register: FunctionComponent = () => {
                                                                     lineHeight: 1.6,
                                                                     p: 2,
                                                                     borderRadius: 2,
-                                                                    bgcolor: alpha(
-                                                                        theme.palette.primary.main,
-                                                                        0.03,
-                                                                    ),
+                                                                    bgcolor:
+                                                                        alpha(
+                                                                            theme
+                                                                                .palette
+                                                                                .primary
+                                                                                .main,
+                                                                            0.03,
+                                                                        ),
                                                                 }}
                                                             >
-                                                                {t('register.privacyNote')}
+                                                                {t(
+                                                                    'register.privacyNote',
+                                                                )}
                                                             </Typography>
                                                         </Grid>
 
@@ -1696,56 +2164,94 @@ const Register: FunctionComponent = () => {
                                                         <Grid size={{ xs: 12 }}>
                                                             <Paper
                                                                 variant='outlined'
-                                                                sx={{ p: 3, mt: 2, borderRadius: 3 }}
+                                                                sx={{
+                                                                    p: 3,
+                                                                    mt: 2,
+                                                                    borderRadius: 3,
+                                                                }}
                                                             >
                                                                 <Typography
                                                                     variant='subtitle2'
                                                                     sx={{
-                                                                        color: theme.palette.primary.main,
+                                                                        color: theme
+                                                                            .palette
+                                                                            .primary
+                                                                            .main,
                                                                         fontWeight: 600,
                                                                         mb: 2,
                                                                     }}
                                                                 >
-                                                                    {t('register.profilePreview')}
+                                                                    {t(
+                                                                        'register.profilePreview',
+                                                                    )}
                                                                 </Typography>
 
                                                                 <Box
                                                                     sx={{
-                                                                        display: 'flex',
-                                                                        alignItems: 'center',
+                                                                        display:
+                                                                            'flex',
+                                                                        alignItems:
+                                                                            'center',
                                                                         gap: 2,
                                                                     }}
                                                                 >
                                                                     <Avatar
-                                                                        src={avatarPreview || undefined}
+                                                                        src={
+                                                                            avatarPreview ||
+                                                                            undefined
+                                                                        }
                                                                         sx={{
                                                                             width: 56,
                                                                             height: 56,
-                                                                            bgcolor: alpha(
-                                                                                theme.palette.primary.main,
-                                                                                0.12,
-                                                                            ),
-                                                                            color: theme.palette.primary.main,
+                                                                            bgcolor:
+                                                                                alpha(
+                                                                                    theme
+                                                                                        .palette
+                                                                                        .primary
+                                                                                        .main,
+                                                                                    0.12,
+                                                                                ),
+                                                                            color: theme
+                                                                                .palette
+                                                                                .primary
+                                                                                .main,
                                                                             fontWeight: 600,
                                                                             fontSize: 24,
                                                                         }}
                                                                     >
                                                                         {formik.values.name.first
-                                                                            ?.charAt(0)
-                                                                            .toUpperCase() || 'U'}
+                                                                            ?.charAt(
+                                                                                0,
+                                                                            )
+                                                                            .toUpperCase() ||
+                                                                            'U'}
                                                                     </Avatar>
 
                                                                     <Box>
                                                                         <Typography fontWeight='medium'>
-                                                                            {formik.values.name.first}{' '}
-                                                                            {formik.values.name.last}
+                                                                            {
+                                                                                formik
+                                                                                    .values
+                                                                                    .name
+                                                                                    .first
+                                                                            }{' '}
+                                                                            {
+                                                                                formik
+                                                                                    .values
+                                                                                    .name
+                                                                                    .last
+                                                                            }
                                                                         </Typography>
 
                                                                         <Typography
                                                                             variant='caption'
                                                                             color='text.secondary'
                                                                         >
-                                                                            @{formik.values.slug || 'username'}
+                                                                            @
+                                                                            {formik
+                                                                                .values
+                                                                                .slug ||
+                                                                                'username'}
                                                                         </Typography>
 
                                                                         <Typography
@@ -1753,9 +2259,16 @@ const Register: FunctionComponent = () => {
                                                                             display='block'
                                                                             color='text.secondary'
                                                                         >
-                                                                            {window.location.origin}
+                                                                            {
+                                                                                window
+                                                                                    .location
+                                                                                    .origin
+                                                                            }
                                                                             /customer/
-                                                                            {formik.values.slug || 'username'}
+                                                                            {formik
+                                                                                .values
+                                                                                .slug ||
+                                                                                'username'}
                                                                         </Typography>
                                                                     </Box>
                                                                 </Box>
@@ -1780,9 +2293,16 @@ const Register: FunctionComponent = () => {
                                             <Button
                                                 variant='outlined'
                                                 onClick={handleBack}
-                                                disabled={currentStep === 0 || isLoading}
+                                                disabled={
+                                                    currentStep === 0 ||
+                                                    isLoading
+                                                }
                                                 startIcon={
-                                                    dir === 'rtl' ? <ArrowForward /> : <ArrowBack />
+                                                    dir === 'rtl' ? (
+                                                        <ArrowForward />
+                                                    ) : (
+                                                        <ArrowBack />
+                                                    )
                                                 }
                                             >
                                                 {t('common.back')}
@@ -1792,7 +2312,10 @@ const Register: FunctionComponent = () => {
                                                 <Button
                                                     variant='contained'
                                                     onClick={handleNext}
-                                                    disabled={checkingSlug && currentStep === 0}
+                                                    disabled={
+                                                        checkingSlug &&
+                                                        currentStep === 0
+                                                    }
                                                 >
                                                     {t('common.next')}
                                                 </Button>
@@ -1809,6 +2332,10 @@ const Register: FunctionComponent = () => {
                                                     startIcon={
                                                         isLoading ? (
                                                             <CircularProgress
+                                                                aria-label={t(
+                                                                    'common.loading',
+                                                                    'جاري التحميل',
+                                                                )}
                                                                 size={20}
                                                                 color='inherit'
                                                             />
@@ -1816,8 +2343,12 @@ const Register: FunctionComponent = () => {
                                                     }
                                                 >
                                                     {isLoading
-                                                        ? t('register.creatingAccount')
-                                                        : t('register.completeRegistration')}
+                                                        ? t(
+                                                              'register.creatingAccount',
+                                                          )
+                                                        : t(
+                                                              'register.completeRegistration',
+                                                          )}
                                                 </Button>
                                             )}
                                         </Box>
@@ -1833,7 +2364,10 @@ const Register: FunctionComponent = () => {
                                             borderTop: `1px solid ${theme.palette.divider}`,
                                         }}
                                     >
-                                        <Typography color='text.secondary' sx={{ mb: 1 }}>
+                                        <Typography
+                                            color='text.secondary'
+                                            sx={{ mb: 1 }}
+                                        >
                                             {t('register.haveAccount')}
                                         </Typography>
 
@@ -1860,7 +2394,8 @@ const Register: FunctionComponent = () => {
                                             to={path.Contact}
                                             style={{
                                                 textDecoration: 'none',
-                                                color: theme.palette.text.secondary,
+                                                color: theme.palette.text
+                                                    .secondary,
                                             }}
                                         >
                                             {t('common.contact')}
@@ -1870,7 +2405,8 @@ const Register: FunctionComponent = () => {
                                             to={path.About}
                                             style={{
                                                 textDecoration: 'none',
-                                                color: theme.palette.text.secondary,
+                                                color: theme.palette.text
+                                                    .secondary,
                                             }}
                                         >
                                             {t('common.about')}
