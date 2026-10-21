@@ -105,7 +105,9 @@ const Home: FunctionComponent = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
     const [posts, setPosts] = useState<Posts[]>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(
+        null,
+    );
 
     const categories = useMemo(() => {
         const counts = new Map<string, number>();
@@ -191,8 +193,14 @@ const Home: FunctionComponent = () => {
             <link rel='apple-touch-icon' href='/d3.png' />
             <link rel='canonical' href={currentUrl} />
             <meta property='og:title' content='صفقة | بيع وشراء جديد ومستعمل' />
-            <meta property='og:description' content='بيع وشراء المنتجات بسهولة وأمان' />
-            <meta property='og:image' content='https://client-qqq1.vercel.app/d3.png' />
+            <meta
+                property='og:description'
+                content='بيع وشراء المنتجات بسهولة وأمان'
+            />
+            <meta
+                property='og:image'
+                content='https://client-qqq1.vercel.app/d3.png'
+            />
             <meta property='og:url' content={currentUrl} />
             <meta property='og:type' content='website' />
             <JsonLd
@@ -258,7 +266,10 @@ const Home: FunctionComponent = () => {
 
                 {/* ─── HELP — Editorial Card Redesign ─── */}
                 <section id='help-section'>
-                    <Container maxWidth='lg' sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
+                    <Container
+                        maxWidth='lg'
+                        sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}
+                    >
                         <Paper
                             elevation={0}
                             sx={{
@@ -302,17 +313,34 @@ const Home: FunctionComponent = () => {
                                 sx={{ position: 'relative' }}
                             >
                                 <Box>
-                                    <Stack direction='row' alignItems='center' gap={1} mb={0.5}>
+                                    <Stack
+                                        direction='row'
+                                        alignItems='center'
+                                        gap={1}
+                                        mb={0.5}
+                                    >
                                         <Chip
                                             size='small'
-                                            icon={<SparkleRoundedIcon sx={{ fontSize: 14 }} />}
-                                            label={t('pages.contact.helpEyebrow', 'مصمّم لمساعدتك')}
+                                            icon={
+                                                <SparkleRoundedIcon
+                                                    sx={{ fontSize: 14 }}
+                                                />
+                                            }
+                                            label={t(
+                                                'pages.contact.helpEyebrow',
+                                                'مصمّم لمساعدتك',
+                                            )}
                                             sx={{
-                                                bgcolor: alpha(BRAND.brown, 0.1),
+                                                bgcolor: alpha(
+                                                    BRAND.brown,
+                                                    0.1,
+                                                ),
                                                 color: BRAND.brown,
                                                 fontWeight: 700,
                                                 fontSize: '0.7rem',
-                                                '& .MuiChip-icon': { color: BRAND.brown },
+                                                '& .MuiChip-icon': {
+                                                    color: BRAND.brown,
+                                                },
                                             }}
                                         />
                                     </Stack>
@@ -320,17 +348,27 @@ const Home: FunctionComponent = () => {
                                         variant='h5'
                                         fontWeight={800}
                                         sx={{
-                                            fontSize: { xs: '1.25rem', md: '1.6rem' },
+                                            fontSize: {
+                                                xs: '1.25rem',
+                                                md: '1.6rem',
+                                            },
                                             letterSpacing: '-0.02em',
                                             lineHeight: 1.2,
                                         }}
                                     >
-                                        {t('pages.contact.quickHelp', 'مساعدتك السريعة')}
+                                        {t(
+                                            'pages.contact.quickHelp',
+                                            'مساعدتك السريعة',
+                                        )}
                                     </Typography>
                                     <Typography
                                         variant='body2'
                                         color='text.secondary'
-                                        sx={{ mt: 0.5, maxWidth: 460, fontSize: '0.85rem' }}
+                                        sx={{
+                                            mt: 0.5,
+                                            maxWidth: 460,
+                                            fontSize: '0.85rem',
+                                        }}
                                     >
                                         {t(
                                             'pages.contact.quickHelpSub',
@@ -344,12 +382,20 @@ const Home: FunctionComponent = () => {
                             <Grid container spacing={2}>
                                 {QUICK_HELP_LINKS.map((link, idx) => {
                                     const Icon = link.icon;
-                                    const to = link.pathKey ? path[link.pathKey] : link.to!;
+                                    const to = link.pathKey
+                                        ? path[link.pathKey]
+                                        : link.to!;
                                     return (
-                                        <Grid key={link.key} size={{ xs: 12, sm: 4 }}>
+                                        <Grid
+                                            key={link.key}
+                                            size={{ xs: 12, sm: 4 }}
+                                        >
                                             <Button
                                                 fullWidth
-                                                aria-label={t(link.key, link.fallback)}
+                                                aria-label={t(
+                                                    link.key,
+                                                    link.fallback,
+                                                )}
                                                 component={RouterLink}
                                                 to={to}
                                                 sx={{
@@ -357,7 +403,8 @@ const Home: FunctionComponent = () => {
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     alignItems: 'flex-start',
-                                                    justifyContent: 'space-between',
+                                                    justifyContent:
+                                                        'space-between',
                                                     gap: 2,
                                                     p: 2.5,
                                                     minHeight: 168,
@@ -368,8 +415,10 @@ const Home: FunctionComponent = () => {
                                                     textAlign: 'start',
                                                     color: 'text.primary',
                                                     overflow: 'hidden',
-                                                    WebkitTapHighlightColor: 'transparent',
-                                                    transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    WebkitTapHighlightColor:
+                                                        'transparent',
+                                                    transition:
+                                                        'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
                                                     '&::after': {
                                                         content: '""',
                                                         position: 'absolute',
@@ -379,19 +428,32 @@ const Home: FunctionComponent = () => {
                                                         height: 100,
                                                         borderRadius: '50%',
                                                         background: `radial-gradient(circle, ${alpha(link.accent, 0.12)} 0%, transparent 70%)`,
-                                                        transition: 'transform 0.35s ease',
+                                                        transition:
+                                                            'transform 0.35s ease',
                                                     },
                                                     '&:hover': {
-                                                        transform: 'translateY(-4px)',
-                                                        borderColor: link.accent,
+                                                        transform:
+                                                            'translateY(-4px)',
+                                                        borderColor:
+                                                            link.accent,
                                                         boxShadow: `0 20px 40px -20px ${alpha(link.accent, 0.5)}`,
-                                                        '&::after': { transform: 'scale(1.4)' },
+                                                        '&::after': {
+                                                            transform:
+                                                                'scale(1.4)',
+                                                        },
                                                         '& .help-arrow': {
-                                                            transform: direction === 'rtl' ? 'translateX(-4px)' : 'translateX(4px)',
+                                                            transform:
+                                                                direction ===
+                                                                'rtl'
+                                                                    ? 'translateX(-4px)'
+                                                                    : 'translateX(4px)',
                                                             opacity: 1,
                                                         },
                                                     },
-                                                    '&:active': { transform: 'translateY(-2px) scale(0.99)' },
+                                                    '&:active': {
+                                                        transform:
+                                                            'translateY(-2px) scale(0.99)',
+                                                    },
                                                 }}
                                             >
                                                 {/* Index numeral */}
@@ -403,8 +465,12 @@ const Home: FunctionComponent = () => {
                                                         fontSize: '2.5rem',
                                                         fontWeight: 900,
                                                         lineHeight: 1,
-                                                        color: alpha(link.accent, 0.1),
-                                                        fontFamily: '"Georgia", serif',
+                                                        color: alpha(
+                                                            link.accent,
+                                                            0.1,
+                                                        ),
+                                                        fontFamily:
+                                                            '"Georgia", serif',
                                                     }}
                                                 >
                                                     0{idx + 1}
@@ -417,12 +483,17 @@ const Home: FunctionComponent = () => {
                                                         borderRadius: '14px',
                                                         display: 'grid',
                                                         placeItems: 'center',
-                                                        bgcolor: alpha(link.accent, 0.1),
+                                                        bgcolor: alpha(
+                                                            link.accent,
+                                                            0.1,
+                                                        ),
                                                         color: link.accent,
                                                         border: `1px solid ${alpha(link.accent, 0.2)}`,
                                                     }}
                                                 >
-                                                    <Icon sx={{ fontSize: 22 }} />
+                                                    <Icon
+                                                        sx={{ fontSize: 22 }}
+                                                    />
                                                 </Box>
 
                                                 <Box sx={{ width: '100%' }}>
@@ -434,24 +505,43 @@ const Home: FunctionComponent = () => {
                                                             lineHeight: 1.3,
                                                         }}
                                                     >
-                                                        {t(link.key, link.fallback)}
+                                                        {t(
+                                                            link.key,
+                                                            link.fallback,
+                                                        )}
                                                     </Typography>
                                                     <Stack
                                                         direction='row'
                                                         alignItems='center'
                                                         gap={0.5}
-                                                        sx={{ color: link.accent }}
+                                                        sx={{
+                                                            color: link.accent,
+                                                        }}
                                                     >
-                                                        <Typography sx={{ fontSize: '0.75rem', fontWeight: 600 }}>
-                                                            {t('common.learnMore', 'اعرف المزيد')}
+                                                        <Typography
+                                                            sx={{
+                                                                fontSize:
+                                                                    '0.75rem',
+                                                                fontWeight: 600,
+                                                            }}
+                                                        >
+                                                            {t(
+                                                                'common.learnMore',
+                                                                'اعرف المزيد',
+                                                            )}
                                                         </Typography>
                                                         <ArrowForwardRoundedIcon
                                                             className='help-arrow'
                                                             sx={{
                                                                 fontSize: 14,
                                                                 opacity: 0.6,
-                                                                transition: 'all 0.25s ease',
-                                                                transform: direction === 'rtl' ? 'scaleX(-1)' : 'none',
+                                                                transition:
+                                                                    'all 0.25s ease',
+                                                                transform:
+                                                                    direction ===
+                                                                    'rtl'
+                                                                        ? 'scaleX(-1)'
+                                                                        : 'none',
                                                             }}
                                                         />
                                                     </Stack>
@@ -466,10 +556,11 @@ const Home: FunctionComponent = () => {
                 </section>
 
                 <HowItWorks />
-
-                <Suspense fallback={<Loader />}>
-                    <DiscountsAndOffers />
-                </Suspense>
+                <section id='Discounts-and-offers'>
+                    <Suspense fallback={<Loader />}>
+                        <DiscountsAndOffers />
+                    </Suspense>
+                </section>
 
                 {/* ─── LISTINGS — Section header ─── */}
                 <Container maxWidth='lg' sx={{ px: { xs: 1.5, sm: 3, md: 4 } }}>
@@ -561,7 +652,9 @@ const Home: FunctionComponent = () => {
             <Fade in={showBackToTop}>
                 <Fab
                     size='small'
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                    onClick={() =>
+                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }
                     aria-label={t('common.backToTop', 'العودة للأعلى')}
                     sx={{
                         position: 'fixed',
@@ -595,14 +688,22 @@ const Home: FunctionComponent = () => {
                     show={showDeleteModal}
                     onHide={() => setShowDeleteModal(false)}
                     title={t('alerts.deletePost.title')}
-                    description={t('alerts.deletePost.description', { name: postToDelete })}
+                    description={t('alerts.deletePost.description', {
+                        name: postToDelete,
+                    })}
                     onConfirm={() => {
                         if (postToDelete) return handleDelete(postToDelete);
                     }}
                     confirmText={t('common.delete', 'حذف')}
                     cancelText={t('common.cancel', 'إلغاء')}
-                    successText={t('alerts.deletePost.success', 'تم حذف المنتج بنجاح')}
-                    errorText={t('alerts.deletePost.error', 'حدث خطأ أثناء حذف المنتج')}
+                    successText={t(
+                        'alerts.deletePost.success',
+                        'تم حذف المنتج بنجاح',
+                    )}
+                    errorText={t(
+                        'alerts.deletePost.error',
+                        'حدث خطأ أثناء حذف المنتج',
+                    )}
                 />
             </Suspense>
 

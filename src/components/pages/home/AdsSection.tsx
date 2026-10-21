@@ -19,7 +19,6 @@ const AdsSection = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const theme = useTheme();
-    const isDark = theme.palette.mode === 'dark';
 
     return (
         <Box
@@ -29,13 +28,10 @@ const AdsSection = () => {
                 borderBottom: '1px solid',
                 borderColor: 'divider',
                 pb: 1,
-                background: isDark
-                    ? `linear-gradient(180deg, ${alpha(BRAND.brown, 0.04)} 0%, transparent 40%)`
-                    : `linear-gradient(180deg, ${alpha(BRAND.brown, 0.035)} 0%, transparent 45%)`,
             }}
         >
             <Container
-                maxWidth='lg'
+                maxWidth='md'
                 sx={{ px: { xs: 1.5, sm: 3, md: 4 }, mb: { xs: 3, md: 4 } }}
             >
                 {/* ── Masthead ─────────────────────────────── */}

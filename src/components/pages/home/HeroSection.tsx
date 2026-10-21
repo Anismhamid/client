@@ -2,8 +2,6 @@
 import { Box, Button, Stack, Typography, Chip, alpha } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import HandshakeOutlinedIcon from '@mui/icons-material/HandshakeOutlined';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -17,8 +15,14 @@ import { useEffect, useState } from 'react';
 import SealBadge from './SealBadge';
 import AISearch from '../../../atoms/AISearch';
 import { BRAND } from '../../navbar/theme/brand';
-import { ArticleOutlined, NotificationsActiveOutlined, Search, WorkOutlineOutlined } from '@mui/icons-material';
+import {
+    ArticleOutlined,
+    NotificationsActiveOutlined,
+    Search,
+    WorkOutlineOutlined,
+} from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
+import HeroFloatingChips from './HeroFloatingChips';
 
 interface HeroSectionProps {
     onAddProduct: () => void;
@@ -33,16 +37,6 @@ const FLOATING_SEALS = [
 
 const TRUST_ITEMS = [
     {
-        icon: LockOutlinedIcon,
-        key: 'trust.securePayments',
-        fallback: 'دفع آمن',
-    },
-    {
-        icon: LocalShippingOutlinedIcon,
-        key: 'trust.fastDelivery',
-        fallback: 'توصيل سريع',
-    },
-    {
         icon: SupportAgentOutlinedIcon,
         key: 'trust.support',
         fallback: 'دعم ٢٤/٧',
@@ -55,9 +49,24 @@ const TRUST_ITEMS = [
 ];
 
 const QUICK_LINKS = [
-    { to: '/jobs', icon: WorkOutlineOutlined, key: 'hero.jobs', fallback: 'الوظائف' },
-    { to: '/blog', icon: ArticleOutlined, key: 'hero.blog', fallback: 'مقالات صفقة' },
-    { to: '/saved-searches', icon: NotificationsActiveOutlined, key: 'hero.savedSearches', fallback: 'تنبيهاتي' }, // عدّل المسار
+    {
+        to: '/jobs',
+        icon: WorkOutlineOutlined,
+        key: 'hero.jobs',
+        fallback: 'الوظائف',
+    },
+    {
+        to: '/blog',
+        icon: ArticleOutlined,
+        key: 'hero.blog',
+        fallback: 'مقالات صفقة',
+    },
+    {
+        to: '/saved-searches',
+        icon: NotificationsActiveOutlined,
+        key: 'hero.savedSearches',
+        fallback: 'تنبيهاتي',
+    }, // عدّل المسار
 ];
 
 const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
@@ -90,6 +99,10 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 px: { xs: 2, md: 4 },
             }}
         >
+
+            <Box position={'relative'}>
+                <HeroFloatingChips />
+            </Box>
             {/* ── Background layers ─────────────────────────────── */}
 
             {/* Ledger texture */}
@@ -507,6 +520,7 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                             }
                                             sx={{
                                                 borderRadius: '10px',
+                                                gap: 1,
                                                 fontWeight: 700,
                                                 fontSize: '0.85rem',
                                                 borderColor: alpha(

@@ -187,7 +187,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
     const iconBtnSx = {
         color: mode === 'dark' ? '#e2e8f0' : '#33415a',
         borderRadius: '10px',
-        '&:hover': { 
+        '&:hover': {
             backgroundColor: alpha(AMBER, 0.15),
             color: mode === 'dark' ? '#fff' : '#1A1E22',
         },
@@ -285,10 +285,7 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
 
             navigate(`${productsPathes.postsDetails}/${postId}`);
         } catch (error) {
-            console.error(
-                '[Notification] Failed to open notification:',
-                error,
-            );
+            console.error('[Notification] Failed to open notification:', error);
         }
     };
 
@@ -823,6 +820,25 @@ const Theme: FunctionComponent<ThemeProps> = ({ mode, setMode }) => {
                     </Toolbar>
                 </Container>
             </AppBar>
+            {/* <Box
+                sx={{
+                    p: 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                }}
+            >
+                <NavLink rel='noopener noreferrer' to={'https://bldtna.co.il/'}>
+                    <img width={100} src='/logo455.png' alt='بلدتنا' />
+                </NavLink>
+                <NavLink
+                role='a'
+                    rel='noopener noreferrer'
+                    to={'https://almasarpress.com/'}
+                >
+                    <img width={100} src='/logoalmasar.webp' alt='بلدتنا' />
+                </NavLink>
+            </Box> */}
 
             {/* ───── MORE MENU (الروابط الثانوية) ───── */}
             <Menu

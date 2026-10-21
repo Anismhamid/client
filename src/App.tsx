@@ -123,7 +123,7 @@ function App() {
                               secondary: { main: '#000000' },
                               background: {
                                   default: '#121212',
-                                  paper: '#0C141A',
+                                  paper: '#161311',
                               },
                               text: {
                                   primary: '#ffffff',
