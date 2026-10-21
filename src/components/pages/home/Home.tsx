@@ -257,7 +257,9 @@ const Home: FunctionComponent = () => {
             </header>
 
             <main id='listing-section' dir={direction}>
-                <AdsSection />
+                <section  id='ads-section'>
+                    <AdsSection />
+                </section>
 
                 {/* ─── STATS ─── */}
                 <section id='StatsStrip-section'>

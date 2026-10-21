@@ -1,5 +1,7 @@
 {
     "you": "أنت",
+    "verifiedSeller": "بائع موثّق",
+    "reviews": "تقييمات",
     "post": "{{count}} إعلان",
     "notificationSettings": "إعدادات الإشعارات",
     "loadMore": "تحميل المزيد",
@@ -331,6 +333,7 @@
     },
     "common": {
         "typing": "يكتب...",
+        "priceOnRequest": "السعر عند الاتفاق",
         "outOf": "من",
         "viewOf": "عرض",
         "countOfPosts": "الإعلانات على الموقع",
@@ -419,7 +422,48 @@
             "publishedDate": "تاريخ النشر",
             "viewsCount": "مشاهدة",
             "relatedProducts": "منتجات ذات صلة",
-            "discoverRelatedProducts": "اكتشف منتجات مشابهة قد تعجبك"
+            "discoverRelatedProducts": "اكتشف منتجات مشابهة قد تعجبك",
+            "serviceTitle": "اسم الخدمة",
+            "providerName": "مقدم الخدمة",
+            "experienceYears": "سنوات الخبرة",
+            "years": "سنوات",
+            "priceRange": "نطاق السعر",
+            "pricingType": "طريقة التسعير",
+            "availableDays": "أيام العمل",
+            "availableHours": "ساعات العمل",
+            "serviceArea": "منطقة الخدمة",
+            "emergencyService": "خدمة طوارئ",
+            "cameraType": "نوع الكاميرا",
+            "sensorType": "نوع المستشعر",
+            "megapixels": "عدد الميجابكسل",
+            "videoResolution": "دقة الفيديو",
+            "lensMount": "حامل العدسة",
+            "focalLength": "البعد البؤري",
+            "title": "العنوان",
+            "author": "المؤلف",
+            "publisher": "الناشر",
+            "publicationYear": "سنة النشر",
+            "language": "اللغة",
+            "isbn": "رقم ISBN",
+            "size": "الحجم",
+            "electric": "كهربائي",
+            "year": "سنة الصنع",
+            "operatingHours": "ساعات التشغيل",
+            "enginePower": "قوة المحرك",
+            "fuelType": "نوع الوقود",
+            "weight": "الوزن",
+            "power": "القدرة",
+            "voltage": "الجهد الكهربائي",
+            "capacity": "السعة",
+            "weldingType": "نوع اللحام",
+            "amperage": "شدة التيار بالأمبير",
+            "connectivity": "الاتصال",
+            "printTechnology": "تقنية الطباعة",
+            "colorPrinting": "طباعة ملونة",
+            "warranty": "الضمان",
+            "includedAccessories": "الملحقات المضمنة",
+            "hours": "ساعة",
+            "kg": "كجم"
         },
         "review": {
             "questionsAndReviews": "الأسئلة والتقييمات",
@@ -459,9 +503,8 @@
             "posts": "المنشورات",
             "info": "المعلومات",
             "ratings": "التقييمات",
-            "contact": "التواصل"
-            ,
-            "jobs":"الوظائف"
+            "contact": "التواصل",
+            "jobs": "الوظائف"
         }
     },
 
@@ -636,7 +679,7 @@
 
     "categories": {
         "title": "الفئات",
-        "all":"الكل",
+        "all": "الكل",
         "House": {
             "label": "البيت",
             "heading": "مستلزمات البيت",
@@ -689,7 +732,12 @@
                 "automatic": "أوتوماتيكي",
                 "toolType": "نوع الأداة",
                 "material": "المادة",
-                "weatherResistant": "مقاوم للعوامل الجوية"
+                "weatherResistant": "مقاوم للعوامل الجوية",
+                "treeType": "نوع الشجرة",
+                "height": "الارتفاع",
+                "ageYears": "العمر بالسنوات",
+                "fruitBearing": "مثمرة",
+                "fruitType": "نوع الثمار"
             }
         },
 
@@ -710,7 +758,8 @@
                 "fuelOptions": {
                     "gasoline": "بنزين",
                     "diesel": "ديزل",
-                    "hybrid": "هجين"
+                    "hybrid": "هجين",
+                    "electric": "كهربائي"
                 },
                 "mileage": "عدد الكيلومترات",
                 "color": "اللون",
@@ -824,6 +873,7 @@
             },
             "fields": {
                 "size": "الحجم",
+                "length": "الطول",
                 "sizeOptions": {
                     "Mini": "صغير جدًا",
                     "Small": "صغير",
@@ -1062,6 +1112,10 @@
                 "rating": "التصنيف",
                 "language": "اللغة",
                 "releaseYear": "سنة الإصدار",
+                "condition": "الحالة",
+                "processor": "المعالج",
+                "ram": "الذاكرة العشوائية (RAM)",
+                "storage": "سعة التخزين",
                 "platformOptions": {
                     "PlayStation": "PlayStation",
                     "Xbox": "Xbox",
@@ -1081,7 +1135,8 @@
                 "house": "منازل",
                 "villa": "فلل",
                 "commercial": "عقارات تجارية",
-                "land": "أراضي"
+                "land": "أراضي",
+                "room": "غرف"
             },
             "fields": {
                 "area": "المساحة بالمتر المربع",
@@ -1098,6 +1153,21 @@
                     "sale": "للبيع",
                     "rent": "للإيجار",
                     "daily": "إيجار يومي"
+                },
+                "monthlyRent": "الإيجار الشهري",
+                "availableFrom": "متاح من تاريخ",
+                "utilitiesIncluded": "الفواتير مشمولة",
+                "roomType": "نوع الغرفة",
+                "roomTypeOptions": {
+                    "private_room": "غرفة خاصة",
+                    "shared_room": "غرفة مشتركة",
+                    "master_room": "غرفة ماستر"
+                },
+                "genderPreference": "تفضيل الجنس",
+                "genderPreferenceOptions": {
+                    "male": "ذكور",
+                    "female": "إناث",
+                    "any": "الجميع"
                 }
             }
         },
@@ -1128,6 +1198,7 @@
                 "brand": "العلامة التجارية",
                 "size": "الحجم",
                 "material": "الخامة",
+                "birdType": "نوع الطائر",
                 "genderOptions": {
                     "male": "ذكر",
                     "female": "أنثى"
@@ -1517,8 +1588,8 @@
             "message": "عذرًا، لم نتمكن من العثور على هذه الصفحة. ربما تكون الصفحة غير موجودة.",
             "goBack": "عودة"
         },
-        "pending":{
-            "title":"قيد الانتظار"
+        "pending": {
+            "title": "قيد الانتظار"
         },
         "jobs": {
             "title": "الوظائف",
@@ -2337,8 +2408,7 @@
                 "edit": "تعديل",
                 "delete": "حذف",
                 "view": "عرض الملف الشخصي",
-                "deleteMessage": "هل أنت متأكد أنك تريد حذف {{name}} نهائيًا؟ لا يمكن التراجع عن هذا الإجراء."
-                ,
+                "deleteMessage": "هل أنت متأكد أنك تريد حذف {{name}} نهائيًا؟ لا يمكن التراجع عن هذا الإجراء.",
                 "cancelDelete": "إلغاء",
                 "confirmDelete": "حذف المستخدم"
             },

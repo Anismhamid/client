@@ -1,5 +1,7 @@
 {
     "you": "You",
+    "verifiedSeller": "Verified Seller",
+    "reviews": "Reviews",
     "post": "{{count}} listing",
     "notificationSettings": "Notification Settings",
     "loadMore": "Load more",
@@ -368,6 +370,7 @@
         "products": "Product",
         "product": {
             "category": "Category",
+            "priceOnRequest": "Price on Request",
             "sellerUnavailable": "Seller is currently unavailable",
             "cannotContactSelf": "You cannot contact yourself",
             "currentPrice": "Current price",
@@ -419,7 +422,48 @@
             "publishedDate": "Published date",
             "viewsCount": "views",
             "relatedProducts": "Related products",
-            "discoverRelatedProducts": "Discover similar products you may like"
+            "discoverRelatedProducts": "Discover similar products you may like",
+            "serviceTitle": "Service Name",
+            "providerName": "Service Provider",
+            "experienceYears": "Years of Experience",
+            "years": "years",
+            "priceRange": "Price Range",
+            "pricingType": "Pricing Method",
+            "availableDays": "Available Days",
+            "availableHours": "Available Hours",
+            "serviceArea": "Service Area",
+            "emergencyService": "Emergency Service",
+            "cameraType": "Camera Type",
+            "sensorType": "Sensor Type",
+            "megapixels": "Megapixels",
+            "videoResolution": "Video Resolution",
+            "lensMount": "Lens Mount",
+            "focalLength": "Focal Length",
+            "title": "Title",
+            "author": "Author",
+            "publisher": "Publisher",
+            "publicationYear": "Publication Year",
+            "language": "Language",
+            "isbn": "ISBN",
+            "size": "Size",
+            "electric": "Electric",
+            "year": "Manufacturing Year",
+            "operatingHours": "Operating Hours",
+            "enginePower": "Engine Power",
+            "fuelType": "Fuel Type",
+            "weight": "Weight",
+            "power": "Power",
+            "voltage": "Voltage",
+            "capacity": "Capacity",
+            "weldingType": "Welding Type",
+            "amperage": "Amperage",
+            "connectivity": "Connectivity",
+            "printTechnology": "Print Technology",
+            "colorPrinting": "Color Printing",
+            "warranty": "Warranty",
+            "includedAccessories": "Included Accessories",
+            "hours": "hours",
+            "kg": "kg"
         },
         "review": {
             "questionsAndReviews": "Questions and reviews",
@@ -459,9 +503,8 @@
             "posts": "Posts",
             "info": "Information",
             "ratings": "Ratings",
-            "contact": "Contact"
-            ,
-            "jobs":"Jobs"
+            "contact": "Contact",
+            "jobs": "Jobs"
         }
     },
 
@@ -675,6 +718,11 @@
             },
             "fields": {
                 "plantType": "Plant type",
+                "treeType": "Tree Type",
+                "height": "Height",
+                "ageYears": "Age (Years)",
+                "fruitBearing": "Fruit-Bearing",
+                "fruitType": "Fruit Type",
                 "season": "Season",
                 "seasonOptions": {
                     "spring": "Spring",
@@ -700,7 +748,7 @@
                 "private": "Private cars",
                 "electric": "Electric cars",
                 "parts": "Spare parts",
-                "accessories": "Car accessories"
+                "accessories": "Accessories"
             },
             "fields": {
                 "brand": "Brand",
@@ -709,7 +757,8 @@
                 "fuelOptions": {
                     "gasoline": "Gasoline",
                     "diesel": "Diesel",
-                    "hybrid": "Hybrid"
+                    "hybrid": "Hybrid",
+                    "electric": "Electric"
                 },
                 "mileage": "Mileage",
                 "color": "Color",
@@ -798,6 +847,7 @@
             },
             "fields": {
                 "size": "Size",
+                "material": "Material",
                 "sizeOptions": {
                     "XS": "Extra small XS",
                     "S": "Small S",
@@ -823,6 +873,7 @@
             },
             "fields": {
                 "size": "Size",
+                "length": "Length",
                 "sizeOptions": {
                     "Mini": "Mini",
                     "Small": "Small",
@@ -1061,6 +1112,10 @@
                 "rating": "Rating",
                 "language": "Language",
                 "releaseYear": "Release year",
+                "condition": "Condition",
+                "processor": "Processor",
+                "ram": "Random Access Memory (RAM)",
+                "storage": "Storage Capacity",
                 "platformOptions": {
                     "PlayStation": "PlayStation",
                     "Xbox": "Xbox",
@@ -1080,7 +1135,8 @@
                 "house": "Houses",
                 "villa": "Villas",
                 "commercial": "Commercial properties",
-                "land": "Land"
+                "land": "Land",
+                "room": "Rooms"
             },
             "fields": {
                 "area": "Area (sqm)",
@@ -1093,10 +1149,25 @@
                 "rentalType": "Listing type",
                 "propertyAge": "Property age (years)",
                 "geoLocation": "Location",
+                "monthlyRent": "Monthly Rent",
+                "availableFrom": "Available From",
+                "utilitiesIncluded": "Utilities Included",
+                "roomType": "Room Type",
                 "rentalTypeOptions": {
                     "sale": "For sale",
                     "rent": "For rent",
                     "daily": "Daily rent"
+                },
+                "roomTypeOptions": {
+                    "private_room": "Private Room",
+                    "shared_room": "Shared Room",
+                    "master_room": "Master Room"
+                },
+                "genderPreference": "Gender Preference",
+                "genderPreferenceOptions": {
+                    "male": "Male",
+                    "female": "Female",
+                    "any": "Any"
                 }
             }
         },
@@ -1115,6 +1186,7 @@
             },
             "fields": {
                 "breed": "Breed",
+                "birdType": "Bird Type",
                 "age": "Age (months)",
                 "gender": "Gender",
                 "vaccinated": "Vaccinated",
@@ -1187,91 +1259,89 @@
             }
         },
         "Cameras": {
-            "label": "Cameras and photography",
-            "heading": "Cameras and photography equipment",
-            "description": "Various cameras and photography equipment including digital cameras, lenses, video gear, and photography accessories.",
+            "label": "Cameras & Photography",
+            "heading": "Cameras and Photography Equipment",
+            "description": "A variety of cameras and photography equipment, including digital cameras, lenses, video equipment, and photography accessories.",
             "subCategories": {
                 "cameras": "Cameras",
                 "lenses": "Lenses",
-                "video": "Video equipment",
-                "accessories": "Photography accessories"
+                "video": "Video Equipment",
+                "accessories": "Photography Accessories"
             },
             "fields": {
                 "brand": "Brand",
                 "model": "Model",
-                "cameraType": "Camera type",
-                "sensorType": "Sensor type",
+                "cameraType": "Camera Type",
+                "sensorType": "Sensor Type",
                 "megapixels": "Megapixels",
                 "resolution": "Resolution",
-                "videoResolution": "Video resolution",
-                "lensMount": "Lens mount",
-                "focalLength": "Focal length",
+                "videoResolution": "Video Resolution",
+                "lensMount": "Lens Mount",
+                "focalLength": "Focal Length",
                 "condition": "Condition",
                 "warranty": "Warranty",
-                "includedAccessories": "Included accessories",
+                "includedAccessories": "Included Accessories",
                 "cameraTypeOptions": {
                     "dslr": "DSLR",
                     "mirrorless": "Mirrorless",
                     "compact": "Compact",
-                    "action": "Action",
-                    "security": "Security",
-                    "professional_video": "Professional video"
+                    "action": "Action Camera",
+                    "security": "Security Camera",
+                    "professional_video": "Professional Video"
                 },
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "Books": {
             "label": "Books",
-            "heading": "Books and references",
-            "description": "Various books and references including school, university, novels, children's books, and specialized books.",
+            "heading": "Books and References",
+            "description": "A variety of books, including textbooks, academic books, novels, children's books, and professional books.",
             "subCategories": {
-                "school": "School books",
-                "university": "University books",
+                "school": "Textbooks",
+                "university": "Academic Books",
                 "novels": "Novels",
-                "children": "Children's books",
-                "religious": "Religious books",
-                "language": "Language books",
-                "business": "Business and management",
-                "other": "Other books"
+                "children": "Children's Books",
+                "religious": "Religious Books",
+                "language": "Language Books",
+                "business": "Business and Management",
+                "other": "Other Books"
             },
             "fields": {
-                "title": "Book title",
+                "title": "Book Title",
                 "author": "Author",
                 "publisher": "Publisher",
                 "edition": "Edition",
-                "publicationYear": "Publication year",
+                "publicationYear": "Publication Year",
                 "language": "Language",
                 "isbn": "ISBN",
                 "condition": "Condition",
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "MusicalInstruments": {
-            "label": "Musical instruments",
-            "heading": "Musical instruments and equipment",
-            "description": "Various musical instruments and equipment including guitars, pianos, keyboards, drums, violins, and more.",
+            "label": "Musical Instruments",
+            "heading": "Musical Instruments and Equipment",
+            "description": "A variety of musical instruments and equipment, including guitars, pianos, keyboards, drums, violins, and more.",
             "subCategories": {
                 "guitars": "Guitars",
                 "pianos": "Pianos",
                 "keyboards": "Keyboards",
                 "drums": "Drums",
                 "violins": "Violins",
-                "wind": "Wind instruments",
-                "percussion": "Percussion instruments",
-                "other": "Other instruments"
+                "wind": "Wind Instruments",
+                "percussion": "Percussion Instruments",
+                "other": "Other Instruments"
             },
             "fields": {
                 "brand": "Brand",
@@ -1284,35 +1354,34 @@
                 "accessories": "Accessories",
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "ConstructionEquipment": {
-            "label": "Construction equipment",
-            "heading": "Construction equipment and machinery",
-            "description": "Heavy and light construction equipment and machinery such as excavators, loaders, cranes, concrete equipment, cutting and compaction tools.",
+            "label": "Construction Equipment",
+            "heading": "Construction Equipment and Machinery",
+            "description": "Heavy and light construction equipment and machinery, including excavators, loaders, cranes, concrete equipment, cutting tools, and compaction equipment.",
             "subCategories": {
                 "excavators": "Excavators",
                 "loaders": "Loaders",
                 "cranes": "Cranes",
-                "concrete_equipment": "Concrete equipment",
+                "concrete_equipment": "Concrete Equipment",
                 "scaffolding": "Scaffolding",
-                "cutting_equipment": "Cutting equipment",
-                "compaction_equipment": "Compaction equipment",
-                "other": "Other equipment"
+                "cutting_equipment": "Cutting Equipment",
+                "compaction_equipment": "Compaction Equipment",
+                "other": "Other Equipment"
             },
             "fields": {
                 "brand": "Brand",
                 "model": "Model",
-                "year": "Year of manufacture",
-                "operatingHours": "Operating hours",
-                "enginePower": "Engine power",
-                "fuelType": "Fuel type",
+                "year": "Manufacturing Year",
+                "operatingHours": "Operating Hours",
+                "enginePower": "Engine Power",
+                "fuelType": "Fuel Type",
                 "weight": "Weight",
                 "condition": "Condition",
                 "warranty": "Warranty",
@@ -1324,62 +1393,60 @@
                 },
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "IndustrialEquipment": {
-            "label": "Industrial equipment",
-            "heading": "Industrial equipment and machinery",
-            "description": "Various industrial equipment and machinery including production machines, compressors, generators, packaging, and handling equipment.",
+            "label": "Industrial Equipment",
+            "heading": "Industrial Equipment and Machinery",
+            "description": "Various industrial equipment and machinery, including industrial machines, compressors, generators, packaging equipment, and material handling equipment.",
             "subCategories": {
-                "industrial_machines": "Industrial machines",
+                "industrial_machines": "Industrial Machines",
                 "compressors": "Compressors",
                 "generators": "Generators",
-                "production_equipment": "Production equipment",
-                "packaging_equipment": "Packaging equipment",
-                "material_handling": "Material handling",
-                "other": "Other equipment"
+                "production_equipment": "Production Equipment",
+                "packaging_equipment": "Packaging Equipment",
+                "material_handling": "Material Handling Equipment",
+                "other": "Other Equipment"
             },
             "fields": {
                 "brand": "Brand",
                 "model": "Model",
-                "year": "Year of manufacture",
+                "year": "Manufacturing Year",
                 "power": "Power",
                 "voltage": "Voltage",
                 "capacity": "Capacity",
-                "operatingHours": "Operating hours",
+                "operatingHours": "Operating Hours",
                 "condition": "Condition",
                 "warranty": "Warranty",
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "WeldingEquipment": {
-            "label": "Welding equipment",
-            "heading": "Welding equipment and devices",
-            "description": "Welding and plasma cutting devices, welding accessories, and protective equipment.",
+            "label": "Welding Equipment",
+            "heading": "Welding Equipment and Machines",
+            "description": "Welding machines, plasma cutters, welding accessories, and protective equipment.",
             "subCategories": {
-                "welding_machines": "Welding machines",
-                "plasma_cutters": "Plasma cutters",
-                "welding_accessories": "Welding accessories",
-                "protective_equipment": "Protective equipment",
-                "other": "Other equipment"
+                "welding_machines": "Welding Machines",
+                "plasma_cutters": "Plasma Cutters",
+                "welding_accessories": "Welding Accessories",
+                "protective_equipment": "Protective Equipment",
+                "other": "Other Equipment"
             },
             "fields": {
                 "brand": "Brand",
                 "model": "Model",
-                "weldingType": "Welding type",
+                "weldingType": "Welding Type",
                 "power": "Power",
                 "voltage": "Voltage",
                 "amperage": "Amperage",
@@ -1389,39 +1456,38 @@
                     "mig": "MIG",
                     "mag": "MAG",
                     "tig": "TIG",
-                    "arc": "Arc",
+                    "arc": "Arc Welding",
                     "plasma": "Plasma",
-                    "spot": "Spot welding"
+                    "spot": "Spot Welding"
                 },
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "OfficeEquipment": {
-            "label": "Office equipment",
-            "heading": "Office equipment and devices",
-            "description": "Office devices and equipment including printers, scanners, copiers, projectors, shredders, and laminators.",
+            "label": "Office Equipment",
+            "heading": "Office Equipment and Devices",
+            "description": "Office equipment and devices, including printers, scanners, copiers, projectors, paper shredders, and laminators.",
             "subCategories": {
                 "printers": "Printers",
                 "scanners": "Scanners",
                 "copiers": "Copiers",
                 "projectors": "Projectors",
-                "shredders": "Paper shredders",
+                "shredders": "Paper Shredders",
                 "laminators": "Laminators",
-                "other": "Other equipment"
+                "other": "Other Equipment"
             },
             "fields": {
                 "brand": "Brand",
                 "model": "Model",
                 "connectivity": "Connectivity",
-                "printTechnology": "Print technology",
-                "colorPrinting": "Color printing",
+                "printTechnology": "Print Technology",
+                "colorPrinting": "Color Printing",
                 "condition": "Condition",
                 "warranty": "Warranty",
                 "printTechnologyOptions": {
@@ -1432,48 +1498,47 @@
                 },
                 "conditionOptions": {
                     "new": "New",
-                    "like_new": "Like new",
+                    "like_new": "Like New",
                     "excellent": "Excellent",
                     "good": "Good",
                     "fair": "Fair"
                 }
             }
         },
-
         "Services": {
             "label": "Services",
-            "heading": "Services and business",
-            "description": "Services offered by individuals and companies in maintenance, electrical, cleaning, transportation, programming, design, and more.",
+            "heading": "Services and Businesses",
+            "description": "Services provided by individuals and companies in maintenance, electrical work, cleaning, transportation, programming, design, and more.",
             "subCategories": {
                 "maintenance": "Maintenance",
-                "electrical": "Electrical",
+                "electrical": "Electrical Services",
                 "plumbing": "Plumbing",
                 "cleaning": "Cleaning",
                 "transportation": "Transportation",
-                "moving": "Furniture moving",
-                "automotive": "Car services",
+                "moving": "Furniture Moving",
+                "automotive": "Automotive Services",
                 "programming": "Programming",
                 "design": "Design",
                 "photography": "Photography",
                 "marketing": "Marketing",
                 "education": "Education",
                 "beauty": "Beauty",
-                "other": "Other services"
+                "other": "Other Services"
             },
             "fields": {
-                "serviceTitle": "Service name",
-                "providerName": "Provider name",
-                "experienceYears": "Years of experience",
-                "priceFrom": "Price from",
-                "priceTo": "Price to",
-                "pricingType": "Pricing type",
-                "availableDays": "Available days",
-                "availableHours": "Available hours",
-                "serviceArea": "Service area",
-                "emergencyService": "Emergency service",
+                "serviceTitle": "Service Title",
+                "providerName": "Provider Name",
+                "experienceYears": "Years of Experience",
+                "priceFrom": "Price From",
+                "priceTo": "Price To",
+                "pricingType": "Pricing Type",
+                "availableDays": "Available Days",
+                "availableHours": "Available Hours",
+                "serviceArea": "Service Area",
+                "emergencyService": "Emergency Service",
                 "pricingTypeOptions": {
                     "hourly": "Hourly",
-                    "fixed": "Fixed price",
+                    "fixed": "Fixed Price",
                     "daily": "Daily",
                     "monthly": "Monthly",
                     "negotiable": "Negotiable"
@@ -2335,8 +2400,7 @@
                 "edit": "Edit",
                 "delete": "Delete",
                 "view": "View profile",
-                "deleteMessage": "Are you sure you want to permanently delete the user {{name}}?"
-                ,
+                "deleteMessage": "Are you sure you want to permanently delete the user {{name}}?",
                 "cancelDelete": "Cancel",
                 "confirmDelete": "Delete user"
             },

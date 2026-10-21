@@ -31,7 +31,7 @@ const AdsSection = () => {
             }}
         >
             <Container
-                maxWidth='md'
+                maxWidth='lg'
                 sx={{ px: { xs: 1.5, sm: 3, md: 4 }, mb: { xs: 3, md: 4 } }}
             >
                 {/* ── Masthead ─────────────────────────────── */}

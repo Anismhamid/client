@@ -1,5 +1,7 @@
 {
     "you": "אתה",
+    "verifiedSeller": "מוכר מאומת",
+    "reviews": "ביקורות",
     "post": "{{count}} מודעה",
     "notificationSettings": "הגדרות התראות",
     "loadMore": "טען עוד",
@@ -368,6 +370,7 @@
         "products": "מוצר",
         "product": {
             "category": "קטגוריה",
+            "priceOnRequest": "המחיר בתיאום",
             "sellerUnavailable": "המוכר לא זמין כרגע",
             "cannotContactSelf": "לא ניתן ליצור קשר עם עצמך",
             "currentPrice": "מחיר נוכחי",
@@ -419,7 +422,48 @@
             "publishedDate": "תאריך פרסום",
             "viewsCount": "צפיות",
             "relatedProducts": "מוצרים קשורים",
-            "discoverRelatedProducts": "גלה מוצרים דומים שאולי יעניינו אותך"
+            "discoverRelatedProducts": "גלה מוצרים דומים שאולי יעניינו אותך",
+            "serviceTitle": "שם השירות",
+            "providerName": "נותן השירות",
+            "experienceYears": "שנות ניסיון",
+            "years": "שנים",
+            "priceRange": "טווח מחירים",
+            "pricingType": "שיטת תמחור",
+            "availableDays": "ימי פעילות",
+            "availableHours": "שעות פעילות",
+            "serviceArea": "אזור השירות",
+            "emergencyService": "שירות חירום",
+            "cameraType": "סוג מצלמה",
+            "sensorType": "סוג חיישן",
+            "megapixels": "מגה-פיקסל",
+            "videoResolution": "רזולוציית וידאו",
+            "lensMount": "תושבת עדשה",
+            "focalLength": "אורך מוקד",
+            "title": "כותרת",
+            "author": "מחבר",
+            "publisher": "הוצאה לאור",
+            "publicationYear": "שנת פרסום",
+            "language": "שפה",
+            "isbn": "ISBN",
+            "size": "גודל",
+            "electric": "חשמלי",
+            "year": "שנת ייצור",
+            "operatingHours": "שעות עבודה",
+            "enginePower": "הספק מנוע",
+            "fuelType": "סוג דלק",
+            "weight": "משקל",
+            "power": "הספק",
+            "voltage": "מתח חשמלי",
+            "capacity": "קיבולת",
+            "weldingType": "סוג ריתוך",
+            "amperage": "זרם באמפר",
+            "connectivity": "קישוריות",
+            "printTechnology": "טכנולוגיית הדפסה",
+            "colorPrinting": "הדפסה צבעונית",
+            "warranty": "אחריות",
+            "includedAccessories": "אביזרים כלולים",
+            "hours": "שעות",
+            "kg": "ק״ג"
         },
         "review": {
             "questionsAndReviews": "שאלות וביקורות",
@@ -687,7 +731,12 @@
                 "automatic": "אוטומטי",
                 "toolType": "סוג הכלי",
                 "material": "חומר",
-                "weatherResistant": "עמיד בפני מזג אוויר"
+                "weatherResistant": "עמיד בפני מזג אוויר",
+                "treeType": "סוג העץ",
+                "height": "גובה",
+                "ageYears": "גיל בשנים",
+                "fruitBearing": "מניב פירות",
+                "fruitType": "סוג הפירות"
             }
         },
 
@@ -699,7 +748,7 @@
                 "private": "מכוניות פרטיות",
                 "electric": "מכוניות חשמליות",
                 "parts": "חלקי חילוף",
-                "accessories": "אביזרים לרכב"
+                "accessories": "אביזרים"
             },
             "fields": {
                 "brand": "מותג",
@@ -708,7 +757,8 @@
                 "fuelOptions": {
                     "gasoline": "בנזין",
                     "diesel": "דיזל",
-                    "hybrid": "היברידי"
+                    "hybrid": "היברידי",
+                    "electric": "חשמלי"
                 },
                 "mileage": "קילומטראז'",
                 "color": "צבע",
@@ -797,6 +847,7 @@
             },
             "fields": {
                 "size": "מידה",
+                "material": "חומר",
                 "sizeOptions": {
                     "XS": "קטן מאוד XS",
                     "S": "קטן S",
@@ -822,6 +873,7 @@
             },
             "fields": {
                 "size": "גודל",
+                "length": "אורך",
                 "sizeOptions": {
                     "Mini": "מיני",
                     "Small": "קטן",
@@ -1059,6 +1111,10 @@
                 "multiplayer": "תמיכה במשחק רב-משתתפים",
                 "rating": "דירוג",
                 "language": "שפה",
+                "condition": "מצב",
+                "processor": "מעבד",
+                "ram": "זיכרון RAM",
+                "storage": "נפח אחסון",
                 "releaseYear": "שנת הפצה",
                 "platformOptions": {
                     "PlayStation": "PlayStation",
@@ -1079,7 +1135,8 @@
                 "house": "בתים",
                 "villa": "וילות",
                 "commercial": "נכסים מסחריים",
-                "land": "קרקעות"
+                "land": "קרקעות",
+                "room": "חדרים"
             },
             "fields": {
                 "area": "שטח במ\"ר",
@@ -1092,10 +1149,20 @@
                 "rentalType": "סוג הצעה",
                 "propertyAge": "גיל הנכס בשנים",
                 "geoLocation": "מיקום",
+                "monthlyRent": "שכר דירה חודשי",
+                "availableFrom": "זמין מתאריך",
+                "utilitiesIncluded": "חשבונות כלולים",
+                "roomType": "סוג החדר",
+                "genderPreference": "העדפת מגדר",
                 "rentalTypeOptions": {
                     "sale": "למכירה",
                     "rent": "להשכרה",
                     "daily": "השכרה יומית"
+                },
+                "genderPreferenceOptions": {
+                    "male": "גברים",
+                    "female": "נשים",
+                    "any": "ללא העדפה"
                 }
             }
         },
@@ -1126,6 +1193,7 @@
                 "brand": "מותג",
                 "size": "גודל",
                 "material": "חומר",
+                "birdType": "סוג הציפור",
                 "genderOptions": {
                     "male": "זכר",
                     "female": "נקבה"
@@ -1257,7 +1325,6 @@
                 }
             }
         },
-
         "MusicalInstruments": {
             "label": "כלי נגינה",
             "heading": "כלי נגינה וציוד מוזיקלי",
@@ -1294,7 +1361,7 @@
         "ConstructionEquipment": {
             "label": "ציוד בנייה",
             "heading": "ציוד ומכונות בנייה",
-            "description": "ציוד ומכונות בנייה כבדים וקלים כמו מחפרים, מעמיסים, מנופים, ציוד בטון, כלי חיתוך וציוד הידוק.",
+            "description": "ציוד ומכונות בנייה כבדים וקלים, כמו מחפרים, מעמיסים, מנופים, ציוד בטון, כלי חיתוך וציוד הידוק.",
             "subCategories": {
                 "excavators": "מחפרים",
                 "loaders": "מעמיסים",
@@ -1330,18 +1397,17 @@
                 }
             }
         },
-
         "IndustrialEquipment": {
             "label": "ציוד תעשייתי",
             "heading": "ציוד ומכונות תעשייתיות",
-            "description": "ציוד ומכונות תעשייתיות שונות, כולל מכונות ייצור, מדחסים, גנרטורים, ציוד אריזה וציוד טיפול בחומרים.",
+            "description": "ציוד ומכונות תעשייתיות שונות, כולל מכונות ייצור, מדחסים, גנרטורים, ציוד אריזה וציוד לטיפול בחומרים.",
             "subCategories": {
                 "industrial_machines": "מכונות תעשייתיות",
                 "compressors": "מדחסים",
                 "generators": "גנרטורים",
                 "production_equipment": "ציוד ייצור",
                 "packaging_equipment": "ציוד אריזה",
-                "material_handling": "ציוד טיפול בחומרים",
+                "material_handling": "ציוד לטיפול בחומרים",
                 "other": "ציוד אחר"
             },
             "fields": {
@@ -1363,7 +1429,6 @@
                 }
             }
         },
-
         "WeldingEquipment": {
             "label": "ציוד ריתוך",
             "heading": "ציוד ומכשירי ריתוך",
@@ -1401,7 +1466,6 @@
                 }
             }
         },
-
         "OfficeEquipment": {
             "label": "ציוד משרדי",
             "heading": "ציוד ומכשירים משרדיים",
@@ -1438,7 +1502,6 @@
                 }
             }
         },
-
         "Services": {
             "label": "שירותים",
             "heading": "שירותים ועסקים",
@@ -1463,7 +1526,7 @@
                 "serviceTitle": "שם השירות",
                 "providerName": "שם הספק",
                 "experienceYears": "שנות ניסיון",
-                "priceFrom": "מחיר מ-",
+                "priceFrom": "מחיר החל מ־",
                 "priceTo": "מחיר עד",
                 "pricingType": "סוג תמחור",
                 "availableDays": "ימים זמינים",
@@ -1471,20 +1534,20 @@
                 "serviceArea": "אזור השירות",
                 "emergencyService": "שירות חירום",
                 "pricingTypeOptions": {
-                    "hourly": "לשעה",
+                    "hourly": "לפי שעה",
                     "fixed": "מחיר קבוע",
                     "daily": "יומי",
                     "monthly": "חודשי",
-                    "negotiable": "ניתן למשא ומתן"
+                    "negotiable": "נתון למשא ומתן"
                 },
                 "availableDaysOptions": {
-                    "sunday": "ראשון",
-                    "monday": "שני",
-                    "tuesday": "שלישי",
-                    "wednesday": "רביעי",
-                    "thursday": "חמישי",
-                    "friday": "שישי",
-                    "saturday": "שבת"
+                    "sunday": "יום ראשון",
+                    "monday": "יום שני",
+                    "tuesday": "יום שלישי",
+                    "wednesday": "יום רביעי",
+                    "thursday": "יום חמישי",
+                    "friday": "יום שישי",
+                    "saturday": "יום שבת"
                 }
             }
         },

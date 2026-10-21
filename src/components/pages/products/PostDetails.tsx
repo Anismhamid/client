@@ -70,10 +70,7 @@ import { useUser } from '../../../hooks/useUSer';
 import { showError, showSuccess } from '../../../atoms/toasts/ReactToast';
 import { generateSingleProductJsonLd } from '../../../../utils/structuredData';
 import JsonLd from '../../../../utils/JsonLd';
-import {
-    categoryLabels,
-    categoryPathMap,
-} from '../../../interfaces/postsCategoeis';
+import { categoryPathMap } from '../../../interfaces/postsCategoeis';
 import LikeButton from '../../../atoms/like/LikeButton';
 import UpdateProductModal from '../../../atoms/productsManage/addAndUpdateProduct/UpdatePostModal';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
@@ -345,7 +342,7 @@ const PostDetails: FunctionComponent = () => {
 
     const categoryLabel = useMemo(() => {
         if (!post.category) return t('common.product.category') || 'التصنيف';
-        return categoryLabels[post.category] || t(post.category);
+        return t(post.category);
     }, [post.category, t]);
 
     const isOwner = Boolean(
@@ -359,6 +356,22 @@ const PostDetails: FunctionComponent = () => {
                 : post.price,
         [post.sale, post.price, post.discount],
     );
+
+    const priceFrom = Number(post.priceFrom) || 0;
+    const priceTo = Number(post.priceTo) || 0;
+    const hasRange = priceFrom > 0 && priceTo > 0;
+    const hasPrice = finalPrice > 0;
+
+    const priceText = useMemo(() => {
+        if (hasPrice) return formatPrice(finalPrice);
+        if (hasRange) {
+            // "1,000 – 100,000 ₪" بدون أسهم عشان ما ينقلب الاتجاه بالـ RTL
+            return priceFrom === priceTo
+                ? formatPrice(priceFrom)
+                : `${formatPrice(priceFrom)} – ${formatPrice(priceTo)}`;
+        }
+        return t('common.product.priceOnRequest', 'السعر عند الاتفاق');
+    }, [hasPrice, hasRange, finalPrice, priceFrom, priceTo, t]);
 
     const averageRating = useMemo(() => {
         const rated = reviews.filter((r) => Number(r.rating) > 0);
@@ -655,7 +668,10 @@ const PostDetails: FunctionComponent = () => {
             <meta property='og:title' content={post.product_name} />
             <meta
                 property='og:description'
-                content={post.description?.trim().slice(0, 160) || `${post.product_name} - صفقة`}
+                content={
+                    post.description?.trim().slice(0, 160) ||
+                    `${post.product_name} - صفقة`
+                }
             />
             <meta property='og:image' content={post.image?.url || '/d3.png'} />
             <meta property='og:type' content='product' />
@@ -1318,7 +1334,6 @@ const PostDetails: FunctionComponent = () => {
                                                     : t('review.noReviewsYet')}
                                             </Typography>
                                         </Stack>
-
                                         <Box
                                             sx={{
                                                 p: 2,
@@ -1335,17 +1350,28 @@ const PostDetails: FunctionComponent = () => {
                                             >
                                                 <Typography
                                                     sx={{
-                                                        fontSize: {
-                                                            xs: '1.9rem',
-                                                            md: '2.2rem',
-                                                        },
+                                                        fontSize: hasPrice
+                                                            ? {
+                                                                  xs: '1.9rem',
+                                                                  md: '2.2rem',
+                                                              }
+                                                            : hasRange
+                                                              ? {
+                                                                    xs: '1.4rem',
+                                                                    md: '1.6rem',
+                                                                }
+                                                              : {
+                                                                    xs: '1.3rem',
+                                                                    md: '1.5rem',
+                                                                },
                                                         fontWeight: 900,
                                                         lineHeight: 1.1,
                                                     }}
                                                 >
-                                                    {formatPrice(finalPrice)}
+                                                    {priceText}
                                                 </Typography>
-                                                {post.sale && (
+
+                                                {hasPrice && post.sale && (
                                                     <>
                                                         <Typography
                                                             sx={{
@@ -1911,7 +1937,7 @@ const PostDetails: FunctionComponent = () => {
 
                             <PostSpecifications
                                 product={post}
-                                categoryLabel={categoryLabel}
+                                categoryLabel={t(`categories.${post.category}.label`)}
                                 t={t}
                             />
 
