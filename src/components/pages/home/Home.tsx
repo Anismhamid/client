@@ -589,7 +589,7 @@ const Home: FunctionComponent = () => {
                                 {t('home.listingEyebrow', 'استكشف السوق')}
                             </Typography>
                             <Typography
-                                variant='h4'
+                                variant='h2'
                                 component='h2'
                                 fontWeight={800}
                                 sx={{
@@ -637,7 +637,6 @@ const Home: FunctionComponent = () => {
                     <PostsGrid
                         key={selectedCategory ?? 'all'}
                         posts={filteredPosts}
-                        featured={false}
                         canEdit={canEdit}
                         onSetPostIdToUpdate={setPostIdToUpdate}
                         onShowUpdateModal={() => setShowUpdateModal(true)}
