@@ -17,7 +17,6 @@ import {
 } from '@mui/material';
 
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import StorefrontRoundedIcon from '@mui/icons-material/StorefrontRounded';
 
 import { m, AnimatePresence } from 'framer-motion';
 
@@ -110,7 +109,10 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
         <Container>
             {/* SEO */}
             <JsonLd
-                data={generateProductsItemListJsonLd(safePosts.slice(0, 20),getAbsolutePostUrl)}
+                data={generateProductsItemListJsonLd(
+                    safePosts.slice(0, 20),
+                    getAbsolutePostUrl,
+                )}
             />
 
             {/* PRODUCTS */}
@@ -126,22 +128,9 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             mb: 3,
                         }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <SealBadge size={28} rotate={-6} tone='outline'>
-                                <StorefrontRoundedIcon sx={{ fontSize: 15 }} />
-                            </SealBadge>
-                            <Typography
-                                variant='h6'
-                                sx={{
-                                    fontWeight: 800,
-                                    fontSize: { xs: '1.05rem', md: '1.2rem' },
-                                }}
-                            >
-                                {t('latessProducts')}
-                            </Typography>
-                        </Box>
                         <Typography
                             variant='caption'
+                            component='p' // FIX: Explicit paragraph
                             sx={{
                                 px: 1.25,
                                 py: 0.5,
@@ -192,15 +181,21 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                             <PostCard
                                                 post={post}
                                                 featured={post.featured}
-                                                discountedPrice={discountedPrice}
+                                                discountedPrice={
+                                                    discountedPrice
+                                                }
                                                 canEdit={canEdit}
                                                 setPostIdToUpdate={() =>
-                                                    onSetPostIdToUpdate(post._id)
+                                                    onSetPostIdToUpdate(
+                                                        post._id,
+                                                    )
                                                 }
                                                 onShowUpdateProductModal={
                                                     onShowUpdateModal
                                                 }
-                                                openDeleteModal={onOpenDeleteModal}
+                                                openDeleteModal={
+                                                    onOpenDeleteModal
+                                                }
                                                 category={post.category}
                                                 onLikeToggle={onLikeToggle}
                                             />
@@ -217,6 +212,8 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             transition={{ duration: 0.4 }}
                         >
                             <Box
+                                role='status' // FIX: Announce empty state to screen readers
+                                aria-live='polite'
                                 sx={{
                                     textAlign: 'center',
                                     py: 8,
@@ -232,7 +229,8 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                     sx={{
                                         position: 'absolute',
                                         inset: 0,
-                                        backgroundImage: BRAND.ledgerLines(0.04),
+                                        backgroundImage:
+                                            BRAND.ledgerLines(0.04),
                                         maskImage:
                                             'radial-gradient(ellipse at center, black 0%, transparent 75%)',
                                         WebkitMaskImage:
@@ -248,13 +246,18 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                                         position: 'relative',
                                     }}
                                 >
-                                    <SealBadge size={56} rotate={0} tone='outline'>
+                                    <SealBadge
+                                        size={56}
+                                        rotate={0}
+                                        tone='outline'
+                                    >
                                         <SearchOffIcon sx={{ fontSize: 24 }} />
                                     </SealBadge>
                                 </Box>
 
                                 <Typography
                                     variant='h6'
+                                    component='p' // FIX: Explicit paragraph
                                     fontWeight={700}
                                     sx={{ position: 'relative' }}
                                 >
@@ -287,7 +290,11 @@ const PostGrid: FunctionComponent<PostGridProps> = ({
                             minHeight: 60,
                         }}
                     >
-                        <CircularProgress size={20} aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND.gold }} />
+                        <CircularProgress
+                            size={20}
+                            aria-label={t('common.loading', 'جاري التحميل')} // FIX: Explicit accessible name
+                            sx={{ color: BRAND.gold }}
+                        />
                     </Box>
                 )}
             </Container>
