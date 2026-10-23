@@ -129,6 +129,8 @@ export type UpdateJobPayload = Partial<CreateJobPayload>;
 // ─── Job seekers ("looking for a job" posts) ───────────────
 
 export interface JobSeeker {
+    portfolioUrl: string;
+    portfolioUrl: import("react/jsx-runtime").JSX.Element;
     _id: string;
     user: User;
     title: string;
@@ -171,6 +173,7 @@ export interface JobSeekersFilters {
 }
 
 export interface CreateJobSeekerPayload {
+    portfolioUrl: string;
     title: string;
     category: JobCategory;
     types: JobType[];

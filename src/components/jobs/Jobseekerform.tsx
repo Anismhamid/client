@@ -17,7 +17,7 @@ import {
     CreateJobSeekerPayload,
     JobCategory,
 } from '../../interfaces/jobs.types';
-import {  BRAND_GRADIENT } from '../../components/pages/Jobs/jobsBrand';
+import { BRAND_GRADIENT } from '../../components/pages/Jobs/jobsBrand';
 import {
     AVAILABILITIES,
     EXPERIENCE_VALUES,
@@ -30,6 +30,7 @@ import {
     optLabel,
 } from '../../components/pages/Jobs/Jobsoptions';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const EMPTY_SEEKER: CreateJobSeekerPayload = {
     title: '',
     category: '' as JobCategory,
@@ -41,6 +42,7 @@ export const EMPTY_SEEKER: CreateJobSeekerPayload = {
     availability: 'flexible',
     about: '',
     showPhone: true,
+    portfolioUrl: ''
 };
 
 interface JobSeekerFormProps {
@@ -64,13 +66,22 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
         const req = t('pages.jobs.seekers.form.required', 'هذا الحقل مطلوب');
 
         if (v.title.trim().length < 3)
-            e.title = t('pages.jobs.seekers.form.titleMin', 'العنوان 3 أحرف على الأقل');
+            e.title = t(
+                'pages.jobs.seekers.form.titleMin',
+                'العنوان 3 أحرف على الأقل',
+            );
         if (!v.category) e.category = req;
         if (!v.types.length) e.types = req;
         if (v.expectedSalary != null && v.expectedSalary < 0)
-            e.expectedSalary = t('pages.jobs.seekers.form.salaryInvalid', 'قيمة غير صحيحة');
+            e.expectedSalary = t(
+                'pages.jobs.seekers.form.salaryInvalid',
+                'قيمة غير صحيحة',
+            );
         if ((v.about ?? '').length > 1000)
-            e.about = t('pages.jobs.seekers.form.aboutMax', 'الحد الأقصى 1000 حرف');
+            e.about = t(
+                'pages.jobs.seekers.form.aboutMax',
+                'الحد الأقصى 1000 حرف',
+            );
 
         return e;
     };
@@ -94,16 +105,29 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                 const err = (k: keyof CreateJobSeekerPayload) =>
                     touched[k] && errors[k] ? String(errors[k]) : undefined;
 
-                const num = (k: 'expectedSalary') => (e: React.ChangeEvent<HTMLInputElement>) =>
-                    setFieldValue(k, e.target.value === '' ? undefined : Number(e.target.value));
+                const num =
+                    (k: 'expectedSalary') =>
+                    (e: React.ChangeEvent<HTMLInputElement>) =>
+                        setFieldValue(
+                            k,
+                            e.target.value === ''
+                                ? undefined
+                                : Number(e.target.value),
+                        );
 
                 return (
                     <Form noValidate>
                         <Stack spacing={2.5}>
                             <TextField
                                 name='title'
-                                label={t('pages.jobs.seekers.form.title', 'شو الشغل اللي بتدور عليه؟')}
-                                placeholder={t('pages.jobs.seekers.form.titlePlaceholder', 'مثال: محاسب، سائق شاحنة، عامل بناء')}
+                                label={t(
+                                    'pages.jobs.seekers.form.title',
+                                    'شو الشغل اللي بتدور عليه؟',
+                                )}
+                                placeholder={t(
+                                    'pages.jobs.seekers.form.titlePlaceholder',
+                                    'مثال: محاسب، سائق شاحنة، عامل بناء',
+                                )}
                                 value={values.title}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
@@ -118,13 +142,19 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 sx={{
                                     display: 'grid',
                                     gap: 2,
-                                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+                                    gridTemplateColumns: {
+                                        xs: '1fr',
+                                        sm: '1fr 1fr',
+                                    },
                                 }}
                             >
                                 <TextField
                                     select
                                     name='category'
-                                    label={t('pages.jobs.seekers.form.category', 'القسم')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.category',
+                                        'القسم',
+                                    )}
                                     value={values.category}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -142,7 +172,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='types'
-                                    label={t('pages.jobs.seekers.form.types', 'نوع الدوام')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.types',
+                                        'نوع الدوام',
+                                    )}
                                     value={values.types}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
@@ -161,14 +194,19 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='experienceLevel'
-                                    label={t('pages.jobs.seekers.form.experience', 'مستوى الخبرة')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.experience',
+                                        'مستوى الخبرة',
+                                    )}
                                     value={values.experienceLevel ?? ''}
                                     onChange={handleChange}
                                 >
                                     <MenuItem value=''>—</MenuItem>
                                     {EXPERIENCE_VALUES.map((v) => (
                                         <MenuItem key={v} value={v}>
-                                            {t(`pages.jobs.experienceLevels.${v}`)}
+                                            {t(
+                                                `pages.jobs.experienceLevels.${v}`,
+                                            )}
                                         </MenuItem>
                                     ))}
                                 </TextField>
@@ -176,7 +214,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='availability'
-                                    label={t('pages.jobs.seekers.form.availability', 'متى بتقدر تبلّش؟')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.availability',
+                                        'متى بتقدر تبلّش؟',
+                                    )}
                                     value={values.availability}
                                     onChange={handleChange}
                                 >
@@ -190,7 +231,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='region'
-                                    label={t('pages.jobs.seekers.form.region', 'المنطقة')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.region',
+                                        'المنطقة',
+                                    )}
                                     value={values.region ?? ''}
                                     onChange={handleChange}
                                 >
@@ -204,7 +248,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
 
                                 <TextField
                                     name='location'
-                                    label={t('pages.jobs.seekers.form.city', 'المدينة / البلد')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.city',
+                                        'المدينة / البلد',
+                                    )}
                                     value={values.location ?? ''}
                                     onChange={handleChange}
                                     inputProps={{ maxLength: 80 }}
@@ -213,7 +260,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     name='expectedSalary'
                                     type='number'
-                                    label={t('pages.jobs.seekers.form.expectedSalary', 'الراتب المتوقع (₪)')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.expectedSalary',
+                                        'الراتب المتوقع (₪)',
+                                    )}
                                     value={values.expectedSalary ?? ''}
                                     onChange={num('expectedSalary')}
                                     onBlur={handleBlur}
@@ -225,7 +275,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='salaryPeriod'
-                                    label={t('pages.jobs.seekers.form.salaryPeriod', 'الفترة')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.salaryPeriod',
+                                        'الفترة',
+                                    )}
                                     value={values.salaryPeriod ?? ''}
                                     onChange={handleChange}
                                 >
@@ -240,7 +293,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='hebrewLevel'
-                                    label={t('pages.jobs.seekers.form.hebrew', 'مستوى العبرية')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.hebrew',
+                                        'مستوى العبرية',
+                                    )}
                                     value={values.hebrewLevel}
                                     onChange={handleChange}
                                 >
@@ -254,7 +310,10 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 <TextField
                                     select
                                     name='languages'
-                                    label={t('pages.jobs.seekers.form.languages', 'اللغات')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.languages',
+                                        'اللغات',
+                                    )}
                                     value={values.languages}
                                     onChange={handleChange}
                                     SelectProps={{ multiple: true }}
@@ -275,50 +334,87 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                 onChange={(_, v) =>
                                     setFieldValue(
                                         'skills',
-                                        v.map((s) => s.trim()).filter(Boolean).slice(0, 15),
+                                        v
+                                            .map((s) => s.trim())
+                                            .filter(Boolean)
+                                            .slice(0, 15),
                                     )
                                 }
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        label={t('pages.jobs.seekers.form.skills', 'مهارات (اكتب واضغط Enter)')}
+                                        label={t(
+                                            'pages.jobs.seekers.form.skills',
+                                            'مهارات (اكتب واضغط Enter)',
+                                        )}
                                     />
                                 )}
                             />
 
                             <TextField
                                 name='about'
-                                label={t('pages.jobs.seekers.form.about', 'عن حالك وخبرتك')}
+                                label={t(
+                                    'pages.jobs.seekers.form.about',
+                                    'عن حالك وخبرتك',
+                                )}
                                 value={values.about ?? ''}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 error={!!err('about')}
-                                helperText={err('about') ?? `${(values.about ?? '').length}/1000`}
+                                helperText={
+                                    err('about') ??
+                                    `${(values.about ?? '').length}/1000`
+                                }
                                 inputProps={{ maxLength: 1000 }}
                                 multiline
                                 minRows={4}
                             />
+
+                            <TextField
+                                name='portfolioUrl'
+                                label={t(
+                                    'pages.jobs.seekers.form.portfolioUrl',
+                                    'رابط معرض الأعمال / GitHub',
+                                )}
+                                value={values.portfolioUrl ?? ''}
+                                onChange={handleChange}
+                                fullWidth
+                                type='url'
+                                placeholder='https://github.com/username'
+                            />
+
+
 
                             <Stack>
                                 <FormControlLabel
                                     control={
                                         <Switch
                                             checked={values.remote}
-                                            onChange={(_, c) => setFieldValue('remote', c)}
+                                            onChange={(_, c) =>
+                                                setFieldValue('remote', c)
+                                            }
                                             color='warning'
                                         />
                                     }
-                                    label={t('pages.jobs.seekers.form.remote', 'بقبل شغل عن بعد')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.remote',
+                                        'بقبل شغل عن بعد',
+                                    )}
                                 />
                                 <FormControlLabel
                                     control={
                                         <Switch
                                             checked={values.showPhone}
-                                            onChange={(_, c) => setFieldValue('showPhone', c)}
+                                            onChange={(_, c) =>
+                                                setFieldValue('showPhone', c)
+                                            }
                                             color='warning'
                                         />
                                     }
-                                    label={t('pages.jobs.seekers.form.showPhone', 'اعرض رقم تلفوني بالبوست')}
+                                    label={t(
+                                        'pages.jobs.seekers.form.showPhone',
+                                        'اعرض رقم تلفوني بالبوست',
+                                    )}
                                 />
                             </Stack>
 
@@ -331,16 +427,31 @@ const JobSeekerForm: FunctionComponent<JobSeekerFormProps> = ({
                                     fontWeight: 700,
                                     color: '#fff',
                                     background: BRAND_GRADIENT,
-                                    '&:hover': { background: BRAND_GRADIENT, filter: 'brightness(0.92)' },
-                                    '&.Mui-disabled': { color: '#fff', opacity: 0.6 },
+                                    '&:hover': {
+                                        background: BRAND_GRADIENT,
+                                        filter: 'brightness(0.92)',
+                                    },
+                                    '&.Mui-disabled': {
+                                        color: '#fff',
+                                        opacity: 0.6,
+                                    },
                                 }}
                             >
                                 {isSubmitting ? (
-                                    <CircularProgress size={22} sx={{ color: '#fff' }} />
+                                    <CircularProgress
+                                        size={22}
+                                        sx={{ color: '#fff' }}
+                                    />
                                 ) : mode === 'edit' ? (
-                                    t('pages.jobs.seekers.form.update', 'حفظ التعديلات')
+                                    t(
+                                        'pages.jobs.seekers.form.update',
+                                        'حفظ التعديلات',
+                                    )
                                 ) : (
-                                    t('pages.jobs.seekers.form.publish', 'انشر البوست')
+                                    t(
+                                        'pages.jobs.seekers.form.publish',
+                                        'انشر البوست',
+                                    )
                                 )}
                             </Button>
                         </Stack>
