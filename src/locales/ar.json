@@ -1592,139 +1592,150 @@
             "title": "قيد الانتظار"
         },
         "jobs": {
-            "title": "الوظائف",
-            "remote": "عن بُعد",
-            "back": "رجوع",
-            "notFound": "لم يتم العثور على الوظيفة",
-            "requirements": "المتطلبات",
-            "benefits": "المزايا",
+            "title": "صفقات العمل",
+            "categories": {
+                "hi_tech": "هاي تك وبرمجة",
+                "engineering": "هندسة وتقنيين",
+                "construction": "بناء وعمارة",
+                "manufacturing": "صناعة ومصانع",
+                "agriculture": "زراعة",
+                "transport": "نقل وسياقة ولوجستيات",
+                "retail": "تجارة ومبيعات",
+                "hospitality": "مطاعم وفنادق وسياحة",
+                "healthcare": "صحة وتمريض",
+                "education": "تعليم وتربية",
+                "office": "إدارة وسكرتارية",
+                "finance": "محاسبة ومالية",
+                "customer_service": "خدمة زبائن",
+                "security": "أمن وحراسة",
+                "cleaning": "تنظيف",
+                "maintenance": "صيانة وحرف (كهربا، سباكة، نجارة...)",
+                "beauty": "تجميل وعناية",
+                "media_design": "إعلام وتصميم",
+                "legal": "قانون",
+                "other": "أخرى"
+            },
+            "regions": {
+                "north": "الشمال",
+                "haifa": "حيفا والكرمل",
+                "sharon": "الشارون",
+                "center": "المركز",
+                "tel_aviv": "تل أبيب وغوش دان",
+                "jerusalem": "القدس",
+                "south": "الجنوب والنقب"
+            },
+            "hebrewLevels": {
+                "none": "بدون عبرية",
+                "basic": "أساسي",
+                "good": "جيد",
+                "fluent": "ممتاز"
+            },
+            "availabilities": {
+                "immediate": "فوراً",
+                "two_weeks": "خلال أسبوعين",
+                "month": "خلال شهر",
+                "flexible": "مرن"
+            },
+            "languages": {
+                "ar": "العربية",
+                "he": "العبرية",
+                "en": "الإنجليزية",
+                "ru": "الروسية"
+            },
+            "tabs": {
+                "seekers": "باحثون عن عمل",
+                "seekerCreate": "نزّل بوست: بدور على شغل"
+            },
+            "hero": {
+                "title": "شغل لكل الناس، من الموظف للعامل",
+                "subtitle": "أصحاب عمل بيدوّروا على موظفين، وناس بتدوّر على شغل. بكل المناطق وكل الأقسام.",
+                "jobsHint": "أصحاب عمل بدهم موظفين",
+                "seekersHint": "ناس جاهزة تبلّش"
+            },
+            "rail": {
+                "label": "الأقسام",
+                "all": "كل الأقسام"
+            },
+            "new": "جديد",
+            "vacancy": "وظيفة شاغرة",
+            "salaryNegotiable": "الراتب حسب الاتفاق",
+            "filters": {
+                "all": "الكل",
+                "search": "بحث"
+            },
 
+            "seekers": {
+                "badge": "بدور على شغل",
+                "empty": "ما في بوستات هون",
+                "emptyHint": "جرّب قسم تاني، أو كون أول واحد بيعلن إنه بدور على شغل.",
+                "availableLabel": "جاهز للبدء",
+                "hebrewLabel": "العبرية",
+                "call": "اتصل",
+                "whatsapp": "واتساب",
+                "noPhone": "صاحب البوست ما نشر رقمه",
+                "mine": "بوستاتي",
+                "activate": "تفعيل",
+                "deactivate": "تعطيل",
+                "delete": "حذف",
+                "deleteConfirm": "حذف البوست؟",
+                "filters": {
+                    "q": "بحث (مهنة، مهارة، مدينة)"
+                },
+                "form": {
+                    "required": "هذا الحقل مطلوب",
+                    "titleMin": "العنوان 3 أحرف على الأقل",
+                    "salaryInvalid": "قيمة غير صحيحة",
+                    "aboutMax": "الحد الأقصى 1000 حرف",
+                    "title": "شو الشغل اللي بتدور عليه؟",
+                    "titlePlaceholder": "مثال: محاسب، سائق شاحنة، عامل بناء",
+                    "category": "القسم",
+                    "types": "نوع الدوام",
+                    "experience": "مستوى الخبرة",
+                    "availability": "متى بتقدر تبلّش؟",
+                    "region": "المنطقة",
+                    "city": "المدينة / البلد",
+                    "expectedSalary": "الراتب المتوقع (₪)",
+                    "salaryPeriod": "الفترة",
+                    "hebrew": "مستوى العبرية",
+                    "languages": "اللغات",
+                    "skills": "مهارات (اكتب واضغط Enter)",
+                    "about": "عن حالك وخبرتك",
+                    "remote": "بقبل شغل عن بعد",
+                    "showPhone": "اعرض رقم تلفوني بالبوست",
+                    "update": "حفظ التعديلات",
+                    "publish": "انشر البوست"
+                },
+                "messages": {
+                    "createdTitle": "تم النشر",
+                    "created": "صار بوستك ظاهر لأصحاب العمل"
+                },
+                "errors": {
+                    "limitTitle": "وصلت للحد الأقصى",
+                    "limit": "عندك 3 بوستات فعّالة. عطّل أو احذف واحد قبل ما تنشر جديد."
+                }
+            },
             "form": {
-                "basicInformation": "معلومات الوظيفة",
+                "basicInformation": "معلومات أساسية",
                 "jobTitle": "المسمى الوظيفي",
-                "type": "نوع الوظيفة",
+                "type": "نوع الدوام",
+                "category": "القسم",
                 "companyName": "اسم الشركة",
-                "industry": "المجال",
+                "industry": "مجال الشركة",
                 "experienceSection": "الخبرة",
                 "experienceLevel": "مستوى الخبرة",
-                "notSpecified": "غير محدد",
-
                 "salarySection": "الراتب",
-                "salaryMin": "الحد الأدنى للراتب",
-                "salaryMax": "الحد الأعلى للراتب",
-                "salaryPeriod": "فترة الراتب",
-
+                "salaryMin": "الحد الأدنى",
+                "salaryMax": "الحد الأعلى",
+                "salaryPeriod": "الفترة",
                 "locationSection": "الموقع",
-                "location": "الموقع",
-                "remote": "العمل عن بُعد",
-
-                "requirements": "متطلبات الوظيفة",
-                "requirement": "المتطلب",
-                "addRequirement": "إضافة متطلب",
-                "noRequirements": "لم تتم إضافة أي متطلبات",
-
-                "benefits": "مزايا الوظيفة",
-                "benefit": "الميزة",
-                "addBenefit": "إضافة ميزة",
-                "noBenefits": "لم تتم إضافة أي مزايا",
-
-                "create": "نشر الوظيفة",
-                "update": "تحديث الوظيفة"
-            },
-
-            "filters": {
-                "type": "نوع الوظيفة",
-                "experience": "الخبرة",
-                "salaryPeriod": "فترة الراتب",
-                "salaryMin": "الحد الأدنى للراتب",
-                "salaryMax": "الحد الأعلى للراتب",
-                "location": "الموقع",
-                "industry": "المجال",
-                "remote": "عن بُعد",
-                "all": "الكل",
-                "search": "بحث",
-                "reset": "إعادة ضبط"
-            },
-
-            "types": {
-                "full_time": "دوام كامل",
-                "part_time": "دوام جزئي",
-                "temporary": "مؤقت",
-                "remote": "عن بُعد",
-                "daily": "يومية",
-                "internship": "تدريب"
-            },
-
-            "experienceLevels": {
-                "no_experience": "بدون خبرة",
-                "entry": "مبتدئ",
-                "mid": "متوسط الخبرة",
-                "senior": "خبير",
-                "manager": "إدارة"
-            },
-            "card": { "openDetails": "عرض المزيد" },
-            "salaryPeriods": {
-                "hourly": "ساعة",
-                "daily": "يوم",
-                "monthly": "شهر",
-                "yearly": "سنة"
-            },
-
-            "validation": {
-                "typeRequired": "نوع الوظيفة مطلوب",
-                "jobTitleRequired": "المسمى الوظيفي مطلوب",
-                "jobTitleMin": "المسمى الوظيفي يجب أن يكون حرفين على الأقل",
-                "jobTitleMax": "المسمى الوظيفي يجب ألا يتجاوز 150 حرفاً",
-
-                "companyNameMax": "اسم الشركة يجب ألا يتجاوز 150 حرفاً",
-                "industryMax": "المجال يجب ألا يتجاوز 100 حرف",
-
-                "salaryMinPositive": "الراتب يجب أن يكون 0 أو أكثر",
-                "salaryMaxPositive": "الراتب يجب أن يكون 0 أو أكثر",
-                "salaryMaxGreater": "الحد الأعلى يجب أن يكون أكبر من أو يساوي الحد الأدنى",
-
-                "locationMax": "الموقع يجب ألا يتجاوز 150 حرفاً",
-
-                "requirementMax": "المتطلب يجب ألا يتجاوز 300 حرف",
-                "benefitMax": "الميزة يجب ألا تتجاوز 300 حرف"
-            },
-            "actions": {
-                "edit": "تعديل",
-                "delete": "حذف",
-                "ok": "حسناً"
-            },
-
-            "messages": {
-                "createdTitle": "تم نشر الوظيفة",
-                "created": "تم نشر الوظيفة بنجاح",
-                "updatedTitle": "تم تحديث الوظيفة",
-                "updated": "تم تحديث الوظيفة بنجاح"
-            },
-
-            "errors": {
-                "loadTitle": "خطأ",
-                "load": "تعذر تحميل بيانات الوظيفة",
-
-                "createTitle": "تعذر نشر الوظيفة",
-                "create": "حدث خطأ أثناء نشر الوظيفة",
-
-                "updateTitle": "تعذر تحديث الوظيفة",
-                "update": "حدث خطأ أثناء تحديث الوظيفة",
-
-                "unauthorizedTitle": "يجب تسجيل الدخول",
-                "unauthorized": "يجب تسجيل الدخول حتى تتمكن من تنفيذ هذا الإجراء",
-
-                "forbiddenTitle": "غير مسموح",
-                "forbidden": "ليس لديك صلاحية لتنفيذ هذا الإجراء"
-            },
-
-            "delete": {
-                "title": "حذف الوظيفة",
-                "message": "هل أنت متأكد من رغبتك في حذف هذه الوظيفة؟ لا يمكن التراجع عن هذا الإجراء.",
-                "cancel": "إلغاء",
-                "confirm": "حذف",
-                "success": "تم حذف الوظيفة بنجاح",
-                "error": "تعذر حذف الوظيفة"
+                "location": "المدينة / البلد",
+                "remote": "عن بعد",
+                "requirements": "المتطلبات",
+                "addRequirement": "المتطلبات",
+                "noRequirements": "ما أضفت متطلبات بعد",
+                "benefits": "المزايا",
+                "addBenefit": "المزايا",
+                "noBenefits": "ما أضفت مزايا بعد"
             }
         },
         "contact": {

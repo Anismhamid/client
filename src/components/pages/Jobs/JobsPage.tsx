@@ -32,10 +32,12 @@ import {
 
 import { searchJobs } from '../../../services/jobsService';
 import CreateJob from './CreateJob';
+import CreateJobSeeker from './Createjobseeker';
+import JobSeekersSection from './JobSeekersSection';
 import { BRAND_GOLD, BRAND_GRADIENT } from './jobsBrand';
 import JobsGrid from '../../jobs/JobsGrid';
 
-type JobsTab = 'jobs' | 'create';
+type JobsTab = 'jobs' | 'seekers' | 'create' | 'seekerCreate';
 
 const DEFAULT_FILTERS: JobsFiltersType = {
     page: 1,
@@ -143,18 +145,22 @@ const JobsPage: FunctionComponent = () => {
                 <Tabs
                     value={activeTab}
                     onChange={(_, value: JobsTab) => setActiveTab(value)}
+                    variant='scrollable'
+                    scrollButtons={false}
                     TabIndicatorProps={{ style: { display: 'none' } }}
                     sx={{
+                        maxWidth: '100%',
                         minHeight: 44,
                         p: 0.5,
                         borderRadius: 999,
                         bgcolor: 'action.hover',
                         '& .MuiTab-root': {
                             minHeight: 36,
-                            px: 3,
+                            px: 2.5,
                             borderRadius: 999,
                             textTransform: 'none',
                             fontWeight: 600,
+                            whiteSpace: 'nowrap',
                             color: 'text.secondary',
                             transition: 'color 0.2s ease, background 0.2s ease',
                         },
@@ -164,30 +170,45 @@ const JobsPage: FunctionComponent = () => {
                         },
                     }}
                 >
+                    <Tab value='jobs' label={t('pages.jobs.tabs.jobs', 'وظائف')} />
                     <Tab
-                        value='jobs'
-                        label={t('pages.jobs.tabs.jobs', 'Jobs')}
+                        value='seekers'
+                        label={t('pages.jobs.tabs.seekers', 'باحثون عن عمل')}
                     />
                     <Tab
                         value='create'
-                        label={t('pages.jobs.tabs.create', 'Share a job')}
+                        label={t('pages.jobs.tabs.create', 'نزّل وظيفة')}
+                    />
+                    <Tab
+                        value='seekerCreate'
+                        label={t('pages.jobs.tabs.seekerCreate', 'بدور على شغل')}
                     />
                 </Tabs>
             </Box>
 
-            {activeTab === 'create' ? (
+            {activeTab === 'create' && (
                 <Paper
                     variant='outlined'
-                    sx={{
-                        p: { xs: 2, md: 4 },
-                        borderRadius: 3,
-                        maxWidth: 840,
-                        mx: 'auto',
-                    }}
+                    sx={{ p: { xs: 2, md: 4 }, borderRadius: 3, maxWidth: 840, mx: 'auto' }}
                 >
                     <CreateJob embedded />
                 </Paper>
-            ) : (
+            )}
+
+            {activeTab === 'seekerCreate' && (
+                <Paper
+                    variant='outlined'
+                    sx={{ p: { xs: 2, md: 4 }, borderRadius: 3, maxWidth: 840, mx: 'auto' }}
+                >
+                    <CreateJobSeeker onCreated={() => setActiveTab('seekers')} />
+                </Paper>
+            )}
+
+            {activeTab === 'seekers' && (
+                <JobSeekersSection onCreate={() => setActiveTab('seekerCreate')} />
+            )}
+
+            {activeTab === 'jobs' && (
                 <>
                     {/* Filters toolbar */}
                     <Box
@@ -278,7 +299,10 @@ const JobsPage: FunctionComponent = () => {
                                 py: 8,
                             }}
                         >
-                            <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  sx={{ color: BRAND_GOLD }} />
+                            <CircularProgress
+                                aria-label={t('common.loading', 'جاري التحميل')}
+                                sx={{ color: BRAND_GOLD }}
+                            />
                         </Box>
                     ) : (
                         <>

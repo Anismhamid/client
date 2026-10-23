@@ -11,14 +11,7 @@ import './locales/i18n.tsx';
 import AppRoutes from './routes/AppRoutes.tsx';
 import Theme from './components/navbar/theme/AppTheme.tsx';
 import useSocketEvents from './hooks/socket/useSocketEvents.ts';
-import {
-    lazy,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    Suspense,
-} from 'react';
+import { lazy, useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import handleRTL from './locales/handleRTL.ts';
 import Loader from './atoms/loader/Loader.tsx';
 import TransitionAlerts from './components/pages/home/TransitionAlerts.tsx';
@@ -107,7 +100,7 @@ function App() {
                     mode,
                     ...(mode === 'light'
                         ? {
-                              primary: { main: '#f59f0b' },
+                              primary: { main: '#d48d12' },
                               secondary: { main: '#1976d2' },
                               background: {
                                   default: '#F8F5EF',
@@ -122,8 +115,8 @@ function App() {
                               primary: { main: '#f59f0b' },
                               secondary: { main: '#000000' },
                               background: {
-                                  default: '#121212',
-                                  paper: '#161311',
+                                  default: '#0f0e0d',
+                                  paper: '#0f0e0d',
                               },
                               text: {
                                   primary: '#ffffff',

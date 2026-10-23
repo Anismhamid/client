@@ -1582,141 +1582,147 @@
             "goBack": "Go Back"
         },
         "jobs": {
-            "title": "Jobs",
-            "remote": "Remote",
-            "back": "Back",
-            "notFound": "Job not found",
-            "requirements": "Requirements",
-            "benefits": "Benefits",
-
+            "title":"Safqa Jobs",
+            "categories": {
+                "hi_tech": "High-tech & software",
+                "engineering": "Engineering & technicians",
+                "construction": "Construction",
+                "manufacturing": "Manufacturing",
+                "agriculture": "Agriculture",
+                "transport": "Transport & logistics",
+                "retail": "Retail & sales",
+                "hospitality": "Hospitality & tourism",
+                "healthcare": "Healthcare & nursing",
+                "education": "Education",
+                "office": "Administration",
+                "finance": "Accounting & finance",
+                "customer_service": "Customer service",
+                "security": "Security",
+                "cleaning": "Cleaning",
+                "maintenance": "Maintenance & trades",
+                "beauty": "Beauty & care",
+                "media_design": "Media & design",
+                "legal": "Legal",
+                "other": "Other"
+            },
+            "regions": {
+                "north": "North",
+                "haifa": "Haifa & Carmel",
+                "sharon": "Sharon",
+                "center": "Center",
+                "tel_aviv": "Tel Aviv & Gush Dan",
+                "jerusalem": "Jerusalem",
+                "south": "South & Negev"
+            },
+            "hebrewLevels": {
+                "none": "No Hebrew",
+                "basic": "Basic",
+                "good": "Good",
+                "fluent": "Fluent"
+            },
+            "availabilities": {
+                "immediate": "Immediately",
+                "two_weeks": "Within two weeks",
+                "month": "Within a month",
+                "flexible": "Flexible"
+            },
+            "languages": {
+                "ar": "Arabic",
+                "he": "Hebrew",
+                "en": "English",
+                "ru": "Russian"
+            },
+            "tabs": {
+                "seekers": "Job seekers",
+                "seekerCreate": "Post: I'm looking for work"
+            },
+            "hero": {
+                "title": "Work for everyone, from office staff to hands-on workers",
+                "subtitle": "Employers looking for staff, people looking for work. In every region and every field.",
+                "jobsHint": "Employers hiring now",
+                "seekersHint": "People ready to start"
+            },
+            "rail": {
+                "label": "Fields",
+                "all": "All fields"
+            },
+            "new": "New",
+            "vacancy": "Open position",
+            "salaryNegotiable": "Salary negotiable",
+            "filters": {
+                "all": "All",
+                "search": "Search"
+            },
+            "seekers": {
+                "badge": "Looking for work",
+                "empty": "No posts here",
+                "emptyHint": "Try another field, or be the first to post that you're looking for work.",
+                "availableLabel": "Available to start",
+                "hebrewLabel": "Hebrew",
+                "call": "Call",
+                "whatsapp": "WhatsApp",
+                "noPhone": "The poster didn't share a phone number",
+                "mine": "My posts",
+                "activate": "Activate",
+                "deactivate": "Deactivate",
+                "delete": "Delete",
+                "deleteConfirm": "Delete this post?",
+                "filters": {
+                    "q": "Search (job, skill, city)"
+                },
+                "form": {
+                    "required": "This field is required",
+                    "titleMin": "Title must be at least 3 characters",
+                    "salaryInvalid": "Invalid value",
+                    "aboutMax": "Maximum 1000 characters",
+                    "title": "What kind of work are you looking for?",
+                    "titlePlaceholder": "e.g. Accountant, truck driver, construction worker",
+                    "category": "Field",
+                    "types": "Job type",
+                    "experience": "Experience level",
+                    "availability": "When can you start?",
+                    "region": "Region",
+                    "city": "City / town",
+                    "expectedSalary": "Expected salary (₪)",
+                    "salaryPeriod": "Period",
+                    "hebrew": "Hebrew level",
+                    "languages": "Languages",
+                    "skills": "Skills (type and press Enter)",
+                    "about": "About you and your experience",
+                    "remote": "Open to remote work",
+                    "showPhone": "Show my phone number on the post",
+                    "update": "Save changes",
+                    "publish": "Publish post"
+                },
+                "messages": {
+                    "createdTitle": "Published",
+                    "created": "Your post is now visible to employers"
+                },
+                "errors": {
+                    "limitTitle": "Limit reached",
+                    "limit": "You have 3 active posts. Deactivate or delete one before posting a new one."
+                }
+            },
             "form": {
-                "basicInformation": "Job information",
+                "basicInformation": "Basic information",
                 "jobTitle": "Job title",
                 "type": "Job type",
+                "category": "Field",
                 "companyName": "Company name",
                 "industry": "Industry",
                 "experienceSection": "Experience",
                 "experienceLevel": "Experience level",
-                "notSpecified": "Not specified",
-
                 "salarySection": "Salary",
-                "salaryMin": "Minimum salary",
-                "salaryMax": "Maximum salary",
-                "salaryPeriod": "Salary period",
-
+                "salaryMin": "Minimum",
+                "salaryMax": "Maximum",
+                "salaryPeriod": "Period",
                 "locationSection": "Location",
-                "location": "Location",
-                "remote": "Remote work",
-
-                "requirements": "Job requirements",
-                "requirement": "Requirement",
-                "addRequirement": "Add requirement",
-                "noRequirements": "No requirements added",
-
-                "benefits": "Job benefits",
-                "benefit": "Benefit",
-                "addBenefit": "Add benefit",
-                "noBenefits": "No benefits added",
-
-                "create": "Publish job",
-                "update": "Update job"
-            },
-
-            "filters": {
-                "type": "Job type",
-                "experience": "Experience",
-                "salaryPeriod": "Salary period",
-                "salaryMin": "Minimum salary",
-                "salaryMax": "Maximum salary",
-                "location": "Location",
-                "industry": "Industry",
+                "location": "City / town",
                 "remote": "Remote",
-                "all": "All",
-                "search": "Search",
-                "reset": "Reset"
-            },
-
-            "types": {
-                "full_time": "Full time",
-                "part_time": "Part time",
-                "temporary": "Temporary",
-                "remote": "Remote",
-                "daily": "Daily",
-                "internship": "Internship"
-            },
-
-            "experienceLevels": {
-                "no_experience": "No experience",
-                "entry": "Entry level",
-                "mid": "Mid level",
-                "senior": "Senior",
-                "manager": "Manager"
-            },
-            "card": {
-                "openDetails": "View More"
-            },
-            "salaryPeriods": {
-                "hourly": "Hour",
-                "daily": "Day",
-                "monthly": "Month",
-                "yearly": "Year"
-            },
-
-            "validation": {
-                "typeRequired": "Job type is required",
-                "jobTitleRequired": "Job title is required",
-                "jobTitleMin": "Job title must be at least 2 characters",
-                "jobTitleMax": "Job title must not exceed 150 characters",
-
-                "companyNameMax": "Company name must not exceed 150 characters",
-                "industryMax": "Industry must not exceed 100 characters",
-
-                "salaryMinPositive": "Salary must be 0 or more",
-                "salaryMaxPositive": "Salary must be 0 or more",
-                "salaryMaxGreater": "Maximum must be greater than or equal to minimum",
-
-                "locationMax": "Location must not exceed 150 characters",
-
-                "requirementMax": "Requirement must not exceed 300 characters",
-                "benefitMax": "Benefit must not exceed 300 characters"
-            },
-            "actions": {
-                "edit": "Edit",
-                "delete": "Delete",
-                "ok": "OK"
-            },
-
-            "messages": {
-                "createdTitle": "Job published",
-                "created": "Job published successfully",
-                "updatedTitle": "Job updated",
-                "updated": "Job updated successfully"
-            },
-
-            "errors": {
-                "loadTitle": "Error",
-                "load": "Could not load job data",
-
-                "createTitle": "Could not publish job",
-                "create": "An error occurred while publishing the job",
-
-                "updateTitle": "Could not update job",
-                "update": "An error occurred while updating the job",
-
-                "unauthorizedTitle": "Login required",
-                "unauthorized": "You must log in to perform this action",
-
-                "forbiddenTitle": "Not allowed",
-                "forbidden": "You do not have permission to perform this action"
-            },
-
-            "delete": {
-                "title": "Delete job",
-                "message": "Are you sure you want to delete this job? This action cannot be undone.",
-                "cancel": "Cancel",
-                "confirm": "Delete",
-                "success": "Job deleted successfully",
-                "error": "Could not delete job"
+                "requirements": "Requirements",
+                "noRequirements": "No requirements added yet",
+                "benefits": "Benefits",
+                "noBenefits": "No benefits added yet"
             }
         },
         "contact": {

@@ -1579,141 +1579,146 @@
             "goBack": "חזרה"
         },
         "jobs": {
-            "title": "משרות",
-            "remote": "מרחוק",
-            "back": "חזור",
-            "notFound": "המשרה לא נמצאה",
-            "requirements": "דרישות",
-            "benefits": "הטבות",
-
+            "categories": {
+                "hi_tech": "הייטק ותכנות",
+                "engineering": "הנדסה וטכנאים",
+                "construction": "בנייה ובינוי",
+                "manufacturing": "תעשייה וייצור",
+                "agriculture": "חקלאות",
+                "transport": "הובלה, נהיגה ולוגיסטיקה",
+                "retail": "קמעונאות ומכירות",
+                "hospitality": "מסעדנות, מלונאות ותיירות",
+                "healthcare": "בריאות וסיעוד",
+                "education": "חינוך והוראה",
+                "office": "ניהול ומזכירות",
+                "finance": "הנהלת חשבונות ופיננסים",
+                "customer_service": "שירות לקוחות",
+                "security": "ביטחון ושמירה",
+                "cleaning": "ניקיון",
+                "maintenance": "תחזוקה ומקצועות (חשמל, אינסטלציה, נגרות...)",
+                "beauty": "יופי וטיפוח",
+                "media_design": "תקשורת ועיצוב",
+                "legal": "משפט",
+                "other": "אחר"
+            },
+            "regions": {
+                "north": "צפון",
+                "haifa": "חיפה והכרמל",
+                "sharon": "השרון",
+                "center": "מרכז",
+                "tel_aviv": "תל אביב וגוש דן",
+                "jerusalem": "ירושלים",
+                "south": "דרום והנגב"
+            },
+            "hebrewLevels": {
+                "none": "ללא עברית",
+                "basic": "בסיסית",
+                "good": "טובה",
+                "fluent": "שוטפת"
+            },
+            "availabilities": {
+                "immediate": "מיידית",
+                "two_weeks": "תוך שבועיים",
+                "month": "תוך חודש",
+                "flexible": "גמיש"
+            },
+            "languages": {
+                "ar": "ערבית",
+                "he": "עברית",
+                "en": "אנגלית",
+                "ru": "רוסית"
+            },
+            "tabs": {
+                "seekers": "מחפשי עבודה",
+                "seekerCreate": "פרסם מודעה: מחפש עבודה"
+            },
+            "hero": {
+                "title": "עבודה לכולם, מהפקיד ועד העובד",
+                "subtitle": "מעסיקים מחפשים עובדים ואנשים מחפשים עבודה. בכל האזורים ובכל התחומים.",
+                "jobsHint": "מעסיקים שמחפשים עובדים",
+                "seekersHint": "אנשים שמוכנים להתחיל"
+            },
+            "rail": {
+                "label": "תחומים",
+                "all": "כל התחומים"
+            },
+            "new": "חדש",
+            "vacancy": "משרה פנויה",
+            "salaryNegotiable": "שכר בהתאם להסכמה",
+            "filters": {
+                "all": "הכל",
+                "search": "חיפוש"
+            },
+            "seekers": {
+                "badge": "מחפש עבודה",
+                "empty": "אין מודעות כאן",
+                "emptyHint": "נסו תחום אחר, או היו הראשונים לפרסם שהם מחפשים עבודה.",
+                "availableLabel": "זמינות להתחלה",
+                "hebrewLabel": "עברית",
+                "call": "התקשר",
+                "whatsapp": "וואטסאפ",
+                "noPhone": "בעל המודעה לא פרסם מספר טלפון",
+                "mine": "המודעות שלי",
+                "activate": "הפעל",
+                "deactivate": "השבת",
+                "delete": "מחק",
+                "deleteConfirm": "למחוק את המודעה?",
+                "filters": {
+                    "q": "חיפוש (מקצוע, כישור, עיר)"
+                },
+                "form": {
+                    "required": "שדה חובה",
+                    "titleMin": "הכותרת חייבת להכיל לפחות 3 תווים",
+                    "salaryInvalid": "ערך לא תקין",
+                    "aboutMax": "מקסימום 1000 תווים",
+                    "title": "איזו עבודה אתם מחפשים?",
+                    "titlePlaceholder": "לדוגמה: מנהל חשבונות, נהג משאית, פועל בניין",
+                    "category": "תחום",
+                    "types": "היקף משרה",
+                    "experience": "רמת ניסיון",
+                    "availability": "מתי אפשר להתחיל?",
+                    "region": "אזור",
+                    "city": "עיר / יישוב",
+                    "expectedSalary": "שכר מבוקש (₪)",
+                    "salaryPeriod": "תקופה",
+                    "hebrew": "רמת עברית",
+                    "languages": "שפות",
+                    "skills": "כישורים (הקלידו ולחצו Enter)",
+                    "about": "קצת עליכם ועל הניסיון שלכם",
+                    "remote": "מוכנים לעבודה מרחוק",
+                    "showPhone": "הצג את מספר הטלפון שלי במודעה",
+                    "update": "שמור שינויים",
+                    "publish": "פרסם מודעה"
+                },
+                "messages": {
+                    "createdTitle": "פורסם",
+                    "created": "המודעה שלך גלויה כעת למעסיקים"
+                },
+                "errors": {
+                    "limitTitle": "הגעת למגבלה",
+                    "limit": "יש לך 3 מודעות פעילות. השבת או מחק אחת לפני פרסום חדשה."
+                }
+            },
             "form": {
-                "basicInformation": "מידע על המשרה",
-                "jobTitle": "תפקיד",
-                "type": "סוג משרה",
+                "basicInformation": "מידע בסיסי",
+                "jobTitle": "שם התפקיד",
+                "type": "היקף משרה",
+                "category": "תחום",
                 "companyName": "שם החברה",
-                "industry": "תחום",
+                "industry": "תחום פעילות",
                 "experienceSection": "ניסיון",
                 "experienceLevel": "רמת ניסיון",
-                "notSpecified": "לא צוין",
-
                 "salarySection": "שכר",
                 "salaryMin": "שכר מינימום",
                 "salaryMax": "שכר מקסימום",
-                "salaryPeriod": "תקופת השכר",
-
+                "salaryPeriod": "תקופה",
                 "locationSection": "מיקום",
-                "location": "מיקום",
+                "location": "עיר / יישוב",
                 "remote": "עבודה מרחוק",
-
-                "requirements": "דרישות המשרה",
-                "requirement": "דרישה",
-                "addRequirement": "הוסף דרישה",
+                "requirements": "דרישות",
                 "noRequirements": "לא נוספו דרישות",
-
-                "benefits": "הטבות המשרה",
-                "benefit": "הטבה",
-                "addBenefit": "הוסף הטבה",
-                "noBenefits": "לא נוספו הטבות",
-
-                "create": "פרסם משרה",
-                "update": "עדכן משרה"
-            },
-
-            "filters": {
-                "type": "סוג משרה",
-                "experience": "ניסיון",
-                "salaryPeriod": "תקופת שכר",
-                "salaryMin": "שכר מינימום",
-                "salaryMax": "שכר מקסימום",
-                "location": "מיקום",
-                "industry": "תחום",
-                "remote": "מרחוק",
-                "all": "הכל",
-                "search": "חיפוש",
-                "reset": "איפוס"
-            },
-
-            "types": {
-                "full_time": "משרה מלאה",
-                "part_time": "משרה חלקית",
-                "temporary": "זמנית",
-                "remote": "מרחוק",
-                "daily": "יומית",
-                "internship": "התמחות"
-            },
-
-            "experienceLevels": {
-                "no_experience": "ללא ניסיון",
-                "entry": "מתחיל",
-                "mid": "בינוני",
-                "senior": "בכיר",
-                "manager": "מנהל"
-            },
-            "card": {
-                "openDetails": "פרטים נוספים"
-            },
-            "salaryPeriods": {
-                "hourly": "שעה",
-                "daily": "יום",
-                "monthly": "חודש",
-                "yearly": "שנה"
-            },
-
-            "validation": {
-                "typeRequired": "סוג משרה נדרש",
-                "jobTitleRequired": "תפקיד נדרש",
-                "jobTitleMin": "התפקיד חייב להכיל לפחות 2 תווים",
-                "jobTitleMax": "התפקיד לא יכול לעלות על 150 תווים",
-
-                "companyNameMax": "שם החברה לא יכול לעלות על 150 תווים",
-                "industryMax": "התחום לא יכול לעלות על 100 תווים",
-
-                "salaryMinPositive": "השכר חייב להיות 0 או יותר",
-                "salaryMaxPositive": "השכר חייב להיות 0 או יותר",
-                "salaryMaxGreater": "המקסימום חייב להיות גדול או שווה למינימום",
-
-                "locationMax": "המיקום לא יכול לעלות על 150 תווים",
-
-                "requirementMax": "הדרישה לא יכולה לעלות על 300 תווים",
-                "benefitMax": "ההטבה לא יכולה לעלות על 300 תווים"
-            },
-            "actions": {
-                "edit": "ערוך",
-                "delete": "מחק",
-                "ok": "אישור"
-            },
-
-            "messages": {
-                "createdTitle": "המשרה פורסמה",
-                "created": "המשרה פורסמה בהצלחה",
-                "updatedTitle": "המשרה עודכנה",
-                "updated": "המשרה עודכנה בהצלחה"
-            },
-
-            "errors": {
-                "loadTitle": "שגיאה",
-                "load": "לא ניתן לטעון את נתוני המשרה",
-
-                "createTitle": "לא ניתן לפרסם את המשרה",
-                "create": "אירעה שגיאה בעת פרסום המשרה",
-
-                "updateTitle": "לא ניתן לעדכן את המשרה",
-                "update": "אירעה שגיאה בעת עדכון המשרה",
-
-                "unauthorizedTitle": "נדרשת התחברות",
-                "unauthorized": "עליך להתחבר כדי לבצע פעולה זו",
-
-                "forbiddenTitle": "לא מורשה",
-                "forbidden": "אין לך הרשאה לבצע פעולה זו"
-            },
-
-            "delete": {
-                "title": "מחק משרה",
-                "message": "האם אתה בטוח שברצונך למחוק משרה זו? לא ניתן לבטל פעולה זו.",
-                "cancel": "ביטול",
-                "confirm": "מחק",
-                "success": "המשרה נמחקה בהצלחה",
-                "error": "לא ניתן למחוק את המשרה"
+                "benefits": "הטבות",
+                "noBenefits": "לא נוספו הטבות"
             }
         },
         "contact": {

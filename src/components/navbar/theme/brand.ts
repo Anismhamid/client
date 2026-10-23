@@ -2,7 +2,7 @@
 // مصدر واحد لهوية صفقة — غيّر هون وبيتغير بكل الصفحات.
 export const BRAND = {
     gold: '#B8860B',
-    brown: '#8B4513',
+    brown: '#3c3a38',
     gradient: 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
     // brown بشفافية، للخطوط والـ hover والظلال
     ledger: (alpha = 0.05) => `rgba(139,69,19,${alpha})`,
