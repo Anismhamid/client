@@ -130,7 +130,6 @@ export type UpdateJobPayload = Partial<CreateJobPayload>;
 
 export interface JobSeeker {
     portfolioUrl: string;
-    portfolioUrl: import("react/jsx-runtime").JSX.Element;
     _id: string;
     user: User;
     title: string;

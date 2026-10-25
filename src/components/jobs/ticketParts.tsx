@@ -9,7 +9,7 @@ import {
     BRAND_GOLD,
     BRAND_GRADIENT,
 } from '../pages/Jobs/jobsBrand';
-import { DISPLAY_FONT, INK } from '../pages/Jobs/jobBrand';
+import { INK, DISPLAY_FONT } from '../pages/Jobs/jobBrand';
 
 export type TicketTone = 'offer' | 'seeker';
 

@@ -37,6 +37,8 @@ import { showInfo } from '../../../atoms/toasts/ReactToast';
 import { path } from '../../../routes/routes';
 import handleRTL from '../../../locales/handleRTL';
 import { BRAND_BROWN, BRAND_GOLD, BRAND_GRADIENT } from './jobsBrand';
+import { CategoryIcon } from './jobsIcons';
+import { JOB_CATEGORIES, labelOf } from './Jobsoptions';
 
 // ─── Helpers ───────────────────────────────────────────────
 
@@ -282,6 +284,14 @@ const JobDetails: FunctionComponent = () => {
                             variant='outlined'
                             label={t('pages.jobs.remote')}
                             sx={{ borderColor: BRAND_GOLD, color: BRAND_BROWN }}
+                        />
+                    )}
+
+                    {job.category && (
+                        <Chip
+                            variant='outlined'
+                            icon={<CategoryIcon category={job.category} />}
+                            label={labelOf(t, 'categories', JOB_CATEGORIES, job.category)}
                         />
                     )}
 

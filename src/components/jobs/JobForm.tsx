@@ -31,6 +31,7 @@ import { useTranslation } from 'react-i18next';
 
 import { CreateJobPayload, Job, JobType } from '../../interfaces/jobs.types';
 import handleRTL from '../../locales/handleRTL';
+import { JOB_CATEGORIES, optLabel } from '../pages/Jobs/Jobsoptions';
 
 const BRAND_GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
 const INK = 'default.main';
@@ -63,6 +64,7 @@ interface JobFormProps {
 const DEFAULT_VALUES: CreateJobPayload = {
     type: 'full_time',
     jobTitle: '',
+    category: undefined,
     companyName: '',
     industry: '',
     experienceLevel: undefined,
@@ -186,6 +188,8 @@ const JobForm: FunctionComponent<JobFormProps> = ({
 
                       jobTitle: initialValues.jobTitle ?? '',
 
+                      category: initialValues.category,
+
                       companyName: initialValues.companyName ?? '',
 
                       industry: initialValues.industry ?? '',
@@ -233,6 +237,15 @@ const JobForm: FunctionComponent<JobFormProps> = ({
                     .min(2, t('pages.jobs.validation.jobTitleMin'))
                     .max(150, t('pages.jobs.validation.jobTitleMax'))
                     .required(t('pages.jobs.validation.jobTitleRequired')),
+
+                category: Yup.string()
+                    .oneOf(JOB_CATEGORIES.map((o) => o.value))
+                    .required(
+                        t(
+                            'pages.jobs.validation.categoryRequired',
+                            'اختار القسم',
+                        ),
+                    ),
 
                 companyName: Yup.string()
                     .trim()
@@ -393,6 +406,63 @@ const JobForm: FunctionComponent<JobFormProps> = ({
                                 </Typography>
 
                                 <Grid container spacing={2}>
+                                    {/* Category */}
+                                    <Grid size={{ xs: 12 }}>
+                                        <FormControl
+                                            fullWidth
+                                            size='small'
+                                            error={Boolean(
+                                                touched.category &&
+                                                errors.category,
+                                            )}
+                                            required
+                                        >
+                                            <InputLabel>
+                                                {t(
+                                                    'pages.jobs.form.category',
+                                                    'القسم',
+                                                )}
+                                            </InputLabel>
+
+                                            <Select
+                                                name='category'
+                                                value={
+                                                    formValues.category ?? ''
+                                                }
+                                                label={t(
+                                                    'pages.jobs.form.category',
+                                                    'القسم',
+                                                )}
+                                                onChange={(event) =>
+                                                    setFieldValue(
+                                                        'category',
+                                                        event.target.value,
+                                                    )
+                                                }
+                                            >
+                                                {JOB_CATEGORIES.map((o) => (
+                                                    <MenuItem
+                                                        key={o.value}
+                                                        value={o.value}
+                                                    >
+                                                        {optLabel(
+                                                            t,
+                                                            'categories',
+                                                            o,
+                                                        )}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+
+                                            {touched.category &&
+                                                errors.category && (
+                                                    <FormHelperText>
+                                                        {errors.category}
+                                                    </FormHelperText>
+                                                )}
+                                        </FormControl>
+                                    </Grid>
+
                                     {/* Job title */}
                                     <Grid
                                         size={{

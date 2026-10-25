@@ -57,7 +57,7 @@ import {
     timeAgo,
     whatsappLink,
 } from '../pages/Jobs/Jobsoptions';
-import { DISPLAY_FONT, INK } from '../pages/Jobs/jobBrand';
+import { INK, DISPLAY_FONT } from '../pages/Jobs/jobBrand';
 
 // ─── Shared info ───────────────────────────────────────────
 

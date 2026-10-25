@@ -1579,14 +1579,61 @@
             "goBack": "חזרה"
         },
         "jobs": {
+            "title": "דרושים",
+            "new": "חדש",
+            "offerBadge": "משרה פנויה",
+            "remote": "מרחוק",
+            "salaryNegotiable": "שכר בהתאם להסכמה",
+            "empty": "לא נמצאו משרות",
+            "emptyHint": "נסו קטגוריה אחרת או שנו את הסינון.",
+            "postedBy": "פורסם על ידי",
+            "benefits": "הטבות",
+            "requirements": "דרישות",
+            "tabs": {
+                "jobs": "משרות",
+                "seekers": "דורשי עבודה",
+                "create": "פרסום משרה",
+                "seekerCreate": "מחפש עבודה"
+            },
+            "rail": {
+                "label": "קטגוריות",
+                "all": "כל הקטגוריות"
+            },
+            "actions": {
+                "back": "חזרה",
+                "delete": "מחיקה",
+                "edit": "עריכה",
+                "ok": "אישור"
+            },
+            "types": {
+                "full_time": "משרה מלאה",
+                "part_time": "משרה חלקית",
+                "temporary": "זמנית",
+                "remote": "מרחוק",
+                "daily": "יומית",
+                "internship": "התמחות"
+            },
+            "experienceLevels": {
+                "no_experience": "ללא ניסיון",
+                "entry": "מתחיל",
+                "mid": "בינוני",
+                "senior": "מנוסה",
+                "manager": "מנהל"
+            },
+            "salaryPeriods": {
+                "hourly": "לשעה",
+                "daily": "ליום",
+                "monthly": "לחודש",
+                "yearly": "לשנה"
+            },
             "categories": {
                 "hi_tech": "הייטק ותכנות",
                 "engineering": "הנדסה וטכנאים",
-                "construction": "בנייה ובינוי",
+                "construction": "בנייה",
                 "manufacturing": "תעשייה וייצור",
                 "agriculture": "חקלאות",
                 "transport": "הובלה, נהיגה ולוגיסטיקה",
-                "retail": "קמעונאות ומכירות",
+                "retail": "מסחר ומכירות",
                 "hospitality": "מסעדנות, מלונאות ותיירות",
                 "healthcare": "בריאות וסיעוד",
                 "education": "חינוך והוראה",
@@ -1595,10 +1642,10 @@
                 "customer_service": "שירות לקוחות",
                 "security": "ביטחון ושמירה",
                 "cleaning": "ניקיון",
-                "maintenance": "תחזוקה ומקצועות (חשמל, אינסטלציה, נגרות...)",
+                "maintenance": "תחזוקה ובעלי מקצוע (חשמל, אינסטלציה, נגרות...)",
                 "beauty": "יופי וטיפוח",
                 "media_design": "תקשורת ועיצוב",
-                "legal": "משפט",
+                "legal": "משפטים",
                 "other": "אחר"
             },
             "regions": {
@@ -1628,97 +1675,141 @@
                 "en": "אנגלית",
                 "ru": "רוסית"
             },
-            "tabs": {
-                "seekers": "מחפשי עבודה",
-                "seekerCreate": "פרסם מודעה: מחפש עבודה"
-            },
-            "hero": {
-                "title": "עבודה לכולם, מהפקיד ועד העובד",
-                "subtitle": "מעסיקים מחפשים עובדים ואנשים מחפשים עבודה. בכל האזורים ובכל התחומים.",
-                "jobsHint": "מעסיקים שמחפשים עובדים",
-                "seekersHint": "אנשים שמוכנים להתחיל"
-            },
-            "rail": {
-                "label": "תחומים",
-                "all": "כל התחומים"
-            },
-            "new": "חדש",
-            "vacancy": "משרה פנויה",
-            "salaryNegotiable": "שכר בהתאם להסכמה",
             "filters": {
+                "title": "סינון",
                 "all": "הכל",
-                "search": "חיפוש"
-            },
-            "seekers": {
-                "badge": "מחפש עבודה",
-                "empty": "אין מודעות כאן",
-                "emptyHint": "נסו תחום אחר, או היו הראשונים לפרסם שהם מחפשים עבודה.",
-                "availableLabel": "זמינות להתחלה",
-                "hebrewLabel": "עברית",
-                "call": "התקשר",
-                "whatsapp": "וואטסאפ",
-                "noPhone": "בעל המודעה לא פרסם מספר טלפון",
-                "mine": "המודעות שלי",
-                "activate": "הפעל",
-                "deactivate": "השבת",
-                "delete": "מחק",
-                "deleteConfirm": "למחוק את המודעה?",
-                "filters": {
-                    "q": "חיפוש (מקצוע, כישור, עיר)"
-                },
-                "form": {
-                    "required": "שדה חובה",
-                    "titleMin": "הכותרת חייבת להכיל לפחות 3 תווים",
-                    "salaryInvalid": "ערך לא תקין",
-                    "aboutMax": "מקסימום 1000 תווים",
-                    "title": "איזו עבודה אתם מחפשים?",
-                    "titlePlaceholder": "לדוגמה: מנהל חשבונות, נהג משאית, פועל בניין",
-                    "category": "תחום",
-                    "types": "היקף משרה",
-                    "experience": "רמת ניסיון",
-                    "availability": "מתי אפשר להתחיל?",
-                    "region": "אזור",
-                    "city": "עיר / יישוב",
-                    "expectedSalary": "שכר מבוקש (₪)",
-                    "salaryPeriod": "תקופה",
-                    "hebrew": "רמת עברית",
-                    "languages": "שפות",
-                    "skills": "כישורים (הקלידו ולחצו Enter)",
-                    "about": "קצת עליכם ועל הניסיון שלכם",
-                    "remote": "מוכנים לעבודה מרחוק",
-                    "showPhone": "הצג את מספר הטלפון שלי במודעה",
-                    "update": "שמור שינויים",
-                    "publish": "פרסם מודעה"
-                },
-                "messages": {
-                    "createdTitle": "פורסם",
-                    "created": "המודעה שלך גלויה כעת למעסיקים"
-                },
-                "errors": {
-                    "limitTitle": "הגעת למגבלה",
-                    "limit": "יש לך 3 מודעות פעילות. השבת או מחק אחת לפני פרסום חדשה."
-                }
+                "type": "היקף משרה",
+                "experience": "רמת ניסיון",
+                "salaryPeriod": "תקופת שכר",
+                "location": "מיקום",
+                "industry": "תחום",
+                "salaryMin": "שכר מינימום",
+                "salaryMax": "שכר מקסימום",
+                "remote": "מרחוק",
+                "search": "חיפוש",
+                "reset": "איפוס"
             },
             "form": {
-                "basicInformation": "מידע בסיסי",
-                "jobTitle": "שם התפקיד",
+                "create": "פרסום משרה",
+                "update": "עריכת משרה",
+                "basicInformation": "פרטים בסיסיים",
+                "category": "קטגוריה",
+                "jobTitle": "כותרת המשרה",
                 "type": "היקף משרה",
-                "category": "תחום",
                 "companyName": "שם החברה",
-                "industry": "תחום פעילות",
+                "industry": "תחום",
                 "experienceSection": "ניסיון",
                 "experienceLevel": "רמת ניסיון",
+                "notSpecified": "לא צוין",
                 "salarySection": "שכר",
                 "salaryMin": "שכר מינימום",
                 "salaryMax": "שכר מקסימום",
-                "salaryPeriod": "תקופה",
+                "salaryPeriod": "תקופת שכר",
                 "locationSection": "מיקום",
-                "location": "עיר / יישוב",
-                "remote": "עבודה מרחוק",
+                "location": "עיר / כתובת",
+                "remote": "אפשרות לעבודה מרחוק",
                 "requirements": "דרישות",
+                "requirement": "דרישה",
+                "addRequirement": "הוספת דרישה",
                 "noRequirements": "לא נוספו דרישות",
                 "benefits": "הטבות",
+                "benefit": "הטבה",
+                "addBenefit": "הוספת הטבה",
                 "noBenefits": "לא נוספו הטבות"
+            },
+            "messages": {
+                "createdTitle": "פורסם",
+                "created": "המשרה מוצגת כעת לדורשי עבודה",
+                "updatedTitle": "נשמר",
+                "updated": "השינויים נשמרו"
+            },
+            "errors": {
+                "unauthorizedTitle": "נדרשת התחברות",
+                "unauthorized": "יש להתחבר כדי להמשיך",
+                "forbiddenTitle": "אין הרשאה",
+                "forbidden": "אין לך הרשאה לבצע פעולה זו",
+                "createTitle": "הפרסום נכשל",
+                "create": "אירעה שגיאה בפרסום המשרה, נסו שוב",
+                "updateTitle": "השמירה נכשלה",
+                "update": "אירעה שגיאה בשמירת השינויים, נסו שוב",
+                "loadTitle": "הטעינה נכשלה",
+                "load": "לא הצלחנו לטעון את המשרה",
+                "delete": "לא הצלחנו למחוק את המשרה"
+            },
+            "delete": {
+                "title": "למחוק את המשרה?",
+                "message": "המשרה תימחק לצמיתות ולא ניתן יהיה לשחזר אותה",
+                "confirm": "מחיקה",
+                "cancel": "ביטול",
+                "success": "המשרה נמחקה",
+                "error": "לא הצלחנו למחוק את המשרה"
+            },
+            "validation": {
+                "typeRequired": "יש לבחור היקף משרה",
+                "categoryRequired": "יש לבחור קטגוריה",
+                "jobTitleRequired": "כותרת המשרה היא שדה חובה",
+                "jobTitleMin": "כותרת המשרה חייבת להכיל לפחות 2 תווים",
+                "jobTitleMax": "כותרת המשרה ארוכה מדי (עד 150 תווים)",
+                "companyNameMax": "שם החברה ארוך מדי (עד 150 תווים)",
+                "industryMax": "התחום ארוך מדי (עד 100 תווים)",
+                "locationMax": "המיקום ארוך מדי",
+                "salaryMinPositive": "שכר מינימום חייב להיות מספר חיובי",
+                "salaryMaxPositive": "שכר מקסימום חייב להיות מספר חיובי",
+                "salaryMaxGreater": "שכר מקסימום חייב להיות גדול או שווה לשכר המינימום",
+                "requirementMax": "הדרישה ארוכה מדי",
+                "benefitMax": "ההטבה ארוכה מדי"
+            },
+            "seekers": {
+                "badge": "מחפש עבודה",
+                "mine": "המודעות שלי",
+                "activate": "הפעלה",
+                "deactivate": "השבתה",
+                "delete": "מחיקה",
+                "deleteConfirm": "למחוק את המודעה?",
+                "empty": "אין כאן מודעות",
+                "emptyHint": "נסו קטגוריה אחרת, או היו הראשונים להודיע שאתם מחפשים עבודה.",
+                "availableLabel": "זמינות להתחלה",
+                "hebrewLabel": "עברית",
+                "call": "התקשרו",
+                "whatsapp": "וואטסאפ",
+                "noPhone": "המפרסם לא פרסם מספר טלפון",
+                "viewPortfolio": "צפייה בתיק עבודות",
+                "filters": {
+                    "q": "חיפוש (מקצוע, מיומנות, עיר)"
+                },
+                "messages": {
+                    "createdTitle": "פורסם",
+                    "created": "המודעה שלך מוצגת כעת למעסיקים"
+                },
+                "errors": {
+                    "limitTitle": "הגעת למגבלה",
+                    "limit": "יש לך 3 מודעות פעילות. השבת או מחק אחת לפני פרסום מודעה חדשה."
+                },
+                "form": {
+                    "title": "איזו עבודה אתם מחפשים?",
+                    "titlePlaceholder": "לדוגמה: מנהל חשבונות, נהג משאית, פועל בניין",
+                    "titleMin": "הכותרת חייבת להכיל לפחות 3 תווים",
+                    "category": "קטגוריה",
+                    "types": "היקף משרה",
+                    "experience": "רמת ניסיון",
+                    "region": "אזור",
+                    "city": "עיר / יישוב",
+                    "remote": "מוכנים לעבודה מרחוק",
+                    "expectedSalary": "שכר מבוקש (₪)",
+                    "salaryPeriod": "תקופה",
+                    "salaryInvalid": "ערך לא תקין",
+                    "hebrew": "רמת עברית",
+                    "availability": "מתי אפשר להתחיל?",
+                    "languages": "שפות",
+                    "skills": "מיומנויות (הקלידו ולחצו Enter)",
+                    "about": "קצת עליכם ועל הניסיון שלכם",
+                    "aboutMax": "עד 1000 תווים",
+                    "portfolioUrl": "קישור לתיק עבודות / GitHub",
+                    "showPhone": "הצגת מספר הטלפון שלי במודעה",
+                    "publish": "פרסום המודעה",
+                    "update": "שמירת שינויים",
+                    "required": "שדה חובה"
+                }
             }
         },
         "contact": {

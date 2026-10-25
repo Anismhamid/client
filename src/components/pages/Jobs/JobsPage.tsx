@@ -9,7 +9,6 @@ import React, {
 import {
     Box,
     Button,
-    CircularProgress,
     Collapse,
     Container,
     Pagination,
@@ -36,6 +35,8 @@ import CreateJobSeeker from './Createjobseeker';
 import JobSeekersSection from './JobSeekersSection';
 import { BRAND_GOLD, BRAND_GRADIENT } from './jobsBrand';
 import JobsGrid from '../../jobs/JobsGrid';
+import { TicketsSkeleton } from '../../jobs/ticketParts';
+import CategoryRail from './CategoryRail';
 
 type JobsTab = 'jobs' | 'seekers' | 'create' | 'seekerCreate';
 
@@ -210,6 +211,13 @@ const JobsPage: FunctionComponent = () => {
 
             {activeTab === 'jobs' && (
                 <>
+                    <CategoryRail
+                        value={filters.category}
+                        onChange={(category) =>
+                            setFilters((prev) => ({ ...prev, category, page: 1 }))
+                        }
+                    />
+
                     {/* Filters toolbar */}
                     <Box
                         sx={{
@@ -292,21 +300,10 @@ const JobsPage: FunctionComponent = () => {
                     </Collapse>
 
                     {loading ? (
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                py: 8,
-                            }}
-                        >
-                            <CircularProgress
-                                aria-label={t('common.loading', 'جاري التحميل')}
-                                sx={{ color: BRAND_GOLD }}
-                            />
-                        </Box>
+                        <TicketsSkeleton />
                     ) : (
                         <>
-                            <JobsGrid jobs={jobs} />
+                            <JobsGrid jobs={jobs} onCreate={() => setActiveTab('create')} />
 
                             {totalPages > 1 && (
                                 <Box
