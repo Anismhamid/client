@@ -1,170 +1,202 @@
-# Safqa Marketplace | C2C Marketplace Frontend
+# Safqa Marketplace — C2C Marketplace Frontend
 
-A modern consumer-to-consumer marketplace frontend built with React, TypeScript, and Vite, designed to let users buy and sell products securely across multiple categories.
+<p align="center">
+  <strong>
+    An Arabic-first, multilingual marketplace for buying, selling,
+    and discovering opportunities.
+  </strong>
+  <br />
+  Built with React, TypeScript, and Vite.
+</p>
 
-Safqa supports authentication, real-time chat, ad management, product discovery, jobs, notifications, moderation, and role-based administration in a responsive, mobile-friendly experience.
+<p align="center">
+  <img alt="React 19" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" />
+  <img alt="TypeScript 5" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
+  <img alt="Vite 6" src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white" />
+  <img alt="Socket.IO" src="https://img.shields.io/badge/Socket.IO-Realtime-010101?logo=socketdotio&logoColor=white" />
+  <img alt="Capacitor 8" src="https://img.shields.io/badge/Capacitor-8-119EFF?logo=capacitor&logoColor=white" />
+  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-green.svg" />
+</p>
 
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
-![Socket.io](https://img.shields.io/badge/Socket.IO-010101?logo=socketdotio&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green)
+Safqa is a consumer-to-consumer (C2C) marketplace frontend that enables users to discover listings, publish advertisements, interact with sellers, manage their accounts, and explore job opportunities.
 
-This client connects to a backend API and Socket.IO event server.
+The interface supports Arabic, Hebrew, and English, including right-to-left (RTL) layouts.
 
-**Backend repository:** [github.com/Anismhamid/server](https://github.com/Anismhamid/server)
+This repository contains the frontend application. Marketplace data, authentication services, and other server-side operations depend on the separately deployed backend.
 
-## Screenshots
-
-| Home | Product Details | Messages |
-| --- | --- | --- |
-| ![Home](public/home.png) | ![Product](public/productDetails.png) | ![Messages](public/messages.png) |
-
-| Admin Center | Jobs | Mobile (Android) |
-| --- | --- | --- |
-| ![Admin](public/adminCenter.png) | ![Jobs](public/jobs.png) | ![Mobile](public/mobile.png) |
-
-## What's New
-
-- Centralized Admin Center with improved navigation.
-- Enhanced user management, roles, and permission controls.
-- Improved product and advertisement moderation.
-- Jobs management with search, filtering, and pagination.
-- Notification management and broadcasting.
-- Message audit logs and user block management.
-- Real-time messaging with read/delivery states and push notifications.
-- Improved responsive UI, localization, and stability.
-- Hardened frontend security practices and backend authorization handling.
+- **Frontend repository:** [Anismhamid/client](https://github.com/Anismhamid/client)
+- **Backend repository:** [Anismhamid/server](https://github.com/Anismhamid/server)
+- **Production frontend:** [Safqa on Vercel](https://client-qqq1.vercel.app)
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Key Features](#key-features)
-- [Tech Stack](#tech-stack)
-- [Prerequisites](#prerequisites)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Requirements](#requirements)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
-- [Scripts](#scripts)
-- [Android (Capacitor)](#android-capacitor)
+- [Available Scripts](#available-scripts)
+- [Build and Bundle Analysis](#build-and-bundle-analysis)
+- [Android App](#android-app-capacitor)
 - [Project Structure](#project-structure)
-- [Main Routes](#main-routes)
-- [Jobs Platform](#jobs-platform)
+- [Application Routes](#application-routes)
 - [Admin Center](#admin-center)
-- [Security & Stability](#security--stability)
+- [Jobs Platform](#jobs-platform)
+- [Security Notes](#security-notes)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
 
-Safqa Marketplace is a feature-rich frontend for a C2C trading platform where people discover, list, and negotiate the sale of products.
+Safqa is designed to facilitate direct interactions between buyers and sellers without an in-platform middleman.
 
-Supported listings:
+Users can browse listings, explore categories, search for products, publish advertisements, save favorites, view seller profiles, and communicate through the application's messaging experience.
 
-- Vehicles
-- Electronics
-- Home and garden items
-- Fashion and accessories
-- Health and beauty products
-- Everyday essentials
-- Miscellaneous goods
+The frontend also includes a jobs platform, a blog, account-management features, and an administrative workspace.
+
+Marketplace categories include areas such as:
+
+- Vehicles and mobility
+- Electronics and gaming
+- Home, garden, and furniture
+- Clothing, bags, watches, and accessories
+- Health, beauty, and everyday products
+- Cameras, books, and musical instruments
+- Construction, industrial, welding, and office equipment
 - Services
-- Jobs
 
-User journeys include browsing and filtering listings, messaging sellers, managing favorites, creating ads, viewing profiles, discovering jobs, and using administrative tools.
+The available listings, category specifications, and user actions depend on the backend API, application configuration, and account permissions.
 
-## Key Features
+## Features
 
 ### Marketplace
 
-- Responsive UI built with React and Material UI
-- Category browsing with filters
-- Search and discovery
-- Product details and seller profiles
-- Favorites and saved listings
-- Premium and featured ad management
-- Product sharing and external navigation integrations
+- Responsive marketplace interface
+- Category-based listing discovery
+- Search and category navigation
+- Listing details and seller profiles
+- Favorites and saved searches
+- Featured advertisements and promotional sections
+- Discounts and offers
+- Listing management dashboard
+- Support for multiple product categories
 
-### Authentication & Accounts
+### Authentication and Accounts
 
-- Registration and login
-- Google OAuth login
-- Role-based access control
-- Account status management
-- Permission-based feature access
-- Profile management
+- Registration and login pages
+- Google OAuth integration
+- User profile management
+- Public customer profiles
+- Account deletion interface
+- Blocked-user management
+- Role-aware administrative navigation
 
-### Messaging
+Authentication and authorization behavior depends on the frontend authentication logic and backend enforcement.
 
-- Real-time messaging with Socket.IO
-- Conversation management
-- Message editing and deletion
-- Read and delivery states
-- Typing indicators
-- Unread indicators
-- Push notifications
+### Messaging and Notifications
 
-### Jobs
+- Messaging interfaces
+- User-to-user chat
+- Socket.IO client integration
+- Administrative notification management
+- Notification sending and sent-notification views
+- Message audit-log and investigation interfaces
 
-- Job listing creation and management
-- Search, filtering, and pagination
-- Job details pages
-- User-based job retrieval
+The availability of individual messaging and notification capabilities depends on the backend implementation and user permissions.
+
+### Jobs Platform
+
+- Job listings
+- Job details
+- Job creation and editing
 - Administrative job management
+- Job-related search and filtering where supported by the current implementation
+
+### Blog
+
+- Blog listing page
+- Individual article pages
+- Article creation and editing
+- Blog management interface
 
 ### Administration
 
-- Centralized Admin Center
+- Centralized administration layout
+- Dashboard
 - User management
-- Advertisement moderation
-- Reports and moderation
-- Jobs administration
-- Notification Center
-- Message Audit Logs
-- User Blocks management
-- Role and permission management
-- Backend-enforced administrative authorization
-- Pagination and filtering for administrative datasets
+- Listing moderation
+- Job management and job details
+- Reports management
+- Blocked-user management
+- Message audit logs
+- Message investigation
+- Notification sending and history
+- Administrative settings
 
-### Platform
+Administrative pages are protected by a frontend guard that checks authentication and the `Admin` or `Moderator` role. Backend authorization is also required for security.
 
-- Dark and light themes
-- Arabic (RTL), Hebrew, and English localization
-- SEO-friendly pages and structured metadata
-- Android app via Capacitor
-- Mobile-first responsive architecture
+### Platform and Localization
 
-## Tech Stack
+- Arabic, Hebrew, and English localization
+- RTL layout support
+- Responsive layouts
+- Light and dark themes where implemented
+- Capacitor-based Android integration
+- SEO metadata and structured-data support where implemented
 
-### Frontend
+## Technology Stack
 
-| Category | Technology |
-| --- | --- |
-| Framework | React 19 |
-| Build Tool | Vite |
-| Language | TypeScript |
-| Routing | React Router DOM |
-| UI Library | Material UI (primary), Bootstrap 5 (grid and utilities) |
-| Forms | Formik + Yup |
-| Real-time | Socket.IO Client |
-| Charts | Recharts |
-| Icons | Font Awesome + Lucide |
-| Toasts | react-toastify |
-| i18n | react-i18next |
+| Area                      | Technology                            |
+| ------------------------- | ------------------------------------- |
+| UI framework              | React 19                              |
+| Language                  | TypeScript 5                          |
+| Build tool                | Vite 6                                |
+| Routing                   | React Router DOM 7                    |
+| UI components             | Material UI 7, MUI Joy UI, MUI Lab    |
+| Styling                   | Emotion, Bootstrap 5, React Bootstrap |
+| Forms and validation      | Formik, Yup                           |
+| HTTP client               | Axios                                 |
+| Real-time communication   | Socket.IO Client 4                    |
+| Internationalization      | i18next, react-i18next                |
+| Animations                | Framer Motion                         |
+| Charts                    | Recharts                              |
+| Icons                     | Font Awesome, Lucide React, MUI Icons |
+| Notifications and dialogs | React Toastify, SweetAlert2           |
+| Date utilities            | Day.js                                |
+| PDF rendering             | @react-pdf/renderer                   |
+| Image capture             | html2canvas                           |
+| Image zoom                | react-zoom-pan-pinch                  |
+| Markdown                  | marked                                |
+| HTML sanitization         | DOMPurify                             |
+| Google authentication     | @react-oauth/google                   |
+| Android runtime           | Capacitor 8                           |
+| Native social login       | @capgo/capacitor-social-login         |
+| Native push notifications | @capacitor/push-notifications         |
+| Build analysis            | rollup-plugin-visualizer              |
+| Deployment performance    | @vercel/speed-insights                |
 
-### Integrations
+The application also uses React Context, custom hooks, and supporting libraries for shared state and application logic.
 
-| Integration | Purpose |
-| --- | --- |
-| Capacitor | Android / hybrid app packaging |
-| Google OAuth | Social authentication |
-| `<PDF_LIBRARY>` | PDF generation and export |
-| Context + Hooks | State management and application logic |
+Dependency versions are declared in `package.json`. The exact installed versions depend on the lockfile and installation environment.
 
-## Prerequisites
+## Requirements
 
-- Node.js 20 or newer
-- npm or yarn
-- A running backend API (see the [server repository](https://github.com/Anismhamid/server))
+For frontend development:
+
+- Node.js compatible with the installed Vite version
+- npm
+- Access to the Safqa backend API for features that require server data
+- Google OAuth client configuration if Google sign-in is enabled
+
+For Android builds:
+
+- Android Studio
+- Android SDK and compatible build tools
+- Java Development Kit compatible with the Android Gradle configuration
+- The Android Gradle Wrapper included in the project
+
+Check the project's Android Gradle files and Capacitor configuration for the required Java and Android SDK versions.
 
 ## Getting Started
 
@@ -183,253 +215,387 @@ npm install
 
 ### 3. Configure environment variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root if these variables are referenced by the current application code:
 
 ```env
 VITE_API_URL=http://localhost:8209/api
 VITE_SOCKET_URL=http://localhost:8209
-VITE_GOOGLE_CLIENT_ID=your_google_client_id_here
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
 ```
 
-Adjust the values if the backend runs on a different host or port.
+Replace the example values with the appropriate URLs and credentials for your environment.
 
-### 4. Run in development
+Run the backend separately when developing against a local API.
+
+**Important:** Vite exposes variables prefixed with `VITE_` to client-side code. Never store private API keys, signing secrets, database credentials, or other server-side secrets in these variables.
+
+Verify the variable names against the frontend source code and deployment configuration before using this example.
+
+### 4. Start the development server
 
 ```bash
 npm run dev
 ```
 
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:8209
+Vite commonly serves the development application at:
+
+`http://localhost:5173`
+
+The actual port may differ if the default port is unavailable or the Vite configuration changes.
 
 ### 5. Build for production
 
 ```bash
 npm run build
+```
+
+The production build is written to the `dist` directory.
+
+### 6. Preview the production build
+
+```bash
 npm run preview
 ```
 
+Run `npm run build` first. The preview command serves the generated production build for local testing; it is not a replacement for a production hosting platform.
+
 ## Environment Variables
 
-| Variable | Description |
-| --- | --- |
-| `VITE_API_URL` | Base URL of the backend API |
-| `VITE_SOCKET_URL` | Socket.IO server URL |
-| `VITE_GOOGLE_CLIENT_ID` | Google OAuth client ID |
+Create a `.env` file in the root directory of the project and configure the following variables:
 
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start the Vite dev server |
-| `npm run build` | Type-check and build for production |
-| `npm run preview` | Serve the production build locally |
-| `npm run lint` | Run ESLint |
-
-## Android (Capacitor)
-
-```bash
-npm run build          # build the web assets first
-npx cap sync android   # copy assets and update native plugins
-npx cap open android   # open the project in Android Studio
+```env
+VITE_API_URL=your_server_api/api
+VITE_API_SOCKET_URL=your_server_api - without => /api
+VITE_API_GOOGLE_API=your_google_client_id
+VITE_API_VIREFY_TOKEN=your_google_verification_url
+VITE_API_CLOUDINARY_UPLOADIMAGE_URL=your_cloudinary_upload_url
+VITE_API_CLOUDINARY_UPLOADIMAGE_NAME=your_cloudinary_configuration_name
 ```
 
-Re-run `npm run build` and `npx cap sync android` after every frontend change you want reflected in the app.
+### Variables Description
+
+| Variable                               | Description                                                             |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| `VITE_API_URL`                         | Base URL for backend API requests.                                      |
+| `VITE_API_SOCKET_URL`                  | Backend server URL used for Socket.IO connections.                      |
+| `VITE_API_GOOGLE_API`                  | Google client ID or API configuration, depending on the implementation. |
+| `VITE_API_VIREFY_TOKEN`                | Verification-related URL or configuration.                              |
+| `VITE_API_CLOUDINARY_UPLOADIMAGE_URL`  | Cloudinary image-upload endpoint.                                       |
+| `VITE_API_CLOUDINARY_UPLOADIMAGE_NAME` | Cloudinary configuration name used by the application.                  |
+
+> **Security note:** Vite exposes variables prefixed with `VITE_` in the client-side bundle. Never store private API keys, client secrets, or other confidential credentials in these variables.
+
+## Available Scripts
+
+The following scripts are defined in `package.json`.
+
+| Command                 | Description                                                       |
+| ----------------------- | ----------------------------------------------------------------- |
+| `npm run dev`           | Start the Vite development server                                 |
+| `npm run build`         | Build the frontend for production                                 |
+| `npm run lint`          | Run ESLint                                                        |
+| `npm run preview`       | Preview the production build                                      |
+| `npm run start`         | Build the frontend and then run Vite preview                      |
+| `npm run version:auto`  | Execute the automatic versioning script                           |
+| `npm run android:sync`  | Synchronize the Capacitor Android project                         |
+| `npm run android:build` | Build the frontend, sync Android, and run the release bundle task |
+| `npm run android:open`  | Open the Android project in Android Studio                        |
+| `npm run release`       | Run automatic versioning followed by the Android release build    |
+
+**Platform note:** The current `android:build` script uses `gradlew.bat`, which is the Windows Gradle Wrapper launcher. On macOS or Linux, use the appropriate `./gradlew` command or adapt the script for the target operating system.
+
+## Build and Bundle Analysis
+
+The project uses Vite with `@vitejs/plugin-react` and `rollup-plugin-visualizer`.
+
+The Vite configuration specifies:
+
+- Production output directory: `dist`
+- Base path: `/`
+- React integration through `@vitejs/plugin-react`
+- Rollup chunk-splitting rules through `manualChunks`
+- Bundle visualization in HTML format
+- Raw bundle-analysis output in JSON format
+- Gzip and Brotli size reporting where configured
+- A development-server `Cross-Origin-Opener-Policy` response header
+
+The visualizer is configured to write reports to:
+
+- `stats/stats.html` — interactive bundle visualization
+- `stats/stats.json` — raw bundle-analysis data
+
+These reports are generated during builds when the visualizer plugin runs successfully. Their actual contents depend on the build and dependency graph.
+
+The chunk-splitting configuration attempts to separate React-related dependencies from UI-library dependencies. Verify the regular expressions in `vite.config.ts` and inspect the generated report to confirm that the intended chunks are produced.
+
+## Android App (Capacitor)
+
+Safqa uses Capacitor to integrate the web application with an Android project.
+
+### Synchronize Android
+
+```bash
+npm run android:sync
+```
+
+### Build a release App Bundle
+
+```bash
+npm run android:build
+```
+
+This script:
+
+1. Builds the frontend.
+2. Synchronizes the Capacitor Android project.
+3. Runs Gradle's `bundleRelease` task.
+
+The generated Android App Bundle is normally located under:
+
+`android/app/build/outputs/bundle/release/`
+
+Confirm the actual output path and signing configuration in the Android project.
+
+### Open Android Studio
+
+```bash
+npm run android:open
+```
+
+### Run the release workflow
+
+```bash
+npm run release
+```
+
+This executes the automatic versioning script and then the Android release build.
+
+Before publishing to Google Play, verify the application ID, version code, version name, signing configuration, permissions, and release behavior.
 
 ## Project Structure
 
-```
+The following is a high-level overview. Some directories and files may differ as the project evolves.
+
+```text
 client/
-├── public/            # Static assets
+├── public/                 # Static assets
 ├── src/
-│   ├── App.tsx        # Main app component
-│   ├── main.tsx       # React entry point
-│   ├── assets/        # Images, icons, static assets
-│   ├── atoms/         # Small reusable UI elements
-│   ├── components/    # Feature UI components
-│   ├── context/       # Context providers
-│   ├── helpers/       # Utility functions
-│   ├── hooks/         # Custom hooks
-│   ├── interfaces/    # TypeScript types
-│   ├── locales/       # Localization files
-│   ├── routes/        # Routing configuration
-│   ├── services/      # API and integration services
-│   ├── socket/        # Socket.IO logic
-│   └── index.css      # Core styles
-├── android/           # Capacitor Android project
+│   ├── App.tsx             # Main application component
+│   ├── main.tsx            # Application entry point
+│   ├── assets/             # Images, icons, and other assets
+│   ├── atoms/              # Reusable UI elements
+│   ├── components/         # Pages and feature components
+│   ├── context/            # React context providers
+│   ├── helpers/            # Utility functions
+│   ├── hooks/              # Custom React hooks
+│   ├── interfaces/         # TypeScript interfaces and types
+│   ├── locales/            # Localization resources
+│   ├── routes/             # Route definitions and constants
+│   ├── services/           # API and integration services
+│   └── socket/             # Socket.IO logic
+├── android/                # Capacitor Android project
 ├── package.json
 ├── vite.config.ts
-├── vercel.json        # Deployment and security headers
-├── tsconfig*.json
+├── vercel.json             # Deployment configuration, if present
 ├── LICENSE
 └── README.md
 ```
 
-## Main Routes
+## Application Routes
 
-### Core Pages
+The routes below are based on the supplied `AppRoutes.tsx`. Access to some pages or operations may depend on authentication, account permissions, or backend authorization.
 
-| Route | Description |
-| --- | --- |
-| `/` | Homepage |
-| `/login` | Login |
-| `/register` | Registration |
-| `/profile` | User profile |
-| `/messages` | Messaging center |
-| `/favorites` | Saved listings |
-| `/about` | About |
-| `/contact` | Contact |
+### Public and General Pages
+
+| Route                 | Description    |
+| --------------------- | -------------- |
+| `/`                   | Home           |
+| `/login`              | Login          |
+| `/register`           | Registration   |
+| `/about`              | About Safqa    |
+| `/contact`            | Contact        |
 | `/privacy-and-policy` | Privacy policy |
-| `/term-of-use` | Terms of use |
-| `/discounts-and-offers` | Promotions and offers |
+| `/term-of-use`        | Terms of use   |
+| `/search`             | Search         |
+| `/saved-searches`     | Saved searches |
 
-### Product & Category Pages
+### User Account
 
-| Route | Description |
-| --- | --- |
-| `/category/cars` | Cars |
-| `/category/motorcycles` | Motorcycles |
-| `/category/electronics` | Electronics |
-| `/category/house` | Home items |
-| `/category/garden` | Garden and outdoor |
-| `/category/health` | Health and wellness |
-| `/category/beauty` | Beauty products |
-| `/category/cleaning` | Cleaning essentials |
-| `/category/watches` | Watches |
-| `/category/women-clothes` | Women's clothing |
-| `/category/men-clothes` | Men's clothing |
+| Route                   | Description                |
+| ----------------------- | -------------------------- |
+| `/profile`              | User profile               |
+| `/profile/:id`          | Profile by ID              |
+| `/users/customer/:slug` | Public customer profile    |
+| `/favorites`            | Favorite listings          |
+| `/blocked-users`        | Blocked users              |
+| `/delete-account`       | Account deletion interface |
 
-### Admin & Management Pages
+### Marketplace and Listings
 
-| Route | Description |
-| --- | --- |
-| `/users-management` | User and account management |
-| `/admins` | Admin Center |
-| `/ads-dashboard` | Featured ads dashboard |
-| `/reports` | Reports and moderation |
+| Route                                    | Description                    |
+| ---------------------------------------- | ------------------------------ |
+| `/category/:category/:subCategory?`      | Category listings              |
+| `/posts/:postId`                         | Listing details by ID          |
+| `/:sellerSlug/posts/:category/:postSlug` | Seller-based listing URL       |
+| `/posts/:category/:brand/:postId`        | Category and brand listing URL |
+| `/my-ads-dashboard`                      | User's ad dashboard            |
+| `/adsDashboard`                          | Featured ads dashboard         |
+| `/featured-ads`                          | Homepage featured section      |
+| `/discounts-and-offers`                  | Discounts and offers           |
+| `/isPending`                             | Pending-posts interface        |
+| `/payment/success`                       | Payment success page           |
 
-Jobs, Notifications, Audit Logs, Blocks, and Permissions are integrated into the Admin Center according to the current route configuration.
+The `/isPending` route is registered separately from the nested admin routes. Do not rely on the route name alone as a security boundary; sensitive operations must be authorized by the backend.
 
-## Jobs Platform
+### Messaging
 
-A dedicated jobs platform integrated into the marketplace.
+| Route            | Description        |
+| ---------------- | ------------------ |
+| `/messages`      | Messages interface |
+| `/chat`          | User-to-user chat  |
+| `/messages/chat` | Chat messages page |
 
-- Job listing creation and management
-- Search, filtering, and pagination
-- Job details pages
-- User-based job retrieval
-- Administrative job management
-- Role-based access control
-- Responsive interface
+### Jobs
+
+| Route            | Description  |
+| ---------------- | ------------ |
+| `/jobs`          | Job listings |
+| `/jobs/:id`      | Job details  |
+| `/jobs/create`   | Create a job |
+| `/jobs/:id/edit` | Edit a job   |
+
+### Blog
+
+| Route            | Description           |
+| ---------------- | --------------------- |
+| `/blog`          | Blog listing          |
+| `/blog/:slug`    | Blog article          |
+| `/blog/new`      | Create a blog article |
+| `/blog/edit/:id` | Edit a blog article   |
+| `/blog/manage`   | Blog management       |
+
+### Help and Password Recovery
+
+| Route                    | Description       |
+| ------------------------ | ----------------- |
+| `/help/selling`          | Selling help      |
+| `/help/safety`           | Safety help       |
+| `/help/disputes`         | Disputes help     |
+| `/password-recover`      | Password recovery |
+| `/reset-password/:token` | Password reset    |
+
+### Admin Center
+
+Administrative pages are nested under `/admin` and wrapped by `AdminGuard`.
+
+| Route                           | Description                                   |
+| ------------------------------- | --------------------------------------------- |
+| `/admin`                        | Admin dashboard                               |
+| `/admin/users`                  | User management                               |
+| `/admin/posts`                  | Listing moderation                            |
+| `/admin/jobs`                   | Job management                                |
+| `/admin/jobs/:jobId`            | Admin job details                             |
+| `/admin/reports`                | Reports management                            |
+| `/admin/security`               | Redirects to the audit-log page               |
+| `/admin/security/blocked`       | Blocked-user management                       |
+| `/admin/security/audit-logs`    | Message audit logs                            |
+| `/admin/security/investigation` | Message investigation                         |
+| `/admin/notifications`          | Notification management, redirects to sending |
+| `/admin/notifications/send`     | Send notifications                            |
+| `/admin/notifications/sent`     | Sent notifications                            |
+| `/admin/settings`               | Administrative settings                       |
+
+The supplied route configuration redirects several legacy administrative URLs to their newer destinations.
+
+Routes for notification templates, standalone role management, and standalone permission management are not registered in the supplied `AppRoutes.tsx` and are therefore not listed as active routes here.
 
 ## Admin Center
 
-A centralized area for secure platform management.
+The administrative workspace provides interfaces for managing platform operations, including:
 
-- User and account management
-- Role-based access control and granular permissions
-- Product and advertisement moderation
-- Job listing management
-- Reports and moderation workflows
-- Notification management
-- Message Audit Logs
-- User Blocks management
-- Pagination and filtering
-- Backend-authorized actions with auditability of sensitive operations
+- Dashboard and user management
+- Listing moderation
+- Job management
+- Reports
+- Blocked users
+- Message audit logs and investigations
+- Notification sending and history
+- Administrative settings
 
-### Roles
+### Frontend Route Guard
 
-- Admin
-- Moderator
-- Client
-- Delivery
+`AdminGuard` uses the authentication state from `useUser()`.
 
-### Permissions
+It:
 
-Permissions are enforced on the backend and reflected in the frontend UI. Examples:
+1. Displays a loader while authentication is loading.
+2. Redirects unauthenticated users to `/login`.
+3. Redirects authenticated users without the `Admin` or `Moderator` role to the home page.
+4. Renders the protected admin layout for authorized roles.
 
-- `canLogin`
-- `canUseAccount`
-- `canCreatePosts`
-- `canSendMessages`
-- `canSendOffers`
-- `canAccessExistingData`
-- `canViewMessageAuditLogs`
+This frontend guard improves navigation and user experience. It does not replace backend authorization.
 
-Frontend permission checks only shape the user experience. The backend is the source of truth for authorization.
+## Jobs Platform
 
-### Notification Center
+The jobs experience is integrated into the marketplace frontend and includes:
 
-- Send to a single user, multiple users, or broadcast
-- Title and message
-- Optional related post or resource
-- Preview and history
-- Permission-protected actions
+- Job listings
+- Job detail pages
+- Job creation
+- Job editing
+- Administrative job management
 
-### Message Audit Logs
+Available fields, filtering options, and actions depend on the current component implementation, API contract, and user permissions.
 
-- Administrative access tracking
-- Conversation-related audit events
-- Administrator, target user, and conversation identification
-- Timestamped actions
-- Permission-controlled access
+## Security Notes
 
-### Blocks Management
+The frontend interacts with a separate backend. Security-sensitive operations must be validated and authorized server-side.
 
-- View blocking relationships
-- Search and filtering
-- Review blocker and blocked users
-- Administrative unblock actions
-- Permission-protected and audited
+Important considerations include:
 
-## Security & Stability
+- Validate authentication and session or token state on the backend.
+- Enforce roles and permissions for protected operations.
+- Validate incoming data on the server.
+- Safely render user-generated content.
+- Configure CORS and cookies appropriately for the deployed origins.
+- Apply appropriate CSRF protections when cookie-based authentication is used.
+- Protect administrative actions and sensitive message data.
+- Avoid exposing private credentials in client-side environment variables.
+- Review deployment headers and content-security settings before relying on them.
 
-### Frontend
-
-- `withCredentials: true` on authenticated API requests (cookie-based authentication)
-- Centralized API configuration in `src/services/api.ts`
-- Automatic handling of unauthorized responses
-- Role- and permission-aware UI
-- Security headers configured in `vercel.json`:
-  - `Content-Security-Policy`
-  - `Strict-Transport-Security`
-  - `X-Content-Type-Options`
-  - `Referrer-Policy`
-  - `Permissions-Policy`
-
-### Backend Authorization
-
-Frontend checks are not sufficient for sensitive operations. The backend is responsible for:
-
-- Authentication and JWT/session validation
-- Role and permission checks
-- Account status validation
-- Input validation and sanitization
-- **CSRF protection** (required, since authentication uses cookies with `withCredentials`)
-- Safe handling of user-generated content
-- Administrative authorization
-- Audit logging for sensitive operations
-
-Administrative requests are validated against the authenticated user's identity, role, account status, and required permissions.
+Frontend route guards and hidden UI controls are not security boundaries. The backend must independently enforce access to protected data and operations.
 
 ## Contributing
 
-Contributions are welcome.
+Contributions, bug reports, and improvements are welcome.
+
+### Suggested workflow
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make and test your changes.
+4. Run the linter and production build.
+5. Submit a pull request describing the changes.
 
 ```bash
 git checkout -b feature/my-improvement
-# make your changes
+
+# Make your changes
+
+npm run lint
+npm run build
+
 git add .
-git commit -m "Add my improvement"
+git commit -m "Describe your change"
 git push origin feature/my-improvement
 ```
 
-Then open a pull request into the `main` branch.
+Open a pull request against the appropriate target branch and include the motivation, implementation details, and testing performed.
 
 ## License
 
-Licensed under the MIT License. See [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License.
 
----
+Copyright (c) 2025 Anis.
 
-Built to support a modern, user-focused, secure, and scalable peer-to-peer marketplace experience.
+See the [LICENSE](LICENSE) file for the full license text.
