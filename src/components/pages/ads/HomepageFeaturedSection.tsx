@@ -9,7 +9,6 @@ import CheckroomIcon from '@mui/icons-material/Checkroom';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import StarIcon from '@mui/icons-material/Star';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
@@ -62,138 +61,138 @@ import { useState, useMemo } from 'react';
 import { FeaturedAd } from '../../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { productsPathes } from '../../../routes/routes';
-import { categoryLabels } from '../../../interfaces/postsCategoeis';
 import { useNavigate } from 'react-router-dom';
 import { useAllFeaturedAds } from '../../../hooks/ads/useFeaturedAds';
 import { getPlanById } from '../../../interfaces/PlanConfig'; // ✅ المسار الصحيح
 import { useTranslation } from 'react-i18next';
+import { CATEGORIES } from '../../../interfaces/categories';
 
 /* ── Category metadata ─────────────────────────────── */
 const CATEGORY_META: Record<
     string,
     { icon: SvgIconComponent; color: string; label: string }
 > = {
-    House: { icon: ChairIcon, color: '#f59e0b', label: categoryLabels.House },
-    Garden: { icon: SpaIcon, color: '#10b981', label: categoryLabels.Garden },
+    House: { icon: ChairIcon, color: '#f59e0b', label: CATEGORIES.House },
+    Garden: { icon: SpaIcon, color: '#10b981', label: CATEGORIES.Garden },
     Electronics: {
         icon: DevicesIcon,
         color: '#3b82f6',
-        label: categoryLabels.Electronics,
+        label: CATEGORIES.Electronics,
     },
     Kids: {
         icon: SportsEsportsIcon,
         color: '#f97316',
-        label: categoryLabels.Kids,
+        label: CATEGORIES.Kids,
     },
-    Baby: { icon: ChildCareIcon, color: '#ec4899', label: categoryLabels.Baby },
-    Beauty: { icon: SpaIcon, color: '#d946ef', label: categoryLabels.Beauty },
+    Baby: { icon: ChildCareIcon, color: '#ec4899', label: CATEGORIES.Baby },
+    Beauty: { icon: SpaIcon, color: '#d946ef', label: CATEGORIES.Beauty },
     Cleaning: {
         icon: CleaningServicesIcon,
         color: '#06b6d4',
-        label: categoryLabels.Cleaning,
+        label: CATEGORIES.Cleaning,
     },
     Health: {
         icon: HealthAndSafetyIcon,
         color: '#14b8a6',
-        label: categoryLabels.Health,
+        label: CATEGORIES.Health,
     },
     Watches: {
         icon: WatchIcon,
         color: '#8b5cf6',
-        label: categoryLabels.Watches,
+        label: CATEGORIES.Watches,
     },
     MenClothes: {
         icon: CheckroomIcon,
         color: '#06b6d4',
-        label: categoryLabels.MenClothes,
+        label: CATEGORIES.MenClothes,
     },
     WomenClothes: {
         icon: CheckroomIcon,
         color: '#ec4899',
-        label: categoryLabels.WomenClothes,
+        label: CATEGORIES.WomenClothes,
     },
     WomenBags: {
         icon: ShoppingBagIcon,
         color: '#f43f5e',
-        label: categoryLabels.WomenBags,
+        label: CATEGORIES.WomenBags,
     },
     Cars: {
         icon: DirectionsCarIcon,
         color: '#f59e0b',
-        label: categoryLabels.Cars,
+        label: CATEGORIES.Cars,
     },
     Motorcycles: {
         icon: GarageIcon,
         color: '#ef4444',
-        label: categoryLabels.Motorcycles,
+        label: CATEGORIES.Motorcycles,
     },
     Trucks: {
         icon: LocalShippingIcon,
         color: '#475569',
-        label: categoryLabels.Trucks,
+        label: CATEGORIES.Trucks,
     },
     Bikes: {
         icon: PedalBikeIcon,
         color: '#84cc16',
-        label: categoryLabels.Bikes,
+        label: CATEGORIES.Bikes,
     },
     ElectricVehicles: {
         icon: ElectricBoltIcon,
         color: '#22c55e',
-        label: categoryLabels.ElectricVehicles,
+        label: CATEGORIES.ElectricVehicles,
     },
-    Art: { icon: PaletteIcon, color: '#a855f7', label: categoryLabels.Art },
+    Art: { icon: PaletteIcon, color: '#a855f7', label: CATEGORIES.Art },
     Gaming: {
         icon: SportsEsportsIcon,
         color: '#6366f1',
-        label: categoryLabels.Gaming,
+        label: CATEGORIES.Gaming,
     },
     RealEstate: {
         icon: ApartmentIcon,
         color: '#0ea5e9',
-        label: categoryLabels.RealEstate,
+        label: CATEGORIES.RealEstate,
     },
-    Pets: { icon: PetsIcon, color: '#f59e0b', label: categoryLabels.Pets },
+    Pets: { icon: PetsIcon, color: '#f59e0b', label: CATEGORIES.Pets },
     Furniture: {
         icon: WeekendIcon,
         color: '#78350f',
-        label: categoryLabels.Furniture,
+        label: CATEGORIES.Furniture,
     },
     Cameras: {
         icon: CameraAlt,
         color: '#e11d48',
-        label: categoryLabels.Cameras,
+        label: CATEGORIES.Cameras,
     },
-    Books: { icon: MenuBook, color: '#854d0e', label: categoryLabels.Books },
+    Books: { icon: MenuBook, color: '#854d0e', label: CATEGORIES.Books },
     MusicalInstruments: {
         icon: Piano,
         color: '#6366f1',
-        label: categoryLabels.MusicalInstruments,
+        label: CATEGORIES.MusicalInstruments,
     },
     ConstructionEquipment: {
         icon: Construction,
         color: '#f59e0b',
-        label: categoryLabels.ConstructionEquipment,
+        label: CATEGORIES.ConstructionEquipment,
     },
     IndustrialEquipment: {
         icon: Factory,
         color: '#475569',
-        label: categoryLabels.IndustrialEquipment,
+        label: CATEGORIES.IndustrialEquipment,
     },
     WeldingEquipment: {
         icon: Whatshot,
         color: '#ef4444',
-        label: categoryLabels.WeldingEquipment,
+        label: CATEGORIES.WeldingEquipment,
     },
     OfficeEquipment: {
         icon: Print,
         color: '#0ea5e9',
-        label: categoryLabels.OfficeEquipment,
+        label: CATEGORIES.OfficeEquipment,
     },
     Services: {
         icon: Handyman,
         color: '#0ea5e9',
-        label: categoryLabels.Services,
+        label: CATEGORIES.Services,
     },
 };
 
@@ -380,7 +379,7 @@ export function HomepageAdCard({
                     >
                         <Chip
                             className='view-button'
-                            icon={<VisibilityIcon sx={{ fontSize: 16 }} />}
+                            // icon={<VisibilityIcon />}
                             label={t('postCard.viewDetails', 'عرض التفاصيل')}
                             sx={{
                                 bgcolor: 'white',
@@ -446,9 +445,26 @@ export function HomepageAdCard({
                     </Box>
 
                     {/* ✅ شارة السعر (أسفل يسار) - تظهر فقط إذا كان السعر > 0 */}
-                    {listing.price && listing.price > 0 && (
+                    {listing.price && listing.price > 0 ? (
                         <Chip
                             label={formatPrice(listing.price)}
+                            size='small'
+                            sx={{
+                                position: 'absolute',
+                                bottom: 12,
+                                insetInlineStart: 12,
+                                bgcolor: 'rgba(255,255,255,0.95)',
+                                color: accent,
+                                fontWeight: 800,
+                                fontSize: 13,
+                                height: 28,
+                                backdropFilter: 'blur(6px)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                            }}
+                        />
+                    ) : (
+                        <Chip
+                            label={t('checkPrice')}
                             size='small'
                             sx={{
                                 position: 'absolute',
@@ -691,25 +707,26 @@ export default function HomepageFeaturedSection() {
                     <Box>
                         <Typography
                             variant='overline'
+                            component={'h2'}
                             sx={{
-                                fontWeight: 800,
+                                // fontWeight: 800,
                                 letterSpacing: '0.18em',
-                                fontSize: '0.65rem',
+                                // fontSize: '0.65rem',
                                 color: theme.palette.primary.main,
                             }}
                         >
-                            {t('ads.showcaseEyebrow', 'مختارات المحرر')}
+                            {t('ads.showcaseEyebrow')}
                         </Typography>
                         <Typography
-                            variant='h5'
-                            component='h3'
+                            variant='h6'
+                            component='h6'
                             fontWeight={900}
                             sx={{
-                                mb: 0.5,
+                                m: 0.5,
                                 color: isDark ? '#fff' : 'inherit',
                                 letterSpacing: '-0.02em',
                                 lineHeight: 1.1,
-                                fontSize: { xs: '1.4rem', sm: '1.6rem' },
+                                fontSize: { xs: '1.4rem', sm: '2rem' },
                             }}
                         >
                             {t('ads.financed')}
@@ -775,7 +792,7 @@ export default function HomepageFeaturedSection() {
                                 return (
                                     <Tab
                                         key={category}
-                                        label={`${categoryInfo.label} (${adsByCategory[category].length})`}
+                                        label={`${t(`categories.${categoryInfo.label}.label`)} (${adsByCategory[category].length})`}
                                         value={category}
                                     />
                                 );

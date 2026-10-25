@@ -39,7 +39,7 @@ const HeroFloatingChips = () => {
         // 3. أقصى اليمين حد اللوغو
         {
             key: 'messages',
-            label: t('hero.messages', 'محادثاتي'),
+            label: t('common.tabs.messages', 'محادثاتي'),
             icon: <ChatBubbleOutlineIcon fontSize='small' />,
             to: '/messages/chat',
             top: '50%',
@@ -49,7 +49,7 @@ const HeroFloatingChips = () => {
         // 4. بين الكرت والنص
         {
             key: 'jobs',
-            label: t('hero.jobs', 'وظائف'),
+            label: t('common.tabs.jobs', 'وظائف'),
             icon: <WorkOutline fontSize='small' />,
             to: '/jobs',
             top: '46%',

@@ -5,12 +5,10 @@ import {
     Typography,
     Stack,
     alpha,
-    useTheme,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
-import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import HomepageFeaturedSection from '../ads/HomepageFeaturedSection';
 import SealBadge from './SealBadge';
 import { BRAND } from '../../navbar/theme/brand';
@@ -18,7 +16,6 @@ import { BRAND } from '../../navbar/theme/brand';
 const AdsSection = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const theme = useTheme();
 
     return (
         <Box
@@ -54,19 +51,6 @@ const AdsSection = () => {
                         </SealBadge>
                         <Box>
                             <Typography
-                                variant='overline'
-                                sx={{
-                                    display: 'block',
-                                    fontWeight: 800,
-                                    letterSpacing: '0.18em',
-                                    fontSize: '0.65rem',
-                                    color: BRAND.brown,
-                                    lineHeight: 1.2,
-                                }}
-                            >
-                                {t('featuredAds.eyebrow', 'إعلانات مميزة')}
-                            </Typography>
-                            <Typography
                                 variant='h2'
                                 fontWeight={800}
                                 sx={{
@@ -75,7 +59,7 @@ const AdsSection = () => {
                                     lineHeight: 1.25,
                                 }}
                             >
-                                {t('featuredAds.title', 'مختارات صفقة')}
+                                {t('ads.topAdsSection.title', 'مختارات صفقة')}
                             </Typography>
                         </Box>
                     </Stack>
@@ -110,19 +94,8 @@ const AdsSection = () => {
                             component='span'
                             sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}
                         >
-                            {t('common.viewAll', 'عرض الكل')}
+                            {t('ads.topAdsSection.viewAll', 'عرض الكل')}
                         </Typography>
-                        <ArrowForwardRoundedIcon
-                            className='masthead-arrow'
-                            sx={{
-                                fontSize: 15,
-                                transition: 'transform 0.2s ease',
-                                transform:
-                                    theme.direction === 'rtl'
-                                        ? 'scaleX(-1)'
-                                        : 'none',
-                            }}
-                        />
                     </Stack>
                 </Stack>
 

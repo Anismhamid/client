@@ -1,5 +1,6 @@
 {
     "you": "أنت",
+   "checkPrice": "اضغط للاستفسار عن السعر",
     "verifiedSeller": "بائع موثّق",
     "reviews": "تقييمات",
     "post": "{{count}} إعلان",
@@ -502,9 +503,16 @@
         "tabs": {
             "posts": "المنشورات",
             "info": "المعلومات",
+            "blog": "المقالات",
             "ratings": "التقييمات",
             "contact": "التواصل",
-            "jobs": "الوظائف"
+            "jobs": "الوظائف",
+            "mySmartSearch": "بحثي الذكي",
+            "messages": "المحادثات"
+        },
+        "trust": {
+            "support": "دعم 24/7",
+            "verifiedDeals": "صفقات موثوقة"
         }
     },
 
@@ -2740,7 +2748,7 @@
             "invalidDateRange": "تاريخ النهاية يجب أن يكون بعد تاريخ البداية"
         },
         "topAdsSection": {
-            "title": "أفضل الإعلانات ⭐",
+            "title": "أفضل الإعلانات ",
             "subtitle": "الإعلانات الأكثر مشاهدة وتفاعلاً",
             "viewAll": "عرض الكل",
             "retry": "إعادة المحاولة",
@@ -2755,6 +2763,7 @@
         "currentAds": "إعلاناتك الحالية",
         "noPromotedAds": "لا توجد إعلانات ترويجية بعد",
         "startPromoting": "ابدأ بشراء أول باقة ترويجية الآن",
+        "showcaseEyebrow": "إعلانات مدفوعة",
         "common": {
             "selected": "مختار",
             "untitled": "بدون عنوان",
@@ -2863,7 +2872,8 @@
         "linkCopied": "تم نسخ الرابط",
         "copyFailed": "فشل نسخ الرابط",
         "reportSuccess": "تم الإبلاغ عن المنتج",
-        "outOfStockError": "هذا المنتج غير متوفر حالياً"
+        "outOfStockError": "هذا المنتج غير متوفر حالياً",
+        "viewDetails":"عرض التفاصيل"
     },
     "searchPage": {
         "title": "نتائج البحث",

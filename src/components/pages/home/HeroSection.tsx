@@ -38,12 +38,12 @@ const FLOATING_SEALS = [
 const TRUST_ITEMS = [
     {
         icon: SupportAgentOutlinedIcon,
-        key: 'trust.support',
+        key: 'common.trust.support',
         fallback: 'دعم ٢٤/٧',
     },
     {
         icon: HandshakeOutlinedIcon,
-        key: 'trust.verifiedDeals',
+        key: 'common.trust.verifiedDeals',
         fallback: 'صفقات موثوقة',
     },
 ];
@@ -52,22 +52,37 @@ const QUICK_LINKS = [
     {
         to: '/jobs',
         icon: WorkOutlineOutlined,
-        key: 'hero.jobs',
+        key: 'common.tabs.jobs',
         fallback: 'الوظائف',
     },
     {
         to: '/blog',
         icon: ArticleOutlined,
-        key: 'hero.blog',
-        fallback: 'مقالات صفقة',
+        key: 'common.tabs.blog',
+        fallback: 'مقالات',
     },
     {
         to: '/saved-searches',
         icon: NotificationsActiveOutlined,
-        key: 'hero.savedSearches',
+        key: 'common.tabs.mySmartSearch',
+        requiresLogin: true,
         fallback: 'تنبيهاتي',
     }, // عدّل المسار
 ];
+
+const quickLinkSx = {
+    borderRadius: '10px',
+    gap: 1,
+    fontWeight: 700,
+    fontSize: '0.85rem',
+    borderColor: alpha(BRAND.brown, 0.35),
+    color: 'text.primary',
+    '&:hover': {
+        borderColor: BRAND.brown,
+        color: BRAND.brown,
+        bgcolor: alpha(BRAND.brown, 0.05),
+    },
+};
 
 const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
     const { isLoggedIn } = useUser();
@@ -99,7 +114,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                 px: { xs: 2, md: 4 },
             }}
         >
-
             <Box position={'relative'}>
                 <HeroFloatingChips />
             </Box>
@@ -500,7 +514,6 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                             >
                                 {t('hero.smartSearch', 'البحث الذكي')}
                             </Button>
-
                             <Box
                                 sx={{
                                     display: 'grid',
@@ -509,38 +522,48 @@ const HeroSection = ({ onAddProduct }: HeroSectionProps) => {
                                 }}
                             >
                                 {QUICK_LINKS.map(
-                                    ({ to, icon: Icon, key, fallback }) => (
-                                        <Button
-                                            key={to}
-                                            component={RouterLink}
-                                            to={to}
-                                            variant='outlined'
-                                            startIcon={
-                                                <Icon sx={{ fontSize: 18 }} />
-                                            }
-                                            sx={{
-                                                borderRadius: '10px',
-                                                gap: 1,
-                                                fontWeight: 700,
-                                                fontSize: '0.85rem',
-                                                borderColor: alpha(
-                                                    BRAND.brown,
-                                                    0.35,
-                                                ),
-                                                color: 'text.primary',
-                                                '&:hover': {
-                                                    borderColor: BRAND.brown,
-                                                    color: BRAND.brown,
-                                                    bgcolor: alpha(
-                                                        BRAND.brown,
-                                                        0.05,
-                                                    ),
-                                                },
-                                            }}
-                                        >
-                                            {t(key, fallback)}
-                                        </Button>
-                                    ),
+                                    ({
+                                        to,
+                                        icon: Icon,
+                                        key: labelKey,
+                                        fallback,
+                                        requiresLogin,
+                                    }) => {
+                                        const locked = Boolean(
+                                            requiresLogin && !isLoggedIn,
+                                        );
+
+                                        return (
+                                            <Button
+                                                key={to}
+                                                component={RouterLink}
+                                                to={locked ? path.Login : to}
+                                                state={
+                                                    locked
+                                                        ? { from: to }
+                                                        : undefined
+                                                }
+                                                variant='outlined'
+                                                startIcon={
+                                                    <Icon
+                                                        sx={{ fontSize: 18 }}
+                                                    />
+                                                }
+                                                sx={{
+                                                    ...quickLinkSx,
+                                                    minWidth: 0,
+                                                    width: '100%',
+                                                    justifyContent:
+                                                        'flex-start',
+                                                }}
+                                            >
+                                                {t(labelKey, fallback)}
+                                                {locked
+                                                    ? ` ${t('login.loginButton')}`
+                                                    : ''}
+                                            </Button>
+                                        );
+                                    },
                                 )}
                             </Box>
                         </Stack>

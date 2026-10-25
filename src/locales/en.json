@@ -1,5 +1,6 @@
 {
     "you": "You",
+    "checkPrice": "Click to Check Price",
     "verifiedSeller": "Verified Seller",
     "reviews": "Reviews",
     "post": "{{count}} listing",
@@ -504,7 +505,14 @@
             "info": "Information",
             "ratings": "Ratings",
             "contact": "Contact",
-            "jobs": "Jobs"
+            "jobs": "Jobs",
+            "blog": "Blog",
+            "mySmartSearch": "My Smart search",
+            "messages": "Chats"
+        },
+        "trust": {
+            "support": "24/7 Support",
+            "verifiedDeals": "Trusted Deals"
         }
     },
 
@@ -2660,46 +2668,47 @@
         "description": "If you delete the account, this action cannot be undone",
         "buttonText": "Permanently delete"
     },
+
     "ads": {
-        "createAd": "Promote listing",
+        "createAd": "Promote an Ad",
         "financed": "Sponsored",
-        "createAdDescription": "Increase your listing's visibility by promoting it. Choose your budget and campaign duration to start attracting more potential buyers.",
-        "dashboard": "Ad dashboard",
-        "description": "Here you can manage your ads, edit them, or delete them as needed",
+        "createAdDescription": "Increase your ad's visibility by promoting it. Choose your budget and campaign duration to start attracting more potential buyers.",
+        "dashboard": "Ads Dashboard",
+        "description": "Here you can manage your ads, edit them, or delete them as needed.",
         "noAds": "You don't have any ads yet. Create a new ad to increase your products' visibility!",
         "promotionPackages": {
-            "title": "Promotion packages",
-            "description": "Choose from different promotion packages to increase your listing's visibility",
-            "subtitle": "Choose the package that suits your needs and enjoy exclusive benefits that boost sales",
+            "title": "Promotion Packages",
+            "description": "Choose from a variety of promotion packages to increase your ad's visibility.",
+            "subtitle": "Choose the package that suits your needs and enjoy exclusive benefits that increase your chances of making a sale.",
             "homepage": {
-                "name": "Homepage package",
-                "FeaturedAdOnTheHomepage": "Featured ad on the homepage",
-                "description": "Featured placement at the top of the homepage in front of thousands of daily visitors",
+                "name": "Homepage Package",
+                "FeaturedAdOnTheHomepage": "Featured Ad on the Homepage",
+                "description": "Premium visibility at the top of the homepage, in front of thousands of visitors every day.",
                 "price": "{{price}} / for one week",
                 "features": [
                     "Placement at the top of the homepage",
-                    "Daily refresh rotation",
-                    "Display priority"
+                    "Daily renewal cycle",
+                    "Priority placement"
                 ]
             },
             "top": {
-                "name": "Top package",
-                "description": "Your listing at the top of search results and lists at all times",
+                "name": "Top Package",
+                "description": "Keep your ad at the top of search results and listing pages.",
                 "price": "{{price}} / for one week",
                 "features": [
                     "Priority in search results",
-                    "Placement at the top of lists",
-                    "Gold color highlight"
+                    "Placement at the top of listings",
+                    "Gold highlighting"
                 ]
             },
             "highlight": {
-                "name": "Highlight ad package",
-                "description": "A striking visual highlight that makes your listing stand out among competitors",
+                "name": "Highlight Package",
+                "description": "Eye-catching visual styling that makes your ad stand out from the competition.",
                 "price": "{{price}} / for one week",
                 "features": [
-                    "Distinctive listing background",
+                    "Distinctive ad background",
                     "Glowing icon",
-                    "Green color highlight"
+                    "Green highlighting"
                 ]
             }
         },
@@ -2707,34 +2716,34 @@
             "all": "All",
             "active": "Active",
             "expired": "Expired",
-            "totalAds": "Total ads",
-            "activeNow": "Active now",
-            "totalPaid": "Total paid",
-            "daysLeft": "Days left",
-            "noActiveAds": "No active promotional ads currently",
+            "totalAds": "Total Ads",
+            "activeNow": "Currently Active",
+            "totalPaid": "Total Spent",
+            "daysLeft": "Days Remaining",
+            "noActiveAds": "There are currently no active promotional ads.",
             "activeCount": "{{count}} active",
-            "activeDaysLeft": "Active • {{count}} days"
+            "activeDaysLeft": "Active • {{count}} days left"
         },
         "purchase": {
-            "title": "Purchase promotion package",
-            "subtitle": "Complete the information below and proceed to payment",
-            "selectListing": "Choose your listing",
-            "selectPromotion": "Promotion type",
-            "startDate": "Start date",
-            "endDate": "End date",
+            "title": "Purchase a Promotion Package",
+            "subtitle": "Complete the details below and proceed to payment.",
+            "selectListing": "Select Your Ad",
+            "selectPromotion": "Promotion Type",
+            "startDate": "Start Date",
+            "endDate": "End Date",
             "duration": "Duration",
-            "days": "day",
-            "payNow": "Pay now",
+            "days": "days",
+            "payNow": "Pay Now",
             "processing": "Processing...",
-            "selectPackage": "Choose the package that suits you",
-            "invalidDateRange": "End date must be after the start date"
+            "selectPackage": "Choose the Right Package for You",
+            "invalidDateRange": "The end date must be after the start date."
         },
         "topAdsSection": {
-            "title": "Top ads ⭐",
-            "subtitle": "The most viewed and engaged ads",
-            "viewAll": "View all",
-            "retry": "Retry",
-            "featuredBadge": "Featured ad",
+            "title": "Top Ads",
+            "subtitle": "The most viewed and engaging ads",
+            "viewAll": "View All",
+            "retry": "Try Again",
+            "featuredBadge": "Featured Ad",
             "verified": "Verified",
             "types": {
                 "homepage": "Homepage",
@@ -2742,9 +2751,10 @@
                 "highlight": "Highlighted"
             }
         },
-        "currentAds": "Your current ads",
-        "noPromotedAds": "No promotional ads yet",
-        "startPromoting": "Start by purchasing your first promotion package now",
+        "currentAds": "Your Current Ads",
+        "noPromotedAds": "You don't have any promoted ads yet.",
+        "startPromoting": "Purchase your first promotion package today.",
+        "showcaseEyebrow": "Sponsored Ads",
         "common": {
             "selected": "Selected",
             "untitled": "Untitled",
@@ -2759,7 +2769,7 @@
             "back": "Back",
             "next": "Next",
             "submit": "Submit",
-            "retry": "Retry"
+            "retry": "Try Again"
         }
     },
     "colors": {
@@ -2853,7 +2863,8 @@
         "linkCopied": "Link copied",
         "copyFailed": "Failed to copy link",
         "reportSuccess": "Product reported",
-        "outOfStockError": "This product is currently unavailable"
+        "outOfStockError": "This product is currently unavailable",
+        "viewDetails":"View details"
     },
     "searchPage": {
         "title": "Search results",
