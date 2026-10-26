@@ -657,6 +657,14 @@ const PostDetails: FunctionComponent = () => {
         <>
             {productJsonLd && <JsonLd data={productJsonLd} />}
             <title>{post.product_name} | صفقة</title>
+
+            <meta property='og:url' content={pageUrl} />
+            <meta
+                property='og:image'
+                content={
+                    post.image?.url ? post.image.url : `${SITE_URL}/d3.png`
+                }
+            />
             <link rel='canonical' href={pageUrl} />
             <meta
                 name='description'
@@ -1937,7 +1945,9 @@ const PostDetails: FunctionComponent = () => {
 
                             <PostSpecifications
                                 product={post}
-                                categoryLabel={t(`categories.${post.category}.label`)}
+                                categoryLabel={t(
+                                    `categories.${post.category}.label`,
+                                )}
                                 t={t}
                             />
 
