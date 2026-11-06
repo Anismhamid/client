@@ -57,8 +57,12 @@ import { useTranslation } from 'react-i18next';
 
 // ─── Spreadsheet-compatible CSV export ────────────────────────────────────────
 
-const csvCell = (value: string | number) =>
-    `"${String(value).replace(/"/g, '""')}"`;
+// بيمنع CSV/formula injection: أي قيمة بتبدأ بـ = + - @ بتنفّذ كـ formula بالإكسل
+const csvCell = (value: string | number) => {
+    let s = String(value);
+    if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+};
 
 const csvRow = (values: Array<string | number>) =>
     values.map(csvCell).join(',');
@@ -220,6 +224,8 @@ const WebSiteAdmins: FunctionComponent = () => {
                                     variant='h3'
                                     component='h1'
                                     sx={{
+                                        background:
+                                            'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)',
                                         backgroundClip: 'text',
                                         WebkitBackgroundClip: 'text',
                                         WebkitTextFillColor: 'transparent',

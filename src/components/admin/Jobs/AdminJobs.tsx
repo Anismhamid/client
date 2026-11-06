@@ -122,6 +122,29 @@ const AdminJobs: FunctionComponent = () => {
         loadJobs(filters);
     }, [filters, loadJobs]);
 
+    useEffect(() => {
+    let ignore = false;
+    const timer = setTimeout(async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await getAdminJobs(filters);
+            if (ignore) return;
+            setJobs(res.jobs || []);
+            setTotalPages(res.pagination?.pages ?? 1);
+            setTotalJobs(res.pagination?.total ?? res.jobs?.length ?? 0);
+        } catch {
+            if (!ignore) setError(t('admin.jobs.errors.load', 'فشل تحميل الوظائف'));
+        } finally {
+            if (!ignore) setLoading(false);
+        }
+    }, 300);
+    return () => {
+        ignore = true;
+        clearTimeout(timer);
+    };
+}, [filters, t]);
+
     const handleSearch = () => {
         setFilters((prev) => ({
             ...prev,

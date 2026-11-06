@@ -91,13 +91,13 @@ const AdminJobDetails: FunctionComponent = () => {
             setForm({
                 type: data.type,
                 jobTitle: data.jobTitle,
-                companyName: data.companyName || '',
-                industry: data.industry || '',
                 experienceLevel: data.experienceLevel,
                 salaryMin: data.salaryMin,
                 salaryMax: data.salaryMax,
+                companyName: data.companyName?.trim() ?? '',
+                industry: data.industry?.trim() ?? '',
+                location: data.location?.trim() ?? '',
                 salaryPeriod: data.salaryPeriod,
-                location: data.location || '',
                 remote: data.remote,
             });
 

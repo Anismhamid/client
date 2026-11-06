@@ -25,7 +25,7 @@ export const ProductsGrowthChart = ({ data }: { data: ProductByDate[] }) => {
     const theme = useTheme();
 
     const formatted = data.map((d) => ({
-        date: new Date(d.date).toLocaleDateString('ar-SA', {
+        date: new Date(`${d.date}T00:00:00`).toLocaleDateString('ar-u-ca-gregory', {
             weekday: 'short',
             day: 'numeric',
         }),
@@ -134,6 +134,7 @@ export const CategoryDonutChart = ({
                         outerRadius={100}
                         innerRadius={62}
                         dataKey='count'
+                        nameKey='category'
                         paddingAngle={4}
                         labelLine={false}
                         label={CustomLabel as never}

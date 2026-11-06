@@ -10,15 +10,15 @@ import {
     Typography,
     Rating,
 } from '@mui/material';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { m } from 'framer-motion';
 import {
     LocalOffer,
-    Favorite,
-    FavoriteBorder,
     Share,
     Storefront,
+    BookmarkBorder,
+    Bookmark,
 } from '@mui/icons-material';
 import { Posts } from '../../../../interfaces/Posts';
 import { User } from '../../../../interfaces/chat/usersMessages';
@@ -50,8 +50,17 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
     toggleWishlist,
     wishlist,
 }) => {
+    const [items, setItems] = useState<Posts[]>(products);
     const { t } = useTranslation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+    setItems(products);
+}, [products]);
+
+const updateProduct = (id: string | undefined) =>
+    (updater: (prev: Posts) => Posts) =>
+        setItems((prev) => prev.map((p) => (p._id === id ? updater(p) : p)));
 
     return (
         <Box m={4}>
@@ -94,7 +103,7 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
 
             {products.length > 0 ? (
                 <Grid container spacing={3}>
-                    {products.map((product, index) => {
+                    {items.map((product, index) => {
                         const productUrl = `${productsPathes.postsDetails}/${product.category}/${product.brand}/${product._id}`;
                         return (
                             <Grid
@@ -340,10 +349,11 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                                 alignItems='center'
                                             >
                                                 <Box sx={{ flex: 1 }}>
-                                                    <LikeButton
-                                                        product={product}
-                                                    />
-                                                </Box>
+        <LikeButton
+            product={product}
+            setProduct={updateProduct(product._id)}
+        />
+    </Box>
                                                 <IconButton
                                                     aria-label={t(
                                                         'common.addToWishlist',
@@ -362,9 +372,9 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
                                                     {wishlist.has(
                                                         product._id ?? '',
                                                     ) ? (
-                                                        <Favorite color='error' />
+                                                        <Bookmark color='error' />
                                                     ) : (
-                                                        <FavoriteBorder />
+                                                        <BookmarkBorder />
                                                     )}
                                                 </IconButton>
                                                 <IconButton

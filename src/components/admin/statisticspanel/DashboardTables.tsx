@@ -39,6 +39,15 @@ import { formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { productsPathes } from '../../../routes/routes';
 import { getCategoryName } from './statisticsUtils';
 
+// ─── Product URL ──────────────────────────────────────────────────────────────
+
+// الشكل الجديد: /:sellerSlug/posts/:category/:postName/:postId
+// وإذا ما في slug بنرجع للشكل القديم /posts/:postId
+const getProductUrl = (p: MostPopularProduct) =>
+    p.seller.slug
+        ? `/${p.seller.slug}/posts/${p.category}/${encodeURIComponent(p.name)}/${p.id}`
+        : `${productsPathes.postsDetails}/${p.id}`;
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type ProductSortKey = 'name' | 'likes' | 'views' | 'price';
@@ -302,7 +311,7 @@ export const ProductsTable = ({
                                                 gap={1}
                                             >
                                                 <Link
-                                                    to={`${productsPathes.postsDetails}/${product.category}/${product.name}/${product.id}`}
+                                                    to={getProductUrl(product)}
                                                 >
                                                     <Avatar
                                                         src={

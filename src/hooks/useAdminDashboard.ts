@@ -9,12 +9,22 @@ import {
     PostWithUser,
     calculateStatistics,
     filterPostsByTimeFrame,
-} from '../components/settings/statisticspanel/statisticsUtils';
+} from '../components/admin/statisticspanel/statisticsUtils';
+
+export type TimeFrame =
+    | 'today'
+    | '7days'
+    | 'month'
+    | '30days'
+    | '90days'
+    | 'year'
+    | 'all';
 
 const INITIAL_STATISTICS: Statistics = {
     totalProducts: 0,
     activeProducts: 0,
     soldPosts: 0,
+    totalPendingPosts: 0,
     newProductsToday: 0,
     newProductsMonth: 0,
     onlineUsers: 0,
@@ -45,9 +55,7 @@ const INITIAL_STATISTICS: Statistics = {
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 export const useAdminDashboard = (role: string) => {
-    const [timeFrame, setTimeFrame] = useState<
-        'today' | '7days' | 'month' | '30days' | '90days' | 'year' | 'all'
-    >('all');
+    const [timeFrame, setTimeFrame] = useState<TimeFrame>('all');
     const [statistics, setStatistics] =
         useState<Statistics>(INITIAL_STATISTICS);
     const [loading, setLoading] = useState(true);
@@ -55,30 +63,25 @@ export const useAdminDashboard = (role: string) => {
     const [error, setError] = useState<string | null>(null);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+    const isStaff = role === 'Admin' || role === 'Moderator';
+
     // Store raw data so timeFrame changes don't need a new API call
     const rawDataRef = useRef<{
         users: AuthValues[];
         posts: PostWithUser[];
     } | null>(null);
 
-    const applyTimeFrame = useCallback(
-        (
-            frame:
-                | 'today'
-                | '7days'
-                | 'month'
-                | '30days'
-                | '90days'
-                | 'year'
-                | 'all',
-        ) => {
-            if (!rawDataRef.current) return;
-            const { users, posts } = rawDataRef.current;
-            const filtered = filterPostsByTimeFrame(posts, frame);
-            setStatistics(calculateStatistics(users, filtered));
-        },
-        [],
-    );
+    // الـ timeFrame بالـ ref عشان fetchData ما يتغيّر مع كل تغيير فترة
+    // (قبل هيك كل تغيير فترة كان يعمل request جديد ويصفّر الـ interval)
+    const timeFrameRef = useRef<TimeFrame>(timeFrame);
+    timeFrameRef.current = timeFrame;
+
+    const applyTimeFrame = useCallback((frame: TimeFrame) => {
+        if (!rawDataRef.current) return;
+        const { users, posts } = rawDataRef.current;
+        const filtered = filterPostsByTimeFrame(posts, frame);
+        setStatistics(calculateStatistics(users, filtered));
+    }, []);
 
     const fetchData = useCallback(
         async (isRefresh = false): Promise<void> => {
@@ -95,19 +98,20 @@ export const useAdminDashboard = (role: string) => {
                 const users = (usersRes as AuthValues[]) ?? [];
                 const rawPosts = (productsRes as Posts[]) ?? [];
 
+                const usersById = new Map(users.map((u) => [u._id, u]));
+
                 const posts: PostWithUser[] = rawPosts
                     .filter((p) => p?.seller)
                     .map((post) => ({
                         ...post,
-                        userData: users.find(
-                            (u) => u._id === post.seller?._id,
-                        ) as User,
+                        userData: usersById.get(post.seller?._id) as
+                            | User
+                            | undefined,
                     }));
 
                 rawDataRef.current = { users, posts };
 
-                const filtered = filterPostsByTimeFrame(posts, timeFrame);
-                setStatistics(calculateStatistics(users, filtered));
+                applyTimeFrame(timeFrameRef.current);
                 setLastUpdated(new Date());
             } catch (err) {
                 console.error('Error fetching dashboard data:', err);
@@ -117,31 +121,29 @@ export const useAdminDashboard = (role: string) => {
                 setRefreshing(false);
             }
         },
-        [timeFrame],
+        [applyTimeFrame],
     );
 
     // Initial load
     useEffect(() => {
-        if (role !== 'Admin' && role !== 'Moderator') return;
+        if (!isStaff) return;
         fetchData();
-    }, [role, fetchData]);
+    }, [isStaff, fetchData]);
 
     // Re-filter when timeFrame changes (no API call)
     useEffect(() => {
-        if (!rawDataRef.current) return;
         applyTimeFrame(timeFrame);
     }, [timeFrame, applyTimeFrame]);
 
-    // Auto-refresh every 5 minutes
+    // Auto-refresh
     useEffect(() => {
-        if (role !== 'Admin' && role !== 'Moderator') return;
+        if (!isStaff) return;
         const interval = setInterval(() => fetchData(true), AUTO_REFRESH_MS);
         return () => clearInterval(interval);
-    }, [role, fetchData]);
+    }, [isStaff, fetchData]);
 
     const handleRefresh = () => fetchData(true);
-    const handleTimeFrameChange = (frame: 'today' | 'month' | 'all') =>
-        setTimeFrame(frame);
+    const handleTimeFrameChange = (frame: TimeFrame) => setTimeFrame(frame);
 
     return {
         timeFrame,

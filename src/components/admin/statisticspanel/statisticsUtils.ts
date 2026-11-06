@@ -53,6 +53,7 @@ export interface Statistics {
     totalProducts: number;
     activeProducts: number;
     soldPosts: number;
+    totalPendingPosts: number;
     newProductsToday: number;
     newProductsMonth: number;
     onlineUsers: number;
@@ -127,11 +128,17 @@ export const CATEGORY_NAMES: Record<string, string> = {
     MenClothes: 'ملابس رجالية',
     WomenClothes: 'ملابس نسائية',
     Baby: 'أطفال',
-    Kids: 'ألعاب',
+    Kids: 'ألعاب أطفال',
     Health: 'صحة',
     Beauty: 'جمال',
     Watches: 'ساعات',
     Cleaning: 'تنظيف',
+    Art: 'فن',
+    Gaming: 'ألعاب فيديو',
+    RealEstate: 'عقارات',
+    Pets: 'حيوانات أليفة',
+    Furniture: 'أثاث',
+    Motorcycles: 'دراجات نارية',
 };
 
 export const getCategoryName = (category: string): string =>
@@ -266,6 +273,9 @@ export const calculateStatistics = (
 
     const activePosts = posts.filter((p) => p.in_stock === true).length;
     const soldPosts = posts.filter((p) => p.in_stock === false).length;
+    const totalPendingPosts = posts.filter(
+        (p) => p.status === 'pending',
+    ).length;
 
     // Sellers map
     const sellersMap = new Map<string, SellerData>();
@@ -278,7 +288,7 @@ export const calculateStatistics = (
             productsCount: (existing?.productsCount ?? 0) + 1,
             totalLikes: (existing?.totalLikes ?? 0) + (post.likes?.length ?? 0),
             totalViews:
-                (existing?.totalViews ?? 0) + (post.reviews?.length ?? 0),
+                (existing?.totalViews ?? 0) + getViewsAsNumber(post.views),
             totalValue: (existing?.totalValue ?? 0) + (post.price ?? 0),
             user: post.userData,
         });
@@ -286,10 +296,7 @@ export const calculateStatistics = (
 
     // Engagement
     const totalLikes = posts.reduce((s, p) => s + (p.likes?.length ?? 0), 0);
-    const totalViews = posts.reduce(
-        (s, p) => s + getViewsAsNumber(p.reviews),
-        0,
-    );
+    const totalViews = posts.reduce((s, p) => s + getViewsAsNumber(p.views), 0);
     const averageLikesPerProduct =
         posts.length > 0
             ? Math.round((totalLikes / posts.length) * 10) / 10
@@ -305,8 +312,10 @@ export const calculateStatistics = (
     const averageProductPrice =
         posts.length > 0 ? Math.round(totalProductValue / posts.length) : 0;
     const highestPricedProduct = prices.length > 0 ? Math.max(...prices) : 0;
-    const lowestPricedProduct =
-        prices.length > 0 ? Math.min(...prices.filter((p) => p > 0)) : 0;
+    const positivePrices = prices.filter((p) => p > 0);
+    const lowestPricedProduct = positivePrices.length
+        ? Math.min(...positivePrices)
+        : 0;
 
     const totalDiscountValue = posts.reduce((s, p) => {
         if (p.sale && p.discount && p.price)
@@ -354,7 +363,7 @@ export const calculateStatistics = (
             name: post.product_name ?? 'منتج بدون اسم',
             image: post.image?.url,
             likes: post.likes?.length ?? 0,
-            views: post.reviews?.length ?? 0,
+            views: getViewsAsNumber(post.views),
             price: post.price ?? 0,
             status: post.in_stock ? 'active' : 'sold',
             seller: {
@@ -391,11 +400,14 @@ export const calculateStatistics = (
         )
         .slice(0, 10);
 
-    // Products by date (last 7 days)
+    // Products by date (last 7 days) — بالتوقيت المحلي مش UTC
+    const toLocalDay = (d: Date) =>
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
     const last7Days = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - i);
-        return d.toISOString().split('T')[0];
+        return toLocalDay(d);
     }).reverse();
 
     const productsByDate: ProductByDate[] = last7Days.map((date) => ({
@@ -403,9 +415,8 @@ export const calculateStatistics = (
         count: posts.filter((post) => {
             if (!post.createdAt) return false;
             return (
-                new Date(getCreatedAtAsString(post.createdAt))
-                    .toISOString()
-                    .split('T')[0] === date
+                toLocalDay(new Date(getCreatedAtAsString(post.createdAt))) ===
+                date
             );
         }).length,
     }));
@@ -414,6 +425,7 @@ export const calculateStatistics = (
         totalProducts: posts.length,
         activeProducts: activePosts,
         soldPosts,
+        totalPendingPosts,
         newProductsToday: newPostsToday,
         newProductsMonth: newPostsMonth,
         onlineUsers,

@@ -55,7 +55,7 @@ export const StatCard = ({
             <CardContent>
                 <Box display='flex' alignItems='center' justifyContent='space-between'>
                     <Box sx={{ color, fontSize: 48, display: 'flex' }}>{icon}</Box>
-                    <Box textAlign='right'>
+                    <Box sx={{ textAlign: 'end' }}>
                         <Typography variant='h3' fontWeight='bold'>{value}</Typography>
                         <Typography variant='body2' sx={{ opacity: .85 }}>{label}</Typography>
                     </Box>
@@ -74,8 +74,8 @@ export const StatCard = ({
                             value={progressValue}
                             sx={{
                                 mt: 1, height: 6, borderRadius: 3,
-                                bgcolor: alpha('#fff', .2),
-                                '& .MuiLinearProgress-bar': { bgcolor: '#fff' },
+                                bgcolor: alpha(color, .15),
+                                '& .MuiLinearProgress-bar': { bgcolor: color },
                             }}
                         />
                         {subValue && (
@@ -91,7 +91,7 @@ export const StatCard = ({
                                 key={i}
                                 size='small'
                                 label={c.label}
-                                sx={{ bgcolor: alpha('#fff', .2) }}
+                                sx={{ bgcolor: alpha(color, .12), color, fontWeight: 600 }}
                             />
                         ))}
                     </Box>
