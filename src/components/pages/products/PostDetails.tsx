@@ -656,7 +656,7 @@ const PostDetails: FunctionComponent = () => {
     return (
         <>
             {productJsonLd && <JsonLd data={productJsonLd} />}
-            <title>{post.product_name} | صفقة</title>
+            <title>{`${post.product_name} | صفقة`}</title>
 
             <meta property='og:url' content={pageUrl} />
             <meta

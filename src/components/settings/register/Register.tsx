@@ -1,4 +1,4 @@
-import {
+﻿import {
     FunctionComponent,
     useCallback,
     useEffect,
@@ -721,7 +721,7 @@ const Register: FunctionComponent = () => {
     if (submitSuccess) {
         return (
             <>
-                <title>{t('register.success.title')} | صفقة</title>
+                <title>{`${t('register.success.title')} | صفقة`}</title>
 
                 <meta
                     name='description'
@@ -854,7 +854,7 @@ const Register: FunctionComponent = () => {
         <>
             <link rel='canonical' href={currentUrl} />
 
-            <title>{t('register.title')} | صفقة</title>
+            <title>{`${t('register.title')} | صفقة`}</title>
 
             <meta
                 name='description'

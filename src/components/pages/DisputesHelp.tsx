@@ -178,7 +178,7 @@ const DisputesHelp: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>{t('pages.contact.resolveDisputes')} | صفقة</title>
+            <title>{`${t('pages.contact.resolveDisputes')} | صفقة`}</title>
             <meta
                 name='description'
                 content={t('pages.contact.resolveDisputes')}

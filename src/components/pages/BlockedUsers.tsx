@@ -240,6 +240,8 @@ const BlockedUsers: FunctionComponent = () => {
     // ============================================
 
     return (
+        <>
+       <title>{`Blocked users | صفقة`}</title>
         <Box
             dir={direction}
             sx={{
@@ -542,7 +544,7 @@ const BlockedUsers: FunctionComponent = () => {
                 onConfirm={handleConfirmUnblock}
                 onHide={() => setConfirmUnblockId(null)}
             />
-        </Box>
+        </Box> </>
     );
 };
 

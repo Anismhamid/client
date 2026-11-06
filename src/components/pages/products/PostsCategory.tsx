@@ -26,7 +26,7 @@ import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 import { useTranslation } from 'react-i18next';
 import { generateCategoryJsonLd } from '../../../../utils/structuredData';
 import JsonLd from '../../../../utils/JsonLd';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { path } from '../../../routes/routes';
 import SearchBox from '../../../atoms/productsManage/SearchBox';
 import { Posts } from '../../../interfaces/Posts';
@@ -34,8 +34,20 @@ import PostCard from './PostsCard';
 import { usePosts } from '../../../hooks/usePosts';
 import handleRTL from '../../../locales/handleRTL';
 import { getAbsolutePostUrl } from './helpers/postUrl';
+import { categoryPathMap } from '../../../interfaces/postsCategoeis';
 
 const PAGE_SIZE = 12;
+const SITE_URL = 'https://client-qqq1.vercel.app';
+
+// بحث بدون حساسية لحالة الأحرف (baby → /category/Baby)
+const resolveCategoryPath = (category: string): string => {
+    const map = categoryPathMap as Record<string, string>;
+    if (map[category]) return map[category];
+    const key = Object.keys(map).find(
+        (k) => k.toLowerCase() === category.toLowerCase(),
+    );
+    return key ? map[key] : `/category/${category}`;
+};
 
 interface PostsCategoryProps {
     category: string;
@@ -71,6 +83,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
     const { t } = useTranslation();
     const theme = useTheme();
     const navigate = useNavigate();
+    const { pathname } = useLocation();
     const dir = handleRTL();
 
     const categoryKey = `${category}-${subCategory ?? ''}`;
@@ -83,6 +96,22 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
         setSearchQuery('');
         setIsLoadingMore(false);
     }
+
+    /* ---------- canonical path ---------- */
+
+    const basePath = resolveCategoryPath(category);
+    const canonicalPath = subCategory ? `${basePath}/${subCategory}` : basePath;
+    const currentUrl = `${SITE_URL}${canonicalPath}`;
+
+    // لو الرابط وصل بحالة أحرف مختلفة (/category/baby) حوّله للصحيح
+    useEffect(() => {
+        if (
+            pathname !== canonicalPath &&
+            pathname.toLowerCase() === canonicalPath.toLowerCase()
+        ) {
+            navigate(canonicalPath, { replace: true });
+        }
+    }, [pathname, canonicalPath, navigate]);
 
     const handleSearchChange = useCallback((value: string) => {
         setSearchQuery(value);
@@ -225,40 +254,53 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
     // لو في subCategory، دور على ترجمة خاصة فيه أول، وإذا مش موجودة
     // ارجع لترجمة التصنيف الرئيسي (fallback)
-    const categoryTitle = subCategory
-        ? t(
-              `categories.${category}.subCategories.${subCategory}.heading`,
-              t(`categories.${category}.heading`),
-          )
-        : t(`categories.${category}.heading`);
+   const categoryTitle = subCategory
+    ? t(
+          `categories.${category}.subCategoryPages.${subCategory}.heading`,
+          t(`categories.${category}.heading`),
+      )
+    : t(`categories.${category}.heading`);
 
-    const categoryDescription = subCategory
-        ? t(
-              `categories.${category}.subCategories.${subCategory}.description`,
-              t(`categories.${category}.description`),
-          )
-        : t(`categories.${category}.description`);
+const categoryDescription = subCategory
+    ? t(
+          `categories.${category}.subCategoryPages.${subCategory}.description`,
+          t(`categories.${category}.description`),
+      )
+    : t(`categories.${category}.description`);
 
-    const searchPlaceholder = subCategory
-        ? t(
-              `categories.${category}.subCategories.${subCategory}.label`,
-              t(`categories.${category}.label`),
-          )
-        : t(`categories.${category}.label`);
+const searchPlaceholder = subCategory
+    ? t(
+          `categories.${category}.subCategoryPages.${subCategory}.label`,
+          t(`categories.${category}.label`),
+      )
+    : t(`categories.${category}.label`);
 
-    const currentUrl = subCategory
-        ? `${window.location.origin}/category/${category}/${subCategory}`
-        : `${window.location.origin}/category/${category}`;
+    /* ---------- head (React 19 بيرفعها للـ <head> تلقائياً) ---------- */
 
-    if (loading) return <Loader />;
+    const isEmpty = !loading && posts.length === 0;
 
-    if (posts.length === 0)
+    const head = (
+        <>
+            <title>{`${categoryTitle} | صفقة`}</title>
+            <link rel='canonical' href={currentUrl} />
+            <meta name='description' content={categoryDescription} />
+            <meta property='og:url' content={currentUrl} />
+            {isEmpty && <meta name='robots' content='noindex,follow' />}
+        </>
+    );
+
+    if (loading)
+        return (
+            <>
+                {head}
+                <Loader />
+            </>
+        );
+
+    if (isEmpty)
         return (
             <main dir={dir}>
-                {/* React 19: these tags are hoisted to <head> automatically */}
-                <title>{categoryTitle} | صفقة</title>
-                <link rel='canonical' href={currentUrl} />
-                <meta name='description' content={categoryDescription} />
+                {head}
                 <Container maxWidth='lg' sx={{ textAlign: 'center' }}>
                     <Typography
                         variant='h5'
@@ -278,7 +320,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                             },
                         }}
                     >
-                        تحديث الصفحة
+                        {t('common.refresh', 'تحديث الصفحة')}
                     </Button>
                 </Container>
             </main>
@@ -294,31 +336,33 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
 
     return (
         <Box component={'main'} p={3} dir={dir}>
-            <title>{categoryTitle} | صفقة</title>
-            <link rel='canonical' href={currentUrl} />
-            <meta name='description' content={categoryDescription} />
+            {head}
 
             <JsonLd data={generateCategory} />
 
-            {/* h1 always present — visually hidden on mobile, still readable
-                by crawlers and screen readers */}
-            <Typography
-                component='h1'
-                sx={{
-                    position: { xs: 'absolute' },
-                    width: { xs: '1px', md: 'auto' },
-                    height: { xs: '1px', md: 'auto' },
-                    overflow: { xs: 'hidden', md: 'visible' },
-                    whiteSpace: { xs: 'nowrap', md: 'normal' },
-                    color: theme.palette.primary.main,
-                    fontWeight: 600,
-                    fontSize: '1.25rem',
-                    px: { md: 2 },
-                    py: { md: 1 },
-                }}
-            >
-                {categoryTitle}
-            </Typography>
+            <Container maxWidth='lg'>
+                {/* h1 ظاهر دايماً (Google بيفهرس بالموبايل أول) */}
+                <Typography
+                    component='h1'
+                    sx={{
+                        color: theme.palette.primary.main,
+                        fontWeight: 700,
+                        fontSize: { xs: '1.35rem', md: '1.6rem' },
+                        mb: 1,
+                    }}
+                >
+                    {categoryTitle}
+                </Typography>
+
+                {/* نص فعلي بالصفحة (بدونه الصفحة شبكة منتجات رفيعة) */}
+                <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mb: 2, maxWidth: 800, lineHeight: 1.8 }}
+                >
+                    {categoryDescription}
+                </Typography>
+            </Container>
 
             {/* Search Bar */}
             <Box
@@ -342,7 +386,7 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
                 <Typography
                     variant='body2'
                     color='text.secondary'
-                    sx={{ mb: 3, px: { xs: 2, md: 0 } }}
+                    sx={{ my: 3, px: { xs: 2, md: 0 } }}
                 >
                     {t('common.viewOf')} {visibleProducts.length}{' '}
                     {t('common.outOf')} {filteredProducts.length}{' '}

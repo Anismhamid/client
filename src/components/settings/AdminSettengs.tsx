@@ -90,7 +90,7 @@ const AdminSettings: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>اداره | {businessInfoState.businessName}</title>
+            <title>{`${businessInfoState.businessName} | صفقة`}</title>
             <meta name='description' content={'تغيير اعدادات الموقع'} />
             <main style={{ fontFamily: 'Heebo' }}>
                 <Box

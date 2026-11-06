@@ -104,7 +104,7 @@ const TermOfUse: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>{t('pages.terms.title')} | صفقة</title>
+            <title>{`${t('pages.terms.title')} | صفقة`}</title>
             <meta name='description' content={t('pages.terms.description')} />
 
             <Box

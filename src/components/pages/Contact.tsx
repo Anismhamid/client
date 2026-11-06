@@ -68,7 +68,7 @@ const Contact: FunctionComponent = () => {
 
     return (
         <>
-            <title>{t('pages.contact.title')} | صفقة</title>
+            <title>{`${t('pages.contact.title')} | صفقة`}</title>
             <meta name='description' content={t('pages.contact.title')} />
             <link rel='canonical' href={currentUrl} />
 

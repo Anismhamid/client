@@ -126,7 +126,7 @@ const SellingHelp: FunctionComponent = () => {
         <>
             <link rel='canonical' href={currentUrl} />
             <title>
-                {t('pages.help.selling.title', 'كيف تبيع على صفقة')} | صفقة
+                {`${t('pages.help.selling.title', 'كيف تبيع على صفقة')} | صفقة`}
             </title>
             <meta
                 name='description'

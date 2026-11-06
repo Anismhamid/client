@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from 'react';
+﻿import { FunctionComponent, useState } from 'react';
 import { useUser } from '../../../hooks/useUSer';
 import { Box, Grid, Typography } from '@mui/material';
 import ProductCard from './PostsCard';
@@ -72,7 +72,7 @@ const FavoritesPosts: FunctionComponent = () => {
     if (!favorites.length) {
         return (
             <>
-                <title>{t('pages.favorites.title')} | صفقة</title>
+                <title>{`${t('pages.favorites.title')} | صفقة`}</title>
 
                 <Box
                     dir={direction}
@@ -96,7 +96,7 @@ const FavoritesPosts: FunctionComponent = () => {
 
             <link rel='canonical' href={currentUrl} />
 
-            <title>{t('pages.favorites.title')} | صفقة</title>
+            <title>{`${t('pages.favorites.title')} | صفقة`}</title>
 
             <meta name='description' content={t('pages.favorites.title')} />
 

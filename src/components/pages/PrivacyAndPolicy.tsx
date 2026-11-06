@@ -55,7 +55,7 @@ const PrivacyAdnPolicy: FunctionComponent = () => {
 
     return (
         <>
-            <title>{t('pages.privacy.title')}</title>
+            <title>{`${t('pages.privacy.title')} | صفقة`}</title>
 
             <meta
                 name='description'

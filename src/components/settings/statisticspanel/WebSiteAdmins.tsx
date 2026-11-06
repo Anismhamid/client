@@ -197,7 +197,7 @@ const WebSiteAdmins: FunctionComponent = () => {
 
     return (
         <>
-            <title>{t('admin.dashboard.title')} | صفقة</title>
+            <title>{`${t('admin.dashboard.title')} | صفقة`}</title>
 
             <meta
                 name='description'

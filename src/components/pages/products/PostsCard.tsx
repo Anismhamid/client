@@ -40,7 +40,8 @@ import SealBadge from '../home/SealBadge';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import ReportButton from '../../reports/ReportButton';
-import { getPostUrl } from './helpers/postUrl';
+import { getAbsolutePostUrl, getPostUrl } from './helpers/postUrl';
+import { categoryPathMap } from '../../../interfaces/postsCategoeis';
 
 interface PostCardProps {
     post: Posts;
@@ -113,7 +114,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const productUrl = getPostUrl(post);
 
     const isOutOfStock = post.in_stock === false;
-    const isOwnPost = auth._id === post.seller?._id;
+    const isOwnPost = Boolean(auth?._id) && auth._id === post.seller?._id;
     const sellerName = post.seller?.name?.first || post.seller?.slug || 'بائع';
     const rated =
         post.reviews?.filter((r) => typeof r.rating === 'number') ?? [];
@@ -129,7 +130,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     const handleMenuClose = () => setMenuAnchor(null);
 
     const handleShare = () => {
-        const shareUrl = `${window.location.origin}${productUrl}`;
+        const shareUrl = getAbsolutePostUrl(post);
         const shareText = `${post.product_name} - ${post.price} ${t(
             'postCard.priceCurrency',
         )}`;
@@ -181,6 +182,10 @@ const PostCard: FunctionComponent<PostCardProps> = ({
         openChat(seller as UserMessage);
     };
 
+    const categoryPath =
+    categoryPathMap[post.category] ?? `/category/${post.category}`;
+
+
     return (
         <Card
             dir={dir}
@@ -223,8 +228,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     },
                 }),
             }}
-            itemScope
-            itemType='https://schema.org/Product'
             role='article'
             // FIX 1: Replaced aria-label with aria-labelledby to prevent overriding inner visible text
             aria-labelledby={`post-title-${post._id}`}
@@ -270,7 +273,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     <CardMedia
                         component='img'
                         image={post.image.url}
-                        alt='' // FIX: Empty alt because the title already describes it
+                        alt={post.product_name} // FIX: Empty alt because the title already describes it
                         loading='lazy'
                         sx={{
                             position: 'absolute',
@@ -403,7 +406,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     sx={{ mb: 0.5 }}
                 >
                     <Link
-                        to={`/category/${post.category}`}
+                        to={categoryPath}
                         style={{ textDecoration: 'none' }}
                     >
                         <Typography
@@ -433,7 +436,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                                 /
                             </Typography>
                             <Link
-                                to={`/category/${post.category}/${post.subcategory}`}
+                                to={`${categoryPath}/${post.subcategory}`}
                                 style={{ textDecoration: 'none' }}
                             >
                                 <Typography
@@ -472,7 +475,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         id={`post-title-${post._id}`} // FIX: Added ID for aria-labelledby
                         variant='subtitle2'
                         component={'p'}
-                        itemProp='name'
                         sx={{
                             fontSize: '0.9688rem',
                             fontWeight: 700,
@@ -495,9 +497,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     alignItems='baseline'
                     spacing={1}
                     sx={{ mt: 1 }}
-                    itemProp='offers'
-                    itemScope
-                    itemType='https://schema.org/Offer'
                 >
                     <Typography
                         component='span'
@@ -522,16 +521,6 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             {formatPrice(post.price)}
                         </Typography>
                     )}
-                    <meta itemProp='price' content={String(finalPrice)} />
-                    <meta itemProp='priceCurrency' content='ILS' />
-                    <meta
-                        itemProp='availability'
-                        content={
-                            isOutOfStock
-                                ? 'https://schema.org/OutOfStock'
-                                : 'https://schema.org/InStock'
-                        }
-                    />
                 </Stack>
 
                 {/* description */}
@@ -561,7 +550,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     flexWrap='wrap'
                     columnGap={1.5}
                     rowGap={0.25}
-                    sx={{ mt: 1, color: 'text.secondary' }} // FIX: Darkened from disabled
+                    sx={{ mt: 1, color: 'text.secondary' }}
                 >
                     {post.location && (
                         <Stack
@@ -572,7 +561,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             <LocationOn sx={{ fontSize: 14 }} />
                             <Typography
                                 variant='caption'
-                                component="span" // FIX: Changed to span
+                                component='span'
                                 sx={{ fontSize: '0.72rem' }}
                             >
                                 {post.location}
@@ -583,7 +572,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <AccessTimeRounded sx={{ fontSize: 13 }} />
                         <Typography
                             variant='caption'
-                            component="span" // FIX: Changed to span
+                            component='span'
                             sx={{ fontSize: '0.72rem' }}
                         >
                             {formatTimeAgo(String(post.createdAt), t) || ''}
@@ -593,7 +582,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         <VisibilityRounded sx={{ fontSize: 13 }} />
                         <Typography
                             variant='caption'
-                            component="span" // FIX: Changed to span
+                            component='span' // FIX: Changed to span
                             sx={{ fontSize: '0.72rem' }}
                         >
                             {post.views || 0}
@@ -699,7 +688,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     </Box>
                 </Link>
 
-                {!isOwnPost && (
+                {!isOwnPost && post.location && (
                     // FIX 3: Removed Tooltip wrapper to prevent duplicate screen reader announcements
                     <IconButton
                         component='a'
@@ -715,7 +704,12 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             borderRadius: '10px',
                         }}
                     >
-                        <img src='/waze.png' width={16} alt='' aria-hidden="true" />
+                        <img
+                            src='/waze.png'
+                            width={16}
+                            alt=''
+                            aria-hidden='true'
+                        />
                     </IconButton>
                 )}
             </Box>
@@ -729,7 +723,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         startIcon={
                             <ChatBubbleOutline
                                 sx={{ fontSize: '16px !important' }}
-                                aria-hidden="true"
+                                aria-hidden='true'
                             />
                         }
                         onClick={handleContactClick}
@@ -780,7 +774,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     startIcon={
                         <ChatBubbleOutline
                             sx={{ fontSize: '16px !important' }}
-                            aria-hidden="true"
+                            aria-hidden='true'
                         />
                     }
                     aria-label={`${commentsCount} ${t('review.comments', 'تعليقات')}`}
@@ -811,11 +805,14 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     aria-label={t('postCard.save', 'حفظ الإعلان')}
                     startIcon={
                         isBookmarked ? (
-                            <Bookmark sx={{ fontSize: '16px !important' }} aria-hidden="true" />
+                            <Bookmark
+                                sx={{ fontSize: '16px !important' }}
+                                aria-hidden='true'
+                            />
                         ) : (
                             <BookmarkBorder
                                 sx={{ fontSize: '16px !important' }}
-                                aria-hidden="true"
+                                aria-hidden='true'
                             />
                         )
                     }
@@ -858,7 +855,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     onClick={handleShare}
                     sx={{ fontSize: '0.8125rem', gap: 1 }}
                 >
-                    <ShareIcon sx={{ fontSize: 16 }} aria-hidden="true" />
+                    <ShareIcon sx={{ fontSize: 16 }} aria-hidden='true' />
                     {t('postCard.share')}
                 </MenuItem>
 
@@ -881,7 +878,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                         }}
                         sx={{ fontSize: '0.8125rem', gap: 1 }}
                     >
-                        <EditIcon sx={{ fontSize: 16 }} aria-hidden="true" />
+                        <EditIcon sx={{ fontSize: 16 }} aria-hidden='true' />
                         {t('postCard.edit')}
                     </MenuItem>
                 )}
@@ -896,7 +893,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     >
                         <DeleteIcon
                             sx={{ fontSize: 16, color: 'error.main' }}
-                            aria-hidden="true"
+                            aria-hidden='true'
                         />
                         <Typography color='error' variant='inherit'>
                             {t('postCard.delete')}

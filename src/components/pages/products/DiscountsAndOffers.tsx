@@ -131,10 +131,7 @@ const DiscountsAndOffers: FunctionComponent = () => {
             <link rel='canonical' href={currentUrl} />
 
             <title>
-                {t(
-                    `categories.discountsAndOffers.categories.discountsAndOffers.title`,
-                )}{' '}
-                | صفقة
+                {`${t(`categories.discountsAndOffers.categories.discountsAndOffers.title`)} | صفقة`}
             </title>
             <meta
                 name='description'

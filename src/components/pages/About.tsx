@@ -117,7 +117,7 @@ const About: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>{t('pages.about.title')} | صفقة</title>
+            <title>{`${t('pages.about.title')} | صفقة`}</title>
             <meta name='description' content={t('pages.about.subtitle')} />
             <meta property='og:title' content={t('pages.about.title')} />
             <meta

@@ -154,7 +154,7 @@ const SafetyHelp: FunctionComponent = () => {
     return (
         <>
             <link rel='canonical' href={currentUrl} />
-            <title>{t('pages.safety.title', 'الامان')} | صفقة</title>
+            <title>{`${t('pages.safety.title', 'الامان')} | صفقة`}</title>
             <meta
                 name='description'
                 content={t(

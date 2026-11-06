@@ -13,7 +13,7 @@ const PageNotFound: FunctionComponent = () => {
 
     return (
         <>
-            <title>{t('pages.pageNotFound.title')}</title>
+            <title>{`${t('pages.pageNotFound.title')} | صفقة`}</title>
 
             <meta
                 name='description'
