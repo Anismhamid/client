@@ -1,4 +1,13 @@
 {
+    "howItWorks": {
+        "title": "How Does It Work?",
+        "step1": "Post Your Ad",
+        "step1Desc": "Take a photo of your product, set a price, and your ad will be online in just two minutes.",
+        "step2": "Connect Directly",
+        "step2Desc": "The buyer contacts you, and you agree directly on the price and delivery.",
+        "step3": "Complete the Deal",
+        "step3Desc": "Hand over the product, receive your payment, and mark the ad as sold."
+    },
     "you": "You",
     "checkPrice": "Click to Check Price",
     "verifiedSeller": "Verified Seller",
@@ -1251,18 +1260,18 @@
                 "errors": {
                     "fetchFailed": "Failed to load discounted listings. Please try again later."
                 },
-                "viewAll": "View all"
+                "viewAll": "View All"
             },
             "categories": {
                 "discountsAndOffers": {
-                    "title": "Offers and discounts",
-                    "description": "Discover amazing discounts on featured listings. Limited-time offers with big savings!",
-                    "subtitle": "Shop now and save a lot on selected listings",
-                    "text1": "Exclusive offers",
-                    "text2": "Limited-time discounts on best-selling listings",
-                    "noProducts": "No discounted products available right now. Follow us soon for new offers!",
-                    "viewAll": "View all offers",
-                    "ariaLabel": "View discounted listings"
+                    "title": "Discounted Listings",
+                    "description": "Discover products whose sellers have reduced their prices and find great deals at lower prices.",
+                    "subtitle": "Browse discounted listings and get your favorite products at better prices.",
+                    "text1": "Reduced Prices",
+                    "text2": "Products at lower prices after sellers have reduced their listing prices.",
+                    "noProducts": "No discounted listings are available right now. Check back soon to discover products with reduced prices!",
+                    "viewAll": "View All Discounted Listings",
+                    "ariaLabel": "View listings with reduced prices set by their sellers"
                 }
             }
         },
@@ -2158,173 +2167,173 @@
             }
         },
         "terms": {
-    "title": "Terms of Use",
-    "description": "Terms and conditions for using the Safqa platform",
-    "subtitle": "Please read these terms carefully before using Safqa",
+            "title": "Terms of Use",
+            "description": "Terms and conditions for using the Safqa platform",
+            "subtitle": "Please read these terms carefully before using Safqa",
 
-    "lastUpdated": "Last updated: {{date}}",
+            "lastUpdated": "Last updated: {{date}}",
 
-    "importantPoints": {
-        "age": "You must be 12 or older, or use the platform with your parent or legal guardian's consent.",
-        "registration": "Registration is required to post listings.",
-        "c2c": "Safqa is a C2C platform. Users are responsible for their buying and selling transactions with each other.",
-        "legalAddress": "The platform is subject to the laws and regulations applicable within its legal jurisdiction."
-    },
-
-    "prohibitedItems": {
-        "title": "Prohibited Items and Activities",
-        "text": "It is strictly prohibited to post, sell, or buy any of the following on Safqa. We may remove any violating listing and suspend the responsible account without prior notice:",
-        "points": [
-            "Firearms, ammunition, and weapon parts, except under a valid official license from the competent authorities.",
-            "Drugs and any substances whose trade is prohibited under Israeli law.",
-            "Prescription-only medicines or any pharmaceutical products not licensed for sale to the public.",
-            "Counterfeit products or products that infringe intellectual property rights or trademarks.",
-            "Stolen goods or goods of illegal, unverified, or undocumented origin.",
-            "Alcohol or tobacco products.",
-            "Hazardous, flammable, or explosive materials, and fireworks.",
-            "Live animals or products derived from endangered species, in violation of applicable laws.",
-            "Sexual or pornographic content or products.",
-            "Official documents, personal identity data, or personal information of third parties.",
-            "Tickets or services whose resale is prohibited by law.",
-            "Any other product or service prohibited by Israeli law or requiring a license the seller has not obtained."
-        ]
-    },
-
-    "sections": {
-        "eligibility": {
-            "title": "Eligibility",
-            "text": "You must be 12 years or older to use the platform, or use it with the explicit consent of your parent or legal guardian. By using the platform, you confirm that you meet these requirements."
-        },
-
-        "products": {
-            "title": "Products and Listings",
-            "text": "Prices, product availability, and descriptions may change at any time. Safqa is a technical intermediary only and is not a party to the sales contract between users. We do not inspect products or guarantee their quality, safety, legality, or the accuracy of their descriptions."
-        },
-
-        "sellerObligations": {
-            "title": "Seller Obligations",
-            "points": [
-                "Be the owner of the product or be legally authorized to sell it.",
-                "Describe the product, its condition (new/used), and its price accurately, with genuine photos.",
-                "Complete the agreed transaction or cancel it with prior notice.",
-                "Bear any taxes or legal obligations arising from their selling activity."
-            ]
-        },
-
-        "userContent": {
-            "title": "User Content",
-            "text": "You retain ownership of the content you post (text, images, listings). By posting it, you grant Safqa a non-exclusive, royalty-free license to display, host, resize, and format it as necessary to operate the service. You are solely responsible for the content you post."
-        },
-
-        "liability": {
-            "title": "Disclaimer of Liability",
-            "points": [
-                "The platform is provided \"as is\" without any warranty of uninterrupted or error-free operation.",
-                "We are not liable for any loss or damage arising from your dealings with other users, fraud, defective products, or inaccurate listings.",
-                "We are not liable for indirect damages, to the extent permitted by law.",
-                "This clause does not affect any mandatory rights that cannot be waived by law."
-            ]
-        },
-
-        "termination": {
-            "title": "Account Termination",
-            "text": "You may delete your account at any time from the app settings or by contacting us. We may suspend or terminate your account if you violate these terms."
-        },
-
-        "reporting": {
-            "title": "Reporting Violations",
-            "text": "You can report any violating listing or user using the report button in the app or by contacting us. We will review reports within a reasonable time."
-        },
-
-        "changes": {
-            "title": "Changes to the Terms",
-            "text": "We may update these terms from time to time. Your continued use of the platform after changes are published means you accept them."
-        },
-
-        "governingLaw": {
-            "title": "Governing Law and Jurisdiction",
-            "text": "These terms are governed by the laws of the State of Israel, and its competent courts have jurisdiction over any dispute arising from them, subject to any mandatory consumer rights under applicable law."
-        },
-
-        "contact": {
-            "title": "Contact Us",
-            "emailLabel": "Email:",
-            "email": "anesmhamed1@gmail.com",
-            "phoneLabel": "Phone:",
-            "phone": "0538346915"
-        },
-
-        "registration": {
-            "title": "Registration and Account Creation",
-            "text": "You must create an account to post listings on the platform. You are responsible for providing accurate and up-to-date information and keeping your password confidential. We reserve the right to suspend or delete any account in case of suspicious activity or violation of these terms or our Privacy Policy.",
-            "privacyPolicy": "Privacy Policy"
-        },
-
-        "responsibility": {
-            "title": "Responsibility and Warranties",
-
-            "platform": {
-                "title": "Nature of the Platform",
-                "text": "Safqa is a C2C (user-to-user) platform that allows users to list and buy products directly from each other. We do not store products or provide delivery or pickup services."
+            "importantPoints": {
+                "age": "You must be 12 or older, or use the platform with your parent or legal guardian's consent.",
+                "registration": "Registration is required to post listings.",
+                "c2c": "Safqa is a C2C platform. Users are responsible for their buying and selling transactions with each other.",
+                "legalAddress": "The platform is subject to the laws and regulations applicable within its legal jurisdiction."
             },
 
-            "legalAddress": {
-                "title": "Legal Address",
-                "addressLabel": "Address:",
-                "address": "Ein Al-Dhurwa Street, Umm al-Fahm, Israel.",
-                "noteLabel": "Note:",
-                "note": "This address is considered the official legal address for all legal notices and correspondence."
+            "prohibitedItems": {
+                "title": "Prohibited Items and Activities",
+                "text": "It is strictly prohibited to post, sell, or buy any of the following on Safqa. We may remove any violating listing and suspend the responsible account without prior notice:",
+                "points": [
+                    "Firearms, ammunition, and weapon parts, except under a valid official license from the competent authorities.",
+                    "Drugs and any substances whose trade is prohibited under Israeli law.",
+                    "Prescription-only medicines or any pharmaceutical products not licensed for sale to the public.",
+                    "Counterfeit products or products that infringe intellectual property rights or trademarks.",
+                    "Stolen goods or goods of illegal, unverified, or undocumented origin.",
+                    "Alcohol or tobacco products.",
+                    "Hazardous, flammable, or explosive materials, and fireworks.",
+                    "Live animals or products derived from endangered species, in violation of applicable laws.",
+                    "Sexual or pornographic content or products.",
+                    "Official documents, personal identity data, or personal information of third parties.",
+                    "Tickets or services whose resale is prohibited by law.",
+                    "Any other product or service prohibited by Israeli law or requiring a license the seller has not obtained."
+                ]
+            },
+
+            "sections": {
+                "eligibility": {
+                    "title": "Eligibility",
+                    "text": "You must be 12 years or older to use the platform, or use it with the explicit consent of your parent or legal guardian. By using the platform, you confirm that you meet these requirements."
+                },
+
+                "products": {
+                    "title": "Products and Listings",
+                    "text": "Prices, product availability, and descriptions may change at any time. Safqa is a technical intermediary only and is not a party to the sales contract between users. We do not inspect products or guarantee their quality, safety, legality, or the accuracy of their descriptions."
+                },
+
+                "sellerObligations": {
+                    "title": "Seller Obligations",
+                    "points": [
+                        "Be the owner of the product or be legally authorized to sell it.",
+                        "Describe the product, its condition (new/used), and its price accurately, with genuine photos.",
+                        "Complete the agreed transaction or cancel it with prior notice.",
+                        "Bear any taxes or legal obligations arising from their selling activity."
+                    ]
+                },
+
+                "userContent": {
+                    "title": "User Content",
+                    "text": "You retain ownership of the content you post (text, images, listings). By posting it, you grant Safqa a non-exclusive, royalty-free license to display, host, resize, and format it as necessary to operate the service. You are solely responsible for the content you post."
+                },
+
+                "liability": {
+                    "title": "Disclaimer of Liability",
+                    "points": [
+                        "The platform is provided \"as is\" without any warranty of uninterrupted or error-free operation.",
+                        "We are not liable for any loss or damage arising from your dealings with other users, fraud, defective products, or inaccurate listings.",
+                        "We are not liable for indirect damages, to the extent permitted by law.",
+                        "This clause does not affect any mandatory rights that cannot be waived by law."
+                    ]
+                },
+
+                "termination": {
+                    "title": "Account Termination",
+                    "text": "You may delete your account at any time from the app settings or by contacting us. We may suspend or terminate your account if you violate these terms."
+                },
+
+                "reporting": {
+                    "title": "Reporting Violations",
+                    "text": "You can report any violating listing or user using the report button in the app or by contacting us. We will review reports within a reasonable time."
+                },
+
+                "changes": {
+                    "title": "Changes to the Terms",
+                    "text": "We may update these terms from time to time. Your continued use of the platform after changes are published means you accept them."
+                },
+
+                "governingLaw": {
+                    "title": "Governing Law and Jurisdiction",
+                    "text": "These terms are governed by the laws of the State of Israel, and its competent courts have jurisdiction over any dispute arising from them, subject to any mandatory consumer rights under applicable law."
+                },
+
+                "contact": {
+                    "title": "Contact Us",
+                    "emailLabel": "Email:",
+                    "email": "anesmhamed1@gmail.com",
+                    "phoneLabel": "Phone:",
+                    "phone": "0538346915"
+                },
+
+                "registration": {
+                    "title": "Registration and Account Creation",
+                    "text": "You must create an account to post listings on the platform. You are responsible for providing accurate and up-to-date information and keeping your password confidential. We reserve the right to suspend or delete any account in case of suspicious activity or violation of these terms or our Privacy Policy.",
+                    "privacyPolicy": "Privacy Policy"
+                },
+
+                "responsibility": {
+                    "title": "Responsibility and Warranties",
+
+                    "platform": {
+                        "title": "Nature of the Platform",
+                        "text": "Safqa is a C2C (user-to-user) platform that allows users to list and buy products directly from each other. We do not store products or provide delivery or pickup services."
+                    },
+
+                    "legalAddress": {
+                        "title": "Legal Address",
+                        "addressLabel": "Address:",
+                        "address": "Ein Al-Dhurwa Street, Umm al-Fahm, Israel.",
+                        "noteLabel": "Note:",
+                        "note": "This address is considered the official legal address for all legal notices and correspondence."
+                    }
+                },
+
+                "userConduct": {
+                    "title": "User Conduct",
+
+                    "points": [
+                        "Do not use the platform for unlawful purposes.",
+                        "Do not impersonate another person or provide false information.",
+                        "Do not upload malicious code or interfere with the proper operation of the platform.",
+                        "Do not attempt to access systems you are not authorized to use."
+                    ],
+
+                    "warning": "Violating these terms may result in account suspension, a ban, or legal action."
+                },
+
+                "blocking": {
+                    "title": "Blocking and User Interaction",
+                    "text": "A user can block another user to protect their privacy and prevent unwanted interaction. When a block is activated, it applies to both parties according to Safqa's blocking system.",
+                    "points": [
+                        "When a user is blocked, neither party can message each other, send offers, or interact directly.",
+                        "The blocked user's listings are hidden from the blocking user, and vice versa.",
+                        "Blocked listings do not appear in search results, categories, or related listings for the other party.",
+                        "A blocked user cannot access the other party's listings through direct links.",
+                        "Users can manage their blocked list and unblock at any time.",
+                        "Safqa may retain necessary blocking records for security and abuse-prevention purposes."
+                    ]
+                }
+            },
+
+            "sidebar": {
+                "title": "Important Links",
+                "privacy": "Privacy Policy",
+                "contact": "Contact Us",
+                "safety": "Safety Tips",
+
+                "questions": {
+                    "title": "Have questions?",
+                    "text": "If you have any questions about the Terms of Use, feel free to contact us.",
+                    "button": "Contact Us"
+                },
+
+                "home": "Back to Home"
+            },
+
+            "actions": {
+                "title": "Do you agree to the terms?",
+                "register": "Create a new account",
+                "login": "Log in"
             }
         },
-
-        "userConduct": {
-            "title": "User Conduct",
-
-            "points": [
-                "Do not use the platform for unlawful purposes.",
-                "Do not impersonate another person or provide false information.",
-                "Do not upload malicious code or interfere with the proper operation of the platform.",
-                "Do not attempt to access systems you are not authorized to use."
-            ],
-
-            "warning": "Violating these terms may result in account suspension, a ban, or legal action."
-        },
-
-        "blocking": {
-            "title": "Blocking and User Interaction",
-            "text": "A user can block another user to protect their privacy and prevent unwanted interaction. When a block is activated, it applies to both parties according to Safqa's blocking system.",
-            "points": [
-                "When a user is blocked, neither party can message each other, send offers, or interact directly.",
-                "The blocked user's listings are hidden from the blocking user, and vice versa.",
-                "Blocked listings do not appear in search results, categories, or related listings for the other party.",
-                "A blocked user cannot access the other party's listings through direct links.",
-                "Users can manage their blocked list and unblock at any time.",
-                "Safqa may retain necessary blocking records for security and abuse-prevention purposes."
-            ]
-        }
-    },
-
-    "sidebar": {
-        "title": "Important Links",
-        "privacy": "Privacy Policy",
-        "contact": "Contact Us",
-        "safety": "Safety Tips",
-
-        "questions": {
-            "title": "Have questions?",
-            "text": "If you have any questions about the Terms of Use, feel free to contact us.",
-            "button": "Contact Us"
-        },
-
-        "home": "Back to Home"
-    },
-
-    "actions": {
-        "title": "Do you agree to the terms?",
-        "register": "Create a new account",
-        "login": "Log in"
-    }
-},
         "about": {
             "title": "About Safqa",
             "subtitle": "Safqa is an online marketplace connecting buyers and sellers in a simple and safe way.",
@@ -2918,7 +2927,7 @@
         "copyFailed": "Failed to copy link",
         "reportSuccess": "Product reported",
         "outOfStockError": "This product is currently unavailable",
-        "viewDetails":"View details"
+        "viewDetails": "View details"
     },
     "searchPage": {
         "title": "Search results",

@@ -94,11 +94,13 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
             in_stock: post.in_stock,
             ...initialDynamicValues,
             createdAt: post.createdAt || '',
-            featured: false,
+            featured: post.featured ?? false,
         },
         validationSchema: yup.object({
             product_name: yup.string().min(2).required(),
             category: yup.string().required(),
+            subcategory: yup.string().required(),
+            type: yup.string().required(),
             price: yup.number().required(),
             description: yup.string().min(2).max(500),
             image: yup

@@ -183,8 +183,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
     };
 
     const categoryPath =
-    categoryPathMap[post.category] ?? `/category/${post.category}`;
-
+        categoryPathMap[post.category] ?? `/category/${post.category}`;
 
     return (
         <Card
@@ -281,12 +280,14 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                             width: '100%',
                             height: '100%',
                             objectFit: 'cover',
+                            aspectRatio: { xs: '16 / 11', sm: '4 / 3' },
+                            overflow: 'hidden',
                             bgcolor: 'action.hover',
                             transition: 'transform 0.3s ease',
                             '&:hover': {
                                 transform: isOutOfStock
                                     ? 'none'
-                                    : 'scale(1.04)',
+                                    : 'scale(1.1)',
                             },
                         }}
                     />
@@ -405,10 +406,7 @@ const PostCard: FunctionComponent<PostCardProps> = ({
                     spacing={0.75}
                     sx={{ mb: 0.5 }}
                 >
-                    <Link
-                        to={categoryPath}
-                        style={{ textDecoration: 'none' }}
-                    >
+                    <Link to={categoryPath} style={{ textDecoration: 'none' }}>
                         <Typography
                             sx={{
                                 fontSize: '0.6875rem',

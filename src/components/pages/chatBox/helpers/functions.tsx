@@ -5,33 +5,32 @@ import { LocalMessage } from '../../../../interfaces/chat/localMessage';
 import { BaseUser } from '../../../../interfaces/chat/chatUser';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import socket from '../../../../socket/globalSocket';
-import { Typography } from '@mui/material';
 import { UserMessage } from '../../../../interfaces/chat/usersMessages';
 import api from '../../../../services/api';
+import { ErrorOutline } from '@mui/icons-material';
 
 // تعريف نوع الحالة
 type MessageStatus = 'seen' | 'delivered' | 'sent' | 'pending' | 'error';
 
 export const getStatusIcon = (status: MessageStatus) => {
-    console.log('Getting status icon for:', status);
-
     switch (status) {
         case 'seen':
-            return <DoneAllIcon sx={{ fontSize: 14, color: '#2196f3' }} />;
+            return <DoneAllIcon color="info" fontSize="small" />;
+
         case 'delivered':
-            return <DoneAllIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />;
+            return <DoneAllIcon fontSize="small" />;
+
         case 'sent':
-            return <CheckIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />;
+            return <CheckIcon fontSize="small" />;
+
         case 'pending':
-            return <AccessTimeIcon sx={{ fontSize: 12, color: '#9e9e9e' }} />;
+            return <AccessTimeIcon  fontSize="small" />;
+
         case 'error':
-            return (
-                <Typography sx={{ color: 'error.main', fontSize: 12 }}>
-                    ⚠
-                </Typography>
-            );
+            return <ErrorOutline color="error" fontSize="small" />;
+
         default:
-            return <CheckIcon sx={{ fontSize: 14, color: '#9e9e9e' }} />;
+            return null;
     }
 };
 
@@ -66,15 +65,26 @@ export const reconcileMessage = (
     prev: LocalMessage[],
     incoming: LocalMessage,
 ): LocalMessage[] => {
-    return prev.map((m): LocalMessage => {
-        if (m.tempId && incoming.tempId && m.tempId === incoming.tempId) {
-            return { ...incoming };
-        }
-        if (m._id === incoming._id) {
-            return { ...m, status: incoming.status as MessageStatus };
-        }
-        return m;
-    });
+    const index = prev.findIndex(
+        (m) =>
+            (incoming.tempId && m.tempId === incoming.tempId) ||
+            (incoming._id && m._id === incoming._id),
+    );
+
+    if (index === -1) {
+        return [...prev, incoming];
+    }
+
+    return prev.map((m, i) =>
+        i === index
+            ? {
+                  ...m,
+                  ...incoming,
+                  status: incoming.status ?? m.status,
+                  tempId: incoming.tempId ?? m.tempId,
+              }
+            : m,
+    );
 };
 
 export const sendMessage = async (

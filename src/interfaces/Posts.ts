@@ -188,8 +188,12 @@ export interface Posts {
     language?: string;
     isbn?: string;
 
-    // ✅ حقول الآلات الموسيقية (MusicalInstruments)
-    // (يمكن استخدام brand, model, material, color, size, electric, condition, accessories)
+    // Musical Instruments
+    material?: string;
+    size?: string;
+    electric?: boolean;
+    condition?: string;
+    accessories?: string[];
 
     // ✅ حقول المعدات (ConstructionEquipment, IndustrialEquipment, ...)
     model?: string;

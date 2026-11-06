@@ -513,14 +513,14 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     // INPUT / TYPING
     // ======================================================
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
         const value = e.target.value;
 
         setInput(value);
 
-        if (!socket) {
-            return;
-        }
+        if (!socket) return;
 
         if (!value.trim()) {
             socket.emit('user:stopTyping', {
@@ -529,7 +529,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             });
 
             isTypingRef.current = false;
-
             return;
         }
 
@@ -1114,7 +1113,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             py: 1,
                         }}
                     >
-                        <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={20} />
+                        <CircularProgress
+                            aria-label={t('common.loading', 'جاري التحميل')}
+                            size={20}
+                        />
                     </Box>
                 )}
 
@@ -1128,7 +1130,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                             mt: 4,
                         }}
                     >
-                        <CircularProgress aria-label={t('common.loading', 'جاري التحميل')}  size={24} />
+                        <CircularProgress
+                            aria-label={t('common.loading', 'جاري التحميل')}
+                            size={24}
+                        />
                     </Box>
                 ) : (
                     userMessages.map((msg) => {
@@ -1245,7 +1250,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                                                 [dir === 'rtl'
                                                     ? 'left'
-                                                    : 'right']:'90%',
+                                                    : 'right']: '90%',
 
                                                 width: 28,
 
@@ -1384,7 +1389,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                                 >
                                                     {isEditing ? (
                                                         <CircularProgress
-                                                        aria-label={t('common.loading', 'جاري التحميل')} 
+                                                            aria-label={t(
+                                                                'common.loading',
+                                                                'جاري التحميل',
+                                                            )}
                                                             size={16}
                                                         />
                                                     ) : (

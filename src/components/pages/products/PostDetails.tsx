@@ -327,19 +327,19 @@ const PostDetails: FunctionComponent = () => {
 
     /* ---------- derived ---------- */
 
-    const pageUrl = post._id
+    const pageUrl = post?._id
         ? getAbsolutePostUrl(post)
         : `${SITE_URL}${pathname}`;
-    const reviews = useMemo(() => post.reviews ?? [], [post.reviews]);
+
+    const reviews = useMemo(() => post?.reviews ?? [], [post?.reviews]);
 
     const sellerDisplayName = useMemo(
         () =>
-            [post.seller?.name?.first, post.seller?.name?.last]
+            [post?.seller?.name?.first, post?.seller?.name?.last]
                 .filter(Boolean)
                 .join(' ') || 'user',
-        [post.seller?.name?.first, post.seller?.name?.last],
+        [post?.seller?.name?.first, post?.seller?.name?.last],
     );
-
     const categoryLabel = useMemo(() => {
         if (!post.category) return t('common.product.category') || 'التصنيف';
         return t(post.category);

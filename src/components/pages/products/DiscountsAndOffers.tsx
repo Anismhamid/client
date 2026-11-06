@@ -1,24 +1,25 @@
 import {
     FunctionComponent,
-    useEffect,
-    useState,
+    memo,
     useCallback,
-    useMemo,
+    useEffect,
     useRef,
+    useState,
 } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
+    alpha,
     Box,
-    Typography,
-    useTheme,
-    useMediaQuery,
-    Skeleton,
-    Link,
-    Container,
     Chip,
+    Container,
     IconButton,
+    Link,
+    Skeleton,
     Stack,
+    Typography,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -26,10 +27,9 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Navigation, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
-import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { getPostsInDiscount } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
@@ -40,23 +40,280 @@ import { Posts } from '../../../interfaces/Posts';
 import handleRTL from '../../../locales/handleRTL';
 import { getAbsolutePostUrl, getPostUrl } from './helpers/postUrl';
 
-const calculateDiscountedPrice = (price: number, discount: number): number => {
-    return price - (price * discount) / 100;
-};
+const calculateDiscountedPrice = (price: number, discount: number): number =>
+    price - (price * discount) / 100;
+
+/* ---------------------------------- Card ---------------------------------- */
+
+interface ProductCardProps {
+    product: Posts;
+    viewLabel: string;
+}
+
+const ProductCard = memo(({ product, viewLabel }: ProductCardProps) => {
+    const [imgLoaded, setImgLoaded] = useState(false);
+
+    const discountedPrice = calculateDiscountedPrice(
+        product.price,
+        product.discount,
+    );
+
+    const productUrl = getPostUrl({
+        _id: product._id,
+        product_name: product.product_name,
+        category: product.category,
+        seller: product.seller,
+    });
+
+    return (
+        <Link
+            component={RouterLink}
+            to={productUrl}
+            underline='none'
+            color='inherit'
+            sx={{
+                display: 'flex',
+                width: '100%',
+                height: '100%',
+                borderRadius: 3,
+                outline: 'none',
+                '&:focus-visible': {
+                    boxShadow: (t) => `0 0 0 3px ${t.palette.primary.main}`,
+                },
+            }}
+        >
+            <Box
+                component='article'
+                sx={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    transition: 'box-shadow .25s ease, transform .25s ease',
+                    '@media (hover: hover)': {
+                        '&:hover': {
+                            boxShadow: 6,
+                            transform: 'translateY(-4px)',
+                            '& .product-image': { transform: 'scale(1.06)' },
+                            '& .view-btn': {
+                                opacity: 1,
+                                transform: 'translate(-50%, 0)',
+                            },
+                        },
+                    },
+                }}
+            >
+                {/* Image */}
+                <Box
+                    sx={{
+                        position: 'relative',
+                        aspectRatio: '4 / 3',
+                        overflow: 'hidden',
+                        bgcolor: 'action.hover',
+                    }}
+                >
+                    {!imgLoaded && (
+                        <Skeleton
+                            variant='rectangular'
+                            animation='wave'
+                            sx={{ position: 'absolute', inset: 0 }}
+                        />
+                    )}
+                    <Box
+                        component='img'
+                        className='product-image'
+                        src={product.image?.url}
+                        alt={product.product_name}
+                        loading='lazy'
+                        decoding='async'
+                        onLoad={() => setImgLoaded(true)}
+                        onError={() => setImgLoaded(true)}
+                        sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            opacity: imgLoaded ? 1 : 0,
+                            transition: 'opacity .3s ease, transform .4s ease',
+                        }}
+                    />
+
+                    <Chip
+                        label={`-${product.discount}%`}
+                        size='small'
+                        color='error'
+                        sx={{
+                            position: 'absolute',
+                            top: 10,
+                            insetInlineStart: 10,
+                            fontWeight: 800,
+                            fontSize: '0.75rem',
+                            borderRadius: 1.5,
+                            zIndex: 2,
+                            boxShadow: 2,
+                        }}
+                    />
+
+                    {/* Hover pill (desktop only) */}
+                    <Box
+                        className='view-btn'
+                        sx={{
+                            display: { xs: 'none', md: 'flex' },
+                            position: 'absolute',
+                            bottom: 12,
+                            left: '50%',
+                            transform: 'translate(-50%, 10px)',
+                            opacity: 0,
+                            transition: 'all .25s ease',
+                            alignItems: 'center',
+                            gap: 0.5,
+                            px: 1.5,
+                            py: 0.5,
+                            borderRadius: 99,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            color: 'text.primary',
+                            bgcolor: (t) =>
+                                alpha(t.palette.background.paper, 0.92),
+                            backdropFilter: 'blur(6px)',
+                            boxShadow: 1,
+                            zIndex: 2,
+                        }}
+                    >
+                        <VisibilityIcon sx={{ fontSize: 14 }} />
+                        {viewLabel}
+                    </Box>
+                </Box>
+
+                {/* Content */}
+                <Box
+                    sx={{
+                        p: { xs: 1.75, md: 2 },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flexGrow: 1,
+                        gap: 0.75,
+                    }}
+                >
+                    <Typography
+                        variant='subtitle2'
+                        component='h3'
+                        sx={{
+                            fontWeight: 700,
+                            lineHeight: 1.45,
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            minHeight: '2.9em',
+                        }}
+                    >
+                        {product.product_name}
+                    </Typography>
+
+                    <Typography
+                        variant='caption'
+                        color='text.secondary'
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.75,
+                        }}
+                    >
+                        <Box
+                            component='span'
+                            sx={{
+                                width: 5,
+                                height: 5,
+                                borderRadius: '50%',
+                                bgcolor: 'primary.main',
+                                flexShrink: 0,
+                            }}
+                        />
+                        {product.category}
+                    </Typography>
+
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'baseline',
+                            flexWrap: 'wrap',
+                            columnGap: 1,
+                            mt: 'auto',
+                            pt: 1.25,
+                            borderTop: '1px dashed',
+                            borderColor: 'divider',
+                        }}
+                    >
+                        <Typography
+                            component='span'
+                            variant='h6'
+                            color='error.main'
+                            fontWeight={800}
+                            sx={{ lineHeight: 1.2 }}
+                        >
+                            {formatPrice(discountedPrice)}
+                        </Typography>
+                        <Typography
+                            component='span'
+                            variant='caption'
+                            color='text.secondary'
+                            sx={{ textDecoration: 'line-through' }}
+                        >
+                            {formatPrice(product.price)}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
+        </Link>
+    );
+});
+ProductCard.displayName = 'ProductCard';
+
+/* -------------------------------- Skeleton -------------------------------- */
+
+const SkeletonCard = () => (
+    <Box
+        sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+            border: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+        }}
+    >
+        <Skeleton
+            variant='rectangular'
+            animation='wave'
+            sx={{ aspectRatio: '4 / 3', height: 'auto', width: '100%' }}
+        />
+        <Box sx={{ p: 2 }}>
+            <Skeleton variant='text' width='90%' height={26} />
+            <Skeleton variant='text' width='50%' height={20} />
+            <Skeleton variant='text' width='40%' height={32} sx={{ mt: 1 }} />
+        </Box>
+    </Box>
+);
+
+/* ------------------------------- Component -------------------------------- */
 
 const DiscountsAndOffers: FunctionComponent = () => {
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+    const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
     const dir = handleRTL();
+    const isRtl = dir === 'rtl';
 
     const [postsInDiscount, setPostsInDiscount] = useState<Posts[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
-    // Ref to control Swiper manually
     const swiperRef = useRef<SwiperType | null>(null);
 
     useEffect(() => {
@@ -86,19 +343,8 @@ const DiscountsAndOffers: FunctionComponent = () => {
         };
     }, [t]);
 
-    const setImageLoaded = useCallback((id: string) => {
-        setLoadedImages((prev) => {
-            const next = new Set(prev);
-            next.add(id);
-            return next;
-        });
-    }, []);
-
-    const slidesPerView = useMemo(() => {
-        if (isMobile) return 1.15;
-        if (isTablet) return 2.15;
-        return 3.15;
-    }, [isMobile, isTablet]);
+    const handlePrev = useCallback(() => swiperRef.current?.slidePrev(), []);
+    const handleNext = useCallback(() => swiperRef.current?.slideNext(), []);
 
     if (error) {
         return (
@@ -116,87 +362,95 @@ const DiscountsAndOffers: FunctionComponent = () => {
         );
     }
 
-    if (postsInDiscount.length === 0 && !loading) {
-        return null;
-    }
+    if (postsInDiscount.length === 0 && !loading) return null;
 
     const productsList = generateDiscountsJsonLd(
         postsInDiscount,
         getAbsolutePostUrl,
     );
     const currentUrl = 'https://client-qqq1.vercel.app/discounts-and-offers';
+    const titleKey =
+        'categories.discountsAndOffers.categories.discountsAndOffers.title';
+    const descKey =
+        'categories.discountsAndOffers.categories.discountsAndOffers.description';
+    const viewLabel = t('pages.messageAuditLogs.viewDetails') || 'عرض';
+
+    const navBtnSx = {
+        width: 42,
+        height: 42,
+        bgcolor: 'background.paper',
+        border: '1px solid',
+        borderColor: 'divider',
+        color: 'text.primary',
+        transition: 'all .2s ease',
+        '&:hover': {
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            borderColor: 'primary.main',
+        },
+    } as const;
+
     return (
         <>
             <JsonLd data={productsList} />
             <link rel='canonical' href={currentUrl} />
-
-            <title>
-                {`${t(`categories.discountsAndOffers.categories.discountsAndOffers.title`)} | صفقة`}
-            </title>
-            <meta
-                name='description'
-                content={t(
-                    `categories.discountsAndOffers.categories.discountsAndOffers.description`,
-                )}
-            />
+            <title>{`${t(titleKey)} | صفقة`}</title>
+            <meta name='description' content={t(descKey)} />
 
             <Box
                 component='section'
-                sx={{
-                    py: { xs: 5, sm: 7, md: 9 },
-                }}
-                dir={dir}
+              dir={dir} sx={{ py: { xs: 3, sm: 5, md: 8 } }}
             >
                 <Container maxWidth='lg'>
-                    {/* Header - Organized Layout with Navigation Buttons */}
+                    {/* Header */}
                     <Box
                         sx={{
                             display: 'flex',
                             flexDirection: { xs: 'column', sm: 'row' },
                             justifyContent: 'space-between',
-                            alignItems: { xs: 'flex-start', sm: 'flex-end' },
-                            mb: { xs: 4, md: 6 },
-                            gap: 2,
+                            alignItems: { xs: 'stretch', sm: 'flex-end' },
+                            gap: { xs: 2, sm: 3 },
+                            mb: { xs: 3, md: 5 },
+                            pb: { xs: 2, md: 3 },
                             borderBottom: '1px solid',
                             borderColor: 'divider',
-                            pb: 3,
                         }}
                     >
-                        {/* Title & Description */}
-                        <Box sx={{ maxWidth: 600 }}>
+                        <Box sx={{ maxWidth: 640 }}>
                             <Typography
-                                variant={isMobile ? 'h5' : 'h4'}
                                 component='h2'
                                 fontWeight={800}
                                 sx={{
-                                    color: 'text.primary',
-                                    mb: 1,
+                                    fontSize: {
+                                        xs: '1.4rem',
+                                        sm: '1.75rem',
+                                        md: '2.125rem',
+                                    },
+                                    lineHeight: 1.25,
+                                    mb: 0.75,
                                 }}
                             >
-                                {t(
-                                    'categories.discountsAndOffers.categories.discountsAndOffers.title',
-                                )}
+                                {t(titleKey)}
                             </Typography>
                             <Typography
-                                variant='body1'
                                 color='text.secondary'
-                                sx={{ lineHeight: 1.6 }}
+                                sx={{
+                                    fontSize: { xs: '0.9rem', md: '1rem' },
+                                    lineHeight: 1.7,
+                                }}
                             >
-                                {t(
-                                    'categories.discountsAndOffers.categories.discountsAndOffers.description',
-                                )}
+                                {t(descKey)}
                             </Typography>
                         </Box>
 
-                        {/* Controls: View All + Navigation Arrows */}
                         <Stack
                             direction='row'
                             alignItems='center'
-                            spacing={2}
-                            sx={{
-                                width: { xs: '100%', sm: 'auto' },
-                                justifyContent: 'space-between',
+                            justifyContent={{
+                                xs: 'space-between',
+                                sm: 'flex-end',
                             }}
+                            spacing={2}
                         >
                             <Link
                                 component={RouterLink}
@@ -205,40 +459,68 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                 sx={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    gap: 1,
+                                    gap: 0.75,
                                     color: 'primary.main',
                                     fontWeight: 700,
                                     fontSize: '0.95rem',
                                     whiteSpace: 'nowrap',
                                     '&:hover .arrow-icon': {
-                                        transform:
-                                            dir === 'ltr'
-                                                ? 'translateX(4px)'
-                                                : 'translateX(-4px)',
+                                        transform: `translateX(${isRtl ? '-4px' : '4px'})`,
                                     },
                                 }}
                             >
                                 {t(
                                     'categories.discountsAndOffers.common.viewAll',
                                 ) || 'View All Offers'}
-                                {dir === 'ltr' ? (
-                                    <ArrowForwardIcon
-                                        className='arrow-icon'
-                                        sx={{
-                                            fontSize: '1.2rem',
-                                            transition: 'transform 0.2s ease',
-                                        }}
-                                    />
-                                ) : (
+                                {isRtl ? (
                                     <ArrowBackIcon
                                         className='arrow-icon'
                                         sx={{
                                             fontSize: '1.2rem',
-                                            transition: 'transform 0.2s ease',
+                                            transition: 'transform .2s ease',
+                                        }}
+                                    />
+                                ) : (
+                                    <ArrowForwardIcon
+                                        className='arrow-icon'
+                                        sx={{
+                                            fontSize: '1.2rem',
+                                            transition: 'transform .2s ease',
                                         }}
                                     />
                                 )}
                             </Link>
+
+                            {/* Nav arrows – desktop/tablet only */}
+                            {!isMobile && !loading && (
+                                <Stack direction='row' spacing={1}>
+                                    <IconButton
+                                        onClick={handlePrev}
+                                        aria-label={t(
+                                            'common.previous',
+                                            'السابق',
+                                        )}
+                                        sx={navBtnSx}
+                                    >
+                                        {isRtl ? (
+                                            <ChevronRightIcon />
+                                        ) : (
+                                            <ChevronLeftIcon />
+                                        )}
+                                    </IconButton>
+                                    <IconButton
+                                        onClick={handleNext}
+                                        aria-label={t('common.next', 'التالي')}
+                                        sx={navBtnSx}
+                                    >
+                                        {isRtl ? (
+                                            <ChevronLeftIcon />
+                                        ) : (
+                                            <ChevronRightIcon />
+                                        )}
+                                    </IconButton>
+                                </Stack>
+                            )}
                         </Stack>
                     </Box>
 
@@ -251,425 +533,101 @@ const DiscountsAndOffers: FunctionComponent = () => {
                                     xs: '1fr',
                                     sm: 'repeat(2, 1fr)',
                                     md: 'repeat(3, 1fr)',
+                                    lg: 'repeat(4, 1fr)',
                                 },
-                                gap: 3,
+                                gap: { xs: 2, md: 3 },
                             }}
                         >
-                            {[...Array(3)].map((_, index) => (
-                                <Box key={index}>
-                                    <Skeleton
-                                        variant='rounded'
-                                        height={220}
-                                        sx={{ mb: 2, borderRadius: 2 }}
-                                    />
-                                    <Skeleton
-                                        variant='text'
-                                        width='100%'
-                                        height={32}
-                                    />
-                                    <Skeleton variant='text' width='60%' />
+                            {[0, 1, 2, 3].map((i) => (
+                                <Box
+                                    key={i}
+                                    sx={{
+                                        display: {
+                                            xs: i < 1 ? 'block' : 'none',
+                                            sm: i < 2 ? 'block' : 'none',
+                                            md: i < 3 ? 'block' : 'none',
+                                            lg: 'block',
+                                        },
+                                    }}
+                                >
+                                    <SkeletonCard />
                                 </Box>
                             ))}
                         </Box>
                     ) : (
                         <Box
                             sx={{
+                                mx: { xs: -2, sm: 0 },
                                 '& .swiper': {
-                                    pb: { xs: 6, md: 4 },
-                                    px: 0.5,
+                                    px: { xs: 2, sm: 0.5 },
+                                    pt: 1,
+                                    pb: { xs: 4, md: 5 },
                                 },
                                 '& .swiper-slide': {
                                     height: 'auto',
                                     display: 'flex',
                                 },
-                                // Hide default Swiper arrows since we use custom ones
-                                '& .swiper-button-prev, & .swiper-button-next':
-                                    {
-                                        display: 'none',
-                                    },
+                                '& .swiper-pagination': { bottom: 0 },
                                 '& .swiper-pagination-bullet': {
                                     bgcolor: 'text.secondary',
                                     opacity: 0.3,
-                                    width: 10,
-                                    height: 10,
-                                    transition: 'all 0.2s ease',
+                                    width: 8,
+                                    height: 8,
+                                    transition: 'all .25s ease',
                                 },
                                 '& .swiper-pagination-bullet-active': {
                                     bgcolor: 'primary.main',
                                     opacity: 1,
-                                    width: 20,
+                                    width: 22,
                                     borderRadius: 4,
                                 },
                             }}
                         >
                             <Swiper
-                                onSwiper={(swiper) => {
-                                    swiperRef.current = swiper;
+                                key={dir}
+                                dir={dir}
+                                onSwiper={(s) => {
+                                    swiperRef.current = s;
                                 }}
-                                modules={[Autoplay, Navigation, Pagination]}
-                                autoplay={{
-                                    delay: 5000,
-                                    disableOnInteraction: false,
-                                    pauseOnMouseEnter: true,
-                                }}
-                                loop={postsInDiscount.length > slidesPerView}
-                                navigation={false} // Disabled default navigation
+                                modules={[Autoplay, Pagination]}
+                                autoplay={
+                                    reduceMotion
+                                        ? false
+                                        : {
+                                              delay: 5000,
+                                              disableOnInteraction: false,
+                                              pauseOnMouseEnter: true,
+                                          }
+                                }
+                                rewind
+                                grabCursor
                                 pagination={{ clickable: true }}
-                                spaceBetween={100}
-                                slidesPerView={slidesPerView}
-                                grabCursor={true}
+                                slidesPerView={1}
+                                spaceBetween={20}
+                                breakpoints={{
+                                    600: {
+                                        slidesPerView: 2.15,
+                                        spaceBetween: 16,
+                                    },
+                                    900: {
+                                        slidesPerView: 3.15,
+                                        spaceBetween: 20,
+                                    },
+                                    1200: {
+                                        slidesPerView: 4,
+                                        spaceBetween: 24,
+                                    },
+                                }}
                             >
-                                {postsInDiscount.map((product) => {
-                                    const isLoaded = loadedImages.has(
-                                        product._id as string,
-                                    );
-                                    const discountedPrice =
-                                        calculateDiscountedPrice(
-                                            product.price,
-                                            product.discount,
-                                        );
-
-                                    const productUrl = getPostUrl({
-                                        _id: product._id,
-                                        product_name: product.product_name,
-                                        category: product.category,
-                                        seller: product.seller,
-                                    });
-
-                                    return (
-                                        <SwiperSlide key={product._id}>
-                                            <Link
-                                                to={productUrl}
-                                                component={RouterLink}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    color: 'inherit',
-                                                    display: 'flex',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                }}
-                                            >
-                                                <Box
-                                                    component='article'
-                                                    sx={{
-                                                        width: '100%',
-                                                        display: 'flex',
-                                                        flexDirection: 'column',
-                                                        borderRadius: 2,
-                                                        bgcolor:
-                                                            'background.paper',
-                                                        border: '1px solid',
-                                                        borderColor: 'divider',
-                                                        transition:
-                                                            'box-shadow 0.2s ease, transform 0.2s ease',
-                                                        '&:hover': {
-                                                            boxShadow: 6,
-                                                            transform:
-                                                                'translateY(-4px)',
-                                                            '& .product-image':
-                                                                {
-                                                                    transform:
-                                                                        'scale(1.05)',
-                                                                },
-                                                            '& .view-btn': {
-                                                                opacity: 1,
-                                                                transform:
-                                                                    'translateY(0)',
-                                                            },
-                                                        },
-                                                    }}
-                                                >
-                                                    {/* Image Container */}
-                                                    <Box
-                                                        sx={{
-                                                            position:
-                                                                'relative',
-                                                            pt: '75%',
-                                                            overflow: 'hidden',
-                                                            bgcolor: 'grey.50',
-                                                            borderTopLeftRadius: 8,
-                                                            borderTopRightRadius: 8,
-                                                        }}
-                                                    >
-                                                        {!isLoaded && (
-                                                            <Skeleton
-                                                                variant='rectangular'
-                                                                sx={{
-                                                                    position:
-                                                                        'absolute',
-                                                                    inset: 0,
-                                                                }}
-                                                            />
-                                                        )}
-                                                        <img
-                                                            src={
-                                                                product.image
-                                                                    ?.url
-                                                            }
-                                                            alt={
-                                                                product.product_name
-                                                            }
-                                                            className='product-image'
-                                                            onLoad={() =>
-                                                                setImageLoaded(
-                                                                    product._id as string,
-                                                                )
-                                                            }
-                                                            style={{
-                                                                position:
-                                                                    'absolute',
-                                                                inset: 0,
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                objectFit:
-                                                                    'cover',
-                                                                opacity:
-                                                                    isLoaded
-                                                                        ? 1
-                                                                        : 0,
-                                                                transition:
-                                                                    'opacity 0.3s ease, transform 0.3s ease',
-                                                            }}
-                                                        />
-
-                                                        {/* Discount Badge */}
-                                                        <Chip
-                                                            label={`-${product.discount}%`}
-                                                            size='small'
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                top: 10,
-                                                                left: 10,
-                                                                bgcolor:
-                                                                    'error.main',
-                                                                color: '#fff',
-                                                                fontWeight: 700,
-                                                                fontSize:
-                                                                    '0.75rem',
-                                                                borderRadius: 1,
-                                                                zIndex: 2,
-                                                            }}
-                                                        />
-
-                                                        {/* Hover View Button */}
-                                                        <Box
-                                                            className='view-btn'
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                bottom: 10,
-                                                                left: '50%',
-                                                                transform:
-                                                                    'translate(-50%, 10px)',
-                                                                opacity: 0,
-                                                                transition:
-                                                                    'all 0.2s ease',
-                                                                bgcolor:
-                                                                    'rgba(255,255,255,0.95)',
-                                                                color: 'text.primary',
-                                                                px: 1.5,
-                                                                py: 0.5,
-                                                                borderRadius: 16,
-                                                                display: 'flex',
-                                                                alignItems:
-                                                                    'center',
-                                                                gap: 0.5,
-                                                                fontSize:
-                                                                    '0.75rem',
-                                                                fontWeight: 600,
-                                                                boxShadow: 1,
-                                                            }}
-                                                        >
-                                                            <VisibilityIcon
-                                                                sx={{
-                                                                    fontSize: 14,
-                                                                }}
-                                                            />
-                                                            {t(
-                                                                'pages.messageAuditLogs.viewDetails',
-                                                            ) || 'عرض'}
-                                                        </Box>
-                                                    </Box>
-
-                                                    {/* Content Container */}
-                                                    <Box
-                                                        sx={{
-                                                            p: 2,
-                                                            display: 'flex',
-                                                            flexDirection:
-                                                                'column',
-                                                            flexGrow: 1,
-                                                        }}
-                                                    >
-                                                        {/* Title */}
-                                                        <Typography
-                                                            variant='subtitle2'
-                                                            component='h3'
-                                                            sx={{
-                                                                fontWeight: 600,
-                                                                color: 'text.primary',
-                                                                lineHeight: 1.4,
-                                                                display:
-                                                                    '-webkit-box',
-                                                                WebkitLineClamp: 2,
-                                                                WebkitBoxOrient:
-                                                                    'vertical',
-                                                                overflow:
-                                                                    'hidden',
-                                                                minHeight:
-                                                                    '2.8em',
-                                                                mb: 1,
-                                                            }}
-                                                        >
-                                                            {
-                                                                product.product_name
-                                                            }
-                                                        </Typography>
-
-                                                        {/* Category */}
-                                                        <Typography
-                                                            variant='caption'
-                                                            sx={{
-                                                                color: 'text.secondary',
-                                                                mb: 2,
-                                                                display: 'flex',
-                                                                alignItems:
-                                                                    'center',
-                                                                gap: 0.5,
-                                                            }}
-                                                        >
-                                                            <Box
-                                                                component='span'
-                                                                sx={{
-                                                                    width: 4,
-                                                                    height: 4,
-                                                                    borderRadius:
-                                                                        '50%',
-                                                                    bgcolor:
-                                                                        'text.disabled',
-                                                                }}
-                                                            />
-                                                            {product.category}
-                                                        </Typography>
-
-                                                        {/* Price Row */}
-                                                        <Box
-                                                            sx={{
-                                                                display: 'flex',
-                                                                alignItems:
-                                                                    'baseline',
-                                                                gap: 1,
-                                                                mt: 'auto',
-                                                                pt: 1,
-                                                                borderTop:
-                                                                    '1px dashed',
-                                                                borderColor:
-                                                                    'divider',
-                                                            }}
-                                                        >
-                                                            <Typography
-                                                                variant='subtitle1'
-                                                                component='span'
-                                                                fontWeight={800}
-                                                                color='error.main'
-                                                                sx={{
-                                                                    lineHeight: 1,
-                                                                }}
-                                                            >
-                                                                {formatPrice(
-                                                                    discountedPrice,
-                                                                )}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant='caption'
-                                                                component='span'
-                                                                color='text.secondary'
-                                                                sx={{
-                                                                    textDecoration:
-                                                                        'line-through',
-                                                                }}
-                                                            >
-                                                                {formatPrice(
-                                                                    product.price,
-                                                                )}
-                                                            </Typography>
-                                                        </Box>
-                                                    </Box>
-                                                </Box>
-                                            </Link>
-                                        </SwiperSlide>
-                                    );
-                                })}
+                                {postsInDiscount.map((product) => (
+                                    <SwiperSlide key={product._id as string}>
+                                        <ProductCard
+                                            product={product}
+                                            viewLabel={viewLabel}
+                                        />
+                                    </SwiperSlide>
+                                ))}
                             </Swiper>
-                            {/* Custom Navigation Buttons */}
-                            {!isMobile && (
-                                <Stack
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'space-around',
-                                    }}
-                                    direction='row'
-                                    spacing={1}
-                                >
-                                    <IconButton
-                                        onClick={() =>
-                                            swiperRef.current?.slideNext()
-                                        }
-                                        aria-label={t('common.next', 'التالي')}
-                                        sx={{
-                                            bgcolor: 'background.paper',
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            color: 'text.primary',
-                                            width: 40,
-                                            height: 40,
-                                            transition: 'all 0.2s ease',
-                                            '&:hover': {
-                                                bgcolor: 'primary.main',
-                                                color: 'primary.contrastText',
-                                                borderColor: 'primary.main',
-                                            },
-                                        }}
-                                    >
-                                        {dir === 'rtl' ? (
-                                            <ChevronRightIcon />
-                                        ) : (
-                                            <ChevronLeftIcon />
-                                        )}
-                                    </IconButton>
-                                    <IconButton
-                                        onClick={() =>
-                                            swiperRef.current?.slidePrev()
-                                        }
-                                        aria-label={t(
-                                            'common.previous',
-                                            'السابق',
-                                        )}
-                                        sx={{
-                                            bgcolor: 'background.paper',
-                                            border: '1px solid',
-                                            borderColor: 'divider',
-                                            color: 'text.primary',
-                                            width: 40,
-                                            height: 40,
-                                            transition: 'all 0.2s ease',
-                                            '&:hover': {
-                                                bgcolor: 'primary.main',
-                                                color: 'primary.contrastText',
-                                                borderColor: 'primary.main',
-                                            },
-                                        }}
-                                    >
-                                        {dir === 'rtl' ? (
-                                            <ChevronLeftIcon />
-                                        ) : (
-                                            <ChevronRightIcon />
-                                        )}
-                                    </IconButton>
-                                </Stack>
-                            )}
                         </Box>
                     )}
                 </Container>
