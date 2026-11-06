@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { path } from '../../routes/routes';
 import {
@@ -17,11 +17,15 @@ import handleRTL from '../../locales/handleRTL';
 const INK = '#12161C';
 const GOLD = '#B8860B';
 const BROWN = '#8B4513';
+const RED = '#B0413E';
 const BRAND_GRADIENT = `linear-gradient(135deg, ${GOLD} 0%, ${BROWN} 100%)`;
 const PARCHMENT = '#FAF7F0';
 
+const LAST_UPDATED = '30/08/2026';
+const CURRENT_URL = 'https://client-qqq1.vercel.app/term-of-use';
+
 /** A circular "wax seal" badge — the page's signature element */
-const Seal: FunctionComponent<{ size?: number; children: React.ReactNode }> = ({
+const Seal: FunctionComponent<{ size?: number; children: ReactNode }> = ({
     size = 44,
     children,
 }) => (
@@ -50,9 +54,10 @@ const Seal: FunctionComponent<{ size?: number; children: React.ReactNode }> = ({
 const Clause: FunctionComponent<{
     number: number;
     title: string;
-    children: React.ReactNode;
-}> = ({ number, title, children }) => (
-    <Box sx={{ display: 'flex', gap: 2.5, mb: 4 }}>
+    last?: boolean;
+    children: ReactNode;
+}> = ({ number, title, last = false, children }) => (
+    <Box sx={{ display: 'flex', gap: 2.5, mb: last ? 2 : 4 }}>
         <Box sx={{ flexShrink: 0, pt: 0.5 }}>
             <Seal size={40}>{number}</Seal>
         </Box>
@@ -61,11 +66,12 @@ const Clause: FunctionComponent<{
             sx={{
                 flex: 1,
                 minWidth: 0,
-                pb: 4,
-                borderBottom: `1px dashed ${INK}22`,
+                pb: last ? 0 : 4,
+                borderBottom: last ? 'none' : `1px dashed ${INK}22`,
             }}
         >
             <Typography
+                component='h2'
                 sx={{
                     fontWeight: 700,
                     fontSize: '1.05rem',
@@ -80,12 +86,72 @@ const Clause: FunctionComponent<{
     </Box>
 );
 
+/** Plain paragraph used inside clauses */
+const Body: FunctionComponent<{
+    children: ReactNode;
+    mb?: number;
+    muted?: boolean;
+}> = ({ children, mb = 0, muted = false }) => (
+    <Typography
+        sx={{
+            color: muted ? 'text.secondary' : INK,
+            lineHeight: 1.9,
+            mb,
+        }}
+    >
+        {children}
+    </Typography>
+);
+
+/** List of points: "block" = red icon (prohibitions), "dash" = gold dash */
+const PointList: FunctionComponent<{
+    items: string[];
+    variant?: 'block' | 'dash';
+}> = ({ items, variant = 'dash' }) => {
+    if (items.length === 0) return null;
+
+    return (
+        <Stack spacing={1}>
+            {items.map((item, i) => (
+                <Stack
+                    key={i}
+                    direction='row'
+                    spacing={1.2}
+                    alignItems='flex-start'
+                >
+                    {variant === 'block' ? (
+                        <Block sx={{ fontSize: 16, color: RED, mt: 0.5 }} />
+                    ) : (
+                        <Box sx={{ color: GOLD, fontWeight: 700, mt: 0.1 }}>
+                            —
+                        </Box>
+                    )}
+                    <Typography sx={{ color: INK, lineHeight: 1.8 }}>
+                        {item}
+                    </Typography>
+                </Stack>
+            ))}
+        </Stack>
+    );
+};
+
+const PerforatedEdge: FunctionComponent<{ position: 'top' | 'bottom' }> = ({
+    position,
+}) => (
+    <Box
+        sx={{
+            height: 10,
+            backgroundImage: `radial-gradient(circle, #EFEAE0 3px, transparent 3.5px)`,
+            backgroundSize: '18px 18px',
+            backgroundPosition: `${position} center`,
+        }}
+    />
+);
+
 const TermOfUse: FunctionComponent = () => {
     const { t } = useTranslation();
     const direction = handleRTL();
     const isRTL = direction === 'rtl';
-
-    const currentUrl = 'https://client-qqq1.vercel.app/term-of-use';
 
     const getStringArray = (key: string): string[] => {
         const value = t(key, { returnObjects: true });
@@ -94,16 +160,18 @@ const TermOfUse: FunctionComponent = () => {
             : [];
     };
 
-    const userConductPoints = getStringArray(
-        'pages.terms.sections.userConduct.points',
-    );
-    const prohibitedItemsPoints = getStringArray(
-        'pages.terms.prohibitedItems.points',
-    );
+    const S = 'pages.terms.sections';
+
+    // Auto-numbering: order of calls below = order of clauses on the page
+    let n = 0;
+    const next = () => ++n;
+
+    const email = t(`${S}.contact.email`);
+    const phone = t(`${S}.contact.phone`);
 
     return (
         <>
-            <link rel='canonical' href={currentUrl} />
+            <link rel='canonical' href={CURRENT_URL} />
             <title>{`${t('pages.terms.title')} | صفقة`}</title>
             <meta name='description' content={t('pages.terms.description')} />
 
@@ -116,7 +184,6 @@ const TermOfUse: FunctionComponent = () => {
                 }}
             >
                 <Container maxWidth='md'>
-                    {/* The "document" */}
                     <Box
                         sx={{
                             bgcolor: PARCHMENT,
@@ -126,43 +193,30 @@ const TermOfUse: FunctionComponent = () => {
                             overflow: 'hidden',
                         }}
                     >
-                        {/* Perforated top edge */}
-                        <Box
-                            sx={{
-                                height: 10,
-                                backgroundImage: `radial-gradient(circle, #EFEAE0 3px, transparent 3.5px)`,
-                                backgroundSize: '18px 18px',
-                                backgroundPosition: 'top center',
-                            }}
-                        />
+                        <PerforatedEdge position='top' />
 
                         <Box
+                            component='main'
                             sx={{
                                 px: { xs: 3, md: 7 },
                                 pt: { xs: 4, md: 5 },
                                 pb: { xs: 4, md: 6 },
                             }}
                         >
-                            {/* Seal of authenticity */}
+                            {/* Header */}
                             <Stack
                                 alignItems='center'
                                 spacing={2}
                                 sx={{ mb: 5, textAlign: 'center' }}
                             >
-                                <Box sx={{ position: 'relative' }}>
-                                    <Seal size={72}>
-                                        <VerifiedRounded
-                                            sx={{ fontSize: 34 }}
-                                        />
-                                    </Seal>
-                                </Box>
+                                <Seal size={72}>
+                                    <VerifiedRounded sx={{ fontSize: 34 }} />
+                                </Seal>
 
                                 <Typography
+                                    component='h1'
                                     sx={{
-                                        fontSize: {
-                                            xs: '1.6rem',
-                                            md: '2.1rem',
-                                        },
+                                        fontSize: { xs: '1.6rem', md: '2.1rem' },
                                         fontWeight: 800,
                                         color: INK,
                                         letterSpacing: '-0.01em',
@@ -172,10 +226,7 @@ const TermOfUse: FunctionComponent = () => {
                                 </Typography>
 
                                 <Typography
-                                    sx={{
-                                        color: 'text.secondary',
-                                        maxWidth: 480,
-                                    }}
+                                    sx={{ color: 'text.secondary', maxWidth: 480 }}
                                 >
                                     {t('pages.terms.subtitle')}
                                 </Typography>
@@ -193,103 +244,86 @@ const TermOfUse: FunctionComponent = () => {
                                     }}
                                 >
                                     {t('pages.terms.lastUpdated', {
-                                        date: '30/08/2026',
+                                        date: LAST_UPDATED,
                                     })}
                                 </Box>
                             </Stack>
 
                             <Divider sx={{ mb: 5, borderColor: `${INK}18` }} />
 
-                            {/* Clauses */}
+                            {/* 1. Eligibility */}
                             <Clause
-                                number={1}
-                                title={t(
-                                    'pages.terms.sections.eligibility.title',
-                                )}
+                                number={next()}
+                                title={t(`${S}.eligibility.title`)}
                             >
-                                <Typography
-                                    sx={{ color: INK, lineHeight: 1.9 }}
-                                >
-                                    {t('pages.terms.sections.eligibility.text')}
-                                </Typography>
+                                <Body>{t(`${S}.eligibility.text`)}</Body>
                             </Clause>
 
+                            {/* 2. Registration */}
                             <Clause
-                                number={2}
-                                title={t(
-                                    'pages.terms.sections.registration.title',
-                                )}
+                                number={next()}
+                                title={t(`${S}.registration.title`)}
                             >
-                                <Typography
-                                    sx={{ color: INK, lineHeight: 1.9 }}
-                                >
-                                    {t(
-                                        'pages.terms.sections.registration.text',
-                                    )}{' '}
+                                <Body>
+                                    {t(`${S}.registration.text`)}{' '}
                                     <MuiLink
                                         component={Link}
                                         to={path.PrivacyAndPolicy}
                                         sx={{ color: GOLD, fontWeight: 600 }}
                                     >
-                                        {t(
-                                            'pages.terms.sections.registration.privacyPolicy',
-                                        )}
+                                        {t(`${S}.registration.privacyPolicy`)}
                                     </MuiLink>
-                                </Typography>
+                                </Body>
                             </Clause>
 
+                            {/* 3. Products & listings */}
                             <Clause
-                                number={3}
-                                title={t('pages.terms.sections.products.title')}
+                                number={next()}
+                                title={t(`${S}.products.title`)}
                             >
-                                <Typography
-                                    sx={{ color: INK, lineHeight: 1.9 }}
-                                >
-                                    {t('pages.terms.sections.products.text')}
-                                </Typography>
+                                <Body>{t(`${S}.products.text`)}</Body>
                             </Clause>
 
+                            {/* 4. Seller obligations */}
                             <Clause
-                                number={4}
+                                number={next()}
+                                title={t(`${S}.sellerObligations.title`)}
+                            >
+                                <PointList
+                                    items={getStringArray(
+                                        `${S}.sellerObligations.points`,
+                                    )}
+                                />
+                            </Clause>
+
+                            {/* 5. User content */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.userContent.title`)}
+                            >
+                                <Body>{t(`${S}.userContent.text`)}</Body>
+                            </Clause>
+
+                            {/* 6. Prohibited items */}
+                            <Clause
+                                number={next()}
                                 title={t('pages.terms.prohibitedItems.title')}
                             >
-                                <Typography
-                                    sx={{ color: INK, lineHeight: 1.9, mb: 2 }}
-                                >
+                                <Body mb={2}>
                                     {t('pages.terms.prohibitedItems.text')}
-                                </Typography>
-
-                                <Stack spacing={1}>
-                                    {prohibitedItemsPoints.map((item, i) => (
-                                        <Stack
-                                            key={i}
-                                            direction='row'
-                                            spacing={1.2}
-                                            alignItems='flex-start'
-                                        >
-                                            <Block
-                                                sx={{
-                                                    fontSize: 16,
-                                                    color: '#B0413E',
-                                                    mt: 0.4,
-                                                }}
-                                            />
-                                            <Typography
-                                                variant='body2'
-                                                sx={{ color: INK }}
-                                            >
-                                                {item}
-                                            </Typography>
-                                        </Stack>
-                                    ))}
-                                </Stack>
+                                </Body>
+                                <PointList
+                                    variant='block'
+                                    items={getStringArray(
+                                        'pages.terms.prohibitedItems.points',
+                                    )}
+                                />
                             </Clause>
 
+                            {/* 7. Responsibility: platform nature + legal address */}
                             <Clause
-                                number={5}
-                                title={t(
-                                    'pages.terms.sections.responsibility.title',
-                                )}
+                                number={next()}
+                                title={t(`${S}.responsibility.title`)}
                             >
                                 <Typography
                                     sx={{
@@ -299,21 +333,11 @@ const TermOfUse: FunctionComponent = () => {
                                         mb: 0.5,
                                     }}
                                 >
-                                    {t(
-                                        'pages.terms.sections.responsibility.platform.title',
-                                    )}
+                                    {t(`${S}.responsibility.platform.title`)}
                                 </Typography>
-                                <Typography
-                                    sx={{
-                                        color: 'text.secondary',
-                                        lineHeight: 1.9,
-                                        mb: 2,
-                                    }}
-                                >
-                                    {t(
-                                        'pages.terms.sections.responsibility.platform.text',
-                                    )}
-                                </Typography>
+                                <Body muted mb={2}>
+                                    {t(`${S}.responsibility.platform.text`)}
+                                </Body>
 
                                 <Typography
                                     sx={{
@@ -323,140 +347,139 @@ const TermOfUse: FunctionComponent = () => {
                                         mb: 0.5,
                                     }}
                                 >
-                                    {t(
-                                        'pages.terms.sections.responsibility.legalAddress.title',
-                                    )}
+                                    {t(`${S}.responsibility.legalAddress.title`)}
                                 </Typography>
-                                <Typography
-                                    sx={{
-                                        color: 'text.secondary',
-                                        lineHeight: 1.9,
-                                    }}
-                                >
+                                <Body muted>
                                     <strong>
                                         {t(
-                                            'pages.terms.sections.responsibility.legalAddress.addressLabel',
+                                            `${S}.responsibility.legalAddress.addressLabel`,
                                         )}
                                     </strong>{' '}
                                     {t(
-                                        'pages.terms.sections.responsibility.legalAddress.address',
+                                        `${S}.responsibility.legalAddress.address`,
                                     )}
                                     <br />
                                     <strong>
                                         {t(
-                                            'pages.terms.sections.responsibility.legalAddress.noteLabel',
+                                            `${S}.responsibility.legalAddress.noteLabel`,
                                         )}
                                     </strong>{' '}
-                                    {t(
-                                        'pages.terms.sections.responsibility.legalAddress.note',
-                                    )}
+                                    {t(`${S}.responsibility.legalAddress.note`)}
+                                </Body>
+                            </Clause>
+
+                            {/* 8. User conduct */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.userConduct.title`)}
+                            >
+                                <Box sx={{ mb: 2 }}>
+                                    <PointList
+                                        items={getStringArray(
+                                            `${S}.userConduct.points`,
+                                        )}
+                                    />
+                                </Box>
+                                <Typography
+                                    sx={{
+                                        color: 'text.secondary',
+                                        fontStyle: 'italic',
+                                    }}
+                                >
+                                    {t(`${S}.userConduct.warning`)}
                                 </Typography>
                             </Clause>
 
-                            <Box sx={{ display: 'flex', gap: 2.5, mb: 2 }}>
-                                <Box sx={{ flexShrink: 0, pt: 0.5 }}>
-                                    <Seal size={40}>6</Seal>
-                                </Box>
-                                <Box sx={{ flex: 1, minWidth: 0 }}>
-                                    <Typography
-                                        sx={{
-                                            fontWeight: 700,
-                                            fontSize: '1.05rem',
-                                            color: INK,
-                                            mb: 1,
-                                        }}
-                                    >
-                                        {t(
-                                            'pages.terms.sections.userConduct.title',
-                                        )}
-                                    </Typography>
-
-                                    <Stack spacing={1} sx={{ mb: 2 }}>
-                                        {userConductPoints.map((item, i) => (
-                                            <Stack
-                                                key={i}
-                                                direction='row'
-                                                spacing={1.2}
-                                                alignItems='flex-start'
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        color: GOLD,
-                                                        fontWeight: 700,
-                                                        mt: 0.1,
-                                                    }}
-                                                >
-                                                    —
-                                                </Box>
-                                                <Typography
-                                                    sx={{
-                                                        color: INK,
-                                                        lineHeight: 1.8,
-                                                    }}
-                                                >
-                                                    {item}
-                                                </Typography>
-                                            </Stack>
-                                        ))}
-                                    </Stack>
-
-                                    <Typography
-                                        sx={{
-                                            color: 'text.secondary',
-                                            fontStyle: 'italic',
-                                        }}
-                                    >
-                                        {t(
-                                            'pages.terms.sections.userConduct.warning',
-                                        )}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
+                            {/* 9. Blocking */}
                             <Clause
-                                number={7}
-                                title={t('pages.terms.sections.blocking.title')}
+                                number={next()}
+                                title={t(`${S}.blocking.title`)}
                             >
-                                <Typography
-                                    sx={{
-                                        color: INK,
-                                        lineHeight: 1.9,
-                                        mb: 2,
-                                    }}
-                                >
-                                    {t('pages.terms.sections.blocking.text')}
-                                </Typography>
+                                <Body mb={2}>{t(`${S}.blocking.text`)}</Body>
+                                <PointList
+                                    variant='block'
+                                    items={getStringArray(
+                                        `${S}.blocking.points`,
+                                    )}
+                                />
+                            </Clause>
 
-                                <Stack spacing={1}>
-                                    {getStringArray(
-                                        'pages.terms.sections.blocking.points',
-                                    ).map((item, i) => (
-                                        <Stack
-                                            key={i}
-                                            direction='row'
-                                            spacing={1.2}
-                                            alignItems='flex-start'
-                                        >
-                                            <Block
-                                                sx={{
-                                                    fontSize: 16,
-                                                    color: '#B0413E',
-                                                    mt: 0.4,
-                                                }}
-                                            />
+                            {/* 10. Liability */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.liability.title`)}
+                            >
+                                <PointList
+                                    items={getStringArray(
+                                        `${S}.liability.points`,
+                                    )}
+                                />
+                            </Clause>
 
-                                            <Typography
-                                                variant='body2'
-                                                sx={{
-                                                    color: INK,
-                                                    lineHeight: 1.8,
-                                                }}
-                                            >
-                                                {item}
-                                            </Typography>
-                                        </Stack>
-                                    ))}
-                                </Stack>
+                            {/* 11. Reporting */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.reporting.title`)}
+                            >
+                                <Body>{t(`${S}.reporting.text`)}</Body>
+                            </Clause>
+
+                            {/* 12. Termination */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.termination.title`)}
+                            >
+                                <Body>{t(`${S}.termination.text`)}</Body>
+                            </Clause>
+
+                            {/* 13. Changes */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.changes.title`)}
+                            >
+                                <Body>{t(`${S}.changes.text`)}</Body>
+                            </Clause>
+
+                            {/* 14. Governing law */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.governingLaw.title`)}
+                            >
+                                <Body>{t(`${S}.governingLaw.text`)}</Body>
+                            </Clause>
+
+                            {/* 15. Contact */}
+                            <Clause
+                                number={next()}
+                                title={t(`${S}.contact.title`)}
+                                last
+                            >
+                                <Body>
+                                    <strong>
+                                        {t(`${S}.contact.emailLabel`)}
+                                    </strong>{' '}
+                                    <MuiLink
+                                        href={`mailto:${email}`}
+                                        sx={{ color: GOLD, fontWeight: 600 }}
+                                    >
+                                        {email}
+                                    </MuiLink>
+                                    <br />
+                                    <strong>
+                                        {t(`${S}.contact.phoneLabel`)}
+                                    </strong>{' '}
+                                    <MuiLink
+                                        href={`tel:${phone}`}
+                                        dir='ltr'
+                                        sx={{
+                                            color: GOLD,
+                                            fontWeight: 600,
+                                            unicodeBidi: 'isolate',
+                                        }}
+                                    >
+                                        {phone}
+                                    </MuiLink>
+                                </Body>
                             </Clause>
 
                             {/* Signature line */}
@@ -520,15 +543,7 @@ const TermOfUse: FunctionComponent = () => {
                             </Box>
                         </Box>
 
-                        {/* Perforated bottom edge */}
-                        <Box
-                            sx={{
-                                height: 10,
-                                backgroundImage: `radial-gradient(circle, #EFEAE0 3px, transparent 3.5px)`,
-                                backgroundSize: '18px 18px',
-                                backgroundPosition: 'bottom center',
-                            }}
-                        />
+                        <PerforatedEdge position='bottom' />
                     </Box>
 
                     {/* Quick links, outside the "document" */}
