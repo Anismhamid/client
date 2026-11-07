@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useState } from 'react';
+import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useFormik } from 'formik';
 import { initialProductValue, Posts } from '../../../interfaces/Posts';
 import * as yup from 'yup';
@@ -15,6 +15,7 @@ import {
     Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
+import { BRAND } from '../../../components/navbar/theme/brand';
 
 interface UpdateProductModalProps {
     show: boolean;
@@ -23,7 +24,42 @@ interface UpdateProductModalProps {
     refresh: () => void;
 }
 
-const GRADIENT = 'linear-gradient(135deg, #B8860B 0%, #8B4513 100%)';
+type CategoryValue = keyof typeof categoriesLogic;
+type SubcategoryValue<C extends CategoryValue> =
+    keyof (typeof categoriesLogic)[C];
+
+const dialogSx = {
+    '& .MuiDialog-paper': {
+        borderRadius: '16px',
+        overflow: 'hidden',
+    },
+} as const;
+
+const titleSx = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    background: BRAND.gradient,
+    color: '#fff',
+    py: 1.75,
+    fontWeight: 'bold',
+    fontSize: '1.25rem',
+} as const;
+
+const validationSchema = yup.object({
+    product_name: yup.string().min(2).required(),
+    category: yup.string().required(),
+    subcategory: yup.string().required(),
+    type: yup.string().required(),
+    price: yup.number().required(),
+    description: yup.string().min(2).max(500),
+    image: yup
+        .object({
+            url: yup.string().required().url(),
+            publicId: yup.string(),
+        })
+        .required(),
+});
 
 const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     show,
@@ -32,7 +68,6 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     refresh,
 }) => {
     const { t } = useTranslation();
-    // const formik = useAddProductFormik();
     const [post, setPost] = useState<Posts>(initialProductValue as Posts);
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageData, setImageData] = useState<{
@@ -41,43 +76,48 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     } | null>(null);
 
     useEffect(() => {
-        if (postId) {
-            getPostById(postId).then((res) => {
-                setPost(res);
-                setImageData({
-                    url: res.image.url,
-                    publicId: res.image.publicId,
-                });
+        if (!postId) return;
+        let cancelled = false;
+
+        getPostById(postId).then((res) => {
+            if (cancelled) return;
+            setPost(res);
+            setImageData({
+                url: res.image.url,
+                publicId: res.image.publicId,
             });
-        }
+        });
+
+        return () => {
+            cancelled = true;
+        };
     }, [postId]);
 
-    type CategoryValue = keyof typeof categoriesLogic;
-    type SubcategoryValue<C extends CategoryValue> =
-        keyof (typeof categoriesLogic)[C];
+    // الـ useFormik هون، فالمودال كله بيعمل re-render مع كل ضغطة حرف.
+    // لهيك لازم نثبّت الحسابات والـ initialValues بـ useMemo (وإلا Formik
+    // بيقارنها deep مع كل render).
+    const dynamicFields = useMemo(() => {
+        const category = post.category as CategoryValue;
+        const subcategory = (post.subcategory || '') as SubcategoryValue<
+            typeof category
+        >;
+        return (categoriesLogic[category]?.[subcategory] ||
+            []) as DynamicField[];
+    }, [post.category, post.subcategory]);
 
-    const category = post.category as CategoryValue;
-    const subcategory = (post.subcategory || '') as SubcategoryValue<
-        typeof category
-    >;
+    const initialValues = useMemo<Posts>(() => {
+        const initialDynamicValues = dynamicFields.reduce(
+            (acc, field) => {
+                acc[field.name] =
+                    post[field.name as keyof Posts] ??
+                    (field.type === 'boolean' ? false : '');
+                return acc;
+            },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            {} as Record<string, any>,
+        );
 
-    const dynamicFields = (categoriesLogic[category]?.[subcategory] ||
-        []) as DynamicField[];
-
-    const initialDynamicValues = dynamicFields.reduce(
-        (acc, field) => {
-            acc[field.name] =
-                post[field.name as keyof Posts] ??
-                (field.type === 'boolean' ? false : '');
-            return acc;
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        {} as Record<string, any>,
-    );
-
-    const formik = useFormik<Posts>({
-        enableReinitialize: true,
-        initialValues: {
+        return {
             product_name: post.product_name || '',
             category: post.category || '',
             subcategory: post.subcategory || '',
@@ -95,23 +135,30 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
             ...initialDynamicValues,
             createdAt: post.createdAt || '',
             featured: post.featured ?? false,
-        },
-        validationSchema: yup.object({
-            product_name: yup.string().min(2).required(),
-            category: yup.string().required(),
-            subcategory: yup.string().required(),
-            type: yup.string().required(),
-            price: yup.number().required(),
-            description: yup.string().min(2).max(500),
-            image: yup
-                .object({
-                    url: yup.string().required().url(),
-                    publicId: yup.string(),
-                })
-                .required(),
-        }),
+        } as Posts;
+    }, [post, dynamicFields]);
+
+    const formik = useFormik<Posts>({
+        enableReinitialize: true,
+        initialValues,
+        validationSchema,
+        // لازم نرجّع الـ promise: بدونها Formik بيضل isSubmitting=true
+        // (الزر يضل loading) وإذا فشل الطلب بيعلق للأبد.
         onSubmit(values, { resetForm }) {
-            updatePost(post._id as string, values)
+            // الحقول الديناميكية اللي ما كانت موجودة بالمنشور بنبعتها '' من الفورم،
+            // والسيرفر (Joi) بيرفض النص الفاضي. فبنشيل بس الحقول الفاضية اللي
+            // أصلاً ما كانت محفوظة؛ أما لو المستخدم مسح قيمة محفوظة بتنبعت متل ما هي.
+            const payload = { ...values } as Record<string, unknown>;
+            dynamicFields.forEach(({ name }) => {
+                if (
+                    payload[name] === '' &&
+                    (post as unknown as Record<string, unknown>)[name] == null
+                ) {
+                    delete payload[name];
+                }
+            });
+
+            return updatePost(post._id as string, payload as unknown as Posts)
                 .then(() => {
                     resetForm();
                     refresh();
@@ -126,58 +173,41 @@ const UpdateProductModal: FunctionComponent<UpdateProductModalProps> = ({
     const dir = handleRTL();
 
     return (
-        <>
-            <Dialog
-                open={show}
-                onClose={onHide}
-                fullWidth
-                maxWidth='sm'
-                dir={dir}
-                sx={{
-                    '& .MuiDialog-paper': {
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                    },
-                }}
-            >
-                <DialogTitle
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        background: GRADIENT,
-                        color: '#fff',
-                        py: 1.75,
-                        fontWeight: 'bold',
-                        fontSize: '1.25rem',
-                    }}
+        <Dialog
+            open={show}
+            onClose={onHide}
+            fullWidth
+            maxWidth='sm'
+            dir={dir}
+            sx={dialogSx}
+        >
+            <DialogTitle sx={titleSx}>
+                {t('modals.updateProductModal.title')}
+
+                <IconButton
+                    onClick={onHide}
+                    size='small'
+                    sx={{ color: '#fff' }}
+                    aria-label={t('common.close', 'إغلاق')}
                 >
-                    {t('modals.updateProductModal.title')}
+                    <CloseIcon fontSize='small' />
+                </IconButton>
+            </DialogTitle>
 
-                    <IconButton
-                        onClick={onHide}
-                        size='small'
-                        sx={{ color: '#fff' }}
-                    >
-                        <CloseIcon fontSize='small' />
-                    </IconButton>
-                </DialogTitle>
-
-                <DialogContent sx={{ pt: 3 }}>
-                    <Box>
-                        <ProductForm
-                            imageData={imageData}
-                            formik={formik}
-                            mode='update'
-                            imageFile={imageFile}
-                            setImageFile={setImageFile}
-                            setImageData={setImageData}
-                            onHide={onHide}
-                        />
-                    </Box>
-                </DialogContent>
-            </Dialog>
-        </>
+            <DialogContent sx={{ pt: 3 }}>
+                <Box>
+                    <ProductForm
+                        imageData={imageData}
+                        formik={formik}
+                        mode='update'
+                        imageFile={imageFile}
+                        setImageFile={setImageFile}
+                        setImageData={setImageData}
+                        onHide={onHide}
+                    />
+                </Box>
+            </DialogContent>
+        </Dialog>
     );
 };
 

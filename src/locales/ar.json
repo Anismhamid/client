@@ -1541,53 +1541,62 @@
             }
         },
 
-        "Services": {
-            "label": "الخدمات",
-            "heading": "الخدمات والأعمال",
-            "description": "خدمات يقدمها الأفراد والشركات في مجالات الصيانة والكهرباء والتنظيف والنقل والبرمجة والتصميم وغيرها.",
-            "subCategories": {
-                "maintenance": "صيانة",
-                "electrical": "كهرباء",
-                "plumbing": "سباكة",
-                "cleaning": "تنظيف",
-                "transportation": "نقل",
-                "moving": "نقل أثاث",
-                "automotive": "خدمات سيارات",
-                "programming": "برمجة",
-                "design": "تصميم",
-                "photography": "تصوير",
-                "marketing": "تسويق",
-                "education": "تعليم",
-                "beauty": "تجميل",
-                "other": "خدمات أخرى"
+        "services": {
+            "title": "الخدمات",
+            "category": "الفئة",
+            "subcategory": "الفئة الفرعية",
+            "serviceName": "اسم الخدمة",
+            "providerName": "اسم مقدم الخدمة",
+            "experienceYears": "سنوات الخبرة",
+            "priceRange": "نطاق السعر",
+            "priceFrom": "السعر من",
+            "priceTo": "السعر حتى",
+            "pricingType": "نوع التسعير",
+            "pricingTypes": {
+                "fixed": "سعر ثابت",
+                "negotiable": "قابل للتفاوض",
+                "hourly": "بالساعة",
+                "daily": "باليوم",
+                "monthly": "بالشهر",
+                "perProject": "حسب المشروع",
+                "free": "مجاني"
             },
-            "fields": {
-                "serviceTitle": "اسم الخدمة",
-                "providerName": "اسم مقدم الخدمة",
-                "experienceYears": "سنوات الخبرة",
-                "priceFrom": "السعر يبدأ من",
-                "priceTo": "السعر حتى",
-                "pricingType": "نوع التسعير",
-                "availableDays": "أيام التوفر",
-                "availableHours": "ساعات التوفر",
-                "serviceArea": "منطقة تقديم الخدمة",
-                "emergencyService": "خدمة طوارئ",
-                "pricingTypeOptions": {
-                    "hourly": "بالساعة",
-                    "fixed": "سعر ثابت",
-                    "daily": "يومي",
-                    "monthly": "شهري",
-                    "negotiable": "قابل للتفاوض"
-                },
-                "availableDaysOptions": {
-                    "sunday": "الأحد",
-                    "monday": "الإثنين",
-                    "tuesday": "الثلاثاء",
-                    "wednesday": "الأربعاء",
-                    "thursday": "الخميس",
-                    "friday": "الجمعة",
-                    "saturday": "السبت"
-                }
+            "availableDays": "أيام التوفر",
+            "availableHours": "ساعات التوفر",
+            "serviceArea": "منطقة تقديم الخدمة",
+            "emergencyService": "خدمة طوارئ",
+            "emergencyServiceYes": "نعم",
+            "emergencyServiceNo": "لا",
+            "days": {
+                "sunday": "الأحد",
+                "monday": "الاثنين",
+                "tuesday": "الثلاثاء",
+                "wednesday": "الأربعاء",
+                "thursday": "الخميس",
+                "friday": "الجمعة",
+                "saturday": "السبت"
+            },
+            "placeholders": {
+                "serviceName": "أدخل اسم الخدمة",
+                "providerName": "أدخل اسم مقدم الخدمة",
+                "experienceYears": "أدخل سنوات الخبرة",
+                "priceFrom": "أدخل السعر الأدنى",
+                "priceTo": "أدخل السعر الأعلى",
+                "serviceArea": "أدخل منطقة تقديم الخدمة",
+                "availableHours": "حدد ساعات التوفر"
+            },
+            "validation": {
+                "serviceNameRequired": "اسم الخدمة مطلوب",
+                "providerNameRequired": "اسم مقدم الخدمة مطلوب",
+                "experienceYearsRequired": "سنوات الخبرة مطلوبة",
+                "experienceYearsInvalid": "أدخل عدد سنوات خبرة صحيح",
+                "priceFromRequired": "السعر الأدنى مطلوب",
+                "priceToRequired": "السعر الأعلى مطلوب",
+                "priceInvalid": "أدخل سعرًا صحيحًا",
+                "priceToGreaterThanFrom": "السعر الأعلى يجب أن يكون أكبر من أو يساوي السعر الأدنى",
+                "pricingTypeRequired": "نوع التسعير مطلوب",
+                "availableDaysRequired": "حدد أيام التوفر",
+                "serviceAreaRequired": "منطقة تقديم الخدمة مطلوبة"
             }
         },
         "notFound": "لم يتم العثور على أي منتجات في هذه الفئة"

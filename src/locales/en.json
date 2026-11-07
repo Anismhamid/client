@@ -1522,56 +1522,65 @@
                 }
             }
         },
-        "Services": {
-            "label": "Services",
-            "heading": "Services and Businesses",
-            "description": "Services provided by individuals and companies in maintenance, electrical work, cleaning, transportation, programming, design, and more.",
-            "subCategories": {
-                "maintenance": "Maintenance",
-                "electrical": "Electrical Services",
-                "plumbing": "Plumbing",
-                "cleaning": "Cleaning",
-                "transportation": "Transportation",
-                "moving": "Furniture Moving",
-                "automotive": "Automotive Services",
-                "programming": "Programming",
-                "design": "Design",
-                "photography": "Photography",
-                "marketing": "Marketing",
-                "education": "Education",
-                "beauty": "Beauty",
-                "other": "Other Services"
+        "services": {
+            "title": "Services",
+            "category": "Category",
+            "subcategory": "Subcategory",
+            "serviceName": "Service Name",
+            "providerName": "Service Provider Name",
+            "experienceYears": "Years of Experience",
+            "priceRange": "Price Range",
+            "priceFrom": "Price From",
+            "priceTo": "Price To",
+            "pricingType": "Pricing Type",
+            "pricingTypes": {
+                "fixed": "Fixed Price",
+                "negotiable": "Negotiable",
+                "hourly": "Per Hour",
+                "daily": "Per Day",
+                "monthly": "Per Month",
+                "perProject": "Per Project",
+                "free": "Free"
             },
-            "fields": {
-                "serviceTitle": "Service Title",
-                "providerName": "Provider Name",
-                "experienceYears": "Years of Experience",
-                "priceFrom": "Price From",
-                "priceTo": "Price To",
-                "pricingType": "Pricing Type",
-                "availableDays": "Available Days",
-                "availableHours": "Available Hours",
-                "serviceArea": "Service Area",
-                "emergencyService": "Emergency Service",
-                "pricingTypeOptions": {
-                    "hourly": "Hourly",
-                    "fixed": "Fixed Price",
-                    "daily": "Daily",
-                    "monthly": "Monthly",
-                    "negotiable": "Negotiable"
-                },
-                "availableDaysOptions": {
-                    "sunday": "Sunday",
-                    "monday": "Monday",
-                    "tuesday": "Tuesday",
-                    "wednesday": "Wednesday",
-                    "thursday": "Thursday",
-                    "friday": "Friday",
-                    "saturday": "Saturday"
-                }
+            "availableDays": "Available Days",
+            "availableHours": "Available Hours",
+            "serviceArea": "Service Area",
+            "emergencyService": "Emergency Service",
+            "emergencyServiceYes": "Yes",
+            "emergencyServiceNo": "No",
+            "days": {
+                "sunday": "Sunday",
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday"
+            },
+            "placeholders": {
+                "serviceName": "Enter service name",
+                "providerName": "Enter service provider name",
+                "experienceYears": "Enter years of experience",
+                "priceFrom": "Enter minimum price",
+                "priceTo": "Enter maximum price",
+                "serviceArea": "Enter service area",
+                "availableHours": "Select available hours"
+            },
+            "validation": {
+                "serviceNameRequired": "Service name is required",
+                "providerNameRequired": "Service provider name is required",
+                "experienceYearsRequired": "Years of experience are required",
+                "experienceYearsInvalid": "Enter a valid number of years of experience",
+                "priceFromRequired": "Minimum price is required",
+                "priceToRequired": "Maximum price is required",
+                "priceInvalid": "Enter a valid price",
+                "priceToGreaterThanFrom": "Maximum price must be greater than or equal to minimum price",
+                "pricingTypeRequired": "Pricing type is required",
+                "availableDaysRequired": "Select available days",
+                "serviceAreaRequired": "Service area is required"
             }
         },
-        "notFound": "No products were found in this category"
+        "notFound": "No products found in this category"
     },
     "seo": {
         "categoryTitle": "{{category}}",

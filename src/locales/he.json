@@ -1519,57 +1519,67 @@
                 }
             }
         },
-        "Services": {
-            "label": "שירותים",
-            "heading": "שירותים ועסקים",
-            "description": "שירותים הניתנים על ידי יחידים וחברות בתחומי תחזוקה, חשמל, ניקיון, הובלה, תכנות, עיצוב ועוד.",
-            "subCategories": {
-                "maintenance": "תחזוקה",
-                "electrical": "חשמל",
-                "plumbing": "אינסטלציה",
-                "cleaning": "ניקיון",
-                "transportation": "הובלה",
-                "moving": "הובלת רהיטים",
-                "automotive": "שירותי רכב",
-                "programming": "תכנות",
-                "design": "עיצוב",
-                "photography": "צילום",
-                "marketing": "שיווק",
-                "education": "חינוך",
-                "beauty": "יופי",
-                "other": "שירותים אחרים"
+        "services": {
+            "title": "שירותים",
+            "category": "קטגוריה",
+            "subcategory": "תת-קטגוריה",
+            "serviceName": "שם השירות",
+            "providerName": "שם נותן השירות",
+            "experienceYears": "שנות ניסיון",
+            "priceRange": "טווח מחירים",
+            "priceFrom": "מחיר החל מ-",
+            "priceTo": "מחיר עד",
+            "pricingType": "סוג התמחור",
+            "pricingTypes": {
+                "fixed": "מחיר קבוע",
+                "negotiable": "נתון למשא ומתן",
+                "hourly": "לפי שעה",
+                "daily": "לפי יום",
+                "monthly": "לפי חודש",
+                "perProject": "לפי פרויקט",
+                "free": "בחינם"
             },
-            "fields": {
-                "serviceTitle": "שם השירות",
-                "providerName": "שם הספק",
-                "experienceYears": "שנות ניסיון",
-                "priceFrom": "מחיר החל מ־",
-                "priceTo": "מחיר עד",
-                "pricingType": "סוג תמחור",
-                "availableDays": "ימים זמינים",
-                "availableHours": "שעות זמינות",
-                "serviceArea": "אזור השירות",
-                "emergencyService": "שירות חירום",
-                "pricingTypeOptions": {
-                    "hourly": "לפי שעה",
-                    "fixed": "מחיר קבוע",
-                    "daily": "יומי",
-                    "monthly": "חודשי",
-                    "negotiable": "נתון למשא ומתן"
-                },
-                "availableDaysOptions": {
-                    "sunday": "יום ראשון",
-                    "monday": "יום שני",
-                    "tuesday": "יום שלישי",
-                    "wednesday": "יום רביעי",
-                    "thursday": "יום חמישי",
-                    "friday": "יום שישי",
-                    "saturday": "יום שבת"
-                }
+            "availableDays": "ימי זמינות",
+            "availableHours": "שעות זמינות",
+            "serviceArea": "אזור מתן השירות",
+            "emergencyService": "שירות חירום",
+            "emergencyServiceYes": "כן",
+            "emergencyServiceNo": "לא",
+            "days": {
+                "sunday": "יום ראשון",
+                "monday": "יום שני",
+                "tuesday": "יום שלישי",
+                "wednesday": "יום רביעי",
+                "thursday": "יום חמישי",
+                "friday": "יום שישי",
+                "saturday": "יום שבת"
+            },
+            "placeholders": {
+                "serviceName": "הזן את שם השירות",
+                "providerName": "הזן את שם נותן השירות",
+                "experienceYears": "הזן את מספר שנות הניסיון",
+                "priceFrom": "הזן את המחיר המינימלי",
+                "priceTo": "הזן את המחיר המקסימלי",
+                "serviceArea": "הזן את אזור מתן השירות",
+                "availableHours": "בחר את שעות הזמינות"
+            },
+            "validation": {
+                "serviceNameRequired": "שם השירות הוא שדה חובה",
+                "providerNameRequired": "שם נותן השירות הוא שדה חובה",
+                "experienceYearsRequired": "שנות ניסיון הן שדה חובה",
+                "experienceYearsInvalid": "יש להזין מספר שנות ניסיון תקין",
+                "priceFromRequired": "המחיר המינימלי הוא שדה חובה",
+                "priceToRequired": "המחיר המקסימלי הוא שדה חובה",
+                "priceInvalid": "יש להזין מחיר תקין",
+                "priceToGreaterThanFrom": "המחיר המקסימלי חייב להיות גדול מהמחיר המינימלי או שווה לו",
+                "pricingTypeRequired": "סוג התמחור הוא שדה חובה",
+                "availableDaysRequired": "יש לבחור ימי זמינות",
+                "serviceAreaRequired": "אזור מתן השירות הוא שדה חובה"
             }
         },
         "notFound": "לא נמצאו מוצרים בקטגוריה זו"
     },
+
     "seo": {
         "categoryTitle": "{{category}}",
         "categoryDescription": "עיין במגוון של {{category}} למכירה בספקא {{location}} ובאזורים הסמוכים. מחירים תחרותיים וקשר ישיר עם המוכרים."

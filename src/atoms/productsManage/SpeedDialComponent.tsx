@@ -1,7 +1,13 @@
 import { Fab, SpeedDial, SpeedDialAction, Zoom } from '@mui/material';
-import { FunctionComponent, useEffect, useState } from 'react';
+import {
+    FunctionComponent,
+    Suspense,
+    lazy,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
 import AddSharpIcon from '@mui/icons-material/AddSharp';
-import AddProductModal from './addAndUpdateProduct/CreatePostModal';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useUser } from '../../hooks/useUSer';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
@@ -15,27 +21,46 @@ import { RoleType } from '../../interfaces/UserType';
 import ImportContactsIcon from '@mui/icons-material/ImportContacts';
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 
+// المودال (مع formik + yup + framer-motion) ما بيتحمّل ولا بيتركّب
+// إلا لما المستخدم يفتحه أول مرة.
+const AddProductModal = lazy(
+    () => import('./addAndUpdateProduct/CreatePostModal'),
+);
+
+const speedDialSx = {
+    position: 'fixed',
+    bottom: 10,
+    right: 10,
+    zIndex: 1100,
+} as const;
+
+const fabStyle = {
+    position: 'fixed',
+    bottom: 16,
+    left: 16,
+    zIndex: 1100,
+} as const;
+
 const SpeedDialComponent: FunctionComponent = () => {
-    const [onShowAddModal, setOnShowAddModal] = useState<boolean>(false);
+    const [onShowAddModal, setOnShowAddModal] = useState(false);
+    // بعد أول فتح بنخليه mounted عشان animation الإغلاق تكمّل
+    const [addModalMounted, setAddModalMounted] = useState(false);
     const { auth, isLoggedIn } = useUser();
     const [visible, setVisible] = useState(false);
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const handleScroll = () => {
-        setVisible(window.scrollY > 300);
-    };
+
+    const showAddProductModal = useCallback(() => {
+        setAddModalMounted(true);
+        setOnShowAddModal(true);
+    }, []);
+    const hideAddProductModal = useCallback(() => setOnShowAddModal(false), []);
 
     const handleClick = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    // const isAdminAndModerator = auth && auth._id
-
-    const showAddProductModal = () => setOnShowAddModal(true);
-    const hideAddProductModal = () => setOnShowAddModal(false);
-
     const isAdmin = auth?.role === RoleType.Admin;
-
     const isModerator = auth?.role === RoleType.Moderator;
     const isManagement = isAdmin || isModerator;
 
@@ -46,25 +71,19 @@ const SpeedDialComponent: FunctionComponent = () => {
             addClick: () => navigate(path.UsersManagement),
             show: isManagement,
         },
-
         {
             icon: <ReportGmailerrorredIcon />,
             name: t('SpeedDial.actions.reports'),
             addClick: () => navigate(path.ReportsManagement),
             show: isManagement,
         },
-
         {
             icon: <SearchIcon />,
             name: t('SpeedDial.actions.messageInvestigation'),
             addClick: () => navigate(path.MessageInvestigation),
             show: isManagement,
         },
-
         {
-            /* ==========================================
-                            Message Audit Logs
-                        ========================================== */
             icon: <ImportContactsIcon />,
             name: t('SpeedDial.actions.messageAuditLogs'),
             addClick: () => navigate(path.MessageAuditLogs),
@@ -86,7 +105,8 @@ const SpeedDialComponent: FunctionComponent = () => {
 
     // Back to top button
     useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
+        const handleScroll = () => setVisible(window.scrollY > 300);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -95,12 +115,7 @@ const SpeedDialComponent: FunctionComponent = () => {
             {auth && isLoggedIn && (
                 <SpeedDial
                     ariaLabel='SpeedDial basic example'
-                    sx={{
-                        position: 'fixed',
-                        bottom: 10,
-                        right: 10,
-                        zIndex: 1100,
-                    }}
+                    sx={speedDialSx}
                     icon={<SettingsIcon />}
                 >
                     {actions
@@ -119,23 +134,22 @@ const SpeedDialComponent: FunctionComponent = () => {
                 <Fab
                     color='primary'
                     onClick={handleClick}
-                    style={{
-                        position: 'fixed',
-                        bottom: 16,
-                        left: 16,
-                        zIndex: 1100,
-                    }}
+                    style={fabStyle}
                     size='medium'
                     aria-label='Back to top'
                 >
                     <KeyboardArrowUpIcon />
                 </Fab>
             </Zoom>
-            {/* Add product modal */}
-            <AddProductModal
-                show={onShowAddModal}
-                onHide={() => hideAddProductModal()}
-            />
+
+            {addModalMounted && (
+                <Suspense fallback={null}>
+                    <AddProductModal
+                        show={onShowAddModal}
+                        onHide={hideAddProductModal}
+                    />
+                </Suspense>
+            )}
         </>
     );
 };

@@ -259,21 +259,21 @@ const PostsCategory: FunctionComponent<PostsCategoryProps> = ({
           `categories.${category}.subCategoryPages.${subCategory}.heading`,
           t(`categories.${category}.heading`),
       )
-    : t(`categories.${category}.heading`);
+    : t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.heading`);
 
 const categoryDescription = subCategory
     ? t(
-          `categories.${category}.subCategoryPages.${subCategory}.description`,
-          t(`categories.${category}.description`),
+          `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.subCategoryPages.${subCategory}.description`,
+          t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`),
       )
-    : t(`categories.${category}.description`);
+    : t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.description`);
 
 const searchPlaceholder = subCategory
     ? t(
-          `categories.${category}.subCategoryPages.${subCategory}.label`,
-          t(`categories.${category}.label`),
+          `categories.${category.charAt(0).toUpperCase() + category.slice(1)}.subCategoryPages.${subCategory}.label`,
+          t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.label`),
       )
-    : t(`categories.${category}.label`);
+    : t(`categories.${category.charAt(0).toUpperCase() + category.slice(1)}.label`);
 
     /* ---------- head (React 19 بيرفعها للـ <head> تلقائياً) ---------- */
 

@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ReactNode } from 'react';
@@ -62,9 +63,11 @@ const ICONS: Record<string, IconType> = {
     providerName: <Person />,
     experienceYears: <WorkHistory />,
     priceRange: <AttachMoney />,
+    pricingType: <AttachMoney />,
     availableDays: <CalendarMonth />,
     availableHours: <AccessTime />,
     serviceArea: <Place />,
+    emergencyService: <Whatshot />,
 
     cameraType: <CameraAlt />,
     title: <MenuBook />,
@@ -111,21 +114,22 @@ const ICONS: Record<string, IconType> = {
 
 const isValidValue = (value: unknown): boolean => {
     if (value === undefined || value === null) return false;
+
     if (typeof value === 'string' && !value.trim()) return false;
+
     if (Array.isArray(value) && value.length === 0) return false;
+
     return true;
 };
 
 const formatNumber = (value: unknown, locale: string): string => {
-    if (typeof value !== 'number') return String(value);
+    const number = Number(value);
 
-    return new Intl.NumberFormat(locale).format(value);
+    if (!Number.isFinite(number)) return String(value);
+
+    return new Intl.NumberFormat(locale).format(number);
 };
 
-/**
- * Returns the first existing translation.
- * defaultValue prevents missing keys from appearing in the UI.
- */
 const translateOrFallback = (
     t: TFunction,
     key: string,
@@ -137,11 +141,7 @@ const translateOrFallback = (
 };
 
 /**
- * Supports category-specific labels:
- * categories.Cameras.fields.cameraType
- *
- * Falls back to:
- * product.cameraType
+ * Resolves labels from the correct translation namespace.
  */
 const getSpecificationLabel = (
     category: string,
@@ -149,22 +149,40 @@ const getSpecificationLabel = (
     t: TFunction,
     fallback: string,
 ): string => {
-    if (category) {
-        const categoryLabel = translateOrFallback(
-            t,
-            `categories.${category}.fields.${key}`,
-            '',
-        );
+    if (category.toLowerCase() === 'services') {
+        const serviceLabelKeys: Record<string, string> = {
+            serviceTitle: 'categories.services.serviceName',
+            serviceName: 'categories.services.serviceName',
+            providerName: 'categories.services.providerName',
+            experienceYears: 'categories.services.experienceYears',
+            priceRange: 'categories.services.priceRange',
+            priceFrom: 'categories.services.priceFrom',
+            priceTo: 'categories.services.priceTo',
+            pricingType: 'categories.services.pricingType',
+            availableDays: 'categories.services.availableDays',
+            availableHours: 'categories.services.availableHours',
+            serviceArea: 'categories.services.serviceArea',
+            emergencyService: 'categories.services.emergencyService',
+            category: 'categories.services.category',
+            subcategory: 'categories.services.subcategory',
+        };
 
-        if (categoryLabel) return categoryLabel;
+        const translationKey = serviceLabelKeys[key];
+
+        if (translationKey) {
+            return translateOrFallback(t, translationKey, fallback);
+        }
     }
 
-    return translateOrFallback(t, `product.${key}`, fallback);
+    return translateOrFallback(
+        t,
+        `product.${key}`,
+        fallback,
+    );
 };
 
 /**
- * Translates option values, such as:
- * categories.Cameras.fields.cameraTypeOptions.dslr
+ * Translates category option values.
  */
 const translateOption = (
     value: unknown,
@@ -192,30 +210,87 @@ const translateOption = (
 
     if (!category) return normalizedValue;
 
-    const optionKey = `categories.${category}.fields.${fieldKey}Options.${normalizedValue}`;
+    const optionKey =
+        `categories.${category}.fields.${fieldKey}Options.${normalizedValue}`;
 
-    const translated = t(optionKey, { defaultValue: '' });
-
-    return translated && translated !== optionKey
-        ? translated
-        : normalizedValue;
+    return translateOrFallback(t, optionKey, normalizedValue);
 };
 
+/**
+ * Translates service availability days.
+ */
 const formatDays = (days: unknown, t: TFunction): string => {
     if (!Array.isArray(days)) return String(days);
 
     return days
         .map((day: unknown) => {
-            const key = `days.${String(day).toLowerCase()}`;
-            return translateOrFallback(t, key, String(day));
+            const normalizedDay = String(day).trim().toLowerCase();
+
+            return translateOrFallback(
+                t,
+                `categories.services.days.${normalizedDay}`,
+                normalizedDay,
+            );
         })
         .join(' • ');
 };
 
+/**
+ * Translates service pricing types.
+ * Keeps camelCase values such as perProject intact.
+ */
 const formatPricingType = (value: unknown, t: TFunction): string => {
-    const key = `product.pricing.${String(value)}`;
+    const normalizedValue = String(value).trim();
 
-    return translateOrFallback(t, key, String(value));
+    const exactKey =
+        `categories.services.pricingTypes.${normalizedValue}`;
+
+    const translated = t(exactKey, { defaultValue: '' });
+
+    if (translated && translated !== exactKey) {
+        return translated;
+    }
+
+    // Supports databases that store enum values in lowercase.
+    const lowerCaseKey =
+        `categories.services.pricingTypes.${normalizedValue.toLowerCase()}`;
+
+    return translateOrFallback(t, lowerCaseKey, normalizedValue);
+};
+
+/**
+ * Formats Arabic experience years.
+ */
+const formatExperience = (
+    value: unknown,
+    locale: string,
+    t: TFunction,
+): string => {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+        return String(value);
+    }
+
+    const formattedNumber = formatNumber(number, locale);
+
+    if (locale.startsWith('ar')) {
+        if (number === 1) return 'سنة واحدة';
+        if (number === 2) return 'سنتان';
+
+        if (number >= 3 && number <= 10) {
+            return `${formattedNumber} سنوات`;
+        }
+
+        return `${formattedNumber} سنة`;
+    }
+
+    const unit =
+        number === 1
+            ? t('categories.services.year', { defaultValue: 'year' })
+            : t('categories.services.years', { defaultValue: 'years' });
+
+    return `${formattedNumber} ${unit}`;
 };
 
 export default function PostSpecifications({
@@ -226,7 +301,9 @@ export default function PostSpecifications({
     const specifications: Specification[] = [];
 
     const language = String(
-        (t as any).i18n?.resolvedLanguage ?? (t as any).i18n?.language ?? 'ar',
+        (t as any).i18n?.resolvedLanguage ??
+            (t as any).i18n?.language ??
+            'ar',
     );
 
     const locale = language.startsWith('he')
@@ -235,8 +312,10 @@ export default function PostSpecifications({
           ? 'en-US'
           : 'ar';
 
-    // Use the actual category key from the product document.
     const category = String(product.category ?? '').trim();
+
+    const isServicesCategory =
+        category.toLowerCase() === 'services';
 
     const add = (
         key: string,
@@ -250,16 +329,33 @@ export default function PostSpecifications({
             days?: boolean;
             pricing?: boolean;
             number?: boolean;
+            experience?: boolean;
         },
     ) => {
         if (!isValidValue(value)) return;
 
         let displayValue: ReactNode;
 
-        if (options?.boolean || typeof value === 'boolean') {
-            displayValue = value
-                ? t('common.yes', { defaultValue: 'نعم' })
-                : t('common.no', { defaultValue: 'لا' });
+        if (options?.experience) {
+            displayValue = formatExperience(value, locale, t);
+        } else if (options?.boolean || typeof value === 'boolean') {
+            if (isServicesCategory && key === 'emergencyService') {
+                displayValue = value
+                    ? translateOrFallback(
+                          t,
+                          'categories.services.emergencyServiceYes',
+                          'نعم',
+                      )
+                    : translateOrFallback(
+                          t,
+                          'categories.services.emergencyServiceNo',
+                          'لا',
+                      );
+            } else {
+                displayValue = value
+                    ? t('common.yes', { defaultValue: 'نعم' })
+                    : t('common.no', { defaultValue: 'لا' });
+            }
         } else if (options?.days) {
             displayValue = formatDays(value, t);
         } else if (options?.pricing) {
@@ -280,89 +376,176 @@ export default function PostSpecifications({
 
         specifications.push({
             key,
-            label: getSpecificationLabel(category, key, t, fallback),
+            label: getSpecificationLabel(
+                category,
+                key,
+                t,
+                fallback,
+            ),
             value: displayValue,
             icon: options?.icon ?? ICONS[key],
         });
     };
 
     // GENERAL
-    if (categoryLabel) {
+    if (categoryLabel || category) {
+        const translatedCategory = isServicesCategory
+            ? translateOrFallback(
+                  t,
+                  'categories.services.title',
+                  categoryLabel || category,
+              )
+            : translateOrFallback(
+                  t,
+                  `categories.${category}.label`,
+                  translateOrFallback(
+                      t,
+                      `categories.${category}.title`,
+                      categoryLabel || category,
+                  ),
+              );
+
         specifications.push({
             key: 'category',
-            label: t('categories.title', { defaultValue: 'الفئة' }),
-            value: categoryLabel,
+            label: isServicesCategory
+                ? translateOrFallback(
+                      t,
+                      'categories.services.category',
+                      'الفئة',
+                  )
+                : t('categories.title', {
+                      defaultValue: 'الفئة',
+                  }),
+            value: translatedCategory,
             icon: ICONS.category,
         });
     }
 
+    // SUBCATEGORY
     if (isValidValue(product.subcategory)) {
-        const subcategory = String(product.subcategory);
-        const subcategoryKey = `categories.${category}.subCategories.${subcategory}`;
+        const subcategory = String(product.subcategory).trim();
 
-        const translatedSubcategory = translateOrFallback(
-            t,
-            subcategoryKey,
-            translateOrFallback(t, `categories.${subcategory}`, subcategory),
-        );
+        const translatedSubcategory = isServicesCategory
+            ? translateOrFallback(
+                  t,
+                  `categories.services.subCategories.${subcategory}`,
+                  translateOrFallback(
+                      t,
+                      `categories.services.subcategories.${subcategory}`,
+                      translateOrFallback(
+                          t,
+                          `categories.${category}.subCategories.${subcategory}`,
+                          subcategory,
+                      ),
+                  ),
+              )
+            : translateOrFallback(
+                  t,
+                  `categories.${category}.subCategories.${subcategory}`,
+                  subcategory,
+              );
 
         specifications.push({
             key: 'subcategory',
-            label: t('product.subcategory', {
-                defaultValue: 'الفئة الفرعية',
-            }),
+            label: isServicesCategory
+                ? translateOrFallback(
+                      t,
+                      'categories.services.subcategory',
+                      'الفئة الفرعية',
+                  )
+                : t('product.subcategory', {
+                      defaultValue: 'الفئة الفرعية',
+                  }),
             value: translatedSubcategory,
             icon: ICONS.subcategory,
         });
     }
 
+    // GENERAL PRODUCT FIELDS
     add('brand', 'العلامة التجارية', product.brand);
     add('model', 'الموديل', product.model);
-    add('color', 'اللون', product.color, { translateValue: true });
+    add('color', 'اللون', product.color, {
+        translateValue: true,
+    });
     add('material', 'الخامة', product.material, {
         translateValue: true,
     });
 
     // SERVICES
-    add('serviceTitle', 'اسم الخدمة', product.serviceTitle);
-    add('providerName', 'مقدم الخدمة', product.providerName);
-    add('experienceYears', 'سنوات الخبرة', product.experienceYears, {
-        unit: t('product.years', { defaultValue: 'سنوات' }),
-        number: true,
-    });
+    if (isServicesCategory) {
+        add(
+            'serviceTitle',
+            'اسم الخدمة',
+            product.serviceTitle ?? product.serviceName,
+        );
 
-    if (isValidValue(product.priceFrom) || isValidValue(product.priceTo)) {
-        const from = isValidValue(product.priceFrom)
-            ? `${formatNumber(product.priceFrom, locale)}₪`
-            : '';
+        add('providerName', 'اسم مقدم الخدمة', product.providerName);
 
-        const to = isValidValue(product.priceTo)
-            ? `${formatNumber(product.priceTo, locale)}₪`
-            : '';
+        add(
+            'experienceYears',
+            'سنوات الخبرة',
+            product.experienceYears,
+            { experience: true },
+        );
 
-        const priceRange = from && to ? `${from} - ${to}` : from || to;
+        if (
+            isValidValue(product.priceFrom) ||
+            isValidValue(product.priceTo)
+        ) {
+            const from = isValidValue(product.priceFrom)
+                ? `${formatNumber(product.priceFrom, locale)}₪`
+                : '';
 
-        specifications.push({
-            key: 'priceRange',
-            label: t('product.priceRange', {
-                defaultValue: 'نطاق السعر',
-            }),
-            value: priceRange,
-            icon: ICONS.priceRange,
-        });
+            const to = isValidValue(product.priceTo)
+                ? `${formatNumber(product.priceTo, locale)}₪`
+                : '';
+
+            specifications.push({
+                key: 'priceRange',
+                label: getSpecificationLabel(
+                    category,
+                    'priceRange',
+                    t,
+                    'نطاق السعر',
+                ),
+                value: from && to ? `${from} - ${to}` : from || to,
+                icon: ICONS.priceRange,
+            });
+        }
+
+        add(
+            'pricingType',
+            'نوع التسعير',
+            product.pricingType,
+            { pricing: true },
+        );
+
+        add(
+            'availableDays',
+            'أيام التوفر',
+            product.availableDays,
+            { days: true },
+        );
+
+        add(
+            'availableHours',
+            'ساعات التوفر',
+            product.availableHours,
+        );
+
+        add(
+            'serviceArea',
+            'منطقة تقديم الخدمة',
+            product.serviceArea,
+        );
+
+        add(
+            'emergencyService',
+            'خدمة طوارئ',
+            product.emergencyService,
+            { boolean: true },
+        );
     }
-
-    add('pricingType', 'طريقة التسعير', product.pricingType, {
-        pricing: true,
-    });
-    add('availableDays', 'أيام العمل', product.availableDays, {
-        days: true,
-    });
-    add('availableHours', 'ساعات العمل', product.availableHours);
-    add('serviceArea', 'منطقة الخدمة', product.serviceArea);
-    add('emergencyService', 'خدمة طوارئ', product.emergencyService, {
-        boolean: true,
-    });
 
     // CAMERAS
     add('cameraType', 'نوع الكاميرا', product.cameraType, {
@@ -397,10 +580,14 @@ export default function PostSpecifications({
 
     // MUSICAL INSTRUMENTS
     add('size', 'الحجم', product.size);
-    add('electric', 'كهربائي', product.electric, { boolean: true });
+    add('electric', 'كهربائي', product.electric, {
+        boolean: true,
+    });
 
     // EQUIPMENT
-    add('year', 'سنة الصنع', product.year, { number: true });
+    add('year', 'سنة الصنع', product.year, {
+        number: true,
+    });
     add('operatingHours', 'ساعات التشغيل', product.operatingHours, {
         unit: t('product.hours', { defaultValue: 'ساعة' }),
         number: true,
@@ -480,15 +667,24 @@ export default function PostSpecifications({
         number: true,
     });
     add('hoseLength', 'طول الخرطوم', product.hoseLength);
-    add('automatic', 'تلقائي', product.automatic, { boolean: true });
-    add('weatherResistant', 'مقاوم للعوامل الجوية', product.weatherResistant, {
+    add('automatic', 'تلقائي', product.automatic, {
         boolean: true,
     });
+    add(
+        'weatherResistant',
+        'مقاوم للعوامل الجوية',
+        product.weatherResistant,
+        { boolean: true },
+    );
 
     // ELECTRONICS
     add('processor', 'المعالج', product.processor);
-    add('ram', 'الذاكرة RAM', product.ram, { unit: 'GB' });
-    add('storage', 'التخزين', product.storage, { unit: 'GB' });
+    add('ram', 'الذاكرة RAM', product.ram, {
+        unit: 'GB',
+    });
+    add('storage', 'التخزين', product.storage, {
+        unit: 'GB',
+    });
     add('screenSize', 'حجم الشاشة', product.screenSize, {
         unit: '"',
     });
@@ -508,18 +704,24 @@ export default function PostSpecifications({
         unit: 'م²',
         number: true,
     });
-    add('rooms', 'عدد الغرف', product.rooms, { number: true });
+    add('rooms', 'عدد الغرف', product.rooms, {
+        number: true,
+    });
     add('bathrooms', 'عدد الحمامات', product.bathrooms, {
         number: true,
     });
-    add('floors', 'عدد الطوابق', product.floors, { number: true });
+    add('floors', 'عدد الطوابق', product.floors, {
+        number: true,
+    });
     add('hasParking', 'موقف سيارات', product.hasParking, {
         boolean: true,
     });
     add('hasElevator', 'مصعد', product.hasElevator, {
         boolean: true,
     });
-    add('furnished', 'مفروشة', product.furnished, { boolean: true });
+    add('furnished', 'مفروشة', product.furnished, {
+        boolean: true,
+    });
     add('rentalType', 'نوع المعاملة', product.rentalType, {
         translateValue: true,
     });
@@ -534,9 +736,15 @@ export default function PostSpecifications({
         unit: t('product.months', { defaultValue: 'شهر' }),
         number: true,
     });
-    add('gender', 'الجنس', product.gender, { translateValue: true });
-    add('vaccinated', 'مطعّم', product.vaccinated, { boolean: true });
-    add('neutered', 'مُعقّم', product.neutered, { boolean: true });
+    add('gender', 'الجنس', product.gender, {
+        translateValue: true,
+    });
+    add('vaccinated', 'مطعّم', product.vaccinated, {
+        boolean: true,
+    });
+    add('neutered', 'مُعقّم', product.neutered, {
+        boolean: true,
+    });
     add('microchipped', 'مزود بشريحة', product.microchipped, {
         boolean: true,
     });
@@ -555,13 +763,17 @@ export default function PostSpecifications({
     add('certificate', 'شهادة الأصالة', product.certificate, {
         boolean: true,
     });
-    add('framed', 'مؤطرة', product.framed, { boolean: true });
+    add('framed', 'مؤطرة', product.framed, {
+        boolean: true,
+    });
 
     // GAMING
     add('platform', 'المنصة', product.platform, {
         translateValue: true,
     });
-    add('genre', 'النوع', product.genre, { translateValue: true });
+    add('genre', 'النوع', product.genre, {
+        translateValue: true,
+    });
     add('edition', 'الإصدار', product.edition, {
         translateValue: true,
     });
@@ -584,7 +796,9 @@ export default function PostSpecifications({
     add('assemblyRequired', 'يحتاج إلى تركيب', product.assemblyRequired, {
         boolean: true,
     });
-    add('style', 'الطراز', product.style, { translateValue: true });
+    add('style', 'الطراز', product.style, {
+        translateValue: true,
+    });
     add('includesAccessories', 'يشمل ملحقات', product.includesAccessories, {
         boolean: true,
     });
@@ -600,15 +814,15 @@ export default function PostSpecifications({
         >
             <Stack spacing={2.5}>
                 <Box>
-                    <Typography variant='h6' sx={{ fontWeight: 800 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 800 }}>
                         {t('product.specifications', {
                             defaultValue: 'مواصفات المنتج',
                         })}
                     </Typography>
 
                     <Typography
-                        variant='body2'
-                        color='text.secondary'
+                        variant="body2"
+                        color="text.secondary"
                         sx={{ mt: 0.5 }}
                     >
                         {t('product.specificationsSubtitle', {
@@ -652,8 +866,8 @@ export default function PostSpecifications({
                                     )}
 
                                     <Typography
-                                        variant='caption'
-                                        color='text.secondary'
+                                        variant="caption"
+                                        color="text.secondary"
                                         sx={{ fontWeight: 600 }}
                                     >
                                         {specification.label}

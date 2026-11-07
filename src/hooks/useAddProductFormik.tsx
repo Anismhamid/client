@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { createNewPost } from '../services/postsServices';
 import { Posts } from '../interfaces/Posts';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { uploadImage } from '../services/uploadImage';
 import { useUser } from './useUSer';
 
@@ -20,6 +20,61 @@ const useAddPostFormik = (
         publicId: string;
     } | null>(null);
 
+    // قبل: الـ schema كانت بتنبني من جديد (مع ~8 استدعاءات t) مع كل ضغطة حرف.
+    // هلأ بتنبني مرة وحدة، وبس إذا تغيّرت اللغة.
+    const validationSchema = useMemo(
+        () =>
+            yup.object({
+                product_name: yup
+                    .string()
+                    .min(
+                        2,
+                        t('modals.addProductModal.validation.productNameMin'),
+                    )
+                    .required(
+                        t(
+                            'modals.addProductModal.validation.productNameRequired',
+                        ),
+                    ),
+                // الصورة مطلوبة: إعلان بدون صورة بيضعّف الشبكة كلها
+                image: yup.object({
+                    url: yup
+                        .string()
+                        .required(
+                            t(
+                                'modals.addProductModal.validation.imageRequired',
+                                'أضف صورة للمنتج',
+                            ),
+                        ),
+                }),
+                category: yup
+                    .string()
+                    .required(
+                        t('modals.addProductModal.validation.categoryRequired'),
+                    ),
+                price: yup
+                    .number()
+                    .required(
+                        t('modals.addProductModal.validation.priceRequired'),
+                    ),
+                type: yup.string(),
+                description: yup
+                    .string()
+                    .min(
+                        2,
+                        t('modals.addProductModal.validation.descriptionMin'),
+                    )
+                    .max(
+                        500,
+                        t('modals.addProductModal.validation.descriptionMax'),
+                    ),
+                sale: yup.boolean(),
+                discount: yup.number(),
+                location: yup.string(),
+            }),
+        [t],
+    );
+
     const formik = useFormik<Posts>({
         initialValues: {
             product_name: '',
@@ -35,45 +90,7 @@ const useAddPostFormik = (
             location: auth?.address?.city || '',
             featured: false,
         },
-        validationSchema: yup.object({
-            product_name: yup
-                .string()
-                .min(2, t('modals.addProductModal.validation.productNameMin'))
-                .required(
-                    t('modals.addProductModal.validation.productNameRequired'),
-                ),
-            // الصورة مطلوبة: إعلان بدون صورة بيضعّف الشبكة كلها
-            image: yup.object({
-                url: yup
-                    .string()
-                    .required(
-                        t(
-                            'modals.addProductModal.validation.imageRequired',
-                            'أضف صورة للمنتج',
-                        ),
-                    ),
-            }),
-            category: yup
-                .string()
-                .required(
-                    t('modals.addProductModal.validation.categoryRequired'),
-                ),
-            price: yup
-                .number()
-                .required(t('modals.addProductModal.validation.priceRequired')),
-            type: yup.string(),
-            description: yup
-                .string()
-                .min(2, t('modals.addProductModal.validation.descriptionMin'))
-                .max(
-                    500,
-                    t('modals.addProductModal.validation.descriptionMax'),
-                ),
-
-            sale: yup.boolean(),
-            discount: yup.number(),
-            location: yup.string(),
-        }),
+        validationSchema,
         onSubmit: async (values, { resetForm }) => {
             try {
                 let uploadedImage = imageData;

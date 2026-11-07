@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, memo } from 'react';
 import {
     Modal,
     Box,
@@ -26,18 +26,205 @@ interface AddProductModalProps {
     onSuccess?: () => void;
 }
 
+// ─── Header: ثابت، ما بيتأثر بالكتابة بالفورم ───────────────────────────────
+const ModalHeader = memo(function ModalHeader({
+    isMobile,
+    onHide,
+}: {
+    isMobile: boolean;
+    onHide: () => void;
+}) {
+    const { t } = useTranslation();
+    const theme = useTheme();
+
+    return (
+        <Box
+            sx={{
+                position: 'sticky',
+                top: 0,
+                zIndex: 20,
+                px: isMobile ? 2.5 : { xs: 3, sm: 4 },
+                py: isMobile ? 2 : 2.5,
+                background: BRAND.gradient,
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                }}
+            >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <m.div
+                        whileHover={{ rotate: 5, scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        <Box
+                            sx={{
+                                width: 44,
+                                height: 44,
+                                borderRadius: '16px',
+                                bgcolor: alpha('#fff', 0.18),
+                                border: `1px solid ${alpha('#fff', 0.25)}`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <AddCircleOutline
+                                sx={{ color: '#fff', fontSize: 24 }}
+                            />
+                        </Box>
+                    </m.div>
+
+                    <Box>
+                        <Typography
+                            variant='h5'
+                            sx={{
+                                fontWeight: 800,
+                                fontSize: isMobile ? '1.3rem' : '1.6rem',
+                                letterSpacing: '-0.5px',
+                                color: '#fff',
+                            }}
+                        >
+                            {t('modals.addProductModal.title') ||
+                                'إضافة منتج جديد'}
+                        </Typography>
+                        <Typography
+                            variant='caption'
+                            sx={{
+                                color: alpha('#fff', 0.8),
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    width: 6,
+                                    height: 6,
+                                    borderRadius: '50%',
+                                    bgcolor: theme.palette.success.light,
+                                }}
+                            />
+                            {t('modals.addProductModal.subtitle') ||
+                                'املأ المعلومات التالية لنشر منتجك'}
+                        </Typography>
+                    </Box>
+                </Box>
+
+                <IconButton
+                    onClick={onHide}
+                    aria-label={t('common.close', 'إغلاق')}
+                    sx={{
+                        color: '#fff',
+                        backgroundColor: alpha('#fff', 0.14),
+                        '&:hover': {
+                            backgroundColor: alpha('#fff', 0.26),
+                            transform: 'rotate(90deg)',
+                        },
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        width: 40,
+                        height: 40,
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </Box>
+        </Box>
+    );
+});
+
+// ─── Body: هون عايش الـ formik، فبس هو بيعمل re-render مع الكتابة ──────────
+// (قبل: الـ hook كان بالمودال الأب، فكل ضغطة حرف كانت بتعيد رسم الـ Paper
+//  والـ gradients والـ header والـ framer-motion).
+const AddProductBody = memo(function AddProductBody({
+    isMobile,
+    onHide,
+    onSuccess,
+}: {
+    isMobile: boolean;
+    onHide: () => void;
+    onSuccess?: () => void;
+}) {
+    const { t } = useTranslation();
+    const theme = useTheme();
+
+    const { formik, imageFile, setImageFile, imageData, setImageData } =
+        useAddProductFormik(onHide, onSuccess);
+
+    return (
+        <>
+            <Box
+                sx={{
+                    background:
+                        theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.common.white, 0.02)
+                            : alpha(theme.palette.common.black, 0.01),
+                    borderRadius: '20px',
+                    p: isMobile ? 1.5 : { xs: 2, sm: 2.5 },
+                    border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
+                }}
+            >
+                <PostForm
+                    formik={formik}
+                    imageFile={imageFile}
+                    setImageFile={setImageFile}
+                    imageData={imageData}
+                    setImageData={setImageData}
+                    onHide={onHide}
+                    mode='add'
+                    wizard
+                />
+            </Box>
+
+            {/* Footer Note */}
+            <Typography
+                variant='caption'
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 1,
+                    mt: 3,
+                    pt: 2,
+                    borderTop: `1px dashed ${alpha(theme.palette.divider, 0.5)}`,
+                    color: alpha(theme.palette.text.secondary, 0.7),
+                    textAlign: 'center',
+                }}
+            >
+                <Box
+                    sx={{
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: BRAND.gradient,
+                    }}
+                />
+                {t('modals.addProductModal.footerNote') ||
+                    'جميع الحقول المميزة بـ * مطلوبة'}
+                <Box
+                    sx={{
+                        width: 4,
+                        height: 4,
+                        borderRadius: '50%',
+                        background: BRAND.gradient,
+                    }}
+                />
+            </Typography>
+        </>
+    );
+});
+
 const AddProductModal: FunctionComponent<AddProductModalProps> = ({
     show,
     onHide,
     onSuccess,
 }) => {
-    const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
     const dir = handleRTL();
-
-    const { formik, imageFile, setImageFile, imageData, setImageData } =
-        useAddProductFormik(onHide, onSuccess);
 
     return (
         <Modal
@@ -105,111 +292,7 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                         </Box>
                     )}
 
-                    {/* Header */}
-                    <Box
-                        sx={{
-                            position: 'sticky',
-                            top: 0,
-                            zIndex: 20,
-                            px: isMobile ? 2.5 : { xs: 3, sm: 4 },
-                            py: isMobile ? 2 : 2.5,
-                            background: BRAND.gradient,
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 1.5,
-                                }}
-                            >
-                                <m.div
-                                    whileHover={{ rotate: 5, scale: 1.05 }}
-                                    transition={{ duration: 0.2 }}
-                                >
-                                    {/* كان نفس لون الخلفية فمكانش بيبان — صار شفاف أبيض */}
-                                    <Box
-                                        sx={{
-                                            width: 44,
-                                            height: 44,
-                                            borderRadius: '16px',
-                                            bgcolor: alpha('#fff', 0.18),
-                                            border: `1px solid ${alpha('#fff', 0.25)}`,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        <AddCircleOutline
-                                            sx={{ color: '#fff', fontSize: 24 }}
-                                        />
-                                    </Box>
-                                </m.div>
-
-                                <Box>
-                                    {/* نص أبيض عادي: التدرّج الأبيض→ذهبي كان ضعيف التباين على خلفية ذهبية */}
-                                    <Typography
-                                        variant='h5'
-                                        sx={{
-                                            fontWeight: 800,
-                                            fontSize: isMobile ? '1.3rem' : '1.6rem',
-                                            letterSpacing: '-0.5px',
-                                            color: '#fff',
-                                        }}
-                                    >
-                                        {t('modals.addProductModal.title') ||
-                                            'إضافة منتج جديد'}
-                                    </Typography>
-                                    <Typography
-                                        variant='caption'
-                                        sx={{
-                                            color: alpha('#fff', 0.8),
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: 0.5,
-                                        }}
-                                    >
-                                        <Box
-                                            sx={{
-                                                width: 6,
-                                                height: 6,
-                                                borderRadius: '50%',
-                                                bgcolor: theme.palette.success.light,
-                                            }}
-                                        />
-                                        {t('modals.addProductModal.subtitle') ||
-                                            'املأ المعلومات التالية لنشر منتجك'}
-                                    </Typography>
-                                </Box>
-                            </Box>
-
-                            <IconButton
-                                onClick={onHide}
-                                aria-label={t('common.close', 'إغلاق')}
-                                sx={{
-                                    color: '#fff',
-                                    backgroundColor: alpha('#fff', 0.14),
-                                    '&:hover': {
-                                        backgroundColor: alpha('#fff', 0.26),
-                                        transform: 'rotate(90deg)',
-                                    },
-                                    transition:
-                                        'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    width: 40,
-                                    height: 40,
-                                }}
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                        </Box>
-                    </Box>
+                    <ModalHeader isMobile={isMobile} onHide={onHide} />
 
                     {/* Body */}
                     <Box
@@ -232,63 +315,11 @@ const AddProductModal: FunctionComponent<AddProductModalProps> = ({
                             },
                         }}
                     >
-                        <Box
-                            sx={{
-                                background:
-                                    theme.palette.mode === 'dark'
-                                        ? alpha(theme.palette.common.white, 0.02)
-                                        : alpha(theme.palette.common.black, 0.01),
-                                borderRadius: '20px',
-                                p: isMobile ? 1.5 : { xs: 2, sm: 2.5 },
-                                border: `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-                            }}
-                        >
-                            <PostForm
-                                formik={formik}
-                                imageFile={imageFile}
-                                setImageFile={setImageFile}
-                                imageData={imageData}
-                                setImageData={setImageData}
-                                onHide={onHide}
-                                mode='add'
-                                wizard
-                            />
-                        </Box>
-
-                        {/* Footer Note */}
-                        <Typography
-                            variant='caption'
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 1,
-                                mt: 3,
-                                pt: 2,
-                                borderTop: `1px dashed ${alpha(theme.palette.divider, 0.5)}`,
-                                color: alpha(theme.palette.text.secondary, 0.7),
-                                textAlign: 'center',
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    width: 4,
-                                    height: 4,
-                                    borderRadius: '50%',
-                                    background: BRAND.gradient,
-                                }}
-                            />
-                            {t('modals.addProductModal.footerNote') ||
-                                'جميع الحقول المميزة بـ * مطلوبة'}
-                            <Box
-                                sx={{
-                                    width: 4,
-                                    height: 4,
-                                    borderRadius: '50%',
-                                    background: BRAND.gradient,
-                                }}
-                            />
-                        </Typography>
+                        <AddProductBody
+                            isMobile={isMobile}
+                            onHide={onHide}
+                            onSuccess={onSuccess}
+                        />
                     </Box>
                 </Paper>
             </Fade>
