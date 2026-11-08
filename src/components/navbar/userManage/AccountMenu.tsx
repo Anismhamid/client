@@ -63,7 +63,7 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({ logout }) => {
 
     const getRoleLabel = () => {
         if (isAdmin) return t('accountMenu.admin');
-        if (isSiteModerator) return t('accountMenu.siteModerator');
+        if (isSiteModerator) return t('accountMenu.moderator');
         return t('accountMenu.client') || 'Client';
     };
 

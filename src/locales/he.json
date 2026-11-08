@@ -2673,7 +2673,7 @@
     },
     "accountMenu": {
         "admin": "מנהל מערכת",
-        "siteModerator": "מפקח אתר",
+        "moderator": "מפקח אתר",
         "client": "משתמש",
         "profile": "פרופיל",
         "blockedUsers": "משתמשים חסומים",

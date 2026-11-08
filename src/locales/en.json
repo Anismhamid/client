@@ -2672,7 +2672,7 @@
     },
     "accountMenu": {
         "admin": "System admin",
-        "siteModerator": "Site moderator",
+        "moderator": "Moderator",
         "client": "Client",
         "profile": "Profile",
         "blockedUsers": "Blocked users",

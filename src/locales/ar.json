@@ -2693,7 +2693,7 @@
     },
     "accountMenu": {
         "admin": "مدير النظام",
-        "siteModerator": "مشرف الموقع",
+        "moderator": "مشرف الموقع",
         "client": "مستخدم",
         "profile": "الملف الشخصي",
         "blockedUsers": "المستخدمون المحظورون",

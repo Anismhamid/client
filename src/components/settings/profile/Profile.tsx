@@ -1,178 +1,184 @@
 import {
     FunctionComponent,
+    lazy,
+    ReactElement,
     Suspense,
+    useCallback,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
-    Button,
-    Typography,
     Box,
-    Stack,
-    Card,
-    CardContent,
-    Avatar,
-    Grid,
-    Paper,
-    Chip,
-    Divider,
-    useTheme,
-    useMediaQuery,
-    Tabs,
-    Tab,
-    Container,
     CircularProgress,
-    IconButton,
-    Tooltip,
+    Collapse,
+    Container,
+    Divider,
+    Grid,
+    Stack,
+    Tab,
+    Tabs,
     alpha,
+    useMediaQuery,
+    useTheme,
 } from '@mui/material';
-import {
-    History as HistoryIcon,
-    Visibility as VisibilityIcon,
-    Phone,
-    Email,
-    LocationOn,
-    VerifiedUser,
-    CalendarToday,
-    Share,
-    Lock,
-    Person,
-    Settings,
-    Logout,
-    Favorite,
-    ShoppingCart,
-    Star,
-} from '@mui/icons-material';
+import { Favorite, Person, Settings } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { m } from 'framer-motion';
-import PersonalInformation from './tabs/PersonalInformationTab';
+import { m, MotionConfig } from 'framer-motion';
+import QuickActionsTab from './tabs/QuickActionsTab';
+
+
 import { useUserPosts } from '../../../hooks/useUserPosts';
 import { usePosts } from '../../../hooks/usePosts';
 import { useUser } from '../../../hooks/useUSer';
-import { Posts } from '../../../interfaces/Posts';
 import { path } from '../../../routes/routes';
 import { showSuccess } from '../../../atoms/toasts/ReactToast';
 import { deleteUserById, getUserById } from '../../../services/usersServices';
-import { formatDate } from '../../../helpers/dateAndPriceFormat';
 import DeleteAccountBox from '../../navbar/userManage/DeleteAccountBox';
-import EditUserData from '../../navbar/userManage/EditUserData';
-import QuickActionsTab from './tabs/QuickActionsTab';
-import FavoritesProducts from '../../pages/products/FavoritesPosts';
 import { User } from '../../../interfaces/chat/usersMessages';
 import Loader from '../../../atoms/loader/Loader';
 import handleRTL from '../../../locales/handleRTL';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
+import { calculateProfileCompletion, computeLevel, EMPTY_USER, getLikesReceived, getMissingFields, getReviewStats, ProfileUser } from './ProfileShared';
+import ActivityCard from './ActivityCard';
+import CompletionCard from './CompletionCard';
+import ProfileHero from './ProfileHero';
+import ReputationCard from './ReputationCard';
+import PersonalInformation from './tabs/PersonalInformation';
 
-const ACCENT = '#f59e0b';
+const EditUserData = lazy(() => import('../../navbar/userManage/EditUserData'));
+const FavoritesProducts = lazy(
+    () => import('../../pages/products/FavoritesPosts'),
+);
 
-const getCompletionColor = (percentage: number) => {
-    if (percentage >= 80) return '#22c55e';
-    if (percentage >= 50) return ACCENT;
-    return '#ef4444';
-};
+type TabKey = 'overview' | 'favorites' | 'settings';
+
+const InlineSpinner = () => (
+    <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
+        <CircularProgress size={32} />
+    </Box>
+);
 
 const Profile: FunctionComponent = () => {
-    const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState(0);
+    const { t } = useTranslation();
     const navigate = useNavigate();
-    const detailsRef = useRef<HTMLDivElement>(null);
-    const { t, i18n } = useTranslation();
     const theme = useTheme();
+    const dir = handleRTL();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    const [showEdit, setShowEdit] = useState<boolean>(false);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [hovered, setHovered] = useState(false);
-    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-
+    const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const { id } = useParams();
     const { auth, logout: contextLogout } = useUser();
 
-    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        setMousePosition({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        });
-    };
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<ProfileUser>(EMPTY_USER);
+    const [showEdit, setShowEdit] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const editRef = useRef<HTMLDivElement>(null);
+    const requestRef = useRef(0);
 
-    const getRelativeDate = (timestamp: string) => {
-        const date = new Date(timestamp);
-        const today = new Date();
-        const diffDays = Math.floor(
-            (today.setHours(0, 0, 0, 0) - new Date(date).setHours(0, 0, 0, 0)) /
-                86400000,
-        );
-        const time = date.toLocaleTimeString(i18n.language, {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-        if (diffDays === 0) return `${t('activity.today')}، ${time}`;
-        if (diffDays === 1) return `${t('activity.yesterday')}، ${time}`;
-        return `${date.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' })}، ${time}`;
-    };
+    const targetId = id || auth?._id;
+    const isOwner = !!auth?._id && (!id || id === auth._id);
 
-    const { id } = useParams();
-    const handleShowIdit = () => setShowEdit((p) => !p);
+    /* ───────── Tabs (synced with ?tab=) ───────── */
+    const allowedTabs: TabKey[] = isOwner
+        ? ['overview', 'favorites', 'settings']
+        : ['overview'];
+    const tabParam = searchParams.get('tab') as TabKey | null;
+    const activeTab: TabKey =
+        tabParam && allowedTabs.includes(tabParam) ? tabParam : 'overview';
 
-    const [user, setUser] = useState<{
-        name: { first: string; last: string };
-        phone: { phone_1: string; phone_2: string };
-        address: { city: string; street: string; houseNumber: number };
-        email: string;
-        image: { url: string; alt: string };
-        role: string;
-        status: boolean;
-        activity: string[];
-        createdAt: string;
-        slug: string;
-        gender?: string;
-    }>({
-        name: { first: '', last: '' },
-        phone: { phone_1: '', phone_2: '' },
-        address: { city: '', street: '', houseNumber: 0 },
-        email: '',
-        image: { url: '', alt: '' },
-        role: '',
-        status: false,
-        activity: [],
-        gender: 'male',
-        createdAt: '',
-        slug: '',
-    });
+    const selectTab = useCallback(
+        (key: TabKey) =>
+            setSearchParams(key === 'overview' ? {} : { tab: key }, {
+                replace: true,
+            }),
+        [setSearchParams],
+    );
+
+    /* ───────── Data ───────── */
+    const loadUser = useCallback(
+        async (silent = false) => {
+            if (!targetId) return;
+            const reqId = ++requestRef.current;
+            try {
+                if (!silent) setLoading(true);
+                const res = await getUserById(targetId);
+                if (reqId === requestRef.current) setUser(res);
+            } catch (err) {
+                console.error('Error fetching profile data:', err);
+            } finally {
+                if (!silent && reqId === requestRef.current) setLoading(false);
+            }
+        },
+        [targetId],
+    );
+
+    useEffect(() => {
+        void loadUser();
+        return () => {
+            requestRef.current += 1; // يلغي أي رد متأخر
+        };
+    }, [loadUser]);
 
     const { userPosts, loading: productsLoading } = useUserPosts(user.slug);
     const { posts } = usePosts();
 
-    const calculateProfileCompletion = (u: User) => {
-        const fields = [
-            u.name?.first,
-            u.name?.last,
-            u.phone?.phone_1,
-            u.address?.city,
-            u.address?.street,
-            u.address?.houseNumber,
-            u.image?.url,
-            u.gender?.toString(),
-        ];
-        const filled = fields.filter(Boolean).length;
-        return Math.round((filled / fields.length) * 100);
+    /* ───────── Derived ───────── */
+    const reviewStats = useMemo(() => getReviewStats(userPosts), [userPosts]);
+    const likesReceived = useMemo(() => getLikesReceived(userPosts), [userPosts]);
+    const completion = useMemo(() => calculateProfileCompletion(user), [user]);
+    const missing = useMemo(() => getMissingFields(user), [user]);
+
+    const favorites = useMemo(() => {
+        const viewerId = auth?._id;
+        if (!viewerId) return 0;
+        return posts.filter(
+            (p) => Array.isArray(p.likes) && p.likes.includes(viewerId),
+        ).length;
+    }, [posts, auth?._id]);
+
+    const level = useMemo(
+        () =>
+            computeLevel({
+                posts: userPosts.length,
+                completion,
+                reviews: reviewStats.count,
+                rating: reviewStats.average,
+            }),
+        [userPosts.length, completion, reviewStats],
+    );
+
+    /* ───────── Actions ───────── */
+    const openEdit = useCallback(() => {
+        setShowEdit(true);
+        selectTab('settings');
+    }, [selectTab]);
+
+    const toggleEdit = () => {
+        // عند الإغلاق نعيد جلب البيانات بصمت حتى يتحدّث الـ Hero
+        if (showEdit) void loadUser(true);
+        setShowEdit((v) => !v);
     };
 
-    const calculateRating = (products: Posts[]) => {
-        if (!products.length) return 0;
-        const ratings = products
-            .flatMap((p) => p.reviews?.map((r) => r.rating) ?? [])
-            .filter((r): r is number => r !== undefined);
-        if (!ratings.length) return 0;
-        const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-        return Number(avg.toFixed(1));
-    };
+    // بعد فتح التعديل ينزل التمرير تلقائياً للنموذج
+    useEffect(() => {
+        if (!showEdit || activeTab !== 'settings') return;
+        const timer = window.setTimeout(
+            () =>
+                editRef.current?.scrollIntoView({
+                    behavior: reduceMotion ? 'auto' : 'smooth',
+                    block: 'start',
+                }),
+            150,
+        );
+        return () => window.clearTimeout(timer);
+    }, [showEdit, activeTab, reduceMotion]);
 
     const handleShareProfile = async () => {
         const profileUrl = `${window.location.origin}/users/customer/${user.slug}`;
-
         try {
             if (navigator.share) {
                 await navigator.share({
@@ -203,671 +209,92 @@ const Profile: FunctionComponent = () => {
         navigate(path.Home, { replace: true });
     };
 
-    const targetId = id || auth?._id;
-
-    useEffect(() => {
-        if (!targetId) return;
-        let cancelled = false;
-
-        (async () => {
-            try {
-                setLoading(true);
-                const userRes = await getUserById(targetId);
-                if (!cancelled) setUser(userRes);
-            } catch (err) {
-                console.error('Error fetching profile data:', err);
-            } finally {
-                if (!cancelled) setLoading(false);
-            }
-        })();
-
-        return () => {
-            cancelled = true;
-        };
-    }, [id, targetId]);
-
-    const stats = useMemo(() => {
-        const viewerId = auth?._id;
-        const totalFavorites = viewerId
-            ? posts.filter(
-                  (post) =>
-                      Array.isArray(post.likes) &&
-                      post.likes.includes(viewerId),
-              ).length
-            : 0;
-
-        return {
-            totalProducts: userPosts.length,
-            totalFavorites,
-            rating: user ? calculateRating(userPosts || []) : 0,
-            completionPercentage: user
-                ? calculateProfileCompletion(user as unknown as User)
-                : 0,
-        };
-    }, [user, userPosts, posts, auth?._id]);
-
     const handleDeleteAccount = async () => {
-        if (!auth?._id) {
-            throw new Error('User ID is missing');
-        }
-
+        if (!auth?._id) throw new Error('User ID is missing');
         await deleteUserById(auth._id);
         await contextLogout();
     };
 
-    const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-        setActiveTab(newValue);
-    };
-
     if (loading || productsLoading) return <Loader />;
 
-    const tabs = [
-        { label: t('profile.title'), icon: <Person aria-hidden='true' /> },
-        {
-            label: t('profile.myFavorites'),
-            icon: <Favorite aria-hidden='true' />,
-        },
-        {
-            label: t('profile.settings'),
-            icon: <Settings aria-hidden='true' />,
-        },
-    ];
-
-    const currentUrl = `https://client-qqq1.vercel.app/profile`;
-    const completionColor = getCompletionColor(stats.completionPercentage);
-
-    const statItems = [
-        {
-            icon: <ShoppingCart aria-hidden='true' sx={{ fontSize: 24 }} />,
-            color: theme.palette.primary.main,
-            value: userPosts.length || 0,
-            label: t('profile.myPosts'),
-            to: `/users/customer/${user.slug}`,
-        },
-        {
-            icon: <Favorite aria-hidden='true' sx={{ fontSize: 24 }} />,
-            color: '#ef4444',
-            value: stats.totalFavorites,
-            label: t('profile.myFavorites'),
-            to: path.Favorite,
-        },
-        {
-            icon: <Star aria-hidden='true' sx={{ fontSize: 24 }} />,
-            color: ACCENT,
-            value: stats.rating.toFixed(1),
-            label: t('profile.ratings'),
-        },
-    ];
-
-    const dir = handleRTL();
     const fullName = `${user.name.first} ${user.name.last}`.trim();
-    const shareLabel = t('common.share') as string;
-    const logoutLabel = t('logout') as string;
 
-    const pillButtonSx = {
-        color: 'inherit',
-        border: '1px solid',
-        borderColor: alpha('#fff', 0.2),
-    } as const;
-
-    const activityList = user.activity?.slice(-5).reverse() ?? [];
+    const tabs: { key: TabKey; label: string; icon: ReactElement }[] = [
+        { key: 'overview', label: t('profile.title'), icon: <Person /> },
+        ...(isOwner
+            ? [
+                  {
+                      key: 'favorites' as const,
+                      label: t('profile.myFavorites'),
+                      icon: <Favorite />,
+                  },
+                  {
+                      key: 'settings' as const,
+                      label: t('profile.settings'),
+                      icon: <Settings />,
+                  },
+              ]
+            : []),
+    ];
 
     return (
-        <>
-            <link rel='canonical' href={currentUrl} />
-            <title>
-                {t('accountMenu.profile')} {user.name.first} {user.name.last} |
-                صفقة
-            </title>
+        <MotionConfig reducedMotion='user'>
+            <link rel='canonical' href={`${window.location.origin}/profile`} />
+            <title>{`${t('accountMenu.profile')} ${fullName} | صفقة`}</title>
             <meta
                 name='description'
-                content={`${t('accountMenu.profile')} ${user.name.first} ${user.name.last}`}
+                content={`${t('accountMenu.profile')} ${fullName}`}
             />
-            <meta
-                property='og:title'
-                content={`${user.name.first} ${user.name.last} - ملف شخصي`}
-            />
+            <meta property='og:title' content={`${fullName} - ملف شخصي`} />
             <meta
                 property='og:description'
                 content={`تعرف على ${user.name.first} على موقع صفقه`}
             />
-            <meta property='og:image' content={user.image?.url} />
+            {user.image?.url && (
+                <meta property='og:image' content={user.image.url} />
+            )}
 
             <Box
                 dir={dir}
-                sx={{ minHeight: '100vh', py: 4, px: { xs: 2, sm: 3 } }}
+                sx={{ minHeight: '100vh', py: { xs: 2, md: 4 }, px: { xs: 1.5, sm: 3 } }}
             >
-                <m.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <Container maxWidth='lg'>
-                        {/* === Membership Card Header === */}
-                        <Box
-                            onMouseMove={handleMouseMove}
-                            onMouseEnter={() => setHovered(true)}
-                            onMouseLeave={() => setHovered(false)}
-                            sx={{
-                                position: 'relative',
-                                mb: 7,
-                                borderRadius: '22px',
-                                px: { xs: 3, md: 5 },
-                                pt: { xs: 3, md: 4 },
-                                pb: { xs: 5, md: 5 },
-                                overflow: 'hidden',
-                                boxShadow: '0 20px 40px -20px rgba(0,0,0,.55)',
-
-                                '&::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    inset: 1,
-                                    borderRadius: '21px',
-                                    pointerEvents: 'none',
-                                    border: '1px solid transparent',
-                                    background: `
-                radial-gradient(
-                    180px circle at ${mousePosition.x - 10}px ${mousePosition.y - 10}px,
-                    rgb(255, 167, 38),
-                    transparent 80%
-                ) border-box
-            `,
-                                    WebkitMask:
-                                        'linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0)',
-                                    WebkitMaskComposite: 'xor',
-                                    maskComposite: 'exclude',
-                                    opacity: hovered ? 1 : 0,
-                                    transition: 'opacity .25s',
-                                },
+                <Container maxWidth='lg'>
+                    <m.div
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.45 }}
+                    >
+                        <ProfileHero
+                            user={user}
+                            isOwner={isOwner}
+                            completion={completion}
+                            level={level}
+                            stats={{
+                                posts: userPosts.length,
+                                favorites,
+                                likes: likesReceived,
+                                rating: reviewStats.average,
+                                reviews: reviewStats.count,
                             }}
-                        >
-                            <Stack
-                                direction='row'
-                                justifyContent='space-between'
-                                alignItems='flex-start'
-                                sx={{ mb: 2 }}
-                            >
-                                <Typography
-                                    variant='overline'
-                                    sx={{ letterSpacing: 3, fontWeight: 700 }}
-                                >
-                                    {t('profile.membershipCard')}
-                                </Typography>
-                                <Stack direction='row' gap={1}>
-                                    <Tooltip title={shareLabel}>
-                                        <IconButton
-                                            onClick={handleShareProfile}
-                                            size='small'
-                                            aria-label={shareLabel}
-                                            sx={{
-                                                ...pillButtonSx,
-                                                '&:hover': {
-                                                    borderColor: alpha(
-                                                        '#272aee',
-                                                        0.8,
-                                                    ),
-                                                },
-                                            }}
-                                        >
-                                            <Share
-                                                fontSize='small'
-                                                aria-hidden='true'
-                                            />
-                                        </IconButton>
-                                    </Tooltip>
-                                    <Tooltip title={logoutLabel}>
-                                        <IconButton
-                                            onClick={handleLogout}
-                                            size='small'
-                                            aria-label={logoutLabel}
-                                            sx={{
-                                                ...pillButtonSx,
-                                                '&:hover': {
-                                                    borderColor: 'error.main',
-                                                    color: 'error.light',
-                                                },
-                                            }}
-                                        >
-                                            <Logout
-                                                fontSize='small'
-                                                aria-hidden='true'
-                                            />
-                                        </IconButton>
-                                    </Tooltip>
-                                </Stack>
-                            </Stack>
+                            onShare={handleShareProfile}
+                            onEdit={openEdit}
+                            onLogout={handleLogout}
+                        />
+                    </m.div>
 
-                            <Grid container spacing={3} alignItems='center'>
-                                <Grid size={{ xs: 12, sm: 'auto' }}>
-                                    <Box
-                                        sx={{
-                                            position: 'relative',
-                                            width: { xs: 108, md: 128 },
-                                            height: { xs: 108, md: 128 },
-                                            mx: { xs: 'auto', sm: 0 },
-                                        }}
-                                    >
-                                        <Avatar
-                                            src={
-                                                user.image?.url ||
-                                                'https://i.ibb.co/5GzXkwq/user.png'
-                                            }
-                                            alt={
-                                                user.image?.alt ||
-                                                `${user.name.first}'s avatar`
-                                            }
-                                            sx={{
-                                                width: '100%',
-                                                height: '100%',
-                                                fontSize: 42,
-                                                border: `3px solid ${alpha('#fff', 0.15)}`,
-                                                bgcolor:
-                                                    theme.palette.primary.main,
-                                            }}
-                                        >
-                                            {user.name?.first
-                                                ?.charAt(0)
-                                                .toUpperCase()}
-                                        </Avatar>
-
-                                        <Tooltip
-                                            title={t('profile.verifiedAccount')}
-                                        >
-                                            <Box
-                                                role='img'
-                                                aria-label={t(
-                                                    'profile.verifiedAccount',
-                                                )}
-                                                sx={{
-                                                    position: 'absolute',
-                                                    bottom: -8,
-                                                    insetInlineEnd: -8,
-                                                    width: 42,
-                                                    height: 42,
-                                                    borderRadius: '50%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    bgcolor: '#d1ab00',
-                                                    p: '3px',
-                                                }}
-                                            >
-                                                <Box
-                                                    sx={{
-                                                        width: '100%',
-                                                        height: '100%',
-                                                        borderRadius: '50%',
-                                                        bgcolor: 'success.main',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent:
-                                                            'center',
-                                                    }}
-                                                >
-                                                    <VerifiedUser
-                                                        aria-hidden='true'
-                                                        sx={{
-                                                            fontSize: 18,
-                                                            color: '#fff',
-                                                        }}
-                                                    />
-                                                </Box>
-                                            </Box>
-                                        </Tooltip>
-                                    </Box>
-                                </Grid>
-
-                                <Grid
-                                    size={{ xs: 12, sm: 'auto' }}
-                                    sx={{ flex: 1 }}
-                                >
-                                    <Typography
-                                        variant='h4'
-                                        component='h1'
-                                        fontWeight={800}
-                                        gutterBottom
-                                        sx={{
-                                            textAlign: {
-                                                xs: 'center',
-                                                sm: 'start',
-                                            },
-                                        }}
-                                    >
-                                        {fullName}
-                                    </Typography>
-                                    <Stack
-                                        direction='row'
-                                        alignItems='center'
-                                        spacing={1}
-                                        mb={2}
-                                        flexWrap='wrap'
-                                        useFlexGap
-                                        justifyContent={{
-                                            xs: 'center',
-                                            sm: 'flex-start',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant='body2'
-                                            sx={{ opacity: 0.9 }}
-                                        >
-                                            @
-                                            {user.slug ||
-                                                user.email.split('@')[0]}
-                                        </Typography>
-                                        <Chip
-                                            label={
-                                                user.role === 'Admin'
-                                                    ? t('accountMenu.admin')
-                                                    : user.role === 'Moderator'
-                                                      ? t(
-                                                            'accountMenu.moderator',
-                                                        )
-                                                      : t('accountMenu.client')
-                                            }
-                                            size='small'
-                                            sx={{
-                                                bgcolor: alpha('#fff', 0.12),
-                                                color: 'inherit',
-                                                fontWeight: 600,
-                                            }}
-                                        />
-                                        <Chip
-                                            label={
-                                                user.status === true
-                                                    ? t('status.active')
-                                                    : t('status.inActive')
-                                            }
-                                            size='small'
-                                            sx={{
-                                                fontWeight: 600,
-                                                bgcolor: user.status
-                                                    ? alpha('#22c55e', 0.18)
-                                                    : alpha('#fff', 0.1),
-                                                color: user.status
-                                                    ? '#4ade80'
-                                                    : alpha('#fff', 0.8),
-                                            }}
-                                        />
-                                    </Stack>
-
-                                    <Stack direction='column' spacing={0.75}>
-                                        {user.email && (
-                                            <Box
-                                                display='flex'
-                                                alignItems='center'
-                                                gap={1}
-                                            >
-                                                <Email
-                                                    fontSize='small'
-                                                    aria-hidden='true'
-                                                    sx={{ opacity: 0.8 }}
-                                                />
-                                                <Typography variant='body2'>
-                                                    {user.email}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                        {user.phone?.phone_1 && (
-                                            <Box
-                                                display='flex'
-                                                alignItems='center'
-                                                gap={1}
-                                            >
-                                                <Phone
-                                                    fontSize='small'
-                                                    aria-hidden='true'
-                                                    sx={{ opacity: 0.8 }}
-                                                />
-                                                <Typography variant='body2'>
-                                                    {user.phone.phone_1}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                        {user.address?.city && (
-                                            <Box
-                                                display='flex'
-                                                alignItems='center'
-                                                gap={1}
-                                            >
-                                                <LocationOn
-                                                    fontSize='small'
-                                                    aria-hidden='true'
-                                                    sx={{ opacity: 0.8 }}
-                                                />
-                                                <Typography variant='body2'>
-                                                    {user.address.street}،{' '}
-                                                    {user.address.city}
-                                                    {user.address.houseNumber
-                                                        ? `، رقم ${user.address.houseNumber}`
-                                                        : ''}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                        {user.createdAt && (
-                                            <Box
-                                                display='flex'
-                                                alignItems='center'
-                                                gap={1}
-                                            >
-                                                <CalendarToday
-                                                    fontSize='small'
-                                                    aria-hidden='true'
-                                                    sx={{ opacity: 0.8 }}
-                                                />
-                                                <Typography variant='body2'>
-                                                    {t('profile.memberSince')} :{' '}
-                                                    {formatDate(user.createdAt)}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </Stack>
-                                </Grid>
-                            </Grid>
-                        </Box>
-
-                        {/* === Stats Ribbon === */}
-                        <Paper
-                            variant='outlined'
-                            sx={{
-                                borderRadius: '18px',
-                                mb: 5,
-                                overflow: 'hidden',
-                            }}
-                        >
-                            <Grid container>
-                                {statItems.map((s) => {
-                                    const content = (
-                                        <Box
-                                            sx={{
-                                                px: 2,
-                                                py: 3,
-                                                textAlign: 'center',
-                                                height: '100%',
-                                                transition:
-                                                    'background-color .2s',
-                                                '&:hover': {
-                                                    bgcolor: 'action.hover',
-                                                },
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    width: 44,
-                                                    height: 44,
-                                                    mx: 'auto',
-                                                    mb: 1,
-                                                    borderRadius: '50%',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    bgcolor: alpha(
-                                                        s.color,
-                                                        0.12,
-                                                    ),
-                                                    color: s.color,
-                                                }}
-                                            >
-                                                {s.icon}
-                                            </Box>
-                                            <Typography
-                                                variant='h5'
-                                                component='p'
-                                                fontWeight={800}
-                                            >
-                                                {s.value}
-                                            </Typography>
-                                            <Typography
-                                                variant='body2'
-                                                color='text.secondary'
-                                            >
-                                                {s.label}
-                                            </Typography>
-                                        </Box>
-                                    );
-                                    return (
-                                        <Grid
-                                            key={s.label}
-                                            size={{ xs: 6, sm: 3 }}
-                                            sx={{
-                                                borderInlineEnd: '1px solid',
-                                                borderColor: 'divider',
-                                            }}
-                                        >
-                                            {s.to ? (
-                                                <Link
-                                                    to={s.to}
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: 'inherit',
-                                                        display: 'block',
-                                                        height: '100%',
-                                                    }}
-                                                >
-                                                    {content}
-                                                </Link>
-                                            ) : (
-                                                content
-                                            )}
-                                        </Grid>
-                                    );
-                                })}
-
-                                <Grid
-                                    size={{ xs: 6, sm: 3 }}
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        py: 2,
-                                    }}
-                                >
-                                    <Tooltip
-                                        title={`${t('profile.complete')}: ${stats.completionPercentage}%`}
-                                    >
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                gap: 0.5,
-                                            }}
-                                        >
-                                            <Box
-                                                sx={{
-                                                    position: 'relative',
-                                                    display: 'inline-flex',
-                                                }}
-                                            >
-                                                <CircularProgress
-                                                    aria-label={t(
-                                                        'common.loading',
-                                                        'جاري التحميل',
-                                                    )}
-                                                    variant='determinate'
-                                                    value={100}
-                                                    size={64}
-                                                    thickness={4}
-                                                    aria-hidden='true'
-                                                    role='presentation'
-                                                    sx={{
-                                                        color: alpha(
-                                                            completionColor,
-                                                            0.15,
-                                                        ),
-                                                        position: 'absolute',
-                                                    }}
-                                                />
-                                                <CircularProgress
-                                                    variant='determinate'
-                                                    value={
-                                                        stats.completionPercentage
-                                                    }
-                                                    size={64}
-                                                    thickness={4}
-                                                    aria-label={t(
-                                                        'profile.completed',
-                                                    )}
-                                                    sx={{
-                                                        color: completionColor,
-                                                    }}
-                                                />
-                                                <Box
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        inset: 0,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent:
-                                                            'center',
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant='caption'
-                                                        fontWeight={800}
-                                                    >
-                                                        {
-                                                            stats.completionPercentage
-                                                        }
-                                                        %
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                            <Typography
-                                                mt={3}
-                                                variant='body2'
-                                                color='text.secondary'
-                                            >
-                                                {t('profile.completed')}
-                                            </Typography>
-                                        </Box>
-                                    </Tooltip>
-                                </Grid>
-                            </Grid>
-                        </Paper>
-
-                        {/* === Tabs Navigation === */}
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                mb: 4,
-                            }}
-                        >
+                    {/* Tabs — بتظهر بس إذا في أكثر من تاب */}
+                    {tabs.length > 1 && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
                             <Tabs
                                 value={activeTab}
-                                onChange={handleTabChange}
+                                onChange={(_, value: TabKey) => selectTab(value)}
                                 aria-label={t('profile.title')}
                                 variant={isMobile ? 'scrollable' : 'standard'}
                                 scrollButtons={isMobile ? 'auto' : false}
-                                slotProps={{
-                                    indicator: { sx: { display: 'none' } },
-                                }}
+                                slotProps={{ indicator: { sx: { display: 'none' } } }}
                                 sx={{
                                     p: 0.75,
-                                    bgcolor: (th) =>
-                                        alpha(th.palette.text.primary, 0.04),
+                                    bgcolor: (th) => alpha(th.palette.text.primary, 0.04),
                                     borderRadius: 999,
                                     minHeight: 0,
                                     '& .MuiTabs-flexContainer': { gap: 0.5 },
@@ -888,9 +315,10 @@ const Profile: FunctionComponent = () => {
                                     },
                                 }}
                             >
-                                {tabs.map((tab, index) => (
+                                {tabs.map((tab) => (
                                     <Tab
-                                        key={index}
+                                        key={tab.key}
+                                        value={tab.key}
                                         label={tab.label}
                                         icon={tab.icon}
                                         iconPosition='start'
@@ -898,391 +326,106 @@ const Profile: FunctionComponent = () => {
                                 ))}
                             </Tabs>
                         </Box>
+                    )}
 
-                        {/* === Tab Content === */}
-                        {activeTab === 0 && (
-                            <m.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ duration: 0.3 }}
-                            >
-                                <Grid container spacing={3}>
-                                    <Grid size={{ xs: 12, lg: 8 }}>
+                    <m.div
+                        key={activeTab}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.25 }}
+                        style={{ marginTop: tabs.length > 1 ? 0 : 32 }}
+                    >
+                        {/* ───── Overview ───── */}
+                        {activeTab === 'overview' && (
+                            <Grid container spacing={3}>
+                                <Grid size={{ xs: 12, lg: isOwner ? 8 : 12 }}>
+                                    <Stack spacing={3}>
                                         <PersonalInformation
                                             user={user as unknown as User}
                                         />
-                                    </Grid>
-
-                                    <Grid size={{ xs: 12, lg: 4 }}>
-                                        <Card
-                                            variant='outlined'
-                                            sx={{
-                                                borderRadius: 3,
-                                                height: '100%',
-                                                overflow: 'hidden',
-                                                position: 'relative',
-                                                '&::before': {
-                                                    content: '""',
-                                                    position: 'absolute',
-                                                    top: 0,
-                                                    left: 0,
-                                                    right: 0,
-                                                    height: '4px',
-                                                    background: `linear-gradient(90deg, ${theme.palette.primary.main}, ${ACCENT})`,
-                                                },
-                                            }}
-                                        >
-                                            <CardContent sx={{ pt: 3 }}>
-                                                <Stack
-                                                    direction='row'
-                                                    alignItems='center'
-                                                    spacing={1.5}
-                                                    mb={3}
-                                                >
-                                                    <Box
-                                                        sx={{
-                                                            width: 36,
-                                                            height: 36,
-                                                            borderRadius: '50%',
-                                                            display: 'flex',
-                                                            alignItems:
-                                                                'center',
-                                                            justifyContent:
-                                                                'center',
-                                                            bgcolor: alpha(
-                                                                theme.palette
-                                                                    .primary
-                                                                    .main,
-                                                                0.12,
-                                                            ),
-                                                            color: theme.palette
-                                                                .primary.main,
-                                                        }}
-                                                    >
-                                                        <HistoryIcon
-                                                            fontSize='small'
-                                                            aria-hidden='true'
-                                                        />
-                                                    </Box>
-                                                    <Typography
-                                                        variant='h6'
-                                                        component='h2'
-                                                        fontWeight={800}
-                                                    >
-                                                        {t('activity.title')}
-                                                    </Typography>
-                                                </Stack>
-
-                                                {activityList.length ? (
-                                                    <Box
-                                                        sx={{
-                                                            position:
-                                                                'relative',
-                                                        }}
-                                                    >
-                                                        <Box
-                                                            aria-hidden='true'
-                                                            sx={{
-                                                                position:
-                                                                    'absolute',
-                                                                top: 6,
-                                                                bottom: 6,
-                                                                insetInlineStart: 15,
-                                                                width: '2px',
-                                                                background: `linear-gradient(180deg, ${ACCENT}, ${alpha(theme.palette.divider, 0.5)})`,
-                                                            }}
-                                                        />
-                                                        <Stack spacing={2.5}>
-                                                            {activityList.map(
-                                                                (
-                                                                    timestamp,
-                                                                    index,
-                                                                ) => (
-                                                                    <Box
-                                                                        key={`${timestamp}-${index}`}
-                                                                        sx={{
-                                                                            position:
-                                                                                'relative',
-                                                                            paddingInlineStart:
-                                                                                '38px',
-                                                                        }}
-                                                                    >
-                                                                        <Box
-                                                                            aria-hidden='true'
-                                                                            sx={{
-                                                                                position:
-                                                                                    'absolute',
-                                                                                insetInlineStart: 6,
-                                                                                top: 2,
-                                                                                width: 20,
-                                                                                height: 20,
-                                                                                borderRadius:
-                                                                                    '50%',
-                                                                                display:
-                                                                                    'flex',
-                                                                                alignItems:
-                                                                                    'center',
-                                                                                justifyContent:
-                                                                                    'center',
-                                                                                bgcolor:
-                                                                                    index ===
-                                                                                    0
-                                                                                        ? ACCENT
-                                                                                        : theme
-                                                                                              .palette
-                                                                                              .background
-                                                                                              .paper,
-                                                                                border: `2px solid ${index === 0 ? ACCENT : theme.palette.primary.main}`,
-                                                                                boxShadow:
-                                                                                    index ===
-                                                                                    0
-                                                                                        ? `0 0 0 4px ${alpha(ACCENT, 0.15)}`
-                                                                                        : 'none',
-                                                                            }}
-                                                                        >
-                                                                            {index ===
-                                                                                0 && (
-                                                                                <Box
-                                                                                    sx={{
-                                                                                        width: 6,
-                                                                                        height: 6,
-                                                                                        borderRadius:
-                                                                                            '50%',
-                                                                                        bgcolor:
-                                                                                            '#fff',
-                                                                                    }}
-                                                                                />
-                                                                            )}
-                                                                        </Box>
-                                                                        <Typography
-                                                                            variant='body2'
-                                                                            fontWeight={
-                                                                                600
-                                                                            }
-                                                                        >
-                                                                            {getRelativeDate(
-                                                                                timestamp,
-                                                                            )}
-                                                                        </Typography>
-                                                                        <Typography
-                                                                            variant='caption'
-                                                                            color='text.secondary'
-                                                                        >
-                                                                            {t(
-                                                                                'activity.lastLogin',
-                                                                            )}
-                                                                        </Typography>
-                                                                    </Box>
-                                                                ),
-                                                            )}
-                                                        </Stack>
-                                                    </Box>
-                                                ) : (
-                                                    <Box
-                                                        sx={{
-                                                            py: 5,
-                                                            display: 'flex',
-                                                            flexDirection:
-                                                                'column',
-                                                            alignItems:
-                                                                'center',
-                                                            gap: 1,
-                                                        }}
-                                                    >
-                                                        <Box
-                                                            sx={{
-                                                                width: 48,
-                                                                height: 48,
-                                                                borderRadius:
-                                                                    '50%',
-                                                                display: 'flex',
-                                                                alignItems:
-                                                                    'center',
-                                                                justifyContent:
-                                                                    'center',
-                                                                bgcolor: alpha(
-                                                                    theme
-                                                                        .palette
-                                                                        .text
-                                                                        .secondary,
-                                                                    0.08,
-                                                                ),
-                                                                color: 'text.secondary',
-                                                            }}
-                                                        >
-                                                            <HistoryIcon aria-hidden='true' />
-                                                        </Box>
-                                                        <Typography
-                                                            color='text.secondary'
-                                                            textAlign='center'
-                                                        >
-                                                            {t(
-                                                                'activity.empty',
-                                                            )}
-                                                        </Typography>
-                                                    </Box>
-                                                )}
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
+                                        <ReputationCard
+                                            stats={reviewStats}
+                                            level={level}
+                                            isOwner={isOwner}
+                                        />
+                                    </Stack>
                                 </Grid>
-                            </m.div>
-                        )}
 
-                        {activeTab === 1 && <FavoritesProducts />}
-
-                        {activeTab === 2 && (
-                            <Card variant='outlined' sx={{ borderRadius: 3 }}>
-                                <CardContent>
-                                    <Typography
-                                        variant='h6'
-                                        component='h2'
-                                        gutterBottom
-                                        fontWeight={800}
-                                    >
-                                        {t('profile.accountSettings')}
-                                    </Typography>
-                                    <Grid container spacing={3}>
-                                        <Grid size={{ xs: 12, md: 6 }}>
-                                            <Card
-                                                variant='outlined'
-                                                sx={{ p: 2, borderRadius: 3 }}
-                                            >
-                                                <Typography
-                                                    variant='subtitle1'
-                                                    component='h3'
-                                                    fontWeight={700}
-                                                    gutterBottom
-                                                >
-                                                    {t('profile.dataPrivacy')}
-                                                </Typography>
-                                                <Stack spacing={1.5}>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={
-                                                            <VisibilityIcon aria-hidden='true' />
-                                                        }
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'profile.appearanceSettings',
-                                                        )}
-                                                    </Button>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={
-                                                            <Lock aria-hidden='true' />
-                                                        }
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'profile.accountPrivacy',
-                                                        )}
-                                                    </Button>
-                                                    <Button
-                                                        disabled
-                                                        variant='outlined'
-                                                        startIcon={
-                                                            <Email aria-hidden='true' />
-                                                        }
-                                                        sx={{
-                                                            justifyContent:
-                                                                'flex-start',
-                                                            gap: 2,
-                                                            borderRadius: 999,
-                                                        }}
-                                                    >
-                                                        {t(
-                                                            'profile.mailNotifications',
-                                                        )}
-                                                    </Button>
-                                                </Stack>
-                                                <QuickActionsTab
-                                                    user={
-                                                        user as unknown as User
-                                                    }
+                                {isOwner && (
+                                    <Grid size={{ xs: 12, lg: 4 }}>
+                                        <Stack spacing={3}>
+                                            {completion < 100 && (
+                                                <CompletionCard
+                                                    completion={completion}
+                                                    missing={missing}
+                                                    onComplete={openEdit}
                                                 />
-                                            </Card>
-                                        </Grid>
+                                            )}
+                                            <ActivityCard activity={user.activity} />
+                                        </Stack>
                                     </Grid>
-                                </CardContent>
-                            </Card>
+                                )}
+                            </Grid>
                         )}
 
-                        {/* === Edit User Data === */}
-                        <Box
-                            ref={detailsRef}
-                            sx={{
-                                my: 4,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                flexDirection: 'column',
-                            }}
-                        >
-                            <Button
-                                variant='outlined'
-                                onClick={handleShowIdit}
-                                aria-expanded={showEdit}
-                                sx={{ borderRadius: 999, px: 3 }}
-                            >
-                                {showEdit
-                                    ? t('profile.hideEditProfile')
-                                    : t('profile.showEditProfile')}
-                            </Button>
-                        </Box>
-
-                        {showEdit && (
-                            <Suspense fallback={null}>
-                                <EditUserData userId={auth?._id || ''} />
+                        {/* ───── Favorites ───── */}
+                        {activeTab === 'favorites' && (
+                            <Suspense fallback={<InlineSpinner />}>
+                                <FavoritesProducts />
                             </Suspense>
                         )}
 
-                        <Divider sx={{ my: 4 }} />
+                        {/* ───── Settings ───── */}
+                        {activeTab === 'settings' && (
+                            <Stack spacing={3} sx={{ maxWidth: 860, mx: 'auto' }}>
+                                <QuickActionsTab
+                                    user={user}
+                                    onEditProfile={toggleEdit}
+                                    editOpen={showEdit}
+                                />
 
-                        <DeleteAccountBox
-                            onDelete={() => setShowDeleteConfirm(true)}
-                        />
-                    </Container>
-                </m.div>
-                <AlertDialogs
-                    show={showDeleteConfirm}
-                    onHide={() => setShowDeleteConfirm(false)}
-                    onConfirm={handleDeleteAccount}
-                    title={t('deleteAccount.title', {
-                        defaultValue: 'حذف الحساب؟',
-                    })}
-                    description={t('deleteAccount.description', {
-                        defaultValue:
-                            'هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
-                    })}
-                    confirmText={t('common.delete', {
-                        defaultValue: 'حذف',
-                    })}
-                    cancelText={t('common.cancel', {
-                        defaultValue: 'إلغاء',
-                    })}
-                    successText={t('deleteAccount.success', {
-                        defaultValue: 'تم حذف الحساب بنجاح',
-                    })}
-                    errorText={t('deleteAccount.error', {
-                        defaultValue: 'حدث خطأ أثناء حذف الحساب',
-                    })}
-                />
+                                <Collapse in={showEdit} unmountOnExit>
+                                    <Box ref={editRef} sx={{ scrollMarginTop: 16 }}>
+                                        <Suspense fallback={<InlineSpinner />}>
+                                            <EditUserData userId={auth?._id || ''} />
+                                        </Suspense>
+                                    </Box>
+                                </Collapse>
+
+                                <Divider />
+
+                                <DeleteAccountBox
+                                    onDelete={() => setShowDeleteConfirm(true)}
+                                />
+                            </Stack>
+                        )}
+                    </m.div>
+                </Container>
+
+                {isOwner && (
+                    <AlertDialogs
+                        show={showDeleteConfirm}
+                        onHide={() => setShowDeleteConfirm(false)}
+                        onConfirm={handleDeleteAccount}
+                        title={t('deleteAccount.title', {
+                            defaultValue: 'حذف الحساب؟',
+                        })}
+                        description={t('deleteAccount.description', {
+                            defaultValue:
+                                'هل أنت متأكد أنك تريد حذف حسابك؟ لا يمكن التراجع عن هذا الإجراء.',
+                        })}
+                        confirmText={t('common.delete', { defaultValue: 'حذف' })}
+                        cancelText={t('common.cancel', { defaultValue: 'إلغاء' })}
+                        successText={t('deleteAccount.success', {
+                            defaultValue: 'تم حذف الحساب بنجاح',
+                        })}
+                        errorText={t('deleteAccount.error', {
+                            defaultValue: 'حدث خطأ أثناء حذف الحساب',
+                        })}
+                    />
+                )}
             </Box>
-        </>
+        </MotionConfig>
     );
 };
 
