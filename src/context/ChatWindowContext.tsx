@@ -7,18 +7,18 @@ import {
     useCallback,
 } from 'react';
 
-import { UserMessage } from '../interfaces/chat/usersMessages';
+import { BaseUser } from '../interfaces/chat/chatUser';
 import api from '../services/api';
 
 interface ChatWindow {
-    user: UserMessage;
+    user: BaseUser;
     minimized: boolean;
     initialMessage?: string;
 }
 
 interface ChatWindowContextType {
     chats: ChatWindow[];
-    openChat: (user: UserMessage, initialMessage?: string) => void;
+    openChat: (user: BaseUser, initialMessage?: string) => void;
     minimizeChat: (id: string) => void;
     closeChat: (id: string) => void;
     getInitialMessage: (userId: string) => string | undefined;
@@ -28,45 +28,56 @@ interface ChatWindowContextType {
 
 const ChatWindowContext = createContext<ChatWindowContextType | null>(null);
 
-export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
+export const ChatWindowProvider = ({
+    children,
+}: {
+    children: ReactNode;
+}) => {
     const [chats, setChats] = useState<ChatWindow[]>([]);
 
-    const openChat = (user: UserMessage, initialMessage?: string) => {
-        const userId = user._id || user.from?._id;
-        console.log('openChat', initialMessage);
-        if (!userId) {
-            console.warn('Cannot open chat: user ID is missing');
-            return;
-        }
+    const openChat = useCallback(
+        (user: BaseUser, initialMessage?: string) => {
+            const userId = user._id;
 
-        setChats((prev) => {
-            const exists = prev.find(
-                (chat) => (chat.user._id || chat.user.from?._id) === userId,
-            );
-
-            if (exists) {
-                return prev.map((chat) =>
-                    (chat.user._id || chat.user.from?._id) === userId
-                        ? {
-                              ...chat,
-                              minimized: false,
-                              initialMessage:
-                                  chat.initialMessage || initialMessage,
-                          }
-                        : chat,
-                );
+            if (!userId) {
+                console.warn('Cannot open chat: user ID is missing');
+                return;
             }
 
-            return [
-                ...prev,
-                {
-                    user,
-                    minimized: false,
-                    initialMessage,
-                },
-            ];
-        });
-    };
+            setChats((prev) => {
+                const exists = prev.find(
+                    (chat) => chat.user._id === userId,
+                );
+
+                if (exists) {
+                    return prev.map((chat) =>
+                        chat.user._id === userId
+                            ? {
+                                  ...chat,
+                                  user: {
+                                      ...chat.user,
+                                      ...user,
+                                  },
+                                  minimized: false,
+                                  initialMessage:
+                                      chat.initialMessage || initialMessage,
+                              }
+                            : chat,
+                    );
+                }
+
+                return [
+                    ...prev,
+                    {
+                        user,
+                        minimized: false,
+                        initialMessage,
+                    },
+                ];
+            });
+        },
+        [],
+    );
 
     useEffect(() => {
         const handleOpenFloatingChat = (async (event: CustomEvent) => {
@@ -74,9 +85,8 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 
             if (!userId) return;
 
-            // إذا الشات مفتوح أصلاً بس مصغّر، فيك تفتحو مباشرة بدون fetch
             const existing = chats.find(
-                (chat) => (chat.user._id || chat.user.from?._id) === userId
+                (chat) => chat.user._id === userId,
             );
 
             if (existing) {
@@ -86,23 +96,29 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 
             try {
                 const { data } = await api.get(`/users/${userId}`);
-                openChat(data as UserMessage);
+
+                // API returns a user, not a UserMessage.
+                openChat(data);
             } catch (error) {
                 console.error(
                     '❌ Failed to load user for floating chat:',
-                    error
+                    error,
                 );
             }
         }) as unknown as EventListener;
 
-        window.addEventListener('open-floating-chat', handleOpenFloatingChat);
+        window.addEventListener(
+            'open-floating-chat',
+            handleOpenFloatingChat,
+        );
 
-        return () =>
+        return () => {
             window.removeEventListener(
                 'open-floating-chat',
                 handleOpenFloatingChat,
             );
-    }, [chats]);
+        };
+    }, [chats, openChat]);
 
     const clearChats = useCallback(() => {
         setChats([]);
@@ -110,33 +126,26 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 
     const minimizeChat = useCallback((id: string) => {
         setChats((prev) =>
-            prev.map((x) => {
-                const chatId = x.user._id || x.user.from?._id;
-                return chatId === id
-                    ? {
-                          ...x,
-                          minimized: true,
-                      }
-                    : x;
-            }),
+            prev.map((chat) =>
+                chat.user._id === id
+                    ? { ...chat, minimized: true }
+                    : chat,
+            ),
         );
     }, []);
 
     const closeChat = useCallback((id: string) => {
         setChats((prev) =>
-            prev.filter((x) => {
-                const chatId = x.user._id || x.user.from?._id;
-                return chatId !== id;
-            }),
+            prev.filter((chat) => chat.user._id !== id),
         );
     }, []);
 
     const getInitialMessage = useCallback(
         (userId: string) => {
-            const chat = chats.find((x) => {
-                const chatId = x.user._id || x.user.from?._id;
-                return chatId === userId;
-            });
+            const chat = chats.find(
+                (chat) => chat.user._id === userId,
+            );
+
             return chat?.initialMessage;
         },
         [chats],
@@ -144,15 +153,14 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 
     const clearInitialMessage = useCallback((userId: string) => {
         setChats((prev) =>
-            prev.map((x) => {
-                const chatId = x.user._id || x.user.from?._id;
-                return chatId === userId
+            prev.map((chat) =>
+                chat.user._id === userId
                     ? {
-                          ...x,
+                          ...chat,
                           initialMessage: undefined,
                       }
-                    : x;
-            }),
+                    : chat,
+            ),
         );
     }, []);
 
@@ -177,7 +185,9 @@ export const ChatWindowProvider = ({ children }: { children: ReactNode }) => {
 export const useChatWindow = () => {
     const ctx = useContext(ChatWindowContext);
 
-    if (!ctx) throw new Error('useChatWindow must be inside provider');
+    if (!ctx) {
+        throw new Error('useChatWindow must be inside provider');
+    }
 
     return ctx;
 };

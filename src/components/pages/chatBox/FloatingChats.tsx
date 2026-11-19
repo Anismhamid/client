@@ -38,7 +38,6 @@ import ReportModal from '../../reports/ReportModal';
 import { showSuccess, showError } from '../../../atoms/toasts/ReactToast';
 
 import { deleteConversation } from '../../../services/messages';
-import { mapUserMessageToChatBox } from './chatUtils';
 
 const FloatingChats = () => {
     // ======================================================
@@ -479,12 +478,7 @@ const FloatingChats = () => {
                                 >
                                     <ChatBox
                                         currentUser={currentUser}
-                                        otherUser={{
-                                            ...mapUserMessageToChatBox(
-                                                chat.user,
-                                            ),
-                                            status: Boolean(chat.user.status),
-                                        }}
+                                        otherUser={chat.user}
                                         initialMessage={chat.initialMessage}
                                     />
                                 </Box>

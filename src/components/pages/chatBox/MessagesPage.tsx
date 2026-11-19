@@ -67,6 +67,7 @@ const MessagesPage = () => {
     const handleSelectChat = useCallback(
         (user: UserMessage) => {
             openChat(user);
+            setSelectedUser(user);
         },
         [openChat],
     );
