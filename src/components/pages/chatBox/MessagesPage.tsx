@@ -28,6 +28,7 @@ import { useChatWindow } from '../../../context/ChatWindowContext';
 import BlockButton from '../../reports/BlockButton';
 import ReportModal from '../../reports/ReportModal';
 import { BaseUser } from '../../../interfaces/chat/chatUser';
+import ChatSidePanel from './ChatSidePanel';
 
 const MessagesPage = () => {
     const [selectedUser, setSelectedUser] = useState<BaseUser | null>(null);
@@ -36,11 +37,10 @@ const MessagesPage = () => {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const { auth } = useUser();
     const dir = handleRTL();
-    // const isOnline = selectedUser?.from?.status === true;
-    // const [chatOpen, setChatOpen] = useState(false);
-    // const [chatMinimized, setChatMinimized] = useState(false);
     const { openChat } = useChatWindow();
-    const [optionsAnchor, setOptionsAnchor] = useState<null | HTMLElement>(null);
+    const [optionsAnchor, setOptionsAnchor] = useState<null | HTMLElement>(
+        null,
+    );
     const [reportOpen, setReportOpen] = useState(false);
 
     useEffect(() => {
@@ -146,7 +146,7 @@ const MessagesPage = () => {
                             )}
                         </AnimatePresence>
 
-                        {/* Main Chat Area */}
+                        {/* Main Area */}
                         <Grid
                             size={{
                                 xs: 12,
@@ -156,6 +156,7 @@ const MessagesPage = () => {
                             }}
                             sx={{
                                 height: '100%',
+                                minHeight: 0,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 bgcolor: alpha(
@@ -175,11 +176,12 @@ const MessagesPage = () => {
                                         transition={{ duration: 0.2 }}
                                         style={{
                                             height: '100%',
+                                            minHeight: 0,
                                             display: 'flex',
                                             flexDirection: 'column',
                                         }}
                                     >
-                                        {/* Chat Header */}
+                                        {/* Header */}
                                         <Box
                                             sx={{
                                                 p: 2,
@@ -200,7 +202,12 @@ const MessagesPage = () => {
                                             >
                                                 {isMobile && (
                                                     <IconButton
-                                                        aria-label={t('messages.backToList') || 'Back to conversations'}
+                                                        aria-label={
+                                                            t(
+                                                                'messages.backToList',
+                                                            ) ||
+                                                            'Back to conversations'
+                                                        }
                                                         onClick={() =>
                                                             setSelectedUser(
                                                                 null,
@@ -293,10 +300,15 @@ const MessagesPage = () => {
                                                 </Box>
                                             </Box>
                                             <IconButton
-                                            sx={{ display:"block" }}
-                                                aria-label={t('messages.options') || 'Conversation options'}
+                                                sx={{ display: 'block' }}
+                                                aria-label={
+                                                    t('messages.options') ||
+                                                    'Conversation options'
+                                                }
                                                 onClick={(event) =>
-                                                    setOptionsAnchor(event.currentTarget)
+                                                    setOptionsAnchor(
+                                                        event.currentTarget,
+                                                    )
                                                 }
                                                 size='small'
                                             >
@@ -305,7 +317,9 @@ const MessagesPage = () => {
                                             <Menu
                                                 anchorEl={optionsAnchor}
                                                 open={Boolean(optionsAnchor)}
-                                                onClose={() => setOptionsAnchor(null)}
+                                                onClose={() =>
+                                                    setOptionsAnchor(null)
+                                                }
                                             >
                                                 <MenuItem
                                                     onClick={() => {
@@ -313,23 +327,36 @@ const MessagesPage = () => {
                                                         setReportOpen(true);
                                                     }}
                                                 >
-                                                    {t('modals.report.reportThis') || 'Report user'}
+                                                    {t(
+                                                        'modals.report.reportThis',
+                                                    ) || 'Report user'}
                                                 </MenuItem>
                                                 <MenuItem disableRipple>
                                                     <BlockButton
-                                                        userId={selectedUser._id as string}
+                                                        userId={
+                                                            selectedUser._id as string
+                                                        }
                                                         variant='text'
                                                     />
                                                 </MenuItem>
                                             </Menu>
                                             <ReportModal
                                                 open={reportOpen}
-                                                onClose={() => setReportOpen(false)}
-                                                targetId={selectedUser._id as string}
+                                                onClose={() =>
+                                                    setReportOpen(false)
+                                                }
+                                                targetId={
+                                                    selectedUser._id as string
+                                                }
                                                 type='user'
-                                                onSuccess={() => setReportOpen(false)}
+                                                onSuccess={() =>
+                                                    setReportOpen(false)
+                                                }
                                             />
                                         </Box>
+
+                                        {/* Seller info panel (chat itself is the floating window) */}
+                                        <ChatSidePanel user={selectedUser} />
                                     </m.div>
                                 </AnimatePresence>
                             ) : (

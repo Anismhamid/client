@@ -44,6 +44,7 @@ import { Navigate } from 'react-router-dom';
 import socket from '../../../socket/globalSocket';
 import { useChat } from '../../../hooks/useChat';
 import { useUser } from '../../../hooks/useUSer';
+import { useChatWindow } from '../../../context/ChatWindowContext';
 
 import { BaseUser } from '../../../interfaces/chat/chatUser';
 import { LocalMessage } from '../../../interfaces/chat/localMessage';
@@ -92,6 +93,8 @@ const ChatBoxInner: FunctionComponent<ChatBoxProps> = ({
         setUnreadForUser,
         updateMessage,
     } = useChat();
+
+    const { minimizeChat } = useChatWindow();
 
     // ======================================================
     // TRANSLATION / AUTH / RTL
@@ -462,6 +465,7 @@ const ChatBoxInner: FunctionComponent<ChatBoxProps> = ({
             requestAnimationFrame(() => {
                 scrollToBottom('smooth', chatContainerRef);
             });
+
         }
     }, [initialMessage, isLoading]);
 
@@ -1590,6 +1594,20 @@ const ChatBoxInner: FunctionComponent<ChatBoxProps> = ({
                                                         msg?.text ??
                                                         ''
                                                     }
+                                                    isMe={isMe}
+                                                    onInternalNavigate={() => {
+                                                        // Mobile: the floating chat is fullscreen,
+                                                        // so minimize it to reveal the page.
+                                                        if (
+                                                            window.matchMedia(
+                                                                '(max-width: 899px)',
+                                                            ).matches
+                                                        ) {
+                                                            minimizeChat(
+                                                                otherUser._id as string,
+                                                            );
+                                                        }
+                                                    }}
                                                 />
                                             </Typography>
 
@@ -1933,7 +1951,10 @@ const ChatBoxInner: FunctionComponent<ChatBoxProps> = ({
                                     <IconButton
                                         color='primary'
                                         size='small'
-                                        aria-label={t('messages.send', 'إرسال')}
+                                        aria-label={t(
+                                            'messages.send',
+                                            'إرسال',
+                                        )}
                                         onClick={handleSend}
                                         disabled={!input.trim()}
                                         sx={{
