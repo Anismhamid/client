@@ -62,8 +62,8 @@ import { FeaturedAd } from '../../../interfaces/featuredAd';
 import { formatDate, formatPrice } from '../../../helpers/dateAndPriceFormat';
 import { productsPathes } from '../../../routes/routes';
 import { useNavigate } from 'react-router-dom';
-import { useAllFeaturedAds } from '../../../hooks/ads/useFeaturedAds';
-import { getPlanById } from '../../../interfaces/PlanConfig'; // ✅ المسار الصحيح
+import { useHomePageAds } from '../../../hooks/ads/useFeaturedAds';
+import { getPlanById } from '../../../interfaces/PlanConfig';
 import { useTranslation } from 'react-i18next';
 import { CATEGORIES } from '../../../interfaces/categories';
 
@@ -612,7 +612,7 @@ export function HomepageAdCard({
 export default function HomepageFeaturedSection() {
     const theme = useTheme();
     const isDark = theme.palette.mode === 'dark';
-    const { ads: allAds, loading } = useAllFeaturedAds();
+    const { homePageAds: allAds, loading } = useHomePageAds();
     const [selectedTab, setSelectedTab] = useState<string>('all');
     const { t } = useTranslation();
 

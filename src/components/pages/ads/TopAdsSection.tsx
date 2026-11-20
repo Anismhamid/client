@@ -160,18 +160,20 @@ const RankBadge = ({ rank }: RankBadgeProps) => {
 interface TopAdsSectionProps {
     featured?: boolean;
     featuredType?: FeaturedType;
+    category?: string;
 }
 
 const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
     featured = false,
     featuredType = 'highlight',
+    category,
 }) => {
     const theme = useTheme();
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { ads: topAds, loading } = useTopAds();
+    const { ads: topAds, loading } = useTopAds(category);
 
-    // ✅ استخدام المصدر المركزي للباقات لجلب الألوان والتسميات
+    // استخدام المصدر المركزي للباقات لجلب الألوان والتسميات
     const featuredMeta = useMemo(() => {
         const plan = getPlanById(featuredType) || PLANS[0];
         return {
@@ -180,6 +182,8 @@ const TopAdsSection: FunctionComponent<TopAdsSectionProps> = ({
             label: plan.title,
         };
     }, [featuredType]);
+
+    if (!category?.trim()) return null;
 
     if (loading) {
         return (

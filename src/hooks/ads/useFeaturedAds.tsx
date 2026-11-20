@@ -1,26 +1,23 @@
-// hooks/useFeaturedAds.ts
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { FeaturedAd } from '../../interfaces/featuredAd';
 
-const api = `${import.meta.env.VITE_API_URL}/featured-ads`;
+import {
+    getHomepageAds,
+    getHighlightAds,
+    getTopAds,
+    getAllFeaturedAds,
+} from '../../services/featuredAdsServices';
 
+// Homepage
 export const useHomePageAds = () => {
     const [homePageAds, setHomePageAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios
-            .get(`${api}/homepage`)
-            .then(({ data }) => {
-                setHomePageAds(data);
-            })
+        getHomepageAds()
+            .then(setHomePageAds)
             .catch((err) => {
-                console.error('❌ خطأ في جلب الإعلانات:', err);
-                console.error(
-                    '❌ تفاصيل الخطأ:',
-                    err.response?.data || err.message,
-                );
+                console.error('Error fetching homepage ads:', err);
             })
             .finally(() => setLoading(false));
     }, []);
@@ -28,21 +25,18 @@ export const useHomePageAds = () => {
     return { homePageAds, loading };
 };
 
+// Highlight
 export const useHighlightAds = () => {
     const [ads, setAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios
-            .get(`${api}/highlight`)
-            .then(({ data }) => {
-                setAds(data);
-                setError(null);
-            })
+        getHighlightAds()
+            .then(setAds)
             .catch((err) => {
-                console.error('❌ خطأ في تحميل الإعلانات المضيئة:', err);
-                setError('حدث خطأ في تحميل الإعلانات المميزة جداً');
+                console.error('Error fetching highlight ads:', err);
+                setError('حدث خطأ في تحميل الإعلانات المميزة');
             })
             .finally(() => setLoading(false));
     }, []);
@@ -50,43 +44,63 @@ export const useHighlightAds = () => {
     return { ads, loading, error };
 };
 
-export const useTopAds = () => {
+// Top
+export const useTopAds = (category?: string) => {
     const [ads, setAds] = useState<FeaturedAd[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios
-            .get(`${api}/top`)
-            .then(({ data }) => {
-                setAds(data);
-                setError(null);
+        if (!category?.trim()) {
+            setAds([]);
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        let cancelled = false;
+
+        setLoading(true);
+        setError(null);
+
+        getTopAds(category)
+            .then((data) => {
+                if (!cancelled) {
+                    setAds(data);
+                }
             })
             .catch((err) => {
-                console.error('❌ خطأ في تحميل أفضل الإعلانات:', err);
-                setError('حدث خطأ في تحميل أفضل الإعلانات');
+                if (!cancelled) {
+                    console.error('Error fetching top ads:', err);
+                    setError('حدث خطأ في تحميل إعلانات أعلى البحث');
+                    setAds([]);
+                }
             })
-            .finally(() => setLoading(false));
-    }, []);
+            .finally(() => {
+                if (!cancelled) {
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [category]);
 
     return { ads, loading, error };
 };
 
-// ✅ دالة جديدة لجلب كل الإعلانات وترتيبها من الأغلى للأرخص
+// All Featured Ads
 export const useAllFeaturedAds = () => {
     const [ads, setAds] = useState<FeaturedAd[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios
-            .get(`${api}/all`)
-            .then(({ data }) => {
-                setAds(data);
-                setError(null);
-            })
+        getAllFeaturedAds()
+            .then(setAds)
             .catch((err) => {
-                console.error('❌ خطأ في جلب الإعلانات المميزة:', err);
+                console.error('Error fetching featured ads:', err);
                 setError('حدث خطأ في تحميل الإعلانات');
                 setAds([]);
             })

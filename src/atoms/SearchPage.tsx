@@ -19,6 +19,7 @@ import { productsPathes } from '../routes/routes';
 import handleRTL from '../locales/handleRTL';
 import { useTranslation } from 'react-i18next';
 import { formatPrice } from '../helpers/dateAndPriceFormat';
+import TopAdsSection from '../components/pages/ads/TopAdsSection';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -267,6 +268,11 @@ const SearchPage = () => {
                 </Box>
             )}
 
+            {/* TOP FEATURED ADS */}
+            {!loading && !error && filters?.category && (
+                <TopAdsSection category={filters.category} />
+            )}
+            
             {/* COUNT */}
 
             {!loading && !error && (

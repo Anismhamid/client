@@ -1,12 +1,15 @@
 import { productsPathes } from '../routes/routes';
 import { Category } from './categories';
 
+// ============================================================
+// Categories
+// يجب أن تتطابق مع Discriminators الموجودة في Backend
+// ============================================================
+
 export const postsCategory = [
     { id: 'House' },
     { id: 'Garden' },
-    { id: 'Electronics' },
     { id: 'Cars' },
-    { id: 'Motorcycles' },
     { id: 'Bikes' },
     { id: 'Trucks' },
     { id: 'ElectricVehicles' },
@@ -19,18 +22,8 @@ export const postsCategory = [
     { id: 'Beauty' },
     { id: 'Watches' },
     { id: 'Cleaning' },
-    { id: 'Art' },
-    { id: 'Gaming' },
-    { id: 'RealEstate' },
-    { id: 'Pets' },
-    { id: 'Furniture' },
-    { id: 'Art' },
-    { id: 'Gaming' },
-    { id: 'RealEstate' },
-    { id: 'Pets' },
-    { id: 'Furniture' },
-
-    // New categories
+    { id: 'Motorcycles' },
+    { id: 'Electronics' },
     { id: 'Cameras' },
     { id: 'Books' },
     { id: 'MusicalInstruments' },
@@ -39,9 +32,18 @@ export const postsCategory = [
     { id: 'WeldingEquipment' },
     { id: 'OfficeEquipment' },
     { id: 'Services' },
-];
+    { id: 'Art' },
+    { id: 'Gaming' },
+    { id: 'RealEstate' },
+    { id: 'Pets' },
+    { id: 'Furniture' },
+] satisfies { id: Category }[];
 
-// ----- Category Labels -----
+
+// ============================================================
+// Category Labels
+// ============================================================
+
 export const categoryLabels: Record<Category, string> = {
     House: 'مستلزمات البيت',
     Garden: 'الحديقة',
@@ -51,30 +53,40 @@ export const categoryLabels: Record<Category, string> = {
     Cleaning: 'مواد التنظيف',
     Health: 'الصحة والعناية',
     Watches: 'ساعات',
+
     MenClothes: 'ملابس رجالية',
     WomenClothes: 'ملابس نسائية',
     WomenBags: 'حقائب نسائية',
+
     Cars: 'سيارات',
     Motorcycles: 'دراجات نارية',
     Trucks: 'شاحنات',
     Bikes: 'دراجات هوائية',
     ElectricVehicles: 'مركبات كهربائية',
+
     Electronics: 'إلكترونيات',
+    Cameras: 'كاميرات وتصوير',
+    Books: 'كتب',
+    MusicalInstruments: 'آلات موسيقية',
+
+    ConstructionEquipment: 'معدات إنشائية',
+    IndustrialEquipment: 'معدات صناعية',
+    WeldingEquipment: 'معدات لحام',
+    OfficeEquipment: 'معدات مكتبية',
+
+    Services: 'خدمات',
+
     Art: 'فن ومقتنيات',
     Gaming: 'ألعاب وقيمنق',
     RealEstate: 'عقارات',
     Pets: 'حيوانات ومستلزماتها',
     Furniture: 'أثاث',
-    Cameras: 'كاميرات وتصوير',
-    Books: 'كتب',
-    MusicalInstruments: 'آلات موسيقية',
-    ConstructionEquipment: 'معدات إنشائية',
-    IndustrialEquipment: 'معدات صناعية',
-    WeldingEquipment: 'معدات لحام',
-    OfficeEquipment: 'معدات مكتبية',
-    Services: 'خدمات',
 };
 
+
+// ============================================================
+// Category Paths
+// ============================================================
 
 export const categoryPathMap: Record<Category, string> = {
     House: productsPathes.house,
@@ -104,7 +116,6 @@ export const categoryPathMap: Record<Category, string> = {
     Pets: productsPathes.pets,
     Furniture: productsPathes.furniture,
 
-    // New
     Cameras: productsPathes.Camera,
     Books: productsPathes.Books,
     MusicalInstruments: productsPathes.MusicalInstruments,
@@ -113,4 +124,4 @@ export const categoryPathMap: Record<Category, string> = {
     WeldingEquipment: productsPathes.WeldingEquipment,
     OfficeEquipment: productsPathes.OfficeEquipment,
     Services: productsPathes.Services,
-} as const;
+};
