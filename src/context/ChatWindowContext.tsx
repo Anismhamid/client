@@ -26,6 +26,10 @@ interface ChatWindowContextType {
     clearChats: () => void;
 }
 
+interface ConversationResponse {
+    user?: BaseUser;
+}
+
 const ChatWindowContext = createContext<ChatWindowContextType | null>(null);
 
 export const ChatWindowProvider = ({
@@ -35,9 +39,13 @@ export const ChatWindowProvider = ({
 }) => {
     const [chats, setChats] = useState<ChatWindow[]>([]);
 
+    // ======================================================
+    // OPEN CHAT
+    // ======================================================
+
     const openChat = useCallback(
         (user: BaseUser, initialMessage?: string) => {
-            const userId = user._id;
+            const userId = user?._id;
 
             if (!userId) {
                 console.warn('Cannot open chat: user ID is missing');
@@ -45,11 +53,11 @@ export const ChatWindowProvider = ({
             }
 
             setChats((prev) => {
-                const exists = prev.find(
+                const existingChat = prev.find(
                     (chat) => chat.user._id === userId,
                 );
 
-                if (exists) {
+                if (existingChat) {
                     return prev.map((chat) =>
                         chat.user._id === userId
                             ? {
@@ -79,33 +87,57 @@ export const ChatWindowProvider = ({
         [],
     );
 
+    // ======================================================
+    // OPEN CHAT FROM NOTIFICATION
+    // ======================================================
+
     useEffect(() => {
-        const handleOpenFloatingChat = (async (event: CustomEvent) => {
-            const { userId } = event.detail;
+        const handleOpenFloatingChat = async (event: Event) => {
+            const customEvent = event as CustomEvent<{
+                userId?: string;
+            }>;
 
-            if (!userId) return;
+            const userId = customEvent.detail?.userId;
 
-            const existing = chats.find(
-                (chat) => chat.user._id === userId,
-            );
-
-            if (existing) {
-                openChat(existing.user);
+            if (!userId || typeof userId !== 'string') {
+                console.warn(
+                    'Cannot open notification chat: invalid user ID',
+                );
                 return;
             }
 
             try {
-                const { data } = await api.get(`/users/${userId}`);
+                // Get conversations accessible to the current user.
+                // Do not use GET /users/:userId here because that route
+                // intentionally restricts access to other user profiles.
 
-                // API returns a user, not a UserMessage.
-                openChat(data);
+                const { data } = await api.get('/messages/conversations');
+
+                const conversations: ConversationResponse[] =
+                    Array.isArray(data?.conversations)
+                        ? data.conversations
+                        : [];
+
+                const conversation = conversations.find(
+                    (item) => item.user?._id === userId,
+                );
+
+                if (!conversation?.user?._id) {
+                    console.warn(
+                        'Notification chat not found in conversations:',
+                        userId,
+                    );
+                    return;
+                }
+
+                openChat(conversation.user);
             } catch (error) {
                 console.error(
-                    '❌ Failed to load user for floating chat:',
+                    'Failed to open chat from notification:',
                     error,
                 );
             }
-        }) as unknown as EventListener;
+        };
 
         window.addEventListener(
             'open-floating-chat',
@@ -118,11 +150,19 @@ export const ChatWindowProvider = ({
                 handleOpenFloatingChat,
             );
         };
-    }, [chats, openChat]);
+    }, [openChat]);
+
+    // ======================================================
+    // CLEAR CHATS
+    // ======================================================
 
     const clearChats = useCallback(() => {
         setChats([]);
     }, []);
+
+    // ======================================================
+    // MINIMIZE CHAT
+    // ======================================================
 
     const minimizeChat = useCallback((id: string) => {
         setChats((prev) =>
@@ -134,11 +174,19 @@ export const ChatWindowProvider = ({
         );
     }, []);
 
+    // ======================================================
+    // CLOSE CHAT
+    // ======================================================
+
     const closeChat = useCallback((id: string) => {
         setChats((prev) =>
             prev.filter((chat) => chat.user._id !== id),
         );
     }, []);
+
+    // ======================================================
+    // GET INITIAL MESSAGE
+    // ======================================================
 
     const getInitialMessage = useCallback(
         (userId: string) => {
@@ -150,6 +198,10 @@ export const ChatWindowProvider = ({
         },
         [chats],
     );
+
+    // ======================================================
+    // CLEAR INITIAL MESSAGE
+    // ======================================================
 
     const clearInitialMessage = useCallback((userId: string) => {
         setChats((prev) =>
@@ -163,6 +215,10 @@ export const ChatWindowProvider = ({
             ),
         );
     }, []);
+
+    // ======================================================
+    // PROVIDER
+    // ======================================================
 
     return (
         <ChatWindowContext.Provider

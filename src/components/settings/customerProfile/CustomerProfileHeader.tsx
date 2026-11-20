@@ -33,7 +33,7 @@ import {
 } from '@mui/icons-material';
 import { NavigateFunction } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { User, UserMessage } from '../../../interfaces/chat/usersMessages';
+import { User } from '../../../interfaces/chat/usersMessages';
 import { Stats } from './types/states';
 import { useUser } from '../../../hooks/useUSer';
 import RoleType from '../../../interfaces/UserType';
@@ -87,7 +87,7 @@ const CustomerProfileHeader: FunctionComponent<CustomerProfileHeaderProps> = ({
             showError('لا يمكن فتح المحادثة، المستخدم غير متوفر');
             return;
         }
-        openChat(user as UserMessage);
+        openChat(user);
     };
 
     const isSelf = auth.slug === user.slug;

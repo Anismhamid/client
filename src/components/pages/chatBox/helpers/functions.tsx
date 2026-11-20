@@ -15,19 +15,19 @@ type MessageStatus = 'seen' | 'delivered' | 'sent' | 'pending' | 'error';
 export const getStatusIcon = (status: MessageStatus) => {
     switch (status) {
         case 'seen':
-            return <DoneAllIcon color="info" fontSize="small" />;
+            return <DoneAllIcon color='info' fontSize='small' />;
 
         case 'delivered':
-            return <DoneAllIcon fontSize="small" />;
+            return <DoneAllIcon fontSize='small' />;
 
         case 'sent':
-            return <CheckIcon fontSize="small" />;
+            return <CheckIcon fontSize='small' />;
 
         case 'pending':
-            return <AccessTimeIcon  fontSize="small" />;
+            return <AccessTimeIcon fontSize='small' />;
 
         case 'error':
-            return <ErrorOutline color="error" fontSize="small" />;
+            return <ErrorOutline color='error' fontSize='small' />;
 
         default:
             return null;
@@ -65,11 +65,26 @@ export const reconcileMessage = (
     prev: LocalMessage[],
     incoming: LocalMessage,
 ): LocalMessage[] => {
-    const index = prev.findIndex(
+    // 1) نفس الـ tempId أو نفس الـ _id الحقيقي
+    let index = prev.findIndex(
         (m) =>
             (incoming.tempId && m.tempId === incoming.tempId) ||
             (incoming._id && m._id === incoming._id),
     );
+
+    // 2) حدث socket بدون tempId: طابقه مع رسالتي المؤقتة (pending) بنفس النص
+    if (index === -1 && !incoming.tempId) {
+        const incomingText = incoming.message ?? incoming.text;
+
+        index = prev.findIndex(
+            (m) =>
+                m.status === 'pending' &&
+                Boolean(m.tempId) &&
+                m._id === m.tempId &&
+                m.from?._id === incoming.from?._id &&
+                (m.message ?? m.text) === incomingText,
+        );
+    }
 
     if (index === -1) {
         return [...prev, incoming];

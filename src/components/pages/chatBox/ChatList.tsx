@@ -1,4 +1,11 @@
-import { useEffect, useState, FunctionComponent, useMemo, memo } from 'react';
+import {
+    useEffect,
+    useState,
+    useRef,
+    FunctionComponent,
+    useMemo,
+    memo,
+} from 'react';
 import {
     Box,
     Typography,
@@ -19,10 +26,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import { m, AnimatePresence } from 'framer-motion';
 import { UserMessage } from '../../../interfaces/chat/usersMessages';
+import { LocalMessage } from '../../../interfaces/chat/localMessage';
 import { useChat } from '../../../hooks/useChat';
 import { useTranslation } from 'react-i18next';
 import { formatTime, getUserName } from './helpers/functions';
 import api from '../../../services/api';
+import socket from '../../../socket/globalSocket';
 
 interface ChatListProps {
     currentUser: {
@@ -46,6 +55,21 @@ interface ConversationItemProps {
     unreadCount: number;
     onOpen: (user: UserMessage) => void;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const normalizeConversations = (raw: any[]): Conversation[] =>
+    raw.map((conv) => ({
+        ...conv,
+        user: {
+            ...conv.user,
+            slug: conv.user.slug || conv.user._id,
+            name: {
+                first: conv.user.name?.first || '',
+                last: conv.user.name?.last || '',
+            },
+            status: conv.user.status ?? false,
+        },
+    }));
 
 // ============================================
 // ConversationItem (خارج ChatList حتى ما ينعمله remount كل render)
@@ -186,11 +210,7 @@ const ConversationItem = memo(
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
                                 fontWeight: unreadCount > 0 ? 500 : 400,
-                                color:
-                                    unreadCount > 0
-                                        ? theme.palette.text.secondary
-                                        : theme.palette.text.secondary,
-
+                                color: theme.palette.text.secondary,
                                 fontSize: '0.78rem',
                                 lineHeight: 1.4,
                                 letterSpacing: '0.01em',
@@ -225,37 +245,118 @@ const ChatList: FunctionComponent<ChatListProps> = ({
     const { t } = useTranslation();
     const theme = useTheme();
 
+    // IDs of conversations already in the list (read inside socket handlers)
+    const knownIdsRef = useRef<Set<string>>(new Set());
+
     useEffect(() => {
-        const loadConversations = async () => {
-            try {
-                setLoading(true);
-                const res = await api.get(`/messages/conversations`);
+        knownIdsRef.current = new Set(
+            conversations.map((c) => String(c.user._id)),
+        );
+    }, [conversations]);
 
-                const conversationsWithStatus = res.data.conversations.map(
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    (conv: any) => ({
-                        ...conv,
-                        user: {
-                            ...conv.user,
-                            slug: conv.user.slug || conv.user._id,
-                            name: {
-                                first: conv.user.name?.first || '',
-                                last: conv.user.name?.last || '',
-                            },
-                            status: conv.user.status ?? false,
-                        },
-                    }),
+    // ======================================================
+    // INITIAL LOAD
+    // ======================================================
+
+    useEffect(() => {
+        let cancelled = false;
+
+        api.get('/messages/conversations')
+            .then((res) => {
+                if (cancelled) return;
+
+                setConversations(
+                    normalizeConversations(res.data.conversations ?? []),
                 );
-
-                setConversations(conversationsWithStatus);
-            } catch (err) {
+            })
+            .catch((err) => {
                 console.error('Failed to load conversations:', err);
-            } finally {
-                setLoading(false);
-            }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
         };
-        loadConversations();
     }, [currentUser._id]);
+
+    // ======================================================
+    // LIVE UPDATES: last message preview + online status
+    // ======================================================
+
+    useEffect(() => {
+        const refetch = () => {
+            api.get('/messages/conversations')
+                .then((res) =>
+                    setConversations(
+                        normalizeConversations(res.data.conversations ?? []),
+                    ),
+                )
+                .catch((err) =>
+                    console.error('Failed to refresh conversations:', err),
+                );
+        };
+
+        const applyMessage = (message: LocalMessage, otherId?: string) => {
+            if (!otherId) return;
+
+            // New conversation that isn't in the list yet → fetch it
+            if (!knownIdsRef.current.has(String(otherId))) {
+                refetch();
+                return;
+            }
+
+            const lastMessage = {
+                message:
+                    message.message ??
+                    message.text ??
+                    (message.fileUrl ? '📎' : ''),
+                createdAt: new Date(
+                    message.createdAt ?? Date.now(),
+                ).toISOString(),
+            };
+
+            setConversations((prev) =>
+                prev.map((conv) =>
+                    String(conv.user._id) === String(otherId)
+                        ? { ...conv, lastMessage }
+                        : conv,
+                ),
+            );
+        };
+
+        const onReceived = (msg: LocalMessage) =>
+            applyMessage(msg, msg?.from?._id);
+
+        const onSent = (msg: LocalMessage) => applyMessage(msg, msg?.to?._id);
+
+        const onStatus = ({
+            userId,
+            status,
+        }: {
+            userId: string;
+            status: boolean;
+        }) => {
+            setConversations((prev) =>
+                prev.map((conv) =>
+                    conv.user._id === userId
+                        ? { ...conv, user: { ...conv.user, status } }
+                        : conv,
+                ),
+            );
+        };
+
+        socket.on('message:received', onReceived);
+        socket.on('message:sent', onSent);
+        socket.on('user:statusChanged', onStatus);
+
+        return () => {
+            socket.off('message:received', onReceived);
+            socket.off('message:sent', onSent);
+            socket.off('user:statusChanged', onStatus);
+        };
+    }, []);
 
     const filteredConversations = useMemo(() => {
         return conversations
@@ -449,7 +550,7 @@ const ChatList: FunctionComponent<ChatListProps> = ({
                         }}
                     >
                         <CircularProgress
-                        aria-label={t('common.loading', 'جاري التحميل')} 
+                            aria-label={t('common.loading', 'جاري التحميل')}
                             size={28}
                             thickness={5}
                             sx={{

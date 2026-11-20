@@ -18,7 +18,6 @@ import ForumTwoToneIcon from '@mui/icons-material/ForumTwoTone';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { m, AnimatePresence } from 'framer-motion';
 import ChatList from './ChatList';
-import { UserMessage } from '../../../interfaces/chat/usersMessages';
 import handleRTL from '../../../locales/handleRTL';
 import { useTranslation } from 'react-i18next';
 import { Link, Navigate } from 'react-router-dom';
@@ -28,9 +27,10 @@ import socket from '../../../socket/globalSocket';
 import { useChatWindow } from '../../../context/ChatWindowContext';
 import BlockButton from '../../reports/BlockButton';
 import ReportModal from '../../reports/ReportModal';
+import { BaseUser } from '../../../interfaces/chat/chatUser';
 
 const MessagesPage = () => {
-    const [selectedUser, setSelectedUser] = useState<UserMessage | null>(null);
+    const [selectedUser, setSelectedUser] = useState<BaseUser | null>(null);
     const { t } = useTranslation();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -65,7 +65,7 @@ const MessagesPage = () => {
     }, []);
 
     const handleSelectChat = useCallback(
-        (user: UserMessage) => {
+        (user: BaseUser) => {
             openChat(user);
             setSelectedUser(user);
         },

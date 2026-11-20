@@ -76,7 +76,7 @@ interface ChatBoxProps {
     initialMessage?: string;
 }
 
-const ChatBox: FunctionComponent<ChatBoxProps> = ({
+const ChatBoxInner: FunctionComponent<ChatBoxProps> = ({
     currentUser,
     otherUser,
     initialMessage,
@@ -116,8 +116,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const [hasMore, setHasMore] = useState(true);
 
     const [isFetchingMore, setIsFetchingMore] = useState(false);
-
-    const [initialMessageSent, setInitialMessageSent] = useState(false);
 
     // ======================================================
     // MESSAGE MENU
@@ -167,11 +165,15 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
     const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
-    const lastScrollHeightRef = useRef<number>(0);
+    // scrollHeight before prepending older messages (pagination)
+    const pendingRestoreRef = useRef<number | null>(null);
 
+    // last message id that was marked as seen
     const lastSeenRef = useRef<string | null>(null);
 
     const initialScrollDone = useRef(false);
+
+    const initialMessageSentRef = useRef(false);
 
     // ======================================================
     // SCROLL BUTTON
@@ -184,8 +186,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     // ======================================================
 
     const userMessages = useMemo(() => {
-        return messages[otherUser?._id ?? ''] || [];
-    }, [messages, otherUser?._id]);
+        return messages[otherUser._id ?? ''] || [];
+    }, [messages, otherUser._id]);
 
     // ======================================================
     // SELECTED MESSAGE
@@ -225,11 +227,13 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
     // ======================================================
     // CLOSE MESSAGE MENU
+    //
+    // selectedMessageId is cleared in the Menu's onExited,
+    // so the items don't disappear during the fade-out.
     // ======================================================
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        setSelectedMessageId(null);
     };
 
     // ======================================================
@@ -301,9 +305,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                 edited: true,
 
+                // ISO string, same format as the socket handler in useChat
                 editedAt: updatedMessage.editedAt
-                    ? new Date(updatedMessage.editedAt)
-                    : new Date(),
+                    ? new Date(updatedMessage.editedAt).toISOString()
+                    : new Date().toISOString(),
             });
 
             setEditingMessageId(null);
@@ -369,11 +374,38 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     };
 
     // ======================================================
+    // SEND MESSAGE
+    // ======================================================
+
+    const handleSend = () => {
+        if (!input.trim()) {
+            return;
+        }
+
+        sendMessage(
+            input,
+            currentUser,
+            otherUser,
+            setInput,
+            chatContainerRef,
+            addMessageForUser,
+            setMessagesForUser,
+        );
+    };
+
+    // ======================================================
     // INITIAL MESSAGE
     // ======================================================
 
     useEffect(() => {
-        if (initialMessage && !initialMessageSent && !isLoading && socket) {
+        if (
+            initialMessage &&
+            !initialMessageSentRef.current &&
+            !isLoading &&
+            socket
+        ) {
+            initialMessageSentRef.current = true;
+
             const newMessage: LocalMessage = {
                 _id: `initial-${Date.now()}`,
 
@@ -430,10 +462,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             requestAnimationFrame(() => {
                 scrollToBottom('smooth', chatContainerRef);
             });
-
-            setInitialMessageSent(true);
         }
-    }, [initialMessage, initialMessageSent, isLoading]);
+    }, [initialMessage, isLoading]);
 
     // ======================================================
     // INITIAL SCROLL
@@ -462,6 +492,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     const markAsSeen = useCallback(
         (lastMessageId?: string) => {
             if (!otherUser?._id || !socket) {
+                return;
+            }
+
+            // Don't mark as seen while the tab/app is in the background
+            if (document.visibilityState !== 'visible') {
                 return;
             }
 
@@ -506,7 +541,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     console.error('Failed to mark as seen:', err);
                 });
         },
-        [otherUser?._id, currentUser._id, setMessagesForUser, setUnreadForUser],
+        [otherUser._id, currentUser._id, setMessagesForUser, setUnreadForUser],
     );
 
     // ======================================================
@@ -559,36 +594,25 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     // LOAD CONVERSATION
     // ======================================================
 
-    const loadConversation = async (isInitial = true) => {
-        if (isInitial) {
-            setIsLoading(true);
-        } else {
-            setIsFetchingMore(true);
+    // Older messages (scroll to top)
+    const loadOlder = async () => {
+        setIsFetchingMore(true);
 
-            if (chatContainerRef.current) {
-                const container = chatContainerRef.current;
-
-                lastScrollHeightRef.current = container.scrollHeight;
-
-                lastSeenRef.current = String(container.scrollTop);
-            }
+        // Remember the height before older messages are prepended
+        if (chatContainerRef.current) {
+            pendingRestoreRef.current = chatContainerRef.current.scrollHeight;
         }
 
         try {
-            const skip = isInitial ? 0 : userMessages.length;
-
             const res = await api.get(
-                `/messages/conversation/${otherUser._id}?limit=20&skip=${skip}`,
+                `/messages/conversation/${otherUser._id}?limit=20&skip=${userMessages.length}`,
             );
 
             const fetchedMessages = res.data.messages || [];
 
-            if (isInitial) {
-                setMessagesForUser(otherUser._id as string, fetchedMessages);
-
-                requestAnimationFrame(() => {
-                    scrollToBottom('smooth', chatContainerRef);
-                });
+            if (fetchedMessages.length === 0) {
+                // Nothing prepended, so nothing to restore
+                pendingRestoreRef.current = null;
             } else {
                 setMessagesForUser(
                     otherUser._id as string,
@@ -599,36 +623,32 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             setHasMore(Boolean(res.data.hasMore));
         } catch (err) {
             console.error('Pagination error:', err);
-        } finally {
-            setIsLoading(false);
 
+            pendingRestoreRef.current = null;
+        } finally {
             setIsFetchingMore(false);
         }
     };
 
     // ======================================================
     // RESTORE SCROLL AFTER PAGINATION
+    //
+    // Runs when the message count changes, i.e. right after
+    // older messages were prepended and before the browser paints.
     // ======================================================
 
     useLayoutEffect(() => {
-        if (!isFetchingMore) {
-            return;
-        }
-
-        if (!chatContainerRef.current) {
-            return;
-        }
-
         const container = chatContainerRef.current;
 
-        if (lastScrollHeightRef.current > 0) {
-            const diff = container.scrollHeight - lastScrollHeightRef.current;
-
-            container.scrollTop = diff;
-
-            lastScrollHeightRef.current = 0;
+        if (!container || pendingRestoreRef.current === null) {
+            return;
         }
-    }, [isFetchingMore, userMessages.length]);
+
+        container.scrollTop =
+            container.scrollHeight - pendingRestoreRef.current;
+
+        pendingRestoreRef.current = null;
+    }, [userMessages.length]);
 
     // ======================================================
     // NEAR BOTTOM
@@ -691,6 +711,34 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     }, [otherUser._id, isLoading, markAsSeen]);
 
     // ======================================================
+    // MARK SEEN WHEN TAB/APP BECOMES VISIBLE
+    // ======================================================
+
+    useEffect(() => {
+        const handleVisibility = () => {
+            if (document.visibilityState !== 'visible' || isLoading) {
+                return;
+            }
+
+            const unseenMessages = userMessages.filter(
+                (message) =>
+                    message?.from?._id === otherUser._id &&
+                    message.status !== 'seen',
+            );
+
+            if (unseenMessages.length > 0 && isNearBottom()) {
+                markAsSeen(unseenMessages[unseenMessages.length - 1]._id);
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibility);
+        };
+    }, [userMessages, otherUser._id, isLoading, isNearBottom, markAsSeen]);
+
+    // ======================================================
     // SOCKET EVENTS
     //
     // message:edited / message:deleted
@@ -702,7 +750,31 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             socket.connect();
         }
 
-        void loadConversation();
+        // Initial load. isLoading already starts as true (the component
+        // remounts per user via key). setState only runs inside callbacks.
+        let cancelled = false;
+
+        api.get(`/messages/conversation/${otherUser._id}?limit=20&skip=0`)
+            .then((res) => {
+                if (cancelled) return;
+
+                setMessagesForUser(
+                    otherUser._id as string,
+                    res.data.messages || [],
+                );
+
+                setHasMore(Boolean(res.data.hasMore));
+
+                requestAnimationFrame(() => {
+                    scrollToBottom('smooth', chatContainerRef);
+                });
+            })
+            .catch((err) => {
+                console.error('Failed to load conversation:', err);
+            })
+            .finally(() => {
+                if (!cancelled) setIsLoading(false);
+            });
 
         // ================================================
         // RECEIVED MESSAGE
@@ -831,6 +903,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         socket.on('message:seen', handleSeen);
 
         return () => {
+            cancelled = true;
+
             socket.off('message:received', handleReceivedMessage);
 
             socket.off('message:sent', handleSentMessage);
@@ -878,7 +952,9 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
             if (res.data.message) {
                 addMessageForUser(otherUser._id as string, res.data.message);
 
-                scrollToBottom('smooth', chatContainerRef);
+                requestAnimationFrame(() => {
+                    scrollToBottom('smooth', chatContainerRef);
+                });
             }
         } catch (err) {
             console.error('Failed to upload file:', err);
@@ -910,6 +986,14 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
     if (!auth?._id) {
         return <Navigate to={path.Login} replace />;
     }
+
+    // ======================================================
+    // ALIGNMENT (RTL / LTR aware)
+    // ======================================================
+
+    const mineAlign = dir === 'rtl' ? 'flex-start' : 'flex-end';
+
+    const theirsAlign = dir === 'rtl' ? 'flex-end' : 'flex-start';
 
     // ======================================================
     // RENDER
@@ -952,6 +1036,10 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         sx: {
                             zIndex: 999999,
                         },
+                    },
+
+                    transition: {
+                        onExited: () => setSelectedMessageId(null),
                     },
 
                     paper: {
@@ -1054,7 +1142,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     }
 
                     if (scrollTop === 0 && hasMore && !isFetchingMore) {
-                        void loadConversation(false);
+                        void loadOlder();
                     }
                 }}
                 sx={{
@@ -1149,7 +1237,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                 data-message-id={msg._id}
                                 className='message-row'
                                 sx={{
-                                    alignSelf: isMe ? 'flex-start' : 'flex-end',
+                                    alignSelf: isMe ? mineAlign : theirsAlign,
 
                                     position: 'relative',
 
@@ -1266,7 +1354,6 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
 
                                                 zIndex: 100,
 
-                                                // 👇 ظاهر دايماً
                                                 opacity: 1,
 
                                                 transform: 'scale(1)',
@@ -1532,7 +1619,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     )}
 
                                     {/* ================================= */}
-                                    {/* STATUS + TIME (مدمجين) */}
+                                    {/* STATUS + TIME */}
                                     {/* ================================= */}
 
                                     {!isEditingThis && (
@@ -1605,7 +1692,7 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                     <Fade in={typing}>
                         <Box
                             sx={{
-                                alignSelf: 'flex-end',
+                                alignSelf: theirsAlign,
 
                                 bgcolor: 'background.paper',
 
@@ -1810,6 +1897,23 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                         maxRows={4}
                         value={input}
                         onChange={handleInputChange}
+                        onKeyDown={(e) => {
+                            // Desktop: Enter sends, Shift+Enter = new line.
+                            // Touch devices (mobile / Capacitor): Enter = new line.
+                            const isDesktop =
+                                window.matchMedia('(pointer: fine)').matches;
+
+                            if (
+                                isDesktop &&
+                                e.key === 'Enter' &&
+                                !e.shiftKey &&
+                                !e.nativeEvent.isComposing
+                            ) {
+                                e.preventDefault();
+
+                                handleSend();
+                            }
+                        }}
                         title={t('messages.typeMessage')}
                         aria-label={t('messages.typeMessage')}
                         placeholder={t('messages.typeMessage')}
@@ -1829,21 +1933,8 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
                                     <IconButton
                                         color='primary'
                                         size='small'
-                                        aria-label={t(
-                                            'messages.send',
-                                            'اكتب رسالة',
-                                        )}
-                                        onClick={() =>
-                                            sendMessage(
-                                                input,
-                                                currentUser,
-                                                otherUser,
-                                                setInput,
-                                                chatContainerRef,
-                                                addMessageForUser,
-                                                setMessagesForUser,
-                                            )
-                                        }
+                                        aria-label={t('messages.send', 'إرسال')}
+                                        onClick={handleSend}
                                         disabled={!input.trim()}
                                         sx={{
                                             bgcolor: 'primary.main',
@@ -1924,5 +2015,11 @@ const ChatBox: FunctionComponent<ChatBoxProps> = ({
         </Box>
     );
 };
+
+// key remounts the chat when the other user changes,
+// so all state/refs start fresh without resetting them in an effect.
+const ChatBox: FunctionComponent<ChatBoxProps> = (props) => (
+    <ChatBoxInner key={props.otherUser._id} {...props} />
+);
 
 export default ChatBox;
