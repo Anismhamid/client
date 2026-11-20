@@ -14,12 +14,24 @@ export const useHomePageAds = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let cancelled = false;
+
         getHomepageAds()
-            .then(setHomePageAds)
-            .catch((err) => {
-                console.error('Error fetching homepage ads:', err);
+            .then((data) => {
+                if (!cancelled) setHomePageAds(data);
             })
-            .finally(() => setLoading(false));
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('Error fetching homepage ads:', err);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     return { homePageAds, loading };
@@ -32,13 +44,25 @@ export const useHighlightAds = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
+
         getHighlightAds()
-            .then(setAds)
-            .catch((err) => {
-                console.error('Error fetching highlight ads:', err);
-                setError('حدث خطأ في تحميل الإعلانات المميزة');
+            .then((data) => {
+                if (!cancelled) setAds(data);
             })
-            .finally(() => setLoading(false));
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('Error fetching highlight ads:', err);
+                    setError('حدث خطأ في تحميل الإعلانات المميزة');
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     return { ads, loading, error };
@@ -46,48 +70,65 @@ export const useHighlightAds = () => {
 
 // Top
 export const useTopAds = (category?: string) => {
-    const [ads, setAds] = useState<FeaturedAd[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [result, setResult] = useState<{
+        category: string;
+        ads: FeaturedAd[];
+        error: string | null;
+    }>({
+        category: '',
+        ads: [],
+        error: null,
+    });
+
+    const normalizedCategory = category?.trim() || '';
 
     useEffect(() => {
-        if (!category?.trim()) {
-            setAds([]);
-            setLoading(false);
-            setError(null);
-            return;
-        }
+        if (!normalizedCategory) return;
 
         let cancelled = false;
 
-        setLoading(true);
-        setError(null);
-
-        getTopAds(category)
+        Promise.resolve()
+            .then(() => getTopAds(normalizedCategory))
             .then((data) => {
                 if (!cancelled) {
-                    setAds(data);
+                    setResult({
+                        category: normalizedCategory,
+                        ads: data,
+                        error: null,
+                    });
                 }
             })
             .catch((err) => {
                 if (!cancelled) {
                     console.error('Error fetching top ads:', err);
-                    setError('حدث خطأ في تحميل إعلانات أعلى البحث');
-                    setAds([]);
-                }
-            })
-            .finally(() => {
-                if (!cancelled) {
-                    setLoading(false);
+
+                    setResult({
+                        category: normalizedCategory,
+                        ads: [],
+                        error: 'حدث خطأ في تحميل إعلانات أعلى البحث',
+                    });
                 }
             });
 
         return () => {
             cancelled = true;
         };
-    }, [category]);
+    }, [normalizedCategory]);
 
-    return { ads, loading, error };
+    const isCurrentCategory =
+        result.category === normalizedCategory;
+
+    return {
+        ads: isCurrentCategory && normalizedCategory
+            ? result.ads
+            : [],
+
+        loading: Boolean(normalizedCategory) && !isCurrentCategory,
+
+        error: isCurrentCategory && normalizedCategory
+            ? result.error
+            : null,
+    };
 };
 
 // All Featured Ads
@@ -97,14 +138,26 @@ export const useAllFeaturedAds = () => {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        let cancelled = false;
+
         getAllFeaturedAds()
-            .then(setAds)
-            .catch((err) => {
-                console.error('Error fetching featured ads:', err);
-                setError('حدث خطأ في تحميل الإعلانات');
-                setAds([]);
+            .then((data) => {
+                if (!cancelled) setAds(data);
             })
-            .finally(() => setLoading(false));
+            .catch((err) => {
+                if (!cancelled) {
+                    console.error('Error fetching featured ads:', err);
+                    setError('حدث خطأ في تحميل الإعلانات');
+                    setAds([]);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) setLoading(false);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, []);
 
     return { ads, loading, error };

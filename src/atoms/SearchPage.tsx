@@ -52,55 +52,81 @@ const SearchPage = () => {
 
     const query = searchParams.get('q')?.trim() || '';
 
-    const [loading, setLoading] = useState(false);
-    const [results, setResults] = useState<Posts[]>([]);
-    const [filters, setFilters] = useState<SearchFilters | null>(null);
-    const [error, setError] = useState(false);
+    interface SearchState {
+        query: string;
+        status: 'success' | 'error';
+        results: Posts[];
+        filters: SearchFilters | null;
+    }
+
+    const [searchState, setSearchState] = useState<SearchState | null>(null);
 
     const { t } = useTranslation();
     const direction = handleRTL();
 
     useEffect(() => {
-        if (!query) {
-            setResults([]);
-            setFilters(null);
-            return;
-        }
+        if (!query) return;
+
+        const controller = new AbortController();
 
         const search = async () => {
             try {
-                setLoading(true);
-                setError(false);
-
                 const response = await axios.post<SearchResponse>(
                     `${API_URL}/ai/search`,
+                    { query },
                     {
-                        query,
+                        signal: controller.signal,
                     },
                 );
 
+                if (controller.signal.aborted) return;
+
                 console.log('🔎 SearchPage AI response:', response.data);
 
-                setResults(
-                    Array.isArray(response.data?.posts)
+                setSearchState({
+                    query,
+                    status: 'success',
+                    results: Array.isArray(response.data?.posts)
                         ? response.data.posts
                         : [],
-                );
+                    filters: response.data?.filters ?? null,
+                });
+            } catch (err) {
+                if (controller.signal.aborted) return;
 
-                setFilters(response.data?.filters ?? null);
-            } catch (error) {
-                console.error('❌ SearchPage error:', error);
+                console.error('❌ SearchPage error:', err);
 
-                setResults([]);
-                setFilters(null);
-                setError(true);
-            } finally {
-                setLoading(false);
+                setSearchState({
+                    query,
+                    status: 'error',
+                    results: [],
+                    filters: null,
+                });
             }
         };
 
         search();
+
+        return () => {
+            controller.abort();
+        };
     }, [query]);
+
+    const hasCurrentSearch = Boolean(query) && searchState?.query === query;
+
+    const loading = Boolean(query) && !hasCurrentSearch;
+
+    const error = hasCurrentSearch && searchState?.status === 'error';
+
+    const results =
+        hasCurrentSearch && searchState?.status === 'success'
+            ? searchState.results
+            : [];
+
+    const filters =
+        hasCurrentSearch && searchState?.status === 'success'
+            ? searchState.filters
+            : null;
 
     const getProductUrl = (post: Posts) => {
         return (
@@ -272,7 +298,7 @@ const SearchPage = () => {
             {!loading && !error && filters?.category && (
                 <TopAdsSection category={filters.category} />
             )}
-            
+
             {/* COUNT */}
 
             {!loading && !error && (
