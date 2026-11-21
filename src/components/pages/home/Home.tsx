@@ -1,3 +1,10 @@
+/**
+ * @file Home.tsx
+ * @description Main landing and marketplace discovery page component.
+ * Displays hero banner, statistics strip, category selector, featured ads carousel,
+ * paginated listings feed with "Load More" pagination, and post management modals.
+ */
+
 // pages/Home.tsx
 import {
     FunctionComponent,
@@ -22,6 +29,7 @@ import {
     Chip,
     alpha,
     useTheme,
+    CircularProgress,
 } from '@mui/material';
 import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
@@ -55,7 +63,6 @@ import { deletePost } from '../../../services/postsServices';
 import JsonLd from '../../../../utils/JsonLd';
 import { useTranslation } from 'react-i18next';
 import { path } from '../../../routes/routes';
-import { Posts } from '../../../interfaces/Posts';
 import AlertDialogs from '../../../atoms/toasts/Sweetalert';
 import { BRAND } from '../../navbar/theme/brand';
 import CategoryBar from './Categorybar';
@@ -92,19 +99,37 @@ const QUICK_HELP_LINKS = [
     },
 ];
 
+/**
+ * Primary Home landing page component.
+ *
+ * Responsibilities:
+ * - Orchestrates marketplace post discovery and category filtering
+ * - Handles pagination via `usePosts` (`loadMore`, `hasMore`, `loadingMore`)
+ * - Manages modal state for adding, editing, and deleting listings
+ * - Renders SEO structured metadata (JsonLd) and responsive layout
+ */
 const Home: FunctionComponent = () => {
     const { auth } = useUser();
     const { t } = useTranslation();
     const direction = handleRTL();
     const theme = useTheme();
-    const { posts: initialPosts, refetch } = usePosts();
+
+    // Paginated posts hook providing data, pagination state, and refetch handler
+    const {
+        posts,
+        setPosts,
+        refetch,
+        loadMore,
+        hasMore,
+        loadingMore,
+        loading,
+    } = usePosts();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [postIdToUpdate, setPostIdToUpdate] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [postToDelete, setPostToDelete] = useState('');
-    const [posts, setPosts] = useState<Posts[]>([]);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
         null,
     );
@@ -134,10 +159,6 @@ const Home: FunctionComponent = () => {
     const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30 });
 
     useEffect(() => {
-        setPosts(initialPosts);
-    }, [initialPosts]);
-
-    useEffect(() => {
         const handleScroll = () => setShowBackToTop(window.scrollY > 600);
         handleScroll();
         window.addEventListener('scroll', handleScroll, { passive: true });
@@ -161,7 +182,7 @@ const Home: FunctionComponent = () => {
                 }),
             );
         },
-        [auth?._id],
+        [auth._id, setPosts],
     );
 
     const isAdmin = auth?.role === RoleType.Admin;
@@ -177,7 +198,7 @@ const Home: FunctionComponent = () => {
             console.error(err);
             throw err;
         }
-    }, []);
+    }, [setPosts]);
 
     const currentUrl = window.location.origin;
 
@@ -647,6 +668,44 @@ const Home: FunctionComponent = () => {
                         onLikeToggle={handleLikeToggle}
                     />
                 </Suspense>
+
+                {/* LOAD MORE */}
+                {!selectedCategory && hasMore && !loading && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            py: 4,
+                        }}
+                    >
+                        <Button
+                            variant='outlined'
+                            onClick={loadMore}
+                            disabled={loadingMore}
+                            startIcon={
+                                loadingMore ? (
+                                    <CircularProgress size={18} />
+                                ) : undefined
+                            }
+                            sx={{
+                                minWidth: 180,
+                                minHeight: 44,
+                                borderRadius: '14px',
+                                fontWeight: 700,
+                                borderColor: alpha(BRAND.brown, 0.35),
+                                color: BRAND.brown,
+                                '&:hover': {
+                                    borderColor: BRAND.brown,
+                                    bgcolor: alpha(BRAND.brown, 0.05),
+                                },
+                            }}
+                        >
+                            {loadingMore
+                                ? t('common.loading', 'جاري التحميل...')
+                                : t('home.loadMore', 'تحميل المزيد')}
+                        </Button>
+                    </Box>
+                )}
 
                 <Suspense fallback={<Loader />}>
                     <ContactCTA />

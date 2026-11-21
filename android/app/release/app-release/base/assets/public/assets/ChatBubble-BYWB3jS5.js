@@ -1,0 +1,1 @@
+import{j as t}from"./react-vendor-i2Ccrb7u.js";import{a as o}from"./mui-vendor-BabvZBR7.js";const s=o(t.jsx("path",{d:"M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2"}));export{s as C};

@@ -1,0 +1,1 @@
+import{g as r}from"./index-0FzjuGcD.js";import"./react-vendor-i2Ccrb7u.js";import"./mui-vendor-BabvZBR7.js";class i extends r{readPassword(){throw new Error("Method not implemented.")}async promptDialog(e){throw new Error("Not implemented on web"+JSON.stringify(e))}async getPluginVersion(){return{version:"web"}}}export{i as SavePasswordWeb};

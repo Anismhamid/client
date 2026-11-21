@@ -1,0 +1,1 @@
+import{bj as r}from"./index-0FzjuGcD.js";const s="https://server-32bo.onrender.com/api",n=async()=>{try{return(await r.get(`${s}/cities`)).data}catch{return[]}},a=async t=>{try{return(await r.get(`${s}/cities/${encodeURIComponent(t)}`)).data}catch(e){return console.error("Error fetching streets:",e),[]}};export{a,n as g};

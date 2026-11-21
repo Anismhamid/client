@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * @file postsServices.ts
+ * @description API service functions for posts management, including CRUD operations,
+ * pagination, category queries, reviews, likes, view counting, and moderation.
+ */
+
 import { Posts } from '../interfaces/Posts';
 import { showError } from '../atoms/toasts/ReactToast';
 import api from './api';
 
 /**
- * Gets a specific post by name
- * @param postName - The name of the post to fetch
+ * Gets a specific post by its ID.
+ *
+ * @param post_id - The unique identifier of the post to fetch
  * @returns The post data if found, or null if there's an error or post not found
  */
 export const getPostById = async (post_id: string) => {
@@ -18,6 +25,14 @@ export const getPostById = async (post_id: string) => {
     }
 };
 
+/**
+ * Fetches related posts within a category, optionally excluding the current post.
+ *
+ * @param category - Category name to retrieve related posts for
+ * @param currentPostId - Optional post ID to exclude from the results
+ * @param limit - Maximum number of related posts to return (default: 4)
+ * @returns An array of related Posts, or an empty array if an error occurs
+ */
 export const getRelatedPosts = async (
     category: string,
     currentPostId?: string,
@@ -40,7 +55,14 @@ export const getRelatedPosts = async (
     }
 };
 
-// // نسخة متقدمة مع فلترة وترتيب
+/**
+ * Fetches related posts with advanced filtering, price range, and sorting options.
+ *
+ * @param category - Category name to filter by
+ * @param currentPostId - Optional post ID to exclude from results
+ * @param options - Additional query parameters for pagination, sorting, and price range
+ * @returns An array of related Posts matching the criteria
+ */
 export const getRelatedPostsAdvanced = async (
     category: string,
     currentPostId?: string,
@@ -88,10 +110,11 @@ export const getRelatedPostsAdvanced = async (
 };
 
 /**
- * Update post by id
- * @param postId - The id of the post to update
- * @param updatedPost - The updated post data
- * @returns The updated post if successful, or null if there's an error
+ * Updates an existing post by its ID.
+ *
+ * @param postId - The unique identifier of the post to update
+ * @param updatedPost - The updated post data payload
+ * @returns The updated post data if successful, or null if an error occurs
  */
 export const updatePost = async (postId: string, updatedPost: Posts) => {
     try {
@@ -104,24 +127,39 @@ export const updatePost = async (postId: string, updatedPost: Posts) => {
 };
 
 /**
- * Get all Posts from all categories
- * @returns An array of Posts, or an empty array if there's an error
+ * Gets a paginated list of all posts across all categories.
+ *
+ * @param page - Page number to fetch (1-indexed, default: 1)
+ * @param limit - Number of posts per page (default: 20)
+ * @returns An array of Posts for the requested page
+ * @throws Error if the request fails
  */
-export const getAllPosts = async () => {
+export const getAllPosts = async (
+    page = 1,
+    limit = 20,
+): Promise<Posts[]> => {
     try {
-        const response = await api.get(`/posts`);
-        if (Array.isArray(response.data)) return response.data;
+        const response = await api.get('/posts', {
+            params: { page, limit },
+        });
+
+        if (Array.isArray(response.data)) {
+            return response.data;
+        }
+
         return [];
-    } catch (error: any) {
-        console.error(error);
-        return [];
+    } catch (error) {
+        console.error('getAllPosts error:', error);
+        throw error;
     }
 };
 
 /**
- * Create a new post
- * @param Posts - post data to be created
- * @returns The created post if successful, or null if there's an error
+ * Creates a new post and notifies the user with a toast error if creation fails.
+ *
+ * @param post - The post data to be created
+ * @returns The created post data returned from the server
+ * @throws Error if creation fails
  */
 export const createNewPost = async (post: Posts) => {
     try {
@@ -141,8 +179,9 @@ export const createNewPost = async (post: Posts) => {
 };
 
 /**
- * Get posts in discount limit (6 items)
- * @returns An array of posts on discount, or an empty array if there's an error
+ * Gets posts currently marked on discount (limited to 6 items).
+ *
+ * @returns An array of posts on discount, or an empty array if an error occurs
  */
 export async function getPostsInDiscount() {
     try {
@@ -155,9 +194,10 @@ export async function getPostsInDiscount() {
 }
 
 /**
- * Delete post by name
- * @param productName - The name of the post to delete
- * @returns The deleted post if successful, or null if there's an error
+ * Deletes a post by its ID.
+ *
+ * @param postId - The unique identifier of the post to delete
+ * @returns The deleted post data if successful, or undefined on error
  */
 export async function deletePost(postId: string) {
     try {
@@ -171,10 +211,11 @@ export async function deletePost(postId: string) {
 }
 
 /**
- * Get posts by category name
- * @param category - The name of the category
- * @param subCategory - Optional subcategory
- * @returns Array of posts
+ * Gets posts by category name and optional subcategory.
+ *
+ * @param category - The name or slug of the category
+ * @param subCategory - Optional subcategory filter
+ * @returns Array of posts belonging to the specified category
  */
 export const getpostsByCategory = async (
     category: string,
@@ -192,6 +233,12 @@ export const getpostsByCategory = async (
     }
 };
 
+/**
+ * Retrieves all posts created by a customer identified by their profile slug.
+ *
+ * @param slug - Customer profile slug
+ * @returns Array of posts belonging to the customer
+ */
 export const getCustomerProfilePostsBySlug = async (
     slug: string,
 ): Promise<Posts[]> => {
@@ -209,6 +256,13 @@ export const getCustomerProfilePostsBySlug = async (
     }
 };
 
+/**
+ * Toggles like status on a post for the authenticated user.
+ *
+ * @param postId - ID of the post to like or unlike
+ * @returns Server response data after toggling like
+ * @throws Error if the request fails
+ */
 export const toggleLike = async (postId: string) => {
     try {
         const res = await api.patch(`/posts/${postId}/like`, {});
@@ -223,7 +277,13 @@ export const toggleLike = async (postId: string) => {
     }
 };
 
-// Review submission
+/**
+ * Submits a rating and comment review for a post.
+ *
+ * @param postId - ID of the post being reviewed
+ * @param review - Review payload containing userId, rating (1-5), and comment text
+ * @returns Server response data, or empty array on error
+ */
 export const submitReview = async (
     postId: string,
     review: { userId: string; rating: number; comment: string },
@@ -238,6 +298,12 @@ export const submitReview = async (
     }
 };
 
+/**
+ * Increments the view count of a post.
+ *
+ * @param postId - ID of the post whose view count is being incremented
+ * @returns Server response data with updated view metrics
+ */
 export const incrementViewCount = async (postId: string) => {
     try {
         const result = await api.patch(`/posts/${postId}/increment-views`);
@@ -248,6 +314,11 @@ export const incrementViewCount = async (postId: string) => {
     }
 };
 
+/**
+ * Retrieves all posts currently awaiting admin review and approval.
+ *
+ * @returns Server response data containing pending posts
+ */
 export const getPendingPosts = async () => {
     try {
         const response = await api('/posts/pending');
@@ -257,6 +328,13 @@ export const getPendingPosts = async () => {
     }
 };
 
+/**
+ * Approves a pending post, publishing it to the platform (admin only).
+ *
+ * @param postId - ID of the post to approve
+ * @returns Server response data confirming approval
+ * @throws Error if approval fails
+ */
 export const approvePost = async (postId: string) => {
     try {
         const response = await api.patch(`/posts/${postId}/approve`);
@@ -272,6 +350,13 @@ export const approvePost = async (postId: string) => {
     }
 };
 
+/**
+ * Rejects a pending post (admin only).
+ *
+ * @param postId - ID of the post to reject
+ * @returns Server response data confirming rejection
+ * @throws Error if rejection fails
+ */
 export const rejectPost = async (postId: string) => {
     try {
         const response = await api.patch(`/posts/${postId}/reject`);

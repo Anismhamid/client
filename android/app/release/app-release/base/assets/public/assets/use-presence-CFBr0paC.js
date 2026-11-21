@@ -1,0 +1,1 @@
+import{r}from"./react-vendor-i2Ccrb7u.js";import{bk as a}from"./index-0FzjuGcD.js";function i(e=!0){const o=r.useContext(a);if(o===null)return[!0,null];const{isPresent:s,onExitComplete:t,register:u}=o,n=r.useId();r.useEffect(()=>{if(e)return u(n)},[e]);const f=r.useCallback(()=>e&&t&&t(n),[n,t,e]);return!s&&t?[!1,f]:[!0]}export{i as u};

@@ -1,0 +1,24 @@
+User-agent: *
+Allow: /
+
+Disallow: /profile
+Disallow: /messages
+Disallow: /admin-settings
+Disallow: /users-management
+Disallow: /favorites
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /forgot-password
+Disallow: /admin
+Disallow: /blog/manage
+Disallow: /blog/new
+Disallow: /blog/edit/
+
+Disallow: /api/
+Allow: /api/blog/
+Allow: /api/posts/
+Disallow: /api/blog/admin/
+
+Sitemap: https://client-qqq1.vercel.app/sitemap/sitemap.xml
+Sitemap: https://client-qqq1.vercel.app/sitemap/blog.xml

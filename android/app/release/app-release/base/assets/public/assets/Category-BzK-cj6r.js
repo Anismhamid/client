@@ -1,0 +1,1 @@
+import{j as r}from"./react-vendor-i2Ccrb7u.js";import{a as t}from"./mui-vendor-BabvZBR7.js";const a=t([r.jsx("path",{d:"m12 2-5.5 9h11z"},"0"),r.jsx("circle",{cx:"17.5",cy:"17.5",r:"4.5"},"1"),r.jsx("path",{d:"M3 13.5h8v8H3z"},"2")]);export{a as C};
