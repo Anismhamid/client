@@ -6,6 +6,7 @@ import {
     ListItemButton,
     Typography,
     Collapse,
+    Tooltip,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -17,6 +18,7 @@ import FloatingToggle from './FloatingToggle';
 
 // --- Constants ---
 const SIDEBAR_WIDTH = 310;
+const COLLAPSED_WIDTH = 72;
 const BUTTON_SIZE = 32;
 const NAVBAR_HEIGHT = { xs: 64, md: 72 };
 
@@ -24,6 +26,8 @@ const NAVBAR_HEIGHT = { xs: 64, md: 72 };
 interface CategoryItemProps {
     category: NavCategory;
     isExpanded: boolean;
+    collapsed: boolean;
+    tooltipPlacement: 'left' | 'right';
     onToggle: (value: string) => void;
     onClose: () => void;
     t: (key: string) => string;
@@ -32,16 +36,18 @@ interface CategoryItemProps {
 const CategoryItem = ({
     category,
     isExpanded,
+    collapsed,
+    tooltipPlacement,
     onToggle,
     onClose,
     t,
 }: CategoryItemProps) => {
-    const hasSubs = category.subCategories && category.subCategories.length > 0;
+    const hasSubs = !!category.subCategories?.length;
+    const label = t(category.labelKey);
 
     return (
         <Box sx={{ mb: 0.5 }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                {/* Main Category Link */}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                     <NavLink
                         to={category.path}
@@ -49,54 +55,71 @@ const CategoryItem = ({
                         style={{ textDecoration: 'none', color: 'inherit' }}
                     >
                         {({ isActive }) => (
-                            <ListItemButton
-                                selected={isActive}
-                                sx={{
-                                    gap: 1,
-                                    minHeight: 56,
-                                    borderRadius: 2,
-                                    px: 1.5,
-                                    '&.Mui-selected': {
-                                        bgcolor: 'warning.light',
-                                        color: 'warning.contrastText',
-                                        '&:hover': { bgcolor: 'warning.main' },
-                                    },
-                                    '&:hover': { bgcolor: 'action.hover' },
-                                }}
+                            <Tooltip
+                                title={collapsed ? label : ''}
+                                placement={tooltipPlacement}
+                                arrow
                             >
-                                <Box
-                                    component='img'
-                                    src={category.icon}
-                                    alt={t(category.labelKey)}
-                                    loading='lazy'
+                                <ListItemButton
+                                    selected={isActive}
                                     sx={{
-                                        width: 45,
-                                        height: 45,
-                                        objectFit: 'contain',
-                                        flexShrink: 0,
-                                        marginInlineStart: 1.5,
-                                    }}
-                                />
-                                <Typography
-                                    sx={{
-                                        fontSize: '0.9rem',
-                                        fontWeight: isActive ? 700 : 500,
-                                        textAlign: 'start',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        ml: 1,
+                                        gap: 1,
+                                        minHeight: 56,
+                                        borderRadius: 2,
+                                        px: 1.5,
+                                        justifyContent: collapsed
+                                            ? 'center'
+                                            : 'flex-start',
+                                        '&.Mui-selected': {
+                                            bgcolor: 'warning.light',
+                                            color: 'warning.contrastText',
+                                            '&:hover': {
+                                                bgcolor: 'warning.main',
+                                            },
+                                        },
+                                        '&:hover': { bgcolor: 'action.hover' },
                                     }}
                                 >
-                                    {t(category.labelKey)}
-                                </Typography>
-                            </ListItemButton>
+                                    <Box
+                                        component='img'
+                                        src={category.icon}
+                                        alt={label}
+                                        loading='lazy'
+                                        sx={{
+                                            width: 45,
+                                            height: 45,
+                                            objectFit: 'contain',
+                                            flexShrink: 0,
+                                            marginInlineStart: collapsed
+                                                ? 0
+                                                : 1.5,
+                                        }}
+                                    />
+                                    {!collapsed && (
+                                        <Typography
+                                            sx={{
+                                                fontSize: '0.9rem',
+                                                fontWeight: isActive
+                                                    ? 700
+                                                    : 500,
+                                                textAlign: 'start',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                marginInlineStart: 1,
+                                            }}
+                                        >
+                                            {label}
+                                        </Typography>
+                                    )}
+                                </ListItemButton>
+                            </Tooltip>
                         )}
                     </NavLink>
                 </Box>
 
                 {/* Expand/Collapse Arrow */}
-                {hasSubs && (
+                {hasSubs && !collapsed && (
                     <IconButton
                         size='small'
                         aria-label={
@@ -109,7 +132,7 @@ const CategoryItem = ({
                             e.preventDefault();
                             onToggle(category.value);
                         }}
-                        sx={{ flexShrink: 0, mr: 0.5 }}
+                        sx={{ flexShrink: 0, marginInlineEnd: 0.5 }}
                     >
                         {isExpanded ? (
                             <ExpandLessIcon fontSize='small' />
@@ -121,7 +144,7 @@ const CategoryItem = ({
             </Box>
 
             {/* Subcategories */}
-            {hasSubs && (
+            {hasSubs && !collapsed && (
                 <Collapse in={isExpanded} unmountOnExit>
                     <List component='div' disablePadding>
                         {category.subCategories!.map((sub) => (
@@ -138,7 +161,7 @@ const CategoryItem = ({
                                     <ListItemButton
                                         selected={isActive}
                                         sx={{
-                                            pl: 4,
+                                            paddingInlineStart: 4,
                                             py: 0.75,
                                             borderRadius: 2,
                                             mb: 0.25,
@@ -176,7 +199,7 @@ const CategoryItem = ({
 // --- Main Component ---
 const ChipNavigation = () => {
     const { t } = useTranslation();
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false); // true = expanded, false = icons only
     const [expandedCategory, setExpandedCategory] = useState<string | false>(
         false,
     );
@@ -184,8 +207,9 @@ const ChipNavigation = () => {
     const dir = handleRTL();
     const isRTL = dir === 'rtl';
 
-    // Determine transform direction based on RTL
+    // Only used on xs, where the closed sidebar is fully hidden
     const closedTranslate = isRTL ? '-100%' : '100%';
+    const collapsed = !open;
 
     const handleCategoryToggle = (value: string) => {
         setExpandedCategory((prev) => (prev === value ? false : value));
@@ -198,45 +222,14 @@ const ChipNavigation = () => {
 
     return (
         <>
-            {/* Floating Toggle Button */}
-            {/* <IconButton
-                onClick={() => setOpen((prev) => !prev)}
-                aria-label={open ? t('common.close') : t('categories.title')}
-                sx={{
-                    position: 'fixed',
-                    top: '40%',
-                    insetInlineEnd: open ? SIDEBAR_WIDTH : 0,
-                    zIndex: (theme) => theme.zIndex.drawer + 1,
-                    width: BUTTON_SIZE,
-                    height: 42,
-                    borderTopEndRadius: 1,
-                    borderBottomEndRadius: 1,
-                    bgcolor: 'background.paper',
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    boxShadow: 2,
-                    transition: 'inset-inline-end 200ms ease-in-out',
-                    '&:hover': { bgcolor: 'background.paper' },
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        borderRight: `1px solid ${BRAND.gold}`,
-                        borderRadius: 1,
-                        top: 0,
-                    },
-                }}
-            >
-                {showRightArrow ? (
-                    <ChevronRightRoundedIcon fontSize='small' />
-                ) : (
-                    <ChevronLeftRoundedIcon fontSize='small' />
-                )}
-            </IconButton> */}
-            <FloatingToggle BUTTON_SIZE={BUTTON_SIZE} SIDEBAR_WIDTH={SIDEBAR_WIDTH}  open={open} setOpen={setOpen} />
+            <FloatingToggle
+                BUTTON_SIZE={BUTTON_SIZE}
+                SIDEBAR_WIDTH={SIDEBAR_WIDTH}
+                COLLAPSED_WIDTH={COLLAPSED_WIDTH}
+                open={open}
+                setOpen={setOpen}
+            />
 
-            {/* Sidebar Drawer */}
             <Box
                 component='aside'
                 dir={dir}
@@ -244,7 +237,7 @@ const ChipNavigation = () => {
                     position: 'fixed',
                     top: NAVBAR_HEIGHT,
                     insetInlineEnd: 0,
-                    width: SIDEBAR_WIDTH,
+                    width: open ? SIDEBAR_WIDTH : COLLAPSED_WIDTH,
                     height: {
                         xs: `calc(100dvh - ${NAVBAR_HEIGHT.xs}px)`,
                         md: `calc(100dvh - ${NAVBAR_HEIGHT.md}px)`,
@@ -252,19 +245,27 @@ const ChipNavigation = () => {
                     bgcolor: 'background.paper',
                     borderInlineStart: '1px solid',
                     borderColor: 'divider',
+                    border: isRTL ? '2px solid #F8F5EF' : undefined,
                     boxShadow: {
-                        xs: open ? '-8px 0 30px rgba(0,0,0,0.15)' : 'none',
-                        lg: open ? '-4px 0 20px rgba(0,0,0,0.08)' : 'none',
+                        xs: open ? '-8px 10px 30px #8a806c' : 'none',
+                        lg: open ? '-4px 10px 20px #8a806c ' : 'none',
                     },
                     zIndex: 1050,
                     overflow: 'hidden',
-                    // Note: 'translateX(+10)' looks like a typo, usually it's 0 for open state
-                    transform: open
-                        ? 'translateX(0)'
-                        : `translateX(${closedTranslate})`,
-                    visibility: open ? 'visible' : 'hidden',
-                    pointerEvents: open ? 'auto' : 'none',
-                    transition: 'transform 200ms ease-in-out, visibility 200ms',
+                    // xs: hidden when closed (as before) — md+: icon rail
+                    transform: {
+                        xs: open
+                            ? 'translateX(0)'
+                            : `translateX(${closedTranslate})`,
+                        md: 'none',
+                    },
+                    visibility: {
+                        xs: open ? 'visible' : 'hidden',
+                        md: 'visible',
+                    },
+                    pointerEvents: { xs: open ? 'auto' : 'none', md: 'auto' },
+                    transition:
+                        'width 200ms ease-in-out, transform 200ms ease-in-out, visibility 200ms',
                 }}
             >
                 {/* Sidebar Header */}
@@ -280,14 +281,17 @@ const ChipNavigation = () => {
                         justifyContent: 'space-between',
                         px: 2,
                         py: 1.5,
+                        minHeight: 56,
                         bgcolor: 'background.paper',
                         borderBottom: '1px solid',
                         borderColor: 'divider',
                     }}
                 >
-                    <Typography variant='h6' fontWeight={700}>
-                        {t('categories.title')}
-                    </Typography>
+                    {!collapsed && (
+                        <Typography variant='h6' fontWeight={700} noWrap>
+                            {t('categories.title')}
+                        </Typography>
+                    )}
                 </Box>
 
                 {/* Sidebar List */}
@@ -296,7 +300,7 @@ const ChipNavigation = () => {
                     sx={{
                         p: 1,
                         height: '100%',
-                        pt: 8, // Space for sticky header
+                        pt: 8,
                         overflowY: 'auto',
                         overflowX: 'hidden',
                     }}
@@ -306,6 +310,8 @@ const ChipNavigation = () => {
                             key={category.value}
                             category={category}
                             isExpanded={expandedCategory === category.value}
+                            collapsed={collapsed}
+                            tooltipPlacement={isRTL ? 'right' : 'left'}
                             onToggle={handleCategoryToggle}
                             onClose={handleClose}
                             t={t}
