@@ -72,6 +72,29 @@ const TabPanel = (props: TabPanelProps) => {
     );
 };
 
+function getUserDisplayName(
+    user?:
+        | {
+              _id?: string;
+              email?: string;
+              first?: string;
+              last?: string;
+              role?: string;
+          }
+        | User
+        | null,
+) {
+    if (!user) return 'مستخدم غير معروف';
+    if ('name' in user && user.name) {
+        return (
+            `${user.name.first || ''} ${user.name.last || ''}`.trim() ||
+            user.email ||
+            'مستخدم'
+        );
+    }
+    return `${user.email}`;
+}
+
 const MessagingPage: React.FC = () => {
     const theme = useTheme();
     const { auth } = useUser();
@@ -127,8 +150,18 @@ const MessagingPage: React.FC = () => {
     useEffect(() => {
         if (!auth._id) return;
 
-        loadData();
+        void Promise.resolve().then(loadData);
     }, [loadData, auth._id]);
+
+    const defaultModeratorId =
+        auth.role === RoleType.Client
+            ? users.find(
+                  (user) =>
+                      user.role === RoleType.Moderator &&
+                      user._id !== auth._id,
+              )?._id || ''
+            : '';
+    const recipientId = toUserId || defaultModeratorId;
 
     useEffect(() => {
         if (!socket || !auth._id) return;
@@ -200,12 +233,12 @@ const MessagingPage: React.FC = () => {
             return;
         }
 
-        if (!toUserId) {
+        if (!recipientId) {
             showError('يرجى اختيار المستلم');
             return;
         }
 
-        if (toUserId === auth._id) {
+        if (recipientId === auth._id) {
             showError('لا يمكنك إرسال رسالة إلى نفسك');
             return;
         }
@@ -215,7 +248,7 @@ const MessagingPage: React.FC = () => {
             return;
         }
 
-        if (!validateRecipient(toUserId)) {
+        if (!validateRecipient(recipientId)) {
             showError('ليس لديك صلاحية لإرسال رسالة إلى هذا المستخدم');
             return;
         }
@@ -225,7 +258,7 @@ const MessagingPage: React.FC = () => {
 
         try {
             const sentMessageFromServer: UserMessage = await postMessage({
-                toUserId,
+                toUserId: recipientId,
                 message: trimmedMessage,
                 warning,
                 isImportant,
@@ -267,31 +300,6 @@ const MessagingPage: React.FC = () => {
         } finally {
             setSending(false);
         }
-    };
-
-    const getUserDisplayName = (
-        user?:
-            | {
-                  _id?: string;
-                  email?: string;
-                  first?: string;
-                  last?: string;
-                  role?: string;
-              }
-            | User
-            | null,
-    ) => {
-        if (!user) return 'مستخدم غير معروف';
-        if ('name' in user && user.name) {
-            // هذا كائن User
-            return (
-                `${user.name.first || ''} ${user.name.last || ''}`.trim() ||
-                user.email ||
-                'مستخدم'
-            );
-        }
-        // هذا كائن from/to في الرسالة
-        return `${user.email}`;
     };
 
     const getUserAvatar = (
@@ -394,20 +402,6 @@ const MessagingPage: React.FC = () => {
 
         return validateRecipient(user._id);
     });
-
-    useEffect(() => {
-        if (auth.role !== RoleType.Client || users.length === 0 || toUserId) {
-            return;
-        }
-
-        const firstModerator = users.find(
-            (user) => user.role === RoleType.Moderator && user._id !== auth._id,
-        );
-
-        if (firstModerator?._id) {
-            setToUserId(firstModerator._id);
-        }
-    }, [auth.role, users, toUserId, auth._id]);
 
     const MessageCard = ({
         msg,
@@ -629,36 +623,6 @@ const MessagingPage: React.FC = () => {
         );
     };
 
-    const ComposeDrawer = () => (
-        <Drawer
-            anchor={direction === 'rtl' ? 'left' : 'right'}
-            open={mobileDrawerOpen}
-            onClose={() => setMobileDrawerOpen(false)}
-            PaperProps={{
-                sx: {
-                    width: '100%',
-                    maxWidth: 400,
-                    p: 3,
-                },
-            }}
-        >
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    mb: 3,
-                }}
-            >
-                <Typography variant='h6'>رد على الرسالة</Typography>
-                <IconButton onClick={() => setMobileDrawerOpen(false)}>
-                    <CloseIcon />
-                </IconButton>
-            </Box>
-            {renderComposeForm()}
-        </Drawer>
-    );
-
     const renderComposeForm = () => (
         <Box component='form' onSubmit={handleSubmit} sx={{ width: '100%' }}>
             <FormControl fullWidth margin='normal'>
@@ -666,7 +630,7 @@ const MessagingPage: React.FC = () => {
                     fullWidth
                     options={filteredUsers}
                     value={
-                        filteredUsers.find((user) => user._id === toUserId) ||
+                        filteredUsers.find((user) => user._id === recipientId) ||
                         null
                     }
                     onChange={(_, user) => {
@@ -912,7 +876,7 @@ const MessagingPage: React.FC = () => {
             )}
 
             <Button
-                disabled={sending || message.length < 2 || !toUserId}
+                disabled={sending || message.length < 2 || !recipientId}
                 variant='contained'
                 type='submit'
                 fullWidth
@@ -1321,7 +1285,39 @@ const MessagingPage: React.FC = () => {
                     )}
 
                     {/* Mobile Compose Drawer */}
-                    {isMobile && <ComposeDrawer />}
+                    {isMobile && (
+                        <Drawer
+                            anchor={direction === 'rtl' ? 'left' : 'right'}
+                            open={mobileDrawerOpen}
+                            onClose={() => setMobileDrawerOpen(false)}
+                            PaperProps={{
+                                sx: {
+                                    width: '100%',
+                                    maxWidth: 400,
+                                    p: 3,
+                                },
+                            }}
+                        >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    mb: 3,
+                                }}
+                            >
+                                <Typography variant='h6'>
+                                    رد على الرسالة
+                                </Typography>
+                                <IconButton
+                                    onClick={() => setMobileDrawerOpen(false)}
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                            </Box>
+                            {renderComposeForm()}
+                        </Drawer>
+                    )}
 
                     {/* Status Snackbar */}
                     {status && (

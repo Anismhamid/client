@@ -81,7 +81,7 @@ const useMessageAuditLogs = () => {
     );
 
     useEffect(() => {
-        fetchAuditLogs();
+        void Promise.resolve().then(fetchAuditLogs);
     }, [fetchAuditLogs]);
 
     return {

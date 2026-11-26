@@ -81,7 +81,7 @@ export const useUsers = () => {
     }, []);
 
     useEffect(() => {
-        fetchUsers();
+        void Promise.resolve().then(fetchUsers);
     }, [fetchUsers]);
 
     return {

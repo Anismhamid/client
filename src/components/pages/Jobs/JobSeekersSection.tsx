@@ -79,7 +79,7 @@ const JobSeekersSection: FunctionComponent<Props> = ({ onCreate }) => {
     }, []);
 
     useEffect(() => {
-        load(filters, mine);
+        void Promise.resolve().then(() => load(filters, mine));
     }, [filters, mine, load]);
 
     const handleSearch = (next: FiltersType) => {

@@ -74,7 +74,9 @@ export const useAdminDashboard = (role: string) => {
     // الـ timeFrame بالـ ref عشان fetchData ما يتغيّر مع كل تغيير فترة
     // (قبل هيك كل تغيير فترة كان يعمل request جديد ويصفّر الـ interval)
     const timeFrameRef = useRef<TimeFrame>(timeFrame);
-    timeFrameRef.current = timeFrame;
+    useEffect(() => {
+        timeFrameRef.current = timeFrame;
+    }, [timeFrame]);
 
     const applyTimeFrame = useCallback((frame: TimeFrame) => {
         if (!rawDataRef.current) return;
@@ -127,7 +129,7 @@ export const useAdminDashboard = (role: string) => {
     // Initial load
     useEffect(() => {
         if (!isStaff) return;
-        fetchData();
+        void Promise.resolve().then(fetchData);
     }, [isStaff, fetchData]);
 
     // Re-filter when timeFrame changes (no API call)

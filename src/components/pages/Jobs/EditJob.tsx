@@ -19,7 +19,7 @@ const EditJob: FunctionComponent = () => {
     const { t } = useTranslation();
 
     const [job, setJob] = useState<Job | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(Boolean(id));
 
     const alert = (
         icon: 'success' | 'warning' | 'error',
@@ -36,7 +36,6 @@ const EditJob: FunctionComponent = () => {
 
     useEffect(() => {
         if (!id) {
-            setLoading(false);
             return;
         }
 

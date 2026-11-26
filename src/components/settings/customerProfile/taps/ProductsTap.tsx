@@ -55,12 +55,14 @@ const ProductsTab: FunctionComponent<ProductsTabProps> = ({
     const navigate = useNavigate();
 
     useEffect(() => {
-    setItems(products);
-}, [products]);
+        void Promise.resolve().then(() => setItems(products));
+    }, [products]);
 
-const updateProduct = (id: string | undefined) =>
-    (updater: (prev: Posts) => Posts) =>
-        setItems((prev) => prev.map((p) => (p._id === id ? updater(p) : p)));
+    const updateProduct = (id: string | undefined) =>
+        (updater: (prev: Posts) => Posts) =>
+            setItems((prev) =>
+                prev.map((p) => (p._id === id ? updater(p) : p)),
+            );
 
     return (
         <Box m={4}>

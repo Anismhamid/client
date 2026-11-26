@@ -93,7 +93,7 @@ const BlockedUsers: FunctionComponent = () => {
 
     useEffect(() => {
         if (auth?._id) {
-            fetchBlockedUsers();
+            void Promise.resolve().then(fetchBlockedUsers);
         }
     }, [auth?._id, fetchBlockedUsers]);
 

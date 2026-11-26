@@ -462,7 +462,7 @@ export default function MyAdsDashboard() {
     };
 
     useEffect(() => {
-        fetchAds();
+        void Promise.resolve().then(fetchAds);
     }, []);
 
     const counts = useMemo(

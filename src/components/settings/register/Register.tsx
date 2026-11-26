@@ -65,8 +65,6 @@ import {
 
 import { m, AnimatePresence } from 'framer-motion';
 
-import debounce from 'lodash-es/debounce';
-
 import { useTranslation } from 'react-i18next';
 
 import useAddressData from '../../../hooks/useAddressData';
@@ -83,6 +81,40 @@ import { updateUserImage, uploadImage } from '../../../services/uploadImage';
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+const StyledTextField = (
+    props: React.ComponentProps<typeof TextField>,
+) => {
+    const theme = useTheme();
+    return (
+        <TextField
+            {...props}
+            sx={{
+                '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    transition: 'all 0.2s ease',
+                    backgroundColor:
+                        theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.common.white, 0.05)
+                            : alpha(theme.palette.common.black, 0.02),
+                    '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.primary.main,
+                        borderWidth: 2,
+                    },
+                    '&:hover fieldset': {
+                        borderColor: theme.palette.primary.light,
+                    },
+                },
+                '& .MuiInputLabel-root': {
+                    '&.Mui-focused': {
+                        color: theme.palette.primary.main,
+                    },
+                },
+                ...props.sx,
+            }}
+        />
+    );
+};
 
 const Register: FunctionComponent = () => {
     const navigate = useNavigate();
@@ -141,26 +173,22 @@ const Register: FunctionComponent = () => {
         }
 
         setAvatarError(null);
+        setAvatarPreview(URL.createObjectURL(file));
         setAvatarFile(file);
     };
 
     const handleRemoveAvatar = () => {
         setAvatarFile(null);
+        setAvatarPreview(null);
         setAvatarError(null);
     };
 
-    // preview محلي + تنظيف الـ object URL
+    // Release the previous preview URL when the file changes or the page unmounts.
     useEffect(() => {
-        if (!avatarFile) {
-            setAvatarPreview(null);
-            return;
-        }
-
-        const objectUrl = URL.createObjectURL(avatarFile);
-        setAvatarPreview(objectUrl);
-
-        return () => URL.revokeObjectURL(objectUrl);
-    }, [avatarFile]);
+        return () => {
+            if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+        };
+    }, [avatarPreview]);
 
     // =========================================================
     // PASSWORD VISIBILITY
@@ -324,69 +352,59 @@ const Register: FunctionComponent = () => {
     // SLUG CHECK
     // =========================================================
 
-    const checkSlug = useMemo(
-        () =>
-            debounce(async (slug: string) => {
-                const normalizedSlug = slug.trim().toLowerCase();
-
-                if (normalizedSlug.length < 3) {
-                    setSlugAvailable(null);
-                    setCheckingSlug(false);
-                    return;
-                }
-
-                const requestId = ++slugRequestId.current;
-
-                setCheckingSlug(true);
-
-                try {
-                    const available =
-                        await checkSlugAvailability(normalizedSlug);
-
-                    // Ignore stale requests.
-                    if (requestId !== slugRequestId.current) {
-                        return;
-                    }
-
-                    setSlugAvailable(Boolean(available));
-                } catch (error) {
-                    console.error('Error checking slug:', error);
-
-                    if (requestId === slugRequestId.current) {
-                        setSlugAvailable(null);
-                    }
-                } finally {
-                    if (requestId === slugRequestId.current) {
-                        setCheckingSlug(false);
-                    }
-                }
-            }, 500),
-        [],
-    );
-
     useEffect(() => {
         const slug = formik.values.slug?.trim().toLowerCase() || '';
-
-        checkSlug.cancel();
-
-        // أي طلب قيد التنفيذ صار قديم
-        slugRequestId.current += 1;
-
-        setSlugAvailable(null);
-        setCheckingSlug(false);
+        const requestId = ++slugRequestId.current;
+        const resetTimer = window.setTimeout(() => {
+            if (requestId !== slugRequestId.current) return;
+            setSlugAvailable(null);
+            setCheckingSlug(false);
+        }, 0);
 
         if (slug.length < 3) {
-            return;
+            return () => {
+                window.clearTimeout(resetTimer);
+                if (slugRequestId.current === requestId) {
+                    slugRequestId.current += 1;
+                }
+            };
         }
 
-        checkSlug(slug);
-    }, [checkSlug, formik.values.slug]);
+        const checkTimer = window.setTimeout(async () => {
+            if (requestId !== slugRequestId.current) return;
+            setCheckingSlug(true);
+
+            try {
+                const available = await checkSlugAvailability(slug);
+                if (requestId === slugRequestId.current) {
+                    setSlugAvailable(Boolean(available));
+                }
+            } catch (error) {
+                console.error('Error checking slug:', error);
+                if (requestId === slugRequestId.current) {
+                    setSlugAvailable(null);
+                }
+            } finally {
+                if (requestId === slugRequestId.current) {
+                    setCheckingSlug(false);
+                }
+            }
+        }, 500);
+
+        return () => {
+            window.clearTimeout(resetTimer);
+            window.clearTimeout(checkTimer);
+            if (slugRequestId.current === requestId) {
+                slugRequestId.current += 1;
+            }
+        };
+    }, [formik.values.slug]);
 
     // =========================================================
     // AUTO GENERATE SLUG
     // =========================================================
 
-    const generateSlugFromName = useCallback(() => {
+    const generateSlugFromName = () => {
         const firstName = formik.values.name.first || '';
         const lastName = formik.values.name.last || '';
 
@@ -405,10 +423,7 @@ const Register: FunctionComponent = () => {
 
         formik.setFieldValue('slug', generatedSlug, true);
 
-        if (generatedSlug.length >= 3) {
-            checkSlug(generatedSlug);
-        }
-    }, [checkSlug, formik]);
+    };
 
     // =========================================================
     // ADDRESS DATA
@@ -448,7 +463,7 @@ const Register: FunctionComponent = () => {
     // STEP VALIDATION
     // =========================================================
 
-    const validateCurrentStep = useCallback(async () => {
+    const validateCurrentStep = async () => {
         const validationErrors = await formik.validateForm();
 
         const currentFields = steps[currentStep].fields;
@@ -486,7 +501,7 @@ const Register: FunctionComponent = () => {
         }
 
         return !hasErrors;
-    }, [currentStep, formik, slugAvailable, steps]);
+    };
 
     // =========================================================
     // NEXT / BACK
@@ -524,7 +539,7 @@ const Register: FunctionComponent = () => {
     // PASSWORD STRENGTH
     // =========================================================
 
-    const PasswordStrengthIndicator = ({ password }: { password: string }) => {
+    const renderPasswordStrengthIndicator = (password: string) => {
         const getStrength = (value: string) => {
             let score = 0;
 
@@ -588,7 +603,7 @@ const Register: FunctionComponent = () => {
     // SLUG INDICATOR
     // =========================================================
 
-    const SlugAvailabilityIndicator = () => {
+    const renderSlugAvailabilityIndicator = () => {
         if (!formik.values.slug || formik.values.slug.length < 3) {
             return null;
         }
@@ -665,54 +680,6 @@ const Register: FunctionComponent = () => {
 
         return null;
     };
-
-    // =========================================================
-    // STYLED TEXT FIELD
-    // =========================================================
-
-    const StyledTextField = useMemo(
-        () =>
-            function StyledTextField(
-                props: React.ComponentProps<typeof TextField>,
-            ) {
-                const theme = useTheme();
-                return (
-                    <TextField
-                        {...props}
-                        sx={{
-                            '& .MuiOutlinedInput-root': {
-                                borderRadius: 2,
-                                transition: 'all 0.2s ease',
-                                backgroundColor:
-                                    theme.palette.mode === 'dark'
-                                        ? alpha(
-                                              theme.palette.common.white,
-                                              0.05,
-                                          )
-                                        : alpha(
-                                              theme.palette.common.black,
-                                              0.02,
-                                          ),
-                                '&.Mui-focused fieldset': {
-                                    borderColor: theme.palette.primary.main,
-                                    borderWidth: 2,
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: theme.palette.primary.light,
-                                },
-                            },
-                            '& .MuiInputLabel-root': {
-                                '&.Mui-focused': {
-                                    color: theme.palette.primary.main,
-                                },
-                            },
-                            ...props.sx,
-                        }}
-                    />
-                );
-            },
-        [],
-    );
 
     // =========================================================
     // SUCCESS SCREEN
@@ -1358,7 +1325,7 @@ const Register: FunctionComponent = () => {
                                                                         }}
                                                                     />
 
-                                                                    <SlugAvailabilityIndicator />
+                                                                    {renderSlugAvailabilityIndicator()}
                                                                 </Box>
 
                                                                 <Button
@@ -1966,13 +1933,9 @@ const Register: FunctionComponent = () => {
 
                                                                 {formik.values
                                                                     .password && (
-                                                                    <PasswordStrengthIndicator
-                                                                        password={
-                                                                            formik
-                                                                                .values
-                                                                                .password
-                                                                        }
-                                                                    />
+                                                                    renderPasswordStrengthIndicator(
+                                                                        formik.values.password,
+                                                                    )
                                                                 )}
                                                             </FormControl>
                                                         </Grid>

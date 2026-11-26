@@ -119,7 +119,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
      * Restore authentication when the application starts.
      */
     useEffect(() => {
-        refreshAuth();
+        void Promise.resolve().then(refreshAuth);
     }, [refreshAuth]);
 
     /**

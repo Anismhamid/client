@@ -117,8 +117,12 @@ const Profile: FunctionComponent = () => {
     );
 
     useEffect(() => {
-        void loadUser();
+        let active = true;
+        void Promise.resolve().then(() => {
+            if (active) void loadUser();
+        });
         return () => {
+            active = false;
             requestRef.current += 1; // يلغي أي رد متأخر
         };
     }, [loadUser]);

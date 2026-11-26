@@ -47,7 +47,7 @@ const useAddressData = (selectedCity = "") => {
 	}, [selectedCity]);
 
 	useEffect(() => {
-		fetchStreets();
+		void Promise.resolve().then(fetchStreets);
 	}, [fetchStreets]);
 
 	return {

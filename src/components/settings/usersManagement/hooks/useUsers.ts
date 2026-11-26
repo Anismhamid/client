@@ -37,7 +37,7 @@ export const useUsers = (t: (key: string) => string) => {
     }, [t]);
 
     useEffect(() => {
-        loadUsers();
+        void Promise.resolve().then(loadUsers);
     }, [loadUsers]);
 
     // =========================

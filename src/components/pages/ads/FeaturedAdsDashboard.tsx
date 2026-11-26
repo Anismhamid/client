@@ -91,7 +91,7 @@ const FeaturedAdsDashboard = () => {
     }, []);
 
     useEffect(() => {
-        fetchAds();
+        void Promise.resolve().then(fetchAds);
     }, [fetchAds]);
 
     const handleTextChange = (

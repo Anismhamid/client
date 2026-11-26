@@ -158,7 +158,7 @@ const SavedSearchesPage = () => {
     );
 
     useEffect(() => {
-        void loadSearches();
+        void Promise.resolve().then(loadSearches);
     }, [loadSearches]);
 
     useEffect(() => {

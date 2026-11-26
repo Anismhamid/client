@@ -331,15 +331,12 @@ const PostDetails: FunctionComponent = () => {
         ? getAbsolutePostUrl(post)
         : `${SITE_URL}${pathname}`;
 
-    const reviews = useMemo(() => post?.reviews ?? [], [post?.reviews]);
+    const reviews = useMemo(() => post.reviews ?? [], [post.reviews]);
 
-    const sellerDisplayName = useMemo(
-        () =>
-            [post?.seller?.name?.first, post?.seller?.name?.last]
-                .filter(Boolean)
-                .join(' ') || 'user',
-        [post?.seller?.name?.first, post?.seller?.name?.last],
-    );
+    const sellerDisplayName =
+        [post.seller?.name?.first, post.seller?.name?.last]
+            .filter(Boolean)
+            .join(' ') || 'user';
     const categoryLabel = useMemo(() => {
         if (!post.category) return t('common.product.category') || 'التصنيف';
         return t(post.category);
@@ -381,13 +378,9 @@ const PostDetails: FunctionComponent = () => {
         );
     }, [reviews]);
 
-    const hasReviewed = useMemo(
-        () =>
-            auth?._id
-                ? reviews.some((r) => getReviewUserId(r) === String(auth._id))
-                : false,
-        [reviews, auth?._id],
-    );
+    const hasReviewed = auth?._id
+        ? reviews.some((r) => getReviewUserId(r) === String(auth._id))
+        : false;
 
     const sellerPhone = post.seller?.phone?.phone_1 ?? '';
     const sellerEmail = post.seller?.email ?? '';
@@ -443,7 +436,7 @@ const PostDetails: FunctionComponent = () => {
     );
 
     useEffect(() => {
-        void loadPost();
+        void Promise.resolve().then(() => loadPost());
     }, [loadPost, auth?._id]);
 
     useEffect(() => {
@@ -465,7 +458,7 @@ const PostDetails: FunctionComponent = () => {
 
     /* ---------- actions ---------- */
 
-    const handleContactSeller = useCallback(() => {
+    const handleContactSeller = () => {
         const seller = post.seller;
 
         if (!auth?._id) {
@@ -489,26 +482,16 @@ const PostDetails: FunctionComponent = () => {
             t('chat.isStillAvailable');
 
         openChat(seller as UserMessage, initialMessage);
-    }, [
-        post.seller,
-        post.product_name,
-        auth?._id,
-        finalPrice,
-        categoryLabel,
-        pageUrl,
-        t,
-        openChat,
-        navigate,
-    ]);
+    };
 
-    const goToProfile = useCallback(() => {
+    const goToProfile = () => {
         if (!post.seller?.slug) return;
         navigate(
             generatePath(path.CustomerProfile, {
                 slug: encodeURIComponent(post.seller.slug),
             }),
         );
-    }, [navigate, post.seller?.slug]);
+    };
 
     const handleShare = useCallback(async () => {
         setIsSharing(true);
@@ -558,7 +541,7 @@ const PostDetails: FunctionComponent = () => {
         }
     }, [navigate, post.category, postId, postSlug, t]);
 
-    const handleSubmitReview = useCallback(async () => {
+    const handleSubmitReview = async () => {
         if (!isLoggedIn) {
             navigate(path.Login);
             return;
@@ -585,16 +568,7 @@ const PostDetails: FunctionComponent = () => {
         } finally {
             setIsSubmittingReview(false);
         }
-    }, [
-        isLoggedIn,
-        post._id,
-        auth?._id,
-        reviewRating,
-        comment,
-        t,
-        navigate,
-        loadPost,
-    ]);
+    };
 
     const scrollToReviews = () =>
         document

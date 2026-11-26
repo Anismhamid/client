@@ -51,7 +51,7 @@ const JobsFilters: FunctionComponent<JobsFiltersProps> = ({
     // =====================================================
 
     useEffect(() => {
-        setLocalFilters(filters);
+        void Promise.resolve().then(() => setLocalFilters(filters));
     }, [filters]);
 
     // =====================================================

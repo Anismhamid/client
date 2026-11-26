@@ -22,24 +22,23 @@ export default function PaymentSuccess() {
 
     useEffect(() => {
         if (sessionId) {
-            verifyPayment(sessionId);
+            const verifyPayment = async () => {
+                try {
+                    const { data } = await axios.get(
+                        `${api}/verify-session?session_id=${sessionId}`,
+                    );
+                    if (data.payment_status === 'paid') {
+                        setVerified(true);
+                    }
+                } catch (error) {
+                    console.error('Verification failed:', error);
+                } finally {
+                    setLoading(false);
+                }
+            };
+            void verifyPayment();
         }
     }, [sessionId]);
-
-    const verifyPayment = async (sessionId: string) => {
-        try {
-            const { data } = await axios.get(
-                `${api}/verify-session?session_id=${sessionId}`,
-            );
-            if (data.payment_status === 'paid') {
-                setVerified(true);
-            }
-        } catch (error) {
-            console.error('Verification failed:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading) {
         return (

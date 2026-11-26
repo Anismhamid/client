@@ -35,6 +35,8 @@ const UserSearchField = ({
     const [options, setOptions] = useState<InvestigationUser[]>([]);
     const [loading, setLoading] = useState(false);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const visibleOptions =
+        inputValue.trim().length < MIN_SEARCH_CHARS ? [] : options;
 
     useEffect(() => {
         // ✅ Cancel any pending requests on unmount or new search
@@ -43,10 +45,7 @@ const UserSearchField = ({
             abortControllerRef.current = null;
         }
 
-        if (inputValue.trim().length < MIN_SEARCH_CHARS) {
-            setOptions([]);
-            return;
-        }
+        if (inputValue.trim().length < MIN_SEARCH_CHARS) return;
 
         const timer = setTimeout(async () => {
             const abortController = new AbortController();
@@ -80,7 +79,7 @@ const UserSearchField = ({
             fullWidth
             disabled={disabled}
             value={value}
-            options={options}
+            options={visibleOptions}
             loading={loading}
             filterOptions={(x) => x}
             isOptionEqualToValue={(option, selected) =>

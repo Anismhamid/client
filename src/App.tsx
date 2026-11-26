@@ -59,7 +59,9 @@ function App() {
 
     // ✅ إعداد التنقل من الإشعارات (native فقط)
     const navigateRef = useRef(navigate);
-    navigateRef.current = navigate;
+    useEffect(() => {
+        navigateRef.current = navigate;
+    }, [navigate]);
 
     useEffect(() => {
         if (!Capacitor.isNativePlatform()) return;

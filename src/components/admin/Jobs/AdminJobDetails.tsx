@@ -114,7 +114,7 @@ const AdminJobDetails: FunctionComponent = () => {
     }, [jobId]);
 
     useEffect(() => {
-        loadJob();
+        void Promise.resolve().then(loadJob);
     }, [loadJob]);
 
     const handleChange = <K extends keyof UpdateJobPayload>(

@@ -96,7 +96,18 @@ const AlertDialogs: FunctionComponent<AlertDialogProps> = ({
             isMounted = false;
             Swal.close();
         };
-    }, [show, dir]);
+    }, [
+        show,
+        dir,
+        title,
+        description,
+        confirmText,
+        cancelText,
+        successText,
+        errorText,
+        onConfirm,
+        onHide,
+    ]);
 
     return null;
 };

@@ -90,7 +90,7 @@ const JobsPage: FunctionComponent = () => {
 
     useEffect(() => {
         if (activeTab === 'jobs') {
-            loadJobs(filters);
+            void Promise.resolve().then(() => loadJobs(filters));
         }
     }, [filters, loadJobs, activeTab]);
 

@@ -71,7 +71,7 @@ export function useAppUpdate({
     }, [language]);
 
     useEffect(() => {
-        void checkForUpdate();
+        void Promise.resolve().then(checkForUpdate);
     }, [checkForUpdate]);
 
     useEffect(() => {

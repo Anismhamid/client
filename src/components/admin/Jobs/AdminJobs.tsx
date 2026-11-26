@@ -1,6 +1,5 @@
 import React, {
     FunctionComponent,
-    useCallback,
     useEffect,
     useMemo,
     useState,
@@ -87,40 +86,6 @@ const AdminJobs: FunctionComponent = () => {
                 value !== '',
         ).length;
     }, [filters]);
-
-    const loadJobs = useCallback(
-        async (currentFilters: AdminJobsFilters) => {
-            try {
-                setLoading(true);
-                setError(null);
-
-                const response = await getAdminJobs(currentFilters);
-
-                setJobs(response.jobs || []);
-
-                setTotalPages(response.pagination?.pages ?? 1);
-
-                setTotalJobs(
-                    response.pagination?.total ?? response.jobs?.length ?? 0,
-                );
-            } catch (err) {
-                console.error('[AdminJobs] Failed to load jobs:', err);
-
-                setJobs([]);
-                setTotalPages(1);
-                setTotalJobs(0);
-
-                setError(t('admin.jobs.errors.load', 'فشل تحميل الوظائف'));
-            } finally {
-                setLoading(false);
-            }
-        },
-        [t],
-    );
-
-    useEffect(() => {
-        loadJobs(filters);
-    }, [filters, loadJobs]);
 
     useEffect(() => {
     let ignore = false;
